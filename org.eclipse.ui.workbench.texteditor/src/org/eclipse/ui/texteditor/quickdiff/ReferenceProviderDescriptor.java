@@ -94,6 +94,8 @@ public class ReferenceProviderDescriptor {
 			return impl;
 		} catch (CoreException e) {
 			return null;
+		} catch (NoClassDefFoundError e) {
+			return null;
 		}
 	}
 
