@@ -35,17 +35,18 @@ public class LaunchVariableUtil {
 	/**
 	 * Variable tag indentifiers
 	 */
-	private static final char VAR_TAG_START_CHAR1 = '$'; //$NON-NLS-1$
-	private static final char VAR_TAG_START_CHAR2 = '{'; //$NON-NLS-1$
-	private static final char VAR_TAG_END_CHAR1 = '}'; //$NON-NLS-1$
+	private static final char VAR_TAG_START_CHAR1 = '$';
+	private static final char VAR_TAG_START_CHAR2 = '{';
+	private static final char VAR_TAG_END_CHAR1 = '}';
 	private static final String VAR_TAG_START = "${"; //$NON-NLS-1$
 	private static final String VAR_TAG_END = "}"; //$NON-NLS-1$
 	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
 	/**
 	 * Argument parsing constants
 	 */
-	private static final char ARG_DELIMITER = ' '; //$NON-NLS-1$
-	private static final char ARG_DBL_QUOTE = '"'; //$NON-NLS-1$
+	private static final char ARG_DELIMITER = ' ';
+	private static final char ARG_DBL_QUOTE = '"';
+	private static final char ARG_BACKSLASH = '\\';
 	/**
 	 * Launch configuration attribute - a map of variables passed into
 	 * Runtime.exec(...) when a launch configuration is launched.
@@ -341,23 +342,22 @@ public class LaunchVariableUtil {
 						}
 					}
 					break;
+					
+				case ARG_BACKSLASH:
+					if (start < end && (arguments.charAt(start) == ARG_DBL_QUOTE)) {
+						// Escaped double-quote
+						buffer.append('\"');
+						start++;
+					} else {
+						buffer.append(ch);
+					}
+					break;
 	
 				case ARG_DBL_QUOTE :
 					if (inVar) {
 						buffer.append(ch);
 					} else {
-						if (start < end) {
-							if (arguments.charAt(start) == ARG_DBL_QUOTE) {
-								// Two quotes together represents one quote
-								buffer.append(ch);
-								start++;
-							} else {
-								inQuotes = !inQuotes;
-							}
-						} else {
-							// A lone quote at the end, just drop it.
-							inQuotes = false;
-						}
+						inQuotes = !inQuotes;
 					}
 					break;
 					
