@@ -280,7 +280,7 @@ protected Point doComputeSize() {
  * Returns the preference store of this preference page.
  * <p>
  * This is a framework hook method for subclasses to return a
- * a a page-specific preference store. The default implementation
+ * page-specific preference store. The default implementation
  * returns <code>null</code>.
  * </p>
  *
