@@ -299,7 +299,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		// ignore list
 		IResource cvsIgnore = project.getFile(".cvsignore");
 		cvsIgnore.delete(true, null);
-		waitForIgnoreHandlerCompletion();
+		waitForIgnoreFileHandling();
 		
 		assertIsIgnored(project.getFile("a.txt"), false);
 		assertIsIgnored(project.getFile("c.java"), false);

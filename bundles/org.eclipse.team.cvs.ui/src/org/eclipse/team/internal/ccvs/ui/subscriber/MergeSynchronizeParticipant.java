@@ -60,26 +60,28 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 			CVSUIPlugin.log(e);
 		}
 	}
-	
+		
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#init(org.eclipse.team.ui.sync.ISynchronizeView, org.eclipse.team.core.ISaveContext)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void restoreState(IMemento memento) throws PartInitException {
-		super.restoreState(memento);
-		String qualifier = memento.getString(CTX_QUALIFIER);
-		String localname = memento.getString(CTX_LOCALNAME);
-		if(qualifier == null || localname == null) {
-			throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.8")); //$NON-NLS-1$
-		}
-		try {
-			setSubscriber(read(new QualifiedName(qualifier, localname), memento));
-		} catch (CVSException e) {
-			throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.9"), e); //$NON-NLS-1$
+	public void init(IMemento memento) throws PartInitException {
+		super.init(memento);
+		if(memento != null) {
+			String qualifier = memento.getString(CTX_QUALIFIER);
+			String localname = memento.getString(CTX_LOCALNAME);
+			if(qualifier == null || localname == null) {
+				throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.8")); //$NON-NLS-1$
+			}
+			try {
+				setSubscriber(read(new QualifiedName(qualifier, localname), memento));
+			} catch (CVSException e) {
+				throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.9"), e); //$NON-NLS-1$
+			}
 		}
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#saveState(org.eclipse.team.core.ISaveContext)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
@@ -94,7 +96,7 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeParticipant#dispose()
 	 */
-	protected void dispose() {
+	public void dispose() {
 		super.dispose();
 		((CVSMergeSubscriber)getInput().getSubscriber()).cancel();
 	}

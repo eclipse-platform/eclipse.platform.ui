@@ -15,8 +15,9 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -30,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
 public class EclipseTest extends EclipseWorkspaceTest {
@@ -707,21 +709,29 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}
 	}
 	
-	public void waitForIgnoreHandlerCompletion() {
-		Job job = SyncFileChangeListener.getDeferredHandler().getEventHandlerJob();
-		int count = 0;
-		while (job.getState() != Job.NONE) {
+	public static void waitForJobCompletion(Job job) {
+		// process UI events first, give the main thread a chance
+		// to handle any syncExecs or asyncExecs posted as a result
+		// of the event processing thread.
+		while (Display.getCurrent().readAndDispatch()) {};
+		
+		// wait for the event handler to process changes.
+		while(job.getState() != Job.NONE) {
+			while (Display.getCurrent().readAndDispatch()) {};
 			try {
-				Thread.sleep(100);
-				count++;
+				Thread.sleep(10);		
 			} catch (InterruptedException e) {
-				// ignore and keep going;
-			}
-			// Only wait 10 seconds at most
-			if (count == 100) {
-				fail("Ignore handling job does not seem to be finishing");
 			}
 		}
+		while (Display.getCurrent().readAndDispatch()) {};
+	}
+	
+	public static void waitForIgnoreFileHandling() {
+		waitForJobCompletion(SyncFileChangeListener.getDeferredHandler().getEventHandlerJob());
+	}
+	
+	public static void waitForSubscriberInputHandling(SubscriberInput input) {
+		waitForJobCompletion(input.getEventHandler().getEventHandlerJob());
 	}
 
 	protected static void executeHeadless(CVSOperation op) throws CVSException {

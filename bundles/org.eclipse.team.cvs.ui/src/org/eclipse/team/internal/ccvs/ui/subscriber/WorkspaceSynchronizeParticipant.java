@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
 import org.eclipse.ui.IMemento;
@@ -23,18 +24,19 @@ public class WorkspaceSynchronizeParticipant extends TeamSubscriberParticipant {
 	public final static String ID = "org.eclipse.team.cvs.ui.cvsworkspace-participant"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#init(org.eclipse.team.ui.sync.ISynchronizeView, org.eclipse.team.core.ISaveContext)
-	 */
-	public void restoreState(IMemento memento) throws PartInitException {
-		super.restoreState(memento);
-		TeamSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
-		setSubscriber(subscriber);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createPage(org.eclipse.team.ui.synchronize.ISynchronizeView)
 	 */
 	public IPageBookViewPage createPage(ISynchronizeView view) {
 		return new WorkspaceSynchronizePage(this, view, getInput());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
+	 */
+	public void init(IMemento memento) throws PartInitException {
+		super.init(memento);
+		TeamSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
+		setSubscriber(subscriber);
+		TeamUIPlugin.getPlugin().getRefreshJob().addSubscriberInput(getInput());
+	}		
 }

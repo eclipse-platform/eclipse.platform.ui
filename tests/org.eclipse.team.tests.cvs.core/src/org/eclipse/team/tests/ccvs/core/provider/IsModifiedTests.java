@@ -171,7 +171,7 @@ public class IsModifiedTests extends EclipseTest {
 				resourceList.add(new Path(string));
 			}
 		}
-		waitForIgnoreHandlerCompletion();
+		waitForIgnoreFileHandling();
 		rootFolder.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				assertModificationState(file);
@@ -298,7 +298,6 @@ public class IsModifiedTests extends EclipseTest {
 		addedResources = buildResources(project, new String[] {"ignored.txt"}, false);
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored.txt".getBytes()), false, DEFAULT_MONITOR);
-		waitForIgnoreHandlerCompletion();
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
@@ -306,13 +305,11 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, null, true);
 		// delete the .cvsignore to see the modification come back
 		project.getFile(".cvsignore").delete(false, DEFAULT_MONITOR);
-		waitForIgnoreHandlerCompletion();
 		assertModificationState(project, new String[] {".", "ignored.txt", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
 		assertModificationState(project, new String[] {".", "ignored.txt"}, true);
 		// re-add the ignore and then delete the ignored
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored.txt".getBytes()), false, DEFAULT_MONITOR);
-		waitForIgnoreHandlerCompletion();
 		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", ".cvsignore"}, true);
 		commitResources(project, new String[] {".cvsignore"});
@@ -402,7 +399,6 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/ignored/", "folder1/ignored/file.txt"}, true);
 		// ignore the folder
 		project.getFile("folder1/.cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
-		waitForIgnoreHandlerCompletion();
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
 		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
@@ -415,7 +411,6 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/ignored/", "folder1/ignored/file.txt"}, true);
 		// re-add the .cvsignore and then delete the ignored
 		project.getFile("folder1/.cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
-		waitForIgnoreHandlerCompletion();
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/.cvsignore"}, true);
 		getProvider(project).add(new IResource[] {project.getFile("folder1/.cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		commitResources(project, new String[] {"folder1/.cvsignore"});
@@ -550,13 +545,13 @@ public class IsModifiedTests extends EclipseTest {
 		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
 		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		commitProject(project);
+		assertModificationState(project, null, true);
 		project.getFolder("ignored").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(project, null, true);
 		
 		// Checkout a copy and add the file to ensure it is ignored
 		// Check the project out under a different name
 		IProject copy = checkoutCopy(project, "-copy");
-		waitForIgnoreHandlerCompletion();
 		assertModificationState(copy, null, true);
 		copy.getFolder("ignored").create(false, true, DEFAULT_MONITOR);
 		assertModificationState(copy, null, true);

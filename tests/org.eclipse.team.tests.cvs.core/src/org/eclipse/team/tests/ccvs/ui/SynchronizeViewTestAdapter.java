@@ -14,7 +14,6 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -24,6 +23,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
+import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -36,25 +36,6 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	public SynchronizeViewTestAdapter() {
 		TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage(null);
 	}
-	
-	public void waitForEventNotification(SubscriberInput input) {
-		// process UI events first, give the main thread a chance
-		// to handle any syncExecs or asyncExecs posted as a result
-		// of the event processing thread.
-		while (Display.getCurrent().readAndDispatch()) {};
-		
-		// wait for the event handler to process changes.
-		Job job = input.getEventHandler().getEventHandlerJob();
-		while(job.getState() != Job.NONE) {
-			while (Display.getCurrent().readAndDispatch()) {};
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-			}
-		}						
-	}
-	
-	
 	
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
 		SubscriberInput input = getInput(subscriber);
@@ -78,7 +59,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 				SubscriberInput input = ((TeamSubscriberParticipant)participant).getInput();
 				TeamSubscriber s = input.getSubscriber();
 				if(s == subscriber) {
-					waitForEventNotification(input);
+					EclipseTest.waitForSubscriberInputHandling(input);
 					return input;
 				}
 			}
@@ -133,8 +114,9 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	 */
 	public void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {
 		super.refresh(subscriber, resource);
-		waitForEventNotification(getInput(subscriber));
+		EclipseTest.waitForSubscriberInputHandling(getInput(subscriber));
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#reset()
 	 */
@@ -142,5 +124,4 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		super.reset(subscriber);
 		getInput(subscriber).reset();
 	}
-
 }
