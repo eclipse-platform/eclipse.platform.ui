@@ -71,12 +71,12 @@ public class ToolBarContributionItem extends ContributionItem {
      * Current width of cool item.
      */
     private int currentWidth = -1;
-    
+
     /**
-     * An exception generated at the time of disposal -- solely for the purpose
-     * of holding a stack trace.
+     * A flag indicating that this item has been disposed. This prevents future
+     * method invocations from doing things they shouldn't.
      */
-    private Exception disposalTrace = null; // TODO Remove this member.
+    private boolean disposed = false;
 
     /**
      * Mininum number of tool items to show in the cool item widget.
@@ -125,15 +125,36 @@ public class ToolBarContributionItem extends ContributionItem {
         this.toolBarManager = (ToolBarManager) toolBarManager;
     }
 
+    /**
+     * Checks whether this contribution item has been disposed. If it has, and
+     * the tracing options are active, then it prints some debugging
+     * information.
+     * 
+     * @return <code>true</code> if the item is disposed; <code>false</code>
+     *         otherwise.
+     *  
+     */
+    private final boolean checkDisposed() {
+        if (disposed) {
+            if ("true".equalsIgnoreCase(Platform //$NON-NLS-1$
+                    .getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$
+                System.out
+                        .println("Method invocation on a disposed tool bar contribution item."); //$NON-NLS-1$
+                new Exception().printStackTrace(System.out);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.jface.action.IContributionItem#dispose()
      */
     public void dispose() {
-        // TODO Remove this.  Extra info for Bug 51000.
-        disposalTrace = new Exception();
-        
         // Dispose of the ToolBar and all its contributions
         if (toolBarManager != null) {
             toolBarManager.dispose();
@@ -148,6 +169,9 @@ public class ToolBarContributionItem extends ContributionItem {
             coolItem.dispose();
             coolItem = null;
         }
+
+        // Mark this item as disposed.
+        disposed = true;
     }
 
     /*
@@ -157,6 +181,8 @@ public class ToolBarContributionItem extends ContributionItem {
      *      int)
      */
     public void fill(CoolBar coolBar, int index) {
+        if (checkDisposed()) { return; }
+
         if (coolItem == null && coolBar != null) {
             ToolBar toolBar = toolBarManager.createControl(coolBar);
             //toolBarManager.update(true);
@@ -241,6 +267,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @return the current height
      */
     public int getCurrentHeight() {
+        if (checkDisposed()) { return -1; }
         return currentHeight;
     }
 
@@ -250,6 +277,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @return the current size
      */
     public int getCurrentWidth() {
+        if (checkDisposed()) { return -1; }
         return currentWidth;
     }
 
@@ -261,6 +289,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see #setMinimumItemsToShow(int)
      */
     public int getMinimumItemsToShow() {
+        if (checkDisposed()) { return -1; }
         return minimumItemsToShow;
     }
 
@@ -272,6 +301,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see IToolBarManager
      */
     public IToolBarManager getToolBarManager() {
+        if (checkDisposed()) { return null; }
         return toolBarManager;
     }
 
@@ -282,6 +312,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *         otherwise
      */
     public boolean getUseChevron() {
+        if (checkDisposed()) { return false; }
         return useChevron;
     }
 
@@ -392,18 +423,8 @@ public class ToolBarContributionItem extends ContributionItem {
      *         set to be visible.
      */
     public boolean isVisible() {
-        // TODO Remove this debugging code (Bug 51000).
-        if (disposalTrace != null) {
-			if ("true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			    System.out.println("ToolBarContributionItem.isVisible when item disposed."); //$NON-NLS-1$
-			    System.out.println("Item disposed by: "); //$NON-NLS-1$
-			    disposalTrace.printStackTrace(System.out);
-			    System.out.println("Call to isVisible by: "); //$NON-NLS-1$
-			    new Exception().printStackTrace(System.out);
-			}
-			return false;
-		}
-        
+        if (checkDisposed()) { return false; }
+
         boolean visibleItem = false;
         if (toolBarManager != null) {
             IContributionItem[] contributionItems = toolBarManager.getItems();
@@ -426,6 +447,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
      */
     public void saveWidgetState() {
+        if (checkDisposed()) { return; }
         if (coolItem == null) return;
 
         //1. Save current size
@@ -473,6 +495,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *            the current height to set
      */
     public void setCurrentHeight(int currentHeight) {
+        if (checkDisposed()) { return; }
         this.currentHeight = currentHeight;
     }
 
@@ -484,6 +507,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *            the current width to set
      */
     public void setCurrentWidth(int currentWidth) {
+        if (checkDisposed()) { return; }
         this.currentWidth = currentWidth;
     }
 
@@ -499,6 +523,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see #setUseChevron(boolean)
      */
     public void setMinimumItemsToShow(int minimumItemsToShow) {
+        if (checkDisposed()) { return; }
         this.minimumItemsToShow = minimumItemsToShow;
     }
 
@@ -511,6 +536,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *            otherwise.
      */
     public void setUseChevron(boolean value) {
+        if (checkDisposed()) { return; }
         useChevron = value;
     }
 
@@ -520,6 +546,7 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
      */
     public void update(String propertyName) {
+        if (checkDisposed()) { return; }
         if (coolItem != null) {
             if ((propertyName == null)
                     || propertyName.equals(ICoolBarManager.SIZE)) {
@@ -538,6 +565,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *            current size
      */
     public void updateSize(boolean changeCurrentSize) {
+        if (checkDisposed()) { return; }
         // cannot set size if coolItem is null
         if (coolItem == null || coolItem.isDisposed()) { return; }
         boolean locked = false;

@@ -29,6 +29,7 @@ public class Policy {
 	public static boolean DEBUG_DRAG_DROP = DEFAULT;
 	public static boolean DEBUG_KEY_BINDINGS = DEFAULT;
 	public static boolean DEBUG_KEY_BINDINGS_VERBOSE = DEFAULT;
+	public static boolean DEBUG_TOOLBAR_DISPOSAL = DEFAULT;
 
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
@@ -43,6 +44,7 @@ public class Policy {
 			DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
 			DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
 			DEBUG_KEY_BINDINGS_VERBOSE = getDebugOption("/trace/keyBindings.verbose"); //$NON-NLS-1$
+			DEBUG_TOOLBAR_DISPOSAL = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
