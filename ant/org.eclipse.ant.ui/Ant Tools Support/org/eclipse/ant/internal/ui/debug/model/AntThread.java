@@ -439,6 +439,9 @@ public class AntThread extends AntDebugElement implements IThread {
                 }
             }
         }
+		if (fSystemProperties == null) {
+			return new IVariable[0];
+		}
         return new IVariable[]{fSystemProperties, fUserProperties, fRuntimeProperties};
       }
 }
