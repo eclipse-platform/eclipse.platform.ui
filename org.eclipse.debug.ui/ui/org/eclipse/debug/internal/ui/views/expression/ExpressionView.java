@@ -152,6 +152,9 @@ public class ExpressionView extends VariablesView {
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (!isVisible()) {
+			return;
+		}
 		if (selection instanceof IStructuredSelection) {
 			IDebugElement context = null;
 			IStructuredSelection ss = (IStructuredSelection)selection;
