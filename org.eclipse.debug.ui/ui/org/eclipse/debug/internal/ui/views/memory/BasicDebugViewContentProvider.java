@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -28,8 +27,8 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	protected StructuredViewer fViewer;
 	protected boolean fDisposed= false;
 
-	/**
-	 * @see IContentProvider#dispose
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 		fDisposed= true;
@@ -43,15 +42,15 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 		return fDisposed;
 	}
 	
-	/**
-	 * @see IContentProvider#inputChanged
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer= (StructuredViewer) viewer;
 	}
 
 	/**
-	 * @see Display.asyncExec(Runnable)
+	 * @see org.eclipse.swt.widgets.Display.asyncExec(java.lang.Runnable)
 	 */
 	protected void asyncExec(Runnable r) {
 		if (fViewer != null) {
@@ -63,7 +62,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	}
 	
 	/**
-	 * @see Display.syncExec(Runnable)
+	 * @see org.eclipse.swt.widgets.Display.syncExec(java.lang.Runnable)
 	 */
 	protected void syncExec(Runnable r) {
 		if (fViewer != null) {
@@ -128,4 +127,3 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	 */
 	protected abstract void doHandleDebugEvent(DebugEvent event);
 }
-
