@@ -195,11 +195,11 @@ public class FeatureEntry
 		
 		// IBundleGroupConstants
 		if (key.equals(FEATURE_IMAGE))
-			return branding.getFeatureImageURL().toExternalForm();
+			return branding.getFeatureImageURL() == null ? null : branding.getFeatureImageURL().toExternalForm();
 		else if (key.equals(TIPS_AND_TRICKS_HREF)) 
 			return branding.getTipsAndTricksHref();
 		else if (key.equals(WELCOME_PAGE)) 
-			return branding.getWelcomePageURL().toExternalForm();
+			return branding.getWelcomePageURL() == null ? null : branding.getWelcomePageURL().toExternalForm();
 		else if (key.equals(WELCOME_PERSPECTIVE))
 			return branding.getWelcomePerspectiveId();
 		// IProductConstants
@@ -208,9 +208,9 @@ public class FeatureEntry
 		else if (key.equals(ABOUT_TEXT))
 			return branding.getAboutText();
 		else if (key.equals(ABOUT_IMAGE))
-			return branding.getAboutImageURL().toExternalForm();
+			return branding.getAboutImageURL() == null ? null : branding.getAboutImageURL().toExternalForm();
 		else if (key.equals(WINDOW_IMAGE))
-			return branding.getWindowImageURL().toExternalForm();
+			return branding.getWindowImageURL()== null ? null : branding.getWindowImageURL().toExternalForm();
 		else if (key.equals(WINDOW_IMAGES)) {
 			URL[] urls = branding.getWindowImagesURLs();
 			if (urls == null)
