@@ -19,7 +19,7 @@ public interface IActivityRegistry {
 
 	List getActivityDefinitions();
 
-	List getActivityPatternBindingDefinitions();
+	List getPatternBindingDefinitions();
 	
 	void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 }

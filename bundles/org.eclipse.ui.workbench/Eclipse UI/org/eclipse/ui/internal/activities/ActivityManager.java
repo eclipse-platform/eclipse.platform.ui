@@ -215,23 +215,23 @@ public final class ActivityManager implements IActivityManager {
 			if (!isActivityDefinitionChildOf(null, (String) iterator.next(), activityDefinitionsById))
 				iterator.remove();
 
-		Map activityPatternBindingDefinitionsByActivityId = ActivityPatternBindingDefinition.activityPatternBindingDefinitionsByActivityId(activityRegistry.getActivityPatternBindingDefinitions());
+		Map patternBindingDefinitionsByActivityId = PatternBindingDefinition.patternBindingDefinitionsByActivityId(activityRegistry.getPatternBindingDefinitions());
 		Map patternBindingsByActivityId = new HashMap();		
 
-		for (Iterator iterator = activityPatternBindingDefinitionsByActivityId.entrySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = patternBindingDefinitionsByActivityId.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String activityId = (String) entry.getKey();
 			
 			if (activityDefinitionsById.containsKey(activityId)) {			
-				Collection activityPatternBindingDefinitions = (Collection) entry.getValue();
+				Collection patternBindingDefinitions = (Collection) entry.getValue();
 				
-				if (activityPatternBindingDefinitions != null)
-					for (Iterator iterator2 = activityPatternBindingDefinitions.iterator(); iterator2.hasNext();) {
-						IActivityPatternBindingDefinition activityPatternBindingDefinition = (IActivityPatternBindingDefinition) iterator2.next();
-						String pattern = activityPatternBindingDefinition.getPattern();
+				if (patternBindingDefinitions != null)
+					for (Iterator iterator2 = patternBindingDefinitions.iterator(); iterator2.hasNext();) {
+						IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) iterator2.next();
+						String pattern = patternBindingDefinition.getPattern();
 					
 						if (pattern != null && pattern.length() != 0) {
-							IPatternBinding patternBinding = new PatternBinding(activityPatternBindingDefinition.isInclusive(), Pattern.compile(pattern));	
+							IPatternBinding patternBinding = new PatternBinding(patternBindingDefinition.isInclusive(), Pattern.compile(pattern));	
 							List patternBindings = (List) patternBindingsByActivityId.get(activityId);
 							
 							if (patternBindings == null) {

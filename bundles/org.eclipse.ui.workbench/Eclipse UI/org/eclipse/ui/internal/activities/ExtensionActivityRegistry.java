@@ -27,8 +27,8 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 	private List activityDefinitions;
-	private List activityPatternBindingDefinitions;
 	private IExtensionRegistry extensionRegistry;
+	private List patternBindingDefinitions;
 	
 	ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)
@@ -61,10 +61,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		else 
 			activityDefinitions.clear();
 
-		if (activityPatternBindingDefinitions == null)
-			activityPatternBindingDefinitions = new ArrayList();
+		if (patternBindingDefinitions == null)
+			patternBindingDefinitions = new ArrayList();
 		else 
-			activityPatternBindingDefinitions.clear();		
+			patternBindingDefinitions.clear();		
 				
 		IConfigurationElement[] configurationElements = extensionRegistry.getConfigurationElementsFor(Persistence.PACKAGE_FULL);
 
@@ -74,8 +74,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 			if (Persistence.TAG_ACTIVITY.equals(name))
 				readActivityDefinition(configurationElement);
-			else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
-				readActivityPatternBindingDefinition(configurationElement);			
+			else if (Persistence.TAG_PATTERN_BINDING.equals(name))
+				readPatternBindingDefinition(configurationElement);			
 		}
 
 		boolean activityRegistryChanged = false;
@@ -85,8 +85,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			activityRegistryChanged = true;
 		}				
 
-		if (!activityPatternBindingDefinitions.equals(super.activityPatternBindingDefinitions)) {
-			super.activityPatternBindingDefinitions = Collections.unmodifiableList(activityPatternBindingDefinitions);		
+		if (!patternBindingDefinitions.equals(super.patternBindingDefinitions)) {
+			super.patternBindingDefinitions = Collections.unmodifiableList(patternBindingDefinitions);		
 			activityRegistryChanged = true;
 		}		
 
@@ -114,10 +114,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			activityDefinitions.add(activityDefinition);	
 	}
 	
-	private void readActivityPatternBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityPatternBindingDefinition activityPatternBindingDefinition = Persistence.readActivityPatternBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	private void readPatternBindingDefinition(IConfigurationElement configurationElement) {
+		IPatternBindingDefinition patternBindingDefinition = Persistence.readPatternBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
-		if (activityPatternBindingDefinition != null)
-			activityPatternBindingDefinitions.add(activityPatternBindingDefinition);	
+		if (patternBindingDefinition != null)
+			patternBindingDefinitions.add(patternBindingDefinition);	
 	}	
 }

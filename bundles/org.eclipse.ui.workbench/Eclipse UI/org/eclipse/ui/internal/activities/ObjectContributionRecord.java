@@ -16,7 +16,7 @@ import org.eclipse.ui.activities.IObjectContributionRecord;
  * Class that represents an extension contribution from a given plugin with a 
  * given localized id value.  Used in ObjectActivityManager and elsewhere for
  * pattern matching.  The toString() value of this Object is used to match
- * against activityPatternBindings and is of the form {pluginId}/{localId}.
+ * against patternBindings and is of the form {pluginId}/{localId}.
  * 
  * This could potentially be extended to include the extension point id from 
  * where the contribution has came from as well, although such bindings would
