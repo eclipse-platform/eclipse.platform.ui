@@ -175,6 +175,10 @@ public class UpdatesView
 	class SiteProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			if (newInput==null) return;
+			updateTitle(newInput);
+		}
 
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
@@ -1233,5 +1237,8 @@ public class UpdatesView
 		}
 		return adapter.getIncludedFeatures(null);
 	}
-
+	
+	protected Object getRootObject() {
+		return UpdateUI.getDefault().getUpdateModel();
+	}
 }

@@ -187,7 +187,8 @@ public class DetailsForm extends PropertyWebForm {
 			if (isCurrentFeature(children)) {
 				SWTUtil.getStandardDisplay().asyncExec(new Runnable() {
 					public void run() {
-						doButton.setEnabled(true);
+						//doButton.setEnabled(true);
+						refresh();
 					}
 				});
 			}
@@ -500,6 +501,13 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 	}
+	
+	private boolean isConfigured(IFeature feature) {
+		ISite site = feature.getSite();
+		IConfiguredSite csite = site.getCurrentConfiguredSite();
+		if (csite==null) return false;
+		return csite.isConfigured(feature);
+	}
 
 	private String getInstalledVersion(IFeature feature) {
 		alreadyInstalled = false;
@@ -509,6 +517,7 @@ public class DetailsForm extends PropertyWebForm {
 
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < installedFeatures.length; i++) {
+			boolean enabled = isConfigured(feature);
 			IFeature installedFeature = installedFeatures[i];
 			VersionedIdentifier ivid =
 				installedFeature.getVersionedIdentifier();
@@ -516,6 +525,10 @@ public class DetailsForm extends PropertyWebForm {
 				buf.append(", ");
 			PluginVersionIdentifier iversion = ivid.getVersion();
 			buf.append(iversion.toString());
+			if (!enabled) {
+				buf.append(" ");
+				buf.append(UpdateUI.getString("FeaturePage.disabledVersion"));
+			}
 			if (ivid.equals(vid)) {
 				alreadyInstalled = true;
 			} else {
@@ -544,6 +557,8 @@ public class DetailsForm extends PropertyWebForm {
 			return;
 
 		installedFeatures = UpdateUI.getInstalledFeatures(feature);
+		if (installedFeatures.length==0)
+			installedFeatures = UpdateUI.getInstalledFeatures(feature, false);
 
 		setHeadingText(feature.getLabel());
 		providerLabel.setText(feature.getProvider());
@@ -963,11 +978,13 @@ public class DetailsForm extends PropertyWebForm {
 			int mode = getCurrentJobType();
 			PendingChange job = createPendingChange(mode);
 			model.addPendingChange(job);
+			/*
 			IWorkbenchPage page = UpdateUI.getActivePage();
 			IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
 			if (view != null) {
 				page.bringToTop(view);
 			}
+			*/
 		} else {
 			PendingChange job = model.findRelatedPendingChange(currentFeature);
 			if (job != null)

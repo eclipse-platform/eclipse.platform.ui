@@ -3,8 +3,10 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -61,4 +63,25 @@ public abstract class BaseTreeView extends BaseView {
 		collapseAllAction.setToolTipText("Collapse All");
 		collapseAllAction.setImageDescriptor(UpdateUIImages.DESC_COLLAPSE_ALL);
 	}
+	
+	protected abstract Object getRootObject();
+	
+	void updateTitle(Object newInput) {
+		IConfigurationElement config = getConfigurationElement();
+		if (config == null)
+			return;
+		String viewName = config.getAttribute("name"); //$NON-NLS-1$
+		if (newInput == null
+			|| newInput.equals(getRootObject())) {
+			// restore old
+			setTitle(viewName);
+			setTitleToolTip(getTitle());
+		} else {
+			String name =
+				((LabelProvider) getViewer().getLabelProvider()).getText(
+					newInput);
+			setTitle(viewName + ": " + name); //$NON-NLS-1$
+			setTitleToolTip(getTitle());
+		}
+	}	
 }

@@ -166,6 +166,10 @@ public class ConfigurationView
 	class LocalSiteProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			if (newInput==null) return;
+			updateTitle(newInput);
+		}
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
@@ -1240,5 +1244,8 @@ public class ConfigurationView
 				return true;
 		}
 		return false;
+	}
+	protected Object getRootObject() {
+		return UpdateUI.getDefault().getUpdateModel();
 	}
 }
