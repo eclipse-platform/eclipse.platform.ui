@@ -254,7 +254,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
-		clearOutputAction = new ClearOutputAction(viewer);
+		clearOutputAction = new ClearOutputAction(console);
 		
 		scrollLockAction = new ScrollLockAction(viewer);
 		scrollLockAction.setChecked(!autoScroll);

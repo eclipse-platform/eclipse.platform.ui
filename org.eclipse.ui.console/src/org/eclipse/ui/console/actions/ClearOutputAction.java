@@ -17,6 +17,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 import org.eclipse.ui.internal.console.ConsolePluginImages;
@@ -34,15 +35,43 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 public class ClearOutputAction extends Action {
 
 	private ITextViewer fViewer;
+	private IOConsole fIOConsole;
 
-	public ClearOutputAction(ITextViewer viewer) {
+	/**
+	 * Constructs a clear output action.
+	 * 
+	 * @since 3.1
+	 */
+	private ClearOutputAction() {
 		super(ConsoleMessages.getString("ClearOutputAction.title")); //$NON-NLS-1$
-		fViewer= viewer;
 		setToolTipText(ConsoleMessages.getString("ClearOutputAction.toolTipText")); //$NON-NLS-1$
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_LCL_CLEAR));		
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_CLEAR));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLEAR));
-		WorkbenchHelp.setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);
+		WorkbenchHelp.setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);	    
+	}
+	
+	/**
+	 * Constructs a clear output action for an I/O console. Clearing an I/O console
+	 * is performed via API on the <code>IOConsole</code>, rather than clearing
+	 * its document directly.
+	 * 
+	 * @param ioConsole I/O console the action is associated with
+	 * @since 3.1
+	 */
+	public ClearOutputAction(IOConsole ioConsole) {
+		this();
+		fIOConsole = ioConsole;
+	}
+	
+	/**
+	 * Constructs an action to clear the document associated with a text viewer.
+	 * 
+	 * @param viewer viewer whose document this action is associated with 
+	 */
+	public ClearOutputAction(ITextViewer viewer) {
+	    this();
+	    fViewer = viewer;
 	}
 
 	/* (non-Javadoc)
@@ -51,12 +80,16 @@ public class ClearOutputAction extends Action {
 	public void run() {
 		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), new Runnable() {
 			public void run() {
-				IDocument document = fViewer.getDocument();
-				if (document != null) {
-					document.set(""); //$NON-NLS-1$
-				}
-				fViewer.setSelectedRange(0, 0);
-				fViewer.getTextWidget().redraw();
+			    if (fIOConsole == null) {
+					IDocument document = fViewer.getDocument();
+					if (document != null) {
+						document.set(""); //$NON-NLS-1$
+					}
+					fViewer.setSelectedRange(0, 0);
+					fViewer.getTextWidget().redraw();
+			    } else {
+			        fIOConsole.clearConsole();
+			    }
 			}
 		});
 	}

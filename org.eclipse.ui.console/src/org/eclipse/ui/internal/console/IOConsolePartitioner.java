@@ -39,6 +39,7 @@ import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Partitions an IOConsole's document
@@ -106,6 +107,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     private IOConsole console;
 	private boolean closeFired = false;
 	
+	private TrimJob trimJob = new TrimJob();
+	private boolean pendingTrim = false;
+	
 	/**
 	 * Lock for appending to and removing from the document - used
 	 * to synchronize addition of new text/partitions in the update
@@ -126,8 +130,8 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
-	public void connect(IDocument document) {
-		this.document = document;
+	public void connect(IDocument doc) {
+		document = doc;
 		document.setDocumentPartitioner(this);
 		lld = document.getLegalLineDelimiters();
 		partitions = new ArrayList();
@@ -302,73 +306,20 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	private void checkBufferSize() {
 		int length = document.getLength();
 		if (length > highWaterMark) {
-		    trimBuffer(length - lowWaterMark);
+		    trimJob.setOffset(length - lowWaterMark);
+		    trimJob.schedule();
 		}
 	}
 	
 	/**
-	 * Trims all text in the console up to the line containing
-	 * the given offset.
-	 * 
-	 * @param truncateOffset the offset up to which all preceeding lines
-	 *  will be removed
+	 * Clears the console
 	 */
-	private void trimBuffer(int truncateOffset) {
-		if (lastPartition == null || highWaterMark == -1 || document == null) {
-			return;
-		}
-		
-		int length = document.getLength();
-		if (truncateOffset < length) {
-			synchronized (overflowLock) {
-				try {
-					int cutoffLine = document.getLineOfOffset(truncateOffset);
-					int cutOffset = document.getLineOffset(cutoffLine);
-					
-	    			Iterator iter = patterns.iterator();
-	    			while (iter.hasNext()) {
-	    				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
-	    				if (notifier.end < cutOffset) {
-	    				    matchJob.schedule();
-	    				    return;
-	    				}
-	    			}					
-					
-					// set the new length of the first partition
-					IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
-					partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
-					
-					setUpdateInProgress(true);
-					document.replace(0, cutOffset, ""); //$NON-NLS-1$
-					setUpdateInProgress(false);
-					
-					//remove partitions and reset Partition offsets
-					int index = partitions.indexOf(partition);
-					for (int i = 0; i < index; i++) {
-                        partitions.remove(0);
-                    }
-					
-					int offset = 0;
-					for (Iterator i = partitions.iterator(); i.hasNext(); ) {
-						IOConsolePartition p = (IOConsolePartition) i.next();
-						p.setOffset(offset);
-						offset += p.getLength();
-					}
-					
-		    		// buffer has been emptied, reset match listeners
-	    			iter = patterns.iterator();
-	    			while (iter.hasNext()) {
-	    				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
-	    				notifier.end = notifier.end - cutOffset;
-	    				if (notifier.end < 0) {
-	    					notifier.end = 0;
-	    				}
-	    			}
-				} catch (BadLocationException e) {
-				}  
-			}
-		}
-	}	
+	public void clearBuffer() {
+	    synchronized (overflowLock) {
+	        trimJob.setOffset(-1);
+		    trimJob.schedule();
+        }
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -641,117 +592,237 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
         }
     }
     
+    /**
+     * Job to trim the console document, runs in the  UI thread.
+     */
+    private class TrimJob extends UIJob {
+        
+        /**
+         * trims output up to the line containing the given offset,
+         * or all output if -1.
+         */
+        private int truncateOffset;
+        
+        /**
+         * Creates a new job to trim the buffer.
+         */
+        TrimJob() {
+            super("Trim Job"); //$NON-NLS-1$
+            setSystem(true);
+        }
+        
+        /**
+         * Sets the trim offset.
+         * 
+         * @param offset trims output up to the line containing the given offset
+         */
+        public void setOffset(int offset) {
+            truncateOffset = offset;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+        	if (lastPartition == null || highWaterMark == -1 || document == null) {
+        		return Status.OK_STATUS;
+        	}
+        	
+        	int length = document.getLength();
+        	if (truncateOffset < length) {
+        		synchronized (overflowLock) {
+        			try {
+        			    pendingTrim = true;
+        				if (truncateOffset < 0) {
+        				    // clear
+        				    setUpdateInProgress(true);
+        					document.set(""); //$NON-NLS-1$
+        					setUpdateInProgress(false);
+        					partitions.clear();
+	        	    		// buffer has been emptied, reset match listeners
+	            			Iterator iter = patterns.iterator();
+	            			while (iter.hasNext()) {
+	            				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
+	            				notifier.end = 0;
+	            			}        					
+        				} else {
+        				    // overflow
+        				    int cutoffLine = document.getLineOfOffset(truncateOffset);
+        				    int cutOffset = document.getLineOffset(cutoffLine);
+        				
+	        				if (!closeFired) {
+	        				    // let the match job catch up unless its complete
+		            			Iterator iter = patterns.iterator();
+		            			while (iter.hasNext()) {
+		            				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
+		            				if (notifier.end < cutOffset) {
+		            				    matchJob.schedule();
+		            				    return Status.OK_STATUS;
+		            				}
+		            			}
+	        				}
+
+        					// set the new length of the first partition
+        					IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
+        					partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
+        					
+        					setUpdateInProgress(true);
+        					document.replace(0, cutOffset, ""); //$NON-NLS-1$
+        					setUpdateInProgress(false);
+        					
+        					//remove partitions and reset Partition offsets
+        					int index = partitions.indexOf(partition);
+        					for (int i = 0; i < index; i++) {
+                                partitions.remove(0);
+                            }
+        					
+        					int offset = 0;
+        					for (Iterator i = partitions.iterator(); i.hasNext(); ) {
+        						IOConsolePartition p = (IOConsolePartition) i.next();
+        						p.setOffset(offset);
+        						offset += p.getLength();
+        					}
+	        				
+	        	    		// buffer has been emptied, reset match listeners
+	            			Iterator iter = patterns.iterator();
+	            			while (iter.hasNext()) {
+	            				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
+	            				notifier.end = notifier.end - cutOffset;
+	            				if (notifier.end < 0) {
+	            					notifier.end = 0;
+	            				}
+	            			}
+        				}
+            			pendingTrim = false;
+        			} catch (BadLocationException e) {
+        			    pendingTrim = false;
+        			}
+        		}
+        	}
+        	return Status.OK_STATUS;
+        }
+    }
+    
     private class MatchJob extends Job {
         MatchJob() {
             super("Match Job"); //$NON-NLS-1$
             setSystem(true);
         }
-                
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
         protected IStatus run(IProgressMonitor monitor) {
             synchronized (overflowLock) {
-	        	IDocument doc = getDocument();
-	        	String text = null;
-	        	int prevBaseOffset = -1;
-	        	if (doc != null && !monitor.isCanceled()) {
-	        	    boolean allDone = partitionerFinished;
-		        	int endOfSearch = doc.getLength();
-		        	int indexOfLastChar = endOfSearch;
-		        	if (indexOfLastChar > 0) {
-		        		indexOfLastChar--;
-		        	}
-		        	int lastLineToSearch = 0;
-		        	int offsetOfLastLineToSearch = 0;
-		        	try {
-		        		lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
-		        		offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
-		        	} catch (BadLocationException e) {
-		        		// perhaps the buffer was re-set 
-		        		return Status.OK_STATUS;
-		        	}
-		        	for (int i = 0; i < patterns.size(); i++) {
-		        	    if (monitor.isCanceled()) {
-		        	        break;
-		        	    }
-		        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
-		        		int baseOffset = notifier.end;
-						int lengthToSearch = endOfSearch - baseOffset;
-						if (lengthToSearch > 0) {
-							try {
-								if (prevBaseOffset != baseOffset) {
-									// reuse the text string if possible
-									text = doc.get(baseOffset, lengthToSearch);
-								}
-								Matcher reg = notifier.pattern.matcher(text);
-								Matcher quick = null;
-								if (notifier.qualifier != null) {
-									quick = notifier.qualifier.matcher(text);
-								}
-								int startOfNextSearch = 0;
-								int endOfLastMatch = -1;
-								int lineOfLastMatch = -1;
-								while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
-									if (quick != null) {
-										if (quick.find(startOfNextSearch)) {
-											// start searching on the beginning of the line where the potential
-											// match was found, or after the last match on the same line
-											int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
-											if (lineOfLastMatch == matchLine) {
-												startOfNextSearch = endOfLastMatch;
-											} else {
-												startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
-											}
-										} else {
-											startOfNextSearch = lengthToSearch;
-										}
-									}
-									if (startOfNextSearch < lengthToSearch) {
-										if (reg.find(startOfNextSearch)) {
-											endOfLastMatch = reg.end();
-											lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
-											int regStart = reg.start();
-											IPatternMatchListener listener = notifier.listener;
-											if (listener != null && !monitor.isCanceled()) {
-											    listener.matchFound(new PatternMatchEvent(console, baseOffset + regStart, endOfLastMatch - regStart));
-											}
-											startOfNextSearch = endOfLastMatch;
-										} else {
-											startOfNextSearch = lengthToSearch;
-										}
-									}
-								}
-								// update start of next search to the last line searched
-								// or the end of the last match if it was on the line that
-								// was last searched
-								if (lastLineToSearch == lineOfLastMatch) {
-									notifier.end = baseOffset + endOfLastMatch;
-								} else {
-									notifier.end = offsetOfLastLineToSearch;
-								}
-			        		} catch (BadLocationException e) {
-			        			ConsolePlugin.log(e);
-			            	}
-						}
-						prevBaseOffset = baseOffset;
-						if (allDone) {
-							int lastLineOfDoc = doc.getNumberOfLines() - 1;
-							try {
-								if (doc.getLineLength(lastLineOfDoc) == 0) {
-									// if the last line is empty, do not consider it
-									lastLineOfDoc--;
-								}
-							} catch (BadLocationException e) {
-							    ConsolePlugin.log(e);
-								allDone = false;
-							}
-							allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
-						}
-			        }
-		        	if (allDone && !monitor.isCanceled() && !closeFired) {
-		        	    console.firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
-		        	    closeFired = true;
-		        	    cancel(); // cancels this job if it has already been re-scheduled
-		        	}
-	        	}
+	        	try {
+                    IDocument doc = getDocument();
+                    String text = null;
+                    int prevBaseOffset = -1;
+                    if (doc != null && !monitor.isCanceled()) {
+                        boolean allDone = partitionerFinished;
+                    	int endOfSearch = doc.getLength();
+                    	int indexOfLastChar = endOfSearch;
+                    	if (indexOfLastChar > 0) {
+                    		indexOfLastChar--;
+                    	}
+                    	int lastLineToSearch = 0;
+                    	int offsetOfLastLineToSearch = 0;
+                    	try {
+                    		lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
+                    		offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
+                    	} catch (BadLocationException e) {
+                    		// perhaps the buffer was re-set 
+                    		return Status.OK_STATUS;
+                    	}
+                    	for (int i = 0; i < patterns.size(); i++) {
+                    	    if (monitor.isCanceled()) {
+                    	        break;
+                    	    }
+                    		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
+                    		int baseOffset = notifier.end;
+                    		int lengthToSearch = endOfSearch - baseOffset;
+                    		if (lengthToSearch > 0) {
+                    			try {
+                    				if (prevBaseOffset != baseOffset) {
+                    					// reuse the text string if possible
+                    					text = doc.get(baseOffset, lengthToSearch);
+                    				}
+                    				Matcher reg = notifier.pattern.matcher(text);
+                    				Matcher quick = null;
+                    				if (notifier.qualifier != null) {
+                    					quick = notifier.qualifier.matcher(text);
+                    				}
+                    				int startOfNextSearch = 0;
+                    				int endOfLastMatch = -1;
+                    				int lineOfLastMatch = -1;
+                    				while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
+                    					if (quick != null) {
+                    						if (quick.find(startOfNextSearch)) {
+                    							// start searching on the beginning of the line where the potential
+                    							// match was found, or after the last match on the same line
+                    							int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
+                    							if (lineOfLastMatch == matchLine) {
+                    								startOfNextSearch = endOfLastMatch;
+                    							} else {
+                    								startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
+                    							}
+                    						} else {
+                    							startOfNextSearch = lengthToSearch;
+                    						}
+                    					}
+                    					if (startOfNextSearch < lengthToSearch) {
+                    						if (reg.find(startOfNextSearch)) {
+                    							endOfLastMatch = reg.end();
+                    							lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
+                    							int regStart = reg.start();
+                    							IPatternMatchListener listener = notifier.listener;
+                    							if (listener != null && !monitor.isCanceled()) {
+                    							    listener.matchFound(new PatternMatchEvent(console, baseOffset + regStart, endOfLastMatch - regStart));
+                    							}
+                    							startOfNextSearch = endOfLastMatch;
+                    						} else {
+                    							startOfNextSearch = lengthToSearch;
+                    						}
+                    					}
+                    				}
+                    				// update start of next search to the last line searched
+                    				// or the end of the last match if it was on the line that
+                    				// was last searched
+                    				if (lastLineToSearch == lineOfLastMatch) {
+                    					notifier.end = baseOffset + endOfLastMatch;
+                    				} else {
+                    					notifier.end = offsetOfLastLineToSearch;
+                    				}
+                        		} catch (BadLocationException e) {
+                        			ConsolePlugin.log(e);
+                            	}
+                    		}
+                    		prevBaseOffset = baseOffset;
+                    		if (allDone) {
+                    			int lastLineOfDoc = doc.getNumberOfLines() - 1;
+                    			try {
+                    				if (doc.getLineLength(lastLineOfDoc) == 0) {
+                    					// if the last line is empty, do not consider it
+                    					lastLineOfDoc--;
+                    				}
+                    			} catch (BadLocationException e) {
+                    			    ConsolePlugin.log(e);
+                    				allDone = false;
+                    			}
+                    			allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
+                    		}
+                        }
+                    	if (allDone && !monitor.isCanceled() && !closeFired) {
+                    	    console.firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+                    	    closeFired = true;
+                    	    cancel(); // cancels this job if it has already been re-scheduled
+                    	}
+                    }
+                } finally {
+                    if (pendingTrim) {
+                        trimJob.schedule();
+                    }
+                }
             }
             return Status.OK_STATUS;
         } 

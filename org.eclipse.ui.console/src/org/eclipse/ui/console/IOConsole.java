@@ -526,4 +526,13 @@ public class IOConsole extends AbstractConsole {
         }        
         return null;
     }
+    
+    /**
+     * Clears the console.
+     */
+    public void clearConsole() {
+        if (partitioner != null) {
+            partitioner.clearBuffer();
+        }
+    }
 }

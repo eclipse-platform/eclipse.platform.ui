@@ -11,8 +11,11 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 
 /**
  * A console document. Requires synchronization for multi-threaded access.
@@ -79,4 +82,35 @@ public class IOConsoleDocument extends Document {
 	public synchronized void replace(int pos, int length, String text) throws BadLocationException {
 		super.replace(pos, length, text);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
+	 */
+    public synchronized void set(String text) {
+        super.set(text);
+    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.AbstractDocument#completeInitialization()
+	 */
+    protected void completeInitialization() {
+        super.completeInitialization();
+        addPositionUpdater(new DefaultPositionUpdater(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY));
+    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
+	 */    
+    public synchronized void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException {
+        super.addPosition(category, position);
+    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#removePosition(java.lang.String, org.eclipse.jface.text.Position)
+	 */    
+    public synchronized void removePosition(String category, Position position) throws BadPositionCategoryException {
+        super.removePosition(category, position);
+    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocument#getPositions(java.lang.String)
+	 */    
+    public synchronized Position[] getPositions(String category) throws BadPositionCategoryException {
+        return super.getPositions(category);
+    }    
 }
