@@ -169,9 +169,9 @@ public class Connection {
 	 * Sends the given string to the server.
 	 */
 	public void write(String s) throws CVSException {
-		byte[] bytes = s.getBytes();
-		write(bytes, 0, bytes.length, false);
+		write(s.getBytes(), false);
 	}
+	
 	/**
 	 * Sends the given bytes to the server.
 	 */
@@ -182,7 +182,7 @@ public class Connection {
 	 * Sends the given string and a newline to the server. 
 	 */
 	public void writeLine(String s) throws CVSException {
-		write(s.getBytes(), 0, s.length(), true);
+		write(s.getBytes(), true);
 	}
 	/**
 	 * Sends the given bytes and a newline to the server.
@@ -190,6 +190,11 @@ public class Connection {
 	public void writeLine(byte[] b, int off, int len) throws CVSException {
 		write(b, off, len, true);
 	}
+	
+	void write (byte[] bytes, boolean newLine) throws CVSException {
+		write(bytes, 0, bytes.length, newLine);
+	}
+	
 	/**
 	 * Low level method to write a string to the server. All write* methods are
 	 * funneled through this method.
