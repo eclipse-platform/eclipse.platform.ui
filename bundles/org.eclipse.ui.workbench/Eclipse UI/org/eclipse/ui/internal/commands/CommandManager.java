@@ -254,9 +254,9 @@ public final class CommandManager implements ICommandManager {
 
 		// TODO high priority. temporary fix for M3 for automatic inheritance
 		// of activities for the specific case of the java editor scope.
-		if (list.contains("org.eclipse.jdt.ui.javaEditorScope")
-			&& !list.contains("org.eclipse.ui.textEditorScope"))
-			list.add("org.eclipse.ui.textEditorScope");
+		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") //$NON-NLS-1$
+			&& !list.contains("org.eclipse.ui.textEditorScope")) //$NON-NLS-1$
+			list.add("org.eclipse.ui.textEditorScope"); //$NON-NLS-1$
 
 		// TODO Remove -- debuggging println
 		String[] activeContextIds =

@@ -290,7 +290,7 @@ public class WorkbenchHelp {
 	public static HelpListener createHelpListener(ICommand command) {
 		// TODO Need a help ID from the context
 		//final String contextId = command.getHelpId();
-		final String contextId = "";
+		final String contextId = ""; //$NON-NLS-1$
 		return new HelpListener() {
 			public void helpRequested(HelpEvent event) {
 				if (getHelpUI() != null) {

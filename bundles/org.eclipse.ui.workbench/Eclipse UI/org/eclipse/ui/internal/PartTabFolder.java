@@ -203,7 +203,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     }
 
     public PartTabFolder(WorkbenchPage page, int flags) {
-        super("PartTabFolder");
+        super("PartTabFolder"); //$NON-NLS-1$
 
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
