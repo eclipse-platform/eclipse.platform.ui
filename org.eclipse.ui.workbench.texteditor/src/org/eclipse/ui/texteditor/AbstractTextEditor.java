@@ -844,8 +844,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			st.setCaretOffset(newCaretOffset);
 			if (fDoSelect) {
-				int start= Math.min(oldSelection.x, caretOffset);
-				st.setSelection(start, newCaretOffset);
+				if (caretOffset < oldSelection.y)	
+					st.setSelection(oldSelection.y, newCaretOffset);
+				else
+					st.setSelection(oldSelection.x, newCaretOffset);
 			} else
 				st.setSelection(newCaretOffset);
 
@@ -927,9 +929,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			st.setCaretOffset(newCaretOffset);
 			if (fDoSelect) {
-				int end= Math.max(oldSelection.y, caretOffset);
-				st.setSelectionRange(end, newCaretOffset - end);
-				st.showSelection();
+				if (caretOffset < oldSelection.y)	
+					st.setSelection(oldSelection.y, newCaretOffset);
+				else
+					st.setSelection(oldSelection.x, newCaretOffset);
 			} else
 				st.setSelection(newCaretOffset);
 
