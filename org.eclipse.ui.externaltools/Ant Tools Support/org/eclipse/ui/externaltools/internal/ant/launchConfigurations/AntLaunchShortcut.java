@@ -97,6 +97,10 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 						configuration= (ILaunchConfiguration)configurations.get(0);
 					} else {
 						configuration= chooseConfig(configurations);
+						if (configuration == null) {
+							// User cancelled selection
+							return;
+						}
 					}
 					
 				}
