@@ -546,9 +546,9 @@ public class PreferenceDialog
 					((PreferencePage) page).getPreferenceStore();
 				if (store != null
 					&& store.needsSaving()
-					&& store instanceof PreferenceStore) {
+					&& store instanceof IPersistentPreferenceStore) {
 					try {
-						((PreferenceStore) store).save();
+						((IPersistentPreferenceStore) store).save();
 					} catch (IOException e) {
 						MessageDialog.openError(getShell(), JFaceResources.getString("PreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
 						JFaceResources.format("PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage()})); //$NON-NLS-1$

@@ -19,7 +19,7 @@ import org.eclipse.jface.util.*;
  * 
  * @see IPreferenceStore
  */
-public class PreferenceStore implements IPreferenceStore {
+public class PreferenceStore implements IPersistentPreferenceStore {
 	
 	/** 
 	 * List of registered listeners (element type: <code>IPropertyChangeListener</code>).

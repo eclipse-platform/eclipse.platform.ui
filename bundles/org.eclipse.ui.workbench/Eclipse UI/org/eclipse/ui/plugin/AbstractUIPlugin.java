@@ -17,6 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -125,7 +126,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * 
 	 * @since 2.0
 	 */
-	private class CompatibilityPreferenceStore implements IPreferenceStore {
+	private class CompatibilityPreferenceStore implements IPersistentPreferenceStore {
 
 		/**
 		 * Flag to indicate that the listener has been added.
@@ -461,6 +462,13 @@ public abstract class AbstractUIPlugin extends Plugin {
 		public void setValue(String name, boolean value) {
 			getPrefs().setValue(name, value);
 		}
+		/**
+		 * @see org.eclipse.jface.preference.IPersistentPreferenceStore#save()
+		 */
+		public void save() throws IOException {
+			AbstractUIPlugin.this.savePreferenceStore();
+		}
+
 	}
 
 	/**
