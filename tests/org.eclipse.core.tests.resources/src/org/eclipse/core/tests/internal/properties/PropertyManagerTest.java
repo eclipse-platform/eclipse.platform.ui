@@ -212,6 +212,8 @@ public class PropertyManagerTest extends LocalStoreTest {
 		IResource destFile = destFolder.getFile(sourceFile.getName());
 		QualifiedName propName = new QualifiedName("test", "prop");
 		String propValue = "this is the property value";
+		
+		ensureExistsInWorkspace(new IResource[] {source, sourceFolder, sourceFile}, true);
 
 		/* 
 		 * persistent properties 
@@ -273,6 +275,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		/* create common objects */
 		IPropertyManager manager = ResourcesCompatibilityHelper.createPropertyManager();
 		IFile target = projects[0].getFile("target");
+		ensureExistsInWorkspace(target, true);
 
 		/* server properties */
 		QualifiedName propName = new QualifiedName("eclipse", "prop");
@@ -289,6 +292,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		IResource sourceFile = sourceFolder.getFile("myfile.txt");
 		propName = new QualifiedName("test", "prop");
 		propValue = "this is the property value";
+		ensureExistsInWorkspace(new IResource[] {source, sourceFolder, sourceFile}, true);
 
 		/* 
 		 * persistent properties 

@@ -728,16 +728,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * added, otherwise they are thrown.  If major exceptions occur, they are always thrown.
 	 */
 	public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
-		// delete properties
-		CoreException err = null;
-		try {
-			getPropertyManager().deleteResource(this);
-		} catch (CoreException e) {
-			if (status != null)
-				status.add(e.getStatus());
-			else
-				err = e;
-		}
 		// remove markers on this resource and its descendents
 		if (exists())
 			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
@@ -761,6 +751,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			convertToPhantom();
 		else
 			workspace.deleteResource(this);
+		// Delete properties after the resource is deleted from the tree. See bug 84584.
+		CoreException err = null;
+		try {
+			getPropertyManager().deleteResource(this);
+		} catch (CoreException e) {
+			if (status != null)
+				status.add(e.getStatus());
+			else
+				err = e;
+		}
 		if (err != null)
 			throw err;
 	}

@@ -16,8 +16,7 @@ import org.eclipse.core.internal.localstore.Bucket;
 import org.eclipse.core.internal.localstore.BucketTree;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.properties.PropertyBucket.PropertyEntry;
-import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
@@ -65,7 +64,7 @@ public class PropertyManager2 implements IPropertyManager {
 		}
 	}
 
-	private BucketTree tree;
+	BucketTree tree;
 
 	public PropertyManager2(Workspace workspace) {
 		this.tree = new BucketTree(workspace, new PropertyBucket());
@@ -139,6 +138,12 @@ public class PropertyManager2 implements IPropertyManager {
 	}
 
 	public synchronized void setProperty(IResource target, QualifiedName name, String value) throws CoreException {
+		//resource may have been deleted concurrently
+		//must check for existence within synchronized method
+		Resource resource = (Resource)target;
+		ResourceInfo info = resource.getResourceInfo(false, false);
+		int flags = resource.getFlags(info);
+		resource.checkAccessible(flags);
 		// enforce the limit stated by the spec
 		if (value != null && value.length() > 2 * 1024) {
 			String message = NLS.bind(Messages.properties_valueTooLong, name.getQualifier(), name.getLocalName());
