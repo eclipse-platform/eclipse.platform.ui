@@ -9,6 +9,7 @@
    <runtime>
       <library name="scheduler.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.update.internal.scheduler"/>
       </library>
    </runtime>
    <requires>

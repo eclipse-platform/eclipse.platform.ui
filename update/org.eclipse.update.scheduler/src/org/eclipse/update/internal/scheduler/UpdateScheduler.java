@@ -164,5 +164,28 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	}
 
 	public void earlyStartup() {
+		Preferences pref = getPluginPreferences();
+		// See if automatic search is enabled at all
+		if (pref.getBoolean(P_ENABLED)==false) return;
+
+		String schedule = pref.getString(P_SCHEDULE);
+		if (schedule.equals(VALUE_ON_STARTUP))
+			startSearch();
+		else {
+			long delay = computeDelay(pref);
+			if (delay == -1) return;
+			startSearch(delay);
+		}
+	}
+	
+	private long computeDelay(Preferences pref) {
+		return -1;
+	}
+	
+	private void startSearch() {
+		startSearch(0);
+	}
+
+	private void startSearch(long delay) {
 	}
 }
