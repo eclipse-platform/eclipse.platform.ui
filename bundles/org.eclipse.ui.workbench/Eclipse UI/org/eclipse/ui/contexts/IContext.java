@@ -32,15 +32,15 @@ public interface IContext extends Comparable {
 	 * @param contextListener the IContextListener instance to register.
 	 * @throws NullPointerException
 	 */	
-	// TODO void addContextListener(IContextListener contextListener);
+	void addContextListener(IContextListener contextListener);
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		// TODO throws NotDefinedException()
+	String getDescription()
+		throws NotDefinedException;
 	
 	/**
 	 * JAVADOC
@@ -54,16 +54,16 @@ public interface IContext extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getName();
-		// TODO throws NotDefinedException()
+	String getName()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getParentId();
-		// TODO throws NotDefinedException()
+	String getParentId()
+		throws NotDefinedException;
 
 	/**
 	 * JAVADOC
@@ -77,7 +77,7 @@ public interface IContext extends Comparable {
 	 * 
 	 * @return
 	 */	
-	// TODO boolean isDefined();
+	boolean isDefined();
 	
 	/**
 	 * Unregisters an IContextListener instance with this context.
@@ -85,5 +85,5 @@ public interface IContext extends Comparable {
 	 * @param contextListener the IContextListener instance to unregister.
 	 * @throws NullPointerException
 	 */
-	// TODO void removeContextListener(IContextListener contextListener);
+	void removeContextListener(IContextListener contextListener);
 }

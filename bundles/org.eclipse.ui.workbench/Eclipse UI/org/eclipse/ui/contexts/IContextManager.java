@@ -13,8 +13,6 @@ package org.eclipse.ui.contexts;
 
 import java.util.SortedSet;
 
-import org.eclipse.ui.handles.IHandle;
-
 /**
  * <p>
  * JAVADOC
@@ -52,7 +50,7 @@ public interface IContextManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IHandle getContextHandle(String contextId);
+	IContext getContext(String contextId);
 
 	/**
 	 * JAVADOC

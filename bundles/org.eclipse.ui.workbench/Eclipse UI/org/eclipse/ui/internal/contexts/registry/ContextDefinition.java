@@ -20,14 +20,14 @@ import java.util.TreeMap;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextDefinition implements Comparable, IContextDefinition {
+public final class ContextDefinition implements Comparable, IContextDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ContextDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	static Comparator nameComparator() {
+	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
@@ -38,7 +38,7 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List contextDefinitions) {
+	public static SortedMap sortedMapById(List contextDefinitions) {
 		if (contextDefinitions == null)
 			throw new NullPointerException();
 
@@ -55,7 +55,7 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List contextDefinitions) {
+	public static SortedMap sortedMapByName(List contextDefinitions) {
 		if (contextDefinitions == null)
 			throw new NullPointerException();
 
