@@ -127,17 +127,15 @@ protected void rehashTo(int anIndex) {
 		index = 0;
 	IMarkerSetElement element = elements[index];
 	while (element != null) {
-		int hash = hashFor(element.getId()) % elements.length + 1;
-		if (index < target) {
-			if (hash > target || hash <= index) {
-				elements[target] = element;
-				target = index;
-			}
-		} else {
-			if (hash > target && hash <= index) {
-				elements[target] = element;
-				target = index;
-			}
+		int hashIndex = hashFor(element.getId()) % elements.length;
+		boolean match;
+		if (index < target)
+			match = !(hashIndex > target || hashIndex <= index);
+		else
+			match = !(hashIndex > target && hashIndex <= index);
+		if (match) {
+			elements[target] = element;
+			target = index;
 		}
 		index++;
 		if (index >= elements.length)
