@@ -81,6 +81,14 @@
 	</extension>
 			
 	<!-- WebBrowsers -->
+	<extension
+		point="org.eclipse.help.ui.browser">
+		<browser
+			factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
+			name="%system_browser"
+			id="org.eclipse.help.ui.systembrowser">
+		</browser>
+	</extension>
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.mozillaLinux"
 			factoryclass="org.eclipse.help.ui.internal.browser.linux.MozillaFactory"
