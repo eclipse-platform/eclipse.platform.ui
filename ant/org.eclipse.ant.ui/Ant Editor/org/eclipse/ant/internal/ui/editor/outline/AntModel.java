@@ -846,7 +846,7 @@ public class AntModel {
 	 * @param taskName the name of the task to check
 	 * @return whether or not a task with this name sets properties
 	 */
-	public static boolean isPropertySettingTask(String taskName) {
+	private boolean isPropertySettingTask(String taskName) {
 		return taskName.equalsIgnoreCase("property") //$NON-NLS-1$
 			|| taskName.equalsIgnoreCase("available") //$NON-NLS-1$
 			|| taskName.equalsIgnoreCase("basename") //$NON-NLS-1$
