@@ -204,9 +204,6 @@ public class AntRunner implements IPlatformRunnable {
 			String defaultName= (String)getDefault.invoke(runner, null);
 			// collect the info into target objects
 			List infos = (List) results;
-			if (infos.size() < 2) {
-				return new TargetInfo[0];
-			}
 			Iterator iter= infos.iterator();
 			List info;
 			TargetInfo[] targets= new TargetInfo[infos.size()];
