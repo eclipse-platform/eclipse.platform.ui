@@ -662,13 +662,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Verify that there are no name collisions.
+	 * Verify that the launch configuration name is valid.
 	 */
 	protected void verifyName() throws CoreException {
-		String currentName = getNameTextWidget().getText();
+		String currentName = getNameTextWidget().getText().trim();
 
 		// If there is no name, complain
-		if (currentName.trim().length() < 1) {
+		if (currentName.length() < 1) {
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
@@ -679,7 +679,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// If the name hasn't changed from the last saved name, do nothing
 		if (currentName.equals(getLastSavedName())) {
 			return;
-		}				
+		}	
+		
+		// See if name contains any 'illegal' characters
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
+		if (status.getCode() != IStatus.OK) {
+			throw new CoreException(new Status(IStatus.ERROR,
+												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 0,
+												 status.getMessage(),
+												 null));									
+		}			
 		
 		// Otherwise, if there's already a config with the same name, complain
 		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
