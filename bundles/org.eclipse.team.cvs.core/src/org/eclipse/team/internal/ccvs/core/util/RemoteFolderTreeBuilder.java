@@ -360,6 +360,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void fetchNewDirectory(Connection connection, RemoteFolderTree newFolder, IPath localPath, IProgressMonitor monitor) throws CVSException {
+		List errors = new ArrayList();
 		
 		// Create an listener that will accumulate new files and folders
 		final boolean expectError[] = new boolean[] {false};
@@ -407,6 +408,7 @@ public class RemoteFolderTreeBuilder {
 				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 				// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(monitor);
+			errors.clear();
 			Client.execute(
 				Client.UPDATE,
 				new String[] {"-n"}, 
