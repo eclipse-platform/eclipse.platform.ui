@@ -29,10 +29,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
  */
-/*package*/
-class WizardFileSystemResourceExportPage1
-	extends WizardExportResourcesPage
-	implements Listener {
+/*package*/ class WizardFileSystemResourceExportPage1 extends WizardExportResourcesPage implements Listener {
 
 	// widgets
 	private Combo destinationNameField;
@@ -40,9 +37,6 @@ class WizardFileSystemResourceExportPage1
 	protected Button overwriteExistingFilesCheckbox;
 	protected Button createDirectoryStructureButton;
 	protected Button createSelectionOnlyButton;
-
-	// constants
-	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID =
