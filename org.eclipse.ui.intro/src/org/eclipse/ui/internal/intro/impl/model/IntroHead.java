@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -34,12 +35,12 @@ public class IntroHead extends AbstractIntroElement {
         src = IntroModelRoot.getPluginLocation(src, element);
     }
 
-    IntroHead(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroHead(Element element, Bundle bundle) {
+        super(element, bundle);
         src = getAttribute(element, ATT_SRC);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, pd);
+        src = IntroModelRoot.getPluginLocation(src, bundle);
     }
 
     /**

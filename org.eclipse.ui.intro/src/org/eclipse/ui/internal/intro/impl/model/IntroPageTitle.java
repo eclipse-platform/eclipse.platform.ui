@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -21,8 +21,8 @@ public class IntroPageTitle extends IntroText {
 
     protected static final String TAG_TITLE = "title";
 
-    IntroPageTitle(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroPageTitle(Element element, Bundle bundle) {
+        super(element, bundle);
     }
 
     /**

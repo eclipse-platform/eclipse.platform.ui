@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -39,8 +40,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     /**
      * @param element
      */
-    AbstractIntroContainer(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    AbstractIntroContainer(Element element, Bundle bundle) {
+        super(element, bundle);
         this.element = element;
     }
 
@@ -192,7 +193,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
 
-        addChildren(filteredElements, getPluginDesc());
+        addChildren(filteredElements, getBundle());
         loaded = true;
     }
 
@@ -201,12 +202,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * 
      * @param childElements
      */
-    protected void addChildren(Element[] childElements, IPluginDescriptor pd) {
+    protected void addChildren(Element[] childElements, Bundle bundle) {
         // loop through each child, in order as appearing in XML, and load the
         // model classes.
         for (int i = 0; i < childElements.length; i++) {
             Element childElement = childElements[i];
-            AbstractIntroElement child = getModelChild(childElement, pd);
+            AbstractIntroElement child = getModelChild(childElement, bundle);
             if (child != null) {
                 child.setParent(this);
                 children.addElement(child);
@@ -221,26 +222,26 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected AbstractIntroElement getModelChild(Element childElement,
-            IPluginDescriptor pd) {
+            Bundle bundle) {
 
         AbstractIntroElement child = null;
         if (childElement.getNodeName().equalsIgnoreCase(IntroDiv.TAG_DIV))
-            child = new IntroDiv(childElement, pd);
+            child = new IntroDiv(childElement, bundle);
         else if (childElement.getNodeName()
                 .equalsIgnoreCase(IntroLink.TAG_LINK))
-            child = new IntroLink(childElement, pd);
+            child = new IntroLink(childElement, bundle);
         else if (childElement.getNodeName()
                 .equalsIgnoreCase(IntroText.TAG_TEXT))
-            child = new IntroText(childElement, pd);
+            child = new IntroText(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroImage.TAG_IMAGE))
-            child = new IntroImage(childElement, pd);
+            child = new IntroImage(childElement, bundle);
         else if (childElement.getNodeName()
                 .equalsIgnoreCase(IntroHTML.TAG_HTML))
-            child = new IntroHTML(childElement, pd);
+            child = new IntroHTML(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroInclude.TAG_INCLUDE))
-            child = new IntroInclude(childElement, pd);
+            child = new IntroInclude(childElement, bundle);
         return child;
     }
 
@@ -402,11 +403,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         if (style != null)
             getParentPage().addStyle(style);
 
-        // for alt-style cache pd for loading resources.
+        // for alt-style cache bundle for loading resources.
         style = target.getParentPage().getAltStyle();
         if (style != null) {
-            IPluginDescriptor pd = target.getPluginDesc();
-            getParentPage().addAltStyle(style, pd);
+            Bundle bundle = target.getBundle();
+            getParentPage().addAltStyle(style, bundle);
         }
     }
 

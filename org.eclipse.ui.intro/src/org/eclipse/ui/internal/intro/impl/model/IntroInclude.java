@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -32,8 +32,8 @@ public class IntroInclude extends AbstractIntroElement {
     private String path;
     private boolean mergeStyle = false;
 
-    IntroInclude(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroInclude(Element element, Bundle bundle) {
+        super(element, bundle);
         configId = getAttribute(element, ATT_CONFIG_ID);
         path = getAttribute(element, ATT_PATH);
         String mergeStyleString = getAttribute(element, ATT_MERGE_STYLE);

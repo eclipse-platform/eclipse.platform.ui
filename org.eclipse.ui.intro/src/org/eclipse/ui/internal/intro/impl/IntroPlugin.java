@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.intro.impl;
 import java.text.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.plugin.*;
+import org.osgi.framework.*;
 
 /**
  * Intro main plugin.
@@ -32,20 +32,14 @@ public class IntroPlugin extends AbstractUIPlugin {
     // There should always be a single instance of all these classes.
     private ResourceBundle resourceBundle;
 
+    // The intro resource bundle.
+    private static String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources";
+
     /**
      * The constructor.
      */
-    public IntroPlugin(IPluginDescriptor descriptor) {
-        super(descriptor);
-        inst = this;
-        try {
-            resourceBundle = ResourceBundle
-                    .getBundle("org.eclipse.ui.internal.intro.impl.IntroPluginResources"); //$NON-NLS-1$
-        } catch (MissingResourceException x) {
-            resourceBundle = null;
-            Logger.logWarning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
-        }
-
+    public IntroPlugin() {
+        super();
     }
 
     /**
@@ -65,7 +59,7 @@ public class IntroPlugin extends AbstractUIPlugin {
                     .getResourceBundle();
             return (bundle != null ? bundle.getString(key) : key);
         } catch (MissingResourceException e) {
-            Logger.logWarning("could not find resource string: " + key); //$NON-NLS-1$
+            Log.warning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
             // ok to return Key.
             return key;
         }
@@ -108,7 +102,8 @@ public class IntroPlugin extends AbstractUIPlugin {
      *  
      */
     public static IIntroPart getIntroPart() {
-        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager().getIntro();
+        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
+                .getIntro();
         return introPart;
     }
 
@@ -117,9 +112,38 @@ public class IntroPlugin extends AbstractUIPlugin {
      *  
      */
     public static IIntroPart showIntroPart(boolean standby) {
-        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager().showIntro(
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow(), false);
+        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
+                .showIntro(
+                        PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+                        false);
         return introPart;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     */
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        inst = this;
+        try {
+            resourceBundle = ResourceBundle.getBundle(INTRO_RESOURCE_BUNDLE);
+        } catch (MissingResourceException x) {
+            resourceBundle = null;
+            Log.warning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
+        }
+
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
     }
 
 

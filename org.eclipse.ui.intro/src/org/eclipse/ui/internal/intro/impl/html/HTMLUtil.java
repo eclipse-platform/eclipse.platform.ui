@@ -12,8 +12,11 @@ package org.eclipse.ui.internal.intro.impl.html;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.util.Logger;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.osgi.framework.*;
+
 /**
  * Convenience class for generating HTML elements.
  */
@@ -155,15 +158,18 @@ public final class HTMLUtil {
 	 * @param descriptor
 	 * @return
 	 */
-	public static String getResolvedPluginPath(IPluginDescriptor descriptor) {
+	public static String getResolvedBundleLocation(Bundle bundle) {
 		try {
-			URL url = Platform.asLocalURL(descriptor.getInstallURL());
-			if (url == null)
+			String location = bundle.getLocation();
+			if (location == null)
 				return null;
+			URL url = new URL(location); 
+			url = Platform.resolve(url);
+			url = Platform.asLocalURL(url);
 			return url.toExternalForm();
 		} catch (IOException e) {
-			Logger.logError("Failed to resolve plugin path for "
-					+ descriptor.getUniqueIdentifier(), e);
+			Log.error("Failed to resolve plugin path for "
+					+ bundle.getSymbolicName(), e);
 			return null;
 		}
 	}

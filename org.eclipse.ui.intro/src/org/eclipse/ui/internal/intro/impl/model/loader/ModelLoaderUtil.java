@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 
@@ -60,14 +61,16 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
-        Logger.logInfo("Loaded " + configElement.getName() + " from "
-                + getLogString(configElement, logAttribute));
+        String msg = StringUtil.concat("Loaded ",
+                configElement.getName(), " from ", getLogString(configElement,
+                        logAttribute));
+        Log.info(msg);
 
         if (arraySize != 1) {
             // we have more than one, warn in the log.
             for (int i = 1; i < arraySize; i++)
                 // log each extra extension.
-                Logger.logWarning(getLogString(configElements[i], logAttribute)
+                Log.warning(getLogString(configElements[i], logAttribute)
                         + " ignored due to multiple contributions");
         }
         return configElement;
@@ -79,9 +82,8 @@ public class ModelLoaderUtil {
      */
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
-        StringBuffer buffer = new StringBuffer("Plugin:");
-        buffer.append(element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor().getUniqueIdentifier());
+        StringBuffer buffer = new StringBuffer("Bundle:");
+        buffer.append(element.getDeclaringExtension().getNamespace());
         buffer.append("  Extension:");
         buffer.append(element.getDeclaringExtension()
                 .getExtensionPointUniqueIdentifier());
@@ -116,14 +118,15 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         Element element = (Element) elements[0];
-        Logger.logInfo("Loaded " + element.getNodeName() + " from "
-                + getLogString(element, logAttribute));
+        String msg = StringUtil.concat("Loaded ", element.getNodeName(),
+                " from ", getLogString(element, logAttribute));
+        Log.info(msg);
 
         if (arraySize != 1) {
             // we have more than one, warn in the log.
             for (int i = 1; i < arraySize; i++)
                 // log each extra extension.
-                Logger.logWarning(getLogString(element, logAttribute)
+                Log.warning(getLogString(element, logAttribute)
                         + " ignored due to multiple contributions");
         }
         return element;
@@ -191,5 +194,44 @@ public class ModelLoaderUtil {
         return filteredElements;
     }
 
+    public static Bundle getBundleFromConfigurationElement(
+            IConfigurationElement cfg) {
+        return Platform.getBundle(cfg.getDeclaringExtension().getNamespace());
+    }
+
+    /**
+     * Utility method to validate the state of a bundle. Log invalid bundles to
+     * log file.
+     */
+    public static boolean bundleHasValidState(Bundle bundle) {
+        if (bundle == null || bundle.getState() == Bundle.UNINSTALLED
+                || bundle.getState() == Bundle.INSTALLED) {
+
+            if (bundle == null)
+                Log.error("Intro tried accessing a NULL bundle.", null);
+            else {
+                String msg = StringUtil.concat(
+                        "Intro tried accessing Bundle: ", getBundleHeader(
+                                bundle, Constants.BUNDLE_NAME), " vendor: ",
+                        getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
+                        " bundle state: ", String.valueOf(bundle.getState()));
+                Log.error(msg, null);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Retrieves the given key from the bundle header.
+     * 
+     * @param bundle
+     * @param key
+     * @return
+     */
+    public static String getBundleHeader(Bundle bundle, String key) {
+        return (String) bundle.getHeaders().get(key);
+    }
 
 }

@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.intro.impl.*;
 public class Util {
 
     /**
-     * Handle the exception by logging to the Logger. <br>
+     * Handle the exception by logging to the Log. <br>
      * The errorId is used to NL enable the error message. Pass
      * <code>null</code> as the messageId to indicate that the error's message
      * should be shown as the primary message
@@ -29,7 +29,7 @@ public class Util {
     }
 
     /**
-     * Handle the exception by logging to the Logger. <br>
+     * Handle the exception by logging to the Log. <br>
      * The errorId is used to NL enable the error message, and the variables are
      * subsituted in the message. Pass <code>null</code> as the messageId to
      * indicate that the error's message should be shown as the primary message
@@ -46,13 +46,13 @@ public class Util {
             else
                 msg = IntroPlugin.getResourceString(errorId);
         }
-        Logger.logError(msg, e);
+        Log.error(msg, e);
     }
 
     /**
      * Handle the exception by displaying an Error Dialog. <br>
      * The errorId is used to NL enable the error message. Also, the error is
-     * logged by the Logger. Pass <code>null</code> as the messageId to
+     * logged by the Log. Pass <code>null</code> as the messageId to
      * indicate that the error's message should be shown as the primary message
      */
     public static void handleExceptionWithPopUp(Shell parent, String errorId,
@@ -204,10 +204,10 @@ public class Util {
                 public void run() {
                     try {
                         Process p = doOpenBrowser(localHref, true);
-                        if (p == null) 
+                        if (p == null)
                             // no browser already opened. Launch new one.
                             doOpenBrowser(localHref, false);
-                        
+
                     } catch (Exception e) {
                         openBrowserError(display, e);
                     }
@@ -287,5 +287,6 @@ public class Util {
             }
         });
     }
+
 
 }

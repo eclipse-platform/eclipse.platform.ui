@@ -18,6 +18,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -100,7 +101,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected void loadChildren() {
         children = new Vector();
 
-        Logger.logInfo("Loading Intro plugin model....");
+        Log.info("Loading Intro plugin model....");
 
         // load presentation first and create the model class for it. If there
         // is more than one presentation, load first one, and log rest.
@@ -108,8 +109,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (presentationElement == null) {
             // no presentations at all, exit.
             setModelState(true, false);
-            Logger
-                    .logWarning("Could not find presentation element in intro config.");
+            Log.warning("Could not find presentation element in intro config.");
             return;
         }
 
@@ -130,8 +130,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return;
         }
 
-        loadPages(document, getPluginDesc());
-        loadSharedDivs(document, getPluginDesc());
+        loadPages(document, getBundle());
+        loadSharedDivs(document, getBundle());
 
         setModelState(true, true);
     }
@@ -163,7 +163,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Loads all pages defined in this config from the xml content file.
      */
-    private void loadPages(Document dom, IPluginDescriptor pd) {
+    private void loadPages(Document dom, Bundle bundle) {
         String homePageId = getPresentation().getHomePageId();
         Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
@@ -172,13 +172,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
             if (pageElement.getAttribute(IntroPage.ATT_ID).equalsIgnoreCase(
                     homePageId)) {
                 // Create the model class for the Root Page.
-                homePage = new IntroHomePage(pageElement, pd);
+                homePage = new IntroHomePage(pageElement, bundle);
                 homePage.setParent(this);
                 currentPageId = homePage.getId();
                 children.add(homePage);
             } else {
                 // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pageElement, pd);
+                IntroPage page = new IntroPage(pageElement, bundle);
                 page.setParent(this);
                 children.add(page);
             }
@@ -188,11 +188,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Loads all shared divs defined in this config, from the DOM.
      */
-    private void loadSharedDivs(Document dom, IPluginDescriptor pd) {
+    private void loadSharedDivs(Document dom, Bundle bundle) {
         Element[] divs = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroDiv.TAG_DIV);
         for (int i = 0; i < divs.length; i++) {
-            IntroDiv div = new IntroDiv(divs[i], pd);
+            IntroDiv div = new IntroDiv(divs[i], bundle);
             div.setParent(this);
             children.add(div);
         }
@@ -206,8 +206,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
         for (int i = 0; i < configExtensionElements.length; i++) {
             // get the pd from the extensions since they are defined in other
             // plugins.
-            IPluginDescriptor pd = configExtensionElements[i]
-                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            Bundle bundle = ModelLoaderUtil
+                    .getBundleFromConfigurationElement(configExtensionElements[i]);
+
             Document dom = loadDOM(configExtensionElements[i]);
             if (dom == null)
                 // we failed to parse the content file. Intro Parser would have
@@ -218,7 +219,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // Find the target of this container extension, and add all its
             // children to target. Make sure to pass pd to propagate to all
             // children.
-            Element extensionContentElement = loadExtensionContent(dom, pd);
+            Element extensionContentElement = loadExtensionContent(dom, bundle);
             if (extensionContentElement == null)
                 // no extension content defined.
                 continue;
@@ -227,7 +228,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 // we failed to resolve this configExtension, add the extension
                 // as a child of this model.
                 children.add(new IntroExtensionContent(extensionContentElement,
-                        pd));
+                        bundle));
                 continue;
             }
 
@@ -238,13 +239,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
                     IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pages[i], pd);
+                IntroPage page = new IntroPage(pages[i], bundle);
                 page.setParent(this);
                 children.add(page);
             }
 
             // load all shared divs from all configExtensions to this model.
-            loadSharedDivs(dom, pd);
+            loadSharedDivs(dom, bundle);
         }
     }
 
@@ -257,7 +258,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param
      * @return
      */
-    private Element loadExtensionContent(Document dom, IPluginDescriptor pd) {
+    private Element loadExtensionContent(Document dom, Bundle bundle) {
         Element[] extensionContents = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroExtensionContent.TAG_CONTAINER_EXTENSION);
         // There should only be one container extension.
@@ -270,7 +271,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // Create the model class.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
-                extensionContentElement, pd);
+                extensionContentElement, bundle);
         // now resolve this extension.
         String path = extensionContent.getPath();
         AbstractIntroElement target = findTarget(this, path);
@@ -286,7 +287,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // loaded with children for ordering.
             if (!targetContainer.isLoaded())
                 targetContainer.loadChildren();
-            targetContainer.addChildren(extensionContent.getChildren(), pd);
+            targetContainer.addChildren(extensionContent.getChildren(), bundle);
             handleExtensionStyleInheritence(extensionContent, targetContainer);
         }
         return extensionContentElement;
@@ -320,8 +321,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // for alt-style cache pd for loading resources.
         style = extension.getAltStyle();
         if (style != null) {
-            IPluginDescriptor pd = extension.getPluginDesc();
-            targetContainer.getParentPage().addAltStyle(style, pd);
+            Bundle bundle = extension.getBundle();
+            targetContainer.getParentPage().addAltStyle(style, bundle);
         }
     }
 
@@ -489,12 +490,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @return returns the URL as is if it had a protocol.
      */
     protected static String resolveURL(String url, String pluginId) {
-        IPluginDescriptor pluginDesc = null;
+        Bundle bundle = null;
         if (pluginId != null)
             // if pluginId is not null, use it.
-            pluginDesc = Platform.getPlugin(pluginId).getDescriptor();
-
-        return resolveURL(url, pluginDesc);
+            bundle = Platform.getBundle(pluginId);
+        return resolveURL(url, bundle);
     }
 
     /**
@@ -508,15 +508,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @return returns the URL as is if it had a protocol.
      */
     protected static String resolveURL(String url, IConfigurationElement element) {
-        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
-        return resolveURL(url, pluginDesc);
+        Bundle bundle = ModelLoaderUtil
+                .getBundleFromConfigurationElement(element);
+        return resolveURL(url, bundle);
     }
 
     /**
      * @see resolveURL(String url, IConfigurationElement element)
      */
-    protected static String resolveURL(String url, IPluginDescriptor pd) {
+    protected static String resolveURL(String url, Bundle bundle) {
         // quick exit
         if (url == null)
             return null;
@@ -525,7 +525,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return url;
         else
             // make plugin relative url. Only now we need the pd.
-            return getPluginLocation(url, pd);
+            return getPluginLocation(url, bundle);
     }
 
 
@@ -540,21 +540,21 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public static String getPluginLocation(String resource,
             IConfigurationElement element) {
-        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
-        return getPluginLocation(resource, pluginDesc);
+        Bundle bundle = ModelLoaderUtil
+                .getBundleFromConfigurationElement(element);
+        return getPluginLocation(resource, bundle);
     }
 
-    public static String getPluginLocation(String resource,
-            IPluginDescriptor pluginDesc) {
+    public static String getPluginLocation(String resource, Bundle bundle) {
 
-        if (resource == null)
+        // quick exits.
+        if (resource == null || !ModelLoaderUtil.bundleHasValidState(bundle))
             return null;
 
         URL localLocation = null;
         try {
             // we need to perform a 'resolve' on this URL.
-            localLocation = pluginDesc.find(new Path(resource));
+            localLocation = Platform.find(bundle, new Path(resource));
             if (localLocation == null)
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. return resource, as is;
@@ -562,8 +562,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
             localLocation = Platform.asLocalURL(localLocation);
             return localLocation.toExternalForm();
         } catch (Exception e) {
-            Logger.logError("Failed to load resource: " + resource + " from "
-                    + pluginDesc.getLabel(), e);
+            String msg = StringUtil.concat("Failed to load resource: ",
+                    resource, " from ", ModelLoaderUtil.getBundleHeader(bundle,
+                            Constants.BUNDLE_NAME));
+            Log.error(msg, e);
             return resource;
         }
     }
@@ -577,9 +579,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @return
      */
     public static String getPluginLocation(String resource, String pluginId) {
-        IPluginDescriptor pluginDesc = Platform.getPlugin(pluginId)
-                .getDescriptor();
-        return getPluginLocation(resource, pluginDesc);
+        Bundle bundle = Platform.getBundle(pluginId);
+        return getPluginLocation(resource, bundle);
     }
 
 

@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -121,7 +123,7 @@ public abstract class AbstractIntroElement {
 
     private AbstractIntroElement parent;
     private IConfigurationElement cfgElement;
-    private IPluginDescriptor pluginDescriptor;
+    private Bundle bundle;
 
 
     /**
@@ -129,8 +131,7 @@ public abstract class AbstractIntroElement {
      */
     AbstractIntroElement(IConfigurationElement element) {
         cfgElement = element;
-        pluginDescriptor = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
+        bundle = ModelLoaderUtil.getBundleFromConfigurationElement(cfgElement);
     }
 
 
@@ -141,8 +142,8 @@ public abstract class AbstractIntroElement {
      * @param element
      * @param pd
      */
-    AbstractIntroElement(Element element, IPluginDescriptor pd) {
-        pluginDescriptor = pd;
+    AbstractIntroElement(Element element, Bundle bundle) {
+        this.bundle = bundle;
     }
 
     /**
@@ -171,8 +172,8 @@ public abstract class AbstractIntroElement {
      * 
      * @return
      */
-    public IPluginDescriptor getPluginDesc() {
-        return pluginDescriptor;
+    public Bundle getBundle() {
+        return bundle;
     }
 
 

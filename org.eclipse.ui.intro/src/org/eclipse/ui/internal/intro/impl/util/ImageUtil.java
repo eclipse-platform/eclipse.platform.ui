@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.internal.intro.impl.*;
+import org.osgi.framework.*;
 
 /**
  * Convenience class for Images.
@@ -50,9 +51,8 @@ public final class ImageUtil {
      * append that directory name for "imageName".
      */
     public static ImageDescriptor createImageDescriptor(String imageName) {
-        return createImageDescriptor(Platform.getPlugin(
-                IIntroConstants.PLUGIN_ID).getDescriptor(), ICONS_PATH
-                + imageName);
+        return createImageDescriptor(Platform
+                .getBundle(IIntroConstants.PLUGIN_ID), ICONS_PATH + imageName);
     }
 
     /**
@@ -61,17 +61,16 @@ public final class ImageUtil {
      * Method assumes that images are under the "icons" directory, so don't
      * append that directory name for "imageName".
      */
-    public static ImageDescriptor createImageDescriptor(IPluginDescriptor pd,
+    public static ImageDescriptor createImageDescriptor(Bundle bundle,
             String imageName) {
         try {
             // REVISIT: make sure to add code to use Display.iconDepth
-            URL installURL = pd.getInstallURL();
-            URL url = new URL(installURL, imageName);
-            ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+            URL imageUrl = Platform.find(bundle, new Path(imageName));
+            ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
             return desc;
         } catch (Exception e) {
             // Should never be here.
-            Logger.logError("could not create Image Descriptor", e); //$NON-NLS-1$
+            Log.error("could not create Image Descriptor", e); //$NON-NLS-1$
             return ImageDescriptor.getMissingImageDescriptor();
         }
     }
@@ -88,7 +87,7 @@ public final class ImageUtil {
             return imageDsc.createImage();
         } catch (Exception e) {
             // Should never be here.
-            Logger.logError("could not create Image", e); //$NON-NLS-1$
+            Log.error("could not create Image", e); //$NON-NLS-1$
             return ImageDescriptor.getMissingImageDescriptor().createImage();
         }
     }
@@ -127,13 +126,12 @@ public final class ImageUtil {
         registry.put(key, createImageDescriptor(imageName));
     }
 
-    public static void registerImage(String key, IPluginDescriptor pd,
-            String imageName) {
+    public static void registerImage(String key, Bundle bundle, String imageName) {
 
         ImageRegistry registry = IntroPlugin.getDefault().getImageRegistry();
         if (registry.getDescriptor(key) != null)
             // key has already been registered. do nothing.
             return;
-        registry.put(key, createImageDescriptor(pd, imageName));
+        registry.put(key, createImageDescriptor(bundle, imageName));
     }
 }

@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -33,16 +33,16 @@ public class IntroExtensionContent extends AbstractBaseIntroElement {
 
     private Element element;
 
-    IntroExtensionContent(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroExtensionContent(Element element, Bundle bundle) {
+        super(element, bundle);
         path = getAttribute(element, ATT_PATH);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
         this.element = element;
 
         // Resolve.
-        style = IntroModelRoot.getPluginLocation(style, pd);
-        altStyle = IntroModelRoot.getPluginLocation(altStyle, pd);
+        style = IntroModelRoot.getPluginLocation(style, bundle);
+        altStyle = IntroModelRoot.getPluginLocation(altStyle, bundle);
     }
 
     /**

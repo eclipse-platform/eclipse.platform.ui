@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.intro.impl.*;
  * set to true.
  *  
  */
-public class Logger implements IIntroConstants {
+public class Log implements IIntroConstants {
 
     /**
      * This MUST be set to <b>false </b> in production. <br>
@@ -54,7 +54,7 @@ public class Logger implements IIntroConstants {
      * Log an Error message with an exception. Note that the message should
      * already be localized to proper local. Errors are always logged.
      */
-    public static synchronized void logError(String message, Throwable ex) {
+    public static synchronized void error(String message, Throwable ex) {
         if (message == null)
             message = ""; //$NON-NLS-1$
         Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
@@ -67,7 +67,7 @@ public class Logger implements IIntroConstants {
      * localized to proper local. Info messages are only logged when the
      * /trace/logInfo debug option is true.
      */
-    public static synchronized void logInfo(String message) {
+    public static synchronized void info(String message) {
         if (!logInfo)
             // logging of info messages is not enabled.
             return;
@@ -84,7 +84,7 @@ public class Logger implements IIntroConstants {
      * to proper local. Warning messages are only logged when the plugin is in
      * debug mode.
      */
-    public static synchronized void logWarning(String message) {
+    public static synchronized void warning(String message) {
         if (!IntroPlugin.getDefault().isDebugging())
             // plugin is not in debug mode. Default is to not log warning
             // messages.
@@ -100,7 +100,7 @@ public class Logger implements IIntroConstants {
     /**
      * Log a development debug message. Debug messages are compiled out.
      */
-    public static synchronized void logDebugMessage(String className,
+    public static synchronized void debugMessage(String className,
             String message) {
         if (DEBUG) {
             MultiStatus debugStatus = new MultiStatus(PLUGIN_ID, IStatus.OK,

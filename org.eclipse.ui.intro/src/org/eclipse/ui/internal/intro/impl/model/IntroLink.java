@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -32,12 +32,12 @@ public class IntroLink extends AbstractTextElement {
     /**
      * @param element
      */
-    IntroLink(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroLink(Element element, Bundle bundle) {
+        super(element, bundle);
         url = getAttribute(element, ATT_URL);
         label = getAttribute(element, ATT_LABEL);
 
-        url = IntroModelRoot.resolveURL(url, pd);
+        url = IntroModelRoot.resolveURL(url, bundle);
         if (url != null) {
             // check the URL.
             IntroURLParser parser = new IntroURLParser(url);

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
 import org.eclipse.core.runtime.*;
@@ -156,15 +154,14 @@ public class BrowserIntroPartImplementation extends
             // defined in the root page
             if (rootPage.getUrl() == null) {
                 // We have no content to display. log an error
-                Logger.logError(
-                        "Url is null; no content to display in browser", //$NON-NLS-1$
+                Log.error("Url is null; no content to display in browser", //$NON-NLS-1$
                         null);
                 return;
             }
             // set the URL the browser should display
             boolean success = browser.setUrl(rootPage.getUrl());
             if (!success) {
-                Logger.logError("Unable to set URL on the browser", null); //$NON-NLS-1$
+                Log.error("Unable to set URL on the browser", null); //$NON-NLS-1$
                 return;
             }
         }
@@ -184,14 +181,14 @@ public class BrowserIntroPartImplementation extends
 
         if (html == null) {
             // there was an error generating the html. log an error
-            Logger.logError("Error generating HTML", null); //$NON-NLS-1$
+            Log.error("Error generating HTML", null); //$NON-NLS-1$
             return;
         }
         // set the browser's HTML
         if (browser != null) {
             boolean success = browser.setText(html.toString());
             if (!success)
-                Logger.logError("Unable to set HTML on the browser", null); //$NON-NLS-1$
+                Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {

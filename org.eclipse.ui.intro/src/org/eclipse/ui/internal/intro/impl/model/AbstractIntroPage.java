@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -59,15 +59,15 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * @param element
      */
-    AbstractIntroPage(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    AbstractIntroPage(Element element, Bundle bundle) {
+        super(element, bundle);
         title = getAttribute(element, ATT_TITLE);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
 
         // Resolve.
-        style = IntroModelRoot.getPluginLocation(style, pd);
-        altStyle = IntroModelRoot.getPluginLocation(altStyle, pd);
+        style = IntroModelRoot.getPluginLocation(style, bundle);
+        altStyle = IntroModelRoot.getPluginLocation(altStyle, bundle);
     }
 
 
@@ -151,11 +151,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * 
      * @param altStyle
      */
-    protected void addAltStyle(String altStyle, IPluginDescriptor pd) {
+    protected void addAltStyle(String altStyle, Bundle bundle) {
         initStylesVectors();
         if (altStyles.containsKey(altStyle))
             return;
-        altStyles.put(altStyle, pd);
+        altStyles.put(altStyle, bundle);
     }
 
     /*
@@ -194,18 +194,18 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
      */
     protected AbstractIntroElement getModelChild(Element childElement,
-            IPluginDescriptor pd) {
+            Bundle bundle) {
         AbstractIntroElement child = null;
         if (childElement.getNodeName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
-            child = new IntroHead(childElement, pd);
+            child = new IntroHead(childElement, bundle);
         } else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroPageTitle.TAG_TITLE)) {
-            child = new IntroPageTitle(childElement, pd);
+            child = new IntroPageTitle(childElement, bundle);
         }
         if (child != null)
             return child;
 
-        return super.getModelChild(childElement, pd);
+        return super.getModelChild(childElement, bundle);
     }
 
     /**

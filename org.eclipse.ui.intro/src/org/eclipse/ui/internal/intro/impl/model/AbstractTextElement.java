@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -24,8 +24,8 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
 
     private IntroText introText;
 
-    AbstractTextElement(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    AbstractTextElement(Element element, Bundle bundle) {
+        super(element, bundle);
         // description will be null if there is no description element.
         introText = getTextElement(element);
     }
@@ -43,7 +43,7 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
                 // no contributions. done.
                 return null;
             IntroText text = new IntroText((Element) textElements.item(0),
-                    getPluginDesc());
+                    getBundle());
             text.setParent(this);
             return text;
         } catch (Exception e) {

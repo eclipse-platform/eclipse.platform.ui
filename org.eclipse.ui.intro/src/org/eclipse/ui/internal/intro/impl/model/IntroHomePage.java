@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -34,8 +34,8 @@ public class IntroHomePage extends AbstractIntroPage {
     private boolean isDynamic = false;
 
 
-    IntroHomePage(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroHomePage(Element element, Bundle bundle) {
+        super(element, bundle);
         url = getAttribute(element, ATT_URL);
         if (url == null) {
             // if we do not have a URL attribute, then we have dynamic content.
@@ -44,12 +44,13 @@ public class IntroHomePage extends AbstractIntroPage {
             standby_alt_style = getAttribute(element, ATT_STANDBY_ALT_STYLE);
 
             // Resolve standby styles. The ALT style need not be resolved.
-            standby_style = IntroModelRoot.getPluginLocation(standby_style, pd);
+            standby_style = IntroModelRoot.getPluginLocation(standby_style,
+                    bundle);
         } else {
             // check the url/standby-url attributes and update accordingly.
-            url = IntroModelRoot.resolveURL(url, pd);
+            url = IntroModelRoot.resolveURL(url, bundle);
             standby_url = getAttribute(element, ATT_STANDBY_URL);
-            standby_url = IntroModelRoot.resolveURL(standby_url, pd);
+            standby_url = IntroModelRoot.resolveURL(standby_url, bundle);
         }
     }
 

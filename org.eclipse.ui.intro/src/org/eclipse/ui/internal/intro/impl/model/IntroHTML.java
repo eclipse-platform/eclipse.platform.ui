@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -35,8 +35,8 @@ public class IntroHTML extends AbstractTextElement {
     private String html_type;
     private IntroImage introImage;
 
-    IntroHTML(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroHTML(Element element, Bundle bundle) {
+        super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         html_type = getAttribute(element, ATT_TYPE);
         if (html_type != null && !html_type.equalsIgnoreCase("inline")
@@ -48,7 +48,7 @@ public class IntroHTML extends AbstractTextElement {
         introImage = getIntroImage(element);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, pd);
+        src = IntroModelRoot.getPluginLocation(src, bundle);
     }
 
     /**
@@ -64,7 +64,7 @@ public class IntroHTML extends AbstractTextElement {
                 // no contributions. done.
                 return null;
             IntroImage image = new IntroImage((Element) imageElements.item(0),
-                    getPluginDesc());
+                    getBundle());
             image.setParent(this);
             return image;
         } catch (Exception e) {

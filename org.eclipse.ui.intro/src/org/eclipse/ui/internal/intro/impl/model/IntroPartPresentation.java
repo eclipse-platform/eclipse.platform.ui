@@ -167,20 +167,20 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
 
                 implementation.init(introPart);
                 implementation.createPartControl(parent);
-                Logger.logInfo("Loaded config implementation from: "
-                        + ModelLoaderUtil.getLogString(
-                                implementationElement, "class"));
+                Log.info("Loaded config implementation from: "
+                        + ModelLoaderUtil.getLogString(implementationElement,
+                                "class"));
                 break;
             } catch (SWTError e) {
-                Logger.logError("Failed to create implementation from: "
-                        + ModelLoaderUtil.getLogString(
-                                implementationElement, "class"), e);
+                Log.error("Failed to create implementation from: "
+                        + ModelLoaderUtil.getLogString(implementationElement,
+                                "class"), e);
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
-                Logger.logError("Failed to create implementation from: "
-                        + ModelLoaderUtil.getLogString(
-                                implementationElement, "class"), e);
+                Log.error("Failed to create implementation from: "
+                        + ModelLoaderUtil.getLogString(implementationElement,
+                                "class"), e);
                 implementation = null;
                 implementationElement = null;
             }
@@ -193,12 +193,11 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
                 implementation.init(introPart);
             } catch (Exception e) {
                 // should never be here.
-                Logger.logError(e.getMessage(), e);
+                Log.error(e.getMessage(), e);
                 return;
             }
             implementation.createPartControl(parent);
-            Logger
-                    .logWarning("Loaded UI Forms implementation as a default Welcome.");
+            Log.warning("Loaded UI Forms implementation as a default Welcome.");
         }
     }
 

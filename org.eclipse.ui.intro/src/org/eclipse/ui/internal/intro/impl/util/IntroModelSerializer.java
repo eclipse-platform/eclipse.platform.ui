@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.intro.impl.util;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.osgi.framework.*;
 
 /**
  * Print the model to a string buffer (only) for debugging.
@@ -96,9 +96,8 @@ public class IntroModelSerializer {
         while (altStyles.hasMoreElements()) {
             String altStyle = (String) altStyles.nextElement();
 
-            IPluginDescriptor pd = (IPluginDescriptor) altStylesHashtable
-                    .get(altStyle);
-            text.append(altStyle + " from " + pd.getUniqueIdentifier());
+            Bundle bundle = (Bundle) altStylesHashtable.get(altStyle);
+            text.append(altStyle + " from " + bundle.getSymbolicName());
             text.append("\n\t\t");
         }
     }

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 
@@ -38,8 +39,8 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroElement {
         class_id = element.getAttribute(ATT_CLASS_ID);
     }
 
-    AbstractBaseIntroElement(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    AbstractBaseIntroElement(Element element, Bundle bundle) {
+        super(element, bundle);
         id = getAttribute(element, ATT_ID);
         class_id = getAttribute(element, ATT_CLASS_ID);
     }

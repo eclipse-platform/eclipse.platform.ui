@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -23,8 +23,8 @@ public class IntroText extends AbstractBaseIntroElement {
 
     private String text;
 
-    IntroText(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroText(Element element, Bundle bundle) {
+        super(element, bundle);
         Node textNode = element.getFirstChild();
         if (textNode.getNodeType() == Node.TEXT_NODE)
             text = textNode.getNodeValue();

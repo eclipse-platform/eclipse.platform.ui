@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -27,13 +27,13 @@ public class IntroImage extends AbstractBaseIntroElement {
     private String src;
     private String alt;
 
-    IntroImage(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroImage(Element element, Bundle bundle) {
+        super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         alt = getAttribute(element, ATT_ALT);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, pd);
+        src = IntroModelRoot.getPluginLocation(src, bundle);
     }
 
     /**

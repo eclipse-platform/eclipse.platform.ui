@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -20,10 +20,10 @@ import org.w3c.dom.*;
 public class IntroPage extends AbstractIntroPage {
 
     /**
-     *  
+     * An Intro Part page.
      */
-    IntroPage(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroPage(Element element, Bundle bundle) {
+        super(element, bundle);
     }
 
     /*

@@ -1,32 +1,30 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.osgi.framework.*;
 
 public class FormStyleManager {
 
     private Properties pageProperties;
     private Hashtable altStyleProperties = new Hashtable();
     private AbstractIntroPage page;
-    private IPluginDescriptor pd;
+    private Bundle bundle;
 
     /**
      * Constructor used when shared styles need to be loaded. The plugin
@@ -35,7 +33,7 @@ public class FormStyleManager {
      * @param modelRoot
      */
     public FormStyleManager(IntroModelRoot modelRoot) {
-        pd = modelRoot.getPluginDesc();
+        bundle = modelRoot.getBundle();
         pageProperties = new Properties();
         String sharedStyle = modelRoot.getPresentation().getStyle();
         if (sharedStyle != null)
@@ -51,22 +49,22 @@ public class FormStyleManager {
      */
     public FormStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
-        pd = page.getPluginDesc();
+        bundle = page.getBundle();
         pageProperties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)
             load(pageProperties, altStyle);
 
-        // AltStyles hastable has alt-styles as keys, the plugin descriptors as
+        // AltStyles hastable has alt-styles as keys, the bundles as
         // values.
         Hashtable altStyles = page.getAltStyles();
         Enumeration styles = altStyles.keys();
         while (styles.hasMoreElements()) {
             String style = (String) styles.nextElement();
             Properties inheritedProperties = new Properties();
-            IPluginDescriptor pd = (IPluginDescriptor) altStyles.get(style);
+            Bundle bundle = (Bundle) altStyles.get(style);
             load(inheritedProperties, style);
-            altStyleProperties.put(inheritedProperties, pd);
+            altStyleProperties.put(inheritedProperties, bundle);
         }
     }
 
@@ -79,7 +77,7 @@ public class FormStyleManager {
             properties.load(is);
             is.close();
         } catch (Exception e) {
-            Logger.logError(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
     }
 
@@ -90,14 +88,14 @@ public class FormStyleManager {
     }
 
     /**
-     * Finds the plugin descriptor from which as shared styles was loaded.
+     * Finds the bundle from which as shared style was loaded.
      * 
      * @param key
      * @return
      */
-    private IPluginDescriptor getAltStylePd(String key) {
+    private Bundle getAltStylePd(String key) {
         Properties aProperties = findProperty(key);
-        return (IPluginDescriptor) altStyleProperties.get(aProperties);
+        return (Bundle) altStyleProperties.get(aProperties);
     }
 
     /**
@@ -192,12 +190,12 @@ public class FormStyleManager {
             if (ImageUtil.hasImage(currentKey))
                 return ImageUtil.getImage(currentKey);
             // try to register the image.
-            IPluginDescriptor pd = getAltStylePd(currentKey);
-            if (pd == null)
+            Bundle bundle = getAltStylePd(currentKey);
+            if (bundle == null)
                 // it means that we are getting a key defined in this page's
                 // styles. (ie: not an inherited style).
-                pd = this.pd;
-            ImageUtil.registerImage(currentKey, pd, value);
+                bundle = this.bundle;
+            ImageUtil.registerImage(currentKey, bundle, value);
             Image image = ImageUtil.getImage(currentKey);
             if (image != null)
                 return image;

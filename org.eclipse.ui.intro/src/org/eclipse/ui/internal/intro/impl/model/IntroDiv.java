@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
@@ -28,8 +28,8 @@ public class IntroDiv extends AbstractIntroContainer {
     /**
      * @param element
      */
-    IntroDiv(Element element, IPluginDescriptor pd) {
-        super(element, pd);
+    IntroDiv(Element element, Bundle bundle) {
+        super(element, bundle);
         label = getAttribute(element, ATT_LABEL);
     }
 

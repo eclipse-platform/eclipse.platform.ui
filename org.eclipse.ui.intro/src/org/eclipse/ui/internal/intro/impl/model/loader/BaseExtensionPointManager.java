@@ -40,7 +40,7 @@ public class BaseExtensionPointManager {
 
     protected Hashtable introModels = new Hashtable();
 
-    protected IPluginRegistry registry;
+    protected IExtensionRegistry registry;
 
     // holds all standbyPart extensions. Key is id, value is
     // IntroStandbyPartContent.
@@ -50,7 +50,7 @@ public class BaseExtensionPointManager {
      * Prevent creation.
      */
     protected BaseExtensionPointManager() {
-        registry = Platform.getPluginRegistry();
+        registry = Platform.getExtensionRegistry();
     }
 
     protected IntroModelRoot loadModel(String attrributeName,
@@ -111,8 +111,8 @@ public class BaseExtensionPointManager {
 
         if (config == null)
             // if there is no valid config, log the fact.
-            Logger.logWarning("No Intro configuration found with "
-                    + attrributeName + " of value = " + attributeValue);
+            Log.warning("No Intro configuration found with " + attrributeName
+                    + " of value = " + attributeValue);
 
         return config;
     }
@@ -171,8 +171,9 @@ public class BaseExtensionPointManager {
         IConfigurationElement[] filteredConfigElements = getConfigurationsFromAttribute(
                 configElements, attributeName, attributeValue);
         // now validate that we got only one.
-        IConfigurationElement config = ModelLoaderUtil.validateSingleContribution(
-                filteredConfigElements, attributeName);
+        IConfigurationElement config = ModelLoaderUtil
+                .validateSingleContribution(filteredConfigElements,
+                        attributeName);
         return config;
     }
 

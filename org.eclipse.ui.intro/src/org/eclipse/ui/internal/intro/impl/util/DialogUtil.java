@@ -28,7 +28,7 @@ public class DialogUtil {
      * Displays core error dialog with a message from the Core error status
      * object, and a user message. <br>
      * The user message is retrieved from the errorID, and is logged using
-     * Logger.logError().
+     * Log.logError().
      */
     public static void displayCoreErrorDialog(final Shell parent,
             String errorId, CoreException coreEx) {
@@ -37,7 +37,7 @@ public class DialogUtil {
         IStatus status = coreEx.getStatus();
         String msg = IntroPlugin.getResourceString(errorId);
         ErrorDialog.openError(parent, title, msg, status);
-        Logger.logError(msg, coreEx);
+        Log.error(msg, coreEx);
     }
 
     /**
@@ -49,13 +49,13 @@ public class DialogUtil {
         String title = IntroPlugin
                 .getResourceString("MessageDialog.errorTitle");
         MessageDialog.openError(parent, title, msg);
-        Logger.logError(msg, ex);
+        Log.error(msg, ex);
     }
 
     /**
      * Displays error dialog with a message corresponding to the errorId. <br>
      * The user message is retrieved from the errorID, and is formatted with the
-     * passed variables. Also logs the error using Logger.logError().
+     * passed variables. Also logs the error using Log.logError().
      */
     public static void displayErrorMessage(final Shell parent,
             final String errorId, final Object[] variables, final Throwable ex) {
@@ -70,8 +70,8 @@ public class DialogUtil {
 
     /**
      * Displays warning dialog with a given message. <br>
-     * also logs the info using Logger.logWarning(). msg error message to
-     * display and log.
+     * also logs the info using Log.logWarning(). msg error message to display
+     * and log.
      */
     public static void displayWarningMessage(final Shell parent,
             final String msg) {
@@ -79,12 +79,12 @@ public class DialogUtil {
         String title = IntroPlugin
                 .getResourceString("MessageDialog.warningTitle");
         MessageDialog.openWarning(parent, title, msg);
-        Logger.logWarning(msg);
+        Log.warning(msg);
     }
 
     /**
      * Displays warning dialog with a message corresponding to the errorId. <br>
-     * also logs the info using Logger.logWarning().
+     * also logs the info using Log.logWarning().
      */
     public static void displayWarningMessage(final Shell parent,
             final String warningId, final Object[] variables) {
@@ -100,19 +100,19 @@ public class DialogUtil {
 
     /**
      * Displays info dialog with a message corresponding to the infoId. <br>
-     * also logs the info using Logger.logInfo().
+     * also logs the info using Log.logInfo().
      */
     public static void displayInfoMessage(final Shell parent, final String msg) {
 
         String title = IntroPlugin.getResourceString("MessageDialog.infoTitle");
         MessageDialog.openInformation(parent, title, msg);
-        Logger.logInfo(msg);
+        Log.info(msg);
 
     }
 
     /**
      * Displays info dialog with a message corresponding to the infoId. <br>
-     * also logs the info using Logger.logInfo().
+     * also logs the info using Log.logInfo().
      */
     public static void displayInfoMessage(final Shell parent,
             final String infoId, final Object[] variables) {

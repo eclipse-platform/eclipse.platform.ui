@@ -42,13 +42,13 @@ public class IntroContentParser {
                 Element rootElement = document.getDocumentElement();
                 if (!rootElement.getTagName().equals(TAG_INTRO_CONTENT)) {
                     document = null;
-                    Logger
-                            .logWarning("Intro content file has incorrect parent tag: "
-                                    + content);
+                    String msg = "Intro content file has incorrect parent tag: "
+                            + content;
+                    Log.warning(msg);
                 }
             }
         } catch (Exception e) {
-            Logger.logError("Could not load Intro content file: " + content, e);
+            Log.error("Could not load Intro content file: " + content, e);
         }
     }
 
@@ -73,20 +73,20 @@ public class IntroContentParser {
             Exception x = spe;
             if (spe.getException() != null)
                 x = spe.getException();
-            Logger.logError(buffer.toString(), x);
+            Log.error(buffer.toString(), x);
 
         } catch (SAXException sxe) {
             Exception x = sxe;
             if (sxe.getException() != null)
                 x = sxe.getException();
-            Logger.logError(x.getMessage(), x);
+            Log.error(x.getMessage(), x);
 
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built
-            Logger.logError(pce.getMessage(), pce);
+            Log.error(pce.getMessage(), pce);
 
         } catch (IOException ioe) {
-            Logger.logError(ioe.getMessage(), ioe);
+            Log.error(ioe.getMessage(), ioe);
         }
         return null;
     }

@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.intro.impl.parts.*;
 import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
+import org.osgi.framework.*;
 
 /**
  * An intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
@@ -244,31 +245,29 @@ public class IntroURL {
                 proxy.run();
             }
         } catch (Exception e) {
-            Logger.logError("Could not run action: " + className, e);
+            Log.error("Could not run action: " + className, e);
             return;
         }
     }
 
     private Object createClassInstance(String pluginId, String className) {
+        // quick exits.
         if (pluginId == null | className == null)
-            // quick exits.
             return null;
-
-        IPluginDescriptor desc = Platform.getPluginRegistry()
-                .getPluginDescriptor(pluginId);
-        if (desc == null)
-            // quick exit.
+        Bundle bundle = Platform.getBundle(pluginId);
+        if (!ModelLoaderUtil.bundleHasValidState(bundle))
             return null;
 
         Class aClass;
         Object aObject;
         try {
-            aClass = desc.getPluginClassLoader().loadClass(className);
+            aClass = bundle.loadClass(className);
             aObject = aClass.newInstance();
             return aObject;
         } catch (Exception e) {
-            Logger.logError("Could not instantiate: " + className + " in "
-                    + pluginId, e);
+            Log.error(
+                    "Could not instantiate: " + className + " in " + pluginId,
+                    e);
             return null;
         }
     }

@@ -13,7 +13,7 @@ import java.io.*;
 import java.net.URL;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.Logger;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
 	private String introTitle;
@@ -98,8 +98,8 @@ public class IntroHTMLGenerator {
 		// add the title
 		head.addContent(generateTitleElement(null, indentLevel + 1));
 		// create the BASE element
-		String basePath = HTMLUtil.getResolvedPluginPath(introPage
-				.getPluginDesc());
+		String basePath = HTMLUtil.getResolvedBundleLocation(introPage
+				.getBundle());
 		HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
 		if (base != null)
 			head.addContent(base);
@@ -473,7 +473,7 @@ public class IntroHTMLGenerator {
 				content.append(IIntroHTMLConstants.NEW_LINE);
 			}
 		} catch (Exception exception) {
-			Logger.logError("Error reading from file", exception); //$NON-NLS-1$
+			Log.error("Error reading from file", exception); //$NON-NLS-1$
 		} finally {
 			try {
 				if (reader != null)
@@ -481,7 +481,7 @@ public class IntroHTMLGenerator {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e) {
-				Logger.logError("Error closing input stream", e); //$NON-NLS-1$
+				Log.error("Error closing input stream", e); //$NON-NLS-1$
 				return null;
 			}
 		}
