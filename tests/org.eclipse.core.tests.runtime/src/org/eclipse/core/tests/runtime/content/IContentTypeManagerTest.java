@@ -814,6 +814,59 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	/**
+	 * This test shows how we deal with aliases.
+	 */
+	public void testAlias() throws IOException, BundleException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
+		assertNotNull("0.7", alias);
+		IContentType derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
+		assertNotNull("0.8", derived);
+		IContentType target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
+		assertNull("0.9", target);
+		IContentType[] selected;
+		selected = contentTypeManager.findContentTypesFor("foo.missing-target");
+		assertEquals("1.1", 2, selected.length);
+		assertEquals("1.2", alias, selected[0]);
+		assertEquals("1.3", derived, selected[1]);
+		selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
+		assertEquals("1.4", 2, selected.length);
+		assertEquals("1.5", derived, selected[0]);
+		assertEquals("1.6", alias, selected[1]);
+
+		//test late addition of content type 
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		listener.register();
+		Bundle installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle02");
+		assertEquals("2.0", Bundle.INSTALLED, installed.getState());
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		try {
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			assertNotNull("2.1", event);
+			assertNotNull("2.2", Platform.getBundle("org.eclipse.bundle02"));
+			alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
+			assertNull("2.3", alias);
+			derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
+			assertNotNull("2.4", derived);
+			target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
+			assertNotNull("2.5", target);
+			// checks associations
+			selected = contentTypeManager.findContentTypesFor("foo.missing-target");
+			assertEquals("3.1", 2, selected.length);
+			assertEquals("3.2", target, selected[0]);
+			assertEquals("3.3", derived, selected[1]);
+			selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
+			assertEquals("3.4", 2, selected.length);
+			assertEquals("3.5", derived, selected[0]);
+			assertEquals("3.6", target, selected[1]);
+		} finally {
+			//remove installed bundle
+			installed.uninstall();
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
+	}
+
+	/**
 	 * Bug 68894  
 	 */
 	public void testPreferences() throws CoreException, BackingStoreException {

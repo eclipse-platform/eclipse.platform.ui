@@ -194,8 +194,17 @@
             id="orphan"/>
       <file-association
             file-extensions="orphan2"
-            content-type="org.eclipse.bundle01.missing"/>            
-            
+            content-type="org.eclipse.bundle01.missing"/>
+      <!-- content types for alias tests -->                        
+      <content-type 
+      		id="alias"
+            name="Alias Type"
+      		file-extensions="missing-target"
+      		alias-for="org.eclipse.bundle02.missing-target"/>
+      <content-type 
+      		id="derived-from-alias"      		
+            name="Derived from Alias Type"      		
+      		base-type="alias"/>
       <!-- content types for content describer tests -->
       <content-type
             base-type="org.eclipse.core.runtime.xml"
