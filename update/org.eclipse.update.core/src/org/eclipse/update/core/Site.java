@@ -61,6 +61,16 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		super();
 	}
 
+
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ISite))
+			return false;
+		if (getURL()==null)
+			return false;
+		ISite otherSite = (ISite)obj;
+		
+		return getURL().equals(otherSite.getURL());
+	}
 	/**
 	 * Saves the site into the site.xml
 	 */
@@ -173,7 +183,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		if (featureReferences != null) {
 			for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
 				IFeatureReference element = featureReferences[indexRef];
-				if (element.getURL().equals(feature.getURL())) {
+				if (element.equals(feature)) {
 					removeFeatureReferenceModel((FeatureReferenceModel) element);
 					break;
 				}

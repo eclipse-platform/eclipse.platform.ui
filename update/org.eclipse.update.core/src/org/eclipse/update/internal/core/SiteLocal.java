@@ -413,7 +413,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					IFeatureReference[] features = ((IConfigurationSite) allConfiguredSites[indexSites]).getConfiguredFeatures();
 					if (features != null) {
 						for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
-							if (!features[indexFeatures].getURL().equals(feature.getURL())) {
+							if (!features[indexFeatures].equals(feature)) {
 								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 								if (pluginEntries != null) {
 									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {

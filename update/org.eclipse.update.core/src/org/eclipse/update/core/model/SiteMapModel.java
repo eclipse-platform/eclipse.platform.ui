@@ -33,6 +33,7 @@ public class SiteMapModel extends ModelObject {
 	public SiteMapModel() {
 		super();
 	}
+
 	
 	/**
 	 * @since 2.0
@@ -209,4 +210,8 @@ public class SiteMapModel extends ModelObject {
 		resolveListReference(getArchiveReferenceModels(), base, bundle);
 		resolveListReference(getCategoryModels(), base, bundle);
 	}
+	/*
+	 * @see Object#equals(Object)
+	 */
+
 }

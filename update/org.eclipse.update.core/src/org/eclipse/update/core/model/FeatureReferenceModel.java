@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.ISite;
 
 /**
@@ -35,7 +36,24 @@ public class FeatureReferenceModel extends ModelObject {
 	public FeatureReferenceModel() {
 		super();
 	}
+
+/**
+ * 
+ * @since 2.0 
+ */
+
+public boolean equals(Object object) {
+	if (!(object instanceof IFeatureReference))
+		return false;
+	if (getURL()==null) return false;
 	
+	FeatureReferenceModel f = (FeatureReferenceModel) object;
+	return (getURL().equals(f.getURL()));
+
+}
+
+
+
 	/**
 	 * @since 2.0
 	 */

@@ -144,8 +144,10 @@ public class InstallConfigurationModel extends ModelObject {
 	public void addActivityModel(ConfigurationActivityModel activity) {
 		if (activities == null)
 			activities = new ArrayList();
-		if (!activities.contains(activity))
+		if (!activities.contains(activity)){
 			activities.add(activity);
+			activity.setInstallConfigurationModel(this);
+		}
 	}
 	/**
 	 * 

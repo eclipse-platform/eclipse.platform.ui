@@ -15,6 +15,7 @@ public class ConfigurationActivityModel extends ModelObject{
 	private int action;
 	private Date date;
 	private int status;
+	private InstallConfigurationModel installConfiguration;
 	
 
 	/**
@@ -86,6 +87,23 @@ public class ConfigurationActivityModel extends ModelObject{
 	public void setAction(int action) {
 		assertIsWriteable();
 		this.action = action;
+	}
+
+	/**
+	 * Gets the installConfiguration.
+	 * @return Returns a InstallConfigurationModel
+	 */
+	public InstallConfigurationModel getInstallConfigurationModel() {
+		return installConfiguration;
+	}
+
+	/**
+	 * Sets the installConfiguration.
+	 * @param installConfiguration The installConfiguration to set
+	 */
+	public void setInstallConfigurationModel(InstallConfigurationModel installConfiguration) {
+		assertIsWriteable();		
+		this.installConfiguration = installConfiguration;
 	}
 
 }

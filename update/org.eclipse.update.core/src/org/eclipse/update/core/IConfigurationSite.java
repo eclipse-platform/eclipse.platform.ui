@@ -24,6 +24,22 @@ public interface IConfigurationSite {
 	 */
 
 	ISite getSite();
+
+	/**
+	 * Returns true if features can be installed in this Site
+	 * @since 2.0 
+	 */
+
+	boolean isInstallSite();
+
+	/**
+	 * sets if the site is an installable site
+	 * @since 2.0 
+	 */
+
+	void setInstallSite(boolean installable);
+
+
 	
 	/**
 	 * returns the policy for this configuration Site
@@ -39,13 +55,7 @@ public interface IConfigurationSite {
 
 	void setConfigurationPolicy(IConfigurationPolicy policy);
 	
-	/**
-	 * Returns true if features can be installed in this Site
-	 * @since 2.0 
-	 */
-
-	boolean isInstallSite();
-	
+		
 	/**
 	 * 
 	 * @param feature the Feature to install
@@ -78,13 +88,7 @@ public interface IConfigurationSite {
 
 	void unconfigure(IFeatureReference feature,IProblemHandler handler) throws CoreException;
 	
-	/**
-	 * sets if the site is an installable site
-	 * @since 2.0 
-	 */
-
-	void setInstallSite(boolean installable);
-	
+		
 	/**
 	 * returns the feature used in this configurationSite
 	 * This is a subset of the feature of teh site
@@ -92,6 +96,12 @@ public interface IConfigurationSite {
 	 */
 
 	IFeatureReference[] getConfiguredFeatures();
+	
+	/**
+	 * returns the InstallConfiguration this Configuration Site is part of
+	 * @since 2.0
+	 */
+	IInstallConfiguration getInstallConfiguration();
 	
 }
 

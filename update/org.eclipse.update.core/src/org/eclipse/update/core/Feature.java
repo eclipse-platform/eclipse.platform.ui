@@ -26,7 +26,6 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  */
 public class Feature extends FeatureModel implements IFeature {
 
-
 	/**
 	 * 
 	 */
@@ -75,6 +74,18 @@ public class Feature extends FeatureModel implements IFeature {
 	public Feature() {
 	}
 
+	/**
+	* 
+	*/
+
+	public boolean equals(Object object) {
+		if (!(object instanceof Feature))
+			return false;
+		IFeature f = (IFeature) object;
+		return (super.equals(object) && getURL().equals(f.getURL()));
+
+	}
+
 	/*
 	 * @see IFeature#getIdentifier()
 	 */
@@ -99,7 +110,7 @@ public class Feature extends FeatureModel implements IFeature {
 		} catch (CoreException e) {
 			// no content provider, log status
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			Status status = new Status(IStatus.ERROR,id,IStatus.OK,"The feature does not have a content provider",e);
+			Status status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature does not have a content provider", e);
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
@@ -256,16 +267,16 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see IFeature#install(IFeature, IProgressMonitor) throws CoreException
 	 */
 	public IFeatureReference install(IFeature targetFeature, IProgressMonitor progress) throws CoreException {
-		
+
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
 			monitor = null;
 		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor)progress;
+			monitor = (InstallMonitor) progress;
 		else
 			monitor = new InstallMonitor(progress);
-		
+
 		// do the install
 		IFeatureContentConsumer consumer = targetFeature.getContentConsumer();
 
@@ -277,56 +288,67 @@ public class Feature extends FeatureModel implements IFeature {
 			ISite targetSite = targetFeature.getSite();
 			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? site.getPluginEntries() : new IPluginEntry[0];
 			IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
-	
+
 			// determine number of monitor tasks
-			int taskCount = 1 // one task for all feature files (already downloaded)
-							+ pluginsToInstall.length // one task for each plugin to install
-							+ getNonPluginEntries().length;  // one task for each non-plugin file to install
-							
-			if (monitor!=null) monitor.beginTask("",taskCount); 
-			
+				int taskCount = 1 // one task for all feature files (already downloaded)
+		+pluginsToInstall.length // one task for each plugin to install
+	+getNonPluginEntries().length; // one task for each non-plugin file to install
+
+			if (monitor != null)
+				monitor.beginTask("", taskCount);
+
 			//finds the contentReferences for this IFeature
-			if (monitor!=null) monitor.setTaskName("Installing feature files: ");
+			if (monitor != null)
+				monitor.setTaskName("Installing feature files: ");
 			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
-				if (monitor!=null) monitor.subTask(references[i].getIdentifier());
+				if (monitor != null)
+					monitor.subTask(references[i].getIdentifier());
 				consumer.store(references[i], monitor);
 			}
-			if (monitor!=null) monitor.worked(1);
+			if (monitor != null)
+				monitor.worked(1);
 
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				if (monitor!=null) monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: ");
+				if (monitor != null)
+					monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: ");
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
-					if (monitor!=null) monitor.subTask(references[j].getIdentifier());
+					if (monitor != null)
+						monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
 				targetFeature.getSite().addPluginEntry(pluginsToInstall[i]);
 				pluginConsumer.close();
-				if (monitor!=null) monitor.worked(1);
+				if (monitor != null)
+					monitor.worked(1);
 			}
 
 			// download and install non plugins bundles
 			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
 			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
-				if (monitor!=null) monitor.setTaskName("Installing non-plug-in files: ");
+				if (monitor != null)
+					monitor.setTaskName("Installing non-plug-in files: ");
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
-					if (monitor!=null) monitor.subTask(references[j].getIdentifier());
+					if (monitor != null)
+						monitor.subTask(references[j].getIdentifier());
 					nonPluginConsumer.store(references[j], monitor);
 				}
 				nonPluginConsumer.close();
-				if (monitor!=null) monitor.worked(1);
+				if (monitor != null)
+					monitor.worked(1);
 			}
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			// an error occured, abort 
-			consumer.abort();	
-			throw e;		
+			consumer.abort();
+			throw e;
 		} finally {
-			if (monitor!=null)	monitor.done();
+			if (monitor != null)
+				monitor.done();
 		}
 		return consumer.close();
 
@@ -341,10 +363,10 @@ public class Feature extends FeatureModel implements IFeature {
 		if (progress == null)
 			monitor = null;
 		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor)progress;
+			monitor = (InstallMonitor) progress;
 		else
 			monitor = new InstallMonitor(progress);
-		
+
 		// remove feature from site
 		getSite().remove(this, monitor);
 	}
@@ -459,17 +481,17 @@ public class Feature extends FeatureModel implements IFeature {
 	 * missing from target array
 	 */
 	private IPluginEntry[] intersection(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
-		
+
 		// No pluginEntry to Install, return Nothing to instal
 		if (sourceArray == null || sourceArray.length == 0) {
 			return new IPluginEntry[0];
 		}
-		
+
 		// No pluginEntry installed, Install them all
 		if (targetArray == null || targetArray.length == 0) {
 			return sourceArray;
 		}
-		
+
 		// if a IPluginEntry from sourceArray is NOT in
 		// targetArray, add it to the list
 		List list1 = Arrays.asList(targetArray);
@@ -478,13 +500,12 @@ public class Feature extends FeatureModel implements IFeature {
 			if (!list1.contains(sourceArray[i]))
 				result.add(sourceArray[i]);
 		}
-		
+
 		IPluginEntry[] resultEntry = new IPluginEntry[result.size()];
-		if (result.size()>0) result.toArray(resultEntry);
-		
+		if (result.size() > 0)
+			result.toArray(resultEntry);
+
 		return resultEntry;
 	}
-
-
 
 }

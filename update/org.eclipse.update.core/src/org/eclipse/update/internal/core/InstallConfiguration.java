@@ -89,7 +89,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
-		addConfigurationSiteModel((ConfigurationSiteModel)site);
+		ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel)site;
+		addConfigurationSiteModel(configSiteModel);
+		configSiteModel.setInstallConfigurationModel(this);
 		// notify listeners
 		Object[] configurationListeners = listeners.getListeners();
 		for (int i = 0; i < configurationListeners.length; i++) {
@@ -118,7 +120,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		activity.setDate(new Date());		
 
 		for (int index = 0; index < site.length; index++) {
-			addConfigurationSiteModel((ConfigurationSiteModel)site[index]);
+			ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel)site[index];
+			addConfigurationSiteModel(configSiteModel);
+			configSiteModel.setInstallConfigurationModel(this);
 			// notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {

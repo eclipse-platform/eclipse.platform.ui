@@ -48,5 +48,11 @@ public interface IActivity {
 	 */
 
 	int getStatus();
+	
+	/**
+	 * rerun the InstallConfig
+	 * @since 2.0
+	 */
+	IInstallConfiguration getInstallConfiguration();
 }
 

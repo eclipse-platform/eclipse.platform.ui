@@ -7,6 +7,7 @@ package org.eclipse.update.internal.core;
 import java.io.PrintWriter;
 
 import org.eclipse.update.core.IActivity;
+import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.InstallConfigurationParser;
 
@@ -53,6 +54,13 @@ public class ConfigurationActivity extends ConfigurationActivityModel implements
 		
 		
 		
+	}
+
+	/*
+	 * @see IActivity#getInstallConfiguration()
+	 */
+	public IInstallConfiguration getInstallConfiguration() {
+		return (IInstallConfiguration)getInstallConfigurationModel();
 	}
 
 }

@@ -55,6 +55,16 @@ public class FeatureModel extends ModelObject {
 		super();
 	}
 
+	public boolean equals(Object obj) {
+	if (!(obj instanceof FeatureModel))
+		return false;	
+	FeatureModel model = (FeatureModel)obj;
+	
+	//FIXME only check version ??
+	return (featureId.toLowerCase().equals(model.getFeatureIdentifier()) 
+		&& featureVersion.toLowerCase().equals(model.getFeatureVersion()));
+	}
+
 	/**
 	 * @since 2.0
 	 */	
@@ -539,4 +549,12 @@ public class FeatureModel extends ModelObject {
 		resolveListReference(getNonPluginEntryModels(), base, bundle);
 		resolveListReference(getGroupEntryModels(), base, bundle);
 	}
+	/*
+	 * @see Object#equals(Object)
+	 */
+
+	/*
+	 * @see Object#hashCode()
+	 */
+
 }

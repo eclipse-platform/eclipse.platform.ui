@@ -21,6 +21,7 @@ public class ConfigurationSiteModel extends ModelObject {
 
 	private SiteMapModel site;
 	private ConfigurationPolicyModel policy;
+	private InstallConfigurationModel installConfiguration;
 	private boolean installable = false;
 
 	/**
@@ -81,4 +82,21 @@ public class ConfigurationSiteModel extends ModelObject {
 	}
 
 	
+	/**
+	 * Gets the installConfiguration.
+	 * @return Returns a InstallConfigurationModel
+	 */
+	public InstallConfigurationModel getInstallConfigurationModel() {
+		return installConfiguration;
+	}
+
+	/**
+	 * Sets the installConfiguration.
+	 * @param installConfiguration The installConfiguration to set
+	 */
+	public void setInstallConfigurationModel(InstallConfigurationModel installConfiguration) {
+		assertIsWriteable();
+		this.installConfiguration = installConfiguration;
+	}
+
 }

@@ -160,7 +160,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 			IFeatureReference referenceToUnconfigure = null;
 			FeatureReferenceModel[] featureRef = getSiteModel().getFeatureReferenceModels();
 			for (int i = 0; i < featureRef.length; i++) {
-				if (featureRef[i].getURL().equals(feature.getURL())) {
+				if (featureRef[i].equals(feature)) {
 					referenceToUnconfigure = (IFeatureReference) featureRef[i];
 					break;
 				}
@@ -418,6 +418,13 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	 */
 	public ISite getSite() {
 		return (ISite)getSiteModel();
+	}
+
+	/*
+	 * @see IConfigurationSite#getInstallConfiguration()
+	 */
+	public IInstallConfiguration getInstallConfiguration() {
+		return (IInstallConfiguration)getInstallConfigurationModel();
 	}
 
 }
