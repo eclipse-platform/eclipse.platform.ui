@@ -1142,9 +1142,11 @@ public IViewPart showView(String viewID)
 	 * }
 	 */
 	else {
-		fastViews.add(part);
 		pane.setFast(true);
 		showFastView(part);
+		//Refresh the part as there might have been an error when showing
+		part = pane.getViewPart();
+		fastViews.add(part);
 	}
 	return part;
 }
