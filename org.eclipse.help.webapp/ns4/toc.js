@@ -221,11 +221,13 @@ function onloadHandler(title)
 	if (isMozilla)
 		adjustMargins();
  		
+ 	/*
 	parent.tocTitle=title;
 	if(parent.currentNavFrame=="toc")
 	{
 		parent.setToolbarTitle(title);
 	}
+	*/
 }
 
 // listen for clicks

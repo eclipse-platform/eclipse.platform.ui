@@ -12,7 +12,7 @@
  	<meta http-equiv="Expires" content="-1">
 	<title>Search</title>
 	<link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
- 	<base target="parent.MainFrame">
+ 	<base target="MainFrame">
 	<script language="JavaScript" src="toc.js"></script>
 </head>
 

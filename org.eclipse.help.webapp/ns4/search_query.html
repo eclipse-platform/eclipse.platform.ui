@@ -20,37 +20,33 @@ TABLE {
 
 
 <body>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
    	<form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" >
-
-	<table width="100%" height="39" style="background-color:#D4D0C8;" border="0" cellspacing="0" cellpadding="3">
-	  <tr>
-  
-		 <td width=160>
-            <input colspan=3 type="text" class="txtInput" name="keyword" 
-                   onblur="if (value == '') {value = 'search'}" 
-                   onfocus="if (value == 'search') {value =''}" 
-                   maxlength=256 size=160>
-          </td>
-          <td>  
-            <input value="Go" type="submit" alt="Search" src="../images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
-          </td> 
-          <td>
-           <!--
-            <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
-   			-->
-
-            <input type="hidden" name="field" value="h1" >
+   	  <tr>
+   	   <td>
+   	        <input type="hidden" name="field" value="h1" >
             <input type="hidden" name="field" value="h2" >
             <input type="hidden" name="field" value="h3" >
             <input type="hidden" name="field" value="role" >
             <input type="hidden" name="field" value="solution" >
             <input type="hidden" name="field" value="technology" >
             <input type="hidden" name="maxHits" value="500" >
-
-		   </td>
+            
+            <table border="0" cellpadding="0" cellspacing="2">
+            <tr>
+              <td><input type="text" class="txtInput" name="keyword" size=10 maxlength=100></td>
+              <td><input value="Go" type="submit" alt="Search" src="../images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" ></td>
+              <!--
+               <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
+			  -->
+            </tr>
+            </table>
+            
+        </td> 
        </tr>
-     </table>
-     </form>
+      </form>
+   </table>
+
 
 <!-- separator line -->
 

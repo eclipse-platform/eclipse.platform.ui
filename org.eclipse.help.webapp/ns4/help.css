@@ -35,9 +35,6 @@ INPUT {
 	font: 8pt Tahoma;
 }
 
-._txtInput {
-	width:100%;
-}
 
 .normal {
 	border-style:solid;

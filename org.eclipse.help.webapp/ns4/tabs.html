@@ -18,10 +18,10 @@ BODY {
 }
 
 TABLE
-	{
-		/*font: 9pt ms sans serif,sans-serif;*/
-		font: 8pt Tahoma;
-	}
+{
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+}
 
 A 
 {
@@ -83,10 +83,15 @@ function switchTab(nav)
   	
   	if (nav == "toc")
   	{
-  		parent.frames["NavFrame"].location = "tocs.jsp";
+  		if (parent.loadedTOC == null)
+  			parent.frames["NavFrame"].location = "tocs.jsp";
+  		else
+  			parent.frames["NavFrame"].location = "toc.jsp?toc="+parent.loadedTOC;
+  			
   		tocI.src = "../images/rightBorder.gif";
 		searchI.src = "../images/middleBorder.gif";
 		linksI.src = "../images/noBorder.gif";
+		parent.frames["ToolbarFrame"].setTitle("Content");
   	}
   	else if (nav == "search")
   	{
@@ -94,6 +99,7 @@ function switchTab(nav)
   		tocI.src = "../images/leftBorder.gif";
 		searchI.src = "../images/rightBorder.gif";
 		linksI.src = "../images/noBorder.gif";
+		parent.frames["ToolbarFrame"].setTitle("Search");
   	}
   	else if (nav == "links")
   	{
@@ -101,6 +107,7 @@ function switchTab(nav)
   		tocI.src = "../images/middleBorder.gif";
 		searchI.src = "../images/leftBorder.gif";
 		linksI.src = "../images/rightBorder.gif";
+		parent.frames["ToolbarFrame"].setTitle("Links");
   	}	
 }
  

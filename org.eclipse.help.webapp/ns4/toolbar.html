@@ -24,7 +24,7 @@ imgs[3].src = '../images/eclipse_close_over.gif';
 
 function showBookshelf()
 {
-	parent.NavFrame.showBookshelf();
+	parent.loadedTOC = null;
 	parent.TabsFrame.switchTab("toc");
 }
 
@@ -67,12 +67,13 @@ function printContent()
 	print();
 }
 
-function setToc(label)
+function setTitle(label)
 {
 	if (label == null) label = "";
+	label = '<FONT FACE="Tahoma" POINT-SIZE="8pt">'+label+'</FONT>';
 	var title = document.layers.title;
 	title.document.open();
-	title.document.write(" " + label);
+	title.document.write(label);
 	title.document.close();
 }
 
@@ -82,7 +83,7 @@ function setToc(label)
    
    <body style="font: 8pt Tahoma;" leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" bgcolor="#D4D0C8" text="#FFFFFF">
    	  
-	  <div id="title" style="position:absolute;top:4;left:24;font-family:Tahoma;font-size:8pt;text-align:center;color:#ffffff;">&nbsp;Bookshelf</div>
+	  <div id="title" style="position:absolute;top:4;left:24;font-family:Tahoma;font-size:8pt;color:#ffffff;">&nbsp;Content</div>
 		
 	  <table width="100%" height="23" cellspacing="0" cellpadding="0" border="0">
 	  	<tr>

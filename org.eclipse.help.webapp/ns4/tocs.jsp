@@ -20,6 +20,8 @@ function loadTOC(tocId)
 {
 	// navigate to this toc
 	window.location.href = "toc.jsp?toc="+tocId;
+	// keep track of it
+	parent.loadedTOC = tocId;
 }
 
 /**
@@ -34,7 +36,7 @@ function selectTopic(topic)
 
 </head>
 
-<body onload="onloadHandler('Bookshelf')">
+<body onload="onloadHandler('Content');parent.loadedTOC=null;">
 
 <ul class='expanded'>
 <% 

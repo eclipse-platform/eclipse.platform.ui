@@ -6,6 +6,7 @@
 %>
 
 <% 
+	
 	// Paramters allowed:
 	// tab = toc | search | links
 	// toc
@@ -76,6 +77,7 @@
 
 	var args = parseQueryString();
 	var queryString = <%=request.getQueryString()%>;
+	var loadedTOC = null;
 	</script>
 	
 </head>
@@ -84,7 +86,7 @@
 <!-- frames -->
 <frameset  rows="27,*,24">
 	<frame name="ToolbarFrame" src="toolbar.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-    <frameset id="contentFrameset" cols="200,*">
+    <frameset id="contentFrameset" cols="25%,*">
         <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="auto" frameborder="0">
         <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
     </frameset>
