@@ -41,7 +41,7 @@ DIV {
 
 </head>
 
-<body >
+<body BGCOLOR="#FFFFFF">
 <% 
 ContentUtil content = new ContentUtil(application, request);
 Element tocsElement = content.loadTocs();

@@ -33,7 +33,7 @@ BODY {
 
 </head>
 
-<body BGCOLOR="#D4D0C8">
+<body BGCOLOR="#FFFFFF">
 
 <div id="bannerTitle" style="background:#D4D0C8; width:100%; position:absolute; left:10px; top:20; font: 14pt icon;">
 	<%=title != null ?title : WebappResources.getString("Bookshelf", request)%>

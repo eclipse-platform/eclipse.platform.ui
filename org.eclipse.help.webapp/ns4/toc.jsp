@@ -120,7 +120,7 @@ if (document.layers){
 	if (tocElement == null){
 		//out.write(WebappResources.getString("Nothing_found", null));
 %>
-<body>
+<body BGCOLOR="#FFFFFF">
 <script>
 <%
 		if("yes".equalsIgnoreCase(request.getParameter("synch"))){
@@ -152,7 +152,7 @@ if (parent.parent.temp){
 		tocDescription = "content/help:" + tocDescription;
 
 %>
-<body onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
+<body BGCOLOR="#FFFFFF" onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
 		<a class='book' href='<%=tocDescription%>'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
 <%

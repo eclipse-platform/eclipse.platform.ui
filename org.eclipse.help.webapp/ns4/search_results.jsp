@@ -50,7 +50,7 @@ TABLE, TD {
 
 </head>
 
-<body >
+<body BGCOLOR="#FFFFFF">
 
 <%
 if(request.getParameter("searchWord")!=null || request.getParameter("searchWordJS13")!=null)
