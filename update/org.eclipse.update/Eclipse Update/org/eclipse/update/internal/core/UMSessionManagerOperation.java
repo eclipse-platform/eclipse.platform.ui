@@ -1019,11 +1019,10 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 				// Build pathname to actual install location
 				//------------------------------------------
 				strFilespec = urlOutput.getFile() + "/" + entryName;
-				int j = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
-				if (j != -1) {		// we're on windoze
-					strFilespec = strFilespec.replace('/', File.separatorChar).substring(1);
-				} else {
-					strFilespec = strFilespec.replace('/', File.separatorChar).substring(0);
+				strFilespec = strFilespec.replace('/',File.separatorChar);
+				int k = strFilespec.indexOf(UMEclipseTree.DEVICE_SEPARATOR);
+				if (k != -1 && strFilespec.startsWith(File.separator)) {
+					strFilespec = strFilespec.substring(1);
 				}
 
 				// Delete the file or directory
