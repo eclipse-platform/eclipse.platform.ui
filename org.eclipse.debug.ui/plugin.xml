@@ -1760,6 +1760,12 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.debug.ui.MemoryView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+<!-- Perspective -->      
+	<command
+      		name="%DebugPerspective.name"
+      		description="%command.openDebugPerspective.description"
+      		categoryId="org.eclipse.ui.category.perspectives"
+      		id="org.eclipse.debug.ui.DebugPerspective" />
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
