@@ -12,7 +12,10 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
- * An implementation of <code>ILaunch</code>.
+ * A launch is the result of launching a debug session
+ * and/or one or more system processes. This class provides
+ * a public implementation of <code>ILaunch</code> for client
+ * use.
  * <p>
  * Clients may instantiate this class. Clients may subclass this class.
  * All of the methods in this class that are part of the launcher interface are
@@ -69,7 +72,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	/**
 	 * The mode this launch was launched in.
 	 */
-	 private String fMode;
+	private String fMode;
 	 
 	/**
 	 * Collection of children.
@@ -77,11 +80,12 @@ public class Launch extends PlatformObject implements ILaunch {
 	private List fChildren= null;
 	
 	/**
-	 * Constructs a launch based on the specified attributes. A launch must
+	 * Constructs a launch with the specified attributes. A launch must
 	 * have at least one of a process or debug target.
 	 *
 	 * @param launcher the launcher that created this launch
-	 * @param mode the mode of this launch - run or debug
+	 * @param mode the mode of this launch - run or debug (constants
+	 *  defined by <code>ILaunchManager</code>)
 	 * @param launchedElement the element that was launched
 	 * @param locator the source locator to use for this debug session, or
 	 * 	<code>null</code> if not supported
@@ -92,70 +96,125 @@ public class Launch extends PlatformObject implements ILaunch {
 	 */
 	public Launch(ILauncher launcher, String mode, Object launchedElement, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
 		super();
-		fLauncher= launcher;			
-		fElement= launchedElement;
-		fLocator= locator;
-		if (processes == null) {
-			fProcesses= new IProcess[0];
-		} else {
-			fProcesses= processes;
-		}
-		fTarget= target;
-		fMode= mode;
+		setLauncher(launcher);			
+		setElement(launchedElement);
+		setSourceLocator(locator);
+		setProcesses(processes);
+		setDebugTarget(target);
+		setLaunchMode(mode);
 		initialize();
 	}
 	
 	/**
-	 * @see ITerminate
+	 * @see ITerminate@canTerminate()
 	 */
 	public final boolean canTerminate() {
 		return !isTerminated();
 	}
 
 	/**
-	 * @see ILaunch
+	 * @see ILaunch#getChildren()
 	 */
 	public final Object[] getChildren() {
 		return fChildren.toArray();
 	}
 
 	/**
-	 * @see ILaunch
+	 * @see ILaunch#getDebugTarget()
 	 */
 	public final IDebugTarget getDebugTarget() {
 		return fTarget;
 	}
 
 	/**
-	 * @see ILaunch
+	 * Sets the debug target associated with this
+	 * launch.
+	 * 
+	 * @param debugTarget the debug target associated
+	 *  with this launch, or <code>null</code> if none.
+	 */
+	private void setDebugTarget(IDebugTarget debugTarget) {
+		fTarget = debugTarget;
+	}
+	
+	/**
+	 * @see ILaunch#getElement()
 	 */
 	public final Object getElement() {
 		return fElement;
 	}
+	
+	/**
+	 * Sets the object that was launched
+	 * 
+	 * @param element the object that was launched
+	 */
+	private void setElement(Object element) {
+		fElement = element;
+	}	
 
 	/**
-	 * @see ILaunch
+	 * @see ILaunch#getLauncher()
 	 */
 	public final ILauncher getLauncher() {
 		return fLauncher;
 	}
+	
+	/**
+	 * Sets the launcher that created
+	 * this launch.
+	 * 
+	 * @param launcher the launcher that created
+	 *  this launch
+	 */
+	private void setLauncher(ILauncher launcher) {
+		fLauncher = launcher;
+	}	
 
 	/**
-	 * @see ILaunch
+	 * @see ILaunch#getProcesses()
 	 */
 	public final IProcess[] getProcesses() {
 		return fProcesses;
 	}
 
 	/**
-	 * @see ILaunch
+	 * Sets the processes associated with this launch.
+	 * 
+	 * @param processes the processes associated with
+	 *  this launch - <code>null</code> or empty if none.
+	 */
+	private void setProcesses(IProcess[] processes) {
+		if (processes == null) {
+			fProcesses= new IProcess[0];
+		} else {
+			fProcesses= processes;
+		}
+	}
+	
+	/**
+	 * @see ILaunch#getSourceLocator()
 	 */
 	public final ISourceLocator getSourceLocator() {
 		return fLocator;
 	}
+	
+	/**
+	 * Sets the source locator to use when locating
+	 * source for the debug target associated with this
+	 * launch.
+	 * 
+	 * @param sourceLocator the source locator for
+	 *  this launch, or <code>null</code> if none.
+	 */
+	private void setSourceLocator(ISourceLocator sourceLocator) {
+		fLocator = sourceLocator;
+	}	
 
 	/**
-	 * Build my children collection.
+	 * Build the children collection for this launch -
+	 * a collection of the processes and debug target
+	 * associated with this launch.
 	 */
 	private final void initialize() {
 
@@ -178,29 +237,27 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#isTerminated()
 	 */
 	public final boolean isTerminated() {
-		Iterator children= fChildren.iterator();
-		while (children.hasNext()) {
-			ITerminate t= (ITerminate) children.next();
-			if (!t.isTerminated()) {
-				if (t instanceof IDisconnect) {
-					IDisconnect d= (IDisconnect)t;
-					if (!d.isDisconnected()) {
-						return false;
-					}
-				} else {
-					return false;
-				}
+		IProcess[] ps = getProcesses();
+		
+		for (int i = 0; i < ps.length; i++) {
+			if (!ps[i].isTerminated()) {
+				return false;
 			}
-
 		}
+		
+		IDebugTarget target = getDebugTarget();
+		if (target != null) {
+			return target.isTerminated() || target.isDisconnected();
+		}
+		
 		return true;
 	}
 
 	/**
-	 * @see ITerminate
+	 * @see ITerminate#terminate()
 	 */
 	public final void terminate() throws DebugException {
 		MultiStatus status= 
@@ -251,10 +308,22 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 
 	/**
-	 * @see ILaunch
+	 * @see ILaunch#getLaunchMode()
 	 */
 	public final String getLaunchMode() {
 		return fMode;
+	}
+	
+	/**
+	 * Sets the mode in which this launch was 
+	 * launched.
+	 * 
+	 * @param mode the mode in which this launch
+	 *  was launched - one of the constants defined
+	 *  by <code>ILaunchManager</code>.
+	 */
+	private void setLaunchMode(String mode) {
+		fMode = mode;
 	}
 }
 
