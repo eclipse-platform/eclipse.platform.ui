@@ -42,7 +42,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * the page description. In addition, it uses <code>"PreferencePage.fontEditor"</code>
  * for the editor description.
  * </p>
- * @deprecated As of 2.1 fonts are managed by the workbench
+ * @deprecated As of 2.1 fonts are managed by the workbench, no longer supported
  */
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
