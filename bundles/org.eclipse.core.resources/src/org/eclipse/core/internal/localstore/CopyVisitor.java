@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 
 //
 public class CopyVisitor implements IUnifiedTreeVisitor {
-	protected FileSystemStore localStore;
 
 	/** root destination */
 	protected IResource rootDestination;
@@ -77,7 +76,6 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 				CoreFileSystemLibrary.copyAttributes(node.getLocalLocation(), destination.getLocation().toOSString(), false);
 				return true;
 			}
-			// XXX: should use transfer streams in order to report better progress
 			((IFile) destination).create(((IFile) source).getContents(false), updateFlags, null);
 			// update the destination timestamp on disk
 			long lastModified = node.getLastModified();
@@ -89,7 +87,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			destinationLocation.toFile().setLastModified(lastModified);
 			//update timestamps on aliases
 			//XXX: this will update aliases twice because setContents above will also do it
-			((Workspace) rootDestination.getWorkspace()).getAliasManager().updateAliases(destination, destinationLocation, IResource.DEPTH_ZERO, monitor);
+			getWorkspace().getAliasManager().updateAliases(destination, destinationLocation, IResource.DEPTH_ZERO, monitor);
 			// update file attributes
 			CoreFileSystemLibrary.copyAttributes(node.getLocalLocation(), destinationLocation.toOSString(), false);
 			destination.getLocalManager().getHistoryStore().copyHistory(source, destination);
@@ -125,12 +123,6 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	public IStatus getStatus() {
 		return status;
-	}
-
-	protected FileSystemStore getStore() {
-		if (localStore == null)
-			localStore = new FileSystemStore();
-		return localStore;
 	}
 
 	protected Workspace getWorkspace() {
