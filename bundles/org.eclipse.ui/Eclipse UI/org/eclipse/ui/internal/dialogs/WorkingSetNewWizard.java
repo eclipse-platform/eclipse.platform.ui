@@ -41,7 +41,6 @@ public class WorkingSetNewWizard extends Wizard {
 	public WorkingSetNewWizard() {
 		super();
 		setWindowTitle(WorkbenchMessages.getString("WorkingSetNewWizard.title"));	//$NON-NLS-1$
-		setForcePreviousAndNextButtons(true);
 	}
 	/**
 	 * Overrides method in Wizard.
@@ -53,11 +52,21 @@ public class WorkingSetNewWizard extends Wizard {
 	 */	
 	public void addPages() {
 		super.addPages();
-		workingSetTypePage = new WorkingSetTypePage();
-		workingSetTypePage.setWizard(this);
-		workingSetTypePage.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
-		workingSetTypePage.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
-		addPage(workingSetTypePage);
+
+		IWizardPage page;
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		WorkingSetDescriptor[] descriptors = registry.getWorkingSetDescriptors();	
+		if (descriptors.length > 1) {
+			page = workingSetTypePage = new WorkingSetTypePage();
+		}
+		else {
+			page = workingSetEditPage = registry.getWorkingSetPage(descriptors[0].getId());
+		}
+		page.setWizard(this);
+		page.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
+		page.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
+		addPage(page);
+		setForcePreviousAndNextButtons(descriptors.length > 1);
 	}		
 	/**
 	 * Overrides method in Wizard.
@@ -68,18 +77,19 @@ public class WorkingSetNewWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(IWizardPage)
 	 */	
 	public IWizardPage getNextPage(IWizardPage page) {
-		String pageId = workingSetTypePage.getSelection();
-		
-		if (page == workingSetTypePage && pageId != null) {			
-			if (workingSetEditPage == null || pageId != editPageId) {
-				WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-				workingSetEditPage = registry.getWorkingSetPage(pageId);
-				workingSetEditPage.setWizard(this);
-				workingSetEditPage.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
-				workingSetEditPage.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
-				editPageId = pageId;
-			}			
-			return workingSetEditPage;
+		if (workingSetTypePage != null && page == workingSetTypePage) {
+			String pageId = workingSetTypePage.getSelection();
+			if (pageId != null) {			
+				if (workingSetEditPage == null || pageId != editPageId) {
+					WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+					workingSetEditPage = registry.getWorkingSetPage(pageId);
+					workingSetEditPage.setWizard(this);
+					workingSetEditPage.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
+					workingSetEditPage.setDescription(WorkbenchMessages.getString("WorkingSetNewWizard.page.description")); //$NON-NLS-1$		
+					editPageId = pageId;
+				}			
+				return workingSetEditPage;
+			}
 		}
 		return null;
 	}

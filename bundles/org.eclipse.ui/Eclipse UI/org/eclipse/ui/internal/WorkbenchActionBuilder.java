@@ -498,12 +498,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Adds the working set actions to the specified menu.
 	 */
 	private void addWorkingSetActions(MenuManager menu) {
-		// Temporary option to enable working sets
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean("ENABLE_WORKING_SETS")) { //$NON-NLS-1$
-			menu.add(selectWorkingSetAction);
-			menu.add(clearWorkingSetAction);
-		}
+		menu.add(selectWorkingSetAction);
+		menu.add(clearWorkingSetAction);
 	}
 	
 	/**

@@ -24,8 +24,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
-	// Temporary option to enable working sets
-	private Button workingSetsButton;
 	// Temporary option to enable cool bars
 	private Button coolBarsButton;
 	// Temporary option to enable new menu structure
@@ -79,15 +77,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
 		// Call commented out on WorkbenchPreferencePage. 
 		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
-
-		// Temporary option to enable workbench working sets
-		workingSetsButton =
-			createTempOption(
-				composite,
-				WorkbenchMessages.getString("WorkInProgressPreference.enableWorkbenchWorkingSets"), //$NON-NLS-1$
-				"ENABLE_WORKING_SETS", //$NON-NLS-1$
-				true,
-				null);
 
 		// Temporary option to enable cool bars
 		coolBarsButton =
@@ -147,7 +136,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		acceleratorPerformDefaults(store);
 		singleClickButtons[3].setSelection(true);
 
-		workingSetsButton.setSelection(store.getDefaultBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$				
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 		
@@ -159,7 +147,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
-		store.setValue("ENABLE_WORKING_SETS", workingSetsButton.getSelection()); //$NON-NLS-1$
 //		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_COOL_BARS", coolBarsButton.getSelection()); //$NON-NLS-1$
 		store.setValue("SINGLE_CLICK_METHOD",singleClickMethod); //$NON-NLS-1$
