@@ -1413,6 +1413,95 @@
             activityId="org.eclipse.activity1">
       </activityRequirementBinding>
    </extension>
+
+  <extension
+         point="org.eclipse.ui.themes">
+      <theme
+      		name="Extended Theme 1"
+            id="extendedTheme1">
+         <data
+               name="d1"
+               value="d1">
+         </data>
+         <colorOverride
+               value="COLOR_DARK_GREEN"
+               id="swtcolor">
+         </colorOverride>
+         <fontOverride
+               value="Sans-regular-10"
+               id="valfont">
+         </fontOverride>
+         
+      </theme>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <theme      		
+            id="extendedTheme1">
+         <data
+               name="d1"
+               value="not honoured">
+         </data>            
+            
+         <data
+               name="d2"
+               value="d2">
+         </data>  
+         
+         <colorOverride
+               value="not honoured"
+               id="swtcolor">
+         </colorOverride>
+
+         <colorOverride
+               value="COLOR_DARK_GREEN"
+               id="rgbcolor">
+         </colorOverride>
+         
+         <fontOverride
+               value="not honoured"
+               id="valfont">
+         </fontOverride>
+         
+         <fontOverride
+               value="Sans-regular-10"
+               id="novalfont">
+         </fontOverride>
+         
+         
+                          
+      </theme>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.themes">
+      <theme      		
+            id="extendedTheme1">
+      </theme>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <theme      		
+      		name="Extended Theme 2"
+            id="extendedTheme2">
+      </theme>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.themes">
+      <theme
+      		name="Extended Theme 3"
+            id="extendedTheme3">
+      </theme>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <theme 
+	        name="not honoured"     		
+            id="extendedTheme3">
+      </theme>
+   </extension>  
+   
    <extension
          point="org.eclipse.ui.themes">
       <theme
@@ -1469,6 +1558,11 @@
             id="rgbcolor">
       </colorDefinition>
       <colorDefinition
+            label="not honoured"
+            value="not honoured"
+            id="rgbcolor">            
+      </colorDefinition>
+      <colorDefinition
             label="swtcolor"
             value="COLOR_DARK_BLUE"
             id="swtcolor">
@@ -1521,6 +1615,11 @@
             value="Tahoma-bold-20"
             id="valfont">
       </fontDefinition>
+      <fontDefinition
+            label="not honoured"
+            value="not honoured"
+            id="valfont">
+      </fontDefinition>      
       <fontDefinition
             label="platformfont"
             value="Sans-bold-15"

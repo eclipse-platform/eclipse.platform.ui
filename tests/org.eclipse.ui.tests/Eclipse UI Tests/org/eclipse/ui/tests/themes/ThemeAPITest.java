@@ -531,4 +531,49 @@ public class ThemeAPITest extends ThemeTest {
                 new FontData[] { new FontData("Tahoma", 20, SWT.BOLD) },
                 defaultTheme.getFontRegistry().getFontData("valfont"));
     }
+    
+    /*
+     * The following tests check to ensure that support for multiple extensions
+     * contributing to the same theeme work. They also check to ensure that the
+     * first value encountered for a given font/colour is the only one used.
+     */
+    
+    public void testThemeExtensionName() {
+        ITheme ext1 = fManager.getTheme("extendedTheme1");
+        ITheme ext2 = fManager.getTheme("extendedTheme2");
+        ITheme ext3 = fManager.getTheme("extendedTheme3");
+        
+        assertEquals("Extended Theme 1", ext1.getLabel());
+        assertEquals("Extended Theme 2", ext2.getLabel());
+        assertEquals("Extended Theme 3", ext3.getLabel());
+    }
+    
+    public void testThemeExtensionData() {
+        ITheme ext1 = fManager.getTheme("extendedTheme1");
+        assertNotNull(ext1.getString("d1"));
+        assertEquals("d1", ext1.getString("d1"));
+        assertNotNull(ext1.getString("d2"));
+    }
+    
+    public void testThemeExtensionColor() {
+        ITheme ext1 = fManager.getTheme("extendedTheme1");
+        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN)
+                .getRGB(), ext1.getColorRegistry().getRGB("swtcolor")); 
+
+        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN)
+                .getRGB(), ext1.getColorRegistry().getRGB("rgbcolor")); 
+    }
+    
+    public void testThemeExtensionFont() {
+        ITheme ext1 = fManager.getTheme("extendedTheme1");
+        
+        FontData[] fd = new FontData[] { new FontData("Sans", 10,
+                SWT.NORMAL) };
+        
+        assertArrayEquals(fd, ext1.getFontRegistry()
+                .getFontData("valfont"));
+
+        assertArrayEquals(fd, ext1.getFontRegistry()
+                .getFontData("novalfont"));
+    }
 }
