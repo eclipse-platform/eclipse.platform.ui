@@ -393,15 +393,16 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				if (lastLineDelimiter != -1) {
 					StringBuffer input = new StringBuffer();
 					Iterator it = inputPartitions.iterator();
-					while (lastLineDelimiter > 0 && it.hasNext()) {
+					while (it.hasNext()) {
 					    IOConsolePartition partition = (IOConsolePartition) it.next();
-					    if (partition.getLength() <= lastLineDelimiter) {
-					        lastLineDelimiter -= partition.getLength();
-					        input.append(partitionText);
+					    if (partition.getOffset() + partition.getLength() <= event.fOffset + lastLineDelimiter) {
+					        if (partition == lastPartition) {
+					            lastPartition = null;
+					        }
+					        input.append(partition.getString());
 							partition.clearBuffer();
 							partition.setReadOnly();
-							inputPartitions.remove(partition);
-							lastPartition = null;
+							it.remove();
 					    } else {
 					        //create a new partition containing everything up to the line delimiter
 					        //and append that to the string buffer.
