@@ -76,6 +76,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction helpContentsAction;
 
+    private IWorkbenchAction helpSearchAction;
+    
     private IWorkbenchAction aboutAction;
 
     private IWorkbenchAction openPreferencesAction;
@@ -217,6 +219,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IContributionItem pinEditorContributionItem;
 
+    private IContributionItem searchComboItem;
+    
     // @issue class is workbench internal
     private StatusLineContributionItem statusLineItem;
 
@@ -440,6 +444,20 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
 
         coolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
+     
+        coolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_HELP)); //$NON-NLS-1$
+        
+        { // Help group
+            IToolBarManager helpToolBar = new ToolBarManager(coolBar
+                    .getStyle());
+            helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP)); //$NON-NLS-1$
+            helpToolBar.add(searchComboItem);
+              // Add the group for applications to contribute
+            helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));              
+            // Add to the cool bar manager
+            coolBar.add(new ToolBarContributionItem(helpToolBar,
+                    IWorkbenchActionConstants.TOOLBAR_HELP)); //$NON-NLS-1$
+        }        
 
     }
 
@@ -752,7 +770,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(new GroupMarker("group.intro.ext")); //$NON-NLS-1$
 		addSeparatorOrGroupMarker(menu, "group.main"); //$NON-NLS-1$
 		menu.add(helpContentsAction);
-
+        menu.add(helpSearchAction);
+        
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
@@ -1068,6 +1087,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         pinEditorContributionItem.dispose();
         showInQuickMenu.dispose();
         newQuickMenu.dispose();
+        searchComboItem.dispose();
         
         // null out actions to make leak debugging easier
         closeAction = null;
@@ -1076,6 +1096,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         saveAction = null;
         saveAllAction = null;
         helpContentsAction = null;
+        helpSearchAction = null;
         aboutAction = null;
         openPreferencesAction = null;
         saveAsAction = null;
@@ -1143,6 +1164,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeProjectAction = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
+        searchComboItem = null;
         statusLineItem = null;
         prefListener = null;
         propPrefListener = null;
@@ -1190,95 +1212,98 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     /**
      * Creates actions (and contribution items) for the menu bar, toolbar and status line.
      */
-    protected void makeActions(IWorkbenchWindow window) {
+    protected void makeActions(final IWorkbenchWindow window) {
 
         // @issue should obtain from ConfigurationItemFactory
         statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
-        newWizardAction = ActionFactory.NEW.create(getWindow());
+        newWizardAction = ActionFactory.NEW.create(window);
         register(newWizardAction);
 
         newWizardDropDownAction = IDEActionFactory.NEW_WIZARD_DROP_DOWN
-                .create(getWindow());
+                .create(window);
         register(newWizardDropDownAction);
 
-        importResourcesAction = ActionFactory.IMPORT.create(getWindow());
+        importResourcesAction = ActionFactory.IMPORT.create(window);
         register(importResourcesAction);
 
-        exportResourcesAction = ActionFactory.EXPORT.create(getWindow());
+        exportResourcesAction = ActionFactory.EXPORT.create(window);
         register(exportResourcesAction);
 
-        buildAllAction = IDEActionFactory.BUILD.create(getWindow());
+        buildAllAction = IDEActionFactory.BUILD.create(window);
         register(buildAllAction);
 
-        cleanAction = IDEActionFactory.BUILD_CLEAN.create(getWindow());
+        cleanAction = IDEActionFactory.BUILD_CLEAN.create(window);
         register(cleanAction);
 
         toggleAutoBuildAction = IDEActionFactory.BUILD_AUTOMATICALLY
-                .create(getWindow());
+                .create(window);
         register(toggleAutoBuildAction);
 
-        saveAction = ActionFactory.SAVE.create(getWindow());
+        saveAction = ActionFactory.SAVE.create(window);
         register(saveAction);
 
-        saveAsAction = ActionFactory.SAVE_AS.create(getWindow());
+        saveAsAction = ActionFactory.SAVE_AS.create(window);
         register(saveAsAction);
 
-        saveAllAction = ActionFactory.SAVE_ALL.create(getWindow());
+        saveAllAction = ActionFactory.SAVE_ALL.create(window);
         register(saveAllAction);
 
-        undoAction = ActionFactory.UNDO.create(getWindow());
+        undoAction = ActionFactory.UNDO.create(window);
         register(undoAction);
 
-        redoAction = ActionFactory.REDO.create(getWindow());
+        redoAction = ActionFactory.REDO.create(window);
         register(redoAction);
 
-        cutAction = ActionFactory.CUT.create(getWindow());
+        cutAction = ActionFactory.CUT.create(window);
         register(cutAction);
 
-        copyAction = ActionFactory.COPY.create(getWindow());
+        copyAction = ActionFactory.COPY.create(window);
         register(copyAction);
 
-        pasteAction = ActionFactory.PASTE.create(getWindow());
+        pasteAction = ActionFactory.PASTE.create(window);
         register(pasteAction);
 
-        printAction = ActionFactory.PRINT.create(getWindow());
+        printAction = ActionFactory.PRINT.create(window);
         register(printAction);
 
-        selectAllAction = ActionFactory.SELECT_ALL.create(getWindow());
+        selectAllAction = ActionFactory.SELECT_ALL.create(window);
         register(selectAllAction);
 
-        findAction = ActionFactory.FIND.create(getWindow());
+        findAction = ActionFactory.FIND.create(window);
         register(findAction);
 
-        closeAction = ActionFactory.CLOSE.create(getWindow());
+        closeAction = ActionFactory.CLOSE.create(window);
         register(closeAction);
 
-        closeAllAction = ActionFactory.CLOSE_ALL.create(getWindow());
+        closeAllAction = ActionFactory.CLOSE_ALL.create(window);
         register(closeAllAction);
 
-        closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
+        closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(window);
         register(closeAllSavedAction);
 
-        helpContentsAction = ActionFactory.HELP_CONTENTS.create(getWindow());
+        helpContentsAction = ActionFactory.HELP_CONTENTS.create(window);
         register(helpContentsAction);
 
-        aboutAction = ActionFactory.ABOUT.create(getWindow());
+        helpSearchAction = ActionFactory.HELP_SEARCH.create(window);
+        register(helpSearchAction);
+        
+        aboutAction = ActionFactory.ABOUT.create(window);
         aboutAction
                 .setImageDescriptor(IDEInternalWorkbenchImages
                         .getImageDescriptor(IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
         register(aboutAction);
 
-        openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());
+        openPreferencesAction = ActionFactory.PREFERENCES.create(window);
         register(openPreferencesAction);
 
-        addBookmarkAction = IDEActionFactory.BOOKMARK.create(getWindow());
+        addBookmarkAction = IDEActionFactory.BOOKMARK.create(window);
         register(addBookmarkAction);
 
-        addTaskAction = IDEActionFactory.ADD_TASK.create(getWindow());
+        addTaskAction = IDEActionFactory.ADD_TASK.create(window);
         register(addTaskAction);
 
-        deleteAction = ActionFactory.DELETE.create(getWindow());
+        deleteAction = ActionFactory.DELETE.create(window);
         register(deleteAction);
 
         AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
@@ -1286,7 +1311,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         for (int i = 0; i < infos.length; i++) {
             if (infos[i].getWelcomePageURL() != null) {
                 quickStartAction = IDEActionFactory.QUICK_START
-                        .create(getWindow());
+                        .create(window);
                 register(quickStartAction);
                 break;
             }
@@ -1295,146 +1320,146 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         for (int i = 0; i < infos.length; i++) {
             if (infos[i].getTipsAndTricksHref() != null) {
                 tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS
-                        .create(getWindow());
+                        .create(window);
                 register(tipsAndTricksAction);
                 break;
             }
         }
 
         // Actions for invisible accelerators
-        showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(getWindow());
+        showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(window);
         register(showViewMenuAction);
 
         showPartPaneMenuAction = ActionFactory.SHOW_PART_PANE_MENU
-                .create(getWindow());
+                .create(window);
         register(showPartPaneMenuAction);
 
-        nextEditorAction = ActionFactory.NEXT_EDITOR.create(getWindow());
+        nextEditorAction = ActionFactory.NEXT_EDITOR.create(window);
         register(nextEditorAction);
-        prevEditorAction = ActionFactory.PREVIOUS_EDITOR.create(getWindow());
+        prevEditorAction = ActionFactory.PREVIOUS_EDITOR.create(window);
         register(prevEditorAction);
         ActionFactory.linkCycleActionPair(nextEditorAction, prevEditorAction);
 
-        nextPartAction = ActionFactory.NEXT_PART.create(getWindow());
+        nextPartAction = ActionFactory.NEXT_PART.create(window);
         register(nextPartAction);
-        prevPartAction = ActionFactory.PREVIOUS_PART.create(getWindow());
+        prevPartAction = ActionFactory.PREVIOUS_PART.create(window);
         register(prevPartAction);
         ActionFactory.linkCycleActionPair(nextPartAction, prevPartAction);
 
         nextPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE
-                .create(getWindow());
+                .create(window);
         register(nextPerspectiveAction);
         prevPerspectiveAction = ActionFactory.PREVIOUS_PERSPECTIVE
-                .create(getWindow());
+                .create(window);
         register(prevPerspectiveAction);
         ActionFactory.linkCycleActionPair(nextPerspectiveAction,
                 prevPerspectiveAction);
 
         activateEditorAction = ActionFactory.ACTIVATE_EDITOR
-                .create(getWindow());
+                .create(window);
         register(activateEditorAction);
 
-        maximizePartAction = ActionFactory.MAXIMIZE.create(getWindow());
+        maximizePartAction = ActionFactory.MAXIMIZE.create(window);
         register(maximizePartAction);
 
-		minimizePartAction = ActionFactory.MINIMIZE.create(getWindow());
+		minimizePartAction = ActionFactory.MINIMIZE.create(window);
 		register(minimizePartAction);
         
         workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS
-                .create(getWindow());
+                .create(window);
         register(workbenchEditorsAction);
 
         workbookEditorsAction = ActionFactory.SHOW_WORKBOOK_EDITORS
-                .create(getWindow());
+                .create(window);
         register(workbookEditorsAction);
 
-        hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
+        hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(window);
         register(hideShowEditorAction);
         savePerspectiveAction = ActionFactory.SAVE_PERSPECTIVE
-                .create(getWindow());
+                .create(window);
         register(savePerspectiveAction);
         editActionSetAction = ActionFactory.EDIT_ACTION_SETS
-                .create(getWindow());
+                .create(window);
         register(editActionSetAction);
-        lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(getWindow());
+        lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(window);
         register(lockToolBarAction);
         resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE
-                .create(getWindow());
+                .create(window);
         register(resetPerspectiveAction);
-        closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(getWindow());
+        closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(window);
         register(closePerspAction);
         closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES
-                .create(getWindow());
+                .create(window);
         register(closeAllPerspsAction);
 
         forwardHistoryAction = ActionFactory.FORWARD_HISTORY
-                .create(getWindow());
+                .create(window);
         register(forwardHistoryAction);
 
         backwardHistoryAction = ActionFactory.BACKWARD_HISTORY
-                .create(getWindow());
+                .create(window);
         register(backwardHistoryAction);
 
-        revertAction = ActionFactory.REVERT.create(getWindow());
+        revertAction = ActionFactory.REVERT.create(window);
         register(revertAction);
 
-        refreshAction = ActionFactory.REFRESH.create(getWindow());
+        refreshAction = ActionFactory.REFRESH.create(window);
         register(refreshAction);
 
-        propertiesAction = ActionFactory.PROPERTIES.create(getWindow());
+        propertiesAction = ActionFactory.PROPERTIES.create(window);
         register(propertiesAction);
 
-        quitAction = ActionFactory.QUIT.create(getWindow());
+        quitAction = ActionFactory.QUIT.create(window);
         register(quitAction);
 
-        moveAction = ActionFactory.MOVE.create(getWindow());
+        moveAction = ActionFactory.MOVE.create(window);
         register(moveAction);
 
-        renameAction = ActionFactory.RENAME.create(getWindow());
+        renameAction = ActionFactory.RENAME.create(window);
         register(renameAction);
 
-        goIntoAction = ActionFactory.GO_INTO.create(getWindow());
+        goIntoAction = ActionFactory.GO_INTO.create(window);
         register(goIntoAction);
 
-        backAction = ActionFactory.BACK.create(getWindow());
+        backAction = ActionFactory.BACK.create(window);
         register(backAction);
 
-        forwardAction = ActionFactory.FORWARD.create(getWindow());
+        forwardAction = ActionFactory.FORWARD.create(window);
         register(forwardAction);
 
-        upAction = ActionFactory.UP.create(getWindow());
+        upAction = ActionFactory.UP.create(window);
         register(upAction);
 
-        nextAction = ActionFactory.NEXT.create(getWindow());
+        nextAction = ActionFactory.NEXT.create(window);
         nextAction
                 .setImageDescriptor(IDEInternalWorkbenchImages
                         .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_NEXT_NAV));
         register(nextAction);
 
-        previousAction = ActionFactory.PREVIOUS.create(getWindow());
+        previousAction = ActionFactory.PREVIOUS.create(window);
         previousAction
                 .setImageDescriptor(IDEInternalWorkbenchImages
                         .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_PREVIOUS_NAV));
         register(previousAction);
 
-        buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());
+        buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(window);
         register(buildProjectAction);
 
-        openProjectAction = IDEActionFactory.OPEN_PROJECT.create(getWindow());
+        openProjectAction = IDEActionFactory.OPEN_PROJECT.create(window);
         register(openProjectAction);
 
-        closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(getWindow());
+        closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(window);
         register(closeProjectAction);
 
         openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
-                .create(getWindow());
+                .create(window);
         register(openWorkspaceAction);
 
         projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES
-                .create(getWindow());
+                .create(window);
         register(projectPropertyDialogAction);
 
-        if (getWindow().getWorkbench().getIntroManager().hasIntro()) {
+        if (window.getWorkbench().getIntroManager().hasIntro()) {
             introAction = ActionFactory.INTRO.create(window);
             register(introAction);
         }
@@ -1443,7 +1468,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         showInQuickMenu = new QuickMenuAction(showInQuickMenuId) {
             protected void fillMenu(IMenuManager menu) {
                 menu.add(ContributionItemFactory.VIEWS_SHOW_IN
-                        .create(getWindow()));
+                        .create(window));
             }
         };
         register(showInQuickMenu);
@@ -1451,13 +1476,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         final String newQuickMenuId = "org.eclipse.ui.file.newQuickMenu"; //$NON-NLS-1$
         newQuickMenu = new QuickMenuAction(newQuickMenuId) {
             protected void fillMenu(IMenuManager menu) {
-                menu.add(new NewWizardMenu(getWindow()));
+                menu.add(new NewWizardMenu(window));
             }
         };
         register(newQuickMenu);
 
         pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
-                .create(getWindow());
+                .create(window);
+        
+        searchComboItem = ContributionItemFactory.HELP_SEARCH_COMBO.create(window);
     }
 
     /**

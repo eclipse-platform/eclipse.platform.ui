@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.about.AboutAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
+import org.eclipse.ui.internal.actions.HelpSearchAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1238,7 +1239,24 @@ public abstract class ActionFactory {
             return action;
         }
     };
-
+    
+    /**
+     * Workbench action (id "helpSearch"): Open the help search. This action
+     * is always enabled.
+     */
+    public static final ActionFactory HELP_SEARCH = new ActionFactory(
+            "helpSearch") {//$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new HelpSearchAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+    
     /**
      * Establishes bi-direction connections between the forward and backward
      * actions of a cycle pair.

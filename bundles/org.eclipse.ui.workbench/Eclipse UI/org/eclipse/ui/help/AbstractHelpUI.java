@@ -38,6 +38,27 @@ public abstract class AbstractHelpUI {
      * Displays the entire help bookshelf.
      */
     public abstract void displayHelp();
+    
+    /**
+     * Displays the help search facility.
+     * For backward compatibility, the default implementation
+     * does nothing. 
+     * @since 3.1
+     */
+    public void displaySearch() {
+        // do nothing
+    }
+    
+    /**
+     * Starts the help search using the help search facility.
+     * For backward compatibility, the default implementation
+     * does nothing.
+     * @param expression the search expression 
+     * @since 3.1
+     */    
+    public void search(String expression) {
+        // do nothing
+    }
 
     /**
      * Displays context-sensitive help for the given context.

@@ -206,6 +206,8 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS,
                 PATH_ETOOL + "help_contents.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH,
+                PATH_ETOOL + "help_search.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL
                 + "forward_nav.gif", true); //$NON-NLS-1$

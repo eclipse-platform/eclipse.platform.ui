@@ -501,6 +501,13 @@ public interface IWorkbenchActionConstants {
      */
     public static final String TOOLBAR_NAVIGATE = "org.eclipse.ui.workbench.navigate"; //$NON-NLS-1$
 
+    /**
+     * Workbench toolbar id for help toolbar group.
+     * 
+     * @since 3.1
+     */
+    public static final String TOOLBAR_HELP = "org.eclipse.ui.workbench.help"; //$NON-NLS-1$    
+
     // Workbench toolbar group ids.  To add an item at the beginning of the group, 
     // use the GROUP id.  To add an item at the end of the group, use the EXT id.
     /**
@@ -562,6 +569,13 @@ public interface IWorkbenchActionConstants {
      * Toolbar: name of group for editor action bars.
      */
     public static final String GROUP_EDITOR = "group.editor"; //$NON-NLS-1$
+    
+    /**
+     * Coolbar: name of group for help actions and contributions
+     * 
+     * @since 3.1
+     */
+    public static final String GROUP_HELP = "group.help"; //$NON-NLS-1$    
 
     // Standard view actions:
     /**

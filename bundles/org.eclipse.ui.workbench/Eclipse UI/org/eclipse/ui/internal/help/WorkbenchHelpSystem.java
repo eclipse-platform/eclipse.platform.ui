@@ -740,6 +740,30 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			helpUI.displayHelp();
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#displaySearch()
+	 */
+	public void displaySearch() {
+		AbstractHelpUI helpUI = getHelpUI();
+		if (helpUI != null) {
+			helpUI.displaySearch();
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#search(java.lang.String)
+	 */
+	public void search(String expression) {
+		AbstractHelpUI helpUI = getHelpUI();
+		if (helpUI != null) {
+			helpUI.search(expression);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)

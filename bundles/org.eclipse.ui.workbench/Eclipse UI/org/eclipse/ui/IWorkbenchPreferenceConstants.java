@@ -262,6 +262,18 @@ public interface IWorkbenchPreferenceConstants {
     public static String HELP_CONTENTS_ACTION_TEXT = "helpContentsActionText"; //$NON-NLS-1$
     
     /**
+     * A named preference for the text of the Help Search action. 
+     * 
+     * String-valued.  If not specified, <code>"S&earch"</code> is used.
+     * <p>
+     * The default value for this preference is: <code>null</code>
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static String HELP_SEARCH_ACTION_TEXT = "helpSearchActionText"; //$NON-NLS-1$
+    
+    /**
      * A named preference for enabling animations when a layout transition occurs
      * <p>
      * The default value for this preference is: <code>true</code> (show animations when a transition occurs)

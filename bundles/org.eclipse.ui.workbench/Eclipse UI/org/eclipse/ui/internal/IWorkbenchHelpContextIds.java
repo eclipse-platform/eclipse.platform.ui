@@ -179,6 +179,9 @@ public interface IWorkbenchHelpContextIds {
 
     public static final String HELP_CONTENTS_ACTION = PREFIX
             + "help_contents_action_context"; //$NON-NLS-1$
+    
+    public static final String HELP_SEARCH_ACTION = PREFIX
+    + "help_search_action_context"; //$NON-NLS-1$
 
 //    // Dialogs
     public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$

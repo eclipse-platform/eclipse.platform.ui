@@ -44,6 +44,23 @@ public interface IWorkbenchHelpSystem {
 	 * </p>
 	 */
 	void displayHelp();
+	
+	/**
+	 * Displays the help search system.
+	 * <p>
+	 * Ignored if no help UI is available.
+	 * </p>
+	 */
+	void displaySearch();
+
+	/**
+	 * Starts the search using the help search system.
+	 * <p>
+	 * Ignored if no help UI is available.
+	 * </p>
+	 * @param expression the search expression
+	 */	
+	void search(String expression);
 
 	/**
 	 * Displays context-sensitive help for the given context.

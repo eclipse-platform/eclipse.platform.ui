@@ -47,6 +47,8 @@ public interface IWorkbenchGraphicConstants {
     public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
 
     public final static String IMG_ETOOL_HELP_CONTENTS = "IMG_ETOOL_HELP_CONTENTS"; //$NON-NLS-1$
+    
+    public final static String IMG_ETOOL_HELP_SEARCH = "IMG_ETOOL_HELP_SEARCH"; //$NON-NLS-1$
 
     // local toolbars
     
