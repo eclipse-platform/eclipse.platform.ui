@@ -55,7 +55,7 @@ public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTre
 	
 	//compute node ID map and fix up moves
 	deltaInfo.setNodeIDMap(computeNodeIDMap(result, new NodeIDMap()));
-	result.fixMovesAndMarkers();
+	result.fixMovesAndMarkers(oldTree);
 
 	// check all the projects and if they were added and opened then tweek the flags
 	// so the delta reports both.

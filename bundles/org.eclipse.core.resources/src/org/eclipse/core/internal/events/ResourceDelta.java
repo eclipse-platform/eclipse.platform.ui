@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
@@ -127,7 +128,7 @@ public IResourceDelta findMember(IPath path) {
  * reflect moves (setting MOVED_FROM and MOVED_TO), and marker changes on
  * added and removed resources.
  */
-protected void fixMovesAndMarkers() {
+protected void fixMovesAndMarkers(ElementTree oldTree) {
 	NodeIDMap nodeIDMap = deltaInfo.getNodeIDMap();
 	if (!path.isRoot() && !nodeIDMap.isEmpty()) {
 		int kind = getKind();
@@ -137,6 +138,8 @@ protected void fixMovesAndMarkers() {
 				long nodeID = newInfo.getNodeId();
 				IPath oldPath = (IPath) nodeIDMap.getOldPath(nodeID);
 				if (oldPath != null && !oldPath.equals(path)) {
+					//get the old info from the old tree
+					oldInfo = (ResourceInfo)oldTree.getElementData(oldPath);
 					// Replace change flags by comparing old info with new info,
 					// Note that we want to retain the kind flag, but replace all other flags
 					// This is done only for MOVED_FROM, not MOVED_TO, since a resource may be both.
@@ -161,7 +164,7 @@ protected void fixMovesAndMarkers() {
 	
 	//recurse on children
 	for (int i = 0; i < children.length; i++) {
-		((ResourceDelta)children[i]).fixMovesAndMarkers();
+		((ResourceDelta)children[i]).fixMovesAndMarkers(oldTree);
 	}
 }
 /**
