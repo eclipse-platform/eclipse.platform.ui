@@ -497,6 +497,13 @@ public abstract class AbstractUIPlugin extends Plugin {
 	public AbstractUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 	}
+	
+	/*
+	 * @see Plugin()
+	 */
+	public AbstractUIPlugin() {
+		super();
+	}
 
 	/** 
 	 * Returns a new image registry for this plugin-in.  The registry will be
@@ -866,4 +873,5 @@ public abstract class AbstractUIPlugin extends Plugin {
 			return null;
 		}
 	}
+	
 }
