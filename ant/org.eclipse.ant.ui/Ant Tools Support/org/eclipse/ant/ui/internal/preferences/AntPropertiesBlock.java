@@ -345,9 +345,14 @@ public class AntPropertiesBlock {
 			Property property = (Property)properties[i];
 			String propertyName = property.getName();
 			if (propertyName.equals(name)) {
-				boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.15"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
-				if (!overWrite) {
+				if (property.isDefault()) {
+					MessageDialog.openError(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.17"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.18"), new String[]{propertyName, property.getPluginLabel()})); //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
+				} else {
+					boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.15"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+					if (!overWrite) {
+						return false;
+					}
 				}
 				((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).remove(property);
 				break;
@@ -364,7 +369,7 @@ public class AntPropertiesBlock {
 	}
 
 	/**
-	 * Handles selection changes in the Property file table viewer.
+	 * Handles selection changes in the Property table viewer.
 	 */
 	private void propertyTableSelectionChanged(IStructuredSelection newSelection) {
 		int size = newSelection.size();
