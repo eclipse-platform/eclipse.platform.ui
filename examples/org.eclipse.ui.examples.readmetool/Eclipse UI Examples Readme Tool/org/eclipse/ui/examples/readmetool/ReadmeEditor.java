@@ -16,6 +16,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 
 /**
  * This class implements the Readme editor.  Since the readme
@@ -63,9 +65,11 @@ public class ReadmeEditor extends TextEditor {
 	/** (non-Javadoc)
 	 * Method declared on AbstractTextEditor
 	 */
-	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		super.editorContextMenuAboutToShow(menu);
-		IMenuManager subMenu= menu.findMenuUsingPath(ITextEditorActionConstants.GROUP_ADD);
+	protected void editorContextMenuAboutToShow(IMenuManager parentMenu) {
+		super.editorContextMenuAboutToShow(parentMenu);
+		parentMenu.add(new Separator());
+		IMenuManager subMenu = new MenuManager(MessageUtil.getString("Add"));
+		parentMenu.add(subMenu);
 		if (subMenu != null) {
 			// Add readme actions with various attributes
 			Object[][] att = new Object[][] {{IReadmeConstants.MARKER_ATT_ID, new Integer(1234)}}; 
