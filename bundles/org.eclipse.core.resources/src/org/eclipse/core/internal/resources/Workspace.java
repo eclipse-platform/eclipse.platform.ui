@@ -1042,7 +1042,8 @@ public NotificationManager getNotificationManager() {
 	return notificationManager;
 }
 /**
- * @see org.eclipse.core.resources.IWorkspace#getPathVariableManager() */
+ * @see org.eclipse.core.resources.IWorkspace#getPathVariableManager()
+ */
 public IPathVariableManager getPathVariableManager() {
 	return pathVariableManager;
 } 
@@ -1735,8 +1736,9 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, message, null);
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isReadOnly()) {
-				message = Policy.bind("resources.readOnly"); //$NON-NLS-1$
-				result.add(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, files[i].getFullPath(), message));
+				IPath filePath = files[i].getFullPath();
+				message = Policy.bind("resources.readOnly", filePath.toString()); //$NON-NLS-1$
+				result.add(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, filePath, message));
 			}
 		}
 		return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus) result;
@@ -1847,7 +1849,7 @@ public IStatus validateName(String segment, int type) {
 
 	/* segment must not begin or end with a whitespace */
 	if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(segment.length() - 1))) {
-		message = Policy.bind("resources.invalidWhitespace"); //$NON-NLS-1$
+		message = Policy.bind("resources.invalidWhitespace",segment); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
@@ -1861,7 +1863,7 @@ public IStatus validateName(String segment, int type) {
 	char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
 	for (int i = 0; i < chars.length; i++)
 		if (segment.indexOf(chars[i]) != -1) {
-			message = Policy.bind("resources.invalidChar", String.valueOf(chars[i])); //$NON-NLS-1$
+			message = Policy.bind("resources.invalidCharInName", String.valueOf(chars[i]), segment); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -1892,7 +1894,7 @@ public IStatus validatePath(String path, int type) {
 
 	/* path must not have a device separator */
 	if (path.indexOf(IPath.DEVICE_SEPARATOR) != -1) {
-		message = Policy.bind("resources.invalidChar", String.valueOf(IPath.DEVICE_SEPARATOR)); //$NON-NLS-1$
+		message = Policy.bind("resources.invalidCharInPath", String.valueOf(IPath.DEVICE_SEPARATOR), path); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
@@ -1905,7 +1907,7 @@ public IStatus validatePath(String path, int type) {
 
 	/* path must be absolute */
 	if (!testPath.isAbsolute()) {
-		message = Policy.bind("resources.mustBeAbsolute"); //$NON-NLS-1$
+		message = Policy.bind("resources.mustBeAbsolute", path); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
@@ -1916,7 +1918,7 @@ public IStatus validatePath(String path, int type) {
 			return validateName(testPath.segment(0), IResource.PROJECT);
 		} else
 			if (type == IResource.PROJECT) {
-				message = Policy.bind("resources.projectPath"); //$NON-NLS-1$
+				message = Policy.bind("resources.projectPath",path); //$NON-NLS-1$
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 	}
@@ -1935,7 +1937,7 @@ public IStatus validatePath(String path, int type) {
 			}
 			return ResourceStatus.OK_STATUS;
 		} else {
-			message = Policy.bind("resources.resourcePath"); //$NON-NLS-1$
+			message = Policy.bind("resources.resourcePath",path); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 	message = Policy.bind("resources.invalidPath", path); //$NON-NLS-1$
