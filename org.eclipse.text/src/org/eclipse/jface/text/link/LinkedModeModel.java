@@ -197,20 +197,33 @@ public class LinkedModeModel {
 		 * @param event {@inheritDoc}
 		 */
 		public void documentChanged(DocumentEvent event) {
+			if (event.equals(fLastEvent) && fExit) {
+				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
+				return;
+			}
+			
+			fLastEvent= null;
+
 			// don't react on changes executed by the parent model
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
 
-			if (event.equals(fLastEvent) && fExit)
-				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
-
-			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
+			// collect all results
+			Map result= null;
+			for (Iterator it= fGroups.iterator(); it.hasNext();) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+				
+				Map map= group.handleEvent(event);
+				if (result != null && map != null) {
+					// exit if more than one position was changed
+					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
+					return;
+				}
+				if (map != null)
+					result= map;
+			}
 
-				Map result= group.handleEvent(event);
-				if (result == null)
-					continue;
-
+			if (result != null) {
 				// edit all documents
 				for (Iterator it2= result.keySet().iterator(); it2.hasNext(); ) {
 					IDocument doc= (IDocument) it2.next();
@@ -230,10 +243,6 @@ public class LinkedModeModel {
 						replace.perform(doc, this);
 					}
 				}
-				
-				// take the first hit - exlusion is guaranteed by enforcing
-				// disjointness when adding positions
-				return;
 			}
 		}
 

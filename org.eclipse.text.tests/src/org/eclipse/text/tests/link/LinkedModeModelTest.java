@@ -364,11 +364,96 @@ public class LinkedModeModelTest extends TestCase {
 		assertUnchanged(group1, group2);
 	}
 	
+	public void testOutsideUpdate() throws BadLocationException {
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "MARGARETE");
+		LinkedModeModel env= new LinkedModeModel();
+		final boolean[] isExit= { false } ;
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
+				isExit[0]= true;
+			}
+		});
+		env.addGroup(group1);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(16, 2, "b");
+		
+		assertEquals(group1, "MARGARETE");
+		assertFalse(isExit[0]);
+		assertEquals("	MARGARETE:\n" + 
+				"	Verbrich mir, Heinrich!", doc1.get(0, 36));
+//		assertUnchanged(group1); // would fail, since it was changed outside
+	}
+	
+	public void testIllegalChange1() throws BadLocationException {
+		// linked mode does not exit if the documents change outside the linked
+		// positions, but it does exit if a change invalidates the constraints
+		// on the positions (complete disjointness, no touching positions)
+		
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "MARGARETE");
+
+		LinkedModeModel env= new LinkedModeModel();
+		final boolean[] isExit= { false } ;
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
+				isExit[0]= true;
+			}
+		});
+		env.addGroup(group1);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(1, 73, "");
+		
+		assertTrue(isExit[0]);
+	}
+	
+	public void testIllegalChange2() throws BadLocationException {
+		// linked mode does not exit if the documents change outside the linked
+		// positions, but it does exit if a change invalidates the constraints
+		// on the positions (complete disjointness, no touching positions)
+		
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "MARGARETE");
+
+		LinkedPositionGroup group2= new LinkedPositionGroup();
+		createLinkedPositions(group2, doc1, "FAUST");
+
+		LinkedModeModel env= new LinkedModeModel();
+		final boolean[] isExit= { false } ;
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
+				isExit[0]= true;
+			}
+		});
+		env.addGroup(group1);
+		env.addGroup(group2);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(9, 35, "");
+		
+		assertTrue(isExit[0]);
+	}
+	
 	private void assertEquals(LinkedPositionGroup group, String expected) throws BadLocationException {
 		LinkedPosition[] positions= group.getPositions();
 		for (int i= 0; i < positions.length; i++) {
 			LinkedPosition pos= positions[i];
-			assertEquals(expected, pos.getContent());
+			if (!pos.isDeleted())
+				assertEquals(expected, pos.getContent());
 		}
 	}
 	
