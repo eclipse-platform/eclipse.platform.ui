@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="Ant Tools Support"/>
-	<classpathentry kind="src" path="Ant Runner Support"/>
+	<classpathentry output="ant_runner_support_bin" kind="src" path="Ant Runner Support"/>
 	<classpathentry kind="src" path="Ant Editor"/>
 	<classpathentry kind="src" path="Remote Ant Support"/>
 	<classpathentry kind="src" path="/org.apache.ant"/>
