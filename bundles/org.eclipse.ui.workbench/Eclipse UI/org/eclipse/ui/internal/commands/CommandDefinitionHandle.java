@@ -11,26 +11,26 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IKeyConfigurationHandle;
+import org.eclipse.ui.commands.ICommandDefinition;
+import org.eclipse.ui.commands.ICommandDefinitionHandle;
 import org.eclipse.ui.handles.NotDefinedException;
 import org.eclipse.ui.internal.handles.Handle;
 
-final class KeyConfigurationHandle extends Handle implements IKeyConfigurationHandle {
+final class CommandDefinitionHandle extends Handle implements ICommandDefinitionHandle {
 
-	KeyConfigurationHandle(String id) {
+	CommandDefinitionHandle(String id) {
 		super(id);
 	}
 	
-	public IKeyConfiguration getKeyConfiguration()
+	public ICommandDefinition getCommandDefinition()
 		throws NotDefinedException {
-		return (IKeyConfiguration) getObject();
+		return (ICommandDefinition) getObject();
 	}
 
 	public void define(Object object) {
 		if (object == null)
 			throw new NullPointerException();
-		else if (!(object instanceof IKeyConfiguration))
+		else if (!(object instanceof ICommandDefinition))
 			throw new IllegalArgumentException();
 			
 		super.define(object);

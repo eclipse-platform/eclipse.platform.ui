@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBinding implements Comparable, IKeyBinding {
+final class KeyBindingDefinition implements Comparable, IKeyBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeyBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeyBindingDefinition.class.getName().hashCode();
 
 	private String commandId;
 	private String contextId;
@@ -29,7 +29,7 @@ final class KeyBinding implements Comparable, IKeyBinding {
 	private String pluginId;
 	private int rank;
 
-	KeyBinding(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId, int rank) {
+	KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId, int rank) {
 		super();
 		
 		if (commandId == null || contextId == null || keyConfigurationId == null || keySequence == null || locale == null || platform == null || rank < 0)
@@ -46,29 +46,29 @@ final class KeyBinding implements Comparable, IKeyBinding {
 	}
 	
 	public int compareTo(Object object) {
-		KeyBinding keyBinding = (KeyBinding) object;
-		int compareTo = commandId.compareTo(keyBinding.commandId);
+		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;
+		int compareTo = commandId.compareTo(keyBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = contextId.compareTo(keyBinding.contextId);			
+			compareTo = contextId.compareTo(keyBindingDefinition.contextId);			
 
 			if (compareTo == 0) {		
-				compareTo = keyConfigurationId.compareTo(keyBinding.keyConfigurationId);			
+				compareTo = keyConfigurationId.compareTo(keyBindingDefinition.keyConfigurationId);			
 
 				if (compareTo == 0) {
-					compareTo = keySequence.compareTo(keyBinding.keySequence);
+					compareTo = keySequence.compareTo(keyBindingDefinition.keySequence);
 
 					if (compareTo == 0) {		
-						compareTo = locale.compareTo(keyBinding.locale);			
+						compareTo = locale.compareTo(keyBindingDefinition.locale);			
 	
 						if (compareTo == 0) {		
-							compareTo = platform.compareTo(keyBinding.platform);			
+							compareTo = platform.compareTo(keyBindingDefinition.platform);			
 			
 							if (compareTo == 0) {
-								compareTo = Util.compare(pluginId, keyBinding.pluginId);
+								compareTo = Util.compare(pluginId, keyBindingDefinition.pluginId);
 							
 								if (compareTo == 0)
-									compareTo = rank - keyBinding.rank;	
+									compareTo = rank - keyBindingDefinition.rank;	
 							}								
 						}
 					}
@@ -80,11 +80,11 @@ final class KeyBinding implements Comparable, IKeyBinding {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof KeyBinding))
+		if (!(object instanceof KeyBindingDefinition))
 			return false;
 
-		KeyBinding keyBinding = (KeyBinding) object;	
-		return commandId.equals(keyBinding.commandId) && contextId.equals(keyBinding.contextId) && keyConfigurationId.equals(keyBinding.keyConfigurationId) && keySequence.equals(keyBinding.keySequence) && locale.equals(keyBinding.locale) && platform.equals(keyBinding.platform) && Util.equals(pluginId, keyBinding.pluginId) && rank == keyBinding.rank;
+		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;	
+		return commandId.equals(keyBindingDefinition.commandId) && contextId.equals(keyBindingDefinition.contextId) && keyConfigurationId.equals(keyBindingDefinition.keyConfigurationId) && keySequence.equals(keyBindingDefinition.keySequence) && locale.equals(keyBindingDefinition.locale) && platform.equals(keyBindingDefinition.platform) && Util.equals(pluginId, keyBindingDefinition.pluginId) && rank == keyBindingDefinition.rank;
 	}
 
 	public String getCommandId() {

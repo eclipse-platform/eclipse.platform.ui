@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IImageBinding;
+import org.eclipse.ui.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ImageBinding implements Comparable, IImageBinding {
+final class ImageBindingDefinition implements Comparable, IImageBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ImageBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = ImageBindingDefinition.class.getName().hashCode();
 
 	private String commandId;
 	private String imageStyle;
@@ -26,7 +26,7 @@ final class ImageBinding implements Comparable, IImageBinding {
 	private String platform;
 	private String pluginId;
 
-	ImageBinding(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {
+	ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {
 		super();
 		
 		if (commandId == null || imageStyle == null || imageUri == null || locale == null || platform == null)
@@ -41,23 +41,23 @@ final class ImageBinding implements Comparable, IImageBinding {
 	}
 	
 	public int compareTo(Object object) {
-		ImageBinding imageBinding = (ImageBinding) object;
-		int compareTo = commandId.compareTo(imageBinding.commandId);
+		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;
+		int compareTo = commandId.compareTo(imageBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = imageStyle.compareTo(imageBinding.imageStyle);			
+			compareTo = imageStyle.compareTo(imageBindingDefinition.imageStyle);			
 
 			if (compareTo == 0) {		
-				compareTo = imageUri.compareTo(imageBinding.imageUri);			
+				compareTo = imageUri.compareTo(imageBindingDefinition.imageUri);			
 
 				if (compareTo == 0) {		
-					compareTo = locale.compareTo(imageBinding.locale);			
+					compareTo = locale.compareTo(imageBindingDefinition.locale);			
 
 					if (compareTo == 0) {		
-						compareTo = platform.compareTo(imageBinding.platform);			
+						compareTo = platform.compareTo(imageBindingDefinition.platform);			
 		
 						if (compareTo == 0)
-							compareTo = Util.compare(pluginId, imageBinding.pluginId);								
+							compareTo = Util.compare(pluginId, imageBindingDefinition.pluginId);								
 					}
 				}
 			}
@@ -67,11 +67,11 @@ final class ImageBinding implements Comparable, IImageBinding {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ImageBinding))
+		if (!(object instanceof ImageBindingDefinition))
 			return false;
 
-		ImageBinding imageBinding = (ImageBinding) object;	
-		return commandId.equals(imageBinding.commandId) && imageStyle.equals(imageBinding.imageStyle) && imageUri.equals(imageBinding.imageUri) && locale.equals(imageBinding.locale) && platform.equals(imageBinding.platform) && Util.equals(pluginId, imageBinding.pluginId);
+		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;	
+		return commandId.equals(imageBindingDefinition.commandId) && imageStyle.equals(imageBindingDefinition.imageStyle) && imageUri.equals(imageBindingDefinition.imageUri) && locale.equals(imageBindingDefinition.locale) && platform.equals(imageBindingDefinition.platform) && Util.equals(pluginId, imageBindingDefinition.pluginId);
 	}
 
 	public String getCommandId() {

@@ -20,13 +20,13 @@ import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.commands.IActiveKeyConfiguration;
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IImageBinding;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.commands.ICategoryDefinition;
+import org.eclipse.ui.commands.ICommandDefinition;
+import org.eclipse.ui.commands.IContextBindingDefinition;
+import org.eclipse.ui.commands.IImageBindingDefinition;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
+import org.eclipse.ui.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -59,7 +59,7 @@ final class Persistence {
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
-	static IActiveKeyConfiguration readActiveKeyConfiguration(IMemento memento, String pluginIdOverride) {
+	static IActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -80,10 +80,10 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 		
-		return new ActiveKeyConfiguration(keyConfigurationId, pluginId);
+		return new ActiveKeyConfigurationDefinition(keyConfigurationId, pluginId);
 	}
 
-	static List readActiveKeyConfigurations(IMemento memento, String name, String pluginIdOverride) {
+	static List readActiveKeyConfigurationDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -95,29 +95,12 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readActiveKeyConfiguration(mementos[i], pluginIdOverride));
+			list.add(readActiveKeyConfigurationDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static List readCategories(IMemento memento, String name, String pluginIdOverride) {
-		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
-		IMemento[] mementos = memento.getChildren(name);
-	
-		if (mementos == null)
-			throw new NullPointerException();
-	
-		List list = new ArrayList(mementos.length);
-	
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readCategory(mementos[i], pluginIdOverride));
-	
-		return list;				
-	}
-
-	static ICategory readCategory(IMemento memento, String pluginIdOverride) {
+	static ICategoryDefinition readCategoryDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -139,10 +122,27 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 		
-		return new Category(description, id, name, pluginId);
+		return new CategoryDefinition(description, id, name, pluginId);
 	}
 
-	static ICommand readCommand(IMemento memento, String pluginIdOverride) {
+	static List readCategoryDefinitions(IMemento memento, String name, String pluginIdOverride) {
+		if (memento == null || name == null)
+			throw new NullPointerException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new NullPointerException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readCategoryDefinition(mementos[i], pluginIdOverride));
+	
+		return list;				
+	}
+
+	static ICommandDefinition readCommandDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -171,10 +171,10 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 		
-		return new Command(categoryId, description, id, name, pluginId);
+		return new CommandDefinition(categoryId, description, id, name, pluginId);
 	}
 
-	static List readCommands(IMemento memento, String name, String pluginIdOverride) {
+	static List readCommandDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -186,12 +186,12 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readCommand(mementos[i], pluginIdOverride));
+			list.add(readCommandDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static IContextBinding readContextBinding(IMemento memento, String pluginIdOverride) {
+	static IContextBindingDefinition readContextBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -206,10 +206,10 @@ final class Persistence {
 			contextId = Util.ZERO_LENGTH_STRING;
 
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new ContextBinding(commandId, contextId, pluginId);
+		return new ContextBindingDefinition(commandId, contextId, pluginId);
 	}
 
-	static List readContextBindings(IMemento memento, String name, String pluginIdOverride) {
+	static List readContextBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -221,12 +221,12 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readContextBinding(mementos[i], pluginIdOverride));
+			list.add(readContextBindingDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static IImageBinding readImageBinding(IMemento memento, String pluginIdOverride) {
+	static IImageBindingDefinition readImageBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -256,10 +256,10 @@ final class Persistence {
 			platform = Util.ZERO_LENGTH_STRING;
 
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new ImageBinding(commandId, imageStyle, imageUri, locale, platform, pluginId);
+		return new ImageBindingDefinition(commandId, imageStyle, imageUri, locale, platform, pluginId);
 	}
 
-	static List readImageBindings(IMemento memento, String name, String pluginIdOverride) {
+	static List readImageBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -271,12 +271,12 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readImageBinding(mementos[i], pluginIdOverride));
+			list.add(readImageBindingDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static IKeyBinding readKeyBinding(IMemento memento, String pluginIdOverride, int rank) {
+	static IKeyBindingDefinition readKeyBindingDefinition(IMemento memento, String pluginIdOverride, int rank) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -351,10 +351,10 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end			
 		
-		return new KeyBinding(commandId, contextId, keyConfigurationId, keySequence, locale, platform, pluginId, rank);
+		return new KeyBindingDefinition(commandId, contextId, keyConfigurationId, keySequence, locale, platform, pluginId, rank);
 	}
 
-	static List readKeyBindings(IMemento memento, String name, String pluginIdOverride, int rank) {
+	static List readKeyBindingDefinitions(IMemento memento, String name, String pluginIdOverride, int rank) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -366,12 +366,12 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readKeyBinding(mementos[i], pluginIdOverride, rank));
+			list.add(readKeyBindingDefinition(mementos[i], pluginIdOverride, rank));
 	
 		return list;				
 	}
 
-	static IKeyConfiguration readKeyConfiguration(IMemento memento, String pluginIdOverride) {
+	static IKeyConfigurationDefinition readKeyConfigurationDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -400,10 +400,10 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end				
 		
-		return new KeyConfiguration(description, id, name, parentId, pluginId);
+		return new KeyConfigurationDefinition(description, id, name, parentId, pluginId);
 	}
 
-	static List readKeyConfigurations(IMemento memento, String name, String pluginIdOverride) {
+	static List readKeyConfigurationDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -415,195 +415,195 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readKeyConfiguration(mementos[i], pluginIdOverride));
+			list.add(readKeyConfigurationDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static void writeActiveKeyConfiguration(IMemento memento, IActiveKeyConfiguration activeKeyConfiguration) {
-		if (memento == null || activeKeyConfiguration == null)
+	static void writeActiveKeyConfigurationDefinition(IMemento memento, IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
+		if (memento == null || activeKeyConfigurationDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_KEY_CONFIGURATION_ID, activeKeyConfiguration.getKeyConfigurationId());
-		memento.putString(TAG_PLUGIN_ID, activeKeyConfiguration.getPluginId());
+		memento.putString(TAG_KEY_CONFIGURATION_ID, activeKeyConfigurationDefinition.getKeyConfigurationId());
+		memento.putString(TAG_PLUGIN_ID, activeKeyConfigurationDefinition.getPluginId());
 	}
 
-	static void writeActiveKeyConfigurations(IMemento memento, String name, List activeKeyConfigurations) {
-		if (memento == null || name == null || activeKeyConfigurations == null)
+	static void writeActiveKeyConfigurationDefinitions(IMemento memento, String name, List activeKeyConfigurationDefinitions) {
+		if (memento == null || name == null || activeKeyConfigurationDefinitions == null)
 			throw new NullPointerException();
 		
-		activeKeyConfigurations = new ArrayList(activeKeyConfigurations);
-		Iterator iterator = activeKeyConfigurations.iterator();
+		activeKeyConfigurationDefinitions = new ArrayList(activeKeyConfigurationDefinitions);
+		Iterator iterator = activeKeyConfigurationDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IActiveKeyConfiguration.class);
+			Util.assertInstance(iterator.next(), IActiveKeyConfigurationDefinition.class);
 
-		iterator = activeKeyConfigurations.iterator();
+		iterator = activeKeyConfigurationDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeActiveKeyConfiguration(memento.createChild(name), (IActiveKeyConfiguration) iterator.next());
+			writeActiveKeyConfigurationDefinition(memento.createChild(name), (IActiveKeyConfigurationDefinition) iterator.next());
 	}
 
-	static void writeCategories(IMemento memento, String name, List categories) {
-		if (memento == null || name == null || categories == null)
+	static void writeCategoryDefinition(IMemento memento, ICategoryDefinition categoryDefinition) {
+		if (memento == null || categoryDefinition == null)
+			throw new NullPointerException();
+
+		memento.putString(TAG_DESCRIPTION, categoryDefinition.getDescription());
+		memento.putString(TAG_ID, categoryDefinition.getId());
+		memento.putString(TAG_NAME, categoryDefinition.getName());
+		memento.putString(TAG_PLUGIN_ID, categoryDefinition.getPluginId());
+	}
+
+	static void writeCategoryDefinitions(IMemento memento, String name, List categoryDefinitions) {
+		if (memento == null || name == null || categoryDefinitions == null)
 			throw new NullPointerException();
 		
-		categories = new ArrayList(categories);
-		Iterator iterator = categories.iterator();
+		categoryDefinitions = new ArrayList(categoryDefinitions);
+		Iterator iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ICategory.class);
+			Util.assertInstance(iterator.next(), ICategoryDefinition.class);
 
-		iterator = categories.iterator();
+		iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeCategory(memento.createChild(name), (ICategory) iterator.next());
+			writeCategoryDefinition(memento.createChild(name), (ICategoryDefinition) iterator.next());
+	}
+
+	static void writeCommandDefinition(IMemento memento, ICommandDefinition commandDefinition) {
+		if (memento == null || commandDefinition == null)
+			throw new NullPointerException();
+
+		memento.putString(TAG_CATEGORY_ID, commandDefinition.getCategoryId());
+		memento.putString(TAG_DESCRIPTION, commandDefinition.getDescription());
+		memento.putString(TAG_ID, commandDefinition.getId());
+		memento.putString(TAG_NAME, commandDefinition.getName());
+		memento.putString(TAG_PLUGIN_ID, commandDefinition.getPluginId());
+	}
+
+	static void writeCommandDefinitions(IMemento memento, String name, List commandDefinitions) {
+		if (memento == null || name == null || commandDefinitions == null)
+			throw new NullPointerException();
+		
+		commandDefinitions = new ArrayList(commandDefinitions);
+		Iterator iterator = commandDefinitions.iterator();
+
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), ICommandDefinition.class);
+
+		iterator = commandDefinitions.iterator();
+
+		while (iterator.hasNext()) 
+			writeCommandDefinition(memento.createChild(name), (ICommandDefinition) iterator.next());
 	}
 	
-	static void writeCategory(IMemento memento, ICategory category) {
-		if (memento == null || category == null)
+	static void writeContextBindingDefinition(IMemento memento, IContextBindingDefinition contextBindingDefinition) {
+		if (memento == null || contextBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_DESCRIPTION, category.getDescription());
-		memento.putString(TAG_ID, category.getId());
-		memento.putString(TAG_NAME, category.getName());
-		memento.putString(TAG_PLUGIN_ID, category.getPluginId());
+		memento.putString(TAG_COMMAND_ID, contextBindingDefinition.getCommandId());
+		memento.putString(TAG_CONTEXT_ID, contextBindingDefinition.getContextId());
+		memento.putString(TAG_PLUGIN_ID, contextBindingDefinition.getPluginId());
 	}
 
-	static void writeCommand(IMemento memento, ICommand command) {
-		if (memento == null || command == null)
-			throw new NullPointerException();
-
-		memento.putString(TAG_CATEGORY_ID, command.getCategoryId());
-		memento.putString(TAG_DESCRIPTION, command.getDescription());
-		memento.putString(TAG_ID, command.getId());
-		memento.putString(TAG_NAME, command.getName());
-		memento.putString(TAG_PLUGIN_ID, command.getPluginId());
-	}
-
-	static void writeCommands(IMemento memento, String name, List commands) {
-		if (memento == null || name == null || commands == null)
+	static void writeContextBindingDefinitions(IMemento memento, String name, List contextBindingDefinitions) {
+		if (memento == null || name == null || contextBindingDefinitions == null)
 			throw new NullPointerException();
 		
-		commands = new ArrayList(commands);
-		Iterator iterator = commands.iterator();
+		contextBindingDefinitions = new ArrayList(contextBindingDefinitions);
+		Iterator iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ICommand.class);
+			Util.assertInstance(iterator.next(), IContextBindingDefinition.class);
 
-		iterator = commands.iterator();
+		iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeCommand(memento.createChild(name), (ICommand) iterator.next());
+			writeContextBindingDefinition(memento.createChild(name), (IContextBindingDefinition) iterator.next());
 	}
 	
-	static void writeContextBinding(IMemento memento, IContextBinding contextBinding) {
-		if (memento == null || contextBinding == null)
+	static void writeImageBindingDefinition(IMemento memento, IImageBindingDefinition imageBindingDefinition) {
+		if (memento == null || imageBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_COMMAND_ID, contextBinding.getCommandId());
-		memento.putString(TAG_CONTEXT_ID, contextBinding.getContextId());
-		memento.putString(TAG_PLUGIN_ID, contextBinding.getPluginId());
+		memento.putString(TAG_COMMAND_ID, imageBindingDefinition.getCommandId());
+		memento.putString(TAG_IMAGE_STYLE, imageBindingDefinition.getImageStyle());
+		memento.putString(TAG_IMAGE_URI, imageBindingDefinition.getImageUri());
+		memento.putString(TAG_LOCALE, imageBindingDefinition.getLocale());
+		memento.putString(TAG_PLATFORM, imageBindingDefinition.getPlatform());
+		memento.putString(TAG_PLUGIN_ID, imageBindingDefinition.getPluginId());
 	}
 
-	static void writeContextBindings(IMemento memento, String name, List contextBindings) {
-		if (memento == null || name == null || contextBindings == null)
+	static void writeImageBindingDefinitions(IMemento memento, String name, List imageBindingDefinitions) {
+		if (memento == null || name == null || imageBindingDefinitions == null)
 			throw new NullPointerException();
 		
-		contextBindings = new ArrayList(contextBindings);
-		Iterator iterator = contextBindings.iterator();
+		imageBindingDefinitions = new ArrayList(imageBindingDefinitions);
+		Iterator iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IContextBinding.class);
+			Util.assertInstance(iterator.next(), IImageBindingDefinition.class);
 
-		iterator = contextBindings.iterator();
+		iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeContextBinding(memento.createChild(name), (IContextBinding) iterator.next());
+			writeImageBindingDefinition(memento.createChild(name), (IImageBindingDefinition) iterator.next());
 	}
-	
-	static void writeImageBinding(IMemento memento, IImageBinding imageBinding) {
-		if (memento == null || imageBinding == null)
+
+	static void writeKeyBindingDefinition(IMemento memento, IKeyBindingDefinition keyBindingDefinition) {
+		if (memento == null || keyBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_COMMAND_ID, imageBinding.getCommandId());
-		memento.putString(TAG_IMAGE_STYLE, imageBinding.getImageStyle());
-		memento.putString(TAG_IMAGE_URI, imageBinding.getImageUri());
-		memento.putString(TAG_LOCALE, imageBinding.getLocale());
-		memento.putString(TAG_PLATFORM, imageBinding.getPlatform());
-		memento.putString(TAG_PLUGIN_ID, imageBinding.getPluginId());
+		memento.putString(TAG_COMMAND_ID, keyBindingDefinition.getCommandId());
+		memento.putString(TAG_CONTEXT_ID, keyBindingDefinition.getContextId());
+		memento.putString(TAG_KEY_CONFIGURATION_ID, keyBindingDefinition.getKeyConfigurationId());
+		memento.putString(TAG_KEY_SEQUENCE, keyBindingDefinition.getKeySequence().toString());
+		memento.putString(TAG_LOCALE, keyBindingDefinition.getLocale());
+		memento.putString(TAG_PLATFORM, keyBindingDefinition.getPlatform());
+		memento.putString(TAG_PLUGIN_ID, keyBindingDefinition.getPluginId());
 	}
 
-	static void writeImageBindings(IMemento memento, String name, List imageBindings) {
-		if (memento == null || name == null || imageBindings == null)
+	static void writeKeyBindingDefinitions(IMemento memento, String name, List keyBindingDefinitions) {
+		if (memento == null || name == null || keyBindingDefinitions == null)
 			throw new NullPointerException();
 		
-		imageBindings = new ArrayList(imageBindings);
-		Iterator iterator = imageBindings.iterator();
+		keyBindingDefinitions = new ArrayList(keyBindingDefinitions);
+		Iterator iterator = keyBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IImageBinding.class);
+			Util.assertInstance(iterator.next(), IKeyBindingDefinition.class);
 
-		iterator = imageBindings.iterator();
-
-		while (iterator.hasNext()) 
-			writeImageBinding(memento.createChild(name), (IImageBinding) iterator.next());
-	}
-
-	static void writeKeyBinding(IMemento memento, IKeyBinding keyBinding) {
-		if (memento == null || keyBinding == null)
-			throw new NullPointerException();
-
-		memento.putString(TAG_COMMAND_ID, keyBinding.getCommandId());
-		memento.putString(TAG_CONTEXT_ID, keyBinding.getContextId());
-		memento.putString(TAG_KEY_CONFIGURATION_ID, keyBinding.getKeyConfigurationId());
-		memento.putString(TAG_KEY_SEQUENCE, keyBinding.getKeySequence().toString());
-		memento.putString(TAG_LOCALE, keyBinding.getLocale());
-		memento.putString(TAG_PLATFORM, keyBinding.getPlatform());
-		memento.putString(TAG_PLUGIN_ID, keyBinding.getPluginId());
-	}
-
-	static void writeKeyBindings(IMemento memento, String name, List keyBindings) {
-		if (memento == null || name == null || keyBindings == null)
-			throw new NullPointerException();
-		
-		keyBindings = new ArrayList(keyBindings);
-		Iterator iterator = keyBindings.iterator();
-
-		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IKeyBinding.class);
-
-		iterator = keyBindings.iterator();
+		iterator = keyBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeKeyBinding(memento.createChild(name), (IKeyBinding) iterator.next());
+			writeKeyBindingDefinition(memento.createChild(name), (IKeyBindingDefinition) iterator.next());
 	}
 
-	static void writeKeyConfiguration(IMemento memento, IKeyConfiguration keyConfiguration) {
-		if (memento == null || keyConfiguration == null)
+	static void writeKeyConfigurationDefinition(IMemento memento, IKeyConfigurationDefinition keyConfigurationDefinition) {
+		if (memento == null || keyConfigurationDefinition == null)
 			throw new NullPointerException();
 	
-		memento.putString(TAG_DESCRIPTION, keyConfiguration.getDescription());
-		memento.putString(TAG_ID, keyConfiguration.getId());
-		memento.putString(TAG_NAME, keyConfiguration.getName());
-		memento.putString(TAG_PARENT_ID, keyConfiguration.getParentId());
-		memento.putString(TAG_PLUGIN_ID, keyConfiguration.getPluginId());
+		memento.putString(TAG_DESCRIPTION, keyConfigurationDefinition.getDescription());
+		memento.putString(TAG_ID, keyConfigurationDefinition.getId());
+		memento.putString(TAG_NAME, keyConfigurationDefinition.getName());
+		memento.putString(TAG_PARENT_ID, keyConfigurationDefinition.getParentId());
+		memento.putString(TAG_PLUGIN_ID, keyConfigurationDefinition.getPluginId());
 	}
 	
-	static void writeKeyConfigurations(IMemento memento, String name, List keyConfigurations) {
-		if (memento == null || name == null || keyConfigurations == null)
+	static void writeKeyConfigurationDefinitions(IMemento memento, String name, List keyConfigurationDefinitions) {
+		if (memento == null || name == null || keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 			
-		keyConfigurations = new ArrayList(keyConfigurations);
-		Iterator iterator = keyConfigurations.iterator();
+		keyConfigurationDefinitions = new ArrayList(keyConfigurationDefinitions);
+		Iterator iterator = keyConfigurationDefinitions.iterator();
 	
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IKeyConfiguration.class);
+			Util.assertInstance(iterator.next(), IKeyConfigurationDefinition.class);
 	
-		iterator = keyConfigurations.iterator();
+		iterator = keyConfigurationDefinitions.iterator();
 	
 		while (iterator.hasNext()) 
-			writeKeyConfiguration(memento.createChild(name), (IKeyConfiguration) iterator.next());
+			writeKeyConfigurationDefinition(memento.createChild(name), (IKeyConfigurationDefinition) iterator.next());
 	}
 
 	// TODO deprecated start

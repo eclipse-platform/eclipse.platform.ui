@@ -16,43 +16,43 @@ import java.util.List;
 
 abstract class AbstractRegistry implements IRegistry {
 
-	protected List activeKeyConfigurations = Collections.EMPTY_LIST;
-	protected List categories = Collections.EMPTY_LIST; 
-	protected List commands = Collections.EMPTY_LIST; 
-	protected List contextBindings = Collections.EMPTY_LIST;
-	protected List imageBindings = Collections.EMPTY_LIST;
-	protected List keyBindings = Collections.EMPTY_LIST;
-	protected List keyConfigurations = Collections.EMPTY_LIST;
+	protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;
+	protected List categoryDefinitions = Collections.EMPTY_LIST; 
+	protected List commandDefinitions = Collections.EMPTY_LIST; 
+	protected List contextBindingDefinitions = Collections.EMPTY_LIST;
+	protected List imageBindingDefinitions = Collections.EMPTY_LIST;
+	protected List keyBindingDefinitions = Collections.EMPTY_LIST;
+	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractRegistry() {
 		super();
 	}
 
-	public List getActiveKeyConfigurations() {
-		return activeKeyConfigurations;
+	public List getActiveKeyConfigurationDefinitions() {
+		return activeKeyConfigurationDefinitions;
 	}
 
-	public List getCategories() {
-		return categories;
+	public List getCategoryDefinitions() {
+		return categoryDefinitions;
 	}
 	
-	public List getCommands() {
-		return commands;
+	public List getCommandDefinitions() {
+		return commandDefinitions;
 	}
 
-	public List getContextBindings() {
-		return contextBindings;
+	public List getContextBindingDefinitions() {
+		return contextBindingDefinitions;
 	}
 
-	public List getImageBindings() {
-		return imageBindings;
+	public List getImageBindingDefinitions() {
+		return imageBindingDefinitions;
 	}
 	
-	public List getKeyBindings() {
-		return keyBindings;
+	public List getKeyBindingDefinitions() {
+		return keyBindingDefinitions;
 	}
 
-	public List getKeyConfigurations() {
-		return keyConfigurations;
+	public List getKeyConfigurationDefinitions() {
+		return keyConfigurationDefinitions;
 	}
 }	

@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.commands.ICategory;
+import org.eclipse.ui.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class Category implements Comparable, ICategory {
+final class CategoryDefinition implements Comparable, ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Category.class.getName().hashCode();
+	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
@@ -32,7 +32,7 @@ final class Category implements Comparable, ICategory {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((ICategory) left).getName(), ((ICategory) right).getName());
+					return Collator.getInstance().compare(((ICategoryDefinition) left).getName(), ((ICategoryDefinition) right).getName());
 				}	
 			};		
 		
@@ -48,9 +48,9 @@ final class Category implements Comparable, ICategory {
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategory.class);				
-			ICategory category = (ICategory) object;
-			sortedMap.put(category.getId(), category);									
+			Util.assertInstance(object, ICategoryDefinition.class);				
+			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			sortedMap.put(categoryDefinition.getId(), categoryDefinition);									
 		}			
 		
 		return sortedMap;
@@ -65,9 +65,9 @@ final class Category implements Comparable, ICategory {
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategory.class);			
-			ICategory category = (ICategory) object;
-			sortedMap.put(category.getName(), category);									
+			Util.assertInstance(object, ICategoryDefinition.class);			
+			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			sortedMap.put(categoryDefinition.getName(), categoryDefinition);									
 		}			
 		
 		return sortedMap;
@@ -78,7 +78,7 @@ final class Category implements Comparable, ICategory {
 	private String name;
 	private String pluginId;
 	
-	Category(String description, String id, String name, String pluginId) {
+	CategoryDefinition(String description, String id, String name, String pluginId) {
 		super();
 		
 		if (id == null || name == null)
@@ -91,17 +91,17 @@ final class Category implements Comparable, ICategory {
 	}
 	
 	public int compareTo(Object object) {
-		Category category = (Category) object;
-		int compareTo = id.compareTo(category.id);
+		CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+		int compareTo = id.compareTo(categoryDefinition.id);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(category.name);			
+			compareTo = name.compareTo(categoryDefinition.name);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, category.description);
+				compareTo = Util.compare(description, categoryDefinition.description);
 				
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, category.pluginId);								
+					compareTo = Util.compare(pluginId, categoryDefinition.pluginId);								
 			}
 		}
 		
@@ -109,11 +109,11 @@ final class Category implements Comparable, ICategory {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Category))
+		if (!(object instanceof CategoryDefinition))
 			return false;
 
-		Category category = (Category) object;	
-		return Util.equals(description, category.description) && id.equals(category.id) && name.equals(category.name) && Util.equals(pluginId, category.pluginId);
+		CategoryDefinition categoryDefinition = (CategoryDefinition) object;	
+		return Util.equals(description, categoryDefinition.description) && id.equals(categoryDefinition.id) && name.equals(categoryDefinition.name) && Util.equals(pluginId, categoryDefinition.pluginId);
 	}
 
 	public String getDescription() {

@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.commands.IActiveKeyConfiguration;
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IImageBinding;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.commands.ICategoryDefinition;
+import org.eclipse.ui.commands.ICommandDefinition;
+import org.eclipse.ui.commands.IContextBindingDefinition;
+import org.eclipse.ui.commands.IImageBindingDefinition;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
+import org.eclipse.ui.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableRegistry extends AbstractRegistry implements IMutableRegistry {
@@ -28,31 +28,31 @@ abstract class AbstractMutableRegistry extends AbstractRegistry implements IMuta
 		super();
 	}
 
-	public void setActiveKeyConfigurations(List activeKeyConfigurations) {
-		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, IActiveKeyConfiguration.class);
+	public void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions) {
+		this.activeKeyConfigurationDefinitions = Util.safeCopy(activeKeyConfigurationDefinitions, IActiveKeyConfigurationDefinition.class);
 	}
 	
-	public void setCategories(List categories) {
-		this.categories = Util.safeCopy(categories, ICategory.class);	
+	public void setCategoryDefinitions(List categoryDefinitions) {
+		this.categoryDefinitions = Util.safeCopy(categoryDefinitions, ICategoryDefinition.class);	
 	}
 	
-	public void setCommands(List commands) {
-		this.commands = Util.safeCopy(commands, ICommand.class);	
+	public void setCommandDefinitions(List commandDefinitions) {
+		this.commandDefinitions = Util.safeCopy(commandDefinitions, ICommandDefinition.class);	
 	}
 
-	public void setContextBindings(List contextBindings) {
-		this.contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);	
+	public void setContextBindingDefinitions(List contextBindingDefinitions) {
+		this.contextBindingDefinitions = Util.safeCopy(contextBindingDefinitions, IContextBindingDefinition.class);	
 	}
 
-	public void setImageBindings(List imageBindings) {
-		this.imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);	
+	public void setImageBindingDefinitions(List imageBindingDefinitions) {
+		this.imageBindingDefinitions = Util.safeCopy(imageBindingDefinitions, IImageBindingDefinition.class);	
 	}
 	
-	public void setKeyBindings(List keyBindings) {
-		this.keyBindings = Util.safeCopy(keyBindings, IKeyBinding.class);	
+	public void setKeyBindingDefinitions(List keyBindingDefinitions) {
+		this.keyBindingDefinitions = Util.safeCopy(keyBindingDefinitions, IKeyBindingDefinition.class);	
 	}
 	
-	public void setKeyConfigurations(List keyConfigurations) {
-		this.keyConfigurations = Util.safeCopy(keyConfigurations, IKeyConfiguration.class);		
+	public void setKeyConfigurationDefinitions(List keyConfigurationDefinitions) {
+		this.keyConfigurationDefinitions = Util.safeCopy(keyConfigurationDefinitions, IKeyConfigurationDefinition.class);		
 	}
 }

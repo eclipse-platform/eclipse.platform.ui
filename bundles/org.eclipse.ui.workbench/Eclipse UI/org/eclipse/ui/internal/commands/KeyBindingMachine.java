@@ -25,7 +25,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
 import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -86,7 +86,7 @@ public final class KeyBindingMachine {
 				if (strings.contains(id))
 					return null;
 							
-				KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationMap.get(id);
+				KeyConfigurationDefinition keyConfiguration = (KeyConfigurationDefinition) keyConfigurationMap.get(id);
 				
 				if (keyConfiguration == null)
 					return null;
@@ -289,7 +289,7 @@ public final class KeyBindingMachine {
 		Iterator iterator = keyBindingSet.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof IKeyBinding))
+			if (!(iterator.next() instanceof IKeyBindingDefinition))
 				throw new IllegalArgumentException();
 
 		if (this.keyBindingSet.equals(keyBindingSet))
@@ -396,7 +396,7 @@ public final class KeyBindingMachine {
 			Iterator iterator = keyBindingSet.iterator();
 		
 			while (iterator.hasNext()) {
-				IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+				IKeyBindingDefinition keyBinding = (IKeyBindingDefinition) iterator.next();
 				Path context = (Path) contextMap.get(keyBinding.getContextId());
 		
 				if (context == null)

@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.commands;
 
+import org.eclipse.ui.handles.IHandle;
+import org.eclipse.ui.handles.NotDefinedException;
+
 /**
  * <p>
  * JAVADOC
@@ -24,40 +27,14 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IKeyConfiguration {
+public interface IKeyConfigurationDefinitionHandle extends IHandle {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	IKeyConfigurationDefinition getKeyConfigurationDefinition()
+		throws NotDefinedException;
 }

@@ -47,13 +47,13 @@ final class FileRegistry extends AbstractMutableRegistry {
 			
 		try {
 			IMemento memento = XMLMemento.createReadRoot(reader);
-			activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveKeyConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
-			categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
-			commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
-			contextBindings = Collections.unmodifiableList(Persistence.readContextBindings(memento, Persistence.TAG_CONTEXT_BINDING, null));
-			imageBindings = Collections.unmodifiableList(Persistence.readImageBindings(memento, Persistence.TAG_IMAGE_BINDING, null));
-			keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK));
-			keyConfigurations = Collections.unmodifiableList(Persistence.readKeyConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
+			activeKeyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readActiveKeyConfigurationDefinitions(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+			categoryDefinitions = Collections.unmodifiableList(Persistence.readCategoryDefinitions(memento, Persistence.TAG_CATEGORY, null));
+			commandDefinitions = Collections.unmodifiableList(Persistence.readCommandDefinitions(memento, Persistence.TAG_COMMAND, null));
+			contextBindingDefinitions = Collections.unmodifiableList(Persistence.readContextBindingDefinitions(memento, Persistence.TAG_CONTEXT_BINDING, null));
+			imageBindingDefinitions = Collections.unmodifiableList(Persistence.readImageBindingDefinitions(memento, Persistence.TAG_IMAGE_BINDING, null));
+			keyBindingDefinitions = Collections.unmodifiableList(Persistence.readKeyBindingDefinitions(memento, Persistence.TAG_KEY_BINDING, null, RANK));
+			keyConfigurationDefinitions = Collections.unmodifiableList(Persistence.readKeyConfigurationDefinitions(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 		} catch (WorkbenchException eWorkbench) {
 			throw new IOException();
 		} finally {
@@ -64,13 +64,13 @@ final class FileRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeActiveKeyConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
-		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
-		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
-		Persistence.writeContextBindings(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindings);
-		Persistence.writeImageBindings(xmlMemento, Persistence.TAG_IMAGE_BINDING, imageBindings);
-		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
-		Persistence.writeKeyConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
+		Persistence.writeActiveKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurationDefinitions);		
+		Persistence.writeCategoryDefinitions(xmlMemento, Persistence.TAG_CATEGORY, categoryDefinitions);		
+		Persistence.writeCommandDefinitions(xmlMemento, Persistence.TAG_COMMAND, commandDefinitions);
+		Persistence.writeContextBindingDefinitions(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindingDefinitions);
+		Persistence.writeImageBindingDefinitions(xmlMemento, Persistence.TAG_IMAGE_BINDING, imageBindingDefinitions);
+		Persistence.writeKeyBindingDefinitions(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindingDefinitions);
+		Persistence.writeKeyConfigurationDefinitions(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
 		Writer writer = new BufferedWriter(new FileWriter(file));		
 		
 		try {

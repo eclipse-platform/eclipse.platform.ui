@@ -11,8 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.handles.IHandle;
-import org.eclipse.ui.handles.NotDefinedException;
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
@@ -27,14 +26,61 @@ import org.eclipse.ui.handles.NotDefinedException;
  * 
  * @since 3.0
  */
-public interface IKeyConfigurationHandle extends IHandle {
+public interface IKeyBindingDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws NotDefinedException
 	 */	
-	IKeyConfiguration getKeyConfiguration()
-		throws NotDefinedException;
+	String getCommandId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getKeyConfigurationId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	KeySequence getKeySequence();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getLocale();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	int getRank();
 }

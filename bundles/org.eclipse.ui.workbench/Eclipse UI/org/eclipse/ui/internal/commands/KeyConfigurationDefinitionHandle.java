@@ -11,26 +11,26 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICategoryHandle;
+import org.eclipse.ui.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.commands.IKeyConfigurationDefinitionHandle;
 import org.eclipse.ui.handles.NotDefinedException;
 import org.eclipse.ui.internal.handles.Handle;
 
-final class CategoryHandle extends Handle implements ICategoryHandle {
+final class KeyConfigurationDefinitionHandle extends Handle implements IKeyConfigurationDefinitionHandle {
 
-	CategoryHandle(String id) {
+	KeyConfigurationDefinitionHandle(String id) {
 		super(id);
 	}
 	
-	public ICategory getCategory()
+	public IKeyConfigurationDefinition getKeyConfigurationDefinition()
 		throws NotDefinedException {
-		return (ICategory) getObject();
+		return (IKeyConfigurationDefinition) getObject();
 	}
 
 	public void define(Object object) {
 		if (object == null)
 			throw new NullPointerException();
-		else if (!(object instanceof ICategory))
+		else if (!(object instanceof IKeyConfigurationDefinition))
 			throw new IllegalArgumentException();
 			
 		super.define(object);

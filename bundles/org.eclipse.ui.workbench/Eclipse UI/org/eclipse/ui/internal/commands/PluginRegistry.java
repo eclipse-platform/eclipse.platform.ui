@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.IActiveKeyConfiguration;
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IImageBinding;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.commands.ICategoryDefinition;
+import org.eclipse.ui.commands.ICommandDefinition;
+import org.eclipse.ui.commands.IContextBindingDefinition;
+import org.eclipse.ui.commands.IImageBindingDefinition;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
+import org.eclipse.ui.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
@@ -39,25 +39,25 @@ final class PluginRegistry extends AbstractRegistry {
 			String name = element.getName();
 
 			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
-				return readActiveKeyConfiguration(element);
+				return readActiveKeyConfigurationDefinition(element);
 
 			if (Persistence.TAG_CATEGORY.equals(name))
-				return readCategory(element);
+				return readCategoryDefinition(element);
 
 			if (Persistence.TAG_COMMAND.equals(name))
-				return readCommand(element);
+				return readCommandDefinition(element);
 
 			if (Persistence.TAG_CONTEXT_BINDING.equals(name))
-				return readContextBinding(element);
+				return readContextBindingDefinition(element);
 
 			if (Persistence.TAG_IMAGE_BINDING.equals(name))
-				return readImageBinding(element);
+				return readImageBindingDefinition(element);
 
 			if (Persistence.TAG_KEY_BINDING.equals(name))
-				return readKeyBinding(element);
+				return readKeyBindingDefinition(element);
 
 			if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
-				return readKeyConfiguration(element);
+				return readKeyConfigurationDefinition(element);
 
 			return true; // TODO return false;
 		}		
@@ -66,13 +66,13 @@ final class PluginRegistry extends AbstractRegistry {
 	private final static int RANK = 2;
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
-	private List activeKeyConfigurations;
-	private List categories; 
-	private List commands; 
-	private List contextBindings;
-	private List imageBindings;
-	private List keyBindings;
-	private List keyConfigurations;	
+	private List activeKeyConfigurationDefinitions;
+	private List categoryDefinitions; 
+	private List commandDefinitions; 
+	private List contextBindingDefinitions;
+	private List imageBindingDefinitions;
+	private List keyBindingDefinitions;
+	private List keyConfigurationDefinitions;	
 	private IPluginRegistry pluginRegistry;
 	private PluginRegistryReader pluginRegistryReader;
 	
@@ -87,52 +87,52 @@ final class PluginRegistry extends AbstractRegistry {
 
 	public void load()
 		throws IOException {
-		if (activeKeyConfigurations == null)
-			activeKeyConfigurations = new ArrayList();
+		if (activeKeyConfigurationDefinitions == null)
+			activeKeyConfigurationDefinitions = new ArrayList();
 		else 
-			activeKeyConfigurations.clear();		
+			activeKeyConfigurationDefinitions.clear();		
 	
-		if (categories == null)
-			categories = new ArrayList();
+		if (categoryDefinitions == null)
+			categoryDefinitions = new ArrayList();
 		else 
-			categories.clear();
+			categoryDefinitions.clear();
 		
-		if (commands == null)
-			commands = new ArrayList();
+		if (commandDefinitions == null)
+			commandDefinitions = new ArrayList();
 		else 
-			commands.clear();
+			commandDefinitions.clear();
 
-		if (contextBindings == null)
-			contextBindings = new ArrayList();
+		if (contextBindingDefinitions == null)
+			contextBindingDefinitions = new ArrayList();
 		else 
-			contextBindings.clear();
+			contextBindingDefinitions.clear();
 
-		if (imageBindings == null)
-			imageBindings = new ArrayList();
+		if (imageBindingDefinitions == null)
+			imageBindingDefinitions = new ArrayList();
 		else 
-			imageBindings.clear();
+			imageBindingDefinitions.clear();
 		
-		if (keyBindings == null)
-			keyBindings = new ArrayList();
+		if (keyBindingDefinitions == null)
+			keyBindingDefinitions = new ArrayList();
 		else 
-			keyBindings.clear();
+			keyBindingDefinitions.clear();
 
-		if (keyConfigurations == null)
-			keyConfigurations = new ArrayList();
+		if (keyConfigurationDefinitions == null)
+			keyConfigurationDefinitions = new ArrayList();
 		else 
-			keyConfigurations.clear();
+			keyConfigurationDefinitions.clear();
 
 		if (pluginRegistryReader == null)
 			pluginRegistryReader = new PluginRegistryReader();
 
 		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);		
-		super.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
-		super.categories = Collections.unmodifiableList(categories);
-		super.commands = Collections.unmodifiableList(commands);
-		super.contextBindings = Collections.unmodifiableList(contextBindings);
-		super.imageBindings = Collections.unmodifiableList(imageBindings);
-		super.keyBindings = Collections.unmodifiableList(keyBindings);
-		super.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
+		super.activeKeyConfigurationDefinitions = Collections.unmodifiableList(activeKeyConfigurationDefinitions);
+		super.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);
+		super.commandDefinitions = Collections.unmodifiableList(commandDefinitions);
+		super.contextBindingDefinitions = Collections.unmodifiableList(contextBindingDefinitions);
+		super.imageBindingDefinitions = Collections.unmodifiableList(imageBindingDefinitions);
+		super.keyBindingDefinitions = Collections.unmodifiableList(keyBindingDefinitions);
+		super.keyConfigurationDefinitions = Collections.unmodifiableList(keyConfigurationDefinitions);
 	}
 
 	private String getPluginId(IConfigurationElement element) {
@@ -152,65 +152,65 @@ final class PluginRegistry extends AbstractRegistry {
 		return pluginId;
 	}
 
-	private boolean readActiveKeyConfiguration(IConfigurationElement element) {
-		IActiveKeyConfiguration activeKeyConfiguration = Persistence.readActiveKeyConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readActiveKeyConfigurationDefinition(IConfigurationElement element) {
+		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence.readActiveKeyConfigurationDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (activeKeyConfiguration != null)
-			activeKeyConfigurations.add(activeKeyConfiguration);	
+		if (activeKeyConfigurationDefinition != null)
+			activeKeyConfigurationDefinitions.add(activeKeyConfigurationDefinition);	
 		
 		return true;
 	}
 
-	private boolean readCategory(IConfigurationElement element) {
-		ICategory category = Persistence.readCategory(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readCategoryDefinition(IConfigurationElement element) {
+		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (category != null)
-			categories.add(category);	
+		if (categoryDefinition != null)
+			categoryDefinitions.add(categoryDefinition);	
 		
 		return true;
 	}
 	
-	private boolean readCommand(IConfigurationElement element) {
-		ICommand command = Persistence.readCommand(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readCommandDefinition(IConfigurationElement element) {
+		ICommandDefinition commandDefinition = Persistence.readCommandDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (command != null)
-			commands.add(command);	
-		
-		return true;
-	}
-
-	private boolean readContextBinding(IConfigurationElement element) {
-		IContextBinding contextBinding = Persistence.readContextBinding(new ConfigurationElementMemento(element), getPluginId(element));
-	
-		if (contextBinding != null)
-			contextBindings.add(contextBinding);	
+		if (commandDefinition != null)
+			commandDefinitions.add(commandDefinition);	
 		
 		return true;
 	}
 
-	private boolean readImageBinding(IConfigurationElement element) {
-		IImageBinding imageBinding = Persistence.readImageBinding(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readContextBindingDefinition(IConfigurationElement element) {
+		IContextBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (contextBindingDefinition != null)
+			contextBindingDefinitions.add(contextBindingDefinition);	
+		
+		return true;
+	}
+
+	private boolean readImageBindingDefinition(IConfigurationElement element) {
+		IImageBindingDefinition imageBinding = Persistence.readImageBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
 		if (imageBinding != null)
-			imageBindings.add(imageBinding);	
+			imageBindingDefinitions.add(imageBinding);	
 		
 		return true;
 	}
 
-	private boolean readKeyBinding(IConfigurationElement element) {
-		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element), RANK);
+	private boolean readKeyBindingDefinition(IConfigurationElement element) {
+		IKeyBindingDefinition keyBindingDefinition = Persistence.readKeyBindingDefinition(new ConfigurationElementMemento(element), getPluginId(element), RANK);
 	
-		if (keyBinding != null)
-			keyBindings.add(keyBinding);	
+		if (keyBindingDefinition != null)
+			keyBindingDefinitions.add(keyBindingDefinition);	
 		
 		return true;
 	}
 	
-	private boolean readKeyConfiguration(IConfigurationElement element) {
-		IKeyConfiguration keyConfiguration = Persistence.readKeyConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
+	private boolean readKeyConfigurationDefinition(IConfigurationElement element) {
+		IKeyConfigurationDefinition keyConfigurationDefinition = Persistence.readKeyConfigurationDefinition(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (keyConfiguration != null)
-			keyConfigurations.add(keyConfiguration);	
+		if (keyConfigurationDefinition != null)
+			keyConfigurationDefinitions.add(keyConfigurationDefinition);	
 		
 		return true;
 	}

@@ -19,17 +19,17 @@ interface IMutableRegistry extends IRegistry {
 	void save()
 		throws IOException;
 
-	void setActiveKeyConfigurations(List activeKeyConfigurations);
+	void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions);
 	
-	void setCategories(List categories);
+	void setCategoryDefinitions(List categoryDefinitions);
 	
-	void setCommands(List commands);
+	void setCommandDefinitions(List commandDefinitions);
 	
-	void setContextBindings(List contextBindings);
+	void setContextBindingDefinitions(List contextBindingDefinitions);
 
-	void setImageBindings(List imageBindings);
+	void setImageBindingDefinitions(List imageBindingDefinitions);
 
-	void setKeyBindings(List keyBindings);
+	void setKeyBindingDefinitions(List keyBindingDefinitions);
 	
-	void setKeyConfigurations(List keyConfigurations);
+	void setKeyConfigurationDefinitions(List keyConfigurationDefinitions);
 }

@@ -23,14 +23,14 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 
 final class KeyBindingNode {
 
-	static void add(SortedMap tree, IKeyBinding keyBinding, State contextConfiguration, State platformLocale) {
+	static void add(SortedMap tree, IKeyBindingDefinition keyBinding, State contextConfiguration, State platformLocale) {
 		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
 		KeyBindingNode node = null;
@@ -91,7 +91,7 @@ final class KeyBindingNode {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, IKeyBinding keyBinding, State contextConfiguration, State platformLocale) {
+	static void remove(SortedMap tree, IKeyBindingDefinition keyBinding, State contextConfiguration, State platformLocale) {
 		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
 		KeyBindingNode node = null;

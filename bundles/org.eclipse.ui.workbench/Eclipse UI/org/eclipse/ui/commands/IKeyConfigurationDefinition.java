@@ -24,7 +24,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICategory {
+public interface IKeyConfigurationDefinition {
 
 	/**
 	 * JAVADOC
@@ -46,6 +46,13 @@ public interface ICategory {
 	 * @return
 	 */	
 	String getName();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getParentId();
 
 	/**
 	 * JAVADOC

@@ -24,47 +24,40 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IImageBinding {
+public interface ICommandDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCommandId();
+	String getCategoryId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getImageStyle();
-
+	String getDescription();
+		
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getImageUri();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getLocale();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
+	String getId();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getPluginId();	
+	String getName();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

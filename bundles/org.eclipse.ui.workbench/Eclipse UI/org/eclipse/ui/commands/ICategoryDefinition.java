@@ -24,26 +24,33 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IContextBinding {
+public interface ICategoryDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCommandId();
+	String getDescription();
+		
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getName();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
+	String getPluginId();
 }

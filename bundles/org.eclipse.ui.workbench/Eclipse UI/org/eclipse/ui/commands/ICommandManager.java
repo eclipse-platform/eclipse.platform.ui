@@ -37,11 +37,7 @@ public interface ICommandManager {
 		get/setActiveKeyConfigurationId();
 		get/setLocale();
 		get/setPlatform();
-		
-		ICommandHandle getCommandHandle(String commandId);
-		SortedMap getIdToCommandMap();
 
-	
 	ICommand
 
 		getCommandDefinition();
@@ -60,41 +56,17 @@ public interface ICommandManager {
 		isActive();		
 		isContext();
 
+		// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
+		List getKeySequences();
+		Map getImageUrisByStyle();
+		SortedSet getContextIds();
 	
 	ICommandRegistry
 		
 		SortedSet getContextBindingDefinitions();
 		SortedSet getImageBindingsDefinitions();
 		SortedSet getKeyBindingDefinitions();
-
-	
-	IContextManager
-
-		get/setActiveContextIds();
-		
-		IContextHandle getContextHandle(String contextId);
-		SortedMap getIdToContextMap();
-		
-	
-	IContext
-	
-		IContextDefinition getContextDefinition();
-		
-		isActive();		
-
-
-
-		// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
-		List getKeySequences();
-		Map getImageUrisByStyle();
-		SortedSet getContextIds();
-		
-		boolean inContext(); ids of getContextBindings() in activeContextIds?		
 	*/	
-
-
-
-
 
 	/**
 	 * Registers an ICommandManagerListener instance with this command manager.

@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.keys.KeySequence;
-
 /**
  * <p>
  * JAVADOC
@@ -26,21 +24,7 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.0
  */
-public interface IKeyBinding {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getCommandId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getContextId();
+public interface IActiveKeyConfigurationDefinition {
 
 	/**
 	 * JAVADOC
@@ -48,39 +32,11 @@ public interface IKeyBinding {
 	 * @return
 	 */	
 	String getKeyConfigurationId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	KeySequence getKeySequence();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getLocale();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	int getRank();
+	String getPluginId();
 }

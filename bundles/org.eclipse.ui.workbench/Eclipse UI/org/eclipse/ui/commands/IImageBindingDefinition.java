@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.handles.IHandle;
-import org.eclipse.ui.handles.NotDefinedException;
-
 /**
  * <p>
  * JAVADOC
@@ -27,14 +24,47 @@ import org.eclipse.ui.handles.NotDefinedException;
  * 
  * @since 3.0
  */
-public interface ICategoryHandle extends IHandle {
+public interface IImageBindingDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws NotDefinedException
 	 */	
-	ICategory getCategory()
-		throws NotDefinedException;
+	String getCommandId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getImageStyle();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getImageUri();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getLocale();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();	
 }

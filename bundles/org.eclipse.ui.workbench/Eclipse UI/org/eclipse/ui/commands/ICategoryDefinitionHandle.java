@@ -9,27 +9,32 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
-import java.io.IOException;
-import java.util.List;
+import org.eclipse.ui.handles.IHandle;
+import org.eclipse.ui.handles.NotDefinedException;
 
-interface IRegistry {
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface ICategoryDefinitionHandle extends IHandle {
 
-	List getActiveKeyConfigurationDefinitions();
-
-	List getCategoryDefinitions();
-	
-	List getCommandDefinitions();
-
-	List getContextBindingDefinitions();
-
-	List getImageBindingDefinitions();
-
-	List getKeyBindingDefinitions();
-	
-	List getKeyConfigurationDefinitions();
-
-	void load()
-		throws IOException;
-}	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 * @throws NotDefinedException
+	 */	
+	ICategoryDefinition getCategoryDefinition()
+		throws NotDefinedException;
+}

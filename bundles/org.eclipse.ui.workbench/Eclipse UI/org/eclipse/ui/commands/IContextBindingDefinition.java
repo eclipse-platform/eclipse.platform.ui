@@ -24,19 +24,26 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IActiveKeyConfiguration {
+public interface IContextBindingDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getKeyConfigurationId();
-	
+	String getCommandId();
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getPluginId();
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
 }

@@ -11,19 +11,19 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IContextBinding;
+import org.eclipse.ui.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextBinding implements Comparable, IContextBinding {
+final class ContextBindingDefinition implements Comparable, IContextBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ContextBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = ContextBindingDefinition.class.getName().hashCode();
 
 	private String commandId;
 	private String contextId;
 	private String pluginId;
 
-	ContextBinding(String commandId, String contextId, String pluginId) {
+	ContextBindingDefinition(String commandId, String contextId, String pluginId) {
 		super();
 		
 		if (commandId == null || contextId == null)
@@ -35,25 +35,25 @@ final class ContextBinding implements Comparable, IContextBinding {
 	}
 	
 	public int compareTo(Object object) {
-		ContextBinding contextBinding = (ContextBinding) object;
-		int compareTo = commandId.compareTo(contextBinding.commandId);
+		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;
+		int compareTo = commandId.compareTo(contextBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = contextId.compareTo(contextBinding.contextId);			
+			compareTo = contextId.compareTo(contextBindingDefinition.contextId);			
 		
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, contextBinding.pluginId);								
+				compareTo = Util.compare(pluginId, contextBindingDefinition.pluginId);								
 		}
 		
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextBinding))
+		if (!(object instanceof ContextBindingDefinition))
 			return false;
 
-		ContextBinding contextBinding = (ContextBinding) object;	
-		return commandId.equals(contextBinding.commandId) && contextId.equals(contextBinding.contextId) && Util.equals(pluginId, contextBinding.pluginId);
+		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;	
+		return commandId.equals(contextBindingDefinition.commandId) && contextId.equals(contextBindingDefinition.contextId) && Util.equals(pluginId, contextBindingDefinition.pluginId);
 	}
 
 	public String getCommandId() {

@@ -11,18 +11,18 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IActiveKeyConfiguration;
+import org.eclipse.ui.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class ActiveKeyConfiguration implements Comparable, IActiveKeyConfiguration {
+final class ActiveKeyConfigurationDefinition implements Comparable, IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActiveKeyConfiguration.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class.getName().hashCode();
 
 	private String keyConfigurationId;
 	private String pluginId;
 
-	ActiveKeyConfiguration(String keyConfigurationId, String pluginId) {
+	ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
 		super();
 		
 		if (keyConfigurationId == null)
@@ -33,21 +33,21 @@ final class ActiveKeyConfiguration implements Comparable, IActiveKeyConfiguratio
 	}
 	
 	public int compareTo(Object object) {
-		ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) object;
-		int compareTo = keyConfigurationId.compareTo(activeKeyConfiguration.keyConfigurationId);			
+		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;
+		int compareTo = keyConfigurationId.compareTo(activeKeyConfigurationDefinition.keyConfigurationId);			
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pluginId, activeKeyConfiguration.pluginId);								
+			compareTo = Util.compare(pluginId, activeKeyConfigurationDefinition.pluginId);								
 
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ActiveKeyConfiguration))
+		if (!(object instanceof ActiveKeyConfigurationDefinition))
 			return false;
 
-		ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) object;	
-		return keyConfigurationId.equals(activeKeyConfiguration.keyConfigurationId) && Util.equals(pluginId, activeKeyConfiguration.pluginId);
+		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;	
+		return keyConfigurationId.equals(activeKeyConfigurationDefinition.keyConfigurationId) && Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
 	}
 
 	public String getKeyConfigurationId() {
