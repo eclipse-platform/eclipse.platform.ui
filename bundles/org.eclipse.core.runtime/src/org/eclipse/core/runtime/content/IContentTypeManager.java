@@ -56,8 +56,8 @@ public interface IContentTypeManager {
 	 * will flow to the caller.
 	 * </p> 
 	 * 
-	 * @param contents
-	 * @param fileName
+	 * @param contents an input stream
+	 * @param fileName the file name associated to the contents, or <code>null</code> 
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
