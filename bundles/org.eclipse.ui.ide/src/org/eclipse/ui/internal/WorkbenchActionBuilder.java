@@ -14,6 +14,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -28,9 +29,9 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -351,12 +352,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator());
 		menu.add(propertiesAction);
 
-		// @issue casting to workbench to gain editor history 
-		menu.add(
-			new ReopenEditorMenu(
-				getWindow(),
-				((Workbench) PlatformUI.getWorkbench()).getEditorHistory(),
-				true));
+		menu.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
 		menu.add(new Separator());
 		menu.add(ActionFactory.QUIT.create(getWindow()));
@@ -489,7 +485,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
 		menu.add(openPreferencesAction);
-		menu.add(new SwitchToWindowMenu(getWindow(), true));
+		menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
 		return menu;
 	}
 
@@ -499,15 +495,15 @@ public final class WorkbenchActionBuilder {
 	private void addPerspectiveActions(MenuManager menu) {
 		{
 			String openText = IDEWorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
-			MenuManager changePerspMenuMgr = new MenuManager(openText); //$NON-NLS-1$
-			ChangeToPerspectiveMenu changePerspMenuItem =
-				new ChangeToPerspectiveMenu(getWindow());
+			MenuManager changePerspMenuMgr = new MenuManager(openText);
+			IContributionItem changePerspMenuItem = 
+				ContributionItemFactory.PERSPECTIVES.create(getWindow());
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
 		}
 		{
 			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			ShowViewMenu showViewMenu = new ShowViewMenu(getWindow());
+			IContributionItem showViewMenu = ContributionItemFactory.OPEN_VIEWS.create(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
 		}
@@ -837,7 +833,7 @@ public final class WorkbenchActionBuilder {
 				removePinEditorAction(windowConfigurer);
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			// @issue idiosyncratic semantics of pinEditor
-			pinEditorAction.updateState();
+//			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
 			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
@@ -868,7 +864,7 @@ public final class WorkbenchActionBuilder {
 	private void removePinEditorAction(IWorkbenchWindowConfigurer configurer) {
 		// Flag the action so it is hidden in the editor menu.
 		// @issue idiosyncratic semantics of pinEditor
-		pinEditorAction.setVisible(false);
+//		pinEditorAction.setVisible(false);
 		
 		IToolBarManager tBarMgr = configurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
 		if (tBarMgr == null) {
