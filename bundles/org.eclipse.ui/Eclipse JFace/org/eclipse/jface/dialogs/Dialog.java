@@ -529,6 +529,7 @@ protected Control getButtonBar() {
  * @return the cancel button or <code>null</code>
  * 
  * @see createButton
+ * @since 2.0
  */
 protected Button getCancelButton() {
 	return cancelButton;
@@ -565,6 +566,7 @@ public static Image getImage(String key) {
  * @return the OK button or <code>null</code>
  * 
  * @see createButton
+ * @since 2.0
  */
 protected Button getOKButton() {
 	return okButton;
