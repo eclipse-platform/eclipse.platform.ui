@@ -875,6 +875,9 @@ public void showPage(IWizardPage page) {
 	// (this allows lazy page control creation)
 	if (page.getControl() == null) {
 		page.createControl(pageContainer);
+		// the page is responsible for ensuring the created control is accessable
+		// via getControl.
+		Assert.isNotNull(page.getControl());
 		// ensure the dialog is large enough for this page
 		updateSize(page);
 	}
@@ -901,6 +904,9 @@ private void showStartingPage() {
 	// ensure the page control has been created
 	if (currentPage.getControl() == null) {
 		currentPage.createControl(pageContainer);
+		// the page is responsible for ensuring the created control is accessable
+		// via getControl.
+		Assert.isNotNull(currentPage.getControl());
 		// we do not need to update the size since the call
 		// to initialize bounds has not been made yet.
 	}

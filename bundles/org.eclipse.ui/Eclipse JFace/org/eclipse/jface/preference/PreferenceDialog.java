@@ -915,8 +915,12 @@ protected boolean showPage(IPreferenceNode node) {
 
 	// Ensure that the page control has been created
 	// (this allows lazy page control creation)
-	if (currentPage.getControl() == null) 
+	if (currentPage.getControl() == null) {
 		currentPage.createControl(pageContainer);
+		// the page is responsible for ensuring the created control is accessable
+		// via getControl.
+		Assert.isNotNull(currentPage.getControl());
+	}
 		
 	// Force calculation of the page's description label because
 	// label can be wrapped.

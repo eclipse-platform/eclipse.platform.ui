@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -161,7 +162,11 @@ public boolean canFinish() {
 public void createPageControls(Composite pageContainer) {
 	// the default behavior is to create all the pages controls
 	for (int i = 0; i < pages.size(); i++){
-		((IWizardPage)pages.get(i)).createControl(pageContainer);
+		IWizardPage page = (IWizardPage)pages.get(i);
+		page.createControl(pageContainer);
+		// page is responsible for ensuring the created control is accessable
+		// via getControl.
+		Assert.isNotNull(page.getControl());
 	}
 }
 /**
