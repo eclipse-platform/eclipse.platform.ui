@@ -33,7 +33,8 @@ public interface IContext {
 	/**
 	 * Returns a list of related topics for this help context.
 	 * 
-	 * @return a list of related help topics
+	 * @return a list of related help topics or <code>null</code>
+	 * if no related topics have been defined for this context.
 	 * @since 2.0
 	 */
 	public IHelpResource[] getRelatedTopics();

@@ -292,7 +292,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		sbuf.append("</p>"); //$NON-NLS-1$
 		IHelpResource[] links = context.getRelatedTopics();
 		IContext2 context2 = null;
-		if (context instanceof IContext2) {
+		if (links!=null && context instanceof IContext2) {
 			context2 = (IContext2)context;
 			ContextHelpSorter sorter = new ContextHelpSorter(context2);
 			sorter.sort(null, links);
