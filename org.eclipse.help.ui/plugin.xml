@@ -112,4 +112,29 @@
             label="%LocalHelp.label">
       </engine>
     </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="%actionSet.description"
+            id="org.eclipse.help.ui.actions"
+            label="%actionSet.label"
+            visible="true">
+         <action
+               class="org.eclipse.help.ui.internal.SearchAction"
+               icon="icons/etool16/search_menu.gif"
+               id="org.eclipse.help.ui.search"
+               label="%searchAction.label"
+               style="push"
+               toolbarPath="org.eclipse.ui.workbench.navigate"
+               tooltip="%searchAction.tooltip"/>
+         <action
+               class="org.eclipse.help.ui.internal.DynamicHelpAction"
+               icon="icons/etool16/help.gif"
+               id="org.eclipse.help.ui.dynamicHelp"
+               label="%searchAction.label"
+               style="push"
+               toolbarPath="org.eclipse.ui.workbench.navigate"
+               tooltip="%dynamicHelpAction.tooltip"/>
+      </actionSet>
+   </extension>
 </plugin>

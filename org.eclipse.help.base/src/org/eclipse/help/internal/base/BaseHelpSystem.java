@@ -274,7 +274,7 @@ public final class BaseHelpSystem {
 	}
 
 	private static String getBase(boolean documentOnly) {
-		String servlet = documentOnly ? "/help/topic" : "/help/hftopic";//$NON-NLS-1$
+		String servlet = documentOnly ? "/help/nftopic" : "/help/topic";//$NON-NLS-1$
 		return "http://" //$NON-NLS-1$
 				+ WebappManager.getHost() + ":" //$NON-NLS-1$
 				+ WebappManager.getPort() + servlet;
