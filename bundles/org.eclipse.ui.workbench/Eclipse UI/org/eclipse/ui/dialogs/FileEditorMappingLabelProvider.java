@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.jface.resource.ImageCache;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -42,7 +45,7 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
     /**
      * Images that will require disposal.
      */
-    private ImageCache imageCache = new ImageCache();
+    private List imagesToDispose = new ArrayList();
 
     /**
      * Creates an instance of this class.  The private visibility of this
@@ -57,7 +60,10 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
      */
     public void dispose() {
         super.dispose();
-        imageCache.dispose();
+        for (Iterator e = imagesToDispose.iterator(); e.hasNext();) {
+            ((Image) e.next()).dispose();
+        }
+        imagesToDispose.clear();
     }
 
     /**
@@ -83,11 +89,13 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
      * is remembered internally and will be deallocated by <code>dispose</code>.
      */
     public Image getImage(Object element) {
-    	if (element instanceof IFileEditorMapping) {
-			return imageCache.getImage(((IFileEditorMapping) element)
-					.getImageDescriptor());
-		}
-		return null;
+        if (element instanceof IFileEditorMapping) {
+            Image image = ((IFileEditorMapping) element).getImageDescriptor()
+                    .createImage();
+            imagesToDispose.add(image);
+            return image;
+        }
+        return null;
     }
 
     /* (non-Javadoc)

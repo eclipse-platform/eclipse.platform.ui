@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.jface.resource.ImageCache;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -21,7 +24,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * to manage the lifecycle of overlaid images.
  */
 class OverlayCache {
-    private ImageCache imageCache = new ImageCache(); /*from OverlayIcon to Image*/
+    private Map cache = new HashMap(); /*from OverlayIcon to Image*/
 
     /**
      * Returns and caches an image corresponding to the specified icon.
@@ -29,14 +32,23 @@ class OverlayCache {
      * @return the image
      */
     Image getImageFor(DecoratorOverlayIcon icon) {
-    	return imageCache.getImage(icon);
+        Image image = (Image) cache.get(icon);
+        if (image == null) {
+            image = icon.createImage();
+            cache.put(icon, image);
+        }
+        return image;
     }
 
     /**
      * Disposes of all images in the cache.
      */
     void disposeAll() {
-        imageCache.dispose();
+        for (Iterator it = cache.values().iterator(); it.hasNext();) {
+            Image image = (Image) it.next();
+            image.dispose();
+        }
+        cache.clear();
     }
 
     /**
