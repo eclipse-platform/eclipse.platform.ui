@@ -4,8 +4,11 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -97,6 +100,21 @@ public class MultiStepWizardDialog extends WizardDialog {
 			multiStepWizard.getStepContainer().nextPressed();
 		else
 			super.nextPressed();
+	}
+	
+	/**
+	 * Sets the label for the finish button
+	 */
+	/* package */ void setFinishLabel(String label) {
+		Button button = getButton(IDialogConstants.FINISH_ID);
+		if (button == null)
+			return;
+
+		if (label == null)
+			button.setText(IDialogConstants.FINISH_LABEL);
+		else
+			button.setText(label);
+		((Composite)button.getParent()).layout(true);
 	}
 	
 	/**

@@ -67,17 +67,10 @@ public abstract class Dialog extends Window {
 	private Control buttonBar;
 	
 	/**
-	 * The cancel button; <code>null</code> if no button is created with 
-	 * an ID equal to <code>IDialogConstants.CANCEL_ID</code>.
+	 * Collection of buttons created by the <code>createButton</code> method.
 	 */
-	private Button cancelButton;
-
-	/**
-	 * The ok button; <code>null</code> if no button is created with 
-	 * an ID equal to <code>IDialogConstants.OK_ID</code>.
-	 */
-	private Button okButton;
-
+	private HashMap buttons = new HashMap();
+	
 	/**
 	 * Font metrics to use for determining pixel sizes.
 	 */
@@ -370,11 +363,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 		}
 	}
 	button.setFont(parent.getFont());
-	
-	if(id == IDialogConstants.OK_ID)
-		okButton = button;
-	else if(id == IDialogConstants.CANCEL_ID)
-		cancelButton = button;
+	buttons.put(new Integer(id), button);
 	
 	return button;
 }
@@ -508,6 +497,21 @@ protected Control createDialogArea(Composite parent) {
 	return composite;
 }
 /**
+ * Returns the button created by the method <code>createButton</code>
+ * for the specified ID as defined on <code>IDialogConstants</code>. If 
+ * <code>createButton</code> was never called with this ID, or 
+ * if <code>createButton</code> is overridden, this method will return
+ * <code>null</code>.
+ * 
+ * @return the button for the ID or <code>null</code>
+ * 
+ * @see createButton
+ * @since 2.0
+ */
+protected Button getButton(int id) {
+	return (Button)buttons.get(new Integer(id));
+}
+/**
  * Returns the button bar control.
  * <p>
  * Clients may call this framework method, but should not override it.
@@ -530,9 +534,11 @@ protected Control getButtonBar() {
  * 
  * @see createButton
  * @since 2.0
+ * @deprecated Use <code>getButton(IDialogConstants.CANCEL_ID)</code> instead.
+ * 		This method will be removed soon.
  */
 protected Button getCancelButton() {
-	return cancelButton;
+	return getButton(IDialogConstants.CANCEL_ID);
 }
 /**
  * Returns the dialog area control.
@@ -567,9 +573,11 @@ public static Image getImage(String key) {
  * 
  * @see createButton
  * @since 2.0
+ * @deprecated Use <code>getButton(IDialogConstants.OK_ID)</code> instead.
+ * 		This method will be removed soon.
  */
 protected Button getOKButton() {
-	return okButton;
+	return getButton(IDialogConstants.OK_ID);
 }
 /**
  * Initializes the computation of horizontal and vertical dialog units
