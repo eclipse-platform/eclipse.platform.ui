@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.ui.ide"
    name="Ide Plug-in"
-   version="1.0.0"
+   version="3.0.0"
    provider-name=""
    class="org.eclipse.ui.internal.ide.IDEWorkbenchPlugin">
 
@@ -292,7 +293,6 @@
             id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>
    </extension>
-
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -324,7 +324,6 @@
             id="org.eclipse.ui.views.ProblemView">
       </view>
    </extension>
-
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
       <filter
