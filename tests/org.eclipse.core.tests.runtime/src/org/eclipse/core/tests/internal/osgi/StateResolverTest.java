@@ -109,9 +109,9 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("3.0", 2, resolutions.length);
 		Map deltasMap = new HashMap();
 		for (int i = 0; i < resolutions.length; i++)
-			deltasMap.put(resolutions[i].getBundle().getUniqueId(), resolutions[i]);
-		assertNotNull("3.1", deltasMap.get(b1.getUniqueId()));
-		assertNotNull("3.2", deltasMap.get(b2.getUniqueId()));
+			deltasMap.put(resolutions[i].getBundle().getSymbolicName(), resolutions[i]);
+		assertNotNull("3.1", deltasMap.get(b1.getSymbolicName()));
+		assertNotNull("3.2", deltasMap.get(b2.getSymbolicName()));
 		BundleDelta[] unresolutions = delta.getChanges(BundleDelta.UNRESOLVED, false);
 		assertEquals("4.0", 1, unresolutions.length);
 		assertEquals("4.1", unresolutions[0].getBundle(), b3);
@@ -143,13 +143,13 @@ public class StateResolverTest extends AbstractStateTest {
 		assertEquals("3.0", 6, resolutions.length);
 		Map deltasMap = new HashMap();
 		for (int i = 0; i < resolutions.length; i++)
-			deltasMap.put(resolutions[i].getBundle().getUniqueId(), resolutions[i]);
-		assertNotNull("3.1", deltasMap.get(b1.getUniqueId()));
-		assertNotNull("3.2", deltasMap.get(b2.getUniqueId()));
-		assertNotNull("3.3", deltasMap.get(b3.getUniqueId()));
-		assertNotNull("3.4", deltasMap.get(b4.getUniqueId()));
-		assertNotNull("3.5", deltasMap.get(b5.getUniqueId()));
-		assertNotNull("3.6", deltasMap.get(b6.getUniqueId()));
+			deltasMap.put(resolutions[i].getBundle().getSymbolicName(), resolutions[i]);
+		assertNotNull("3.1", deltasMap.get(b1.getSymbolicName()));
+		assertNotNull("3.2", deltasMap.get(b2.getSymbolicName()));
+		assertNotNull("3.3", deltasMap.get(b3.getSymbolicName()));
+		assertNotNull("3.4", deltasMap.get(b4.getSymbolicName()));
+		assertNotNull("3.5", deltasMap.get(b5.getSymbolicName()));
+		assertNotNull("3.6", deltasMap.get(b6.getSymbolicName()));
 		BundleDelta[] unresolutions = delta.getChanges(BundleDelta.UNRESOLVED, false);
 		assertEquals("4.0", 0, unresolutions.length);
 		assertFullyResolved("5.1", b1);

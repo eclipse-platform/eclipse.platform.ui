@@ -41,7 +41,7 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 
 	public static void assertEquals(String tag, BundleDescription original, BundleDescription copy) {
 		assertEquals(tag + ".0", original.getBundleId(), copy.getBundleId());
-		assertEquals(tag + ".1", original.getUniqueId(), copy.getUniqueId());
+		assertEquals(tag + ".1", original.getSymbolicName(), copy.getSymbolicName());
 		assertEquals(tag + ".2", original.getVersion(), copy.getVersion());
 		assertEquals(tag + ".3", original.getLocation(), copy.getLocation());
 		assertEquals(tag + ".4", original.getState(), copy.getState());
@@ -87,7 +87,7 @@ public abstract class AbstractStateTest extends EclipseWorkspaceTest {
 		assertEquals(tag + ".4", original.getActualVersion(), copy.getActualVersion());
 		assertEquals(tag + ".5", original.getSupplier() == null, copy.getSupplier() == null);
 		if (original.getSupplier() != null)
-			assertEquals(tag + ".6", original.getSupplier().getUniqueId(), copy.getSupplier().getUniqueId());
+			assertEquals(tag + ".6", original.getSupplier().getSymbolicName(), copy.getSupplier().getSymbolicName());
 	}
 
 	public static void assertFullyResolved(String tag, BundleDescription bundle) {
