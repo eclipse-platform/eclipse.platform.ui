@@ -144,6 +144,9 @@ public class InstructionPointerManager {
 			IThread thread = (IThread) threads[i];
 			removeAnnotations(thread, threadMap);
 		}
+		
+		// Remove the entry for the debug target
+		fDebugTargetMap.remove(debugTarget);
 	}
 	
 	/**
