@@ -524,4 +524,43 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		getSyncInfoSource().tearDown();
 		super.tearDown();
 	}
+	
+	public void testDeletedAddition() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+		IProject project = createProject("testDeletedAddition", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// add a file to HEAD
+		addResources(branchedProject, new String[] {"folder2/", "folder2/added.txt"}, true);
+		
+		// Setup a merge by creating a merge subscriber
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
+		assertSyncEquals("testDeletedAddition", subscriber, project, 
+				new String[]{"folder2/", "folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.INCOMING | SyncInfo.ADDITION, 
+					SyncInfo.INCOMING | SyncInfo.ADDITION
+				});
+		
+		// Merge the change with HEAD
+		mergeResources(subscriber, project, new String[]{"folder2/", "folder2/added.txt"}, true);
+		assertSyncEquals("testDeletedAddition", subscriber, project, 
+				new String[]{"folder2/", "folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.IN_SYNC, 
+					SyncInfo.IN_SYNC
+				});
+
+		// Delete the file from the branch
+		deleteResources(branchedProject, new String[] {"folder2/added.txt"}, true);
+		assertSyncEquals("testDeletedAddition", subscriber, project, 
+				new String[]{"folder2/", "folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.IN_SYNC, 
+					SyncInfo.CONFLICTING | SyncInfo.CHANGE
+				});
+	}
 }

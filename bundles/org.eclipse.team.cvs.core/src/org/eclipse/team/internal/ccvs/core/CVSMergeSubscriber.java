@@ -10,31 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
-import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
-import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.core.variants.IResourceVariantTree;
-import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
+import org.eclipse.team.core.variants.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
@@ -58,14 +42,79 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener, ISubscriberChangeListener {
 
+	private final class MergeBaseTree extends CVSResourceVariantTree {
+		// The merge synchronizer has been kept so that those upgrading
+		// from 3.0 M8 to 3.0 M9 so not lose there ongoing merge state
+		private PersistantResourceVariantByteStore mergedSynchronizer;
+		private MergeBaseTree(ResourceVariantByteStore cache, CVSTag tag, boolean cacheFileContentsHint, String syncKeyPrefix) {
+			super(cache, tag, cacheFileContentsHint);
+			mergedSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + "0merged")); //$NON-NLS-1$
+		}
+		public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+			// Only refresh the base of a resource once as it should not change
+			List unrefreshed = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if (!hasResourceVariant(resource)) {
+					unrefreshed.add(resource);
+				}
+			}
+			if (unrefreshed.isEmpty()) {
+				monitor.done();
+				return new IResource[0];
+			}
+			IResource[] refreshed = super.refresh((IResource[]) unrefreshed.toArray(new IResource[unrefreshed.size()]), depth, monitor);
+			return refreshed;
+		}
+		public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
+			// Use the merged bytes for the base if there are some
+			byte[] mergedBytes = mergedSynchronizer.getBytes(resource);
+			if (mergedBytes != null) {
+				byte[] parentBytes = getByteStore().getBytes(resource.getParent());
+				if (parentBytes != null) {
+					return RemoteFile.fromBytes(resource, mergedBytes, parentBytes);
+				}
+			}
+			return super.getResourceVariant(resource);
+		}
+		
+		/**
+		 * Mark the resource as merged by making it's base equal the remote
+		 */
+		public void merged(IResource resource, byte[] remoteBytes) throws TeamException {
+			if (remoteBytes == null) {
+				getByteStore().deleteBytes(resource);
+			} else {
+				getByteStore().setBytes(resource, remoteBytes);
+			}
+		}
+		
+		/**
+		 * Return true if the remote has already been merged
+		 * (i.e. the base equals the remote).
+		 */
+		public boolean isMerged(IResource resource, byte[] remoteBytes) throws TeamException {
+			byte[] mergedBytes = getByteStore().getBytes(resource);
+			return Util.equals(mergedBytes, remoteBytes);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree#dispose()
+		 */
+		public void dispose() {
+			mergedSynchronizer.dispose();
+			super.dispose();
+		}
+	}
+
 	public static final String ID = "org.eclipse.team.cvs.ui.cvsmerge-participant"; //$NON-NLS-1$
 	public static final String ID_MODAL = "org.eclipse.team.cvs.ui.cvsmerge-participant-modal"; //$NON-NLS-1$
 	private static final String UNIQUE_ID_PREFIX = "merge-"; //$NON-NLS-1$
 	
 	private CVSTag start, end;
 	private List roots;
-	private PersistantResourceVariantByteStore mergedSynchronizer;
-	private CVSResourceVariantTree baseTree, remoteTree;
+	private CVSResourceVariantTree remoteTree;
+	private MergeBaseTree baseTree;
 	
 	public CVSMergeSubscriber(IResource[] roots, CVSTag start, CVSTag end) {		
 		this(getUniqueId(), roots, start, end);
@@ -105,41 +154,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 			}
 		};
 		PersistantResourceVariantByteStore baseSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + start.getName()));
-		baseTree = new CVSResourceVariantTree(baseSynchronizer, getStartTag(), getCacheFileContentsHint()) {
-			public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-				// Only refresh the base of a resource once as it should not change
-				List unrefreshed = new ArrayList();
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					if (!getBaseByteStore().isVariantKnown(resource)) {
-						unrefreshed.add(resource);
-					}
-				}
-				if (unrefreshed.isEmpty()) {
-					monitor.done();
-					return new IResource[0];
-				}
-				IResource[] refreshed = super.refresh((IResource[]) unrefreshed.toArray(new IResource[unrefreshed.size()]), depth, monitor);
-				return refreshed;
-			}
-			public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
-				// Use the merged bytes for the base if there are some
-				byte[] mergedBytes = mergedSynchronizer.getBytes(resource);
-				if (mergedBytes != null) {
-					byte[] parentBytes = getBaseByteStore().getBytes(resource.getParent());
-					if (parentBytes != null) {
-						return RemoteFile.fromBytes(resource, mergedBytes, parentBytes);
-					}
-				} else {
-					// A deletion was merged so return null for the base
-					if (mergedSynchronizer.isVariantKnown(resource)) {
-						return null;
-					}
-				}
-				return super.getResourceVariant(resource);
-			}
-		};
-		mergedSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + "0merged")); //$NON-NLS-1$
+		baseTree = new MergeBaseTree(baseSynchronizer, getStartTag(), getCacheFileContentsHint(), syncKeyPrefix);
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(this);
@@ -161,11 +176,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	
 	private void internalMerged(IResource resource) throws TeamException {
 		byte[] remoteBytes = getRemoteByteStore().getBytes(resource);
-		if (remoteBytes == null) {
-			mergedSynchronizer.deleteBytes(resource);
-		} else {
-			mergedSynchronizer.setBytes(resource, remoteBytes);
-		}
+		baseTree.merged(resource, remoteBytes);
 	}
 
 	/* (non-Javadoc)
@@ -174,8 +185,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	public void cancel() {	
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);		
 		remoteTree.dispose();
-		baseTree.dispose();
-		mergedSynchronizer.dispose();		
+		baseTree.dispose();	
 	}
 
 	/* (non-Javadoc)
@@ -248,19 +258,13 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	/**
 	 * Return whether the given resource has been merged with its 
 	 * corresponding remote.
-	 * @param resource tghe loca resource
+	 * @param resource the local resource
 	 * @return boolean
 	 * @throws TeamException
 	 */
 	public boolean isMerged(IResource resource) throws TeamException {
-		byte[] mergedBytes = mergedSynchronizer.getBytes(resource);
 		byte[] remoteBytes = getRemoteByteStore().getBytes(resource);
-		if (mergedBytes == null) {
-			return (remoteBytes == null 
-					&& mergedSynchronizer.isVariantKnown(resource)
-					&& getRemoteByteStore().isVariantKnown(resource));
-		}
-		return Util.equals(mergedBytes, remoteBytes);
+		return baseTree.isMerged(resource, remoteBytes);
 	}
 
 	/* 
@@ -329,18 +333,9 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		monitor.done();
 	}
 	
-	/*
-	 * TODO: Should not need to access this here
-	 */
+	
 	private PersistantResourceVariantByteStore getRemoteByteStore() {
 		return (PersistantResourceVariantByteStore)((CVSResourceVariantTree)getRemoteTree()).getByteStore();
-	}
-
-	/*
-	 * TODO: Should not need to access this here
-	 */
-	private PersistantResourceVariantByteStore getBaseByteStore() {
-		return (PersistantResourceVariantByteStore)((CVSResourceVariantTree)getBaseTree()).getByteStore();
 	}
 	
 	/* (non-Javadoc)
