@@ -67,11 +67,10 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return fgSearchPlugin;
 	}
 
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	/*
+	 * Overrides AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		super.initializeDefaultPreferences(store);
 		SearchPreferencePage.initDefaults(store);
 	}
 	
