@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
+import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
@@ -25,14 +26,15 @@ public class SearchCommand extends ScriptedCommand {
 	
 	public SearchCommand(String fromSite) {
 		try {
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
+			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite("remoteSite", remoteSiteURL, new String[0]);
 			searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
 			collector = new UpdateSearchResultCollector();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} 
+		} catch (UnsupportedEncodingException e) {
+		}
 	}
 
 	/**

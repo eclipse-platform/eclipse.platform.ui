@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.net.URLEncoder;
@@ -425,7 +426,11 @@ public class UpdateUI extends AbstractUIPlugin {
 					+ "/" //$NON-NLS-1$
 					+ WEB_APP_ID
 					+ "/install"; //$NON-NLS-1$
-			return URLEncoder.encode(value);
+			try {
+				value = URLEncoder.encode(value, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+			}
+			return value;
 		}
 	}
 	

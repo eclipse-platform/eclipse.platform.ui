@@ -113,7 +113,7 @@ public class NewUpdateSiteDialog extends Dialog {
 		}
 	
 		try {
-			URL newURL = new URL(URLDecoder.decode(url.getText().trim()));
+			URL newURL = new URL(URLDecoder.decode(url.getText().trim(), "UTF-8"));
 			if (url.getEditable())
 				okButton.setEnabled(!newURL.getProtocol().equals("file")); //$NON-NLS-1$
 			else 

@@ -43,7 +43,7 @@ public class InstallCommand extends ScriptedCommand {
 			this.featureId = featureId;
 			this.version = version;
 
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
+			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
 
 			// Get site to install to
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();

@@ -191,12 +191,14 @@ public class UpdatePolicy {
 			addEntry(pattern, null);
 			return;
 		}
-		String decodedValue = URLDecoder.decode(urlName);
+
 		try {
+			String decodedValue = URLDecoder.decode(urlName, "UTF-8");
 			URL url = new URL(decodedValue);
 			addEntry(pattern, url);
 		} catch (MalformedURLException e) {
 			throwCoreException("invalid URL - "+urlName, null);
+		} catch (UnsupportedEncodingException e) {
 		}
 	}
 	

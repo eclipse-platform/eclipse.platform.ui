@@ -537,10 +537,12 @@ public class UpdateUtils {
 		String mapFile = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);
 		if (mapFile!=null && mapFile.length()>0) {
 			try {
-				String decodedFile = URLDecoder.decode(mapFile);
+				String decodedFile = URLDecoder.decode(mapFile, "UTF-8");
 				return new URL(decodedFile);
 			}
 			catch (MalformedURLException e) {
+			}
+			catch(UnsupportedEncodingException e) {
 			}
 		}
 		return null;
