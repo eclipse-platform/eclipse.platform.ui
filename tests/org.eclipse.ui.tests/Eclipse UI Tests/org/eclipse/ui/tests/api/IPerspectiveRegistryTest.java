@@ -20,25 +20,25 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testFindPerspectiveWithId()
 	{		
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Man.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithId( pers.getId() );
 		assertNotNull( suspect );
 		assertEquals( pers, suspect );
 				
-		suspect = fReg.findPerspectiveWithId( Man.FakeID );
+		suspect = fReg.findPerspectiveWithId( Tool.FakeID );
 		assertNull( suspect );
 	}
 	
 	public void testFindPerspectiveWithLabel()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Man.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithLabel( pers.getLabel() );
 		assertNotNull( suspect );
 		assertEquals( pers, suspect );
 				
-		suspect = fReg.findPerspectiveWithLabel( Man.FakeLabel );
+		suspect = fReg.findPerspectiveWithLabel( Tool.FakeLabel );
 		assertNull( suspect );
 	}
 	
@@ -53,7 +53,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testSetDefaultPerspective()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Man.pick( fReg.getPerspectives() );			
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );			
 		fReg.setDefaultPerspective( pers.getId() );
 		
 		assertEquals( pers.getId(), fReg.getDefaultPerspective() );

@@ -1,110 +1,152 @@
 package org.eclipse.ui.tests.api;
 
-
-import junit.framework.TestCase;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * Tests the IWorkbench interface.
  */
-public class IWorkbenchTest extends TestCase {
+public class IWorkbenchTest extends AbstractTestCase {
 
-	private IWorkbench fBench;
-	
 	public IWorkbenchTest(String testName) {
 		super(testName);
 	}
 
-	protected void setUp() {
-		fBench = PlatformUI.getWorkbench();
-	}
-	
-	public void testGetActiveWorkbenchWindow() throws Throwable {		
-		IWorkbenchWindow awin = fBench.getActiveWorkbenchWindow();
-		assertNotNull(awin);
+	/**
+	 * Tests the activation of two windows.
+	 */
+	public void testGetActiveWorkbenchWindow() throws Throwable {
+		IWorkbenchWindow win1, win2;
 
-/*		IWorkbenchWindow[] wins = fBench.getWorkbenchWindows();		
-		if( wins.length > 1 )
-			for( int i = 0; i < wins.length; i ++ )
-				if( wins[ i ] != awin ){
-					System.out.println( "whoa whoa, there is more than 
-		Shell sh = win.getShell();		
-//		win = fBench.getActiveWorkbenchWindow();
-//		assertNull(win);*/
+		// Test initial window.
+		win1 = fWorkbench.getActiveWorkbenchWindow();
+		assertNotNull(win1);
+
+		// Test open window.
+		win1 = openTestWindow();
+		assertEquals(win1, fWorkbench.getActiveWorkbenchWindow());
+
+		// Test open second window.
+		win2 = openTestWindow();
+		assertEquals(win2, fWorkbench.getActiveWorkbenchWindow());
+
+		// Test set focus.
+		win1.getShell().forceFocus();
+		assertEquals(win1, fWorkbench.getActiveWorkbenchWindow());
+
+		// Test set focus.
+		win2.getShell().forceFocus();
+		assertEquals(win2, fWorkbench.getActiveWorkbenchWindow());
+
+		// Cleanup in tearDown.
 	}
 
-	public void testGetEditorRegistry() throws Throwable
-	{
-		IEditorRegistry reg = fBench.getEditorRegistry();
-		assertNotNull( reg );
+	public void testGetEditorRegistry() throws Throwable {
+		IEditorRegistry reg = fWorkbench.getEditorRegistry();
+		assertNotNull(reg);
 	}
-	
-	public void testGetPerspectiveRegistry() throws Throwable
-	{
-		IPerspectiveRegistry reg = fBench.getPerspectiveRegistry();
-		assertNotNull( reg );	
+
+	public void testGetPerspectiveRegistry() throws Throwable {
+		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+		assertNotNull(reg);
 	}
-	
+
 	public void testGetPrefereneManager() throws Throwable {
-		PreferenceManager mgr = fBench.getPreferenceManager();
+		PreferenceManager mgr = fWorkbench.getPreferenceManager();
 		assertNotNull(mgr);
-	} 
-
-	public void testGetSharedImages() throws Throwable
-	{
-		ISharedImages img = fBench.getSharedImages();
-		assertNotNull( img );
-	} 
-	
-	public void testGetWorkbenchWindows() throws Throwable
-	{
-		IWorkbenchWindow[] wins = fBench.getWorkbenchWindows();
-
-		assertNotNull( wins );		
-		for( int i = 0; i < wins.length; i ++ )
-			assertNotNull( wins[ i ] );
-	}
-	
-	public void testOpenWorkbenchWindow_String() throws Throwable
-	{
-		IPerspectiveRegistry reg = fBench.getPerspectiveRegistry();
-		IPerspectiveDescriptor per = (IPerspectiveDescriptor)Man.pick( reg.getPerspectives() );
-		IWorkbenchWindow win = fBench.openWorkbenchWindow( per.getId(), null );
-
-		assertNotNull( win );
-				
-		assertEquals( win, fBench.getActiveWorkbenchWindow() );
-		assertEquals( per, win.getActivePage().getPerspective() );
-
-		win.close();
 	}
 
-	public void testOpenWorkbenchWindow() throws Throwable
-	{
- 		IWorkbenchWindow win = fBench.openWorkbenchWindow( null );
-		
-		assertNotNull( win );
-		assertEquals( win, fBench.getActiveWorkbenchWindow() );
-		assertNotNull( win.getActivePage() );
-		
-		win.close();
+	public void testGetSharedImages() throws Throwable {
+		ISharedImages img = fWorkbench.getSharedImages();
+		assertNotNull(img);
 	}
-	
-	public void testClose()
-	{
-/* 
-	close() couldn't be tested because close() needs to be called after all other
-	test methods are done, but we can't specifiy the order in which the test
-	methods are invoked. testClose() is defined as a place holder.
-*/
-	//	fBench.close();		
+
+	public void testGetWorkbenchWindows() throws Throwable {
+		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
+		assert(Tool.check(wins));
+		int oldTotal = wins.length;
+		int num = 3;
+
+		IWorkbenchWindow[] newWins = new IWorkbenchWindow[num];
+		for (int i = 0; i < num; i++)
+			newWins[i] = openTestWindow();
+
+		wins = fWorkbench.getWorkbenchWindows();
+		for (int i = 0; i < num; i++)
+			assert(Tool.arrayHas(wins, newWins[i]));
+
+		assert(wins.length == oldTotal + num);
+
+		closeAllTestWindows();
+		wins = fWorkbench.getWorkbenchWindows();
+		assert(wins.length == oldTotal);
+	}
+
+	/**
+	 * openWorkbenchWindow(String, IAdaptable)
+	 */
+	public void testOpenWorkbenchWindow() throws Throwable {
+		// open a window with valid perspective 
+		IWorkbenchWindow win = null;
+		try {
+			win =
+				fWorkbench.openWorkbenchWindow(
+					EmptyPerspective.PERSP_ID,
+					ResourcesPlugin.getWorkspace());
+			assertNotNull(win);
+			assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
+			assertEquals(
+				EmptyPerspective.PERSP_ID,
+				win.getActivePage().getPerspective().getId());
+		} finally {
+			if (win != null)
+				win.close();
+		}
+
+		// open a window with invalid perspective. WorkbenchException is expected.
+		boolean exceptionOccured = false;
+		try {
+			win =
+				fWorkbench.openWorkbenchWindow("afdasfdasf", ResourcesPlugin.getWorkspace());
+		} catch (WorkbenchException ex) {
+			exceptionOccured = true;
+		}
+
+		assert(exceptionOccured);
+
+	}
+
+	/**
+	 * openWorkbenchWindow(IAdaptable)
+	 */
+	public void testOpenWorkbenchWindow2() throws Throwable {
+		// open a window with valid perspective 
+		IWorkbenchWindow win = null;
+
+		try {
+			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			assertNotNull(win);
+
+			assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
+			String defaultID = fWorkbench.getPerspectiveRegistry().getDefaultPerspective();
+			assertEquals(win.getActivePage().getPerspective().getId(), defaultID);
+
+		} finally {
+			if (win != null)
+				win.close();
+		}
+	}
+
+	/* 
+		close() couldn't be tested because if we call close(), it would lead to early termination 
+		to entire test suites		
+	*/
+	public void testClose() {
 	}
 }

@@ -14,28 +14,42 @@ public class IWorkbenchPageTest extends TestCase {
 	}
 	
 	public void setUp()
-	{
-		IWorkbenchWindow[] wins = PlatformUI.getWorkbench().getWorkbenchWindows();
-		fWin = wins[ 0 ];
+	{		
+		fWin = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		fPage = fWin.getActivePage();
 	}
 	
 	public void testSetPerspective()
 	{
-		IPerspectiveDescriptor per = ( IPerspectiveDescriptor )Man.pick(
+		IPerspectiveDescriptor per = ( IPerspectiveDescriptor )Tool.pick(
 			PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives()
 		);
 		fPage.setPerspective( per );
 		
 		assertEquals( per, fPage.getPerspective() );
 	}
+	
+/* 
+	This method tests BOTH setEditorAreaVisible() and isEditorAreaVisible()
+	as they are closely related to each other.
+*/
+	public void testSetEditorAreaVisible() throws Throwable
+	{
+		fPage.setEditorAreaVisible( true );		
+		assert( fPage.isEditorAreaVisible() == true );
+		
+		fPage.setEditorAreaVisible( false );		
+		assert( fPage.isEditorAreaVisible() == false );
+	}
 
-	public void testGetPerspective()
+//	public 
+
+	public void testGetPerspective() throws Throwable
 	{
 		assertNotNull( fPage.getPerspective() );
 	}
 	
-	public void testGetLabel()
+	public void testGetLabel() throws Throwable
 	{
 		assertNotNull( fPage.getLabel() );
 	}
@@ -50,6 +64,5 @@ public class IWorkbenchPageTest extends TestCase {
 		
 		assertNotNull( fPage.getLabel() );*/
 	}
-
 }
 

@@ -16,4 +16,8 @@ public class PlatformUITest extends TestCase {
 		IWorkbench wb = PlatformUI.getWorkbench();
 		assertNotNull(wb);
 	}
+	
+	public void testPLUGIN_ID() {
+		assertNotNull(PlatformUI.PLUGIN_ID);
+	}
 }
