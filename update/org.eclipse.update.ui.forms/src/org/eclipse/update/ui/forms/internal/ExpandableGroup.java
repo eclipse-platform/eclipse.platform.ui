@@ -35,7 +35,8 @@ class ExpandableLayout extends Layout {
 		else
 		   y = size.y + 2;
 		if (expanded) {
-			size = expansion.computeSize(clientArea.width, SWT.DEFAULT, changed);
+			int areaWidth = clientArea.width - x;
+			size = expansion.computeSize(areaWidth, SWT.DEFAULT, changed);
 			expansion.setBounds(x, y, size.x, size.y);
 		}
 	}
@@ -176,7 +177,7 @@ class ExpandableLayout extends Layout {
 		}
 		gc.setFont(textLabel.getFont());
 		int height = gc.getFontMetrics().getHeight();
-		y = height/2 - 4;
+		y = height/2 - 4 +1;
 		y = Math.max(y, 0);
 		if (noGC) gc.dispose();
 		return new Rectangle(x, y, 8, 8);
