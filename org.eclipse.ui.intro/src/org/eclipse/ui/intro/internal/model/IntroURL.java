@@ -117,7 +117,7 @@ public class IntroURL {
     private void closeIntro() {
         // Relies on Workbench.
         PlatformUI.getWorkbench().closeIntro(
-                PlatformUI.getWorkbench().findIntro());
+                PlatformUI.getWorkbench().getIntro());
     }
 
     /**

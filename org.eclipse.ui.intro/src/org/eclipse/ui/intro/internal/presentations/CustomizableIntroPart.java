@@ -81,6 +81,14 @@ public class CustomizableIntroPart extends IntroPart {
                             + "\nCheck Log View for details.", null);
 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite, org.eclipse.ui.IMemento)
+	 */
+	public void init(IIntroSite site, IMemento memento)
+			throws PartInitException {
+		init(site);
+	}
 
     /*
      * (non-Javadoc)
@@ -180,5 +188,7 @@ public class CustomizableIntroPart extends IntroPart {
      */
     public StandbyPart getStandbyPart() {
         return standbyPart;
+        
     }
+	
 }
