@@ -27,6 +27,7 @@ public class CVSStatus extends Status {
 	public static final int CASE_VARIANT_EXISTS = -19;
 	public static final int UNSUPPORTED_SERVER_VERSION = -20;
 	public static final int SERVER_IS_CVSNT = -21;
+	public static final int SERVER_IS_UNKNOWN = -22;
 	
 	// Path for resource related status
 	private IPath path;

@@ -402,7 +402,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			setPageComplete(false);
 			return;
 		} else {
-			IPath path = new Path(repositoryPathCombo.getText());
+			String pathString = repositoryPathCombo.getText();
+			IPath path = new Path(pathString);
 			String[] segments = path.segments();
 			for (int i = 0; i < segments.length; i++) {
 				String string = segments[i];
@@ -411,6 +412,17 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 					setPageComplete(false);
 					return;
 				}
+			}
+			// look for // and inform the user that we support use of C:\cvs\root instead of /c//cvs/root
+			if (pathString.indexOf("//") != -1) { //$NON-NLS-1$
+				if (pathString.indexOf("//") == 2) { //$NON-NLS-1$
+					// The user is probably trying to specify a CVSNT path
+					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.useNTFormat")); //$NON-NLS-1$
+				} else {
+					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSlashes")); //$NON-NLS-1$
+				}
+				setPageComplete(false);
+				return;
 			}
 		}
 		setErrorMessage(null);

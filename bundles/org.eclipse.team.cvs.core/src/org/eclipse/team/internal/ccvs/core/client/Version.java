@@ -16,8 +16,11 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 /**
  * Here are some of the output formats we know about:
@@ -38,8 +41,9 @@ public class Version extends AbstractMessageCommand {
 		return "version"; //$NON-NLS-1$
 	}
 
-	public IStatus execute(Session session, IProgressMonitor monitor) throws CVSException {
-		return execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, NO_ARGUMENTS, new ICommandOutputListener() {
+	public IStatus execute(Session session, final ICVSRepositoryLocation location, IProgressMonitor monitor) throws CVSException {
+		
+		ICommandOutputListener listener = new ICommandOutputListener() {
 			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				String knownPrefix = null;
 				boolean isCVSNT = false;
@@ -52,29 +56,29 @@ public class Version extends AbstractMessageCommand {
 				} else if (line.startsWith(CVS_PREFIX)) {
 					knownPrefix = CVS_PREFIX;
 				}
-				String repository = null;
-				try {
-					repository = commandRoot.getFolderSyncInfo().getRoot();
-				} catch (CVSException e) {
-					// This should never happen as the commandRoot must be a cvs folder
-				}
+				IStatus status = OK;
 				if (knownPrefix != null) {
 					String versionNumber = line.substring(knownPrefix.length(), line.indexOf(' ', knownPrefix.length() + 1));
 					if (versionNumber.startsWith("1.10") || versionNumber.equals("1.11") || versionNumber.equals("1.11.1")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						return new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, Policy.bind("Version.unsupportedVersion", repository, versionNumber));//$NON-NLS-1$
+						status = new CVSStatus(IStatus.ERROR, CVSStatus.UNSUPPORTED_SERVER_VERSION, Policy.bind("Version.unsupportedVersion", location.getHost(), versionNumber));//$NON-NLS-1$
 					} else if (isCVSNT) {
-						return new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_CVSNT, Policy.bind("Version.unsupportedCVSNT", repository, versionNumber));//$NON-NLS-1$
+						status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_CVSNT, Policy.bind("Version.unsupportedCVSNT", location.getHost(), versionNumber));//$NON-NLS-1$
 					}
 				} else {
-					// We'll assume it's a newer version and let it pass but log it
-					CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, 0, Policy.bind("Version.unknownVersionFormat", repository, line)));//$NON-NLS-1$
+					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.unknownVersionFormat", location.getHost(), line));//$NON-NLS-1$
 				}
-
-				return OK;
+				((CVSRepositoryLocation)location).setServerPlaform(status);
+				return status;
 			}
 			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, line);
 			}
-		}, monitor);
+		};
+		
+		if (session == null) {
+			return execute(NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, new ICVSResource[] {}, listener, monitor);
+		} else {
+			return execute(session, NO_GLOBAL_OPTIONS, NO_LOCAL_OPTIONS, new String[] {}, listener, monitor);
+		}
 	}
 }

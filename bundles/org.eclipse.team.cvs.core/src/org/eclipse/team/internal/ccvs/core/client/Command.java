@@ -12,15 +12,13 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -32,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
  * Abstract base class for command requests.
@@ -702,7 +701,13 @@ public abstract class Command extends Request {
 		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
 		
 		// We assume that all the passed resources have the same root
-		Session openSession = Session.getOpenSession(arguments[0]);
+		Session openSession;
+		if (arguments.length == 0) {
+			// If there are no arguments to the command, assume that the command is rooted at the workspace root
+			openSession = Session.getOpenSession(CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
+		} else {
+			openSession = Session.getOpenSession(arguments[0]);
+		}
 		if (openSession == null) {
 			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
 		} else {

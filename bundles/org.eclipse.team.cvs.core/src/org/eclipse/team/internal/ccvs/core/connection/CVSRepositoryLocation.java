@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -29,13 +30,18 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 
@@ -60,6 +66,13 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
  */
 public class CVSRepositoryLocation extends PlatformObject implements ICVSRepositoryLocation, IUserInfo {
 
+	// server platform constants
+	public static final int UNDETERMINED_PLATFORM = 0;
+	public static final int CVS_SERVER = 1;
+	public static final int CVSNT_SERVER = 2;
+	public static final int UNSUPPORTED_SERVER = 3;
+	public static final int UNKNOWN_SERVER = 4;
+	
 	// static variables for extension points
 	private static IUserAuthenticator authenticator;
 	private static IConnectionMethod[] pluggedInConnectionMethods = null;
@@ -72,6 +85,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private String root;
 	private boolean userFixed;
 	private boolean passwordFixed;
+	private int serverPlatform = UNDETERMINED_PLATFORM;
 	
 	public static final char COLON = ':';
 	public static final char HOST_SEPARATOR = '@';
@@ -418,11 +432,72 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public void validateConnection(IProgressMonitor monitor) throws CVSException {
 		try {
-			openConnection(monitor).close();
+			ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
+			Session.run(this, root, false, new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					IStatus status = Command.VERSION.execute(null, CVSRepositoryLocation.this, monitor);
+					// Only report errors on validation (ignoring warnings)
+					if (status.getSeverity() == IStatus.ERROR) {
+						throw new CVSException(status);
+					}
+				}
+			}, monitor);
 		} catch (CVSException e) {
 			// If the validation failed, dispose of any cached info
 			dispose();
 			throw e;
+		}
+	}
+	
+	/**
+	 * Return the server platform type. It will be one of the following:
+	 *		UNDETERMINED_PLATFORM: The platform has not been determined
+	 *		CVS_SERVER: The platform is regular CVS server
+	 *		CVSNT_SERVER: The platform in CVSNT
+	 * If UNDETERMINED_PLATFORM is returned, the platform can be determined
+	 * using the Command.VERSION command.
+	 */
+	public int getServerPlatform() {
+		return serverPlatform;
+	}
+	
+	/**
+	 * This method is called from Command.VERSION to set the platform type.
+	 */
+	public void setServerPlaform(IStatus status) {
+		// OK means that its a regular cvs server
+		if (status.isOK()) {
+			serverPlatform = CVS_SERVER;
+			return;
+		}
+		// Find the status that reports the CVS platform
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				IStatus iStatus = children[i];
+				if (iStatus.getCode() == CVSStatus.SERVER_IS_CVSNT 
+						|| iStatus.getCode() == CVSStatus.UNSUPPORTED_SERVER_VERSION
+						|| iStatus.getCode() == CVSStatus.SERVER_IS_UNKNOWN) {
+					status = iStatus;
+					break;
+				}
+			}
+		}
+		// Second, check the code of the status itself to see if it is NT
+		switch (status.getCode()) {
+			case CVSStatus.SERVER_IS_CVSNT:
+				serverPlatform = CVSNT_SERVER;
+				break;
+			case CVSStatus.UNSUPPORTED_SERVER_VERSION:
+				serverPlatform = UNSUPPORTED_SERVER;
+				break;
+			case CVSStatus.SERVER_IS_UNKNOWN:
+				serverPlatform = UNKNOWN_SERVER;
+				break;
+			default:
+				// We had an error status with no info about the server.
+				// Mark it as undetermined.
+				serverPlatform = UNDETERMINED_PLATFORM;
 		}
 	}
 	

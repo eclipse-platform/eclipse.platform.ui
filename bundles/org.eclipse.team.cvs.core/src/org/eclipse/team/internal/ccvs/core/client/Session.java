@@ -290,11 +290,14 @@ public class Session {
 			hasBeenConnected = true;
 			
 			ResponseHandler mtHandler = Request.getResponseHandler("MT"); //$NON-NLS-1$
+			// accept MT messages for all non-standard server
+			boolean useMT = ! (location.getServerPlatform() == location.CVS_SERVER);
 			try {
-				// If we're connected to a CVSNT server, accept MT. Otherwise don't.
+				// If we're connected to a CVSNT server or we don't know the platform, 
+				// accept MT. Otherwise don't.
 				// We only want to disable MT messages for this particular session
 				// since there may be multiple sessions open.
-				if ( ! isCVSNT()) {
+				if ( ! useMT) {
 					Request.removeResponseHandler("MT"); //$NON-NLS-1$
 				}
 				
@@ -302,13 +305,13 @@ public class Session {
 				connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
 			} finally {
 				// Re-register the MT handler since there may be more than one session open
-				if ( ! isCVSNT()) {
+				if ( ! useMT) {
 					Request.registerResponseHandler(mtHandler);
 				}
 			}
 	
 			// ask for the set of valid requests
-			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 50));
+			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 40));
 			
 			// set the root directory on the server for this connection
 			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
@@ -325,6 +328,11 @@ public class Session {
 				connection.writeLine("gzip-file-contents " + Integer.toString(compressionLevel)); //$NON-NLS-1$
 			} else {
 				compressionLevel = 0;
+			}
+			
+			// get the server platform if it is unknown
+			if (location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
+				Command.VERSION.execute(this, location, Policy.subMonitorFor(monitor, 10));
 			}
 		} catch (CVSException e) {
 			// If there is a failure opening, make sure we're closed
@@ -372,7 +380,11 @@ public class Session {
 	}
 	
 	public boolean isCVSNT() {
-		return location.getRootDirectory().indexOf(':') == 1;
+		if (location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
+			return location.getRootDirectory().indexOf(':') == 1;
+		} else {
+			return location.getServerPlatform() == location.CVSNT_SERVER;
+		}
 	}
 
 	/**

@@ -92,9 +92,18 @@ public class NewLocationWizard extends Wizard {
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.
-				boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
-					Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
-					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
+				if (error.isMultiStatus() && error.getChildren().length == 1) {
+					error = error.getChildren()[1];
+				}
+					
+				boolean keep = false;
+				if (error.isMultiStatus()) {
+					ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.validationFailedTitle"), null, error); //$NON-NLS-1$
+				} else {
+					keep = MessageDialog.openQuestion(getContainer().getShell(),
+						Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
+						Policy.bind("NewLocationWizard.validationFailedText", new Object[] {error.getMessage()})); //$NON-NLS-1$
+				}
 				try {
 					if (keep) {
 						provider.addRepository(root[0]);
