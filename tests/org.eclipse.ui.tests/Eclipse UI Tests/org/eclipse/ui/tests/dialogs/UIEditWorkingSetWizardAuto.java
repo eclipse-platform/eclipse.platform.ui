@@ -79,7 +79,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish() == false);
 		assertNull(page.getErrorMessage());		
-		widgets = getWidgets(fWizardDialog.getShell(), Tree.class);
+		widgets = getWidgets((Composite) page.getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();		
 		assertEquals(workspace.getRoot().getProjects().length, tree.getItemCount());

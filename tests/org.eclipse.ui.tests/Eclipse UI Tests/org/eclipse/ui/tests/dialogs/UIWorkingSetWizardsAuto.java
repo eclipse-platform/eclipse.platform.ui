@@ -64,7 +64,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		super(name);
 	}
 	protected void checkTreeItems() {
-		List widgets = getWidgets(fWizardDialog.getShell(), Tree.class);
+		List widgets = getWidgets((Composite) fWizardDialog.getCurrentPage().getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
 		TreeItem[] treeItems = tree.getItems();
 		for (int i = 0; i < treeItems.length; i++) {

@@ -12,25 +12,16 @@ package org.eclipse.ui.tests.dialogs;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.jface.wizard.IWizardPage;
-
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.dialogs.IWorkingSetPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
-import org.eclipse.ui.internal.dialogs.WorkingSetTypePage;
-import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
-import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.tests.util.*;
 
 /**
  * Tests the WorkingSetNewWizard.
@@ -59,7 +50,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		assertTrue(fWorkingSetDescriptors.length >= 2);		
 		if (page instanceof WorkingSetTypePage) {
 			WorkingSetTypePage typePage = (WorkingSetTypePage) page;
-			List widgets = getWidgets(fWizardDialog.getShell(), Table.class);
+			List widgets = getWidgets((Composite) page.getControl(), Table.class);
 			Table table = (Table) widgets.get(0);
 			/*
 			 * Test initial page state
@@ -93,7 +84,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 			 * Select the default (Resource) working set type
 			 * and advance to edit page.
 			 */
-			List widgets = getWidgets(fWizardDialog.getShell(), Table.class);
+			List widgets = getWidgets((Composite) page.getControl(), Table.class);
 			Table table = (Table) widgets.get(0);
 			TableItem[] items = table.getItems();
 			String workingSetName = null;
@@ -150,7 +141,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		IAdaptable[] workingSetItems = workingSet.getElements();
 		assertEquals(WORKING_SET_NAME_1, workingSet.getName());
 		
-		List widgets = getWidgets(fWizardDialog.getShell(), Tree.class);
+		List widgets = getWidgets((Composite) page.getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
 		assertEquals(workingSetItems.length, tree.getItemCount());
 		assertTrue(ArrayUtil.contains(workingSetItems, p1));
