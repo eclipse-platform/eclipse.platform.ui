@@ -25,6 +25,7 @@ import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.ui.internal.editor.outline.AntModel;
 import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
 import org.eclipse.ant.ui.internal.editor.support.TestLocationProvider;
+import org.eclipse.ant.ui.internal.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,10 +37,21 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentPartitioner;
+import org.eclipse.debug.internal.ui.views.console.HyperlinkPosition;
+import org.eclipse.debug.internal.ui.views.console.StreamPartition;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
+import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.swt.graphics.Color;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -257,5 +269,40 @@ public abstract class AbstractAntUITest extends TestCase {
 		}
 		assertNotNull("Program did not suspend, launch terminated.", suspendee);
 		return suspendee;		
+	}
+	
+	protected IConsoleHyperlink getHyperlink(int offset, IDocument doc) {
+		if (offset >= 0 && doc != null) {
+			Position[] positions = null;
+			try {
+				positions = doc.getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
+			} catch (BadPositionCategoryException ex) {
+				// no links have been added
+				return null;
+			}
+			for (int i = 0; i < positions.length; i++) {
+				Position position = positions[i];
+				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
+					return ((HyperlinkPosition)position).getHyperLink();
+				}
+			}
+		}
+		return null;
+	}
+	
+	protected Color getColorAtOffset(int offset, IDocument document) throws BadLocationException {
+		if (document != null) {
+			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)document.getDocumentPartitioner();
+			if (partitioner != null) {
+				IConsoleColorProvider colorProvider = DebugUIPlugin.getDefault().getConsoleDocumentManager().getColorProvider(IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
+				ITypedRegion[] regions= partitioner.computePartitioning(offset, document.getLineInformationOfOffset(offset).getLength());
+				
+				for (int i = 0; i < regions.length; i++) {
+					StreamPartition partition = (StreamPartition)regions[i];
+					return colorProvider.getColor(partition.getStreamIdentifier());
+				}	
+			}
+		}
+		return null;
 	}
 }
