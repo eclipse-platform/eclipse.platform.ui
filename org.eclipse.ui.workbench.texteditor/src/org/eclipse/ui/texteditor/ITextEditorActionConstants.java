@@ -320,7 +320,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Copy global action in the Edit menu.
 	 * Value <code>"copy"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#COPY#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#COPY
 	 */
 	static final String COPY= ActionFactory.COPY.getId();
 	
@@ -328,7 +328,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Cut global action in the Edit menu.
 	 * Value <code>"cut"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#CUT#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#CUT
 	 */
 	static final String CUT= ActionFactory.CUT.getId();
 	
@@ -336,7 +336,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Delete global action in the Edit menu.
 	 * Value <code>"delete"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#DELETE#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#DELETE
 	 */
 	static final String DELETE= ActionFactory.DELETE.getId();
 	
@@ -344,7 +344,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Find global action in the Edit menu.
 	 * Value <code>"find"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#FIND#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#FIND
 	 */
 	static final String FIND= ActionFactory.FIND.getId();
 	
@@ -352,7 +352,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Paste global action in the Edit menu.
 	 * Value <code>"paste"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#PASTE#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#PASTE
 	 */
 	static final String PASTE= ActionFactory.PASTE.getId();
 	
@@ -360,7 +360,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Print global action in the File menu.
 	 * Value <code>"print"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#PRINT#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#PRINT
 	 */
 	static final String PRINT= ActionFactory.PRINT.getId();
 	
@@ -368,7 +368,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Redo global action in the Edit menu.
 	 * Value <code>"redo"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#REDO#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#REDO
 	 */
 	static final String REDO= ActionFactory.REDO.getId();
 	
@@ -376,7 +376,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Undo global action in the Edit menu.
 	 * Value <code>"undo"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#UNDO#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#UNDO
 	 */
 	static final String UNDO= ActionFactory.UNDO.getId();
 	
@@ -384,7 +384,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Save global action in the File menu.
 	 * Value <code>"save"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#SAVE#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#SAVE
 	 */
 	static final String SAVE= ActionFactory.SAVE.getId();
 	
@@ -392,7 +392,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Select All global action in the Edit menu.
 	 * Value <code>"selectAll"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#SELECT_ALL#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#SELECT_ALL
 	 */
 	static final String SELECT_ALL= ActionFactory.SELECT_ALL.getId();
 	
@@ -400,7 +400,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of standard Revert global action in the File menu.
 	 * Value <code>"revert"</code>
 	 * @since 3.0
-	 * @see org.eclipse.ui.actions.ActionFactory#REVERT#getId()
+	 * @see org.eclipse.ui.actions.ActionFactory#REVERT
 	 */
 	static final String REVERT= ActionFactory.REVERT.getId();
 	

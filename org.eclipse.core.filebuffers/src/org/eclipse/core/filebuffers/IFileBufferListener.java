@@ -77,7 +77,7 @@ public interface IFileBufferListener {
 	 * given location.
 	 * 
 	 * @param buffer the effected file buffer
-	 * @param target the new location (not just the container)
+	 * @param path the new location (not just the container)
 	 */
 	void underlyingFileMoved(IFileBuffer buffer, IPath path);
 	

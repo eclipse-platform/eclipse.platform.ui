@@ -18,8 +18,6 @@ import java.util.Map;
  * Formatting strategy for context based content formatting.
  * <p>
  * 
- * @see IContentFormatterExtension2
- * @see IFormattingStrategyExtension
  * @since 3.0
  */
 public abstract class ContextBasedFormattingStrategy implements IFormattingStrategy, IFormattingStrategyExtension {

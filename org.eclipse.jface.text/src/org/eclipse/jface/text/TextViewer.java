@@ -1545,10 +1545,11 @@ public class TextViewer extends Viewer implements
 	 * Note: The return value is used to initialize the cursor
 	 * listener. To return a non-constant value has no effect.
 	 * <p>
-	 * The same value (<code>500</code>) is used in the <code>OpenStrategy</code>.
+	 * The same value (<code>500</code>) is used in <code>OpenStrategy.TIME</code>.
 	 * </p>
+	 * @return delay in milliseconds
 	 * @see CursorListener
-	 * @see org.eclipse.jface.util.OpenStrategy#TIME
+	 * @see org.eclipse.jface.util.OpenStrategy
 	 * @since 3.0
 	 */
 	protected int getEmptySelectionChangedEventDelay() {

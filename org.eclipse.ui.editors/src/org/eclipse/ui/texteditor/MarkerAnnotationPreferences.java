@@ -97,7 +97,7 @@ public class MarkerAnnotationPreferences {
 	 * setting the default values in the future.
 	 * <p>
 	 * Note: In order to work this method must be called before any
-	 *       call to {@link #initializeDefaultValues(IPreferenceStore)
+	 *       call to {@link #initializeDefaultValues(IPreferenceStore)}
 	 * </p>
 	 * <p>
 	 * This method is not part of the API and must only be called
@@ -146,7 +146,7 @@ public class MarkerAnnotationPreferences {
 	 * setting the default values in the future.
 	 * <p>
 	 * Note: In order to work this method must be called before any
-	 *       call to {@link #initializeDefaultValues(IPreferenceStore)
+	 *       call to {@link #initializeDefaultValues(IPreferenceStore)}
 	 * </p>
 	 * <p>
 	 * This method is not part of the API and must only be called

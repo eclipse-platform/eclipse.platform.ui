@@ -93,7 +93,7 @@ public final class FileBuffers {
 	 * </p>
 	 * 
 	 * @param location
-	 * @return
+	 * @return the {@link File} in the local file system for the given location
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
 		if (location == null)

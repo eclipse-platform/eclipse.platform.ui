@@ -21,28 +21,28 @@ public interface IFoldingCommandIds {
 	/**
 	 * Identifier of the "collapse folded region" command.
 	 * <p>
-	 * Value: {@value).</p>
+	 * Value: {@value}.</p>
 	 */
 	String FOLDING_COLLAPSE= "org.eclipse.ui.edit.text.folding.collapse"; //$NON-NLS-1$
 
 	/**
 	 * Identifier of the "expand folded region" command.
 	 * <p>
-	 * Value: {@value).</p>
+	 * Value: {@value}.</p>
 	 */
 	String FOLDING_EXPAND= "org.eclipse.ui.edit.text.folding.expand"; //$NON-NLS-1$
 
 	/**
 	 * Identifier of the "expand all folded regions" command.
 	 * <p>
-	 * Value: {@value).</p>
+	 * Value: {@value}.</p>
 	 */
 	String FOLDING_EXPAND_ALL= "org.eclipse.ui.edit.text.folding.expand_all"; //$NON-NLS-1$
 
 	/**
 	 * Identifier of the "toggle folding" command.
 	 * <p>
-	 * Value: {@value).</p>
+	 * Value: {@value}.</p>
 	 */
 	String FOLDING_TOGGLE= "org.eclipse.ui.edit.text.folding.toggle"; //$NON-NLS-1$
 

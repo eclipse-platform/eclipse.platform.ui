@@ -229,7 +229,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * 
 	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
-	 * @param bounds the bounds inside the canvas to draw on
+	 * @param r the bounds inside the canvas to draw on
 	 * @deprecated since 3.0 use
 	 *             <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>
 	 * @since 3.0

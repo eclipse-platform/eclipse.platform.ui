@@ -49,21 +49,21 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	Iterator keySetIterator();
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * 
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	Set entrySet();
 	
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * 
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	Set keySet();
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * 
 	 * The returned collection is not synchronized on this annotation map's lock object.
 	 */

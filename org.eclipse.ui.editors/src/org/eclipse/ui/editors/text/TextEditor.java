@@ -79,7 +79,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	}
 	
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 * 
 	 * This method configures the editor but does not define a
 	 * <code>SourceViewerConfiguration</code>. When only interested in
