@@ -180,7 +180,6 @@ protected Control createDialogArea(Composite parent) {
 	layout.horizontalSpacing = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	composite.setFont(parent.getFont());
 
 	// create the title area
 	createTitleArea(composite);
@@ -264,7 +263,7 @@ private Composite createTitleArea(Composite parent) {
 	messageLabel = new Label(messageArea, SWT.WRAP);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
-	messageLabel.setFont(parent.getFont());
+	messageLabel.setFont(JFaceResources.getDialogFont());
 
 	// Dialog image @ right
 	titleImage = new Label(titleArea, SWT.CENTER);

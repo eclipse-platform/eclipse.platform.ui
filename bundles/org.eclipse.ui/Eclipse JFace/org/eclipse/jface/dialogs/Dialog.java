@@ -217,7 +217,6 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 			shell.setDefaultButton(button);
 		}
 	}
-	button.setFont(parent.getFont());
 	return button;
 }
 /**
@@ -250,8 +249,6 @@ protected Control createButtonBar(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_END |
 		GridData.VERTICAL_ALIGN_CENTER);
 	composite.setLayoutData(data);
-
-	composite.setFont(parent.getFont());
 	
 	// Add the buttons to the button bar.
 	createButtonsForButtonBar(composite);
@@ -325,7 +322,6 @@ protected Control createDialogArea(Composite parent) {
 	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	composite.setFont(parent.getFont());
 
 	return composite;
 }

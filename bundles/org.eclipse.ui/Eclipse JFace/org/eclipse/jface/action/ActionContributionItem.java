@@ -193,7 +193,6 @@ public void fill(Composite parent) {
 		
 		Button b = new Button(parent, flags);
 		b.setData(this);
-		b.setFont(JFaceResources.getDefaultFont());
 		b.addListener(SWT.Dispose, listener);
 		// Don't hook a dispose listener on the parent
 		b.addListener(SWT.Selection, listener);

@@ -274,7 +274,6 @@ protected Control createDialogArea(Composite parent) {
 		Label iconLabel= new Label(c, SWT.LEFT);
 		GridData gd= new GridData();
 		iconLabel.setLayoutData(gd);
-		iconLabel.setFont(parent.getFont());
 		Image i= JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 		if (i != null)
 			iconLabel.setImage(i);
@@ -286,7 +285,6 @@ protected Control createDialogArea(Composite parent) {
 		taskLabel = new Label(c, SWT.LEFT | SWT.WRAP);
 		taskLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		taskLabel.setText(DEFAULT_TASKNAME);
-		taskLabel.setFont(parent.getFont());
 
 		// progress indicator
 		progressIndicator= new ProgressIndicator(c);
@@ -303,7 +301,6 @@ protected Control createDialogArea(Composite parent) {
 		gd.heightHint= 35;	
 		gd.horizontalSpan= 2;
 		subTaskLabel.setLayoutData(gd);
-		subTaskLabel.setFont(parent.getFont());
 
 		return c;
 	}
