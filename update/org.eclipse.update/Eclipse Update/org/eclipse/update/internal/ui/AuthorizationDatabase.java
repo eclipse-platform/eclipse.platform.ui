@@ -6,9 +6,8 @@ package org.eclipse.update.internal.ui;
  * (c) Copyright IBM Corp 2000
  */
  
-import org.eclipse.swt.widgets.*;
-import org.eclipse.webdav.client.URLTool;
-import org.eclipse.webdav.http.client.IAuthenticator;
+import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;import org.eclipse.webdav.http.client.IAuthenticator;
 import java.net.*;
 import java.util.*;
 
@@ -18,118 +17,85 @@ import java.util.*;
  * when the Plaform shuts down.
  */
 public class AuthorizationDatabase implements IAuthenticator{
+	
 	/**
-	 * A nested hashtable that stores authorization information. The
-	 * table maps server URLs to realms to authentication schemes to
-	 * authorization information.
+	 * The Map containing the userid and password
 	 */
-	private Hashtable authorizationInfo = new Hashtable(5);
-
-	/**
-	 * A hashtable mapping resource URLs to realms.
-	 */
-	private Hashtable protectionSpace = new Hashtable(5);
+	private Map result = new Hashtable();
+	
 /**
  * 
  */
-public void addAuthenticationInfo(
-	URL serverUrl,
-	String realm,
-	String scheme,
-	java.util.Map info) {
-	String url = serverUrl.toString();
-	Hashtable realmToAuthScheme = (Hashtable) authorizationInfo.get(url);
-	if (realmToAuthScheme == null) {
-		realmToAuthScheme = new Hashtable(5);
-		authorizationInfo.put(url, realmToAuthScheme);
+public void addAuthenticationInfo(URL serverUrl,String realm,String scheme, Map info) {
+	try {
+		Platform.addAuthorizationInfo(serverUrl,realm,scheme,info);
+	} catch (CoreException e) {
+		UpdateManagerPlugin.getPluginInstance().getLog().log(e.getStatus());
 	}
-
-	Hashtable authSchemeToInfo = (Hashtable) realmToAuthScheme.get(realm);
-	if (authSchemeToInfo == null) {
-		authSchemeToInfo = new Hashtable(5);
-		realmToAuthScheme.put(realm, authSchemeToInfo);
-	}
-
-	authSchemeToInfo.put(scheme.toLowerCase(), info);
 }
+
 /**
  * 
  */
 public void addProtectionSpace(URL resourceUrl, String realm){
-
-	String file = resourceUrl.getFile();
-	if(!file.endsWith("/")){
-		resourceUrl = URLTool.getParent(resourceUrl);
-	} 
-
-	String oldRealm = getProtectionSpace(resourceUrl);
-	if(oldRealm != null && oldRealm.equals(realm)){
-		return;
+	try {
+		Platform.addProtectionSpace(resourceUrl,realm);
+	} catch (CoreException e) {
+		UpdateManagerPlugin.getPluginInstance().getLog().log(e.getStatus());
 	}
 
-	String url1 = resourceUrl.toString();
-	Enumeration urls = protectionSpace.keys();
-	while(urls.hasMoreElements()){
-		String url2 = (String)urls.nextElement();
-		if(url1.startsWith(url2) || url2.startsWith(url1)){
-			protectionSpace.remove(url2);
-			break;
-		}
-	}
-
-	protectionSpace.put(url1, realm);
 }
 /**
  *
  */
 public Map getAuthenticationInfo(URL serverUrl, String realm, String scheme) {
-	Hashtable realmToAuthScheme = (Hashtable)authorizationInfo.get(serverUrl.toString());
-	if(realmToAuthScheme == null){
-		return null;
-	}
 
-	Hashtable authSchemeToInfo = (Hashtable)realmToAuthScheme.get(realm);
-	if(authSchemeToInfo == null){
-		return null;
-	}
-
-	return (Map)authSchemeToInfo.get(scheme.toLowerCase());
+	return Platform.getAuthorizationInfo(serverUrl,realm,scheme);
 }
 /**
  * 
  */
 public String getProtectionSpace(URL resourceUrl){
-	while(resourceUrl != null){
-		String realm = (String)protectionSpace.get(resourceUrl.toString());
-		if(realm != null){
-			return realm;
-		}
-		resourceUrl = URLTool.getParent(resourceUrl);
-	}
-
-	return null;
+	return Platform.getProtectionSpace(resourceUrl);
 }
 /**
  * 
  */
-public java.util.Map requestAuthenticationInfo(java.net.URL resourceUrl, java.lang.String realm, java.lang.String scheme) {
-	Shell shell = new Shell(Display.getCurrent());
-
+public Map requestAuthenticationInfo(final URL resourceUrl, final String realm, final String scheme) {
+	
+	result = new Hashtable();
 	if (scheme.equalsIgnoreCase("Basic")) {
-		UserValidationDialog ui = new UserValidationDialog(shell,resourceUrl.getHost(), "");
+				
+		Display disp = Display.getCurrent();
+		if (disp != null) {
+			promptForPassword(resourceUrl, realm, result);
+		} else {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {	
+					promptForPassword(resourceUrl, realm, result);
+					}
+			});
+		};
+	}
+	return result;
+}
+
+/**
+ *
+ */
+private void promptForPassword(URL resourceUrl, String realm, Map info){
+		
+		Shell shell = new Shell();
+		UserValidationDialog ui = new UserValidationDialog(shell,resourceUrl,realm,"");
 		ui.setUsernameMutable(true);
 		ui.setBlockOnOpen(true);
-		ui.open();
-
-		if (ui.getReturnCode() == ui.CANCEL)
-			return null;
-		else {
-			Map info = new Hashtable();
+		ui.open();			
+		
+		if (ui.getReturnCode() != ui.CANCEL) {
 			info.put("username", ui.getUserid());
 			info.put("password", ui.getPassword());
-			return info;
 		}
-	} else
-		return null;
+		shell.dispose();
+	
 }
 }

@@ -1,6 +1,6 @@
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.core.runtime.*;
+import java.net.URL;import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -16,6 +16,7 @@ public class UserValidationDialog extends Dialog {
 	protected Text passwordField;
 
 	protected String domain;
+	protected String realm;
 	protected String defaultUsername;
 	protected String password = null;
 	protected String userid = null;
@@ -23,10 +24,11 @@ public class UserValidationDialog extends Dialog {
 /**
  * Creates a new UserValidationDialog.
  */
-public UserValidationDialog(Shell parentShell, String location, String defaultName) {
+public UserValidationDialog(Shell parentShell, URL location, String realm, String defaultName) {
 	super(parentShell);
 	this.defaultUsername = defaultName;
-	this.domain = location;
+	this.domain = location.getHost();
+	this.realm = realm;
 }
 /**
  * @see Window#configureShell
@@ -63,7 +65,9 @@ protected Control createDialogArea(Composite parent) {
 	main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	Label label = new Label(main, SWT.WRAP);
-	label.setText(UpdateManagerStrings.getString("S_Enter_a_user_name_and_password_for_the_following_domain") + ":\n" + domain);
+	String text = UpdateManagerStrings.getString("S_Enter_a_user_name_and_password_for")+": " + realm;
+	text += "\n" + UpdateManagerStrings.getString("S_At_the_following_domain")+": "+domain;
+	label.setText(text);
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 3;
 	label.setLayoutData(data);
