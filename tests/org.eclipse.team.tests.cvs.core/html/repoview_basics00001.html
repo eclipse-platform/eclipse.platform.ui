@@ -4,17 +4,39 @@
 <meta NAME="since" content="">
 </head><body><h2>Basics</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
-<p>You should be able to create a repo connection from the toolbar of the view or via the context menu. Try expanding, searching for branches. Also, 
-try the failures cases from <a href="html/connections00001.html">Connections</a>.
+<h3>Adding and Discarding Locations</h3>
+
+<p>You should be able to create a repository location from the toolbar of the view or via the context menu. 
+Try expanding the location, the HEAD, Versions and Branches categories. Also, 
+try the failures cases from <a href="connections00001.html">Connections</a>.
 Things to try:
 <ul>
 <li>Create repo locations for different connection types: ext, pserver, extssh.
-<li>Expanding project nodes should process the children in the background and the view should remain responsive while this is happening. When children nodes are added to the 
+<li>Expanding project nodes should process the children in the background and the 
+view should remain responsive while this is happening. When children nodes are added to the 
 tree the tree shouldn't be too jumpy.
+<li>Discard a location and ensure it is removed. Also ensure that discarding is not permitted when 
+projects in the local workspace are shared with the location.
 </ul>
 </p>
+
+<h3>Repository Location Properties</h3>
+
+View a location's properties page and ensure that information is correct and can be changed. 
+Ensure that the sharing information for any projects mapped to the location are also changed.
+
+<h3>Modules</h3>
+
+<h3>Working with modules</h3>
+
+<ul>
+  <li>Expanding HEAD or the Versions category should display the modules defined in the CVSROOT/modules file</li>
+  <li>Check Out and Checkout As should be availabel on modules and should work as expected</li>
+  <li>Performing a "Configure Branches and Versions" on the module allows the user to set the autorefresh file and add some tags.
+  Ensure that the module now appears properly in association with those tags.</li>
+</ol>
 
 
 </body></html>

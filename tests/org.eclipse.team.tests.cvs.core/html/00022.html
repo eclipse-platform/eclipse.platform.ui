@@ -4,33 +4,26 @@
 <meta NAME="since" content="">
 </head><body><h2>Performing a Merge</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/25 16:39:41 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
-<h3>Scenario 1: Merge in Dialog</h3>
-<ol>
-<li>Select a project and perform a Team>Merge.
-<li>Choose the start and end tags in the wizard and finish.
-<li>The merge will run in the background.
-<li>Upon completion, the user is presented with a dialog of the incoming changes.
-<li>Update the incoming changes and ensure they worked.
-</ol>
 
-<p>After updating, reperform the same merge. A no-changes dialog should be 
-presented since the local contents match the end-poimt.
+<h3>Scenario 1: One Time Merge</h3>
 
-<h3>Scenario 1: Merge in Synchronize view</h3>
+<p>
+Using Team>Merge, merge the changes from a branch into HEAD. Once completed, in the synchronize view, 
+update the incoming changes, resolve any conflicts and ensure they worked, After updating, 
+redo the same merge. A no-changes dialog should be 
+presented since the local contents match the end-point.
 
-<ol>
-<li>Perform the previous scenario except for the last step
-<li>Choose to remember the merge 
-<li>Ensure that the merge appears in the Synchronize View
-<li>Exit and restart eclipse
-<li>The merge should still exist in the Synchronize View
-<li>Update to the incoming changes.
-<li>Optionally release new changes to the merge endpoint and refresh the merge. 
-The new updates should appear.
-<li>Delete the merge from the synchronize view using the remove toolbar button
-<li>The merge subscriber should be removed from the view.
-</ol>
+<h3>Scenario 2: Ongoing Merge</h3>
+
+After performing a one-time merge, pin the entry in the synchronize view. 
+Release changes to the end point (branch) and synchronize the merge.
+The new changes should appear in the synchronize view. Update to these
+changes as appropriate.
+ 
+<h3>Removing a Merge</h3>
+
+<p>Delete the merge from the synchronize view using the remove toolbar button. The merge subscriber should be removed from the view.
 
 </body></html>

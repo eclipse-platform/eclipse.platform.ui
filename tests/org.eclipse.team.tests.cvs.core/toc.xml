@@ -8,7 +8,7 @@
             </topic>
             <topic label="Check Out Wizard" href="html/checkoutwizard00001.html">
             </topic>
-            <topic label="Date Tags" href="html/datetags_repoview00001.html">
+            <topic label="Tags" href="html/datetags_repoview00001.html">
             </topic>
         </topic>
         <topic label="Sharing" href="html/00026.html">
@@ -46,21 +46,21 @@
             </topic>
         </topic>
         <topic label="Synchronizing" href="html/00010.html">
-            <topic label="Sync View operations and selection" href="html/00011.html">
-            </topic>
-            <topic label="Sync View modes and working sets" href="html/00016.html">
-            </topic>
             <topic label="Performing a Synchronize" href="html/00048.html">
+            </topic>
+            <topic label="Synchronize View" href="html/00011.html">
             </topic>
             <topic label="Decorations" href="html/00049.html">
             </topic>
             <topic label="Commit Sets Layout" href="html/commit_stes00001.html">
             </topic>
+            <topic label="Scenarios" href="html/sync00001.html">
+            </topic>
         </topic>
         <topic label="Merging" href="html/00012.html">
-            <topic label="Sync View operations and selection" href="html/00013.html">
-            </topic>
             <topic label="Performing a Merge" href="html/00022.html">
+            </topic>
+            <topic label="Synchronize View" href="html/00013.html">
             </topic>
         </topic>
         <topic label="Patching" href="html/00029.html">
@@ -114,12 +114,12 @@
         <topic label="Performance" href="html/perf00001.html">
             <topic label="Timings" href="html/perf00002.html">
             </topic>
-           <topic label="Resource Data Structures" href="html/perf00004.html">
-                </topic>
-                <topic label="Looking For Leaks" href="html/perf00005.html">
-                </topic>
-                <topic label="Team Data Structures" href="html/perf00006.html">
-                </topic>
+            <topic label="Resource Data Structures" href="html/perf00004.html">
+            </topic>
+            <topic label="Looking For Leaks" href="html/perf00005.html">
+            </topic>
+            <topic label="Team Data Structures" href="html/perf00006.html">
+            </topic>
         </topic>
         <topic label="Failure Cases" href="html/failures00001.html">
             <topic label="Connections" href="html/connections00001.html">

@@ -1,10 +1,20 @@
-<html><head><title>Sync View operations and selection</title>
+<html><head><title>Synchronize View</title>
 <LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
-</head><body><h2>Sync View operations and selection</h2>
+</head><body><h2>Synchronize View</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+
+<h3>Synchronize View Modes</h3>
+
+Ensure that choosing modes 
+<ul>
+<li>result in proper filtering 
+<li>updates status bar properly 
+</ul>
+
+<h3>Synchronize View Operations</h3>
 <p>Ensure Commit and Update buttons:</p>
 <ul>
   <li>operate on all applicable visible changes</li>
@@ -40,5 +50,145 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 </ul>
 <p>All actions on large sets (Mark as Merged as well)</p>
 
+The following table can be used to determine what operations are appropriate and what result to expect.
+
+<table height="124" border="1" width="99%">
+  <tbody>
+    <tr>
+      <td width="25%"><b>Change Type</b></td>
+      <td width="25%"><b>Action</b></td>
+      <td width="50%"><b>Result</b></td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Change</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Remote contents become local. Try with both Text and
+ Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Change</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Addition</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Remote contents become local. Try with both Text and
+ Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Addition</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits deletion to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Deletion</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">Local file is deleted.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Incoming File Deletion</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Change</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. Remote contents become local. Try
+ with both Text and Binary files.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Add to Version Control</td>
+      <td width="50%">Adds the file to version control. The icon should change
+ in the sync view, and Commit should now be enabled.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Add to .cvsignore</td>
+      <td width="50%">Adds the file to .cvsignore. The file should disappear
+ from the sync view. The .cvsignore file should appear (if it wasn't visible
+ already). The file should not appear in subsequent syncs.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Commit is only enabled on an outgoing addition if it
+ has first been added to version control. Prompt for release comment. Cancel
+ aborts, OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Addition</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. Local file is deleted.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Deletion</b></td>
+      <td width="25%">Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ deletion to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Outgoing File Deletion</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Only in Both mode. File is re-created, remote contents
+ become local.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Change</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
+ local file to server. Applies to both auto-mergeable and non-mergeable conflicts.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Auto-mergeable Conflicting File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Auto-mergeable conflicts have a two-way red/green arrow.
+ Dialog prompts user to either auto-merge or replace. If user chooses auto-merge,
+ then remote changes are merged in with local changes. File should still
+be  dirty, local changes should still be present, CVS markup should not be
+present,  and no .# files should have been created. If user chooses replace,
+then local  changes are discarded and remote contents replace local. No .#
+files created,  no CVS markup, and the file is not dirty as a result. If
+the user chooses  cancel nothing happens.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Non-mergeable Conflicting File Change</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Dialog prompts user to replace local changes. If user
+ cancels nothing happens. If user chooses OK, then local changes are discarded
+ and remote contents replace local. No .# files created, no CVS markup, and
+ the file is not dirty as a result.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Add to Version Control</td>
+      <td width="50%">Adds the file to version control. The icon should change
+ in the sync view, and Override and Commit should now be enabled.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Override and Commit</td>
+      <td width="50%">Override and Commit is only enabled on an outgoing addition
+if it has first been added to version control. Prompt to warn of conflicting
+changes. If OK, prompt for release comment. Cancel aborts either dialog.
+OK commits local file to server.</td>
+    </tr>
+    <tr>
+      <td width="25%"><b>Conflicting File Addition</b></td>
+      <td width="25%">Override and Update</td>
+      <td width="50%">Remote contents become local.</td>
+    </tr>
+  </tbody>
+</table>
 
 </body></html>
