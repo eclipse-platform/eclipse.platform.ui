@@ -1388,6 +1388,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
+		savedState.put("selectionarea", ControlEnableState.disable(getSelectionArea()));//$NON-NLS-1$
 		savedState.put("editarea", ControlEnableState.disable(getEditArea()));//$NON-NLS-1$
 		return savedState;
 	}
@@ -1428,6 +1429,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
+		ControlEnableState treeState = (ControlEnableState) state.get("selectionarea");//$NON-NLS-1$
+		treeState.restore();
 		ControlEnableState tabState = (ControlEnableState) state.get("editarea");//$NON-NLS-1$
 		tabState.restore();
 	}
