@@ -107,12 +107,6 @@
 			command="org.eclipse.compare.copyRightToLeft"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.copyRightToLeft"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-		/>
 		
  		<command
 			category="org.eclipse.compare.ui.category.compare"
@@ -125,12 +119,6 @@
 			scope="org.eclipse.ui.globalScope"
 			command="org.eclipse.compare.copyLeftToRight"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.copyLeftToRight"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
 		/>
 
 		<command
@@ -145,12 +133,6 @@
 			command="org.eclipse.compare.copyAllRightToLeft"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.copyAllRightToLeft"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-		/>
 
 		<command
 			category="org.eclipse.compare.ui.category.compare"
@@ -163,12 +145,6 @@
 			scope="org.eclipse.ui.globalScope"
 			command="org.eclipse.compare.copyAllLeftToRight"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.copyAllLeftToRight"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
 		/>
 
 		<command
@@ -183,12 +159,6 @@
 			command="org.eclipse.compare.selectNextChange"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.selectNextChange"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-		/>
 		
 		<command
 			category="org.eclipse.compare.ui.category.compare"
@@ -201,12 +171,6 @@
 			scope="org.eclipse.ui.globalScope"
 			command="org.eclipse.compare.selectPreviousChange"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.compare.selectPreviousChange"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
 		/>
 
 	</extension>
