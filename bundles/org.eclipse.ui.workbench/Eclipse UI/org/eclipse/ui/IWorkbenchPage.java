@@ -277,9 +277,10 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 */
 	public String getLabel();
 	/**
-	 * Returns the current perspective descriptor for this page.
+	 * Returns the current perspective descriptor for this page, or 
+	 * <code>null</code> if the is no current perspective.
 	 * 
-	 * @return the current perspective descriptor
+	 * @return the current perspective descriptor or <code>null</code>
 	 * @see #setPerspective
 	 * @see #savePerspective
 	 */
