@@ -265,6 +265,9 @@ import org.eclipse.swt.widgets.*;
 				StatusLine.this.startTask(timestamp, animated);
 			}
 		};
+		if(fProgressBar == null)
+			return;
+		
 		fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
 		if (!animated) {
 			fProgressBar.beginTask(totalWork);
@@ -305,6 +308,8 @@ import org.eclipse.swt.widgets.*;
 	protected void handleDispose() {
 		fStopButtonCursor.dispose();
 		fStopButtonCursor= null;
+		fProgressBar.dispose();
+		fProgressBar = null;
 	}
 	/**
 	 * Hides the Cancel button and ProgressIndicator.
