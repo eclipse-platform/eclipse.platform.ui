@@ -538,8 +538,13 @@ public class Main {
         } else {
             System.getProperties().setProperty(PROP_FRAMEWORK_SHAPE, "jar");//$NON-NLS-1$
         }
-        System.getProperties().setProperty(PROP_FRAMEWORK_SYSPATH, new File(base.getFile()).getParentFile().getAbsolutePath());
-        //TODO Here we don't lower case the first letter like it is done in EclipseStarter
+	    String fwkPath = new File(base.getFile()).getParentFile().getAbsolutePath();
+		if (Character.isUpperCase(fwkPath.charAt(0))) {
+			char[] chars = fwkPath.toCharArray();
+			chars[0] = Character.toLowerCase(chars[0]);
+			fwkPath = new String(chars);
+		}
+        System.getProperties().setProperty(PROP_FRAMEWORK_SYSPATH, fwkPath);
         
         String[] baseJars = getArrayFromList(baseJarList);
         if (baseJars.length == 0) {
