@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -137,6 +138,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
 														  afterRefresh, afterConfigure);
+		Dialog.applyDialogFont(parent);
 		initialize();
 		setPageComplete(false);
 	}
