@@ -203,8 +203,10 @@ public void bringToTop(IWorkbenchPart part) {
 	} else if (part instanceof IViewPart) {
 		broughtToTop = persp.bringToTop((IViewPart)part);
 	}
-	if (broughtToTop)
+	if (broughtToTop) {
+		activationList.setActive(part);
 		firePartBroughtToTop(part);
+	}
 }
 /**
  * Resets the layout for the perspective.  The active part in the old layout is activated
@@ -1301,7 +1303,7 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			else
 				activate(editor);
 		} else {
-			activationList.add(editor);
+			activationList.setActive(editor);
 			// The previous openEditor call may create a new editor
 			// and make it visible, so send the notification.
 			IEditorPart visibleEditor = getEditorManager().getVisibleEditor();
