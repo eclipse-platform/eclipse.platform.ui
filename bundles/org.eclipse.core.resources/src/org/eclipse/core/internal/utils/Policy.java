@@ -21,15 +21,10 @@ public class Policy {
 	private static String bundleName = "org.eclipse.core.internal.utils.messages";//$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 
-	private static final int autoBuildOpWork = 99;
-	private static final int autoBuildBuildWork = 1;
-	private static final int manualBuildOpWork = 99;
-	private static final int manualBuildBuildWork = 1;
-
 	public static final boolean buildOnCancel = false;
-	public static int opWork;
-	public static int buildWork;
-	public static int totalWork;
+	public static int opWork = 99;
+	public static int endOpWork= 1;
+	public static final int totalWork = 100;
 
 	// default workspace description values
 	public static final boolean defaultAutoBuild = true;
@@ -76,8 +71,6 @@ public class Policy {
 	public static boolean DEBUG_AUTO_REFRESH = false;
 
 	static {
-		setupAutoBuildProgress(defaultAutoBuild);
-
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
 			String sTrue = Boolean.TRUE.toString();
@@ -164,12 +157,6 @@ public class Policy {
 		if (monitor == null)
 			return new NullProgressMonitor();
 		return monitor;
-	}
-
-	public static void setupAutoBuildProgress(boolean on) {
-		opWork = on ? autoBuildOpWork : manualBuildOpWork;
-		buildWork = on ? autoBuildBuildWork : manualBuildBuildWork;
-		totalWork = opWork + buildWork;
 	}
 
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {

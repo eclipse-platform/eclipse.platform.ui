@@ -505,7 +505,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -544,7 +544,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -609,7 +609,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -692,7 +692,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork * 1000));
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork * 1000));
 			}
 		} finally {
 			monitor.done();
@@ -1196,7 +1196,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -1224,7 +1224,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, build, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, build, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -1245,7 +1245,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				internalSetLocal(flag, depth);
 				monitor.worked(Policy.opWork);
 			} finally {
-				workspace.endOperation(null, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(null, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -1357,7 +1357,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();

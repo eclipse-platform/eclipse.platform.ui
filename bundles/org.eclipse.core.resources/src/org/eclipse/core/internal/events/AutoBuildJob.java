@@ -160,7 +160,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				// operation so open it
 				if (workspace.getElementTree().isImmutable())
 					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();

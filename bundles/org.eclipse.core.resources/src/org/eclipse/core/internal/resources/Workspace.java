@@ -201,7 +201,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
 					newWorkingTree();
-				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -1679,7 +1679,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					notificationManager.endAvoidNotify();
 				if (depth >= 0)
 					getWorkManager().endUnprotected(depth);
-				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();
@@ -1735,7 +1735,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (description.getBuildOrder(false) != null || newOrder != null)
 			buildOrder = null;
 		description.copyFrom(newDescription);
-		Policy.setupAutoBuildProgress(description.isAutoBuilding());
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 	}
 
