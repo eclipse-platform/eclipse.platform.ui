@@ -113,7 +113,10 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 			setContextMenuManager(null);
 		}
 		
+		// Prevents a memory leak (e.g., EditorActionBars$Overrides).
+		setOverrides(null);		
 	}
+	
 	/**
 	 * Returns the tool bar control for this manager.
 	 *
