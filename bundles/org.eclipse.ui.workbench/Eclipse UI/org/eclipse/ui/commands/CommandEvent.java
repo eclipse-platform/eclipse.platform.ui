@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -26,13 +26,13 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class CommandEvent {
 
+    private boolean attributeValuesByNameChanged;
+
     private boolean categoryIdChanged;
 
     private ICommand command;
 
     private boolean contextBindingsChanged;
-
-    private boolean definedAttributeNamesChanged;
 
     private boolean definedChanged;
 
@@ -44,13 +44,15 @@ public final class CommandEvent {
 
     private boolean nameChanged;
 
-    private Set previouslyDefinedAttributeNames;
+    private Map previousAttributeValuesByName;
 
     /**
      * Creates a new instance of this class.
      * 
      * @param command
      *            the instance of the interface that changed.
+     * @param attributeValuesByNameChanged
+     *            true, iff the attributeValuesByName property changed.
      * @param categoryIdChanged
      *            true, iff the categoryId property changed.
      * @param contextBindingsChanged
@@ -67,34 +69,34 @@ public final class CommandEvent {
      *            true, iff the keySequenceBindings property changed.
      * @param nameChanged
      *            true, iff the name property changed.
-     * @param previouslyAttributeNames
-     *            the set of previously defined attribute names. This set may be
-     *            empty. If this set is not empty, it must only contain
-     *            instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedAttributeNamesChanged is
+     * @param previousAttributeValuesByName
+     *            the map of previous attribute values by name. This map may be
+     *            empty. If this map is not empty, it's collection of keys must
+     *            only contain instances of <code>String</code>. This map
+     *            must be <code>null</code> if attributeValuesByNameChanged is
      *            <code>false</code> and must not be null if
-     *            definedAttributeNamesChanged is <code>true</code>.
+     *            attributeValuesByNameChanged is <code>true</code>.
      */
-    public CommandEvent(ICommand command, boolean categoryIdChanged,
-            boolean contextBindingsChanged,
-            boolean definedAttributeNamesChanged, boolean definedChanged,
-            boolean descriptionChanged, boolean imageBindingsChanged,
-            boolean keySequenceBindingsChanged, boolean nameChanged,
-            Set previouslyDefinedAttributeNames) {
+    public CommandEvent(ICommand command, boolean attributeValuesByNameChanged,
+            boolean categoryIdChanged, boolean contextBindingsChanged,
+            boolean definedChanged, boolean descriptionChanged,
+            boolean imageBindingsChanged, boolean keySequenceBindingsChanged,
+            boolean nameChanged, Map previousAttributeValuesByName) {
         if (command == null) throw new NullPointerException();
 
-        if (!definedAttributeNamesChanged
-                && previouslyDefinedAttributeNames != null)
+        if (!attributeValuesByNameChanged
+                && previousAttributeValuesByName != null)
                 throw new IllegalArgumentException();
 
-        if (definedAttributeNamesChanged)
-                this.previouslyDefinedAttributeNames = Util.safeCopy(
-                        previouslyDefinedAttributeNames, String.class);
+        if (attributeValuesByNameChanged)
+                this.previousAttributeValuesByName = Util.safeCopy(
+                        previousAttributeValuesByName, String.class,
+                        Object.class, false, true);
 
         this.command = command;
+        this.attributeValuesByNameChanged = attributeValuesByNameChanged;
         this.categoryIdChanged = categoryIdChanged;
         this.contextBindingsChanged = contextBindingsChanged;
-        this.definedAttributeNamesChanged = definedAttributeNamesChanged;
         this.definedChanged = definedChanged;
         this.descriptionChanged = descriptionChanged;
         this.imageBindingsChanged = imageBindingsChanged;
@@ -113,17 +115,18 @@ public final class CommandEvent {
     }
 
     /**
-     * Returns the set of previously defined attribute names.
+     * Returns the map of previous attribute values by name.
      * 
-     * @return the set of previously defined attribute names. This set may be
-     *         empty. If this set is not empty, it is guaranteed to only contain
-     *         instances of <code>String</code>. This set is guaranteed to be
-     *         <code>null</code> if haveDefinedAttributeNamesChanged() is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         haveDefinedAttributeNamesChanged() is <code>true</code>.
+     * @return the map of previous attribute values by name. This map may be
+     *         empty. If this map is not empty, it's collection of keys is
+     *         guaranteed to only contain instances of <code>String</code>.
+     *         This map is guaranteed to be <code>null</code> if
+     *         haveAttributeValuesByNameChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveAttributeValuesByNameChanged()
+     *         is <code>true</code>.
      */
-    public Set getPreviouslyDefinedAttributeNames() {
-        return previouslyDefinedAttributeNames;
+    public Map getPreviousAttributeValuesByName() {
+        return previousAttributeValuesByName;
     }
 
     /**
@@ -163,21 +166,21 @@ public final class CommandEvent {
     }
 
     /**
+     * Returns whether or not the attributeValuesByName property changed.
+     * 
+     * @return true, iff the attributeValuesByName property changed.
+     */
+    public boolean haveAttributeValuesByNameChanged() {
+        return attributeValuesByNameChanged;
+    }
+
+    /**
      * Returns whether or not the contextBindings property changed.
      * 
      * @return true, iff the contextBindings property changed.
      */
     public boolean haveContextBindingsChanged() {
         return contextBindingsChanged;
-    }
-
-    /**
-     * Returns whether or not the definedAttributeNames property changed.
-     * 
-     * @return true, iff the definedAttributeNames property changed.
-     */
-    public boolean haveDefinedAttributeNamesChanged() {
-        return definedAttributeNamesChanged;
     }
 
     /**

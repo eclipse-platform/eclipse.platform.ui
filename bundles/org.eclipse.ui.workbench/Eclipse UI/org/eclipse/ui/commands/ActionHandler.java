@@ -11,8 +11,8 @@
 package org.eclipse.ui.commands;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
@@ -30,12 +30,14 @@ public final class ActionHandler extends AbstractHandler {
 
     private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
 
-    /* TODO This should be changed.
-     * CommandManager should not look for this attribute (search by string "handled" to find it..).
-     * Instead, code in workbench should be changed such that if a RetargetAction loses its action,
-     * this ActionHandler instance's corresponding HandlerSubmission should be removed.
-     * In any case, this attribute especially should never be made public.
-     */ 
+    /*
+     * TODO This should be changed. CommandManager should not look for this
+     * attribute (search by string "handled" to find it..). Instead, code in
+     * workbench should be changed such that if a RetargetAction loses its
+     * action, this ActionHandler instance's corresponding HandlerSubmission
+     * should be removed. In any case, this attribute especially should never be
+     * made public.
+     */
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
     private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -43,8 +45,6 @@ public final class ActionHandler extends AbstractHandler {
     private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
 
     private IAction action;
-
-    private Set definedAttributeNames;
 
     /**
      * Creates a new instance of this class given an instance of
@@ -58,14 +58,6 @@ public final class ActionHandler extends AbstractHandler {
         if (action == null) throw new NullPointerException();
 
         this.action = action;
-        definedAttributeNames = new HashSet();
-        definedAttributeNames.add(ATTRIBUTE_CHECKED);
-        definedAttributeNames.add(ATTRIBUTE_ENABLED);
-        definedAttributeNames.add(ATTRIBUTE_HANDLED);
-        definedAttributeNames.add(ATTRIBUTE_ID);
-        definedAttributeNames.add(ATTRIBUTE_STYLE);
-        definedAttributeNames = Collections
-                .unmodifiableSet(definedAttributeNames);
     }
 
     public void execute(Object parameter) throws ExecutionException {
@@ -84,30 +76,25 @@ public final class ActionHandler extends AbstractHandler {
         }
     }
 
-    public Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException {
-        if (!definedAttributeNames.contains(attributeName))
-            throw new NoSuchAttributeException();
-        else if (ATTRIBUTE_CHECKED.equals(attributeName))
-            return action.isChecked() ? Boolean.TRUE : Boolean.FALSE;
-        else if (ATTRIBUTE_ENABLED.equals(attributeName))
-            return action.isEnabled() ? Boolean.TRUE : Boolean.FALSE;
-        else if (ATTRIBUTE_HANDLED.equals(attributeName)) {
-            if (action instanceof RetargetAction) {
-                RetargetAction retargetAction = (RetargetAction) action;
-                return (retargetAction.getActionHandler() != null) ? Boolean.TRUE
-                        : Boolean.FALSE;
-            } else
-                return Boolean.TRUE;
-        } else if (ATTRIBUTE_ID.equals(attributeName))
-            return action.getId();
-        else if (ATTRIBUTE_STYLE.equals(attributeName))
-            return new Integer(action.getStyle());
-        else
-            throw new NoSuchAttributeException();
-    }
+    public Map getAttributeValuesByName() {
+        Map attributeValuesByName = new HashMap();
+        attributeValuesByName.put(ATTRIBUTE_CHECKED,
+                action.isChecked() ? Boolean.TRUE : Boolean.FALSE);
+        attributeValuesByName.put(ATTRIBUTE_ENABLED,
+                action.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
+        boolean handled = true;
 
-    public Set getDefinedAttributeNames() {
-        return definedAttributeNames;
+        if (action instanceof RetargetAction) {
+            RetargetAction retargetAction = (RetargetAction) action;
+            handled = retargetAction.getActionHandler() != null;
+        }
+
+        attributeValuesByName.put(ATTRIBUTE_ENABLED, handled ? Boolean.TRUE
+                : Boolean.FALSE);
+        attributeValuesByName.put(ATTRIBUTE_ID, action.getId());
+        attributeValuesByName.put(ATTRIBUTE_STYLE, new Integer(action
+                .getStyle()));
+
+        return Collections.unmodifiableMap(attributeValuesByName);
     }
 }

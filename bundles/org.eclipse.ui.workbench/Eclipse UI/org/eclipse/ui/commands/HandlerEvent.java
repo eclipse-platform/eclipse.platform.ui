@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -26,41 +26,42 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class HandlerEvent {
 
-    private boolean definedAttributeNamesChanged;
+    private boolean attributeValuesByNameChanged;
 
     private IHandler handler;
 
-    private Set previouslyDefinedAttributeNames;
+    private Map previousAttributeValuesByName;
 
     /**
      * Creates a new instance of this class.
      * 
      * @param handler
      *            the instance of the interface that changed.
-     * @param definedAttributeNamesChanged
-     *            true, iff the definedAttributeNames property changed.
-     * @param previouslyAttributeNames
-     *            the set of previously defined attribute names. This set may be
-     *            empty. If this set is not empty, it must only contain
-     *            instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedAttributeNamesChanged is
+     * @param attributeValuesByNameChanged
+     *            true, iff the attributeValuesByName property changed.
+     * @param previousAttributeValuesByName
+     *            the map of previous attribute values by name. This map may be
+     *            empty. If this map is not empty, it's collection of keys must
+     *            only contain instances of <code>String</code>. This map
+     *            must be <code>null</code> if attributeValuesByNameChanged is
      *            <code>false</code> and must not be null if
-     *            definedAttributeNamesChanged is <code>true</code>.
+     *            attributeValuesByNameChanged is <code>true</code>.
      */
-    public HandlerEvent(IHandler handler, boolean definedAttributeNamesChanged,
-            Set previouslyDefinedAttributeNames) {
+    public HandlerEvent(IHandler handler, boolean attributeValuesByNameChanged,
+            Map previousAttributeValuesByName) {
         if (handler == null) throw new NullPointerException();
 
-        if (!definedAttributeNamesChanged
-                && previouslyDefinedAttributeNames != null)
+        if (!attributeValuesByNameChanged
+                && previousAttributeValuesByName != null)
                 throw new IllegalArgumentException();
 
-        if (definedAttributeNamesChanged)
-                this.previouslyDefinedAttributeNames = Util.safeCopy(
-                        previouslyDefinedAttributeNames, String.class);
+        if (attributeValuesByNameChanged)
+                this.previousAttributeValuesByName = Util.safeCopy(
+                        previousAttributeValuesByName, String.class,
+                        Object.class, false, true);
 
         this.handler = handler;
-        this.definedAttributeNamesChanged = definedAttributeNamesChanged;
+        this.attributeValuesByNameChanged = attributeValuesByNameChanged;
     }
 
     /**
@@ -74,25 +75,26 @@ public final class HandlerEvent {
     }
 
     /**
-     * Returns the set of previously defined attribute names.
+     * Returns the map of previous attribute values by name.
      * 
-     * @return the set of previously defined attribute names. This set may be
-     *         empty. If this set is not empty, it is guaranteed to only contain
-     *         instances of <code>String</code>. This set is guaranteed to be
-     *         <code>null</code> if haveDefinedAttributeNamesChanged() is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         haveDefinedAttributeNamesChanged() is <code>true</code>.
+     * @return the map of previous attribute values by name. This map may be
+     *         empty. If this map is not empty, it's collection of keys is
+     *         guaranteed to only contain instances of <code>String</code>.
+     *         This map is guaranteed to be <code>null</code> if
+     *         haveAttributeValuesByNameChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveAttributeValuesByNameChanged()
+     *         is <code>true</code>.
      */
-    public Set getPreviouslyDefinedAttributeNames() {
-        return previouslyDefinedAttributeNames;
+    public Map getPreviousAttributeValuesByName() {
+        return previousAttributeValuesByName;
     }
 
     /**
-     * Returns whether or not the definedAttributeNames property changed.
+     * Returns whether or not the attributeValuesByName property changed.
      * 
-     * @return true, iff the definedAttributeNames property changed.
+     * @return true, iff the attributeValuesByName property changed.
      */
-    public boolean haveDefinedAttributeNamesChanged() {
-        return definedAttributeNamesChanged;
+    public boolean haveAttributeValuesByNameChanged() {
+        return attributeValuesByNameChanged;
     }
 }

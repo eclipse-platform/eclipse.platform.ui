@@ -12,19 +12,17 @@ package org.eclipse.ui.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.NoSuchAttributeException;
 
 /**
  * Handles the cut command in both dialogs and windows. This handler is enabled
@@ -32,13 +30,8 @@ import org.eclipse.ui.commands.NoSuchAttributeException;
  * 
  * @since 3.0
  */
-public class WidgetMethodHandler extends AbstractHandler implements IExecutableExtension {
-
-    /**
-     * The attribute names supported by this handler.  This value is never
-     * <code>null</code>, but may be empty.
-     */
-    private static final Set ATTRIBUTE_NAMES = new HashSet();
+public class WidgetMethodHandler extends AbstractHandler implements
+        IExecutableExtension {
 
     /**
      * The name of the attribute controlling the enabled state.
@@ -51,18 +44,13 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
     private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
     /**
-     * The parameters to pass to the method this handler invokes.  This handler
+     * The parameters to pass to the method this handler invokes. This handler
      * always passes no parameters.
      */
     private static final Class[] METHOD_PARAMETERS = new Class[0];
 
-    static {
-        ATTRIBUTE_NAMES.add(ATTRIBUTE_ENABLED);
-        ATTRIBUTE_NAMES.add(ATTRIBUTE_ID);
-    }
-
     /**
-     * The name of the method to be invoked by this handler.  This value should
+     * The name of the method to be invoked by this handler. This value should
      * never be <code>null</code>.
      */
     private String methodName;
@@ -87,11 +75,18 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
         }
     }
 
+    public Map getAttributeValuesByName() {
+        Map attributeValuesByName = new HashMap();
+        attributeValuesByName.put(ATTRIBUTE_ENABLED,
+                getMethodToExecute() == null ? Boolean.FALSE : Boolean.TRUE);
+        attributeValuesByName.put(ATTRIBUTE_ID, null);
+        return Collections.unmodifiableMap(attributeValuesByName);
+    }
+
     /**
-     * Looks up the "cut" method on the focus control.
+     * Looks up the method on the focus control.
      * 
-     * @return The "cut" method on the focus control; <code>null</code> if
-     *         none.
+     * @return The method on the focus control; <code>null</code> if none.
      */
     private final Method getMethodToExecute() {
         final Control focusControl = Display.getCurrent().getFocusControl();
@@ -106,36 +101,12 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.commands.IHandler#getAttributeValue(java.lang.String)
+     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
+     *      java.lang.String, java.lang.Object)
      */
-    public final Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException {
-        if (attributeName.equals(ATTRIBUTE_ENABLED)) {
-            return (getMethodToExecute() == null) ? Boolean.FALSE
-                    : Boolean.TRUE;
-        } else if (attributeName.equals(ATTRIBUTE_ID)) {
-            return null;
-        } else {
-            throw new NoSuchAttributeException(
-                    "This handler doesn't have the '" + attributeName //$NON-NLS-1$
-                            + "' attribute"); //$NON-NLS-1$
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IHandler#getDefinedAttributeNames()
-     */
-    public final Set getDefinedAttributeNames() {
-        return ATTRIBUTE_NAMES;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
-    public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+    public void setInitializationData(IConfigurationElement config,
+            String propertyName, Object data) throws CoreException {
         // The data is really just a string (i.e., the method name).
-        methodName = data.toString();        
+        methodName = data.toString();
     }
 }

@@ -10,11 +10,11 @@
  ******************************************************************************/
 package org.eclipse.ui.commands;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
- * An instance of this interface is an handler as defined by the extension
- * point <code>org.eclipse.ui.commands</code>.
+ * An instance of this interface is an handler as defined by the extension point
+ * <code>org.eclipse.ui.commands</code>.
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
@@ -29,10 +29,9 @@ public interface IHandler {
      * changes to properties of this instance.
      * 
      * @param handlerListener
-     *            the instance to register. Must not be <code>null</code>.
-     *            If an attempt is made to register an instance which is
-     *            already registered with this instance, no operation is
-     *            performed.
+     *            the instance to register. Must not be <code>null</code>. If
+     *            an attempt is made to register an instance which is already
+     *            registered with this instance, no operation is performed.
      */
     void addHandlerListener(IHandlerListener handlerListener);
 
@@ -47,33 +46,22 @@ public interface IHandler {
     void execute(Object parameter) throws ExecutionException;
 
     /**
-     * Returns an attribute value given an attribute name.
-     * 
-     * @param attributeName
-     *            the name of the attribute. Must not be <code>null</code>.
-     * @return the value of the attribute.
-     * @throws NoSuchAttributeException
-     *             if the attribute is not defined.
-     */
-    Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException;
-
-    /**
-     * Returns the set of names of defined attributes.
+     * Returns the map of attribute values by name.
      * <p>
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
      * 
-     * @return the set of names of defined attributes. This set may be empty,
-     *         but is guaranteed not to be <code>null</code>. If this set is
-     *         not empty, it is guaranteed to only contain instances of <code>String</code>.
+     * @return the map of attribute values by name. This map may be empty, but
+     *         is guaranteed not to be <code>null</code>. If this map is not
+     *         empty, its collection of keys is guaranteed to only contain
+     *         instances of <code>String</code>.
      */
-    Set getDefinedAttributeNames();
+    Map getAttributeValuesByName();
 
     /**
-     * Unregisters an instance of <code>IPropertyListener</code> listening
-     * for changes to properties of this instance.
+     * Unregisters an instance of <code>IPropertyListener</code> listening for
+     * changes to properties of this instance.
      * 
      * @param handlerListener
      *            the instance to unregister. Must not be <code>null</code>.

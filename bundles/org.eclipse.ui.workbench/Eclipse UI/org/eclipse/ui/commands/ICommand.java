@@ -12,7 +12,7 @@
 package org.eclipse.ui.commands;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * <p>
@@ -72,39 +72,27 @@ public interface ICommand extends Comparable {
             NotHandledException;
 
     /**
-     * Returns an attribute value given an attribute name.
-     * 
-     * @param attributeName
-     *            the name of the attribute. Must not be <code>null</code>.
-     * @return the value of the attribute.
-     * @throws NoSuchAttributeException
-     *             if the attribute is not defined.
-     * @throws NotHandledException
-     *             if this is not handled.
-     */
-    Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException, NotHandledException;
-
-    /**
-     * Returns the set of names of defined attributes.
+     * Returns the map of attribute values by name.
      * <p>
      * Notification is sent to all registered listeners if this property
      * changes.
      * </p>
      * 
-     * @return the set of names of defined attributes. This set may be empty,
-     *         but is guaranteed not to be <code>null</code>. If this set is
-     *         not empty, it is guaranteed to only contain instances of <code>String</code>.
+     * @return the map of attribute values by name. This map may be empty, but
+     *         is guaranteed not to be <code>null</code>. If this map is not
+     *         empty, its collection of keys is guaranteed to only contain
+     *         instances of <code>String</code>.
      * @throws NotHandledException
      *             if this is not handled.
      */
-    Set getDefinedAttributeNames() throws NotHandledException;
+    Map getAttributeValuesByName()
+    	throws NotHandledException;
 
     /**
      * <p>
      * Returns the list of activity bindings for this handle. This method will
-     * return all activity bindings for this handle's identifier, whether or
-     * not the command represented by this handle is defined.
+     * return all activity bindings for this handle's identifier, whether or not
+     * the command represented by this handle is defined.
      * </p>
      * <p>
      * Notification is sent to all registered listeners if this attribute
@@ -113,22 +101,23 @@ public interface ICommand extends Comparable {
      * 
      * @return the list of activity bindings. This list may be empty, but is
      *         guaranteed not to be <code>null</code>. If this list is not
-     *         empty, it is guaranteed to only contain instances of <code>IActivityBinding</code>.
+     *         empty, it is guaranteed to only contain instances of
+     *         <code>IActivityBinding</code>.
      */
     List getContextBindings();
 
     /**
      * <p>
-     * Returns the identifier of the category of the command represented by
-     * this handle.
+     * Returns the identifier of the category of the command represented by this
+     * handle.
      * </p>
      * <p>
      * Notification is sent to all registered listeners if this attribute
      * changes.
      * </p>
      * 
-     * @return the identifier of the category of the command represented by
-     *         this handle. May be <code>null</code>.
+     * @return the identifier of the category of the command represented by this
+     *         handle. May be <code>null</code>.
      * @throws NotDefinedException
      *             if the command represented by this handle is not defined.
      */
@@ -154,7 +143,8 @@ public interface ICommand extends Comparable {
     /**
      * Returns the identifier of this handle.
      * 
-     * @return the identifier of this handle. Guaranteed not to be <code>null</code>.
+     * @return the identifier of this handle. Guaranteed not to be
+     *         <code>null</code>.
      */
     String getId();
 
@@ -171,7 +161,8 @@ public interface ICommand extends Comparable {
      * 
      * @return the list of image bindings. This list may be empty, but is
      *         guaranteed not to be <code>null</code>. If this list is not
-     *         empty, it is guaranteed to only contain instances of <code>IImageBinding</code>.
+     *         empty, it is guaranteed to only contain instances of
+     *         <code>IImageBinding</code>.
      */
     List getImageBindings();
 
@@ -186,9 +177,10 @@ public interface ICommand extends Comparable {
      * changes.
      * </p>
      * 
-     * @return the list of key sequence bindings. This list may be empty, but
-     *         is guaranteed not to be <code>null</code>. If this list is
-     *         not empty, it is guaranteed to only contain instances of <code>IKeySequenceBinding</code>.
+     * @return the list of key sequence bindings. This list may be empty, but is
+     *         guaranteed not to be <code>null</code>. If this list is not
+     *         empty, it is guaranteed to only contain instances of
+     *         <code>IKeySequenceBinding</code>.
      */
     List getKeySequenceBindings();
 
@@ -211,8 +203,7 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
-     * Returns whether or not the command represented by this handle is
-     * defined.
+     * Returns whether or not the command represented by this handle is defined.
      * </p>
      * <p>
      * Notification is sent to all registered listeners if this attribute
@@ -226,9 +217,9 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
-     * Returns whether or not this command is enabled. Instances of <code>ICommand</code>
-     * are enabled and disabled by the instance of <code>ICommandManager</code>
-     * from whence they were brokered.
+     * Returns whether or not this command is enabled. Instances of
+     * <code>ICommand</code> are enabled and disabled by the instance of
+     * <code>ICommandManager</code> from whence they were brokered.
      * </p>
      * <p>
      * Notification is sent to all registered listeners if this attribute
@@ -244,9 +235,9 @@ public interface ICommand extends Comparable {
      * changes to attributes of this instance.
      * 
      * @param commandListener
-     *            the instance of <code>ICommandListener</code> to
-     *            unregister. Must not be <code>null</code>. If an attempt
-     *            is made to unregister an instance of <code>ICommandListener</code>
+     *            the instance of <code>ICommandListener</code> to unregister.
+     *            Must not be <code>null</code>. If an attempt is made to
+     *            unregister an instance of <code>ICommandListener</code>
      *            which is not already registered with this instance, no
      *            operation is performed.
      */

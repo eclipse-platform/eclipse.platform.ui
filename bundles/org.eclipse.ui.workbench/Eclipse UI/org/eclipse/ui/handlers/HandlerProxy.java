@@ -12,18 +12,15 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.NoSuchAttributeException;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -60,12 +57,6 @@ public final class HandlerProxy extends AbstractHandler {
     private final String commandId;
 
     /**
-     * The priority of this handler in the system. The priority is an integer
-     * value. The greater the integer, the higher the priority.
-     */
-    private final Integer priority;
-
-    /**
      * The configuration element from which the handler can be created. This
      * value will exist until the element is converted into a real class -- at
      * which point this value will be set to <code>null</code>.
@@ -78,6 +69,12 @@ public final class HandlerProxy extends AbstractHandler {
      * is converted, nulled out, and this handler gains a reference.
      */
     private IHandler handler;
+
+    /**
+     * The priority of this handler in the system. The priority is an integer
+     * value. The greater the integer, the higher the priority.
+     */
+    private final Integer priority;
 
     /**
      * Constructs a new instance of <code>HandlerProxy</code> with all the
@@ -101,15 +98,28 @@ public final class HandlerProxy extends AbstractHandler {
         handler = null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
-     */
     public void execute(Object parameter) throws ExecutionException {
         if (loadHandler()) {
             handler.execute(parameter);
         }
+    }
+
+    // this method is no longer part of IHandler. lets try to remove this..
+    public Object getAttributeValue(String attributeName) {
+        if (handler == null) {
+            if (ATTRIBUTE_ID.equals(attributeName))
+                return commandId;
+            else if (ATTRIBUTE_PRIORITY.equals(attributeName)) return priority;
+        }
+
+        return getAttributeValuesByName().get(attributeName);
+    }
+
+    public Map getAttributeValuesByName() {
+        if (loadHandler())
+            return handler.getAttributeValuesByName();
+        else
+            return Collections.EMPTY_MAP;
     }
 
     /**
@@ -142,36 +152,5 @@ public final class HandlerProxy extends AbstractHandler {
         }
 
         return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IHandler#getAttributeValue(java.lang.String)
-     */
-    public Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException {
-        if (handler == null) {
-            if (ATTRIBUTE_ID.equals(attributeName)) {
-                return commandId;
-            } else if (ATTRIBUTE_PRIORITY.equals(attributeName)) { return priority; }
-        }
-
-        // We need to try to load the handler
-        if (loadHandler()) { return handler.getAttributeValue(attributeName); }
-
-        throw new NoSuchAttributeException(
-                "The proxy does not contain the information, and the real handler could not be loaded."); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IHandler#getDefinedAttributeNames()
-     */
-    public Set getDefinedAttributeNames() {
-        if (loadHandler()) { return handler.getDefinedAttributeNames(); }
-
-        return Collections.EMPTY_SET;
     }
 }

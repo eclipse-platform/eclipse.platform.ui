@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.ui.commands.CommandEvent;
@@ -23,7 +24,6 @@ import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.misc.Policy;
@@ -183,12 +183,11 @@ final class Command implements ICommand {
                             .commandChanged(commandEvent);
     }
 
-    public Object getAttributeValue(String attributeName)
-            throws NoSuchAttributeException, NotHandledException {
+    public Map getAttributeValuesByName() throws NotHandledException {
         IHandler handler = this.handler;
 
         if (handler != null)
-            return handler.getAttributeValue(attributeName);
+            return handler.getAttributeValuesByName();
         else
             throw new NotHandledException();
     }
@@ -201,15 +200,6 @@ final class Command implements ICommand {
 
     public List getContextBindings() {
         return contextBindings;
-    }
-
-    public Set getDefinedAttributeNames() throws NotHandledException {
-        IHandler handler = this.handler;
-
-        if (handler != null)
-            return handler.getDefinedAttributeNames();
-        else
-            throw new NotHandledException();
     }
 
     public String getDescription() throws NotDefinedException {
@@ -260,13 +250,15 @@ final class Command implements ICommand {
     }
 
     public boolean isHandled() {
-        try {
-            return handler != null
-                    && Boolean.TRUE
-                            .equals(handler.getAttributeValue("handled")); //$NON-NLS-1$ 
-        } catch (NoSuchAttributeException e) {
+        if (handler != null) return false;
+
+        Map attributeValuesByName = handler.getAttributeValuesByName();
+
+        if (attributeValuesByName.containsKey("handled")
+                && !Boolean.TRUE.equals(attributeValuesByName.get("handled")))
+            return false;
+        else
             return true;
-        }
     }
 
     public void removeCommandListener(ICommandListener commandListener) {
