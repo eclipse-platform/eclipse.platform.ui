@@ -126,7 +126,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			Factory factory = new Factory(problems);
 			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
-			bundleModel.setId(bundle.getBundleId());
+			bundleModel.setBundle(bundle);
 			if (isFragment) {
 				Bundle[] hosts = InternalPlatform.getDefault().getHosts(bundle);
 				if (hosts != null && hosts.length > 0)

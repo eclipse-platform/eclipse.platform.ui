@@ -170,7 +170,7 @@ public class RegistryCacheReader {
 			result = cacheFactory.createBundle();
 			addToObjectTable(result);
 			result.setUniqueIdentifier(readString(in, true));
-			result.setId(in.readLong());
+			result.setBundle(InternalPlatform.getDefault().getBundleContext().getBundle(in.readLong()));
 			result.setParent(readRegistry(in));
 			result.setHostIdentifier(readString(in, true));
 
