@@ -38,6 +38,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -208,7 +210,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Verify basic integrity of launch configurations in the given list,
 	 * adding valid configs to the collection of all launch configurations.
-	 * Excpetions are logged for invalid configs.
+	 * Exceptions are logged for invalid configs.
 	 * 
 	 * @param verify the list of configs to verify
 	 * @param valid the list to place valid configrations in
@@ -841,7 +843,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		if (container instanceof IProject && !((IProject)container).isOpen()) {
 			return list;
 		}
-		searchForFiles(container, ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION, list);
+		ResourceProxyVisitor visitor= new ResourceProxyVisitor(list);
+		try {
+			container.accept(visitor, IResource.NONE);
+		} catch (CoreException ce) {
+			//Closed project...should not be possible with previous check
+		}
 		Iterator iter = list.iterator();
 		List configs = new ArrayList(list.size());
 		while (iter.hasNext()) {
@@ -849,33 +856,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			configs.add(getLaunchConfiguration(file));
 		}
 		return configs;
-	}
-	
-	/**
-	 * Recursively searches the given container for files with the given
-	 * extension.
-	 * 
-	 * @param container the container to search in
-	 * @param extension the file extension being searched for
-	 * @param list the list to add the matching files to
-	 * @exception CoreException if an exception occurs traversing
-	 *  the container
-	 */
-	protected void searchForFiles(IContainer container, String extension, List list) throws CoreException {
-		IResource[] members = container.members();
-		for (int i = 0; i < members.length; i++) {
-			if (members[i] instanceof IContainer) {
-				if (members[i] instanceof IProject && !((IProject)members[i]) .isOpen()) {
-					continue;
-				}
-				searchForFiles((IContainer)members[i], extension, list);
-			} else if (members[i] instanceof IFile) {
-				IFile file = (IFile)members[i];
-				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(file.getFileExtension())) {
-					list.add(file);
-				}
-			}
-		}
 	}
 	
 	/**
@@ -1235,6 +1215,31 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			return fTo;
 		}
 		return null;
+	}
+	
+	/**
+	 * Collects files whose extension matches the launch configuration file
+	 * extension.
+	 */
+	class ResourceProxyVisitor implements IResourceProxyVisitor {
+		
+		private List fList;
+		
+		protected ResourceProxyVisitor(List list) {
+			fList= list;
+		}
+		/**
+		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+		 */
+		public boolean visit(IResourceProxy proxy) throws CoreException {
+			if (proxy.getType() == IResource.FILE) {
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equalsIgnoreCase(proxy.requestFullPath().getFileExtension())) {
+					fList.add(proxy.requestResource());
+				}
+				return false;
+			}
+			return true;
+		}
 	}
 
 }
