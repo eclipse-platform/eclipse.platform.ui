@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelProvider;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * This class is reponsible for creating and maintaining a presentation model of 
@@ -71,7 +72,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			}
 		};
 	
-	class LabelUpdateJob extends UIJob {
+	class LabelUpdateJob extends WorkbenchJob {
 		public static final int BATCH_WAIT_INCREMENT = 100;
 		Set nodes = new HashSet();
 		public LabelUpdateJob() {
