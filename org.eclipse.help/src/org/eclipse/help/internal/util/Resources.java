@@ -19,7 +19,7 @@ public class Resources {
 		resBundle = ResourceBundle.getBundle("help", getDefaultLocale());
 	}
 	/**
-	 * Resources constructort.
+	 * Resources constructor.
 	 */
 	public Resources() {
 		super();
