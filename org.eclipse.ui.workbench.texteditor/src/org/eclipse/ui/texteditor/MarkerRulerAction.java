@@ -359,7 +359,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator = new IInputValidator() {
 			public String isValid(String newText) {
-				return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
+				return (newText == null || newText.trim().length() == 0) ? " " : null; //$NON-NLS-1$
 			}
 		};
 		InputDialog dialog= new InputDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator);
@@ -414,4 +414,3 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		return attributes;
 	}
 }
-

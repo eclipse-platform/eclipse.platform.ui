@@ -155,7 +155,7 @@ public class AddMarkerAction extends TextEditorAction {
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator = new IInputValidator() {
 			public String isValid(String newText) {
-				return  (newText == null || newText.length() == 0) ? " " : null;  //$NON-NLS-1$
+				return  (newText == null || newText.trim().length() == 0) ? " " : null;  //$NON-NLS-1$
 			}
 		};		
 		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, inputValidator);
