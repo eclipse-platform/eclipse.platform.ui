@@ -182,6 +182,7 @@ public abstract class FeatureContentProvider
 		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
+		// if both are null or empty, return UNKNOWN size
 		if ((pluginEntries == null || pluginEntries.length == 0)
 			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
@@ -189,22 +190,24 @@ public abstract class FeatureContentProvider
 
 		// loop on plugin entries
 		long size = 0;
-		for (int i = 0; i < pluginEntries.length; i++) {
-			size = ((PluginEntryModel) pluginEntries[i]).getDownloadSize();
-			if (size == ContentEntryModel.UNKNOWN_SIZE) {
-				return ContentEntryModel.UNKNOWN_SIZE;
+		if (pluginEntries!=null)		
+			for (int i = 0; i < pluginEntries.length; i++) {
+				size = ((PluginEntryModel) pluginEntries[i]).getDownloadSize();
+				if (size == ContentEntryModel.UNKNOWN_SIZE) {
+					return ContentEntryModel.UNKNOWN_SIZE;
+				}
+				result += size;
 			}
-			result += size;
-		}
 
 		// loop on non plugin entries
-		for (int i = 0; i < pluginEntries.length; i++) {
-			size = ((NonPluginEntryModel) nonPluginEntries[i]).getDownloadSize();
-			if (size == ContentEntryModel.UNKNOWN_SIZE) {
-				return ContentEntryModel.UNKNOWN_SIZE;
+		if (nonPluginEntries!=null)
+			for (int i = 0; i < nonPluginEntries.length; i++) {
+				size = ((NonPluginEntryModel) nonPluginEntries[i]).getDownloadSize();
+				if (size == ContentEntryModel.UNKNOWN_SIZE) {
+					return ContentEntryModel.UNKNOWN_SIZE;
+				}
+				result += size;
 			}
-			result += size;
-		}
 
 		return result;
 	}
@@ -219,28 +222,32 @@ public abstract class FeatureContentProvider
 		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
-		if (pluginEntries == null || nonPluginEntries == null){
+		// if both are null or empty, return UNKNOWN size
+		if ((pluginEntries == null || pluginEntries.length == 0)
+			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
 		// loop on plugin entries
 		long size = 0;
-		for (int i = 0; i < pluginEntries.length; i++) {
-			size = ((PluginEntryModel) pluginEntries[i]).getInstallSize();
-			if (size == ContentEntryModel.UNKNOWN_SIZE) {
-				return ContentEntryModel.UNKNOWN_SIZE;
+		if (pluginEntries!=null)
+			for (int i = 0; i < pluginEntries.length; i++) {
+				size = ((PluginEntryModel) pluginEntries[i]).getInstallSize();
+				if (size == ContentEntryModel.UNKNOWN_SIZE) {
+					return ContentEntryModel.UNKNOWN_SIZE;
+				}
+				result += size;
 			}
-			result += size;
-		}
 
 		// loop on non plugin entries
-		for (int i = 0; i < nonPluginEntries.length; i++) {
-			size = ((NonPluginEntryModel) nonPluginEntries[i]).getInstallSize();
-			if (size == ContentEntryModel.UNKNOWN_SIZE) {
-				return ContentEntryModel.UNKNOWN_SIZE;
+		if (nonPluginEntries!=null)
+			for (int i = 0; i < nonPluginEntries.length; i++) {
+				size = ((NonPluginEntryModel) nonPluginEntries[i]).getInstallSize();
+				if (size == ContentEntryModel.UNKNOWN_SIZE) {
+					return ContentEntryModel.UNKNOWN_SIZE;
+				}
+				result += size;
 			}
-			result += size;
-		}
 
 		return result;
 	}

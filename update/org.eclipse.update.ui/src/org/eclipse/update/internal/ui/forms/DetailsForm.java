@@ -475,7 +475,7 @@ public class DetailsForm extends PropertyWebForm {
 			installedVersion =
 				UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
-		long size = feature.getInstallSize();
+		long size = feature.getDownloadSize();
 		String format = null;
 		if (size != -1) {
 			String stext = Long.toString(size);

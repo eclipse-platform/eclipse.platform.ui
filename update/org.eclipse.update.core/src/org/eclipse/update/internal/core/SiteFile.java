@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -306,12 +307,30 @@ public class SiteFile extends Site {
 	 */
 	public long getInstallSizeFor(IFeature feature) {
 		long result = 0;
-		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
-		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall =
-			UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
-		try {
+		try {		
+			List pluginsToInstall = new ArrayList();
+			
+			// get all the plugins [17304]
+			pluginsToInstall.addAll(Arrays.asList(feature.getPluginEntries()));
+			IFeatureReference[] children = feature.getIncludedFeatureReferences();
+			IFeature currentFeature= null;
+			for (int i = 0; i < children.length; i++) {
+				currentFeature = children[i].getFeature();
+				if (currentFeature!=null){
+					pluginsToInstall.addAll(Arrays.asList(currentFeature.getPluginEntries()));
+				}
+			}
+			
+			IPluginEntry[] entriesToInstall = new IPluginEntry[0];
+			if (pluginsToInstall.size()>0){
+				entriesToInstall = new IPluginEntry[pluginsToInstall.size()];
+				pluginsToInstall.toArray(entriesToInstall);
+			}
+			
+			IPluginEntry[] siteEntries = this.getPluginEntries();
+			entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+
 			result =
 				feature
 					.getFeatureContentProvider()
