@@ -45,7 +45,7 @@ public class WorkingSetTypePage extends WizardPage {
 	 * Creates a new instance of the receiver
 	 */
 	public WorkingSetTypePage() {
-		super("workingSetTypeSelectionPage"); //$NON-NLS-1$
+		super("workingSetTypeSelectionPage", WorkbenchMessages.getString("Select"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
 		setDescription(WorkbenchMessages.getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
 		icons = new Hashtable();
 	}

@@ -154,6 +154,8 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_WIZBAN_EXPORT_WIZ = "IMG_WIZBAN_EXPORT_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_EXPORTDIR_WIZ =  "IMG_WIZBAN_EXPORTDIR_WIZ"; //$NON-NLS-1$
 	public final static String IMG_WIZBAN_EXPORTZIP_WIZ = "IMG_WIZBAN_EXPORTZIP_WIZ"; //$NON-NLS-1$
+	
+	public final static String IMG_WIZBAN_RESOURCEWORKINGSET_WIZ = "IMG_WIZBAN_EXPORTZIP_WIZ"; //$NON-NLS-1$	
 
 	public final static String IMG_VIEW_DEFAULTVIEW_MISC = "IMG_VIEW_DEFAULTVIEW_MISC"; //$NON-NLS-1$
 	
