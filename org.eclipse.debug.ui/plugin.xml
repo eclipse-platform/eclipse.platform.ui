@@ -1111,6 +1111,33 @@
                enablesFor="*"
                id="org.eclipse.debug.ui.actions.GroupBreakpointsByAction">
         </action>
+        <action
+               label="%RemoveAction.label"
+               icon="icons/full/elcl16/rem_co.gif"
+               helpContextId="remove_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
+               menubarPath="breakpointGroup"
+               enablesFor="1+"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.remove">
+        </action>
+        <action
+               label="%DisableBreakpointsAction.label"
+               icon="icons/full/elcl16/disabled_co.gif"
+               helpContextId="disable_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
+               menubarPath="breakpointGroup"
+               enablesFor="1+"
+               id="org.eclipse.debug.ui.actions.DisableBreakpoint">
+        </action>
+        <action
+               label="%EnableBreakpointsAction.label"
+               icon="icons/full/elcl16/enabled_co.gif"
+               helpContextId="enable_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
+               menubarPath="breakpointGroup"
+               enablesFor="1+"
+               id="org.eclipse.debug.ui.actions.EnableBreakpoint">
+        </action>
       </viewerContribution>
       <!-- Breakpoint actions -->
       <viewerContribution
@@ -1121,33 +1148,6 @@
                name="org.eclipse.debug.core.model.IBreakpoint">
             </objectClass>
          </visibility>
-         <action
-               label="%RemoveAction.label"
-               icon="icons/full/elcl16/rem_co.gif"
-               helpContextId="remove_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
-               menubarPath="breakpointGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.remove">
-         </action>
-         <action
-               label="%DisableBreakpointsAction.label"
-               icon="icons/full/elcl16/disabled_co.gif"
-               helpContextId="disable_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
-               menubarPath="breakpointGroup"
-               enablesFor="2+"
-               id="org.eclipse.debug.ui.actions.DisableBreakpoint">
-         </action>
-         <action
-               label="%EnableBreakpointsAction.label"
-               icon="icons/full/elcl16/enabled_co.gif"
-               helpContextId="enable_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
-               menubarPath="breakpointGroup"
-               enablesFor="2+"
-               id="org.eclipse.debug.ui.actions.EnableBreakpoint">
-         </action>
          <action
                label="%addToGroup.label"
                icon="icons/full/obj16/brkp_grp.gif"
@@ -2123,16 +2123,6 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.MemoryViewTableFont">
          <description>
             %MemoryViewTableFontDefinition.description
-         </description>
-      </fontDefinition>
-      <fontDefinition
-            defaultsTo="org.eclipse.jface.textfont"
-            isEditable="true"
-            label="%ConsoleFont.label"
-            categoryId="org.eclipse.debug.ui.presentation"
-            id="org.eclipse.debug.ui.consoleFont">
-         <description>
-            %ConsoleFont.description
          </description>
       </fontDefinition>
    </extension>

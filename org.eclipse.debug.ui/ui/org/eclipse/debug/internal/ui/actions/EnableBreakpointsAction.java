@@ -25,6 +25,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IBreakpointContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -86,20 +87,26 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				while (itr.hasNext()) {
-					IBreakpoint breakpoint = (IBreakpoint) itr.next();
+					Object element= itr.next();
 					try {
-						if (size > 1) {
-							if (isEnableAction()) {
-								breakpoint.setEnabled(true);
-							} else {
-								breakpoint.setEnabled(false);
-							}
-						} else {
-							breakpoint.setEnabled(!breakpoint.isEnabled());
+						IBreakpoint[] breakpoints= null;
+						if (element instanceof IBreakpoint) {
+							breakpoints= new IBreakpoint[] { (IBreakpoint) element };
+						} else if (element instanceof IBreakpointContainer) {
+							breakpoints= ((IBreakpointContainer) element).getBreakpoints();
+						}
+						if (breakpoints != null) {
+							setEnabled(breakpoints);
 						}
 					} catch (CoreException e) {
 						ms.merge(e.getStatus());
 					}
+				}
+			}
+			public void setEnabled(IBreakpoint[] breakpoints) throws CoreException {
+				boolean enable= isEnableAction();
+				for (int i = 0; i < breakpoints.length; i++) {
+					breakpoints[i].setEnabled(enable);
 				}
 			}
 		};
@@ -139,30 +146,49 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
 			Object selected= itr.next();
-			if (!(selected instanceof IBreakpoint)) {
+			if (selected instanceof IBreakpointContainer) {
+				IBreakpoint[] breakpoints = ((IBreakpointContainer) selected).getBreakpoints();
+				for (int i = 0; i < breakpoints.length; i++) {
+					try {
+						if (breakpoints[i].isEnabled()) {
+							allDisabled= false;
+						} else {
+							allEnabled= false;
+						}
+					} catch (CoreException ce) {
+						handleException(ce);
+					}
+				}
+			} else if (selected instanceof IBreakpoint) {
+				IBreakpoint bp= (IBreakpoint)selected;
+				try {
+					if (bp.isEnabled()) {
+						allDisabled= false;
+					} else {
+						allEnabled= false;
+					}
+				} catch (CoreException ce) {
+					handleException(ce);
+				}
+			} else {
 				return;
 			}
-			IBreakpoint bp= (IBreakpoint)selected;
-			try {
-				if (bp.isEnabled()) {
-					allDisabled= false;
-				} else {
-					allEnabled= false;
-				}
-			} catch (CoreException ce) {
-				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window != null) {
-					DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
-				} else {
-					DebugUIPlugin.log(ce);
-				}
-			}
+			
 		}
 			
 		if (isEnableAction()) {
 			action.setEnabled(!allEnabled);
 		} else {
 			action.setEnabled(!allDisabled);
+		}
+	}
+	
+	private void handleException(CoreException ce) {
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
+		} else {
+			DebugUIPlugin.log(ce);
 		}
 	}
 	
