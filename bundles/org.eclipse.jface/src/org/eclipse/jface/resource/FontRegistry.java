@@ -454,12 +454,12 @@ public class FontRegistry extends ResourceRegistry {
         if (validData.length == 0) {
             //Nothing specified 
             return null;
-        } else {
-            //Do not fire the update from creation as it is not a property change
-            put(symbolicName, validData, false);
-            Font newFont = new Font(display, validData);
-            return new FontRecord(newFont, validData);
-        }
+        } 
+
+        //Do not fire the update from creation as it is not a property change
+        put(symbolicName, validData, false);
+        Font newFont = new Font(display, validData);
+        return new FontRecord(newFont, validData);
     }
 
     /**
