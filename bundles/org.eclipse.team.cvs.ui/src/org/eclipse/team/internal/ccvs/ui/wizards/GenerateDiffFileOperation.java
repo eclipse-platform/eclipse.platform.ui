@@ -82,16 +82,20 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			boolean emptyDiff = false;
 			
 			if(toClipboard) {				
-				ByteArrayOutputStream baos = (ByteArrayOutputStream)os;
+				final ByteArrayOutputStream baos = (ByteArrayOutputStream)os;
 				if(baos.size() == 0) {
 					emptyDiff = true;
 				} else {
-					TextTransfer plainTextTransfer = TextTransfer.getInstance();
-					Clipboard clipboard= new Clipboard(shell.getDisplay());		
-					clipboard.setContents(
-						new String[]{baos.toString()}, 
-						new Transfer[]{plainTextTransfer});	
-					clipboard.dispose();
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							TextTransfer plainTextTransfer = TextTransfer.getInstance();
+							Clipboard clipboard = new Clipboard(shell.getDisplay());		
+							clipboard.setContents(
+								new String[]{baos.toString()}, 
+								new Transfer[]{plainTextTransfer});	
+							clipboard.dispose();
+						}
+					});
 				}
 			} else {
 				if(outputFile.length() == 0) {
