@@ -39,6 +39,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -293,17 +295,7 @@ public class PreferenceDialog extends Dialog implements
 			}
 
 		});
-		newShell.addListener(SWT.Resize, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				updateMessage();
 
-			}
-		});
 	}
 
 	/*
@@ -350,6 +342,7 @@ public class PreferenceDialog extends Dialog implements
 				selectSavedItem();
 			}
 		});
+		
 		return control[0];
 	}
 
@@ -481,6 +474,16 @@ public class PreferenceDialog extends Dialog implements
 		// Message label
 		messageArea = new DialogMessageArea();
 		messageArea.createContents(titleArea);
+		
+		titleArea.addControlListener(new ControlAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
+			 */
+			public void controlResized(ControlEvent e) {
+				updateMessage();
+			}
+		});
+		
 		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (JFaceResources.BANNER_FONT.equals(event.getProperty()))
