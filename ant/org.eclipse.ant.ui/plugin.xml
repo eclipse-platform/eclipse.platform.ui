@@ -314,7 +314,7 @@ M4 = Platform-specific fourth key -->
           <menu
 			id="projection"
 			label="%Folding.label"
-			path="rest">
+			path="rulers">
 		 </menu>
          <action
                label="%Dummy.label"
@@ -332,28 +332,13 @@ M4 = Platform-specific fourth key -->
                definitionId="org.eclipse.ui.edit.text.folding.toggle"
                id="org.eclipse.ant.ui.folding.toggle">
          </action>
-         <action
-               label="%Dummy.label"
-               style="push"
-               definitionId="org.eclipse.quickdiff.toggle"
-               helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
-               menubarPath="quickdiff"
-               id="ant.quickdiff.toggle">
-         </action>
       </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
             targetID="org.eclipse.ant.ui.internal.editor.AntEditor"
-            id="org.eclipse.quickdiff.editoractions.antEditor">
-         <action
-               definitionId="org.eclipse.quickdiff.toggle"
-               label="%Dummy.label"
-               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
-               id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
-         </action>
+            id="org.eclipse.ui.editorActions.antEditor">
           <action
                definitionId="org.eclipse.ant.ui.openExternalDoc"
                label="%Dummy.label"
