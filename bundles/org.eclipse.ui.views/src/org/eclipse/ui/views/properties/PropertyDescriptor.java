@@ -4,8 +4,8 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
 /**
  * Standard implementation for property descriptors.

@@ -12,7 +12,8 @@ Contributors:
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 class MarkCompletedAction extends TaskAction {

@@ -11,11 +11,9 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.core.resources.*;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
 

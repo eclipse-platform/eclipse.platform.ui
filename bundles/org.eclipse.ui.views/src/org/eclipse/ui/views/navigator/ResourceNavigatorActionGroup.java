@@ -10,10 +10,8 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.swt.events.KeyEvent;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**

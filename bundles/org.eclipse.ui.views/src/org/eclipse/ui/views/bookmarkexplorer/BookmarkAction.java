@@ -5,7 +5,6 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * All Rights Reserved.
  */
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.jface.viewers.*;
 
 /**
  * An abstract class for all bookmark view actions.

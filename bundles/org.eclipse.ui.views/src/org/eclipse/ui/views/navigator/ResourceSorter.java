@@ -6,7 +6,6 @@ package org.eclipse.ui.views.navigator;
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 

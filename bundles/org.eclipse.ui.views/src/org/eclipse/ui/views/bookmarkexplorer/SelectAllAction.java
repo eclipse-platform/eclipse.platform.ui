@@ -5,7 +5,6 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * All Rights Reserved.
  */
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.help.WorkbenchHelp;

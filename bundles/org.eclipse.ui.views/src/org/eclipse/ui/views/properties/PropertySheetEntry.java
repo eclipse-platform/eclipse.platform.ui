@@ -4,15 +4,14 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import java.lang.reflect.*;
 import java.text.Collator;
 import java.util.*;
-import java.util.List;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * <code>PropertySheetEntry</code> is an implementation of

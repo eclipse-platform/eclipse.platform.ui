@@ -10,11 +10,10 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.util.*;
 
 /**
  * Supports a web-browser style of navigation by maintaining a list

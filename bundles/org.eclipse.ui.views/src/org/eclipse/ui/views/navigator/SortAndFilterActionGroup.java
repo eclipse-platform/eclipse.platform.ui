@@ -12,7 +12,6 @@ Contributors:
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-
 import org.eclipse.ui.IActionBars;
 
 /**

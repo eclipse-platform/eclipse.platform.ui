@@ -4,12 +4,11 @@ package org.eclipse.ui.views.contentoutline;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.widgets.Composite; 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.*;
 
 /**
  * Main class for the Content Outline View.

@@ -5,11 +5,9 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

@@ -4,18 +4,19 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.dialogs.*;
-
-import java.text.Collator;
-import java.util.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Shows a list of resources to the user with a text entry field

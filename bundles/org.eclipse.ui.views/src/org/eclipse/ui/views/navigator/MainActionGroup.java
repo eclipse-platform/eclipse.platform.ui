@@ -11,13 +11,10 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;

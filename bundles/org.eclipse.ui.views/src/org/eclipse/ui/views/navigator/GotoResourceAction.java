@@ -4,11 +4,13 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import java.util.ArrayList;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Implements the go to resource action. Opens a dialog and set

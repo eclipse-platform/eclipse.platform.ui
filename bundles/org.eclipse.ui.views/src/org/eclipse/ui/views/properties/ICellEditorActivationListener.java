@@ -4,7 +4,7 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.CellEditor;  
+import org.eclipse.jface.viewers.CellEditor;
 /**
  * A listener which is notified when a cell editor is 
  * activated/deactivated

@@ -8,13 +8,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.swt.widgets.Table;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

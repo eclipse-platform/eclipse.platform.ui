@@ -6,8 +6,6 @@ package org.eclipse.ui.views.properties;
  */
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.part.IPage;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.IStatusLineManager;
 
 /**
  * Interface for a property sheet page that appears in a property sheet view.

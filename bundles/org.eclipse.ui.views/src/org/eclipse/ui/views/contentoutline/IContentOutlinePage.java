@@ -4,8 +4,8 @@ package org.eclipse.ui.views.contentoutline;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.part.IPage;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.part.IPage;
 
 /**
  * Marker-style interface for a content outline page. This interface defines

@@ -4,7 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
+import java.util.Vector;
 
 /**
  * A string pattern matcher, suppporting * and ? wildcards.

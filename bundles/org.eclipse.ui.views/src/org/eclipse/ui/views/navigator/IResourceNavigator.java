@@ -8,7 +8,6 @@ package org.eclipse.ui.views.navigator;
  */
 
 import org.eclipse.jface.viewers.TreeViewer;
-
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.views.framelist.FrameList;

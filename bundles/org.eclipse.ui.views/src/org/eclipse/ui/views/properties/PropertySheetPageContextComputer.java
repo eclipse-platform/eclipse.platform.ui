@@ -4,14 +4,13 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+
+import org.eclipse.help.IContext;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.help.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.widgets.Control;
-import java.util.*;
+import org.eclipse.ui.help.IContextComputer;
 
 /**
  * For determining the help context for a property sheet page.

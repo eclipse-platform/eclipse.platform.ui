@@ -4,7 +4,6 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.List;
 
 /**
  * Interface to an object capable of supplying properties for display by the

@@ -4,7 +4,7 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action hides or shows expert properties in the <code>PropertySheetViewer</code>.

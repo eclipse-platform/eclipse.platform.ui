@@ -4,13 +4,11 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import java.net.*;
 
 /**
  * Returns the label text and image for bookmarks in the bookmarks viewer.

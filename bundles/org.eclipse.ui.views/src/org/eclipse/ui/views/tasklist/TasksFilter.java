@@ -17,10 +17,8 @@ import java.util.HashSet;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 

@@ -6,7 +6,6 @@ package org.eclipse.ui.views.properties;
  */
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.actions.*;
 
 /**
  * This is the base class of all the local actions used
