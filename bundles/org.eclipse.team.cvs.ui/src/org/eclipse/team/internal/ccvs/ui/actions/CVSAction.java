@@ -156,7 +156,12 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	
 	public void dispose() {
 		super.dispose();
-        getWindow().getPartService().removePartListener(retargetAction);
+        IWorkbenchWindow window = getWindow();
+        if (window != null) {
+            IPartService partService = window.getPartService();
+            if (partService != null)
+                partService.removePartListener(retargetAction);
+        }
         
         if(retargetAction != null) {
         	retargetAction.dispose();
