@@ -22,6 +22,7 @@ BODY {
 	/*font: 9pt ms sans serif,sans-serif;*/
 	font: 8pt Tahoma;
 	margin-top:5px;
+	margin-left:5px;
 	padding:0;
 	border:0;
 	cursor:default;
@@ -33,31 +34,40 @@ BODY {
 	scrollbar-face-color:ActiveBorder;
 }
 
+
 A {
 	text-decoration:none; 
 	color:WindowText; 
-	height:18;
 	padding:0px;
-	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 	cursor:default;
 }
 
-DIV {
-	padding-left:20px;
+
+TABLE {
+	background-color: Window;
+	font: 8pt Tahoma;
+	width:100%;
 }
 
-DIV.list {
+
+.icon {
 	background-image: url("images/topic_obj.gif");
 	background-position:center left;
 	background-repeat:no-repeat;
+	width:16px;
+}
+
+.list {
+	padding:2px;
 }
      
-DIV.active { 
+.active { 
 	background:ActiveBorder;
-	background-image: url("images/topic_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
+}
+
+.label {
+	margin-left:4px;
 }
 
 

@@ -56,14 +56,18 @@ public class Links {
 			out.write(WebappResources.getString("Nothing_found", null));
 			return;
 		}
+		out.write("<table id='list'  cellspacing='0' >");
 		for (int i = 0; i < topics.getLength(); i++) {
 			Node n = topics.item(i);
 			if (n.getNodeType() == Node.ELEMENT_NODE)
 				genTopic((Element) n, out);
 		}
+		out.write("</table>");
 	}
 	private void genTopic(Element topic, Writer out) throws IOException {
-		out.write("<div class='list'>");
+		out.write("<tr class='list'>");
+		out.write("<td class='icon'></td>");
+		out.write("<td align='left' class='label' nowrap>");
 		out.write("<a href=");
 		String href = topic.getAttribute("href");
 		if (href != null && href.length() > 0) {
@@ -73,10 +77,10 @@ public class Links {
 		} else
 			href = "javascript:void 0";
 		out.write("'" + href + "'>");
-		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
-		out.write("<nobr>");
-		out.write(topic.getAttribute("label") + "</nobr></a>");
-		out.write("</div>");
+				
+		out.write(topic.getAttribute("label"));
+
+		out.write("</a></td></tr>");
 	}
 
 }

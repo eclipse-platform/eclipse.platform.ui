@@ -61,29 +61,18 @@ public class Search {
 			return;
 		}
 		
+		out.write("<table id='list' cellspacing='0'>");
 		for (int i = 0; i < topics.getLength(); i++) {
 			Node n = topics.item(i);
 			if (n.getNodeType() == Node.ELEMENT_NODE)
 				genTopic((Element) n, out);
 		}
+		out.write("</table>");
 	}
 
 	private void genTopic(Element topic, Writer out) throws IOException {
-		out.write("<div class='list'>");
-		out.write("<a href=");
-		String href = topic.getAttribute("href");
-		if (href != null && href.length() > 0) {
-			// external href
-			if (href.charAt(0) == '/')
-				href = "content/help:" + href;
-		} else
-			href = "javascript:void 0";
-		out.write("'" + href + "'>");
-		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
-		out.write("<nobr>");
-				
-		String label = topic.getAttribute("label");
-
+		out.write("<tr class='list'>");
+		
 		// obtain document score
 		String scoreString = topic.getAttribute("score");
 		try {
@@ -95,10 +84,22 @@ public class Search {
 		} catch (NumberFormatException nfe) {
 			// will display original score string
 		}
+		out.write("<td align='right' class='score'>");
+		out.write(scoreString);
+		out.write("</td><td align='left' class='label' nowrap>");
+		out.write("<a href=");
+		String href = topic.getAttribute("href");
+		if (href != null && href.length() > 0) {
+			// external href
+			if (href.charAt(0) == '/')
+				href = "content/help:" + href;
+		} else
+			href = "javascript:void 0";
+		out.write("'" + href + "'>");
+				
+		out.write(topic.getAttribute("label"));
 
-		out.write(scoreString + "&nbsp;&nbsp;" + label + "</nobr></a>");
-
-		out.write("</div>");
+		out.write("</a></td></tr>");
 	}
 
 

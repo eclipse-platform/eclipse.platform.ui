@@ -8,17 +8,17 @@ var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
  * Returns the anchor of this click
  * NOTE: MOZILLA BUG WITH A:focus and A:active styles
  */
-function getDivNode(node) {
+function getTRNode(node) {
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
 	return node.parentNode.parentNode.parentNode;
-  else if (node.tagName == "NOBR")
+  else if (node.tagName == "A")
   	return node.parentNode.parentNode;
-  else if (node.tagName == "A") 
+  else if (node.tagName == "TD") 
     return node.parentNode;
-  else if (node.tagName == "DIV") 
+  else if (node.tagName == "TR") 
     return node;
   else
-    return null;
+  	return null;
 }
 
 
@@ -38,14 +38,14 @@ function mouseMoveHandler(e) {
   else 
   	return;
   	
-  overNode = getDivNode(overNode);
+  overNode = getTRNode(overNode);
   if (overNode == null)
    return;
  
   if (isMozilla)
      e.cancelBubble = false;
      
-  window.status = overNode.firstChild.firstChild.innerHTML;
+  window.status = overNode.lastChild.firstChild.innerHTML;
 }
 
 /**
@@ -59,6 +59,9 @@ function mouseClickHandler(e) {
    	clickedNode = window.event.srcElement;
   else 
   	return;
+
+  if (clickedNode)	
+  	clickedNode.blur();
   	
   highlightTopic(clickedNode);
 
@@ -72,7 +75,8 @@ function mouseClickHandler(e) {
  */
 function highlightTopic(topic)
 {
-  var a = getDivNode(topic); 
+  var a = getTRNode(topic); 
+
   if (a != null)
   {
   	   if (oldActive && oldActive != a) 

@@ -38,27 +38,35 @@ BODY {
 	scrollbar-face-color:ActiveBorder;
 }
 
+
 A {
 	text-decoration:none; 
 	color:WindowText; 
-	height:18;
 	padding:0px;
-	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 	cursor:default;
 }
 
-DIV.list {
-}
-     
-DIV.active { 
-	background:ActiveBorder;
-}
 
-TABLE , TD {
+TABLE {
 	background-color: Window;
 	font: 8pt Tahoma;
 }
+
+.score {
+	padding-right:5px;
+}
+
+
+.list {
+	padding:2px;
+}
+     
+.active { 
+	background:ActiveBorder;
+	padding:2px;
+}
+
 
 </style>
 
