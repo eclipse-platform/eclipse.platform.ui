@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
@@ -29,7 +31,7 @@ public class AntPropertyNode extends AntTaskNode {
 	
 	private String fValue= null;
 	private String fReferencedName;
-	
+    
 	/*
 	 * The set of properties defined by this node
 	 * name-> value mapping
@@ -148,7 +150,7 @@ public class AntPropertyNode extends AntTaskNode {
 			}
 		}
 		if (fValue != null) {
-			return fValue.indexOf(identifier + '}') != -1;
+			return fValue.indexOf('{' + identifier + '}') != -1;
 		}
 		return false;
 	}
@@ -184,18 +186,30 @@ public class AntPropertyNode extends AntTaskNode {
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedOccurrencesIdentifier(java.lang.String)
-	 */
-	public String getModifiedOccurrencesIdentifier(String identifier) {
-		return identifier;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
-	 */
-	public int getOccurrencePositionOffset() {
-		return 0;
-	}
+    
+    public List computeIdentifierOffsets(String identifier) {
+        String textToSearch= getAntModel().getText(getOffset(), getLength());
+        List results= new ArrayList();
+        if (fBaseLabel != null) {
+            if (fBaseLabel.equals(identifier)) {
+                int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+                nameOffset= textToSearch.indexOf(identifier, nameOffset);
+                results.add(new Integer(getOffset() + nameOffset));
+            }
+        }
+        if (fValue != null) {
+            int valueOffset= textToSearch.indexOf("value"); //$NON-NLS-1$
+            int endOffset= getOffset() + getLength();
+            identifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
+            while(valueOffset < endOffset) {
+                valueOffset= textToSearch.indexOf(identifier, valueOffset);
+                if (valueOffset == -1 || valueOffset > endOffset) {
+                    break;
+                }
+                results.add(new Integer(getOffset() + valueOffset + 1));
+                valueOffset+= identifier.length();
+            }
+        }
+        return results;
+    }
 }

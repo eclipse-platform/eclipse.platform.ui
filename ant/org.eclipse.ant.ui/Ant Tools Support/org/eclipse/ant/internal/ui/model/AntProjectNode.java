@@ -11,6 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -118,18 +121,14 @@ public class AntProjectNode extends AntElementNode {
 	public boolean containsOccurrence(String identifier) {
 		return identifier.equals(getDefaultTargetName());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedIdentifier(java.lang.String)
-	 */
-	public String getModifiedOccurrencesIdentifier(String identifier) {
-		return new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
-	 */
-	public int getOccurrencePositionOffset() {
-		return 1;
-	}
+    
+    public List computeIdentifierOffsets(String identifier) {
+        String textToSearch= getAntModel().getText(getOffset(), getLength());
+        List results= new ArrayList(1);
+        identifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
+        int defaultTargetNameOffset= textToSearch.indexOf("default"); //$NON-NLS-1$
+        defaultTargetNameOffset= textToSearch.indexOf(identifier, defaultTargetNameOffset);
+        results.add(new Integer(getOffset() + defaultTargetNameOffset));
+        return results;
+    }
 }

@@ -632,27 +632,6 @@ public class AntElementNode implements IAdaptable {
 	public String getOccurrencesIdentifier() {
 		return getLabel();
 	}
-	
-	/**
-	 * Returns a modified identifier to use for matching occurrences in the Ant editor so
-	 * that false position matches are not considered
-	 * 
-	 * @return the modified identifier for this node
-	 */
-	public String getModifiedOccurrencesIdentifier(String identifier) {
-		return identifier;
-	}
-	
-	/**
-	 * Returns the position offset to adjust reference matches resulting from the use of
-	 * the modified identifier for this node.
-	 * 
-	 * @return the position offset
-	 * @see #getModifiedIdentifier(String)
-	 */
-	public int getOccurrencePositionOffset() {
-		return 0;
-	}
 
 	/**
 	 * Returns whether the supplied region can be considered as an area in this node containing
@@ -664,4 +643,8 @@ public class AntElementNode implements IAdaptable {
 	public boolean isRegionPotentialReference(IRegion region) {
 		return region.getOffset() >= fOffset;
 	}
+
+    public List computeIdentifierOffsets(String identifier) {
+        return null;
+    }
 }

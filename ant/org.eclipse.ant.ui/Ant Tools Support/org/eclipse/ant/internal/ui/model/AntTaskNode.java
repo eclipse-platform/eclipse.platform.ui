@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.tools.ant.BuildException;
@@ -138,10 +140,9 @@ public class AntTaskNode extends AntElementNode {
 	
 	public boolean containsOccurrence(String identifier) {
 		RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
-		
 		Map attributeMap= wrapper.getAttributeMap();
 		Set keys= attributeMap.keySet();
-		String modifiedIdentifier= getModifiedOccurrencesIdentifier(identifier);
+		String modifiedIdentifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
 		for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
 			String key = (String) iter.next();
 			String value= (String) attributeMap.get(key);
@@ -158,18 +159,36 @@ public class AntTaskNode extends AntElementNode {
 	
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedIdentifier(java.lang.String)
-	 */
-	public String getModifiedOccurrencesIdentifier(String identifier) {
-		return new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
-	 */
-	public int getOccurrencePositionOffset() {
-		return 1;
-	}
+    
+    public List computeIdentifierOffsets(String identifier) {
+        String textToSearch= getAntModel().getText(getOffset(), getLength());
+        List results= new ArrayList();
+        RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
+        Map attributeMap= wrapper.getAttributeMap();
+        Set keys= attributeMap.keySet();
+        String modifiedIdentifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
+        for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
+            String key = (String) iter.next();
+            String value= (String) attributeMap.get(key);
+            if (value.indexOf(modifiedIdentifier) != -1) {
+                int keyOffset= textToSearch.indexOf(key);
+                int valueOffset= textToSearch.indexOf(value, keyOffset);
+                int valueEndOffset= textToSearch.indexOf('"', valueOffset);
+                valueEndOffset= textToSearch.indexOf('"', valueEndOffset);
+                int withinValueOffset= value.indexOf(modifiedIdentifier);
+                while(withinValueOffset != -1) {
+                    results.add(new Integer(getOffset() + valueEndOffset + withinValueOffset + 1));
+                    withinValueOffset= value.indexOf(modifiedIdentifier, withinValueOffset + 1);
+                }
+            }
+        }
+        
+        StringBuffer text= wrapper.getText();
+        if (text.length() > 0) {
+            int offset= textToSearch.indexOf(text.toString());
+            offset= textToSearch.indexOf(modifiedIdentifier, offset);
+            results.add(new Integer(offset + getOffset() + 1));
+        }
+        return results;
+    }
 }

@@ -1622,32 +1622,4 @@ public class AntModel implements IAntModel {
         }
         return null;
     }
-
-	public List computeIdentifierOffsets(AntElementNode currentNode, String identifier) {
-		try {
-			
-			int offset= computeOffset(getLine(currentNode.getOffset() + currentNode.getLength()), 0, identifier);
-			if (offset == -1) {
-				return null;
-			}
-			List results= new ArrayList();
-			while(offset >= currentNode.getOffset()) {
-				results.add(new Integer(offset));
-				int line= getLine(offset) - 1;
-				offset= -1;
-				int nextOffset= getOffset(line, 0);
-				if (nextOffset >= currentNode.getOffset()) {
-					try {
-						offset= computeOffset(line, 0, identifier);
-					} catch (BadLocationException be) {
-						return results;
-					}
-				} 
-			}
-			return results;
-			
-		} catch (BadLocationException e) {
-			return null;
-		}
-	}
 }

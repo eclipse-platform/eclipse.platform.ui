@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.Target;
@@ -163,4 +165,28 @@ public class AntTargetNode extends AntElementNode {
 	public String getOccurrencesIdentifier() {
 		return getTargetName();
 	}
+    
+    public List computeIdentifierOffsets(String identifier) {
+        String textToSearch= getAntModel().getText(getOffset(), getLength());
+        List results= new ArrayList();
+        if (getTargetName().equals(identifier)) {
+            int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+            nameOffset= textToSearch.indexOf(identifier, nameOffset);
+            results.add(new Integer(getOffset() + nameOffset));
+        }
+        int dependsOffset= textToSearch.indexOf("depends"); //$NON-NLS-1$
+        if (dependsOffset != -1) {
+            int dependsOffsetEnd= textToSearch.indexOf('"', dependsOffset);
+            dependsOffsetEnd= textToSearch.indexOf('"', dependsOffsetEnd+1);
+            while(dependsOffset < dependsOffsetEnd) {
+                dependsOffset= textToSearch.indexOf(identifier, dependsOffset);
+                if (dependsOffset == -1 || dependsOffset > dependsOffsetEnd) {
+                    break;
+                }
+                results.add(new Integer(getOffset() + dependsOffset));
+                dependsOffset+= identifier.length();
+            }
+        }
+        return results;
+    }
 }
