@@ -67,7 +67,7 @@ public class DebugSelectionManager implements IPageListener {
 	}
 	
 	/**
-	 * Add tge given listener to the selection provider for the specified
+	 * Add the given listener to the selection provider for the specified
 	 * page and view.
 	 * 
 	 * @param listener selection listener
