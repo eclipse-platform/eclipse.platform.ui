@@ -25,6 +25,8 @@ import org.eclipse.jface.resource.JFaceResources;
  * provides some common functionality for view preferences.
  * <strong>NOTE: This API is experimental and may change
  * before Eclipse 3.1 is released. <strong>
+ * 
+ * @since 3.1
  */
 public class ViewSettingsDialog extends Dialog {
 	

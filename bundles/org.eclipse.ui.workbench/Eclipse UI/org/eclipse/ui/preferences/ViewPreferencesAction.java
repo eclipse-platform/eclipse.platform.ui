@@ -17,6 +17,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * The ViewPreferencesAction is the action for opening
  * a view preferences dialog on a class.
+ * 
+ * @since 3.1
  */
 public abstract class ViewPreferencesAction extends Action {
 
