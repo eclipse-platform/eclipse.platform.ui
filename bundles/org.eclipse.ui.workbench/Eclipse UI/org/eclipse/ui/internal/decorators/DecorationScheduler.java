@@ -12,16 +12,13 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.*;
 import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.progress.UIJob;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.progress.UIJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -38,7 +35,7 @@ public class DecorationScheduler {
 	// Objects that are awaiting a label update.
 	private Set pendingUpdate = new HashSet();
 
-	private ILock resultLock = JobManager.getInstance().newLock();
+	private Object resultLock = new Object();
 
 	private Map awaitingDecorationValues = new HashMap();
 
