@@ -11,9 +11,10 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -43,15 +44,17 @@ class SelectionProviderAdapter implements ISelectionProvider {
 
     public void setSelection(ISelection selection) {
         theSelection = selection;
-        SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
-        Iterator iter = listeners.iterator();
-
-        while (iter.hasNext()) {
-            ISelectionChangedListener next = (ISelectionChangedListener) iter
-                    .next();
-
-            next.selectionChanged(e);
-        }
+        final SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
+        Object[] listenersArray = listeners.toArray();
+        
+        for (int i = 0; i < listenersArray.length; i++) {
+            final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.selectionChanged(e);
+                }
+            });
+		}
     }
 
 }
