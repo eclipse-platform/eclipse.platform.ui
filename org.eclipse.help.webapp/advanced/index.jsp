@@ -20,6 +20,13 @@
 </noscript>
 <title><%=ServletResources.getString("Help", request)%></title>
 <jsp:include page="livehelp.js.jsp"/>
+
+<style type="text/css">
+FRAMESET {
+	border: 0px;
+}
+</style>
+
 </head>
 
 <frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>

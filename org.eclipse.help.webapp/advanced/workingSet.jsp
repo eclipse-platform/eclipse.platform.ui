@@ -31,7 +31,6 @@ HTML {
 BODY {
 	font: <%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
-	_border:1px solid WindowText;
 	padding:0px;
 	margin:0px;
 }
