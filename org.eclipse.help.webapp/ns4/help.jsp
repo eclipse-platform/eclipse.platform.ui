@@ -116,7 +116,7 @@
 <%
 	} else {
 %>
-<frameset onload="onloadFrameset()" rows="<%=banner_height%>,35,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+<frameset onload="onloadFrameset()" rows="35,*"  frameborder="0" framespacing="0" border="0" spacing="0">
 	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
 	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
