@@ -1,6 +1,5 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -21,10 +20,6 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 		return fDefaultWorkingDirPath;
 	}
 
-	public void setDefaultWorkingDirPath(String defaultWorkingDirPath) {
-		fDefaultWorkingDirPath = defaultWorkingDirPath;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setDefaultWorkingDir()
 	 */
@@ -38,21 +33,25 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 		fWorkspaceDirButton.setSelection(false);		
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
-		try {			
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
-			fWorkspaceDirText.setText(""); //$NON-NLS-1$
-			fWorkingDirText.setText(""); //$NON-NLS-1$
-			if (wd == null) {
+		try {
+			if (fDefaultWorkingDirPath == null) {
 				try {
 					fDefaultWorkingDirPath= ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
 				} catch (CoreException e) {
-					AntUIPlugin.log(e);
+					//no location
 				}
+			}
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
+			fWorkspaceDirText.setText(""); //$NON-NLS-1$
+			fWorkingDirText.setText(""); //$NON-NLS-1$
+			boolean sameAsDefault= wd != null && (wd.equals(fDefaultWorkingDirPath) || wd.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
+			if (wd == null || sameAsDefault) {
 				fUseDefaultWorkingDirButton.setSelection(true);
 			} else {
 				IPath path = new Path(wd);
@@ -73,6 +72,7 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -86,5 +86,26 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			wd = path.toString();
 		} 
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
+	}
+	
+	public void setEnabled(boolean enabled) {
+		fWorkingDirLabel.setEnabled(enabled);
+		fUseDefaultWorkingDirButton.setEnabled(enabled);
+		if(!isDefaultWorkingDirectory()) {
+			boolean local = isLocalWorkingDirectory();
+			fWorkingDirText.setEnabled(local);
+			fWorkingDirBrowseButton.setEnabled(local);
+			fLocalDirButton.setEnabled(true);
+			fWorkspaceDirText.setEnabled(!local);
+			fWorkspaceDirBrowseButton.setEnabled(!local);
+			fWorkspaceDirButton.setEnabled(true);
+		} else {
+			fWorkingDirText.setEnabled(false);
+			fWorkingDirBrowseButton.setEnabled(false);
+			fWorkspaceDirText.setEnabled(false);
+			fWorkspaceDirBrowseButton.setEnabled(false);
+			fLocalDirButton.setEnabled(false);
+			fWorkspaceDirButton.setEnabled(false);
+		}
 	}
 }

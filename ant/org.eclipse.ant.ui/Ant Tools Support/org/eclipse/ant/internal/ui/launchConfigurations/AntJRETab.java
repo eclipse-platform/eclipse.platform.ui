@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
@@ -61,17 +62,13 @@ public class AntJRETab extends JavaJRETab {
 	
 	private Button updateClasspathButton;
 	private IVMInstall previousJRE;
-	protected VMArgumentsBlock fVMArgumentsBlock;
-	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock;
+	protected VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
+	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		
-		fVMArgumentsBlock =  new VMArgumentsBlock();
-		fWorkingDirectoryBlock = new AntWorkingDirectoryBlock();
-		
 		super.createControl(parent);
 		Font font= parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
@@ -94,7 +91,7 @@ public class AntJRETab extends JavaJRETab {
 		Label label= new Label(lowerComp, SWT.NULL);
 		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
 		label.setFont(font);
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(gd);
 		
 		updateClasspathButton= createPushButton(lowerComp, AntLaunchConfigurationMessages.getString("AntJRETab.10"), null); //$NON-NLS-1$
@@ -103,6 +100,8 @@ public class AntJRETab extends JavaJRETab {
 				updateClasspath(getLaunchConfigurationWorkingCopy());
 			}
 		});
+		gd= (GridData)updateClasspathButton.getLayoutData();
+		gd.horizontalAlignment= GridData.HORIZONTAL_ALIGN_BEGINNING;
 		
 		createVerticalSpacer(lowerComp, 2);
 		
@@ -140,6 +139,8 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		fWorkingDirectoryBlock.setEnabled(!fJREBlock.isDefaultJRE());
+		fVMArgumentsBlock.setEnabled(!fJREBlock.isDefaultJRE());
 		if (fJREBlock.isDefaultJRE()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
@@ -147,8 +148,6 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
-			fVMArgumentsBlock.setDefaults(configuration);
-			fWorkingDirectoryBlock.setDefaults(configuration);
 		} else {
 			super.performApply(configuration);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
@@ -337,5 +336,36 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
+	 */
+	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
+		super.setLaunchConfigurationDialog(dialog);
+		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
+		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		String m = super.getErrorMessage();
+		if (m == null) {
+			return fWorkingDirectoryBlock.getErrorMessage();
+		}
+		return m;
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
+	 */
+	public String getMessage() {
+		String m = super.getMessage();
+		if (m == null) {
+			return fWorkingDirectoryBlock.getMessage();
+		}
+		return m;
 	}
 }
