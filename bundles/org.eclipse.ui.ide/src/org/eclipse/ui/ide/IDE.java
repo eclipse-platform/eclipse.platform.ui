@@ -218,7 +218,7 @@ public final class IDE {
 	 *			See <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
 	 *   <li>The operating system is consulted to determine if an in-place
 	 *       component editor is available (e.g. OLE editor on Win32 platforms).</li>
-	 *   <li>The operating system is consulter to determine if an external
+	 *   <li>The operating system is consulted to determine if an external
 	 * 		editor is available.</li>
 	 * </ol>
 	 * </p>
