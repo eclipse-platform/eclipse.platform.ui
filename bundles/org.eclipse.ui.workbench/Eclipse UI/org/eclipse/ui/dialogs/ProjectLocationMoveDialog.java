@@ -155,8 +155,10 @@ protected Control createDialogArea(Composite parent) {
 	createProjectLocationGroup(composite);
 
 	//Add in a label for status messages if required
-	statusMessageLabel = new Label(composite, SWT.NONE);
+	statusMessageLabel = new Label(composite, SWT.WRAP);
 	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+	//Make it two lines.
+	statusMessageLabel.setText(" \n ");
 
 	return composite;
 }
