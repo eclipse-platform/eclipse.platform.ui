@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -166,7 +168,7 @@ public class ActivityEnabler {
 		}
 
 		Composite c = new Composite(mainComposite, SWT.NONE);
-		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		{
 		    GridLayout gridLayout = new GridLayout(1, true);
@@ -186,7 +188,14 @@ public class ActivityEnabler {
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport.getActivityManager());
-		dualViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		GC gc = new GC(dualViewer.getControl());
+		gc.setFont(parent.getFont());
+		// ensure that the viewer is big enough, but no so big in the case where
+		// the dialog font is large
+		data.heightHint = Math.min(Dialog.convertHeightInCharsToPixels(gc.getFontMetrics(), 18), 200);
+		gc.dispose();
+		dualViewer.getControl().setLayoutData(data);
 		dualViewer.getControl().setFont(parent.getFont());
 
 		c = new Composite(mainComposite, SWT.NONE);
@@ -204,7 +213,7 @@ public class ActivityEnabler {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 		
-		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER);
+		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		descriptionText.setFont(parent.getFont());
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		setInitialStates();
