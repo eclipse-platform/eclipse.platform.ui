@@ -553,7 +553,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 					if (isProjectScope) {
 						resource= resource.getProject();
-						if (isProjectScope && scope.encloses(resource))
+						if (resource == null || isProjectScope && scope.encloses(resource))
 							continue;
 					}
 				
