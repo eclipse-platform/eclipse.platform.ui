@@ -13,6 +13,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -36,7 +37,7 @@ public class AdminKSubstListener implements ICommandOutputListener {
 		this.ksubstMode = ksubstMode;
 	}
 	
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
+	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		if (line.startsWith("RCS file:")) { //$NON-NLS-1$
 			String rcsFile = line.substring(10).trim();
@@ -81,7 +82,7 @@ public class AdminKSubstListener implements ICommandOutputListener {
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		// we don't expect to see anything on stderr if the command succeeds
 		// possible errors include:

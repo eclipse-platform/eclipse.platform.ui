@@ -16,6 +16,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.DateUtil;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
@@ -39,7 +40,7 @@ public class LogListener implements ICommandOutputListener {
 		this.entries = entries;
 	}
 
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
+	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		// Fields we will find in the log for a file
 		// keys = String (tag name), values = String (tag revision number) */
@@ -126,7 +127,7 @@ public class LogListener implements ICommandOutputListener {
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		return OK;
 	}

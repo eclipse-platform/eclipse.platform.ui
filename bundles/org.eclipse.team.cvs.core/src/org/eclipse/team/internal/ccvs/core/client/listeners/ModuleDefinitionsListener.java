@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
 /*
  * This class pares the output of the "cvs checkout -c" command which returns the list of modules 
@@ -33,6 +34,7 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 	 */
 	public IStatus messageLine(
 		String line,
+		ICVSRepositoryLocation location,
 		ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
@@ -56,7 +58,7 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 	/*
 	 * @see ICommandOutputListener#errorLine(String, ICVSFolder, IProgressMonitor)
 	 */
-	public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {	
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {	
 		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 	

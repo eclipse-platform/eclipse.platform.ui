@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -102,10 +102,10 @@ public abstract class Command extends Request {
 	/*** Default command output listener ***/
 	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
 		new ICommandOutputListener() {
-			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+			public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				return OK;
 			}
-			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+			public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 			}
 

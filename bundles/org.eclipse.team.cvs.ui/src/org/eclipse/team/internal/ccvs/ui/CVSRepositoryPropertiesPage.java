@@ -29,6 +29,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -61,9 +62,15 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	
 	boolean passwordChanged;
 	boolean connectionInfoChanged;
+	boolean programNameChanged;
 
 	IUserInfo info;
-		
+
+	// Program Name
+	private Text programNameText;
+	private Button useDefaultProgramName;
+	private Button useCustomProgramName;
+			
 	/*
 	 * @see PreferencesPage#createContents
 	 */
@@ -94,8 +101,35 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
 		pathLabel = createLabel(composite, "", 2); //$NON-NLS-1$
-		
+
+		// Add some extra space
+		createLabel(composite, "", 3); //$NON-NLS-1$
+
+		// Remote CVS program name
+		// create a composite to ensure the radio buttons come in the correct order
+		Composite programNameGroup = new Composite(composite, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalSpan = 3;
+		programNameGroup.setLayoutData(data);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		programNameGroup.setLayout(layout);
+		Listener listener = new Listener() {
+			public void handleEvent(Event event) {
+				programNameChanged = true;
+				updateWidgetEnablements();
+			}
+		};
+		useDefaultProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useDefaultProgramName"), 3); //$NON-NLS-1$
+		useCustomProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useProgramName"), 1); //$NON-NLS-1$
+		useCustomProgramName.addListener(SWT.Selection, listener);
+		programNameText = createTextField(programNameGroup);
+		programNameText.addListener(SWT.Modify, listener);
+				
 		initializeValues();
+		updateWidgetEnablements();
 		passwordText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				passwordChanged = true;
@@ -162,6 +196,22 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		return text;
 	}
 	/**
+	 * Utility method to create a radio button
+	 * 
+	 * @param parent  the parent of the radio button
+	 * @param label  the label of the radio button
+	 * @param span  the number of columns to span
+	 * @return the created radio button
+	 */
+	protected Button createRadioButton(Composite parent, String label, int span) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		button.setLayoutData(data);
+		return button;
+	}
+	/**
 	 * Initializes the page
 	 */
 	private void initialize() {
@@ -199,6 +249,10 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			portLabel.setText("" + port); //$NON-NLS-1$
 		}
 		pathLabel.setText(location.getRootDirectory());
+		String programName = ((CVSRepositoryLocation)location).getRemoteCVSProgramName();
+		programNameText.setText(programName);
+		useDefaultProgramName.setSelection(programName == CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME);
+		useCustomProgramName.setSelection(!useDefaultProgramName.getSelection());
 	}
 	
 	/*
@@ -206,6 +260,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	 */
 	public boolean performOk() {
 		if (!connectionInfoChanged && !passwordChanged) {
+			if (programNameChanged) {
+				recordNewProgramName((CVSRepositoryLocation)location);
+			}
 			return true;
 		}
 		info.setUsername(userText.getText());
@@ -287,8 +344,14 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 						
 						// Set the location of the page to the new location in case Apply was chosen
 						location = newLocation;
+						
+						if (programNameChanged) {
+							recordNewProgramName((CVSRepositoryLocation)location);
+						}
+							
 						connectionInfoChanged = false;
 						passwordChanged = false;
+						programNameChanged = false;
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -328,6 +391,39 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				}
 			}
 			ErrorDialog.openError(getShell(), status.getMessage(), null, toShow);
+		}
+	}
+	/**
+	 * Updates widget enablements and sets error message if appropriate.
+	 */
+	protected void updateWidgetEnablements() {
+		if (useDefaultProgramName.getSelection()) {
+			programNameText.setEnabled(false);
+		} else {
+			programNameText.setEnabled(true);
+		}
+		validateFields();
+	}
+	
+	private void validateFields() {
+		if (programNameText.isEnabled()) {
+			if (programNameText.getText().length() == 0) {
+				setValid(false);
+				return;
+			}
+		}
+	}
+	
+	private void recordNewProgramName(CVSRepositoryLocation location) {
+		// Set the remote program name if appropriate
+		String newProgramName;
+		if (useDefaultProgramName.getSelection()) {
+			newProgramName = CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME;
+		} else {
+			newProgramName = programNameText.getText();
+		}
+		if (!location.getRemoteCVSProgramName().equals(newProgramName)) {
+			CVSProviderPlugin.getPlugin().setCVSProgramName(location, newProgramName);
 		}
 	}
 }

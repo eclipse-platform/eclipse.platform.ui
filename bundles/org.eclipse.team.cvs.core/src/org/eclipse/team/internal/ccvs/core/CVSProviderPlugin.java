@@ -109,6 +109,8 @@ public class CVSProviderPlugin extends Plugin {
 	private AddDeleteMoveListener addDeleteMoveListener;
 
 	private static final String REPOSITORIES_STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
+	// version numbers for the state file (a positive number indicates version 1)
+	private static final int REPOSITORIES_STATE_FILE_VERSION_2 = -1;
 	private Map repositories = new HashMap();
 	private List repositoryListeners = new ArrayList();
 	
@@ -765,19 +767,36 @@ public class CVSProviderPlugin extends Plugin {
 	
 	private void readState(DataInputStream dis) throws IOException, CVSException {
 		int count = dis.readInt();
-		for (int i = 0; i < count; i++) {
-			getRepository(dis.readUTF());
+		if (count >= 0) {
+			// this is the version 1 format of the state file
+			for (int i = 0; i < count; i++) {
+				getRepository(dis.readUTF());
+			}
+		} else if (count == REPOSITORIES_STATE_FILE_VERSION_2) {
+			count = dis.readInt();
+			for (int i = 0; i < count; i++) {
+				ICVSRepositoryLocation root = getRepository(dis.readUTF());
+				String programName = dis.readUTF();
+				if (!programName.equals(CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME)) {
+					((CVSRepositoryLocation)root).setRemoteCVSProgramName(programName);
+				}
+			}
+		} else {
+			Util.logError(Policy.bind("CVSProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
 		}
 	}
 	
 	private void writeState(DataOutputStream dos) throws IOException {
 		// Write the repositories
+		dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_2);
+		// Write out the repos
 		Collection repos = repositories.values();
 		dos.writeInt(repos.size());
 		Iterator it = repos.iterator();
 		while (it.hasNext()) {
-			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
+			CVSRepositoryLocation root = (CVSRepositoryLocation)it.next();
 			dos.writeUTF(root.getLocation());
+			dos.writeUTF(root.getRemoteCVSProgramName());
 		}
 	}
 		
@@ -801,5 +820,16 @@ public class CVSProviderPlugin extends Plugin {
 	public void setDetermineVersionEnabled(boolean determineVersionEnabled) {
 		this.determineVersionEnabled = determineVersionEnabled;
 	}
-}
+	
+	/**
+	 * Set the program name of the given repository location.
+	 * The program name is the expected prefix on server text messages.
+	 * Since we extract information out of these messages, we need to
+	 * know what prefix to expect. The default is "cvs".
+	 */
+	public void setCVSProgramName(ICVSRepositoryLocation location, String programName) {
+		((CVSRepositoryLocation)location).setRemoteCVSProgramName(programName);
+		saveState();
+	}
 
+}

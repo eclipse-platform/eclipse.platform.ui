@@ -54,7 +54,7 @@ public class Version extends RemoteCommand {
 		}
 		
 		ICommandOutputListener listener = new ICommandOutputListener() {
-			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+			public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				String knownPrefix = null;
 				boolean isCVSNT = false;
 				if (line.startsWith(CVS_NT_PREFIX_1)) {
@@ -80,7 +80,7 @@ public class Version extends RemoteCommand {
 				((CVSRepositoryLocation)location).setServerPlaform(status);
 				return status;
 			}
-			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+			public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 				return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, line);
 			}
 		};

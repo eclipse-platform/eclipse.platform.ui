@@ -87,12 +87,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private boolean userFixed;
 	private boolean passwordFixed;
 	private int serverPlatform = UNDETERMINED_PLATFORM;
+	private String remoteCVSProgramName = DEFAULT_REMOTE_CVS_PROGRAM_NAME;
 	
 	public static final char COLON = ':';
 	public static final char HOST_SEPARATOR = '@';
 	public static final char PORT_SEPARATOR = '#';
 	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null) ? //$NON-NLS-1$ 
 		false	:(new Boolean(System.getProperty("eclipse.cvs.standalone")).booleanValue()); //$NON-NLS-1$ 
+	public static final String DEFAULT_REMOTE_CVS_PROGRAM_NAME = "cvs"; //$NON-NLS-1$
 	
 	// command to start remote cvs in server mode
 	private static final String INVOKE_SVR_CMD = "server"; //$NON-NLS-1$
@@ -882,5 +884,43 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			oldString, newString);
 	}
 
+	/**
+	 * Return the name of the cvs program on the remote server. 
+	 * The default is "cvs" but it can be tailored for some servers	 * @return String	 */
+	public String getRemoteCVSProgramName() {
+		return remoteCVSProgramName;
+	}
 
+	/**
+	 * Sets the remoteCVSProgramName.
+	 * @param remoteCVSProgramName The remoteCVSProgramName to set
+	 */
+	public void setRemoteCVSProgramName(String remoteCVSProgramName) {
+		this.remoteCVSProgramName = remoteCVSProgramName;
+	}
+		
+	/**
+	 * Return the server message with the prefix removed.
+	 * Server aborted messages typically start with 
+	 *    "cvs server: ..."
+	 *    "cvs [server aborted]: ..."
+	 *    "cvs rtag: ..."
+	 */
+	public String getServerMessageWithoutPrefix(String errorLine, String prefix) {
+		String message = errorLine;
+		String programName = getRemoteCVSProgramName();
+		if (message.startsWith(programName)) {
+			// remove the program name and the space
+			message = message.substring(programName.length() + 1);
+			if (message.startsWith(prefix)) {
+				message = message.substring(prefix.length());
+				if (message.charAt(0) == ' ') {
+					message = message.substring(1);
+				}
+				return message;
+			}
+		}
+		// This is not a server message with the desired prefix
+		return null;
+	}
 }

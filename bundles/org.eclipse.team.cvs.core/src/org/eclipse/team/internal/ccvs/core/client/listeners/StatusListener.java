@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class StatusListener implements ICommandOutputListener {
 	private static boolean isFolder = false;
@@ -25,7 +27,7 @@ public class StatusListener implements ICommandOutputListener {
 		this.statusListener = statusListener;
 	}
 
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
+	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
 		// We're only concerned about file revisions.
@@ -58,25 +60,31 @@ public class StatusListener implements ICommandOutputListener {
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
-		if (line.startsWith("cvs server: conflict:")) {//$NON-NLS-1$
-			// We get this because we made up an entry line to send to the server
-			// Therefore, we make this a warning!!!
-			return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if (serverMessage != null) {
+			if (serverMessage.startsWith("conflict:")) {//$NON-NLS-1$
+				// We get this because we made up an entry line to send to the server
+				// Therefore, we make this a warning!!!
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+			}
+			if (serverMessage.startsWith("Examining")) {//$NON-NLS-1$
+				isFolder = true;
+				return OK;
+			}
 		}
-		if (line.startsWith("cvs server: Examining")) {//$NON-NLS-1$
-			isFolder = true;
-			return OK;
-		}
-		if (isFolder && line.startsWith("cvs [server aborted]: could not chdir to")) {//$NON-NLS-1$
-			String folderPath = line.substring(41, line.indexOf(':', 42));
-			// Pass null to listener indicating that the resource exists but does not have a revision number
-			// (i.e. the resource is a folder)
-			if (statusListener != null)
-				// XXX We should be using that path relative to the root of the command (mRoot)!!!
-				statusListener.fileStatus(commandRoot, new Path(folderPath).removeFirstSegments(1), IStatusListener.FOLDER_REVISION);
-			isFolder = false;
-			return OK;
+		if (isFolder) {
+			String serverAbortedMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_ABORTED_PREFIX);
+			if (serverAbortedMessage.startsWith("could not chdir to")) {//$NON-NLS-1$
+				String folderPath = serverAbortedMessage.substring(19, line.indexOf(':', 20));
+				// Pass null to listener indicating that the resource exists but does not have a revision number
+				// (i.e. the resource is a folder)
+				if (statusListener != null)
+					// XXX We should be using that path relative to the root of the command (mRoot)!!!
+					statusListener.fileStatus(commandRoot, new Path(folderPath).removeFirstSegments(1), IStatusListener.FOLDER_REVISION);
+				isFolder = false;
+				return OK;
+			}
 		}
 		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}

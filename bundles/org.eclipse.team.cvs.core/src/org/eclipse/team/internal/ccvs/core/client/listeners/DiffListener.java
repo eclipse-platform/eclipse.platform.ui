@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class DiffListener implements ICommandOutputListener {
 	PrintStream patchStream;
@@ -19,26 +21,36 @@ public class DiffListener implements ICommandOutputListener {
 		this.patchStream = patchStream;
 	}
 	
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
-		if (! line.startsWith("cvs server:")) { //$NON-NLS-1$
-			// Ensure that the line doesn't end with a CR.
-			// This can happen if the remote file has CR/LF in it.
-			if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
-				line = line.substring(0, line.length() - 1);
-			}
-			patchStream.println(line);
+	public IStatus messageLine(
+			String line, 
+			ICVSRepositoryLocation location, 
+			ICVSFolder commandRoot,
+			IProgressMonitor monitor) {
+		// ignore any server messages	
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if (serverMessage != null) {
+			return OK;
 		}
+		// Ensure that the line doesn't end with a CR.
+		// This can happen if the remote file has CR/LF in it.
+		if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
+			line = line.substring(0, line.length() - 1);
+		}
+		patchStream.println(line);
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
-		// ignore these errors for now - this is used only with the diff
+	public IStatus errorLine(
+			String line, 
+			ICVSRepositoryLocation location, 
+			ICVSFolder commandRoot,
+			IProgressMonitor monitor) {
+		// ignore server messages for now - this is used only with the diff
 		// request and the errors can be safely ignored.
-		if(! line.startsWith("cvs server:")) {//$NON-NLS-1$
-			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if (serverMessage != null) {
+			return OK;
 		}
-		return OK;
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 }

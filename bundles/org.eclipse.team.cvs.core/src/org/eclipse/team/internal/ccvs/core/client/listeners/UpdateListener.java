@@ -16,11 +16,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class UpdateListener implements ICommandOutputListener {
-	static final String SERVER_PREFIX = "cvs server: "; //$NON-NLS-1$
-	static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: "; //$NON-NLS-1$
 
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
@@ -29,7 +29,7 @@ public class UpdateListener implements ICommandOutputListener {
 		this.updateMessageListener = updateMessageListener;
 	}
 	
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
+	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		if (updateMessageListener == null) return OK;
 		if(line.startsWith("Merging differences")) { //$NON-NLS-1$
@@ -96,12 +96,13 @@ public class UpdateListener implements ICommandOutputListener {
 	 * Tag error that really means there are no files in a directory
 	 *    cvs [server aborted]: no such tag
 	 */
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
-		if (line.startsWith(SERVER_PREFIX)) {
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if (serverMessage != null) {
 			// Strip the prefix from the line
-			String message = line.substring(SERVER_PREFIX.length());
+			String message = serverMessage;
 			if (message.startsWith("Updating")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(9));
@@ -163,15 +164,18 @@ public class UpdateListener implements ICommandOutputListener {
 					&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
 				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 			}
-		} else if (line.startsWith(SERVER_ABORTED_PREFIX)) {
-			// Strip the prefix from the line
-			String message = line.substring(SERVER_ABORTED_PREFIX.length());
-			if (message.startsWith("no such tag")) { //$NON-NLS-1$
-				// This is reported from CVS when a tag is used on the update there are no files in the directory
-				// To get the folders, the update request should be re-issued for HEAD
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
-			} else {
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+		} else {
+			String serverAbortedMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_ABORTED_PREFIX);
+			if (serverAbortedMessage != null) {
+				// Strip the prefix from the line
+				String message = serverAbortedMessage;
+				if (message.startsWith("no such tag")) { //$NON-NLS-1$
+					// This is reported from CVS when a tag is used on the update there are no files in the directory
+					// To get the folders, the update request should be re-issued for HEAD
+					return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
+				} else {
+					return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
+				}
 			}
 		}
 		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);

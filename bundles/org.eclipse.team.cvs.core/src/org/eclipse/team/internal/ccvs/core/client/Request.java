@@ -162,7 +162,7 @@ public abstract class Request {
 				// and console as if it were an M response
 				if (handler.isLineAvailable()) {
 					String line = handler.getLine();
-					IStatus status = listener.messageLine(line, session.getLocalRoot(), monitor);
+					IStatus status = listener.messageLine(line, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
 					if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 					if (session.isOutputToConsole()) {
 						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
@@ -170,14 +170,14 @@ public abstract class Request {
 					}
 				}
 			} else if (response.equals("M")) {  //$NON-NLS-1$
-				IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
+				IStatus status = listener.messageLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (session.isOutputToConsole()) {
 					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 					if (consoleListener != null) consoleListener.messageLineReceived(argument);
 				}
 			} else if (response.equals("E")) { //$NON-NLS-1$
-				IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
+				IStatus status = listener.errorLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (session.isOutputToConsole()) {
 					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();

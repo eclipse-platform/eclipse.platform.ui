@@ -1,20 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
+/**
+ * Instances of this interface can be passed to the <code>Command#execute</code> methods
+ * and will receive notification when M or E messages are received from the server. */
 public interface ICommandOutputListener {
 	
 	/*** Status to be returned when no error or warning occured ***/
-	public static final IStatus OK = new CVSStatus(CVSStatus.OK,Policy.bind("ok")); //$NON-NLS-1$
+	public static final IStatus OK = new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
+	
+	public static final String SERVER_PREFIX = "server: "; //$NON-NLS-1$
+	public static final String SERVER_ABORTED_PREFIX = "[server aborted]: "; //$NON-NLS-1$
+	public static final String RTAG_PREFIX = "rtag: "; //$NON-NLS-1$
 	
 	/**
 	 * Invoked when a message line is received from the server.
@@ -31,7 +44,9 @@ public interface ICommandOutputListener {
 	 * @param monitor the progress monitor
 	 * @return a status indicating success or failure based on the text
 	 */
-	public IStatus messageLine(String line, ICVSFolder commandRoot,
+	public IStatus messageLine(String line,
+		ICVSRepositoryLocation location,
+		ICVSFolder commandRoot,
 		IProgressMonitor monitor);
 
 	/**
@@ -49,6 +64,8 @@ public interface ICommandOutputListener {
 	 * @param monitor the progress monitor
 	 * @return a status indicating success or failure based on the text
 	 */
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
+	public IStatus errorLine(String line,
+		ICVSRepositoryLocation location,
+		ICVSFolder commandRoot,
 		IProgressMonitor monitor);
 }

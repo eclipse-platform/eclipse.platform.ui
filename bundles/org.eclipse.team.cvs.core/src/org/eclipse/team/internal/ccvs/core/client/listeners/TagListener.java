@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class TagListener implements ICommandOutputListener {
 
@@ -17,6 +19,7 @@ public class TagListener implements ICommandOutputListener {
 	 */
 	public IStatus messageLine(
 		String line,
+		ICVSRepositoryLocation location,
 		ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
@@ -34,13 +37,17 @@ public class TagListener implements ICommandOutputListener {
 	 */
 	public IStatus errorLine(
 		String line,
+		ICVSRepositoryLocation location,
 		ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 			
 		// Ignore the lines: Tagging folder1/folder2
-		if( line.startsWith("cvs server: Tagging") ) { //$NON-NLS-1$
+		String serverMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, SERVER_PREFIX);
+		if ((serverMessage != null) && serverMessage.startsWith("Tagging")) { //$NON-NLS-1$
 			return OK;
-		} else if( line.startsWith("cvs rtag: Tagging") ) { //$NON-NLS-1$
+		}
+		String rtagMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, RTAG_PREFIX);
+		if( line.startsWith("Tagging") ) { //$NON-NLS-1$
 			return OK;
 		}
 			
