@@ -111,7 +111,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testPropertyProposals() throws BadLocationException {
     	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-    	int lineNumber= 8;
+    	int lineNumber= 7;
     	int columnNumber= 17;
     	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
@@ -121,7 +121,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length >= 1);
     	assertContains("prop1", proposals);
     	
-    	lineNumber= 19;
+    	lineNumber= 18;
     	columnNumber= 25;
     	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
@@ -138,24 +138,24 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testTargetDependProposals() throws BadLocationException {
     	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
     	//simple depends
-    	int lineNumber= 11;
+    	int lineNumber= 10;
     	int columnNumber= 34;
     	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
-    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "if");
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "depends");
     	assertTrue(proposals.length == 7);
     	assertContains("pretest", proposals);
     	assertContains("testMoreDepends", proposals);
     	//comma separated depends
-    	lineNumber= 18;
+    	lineNumber= 17;
     	columnNumber= 54;
     	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
-    	proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "if");
+    	proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "depends");
     	assertTrue(proposals.length == 6);
     	assertContains("main", proposals);
     	assertDoesNotContain("pretest", proposals);
@@ -168,7 +168,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testTargetIfProposals() throws BadLocationException {
     	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-    	int lineNumber= 16;
+    	int lineNumber= 15;
     	int columnNumber= 31;
     	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
@@ -185,7 +185,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testTargetUnlessProposals() throws BadLocationException {
     	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
-    	int lineNumber= 17;
+    	int lineNumber= 16;
     	int columnNumber= 43;
     	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
