@@ -281,8 +281,6 @@ public class ExtrenalToolOptionTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 		configuration.setAttribute(IExternalToolConstants.ATTR_SAVE_DIRTY_EDITORS, false);
 		configuration.setAttribute(IExternalToolConstants.ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU, false);
-		configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-		configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "");
 	}
 
 	/**
@@ -425,13 +423,20 @@ public class ExtrenalToolOptionTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, runBackgroundButton.getSelection());
 		configuration.setAttribute(IExternalToolConstants.ATTR_SAVE_DIRTY_EDITORS, saveModifiedButton.getSelection());
 		configuration.setAttribute(IExternalToolConstants.ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU, showInMenuButton.getSelection());
+		
 		if (openPerspButton.getSelection()) {
 			configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, openPerspNameField.getText());
 		} else {
 			configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		}
 		
-		configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, argumentField.getText());
+		String arguments= argumentField.getText().trim();
+		if (arguments.length() == 0) {
+			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String)null);
+		} else {
+			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
+		}
+		
 	}
 
 	/**
