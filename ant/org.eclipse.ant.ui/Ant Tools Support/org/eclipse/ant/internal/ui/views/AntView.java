@@ -410,16 +410,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			AntProjectNode project = (AntProjectNode) node;
 			StringBuffer message= new StringBuffer(project.getBuildFileName());
 			String description= project.getDescription();
-			if (description != null) {
+			if (description != null && description.length() > 0) {
 				message.append(": "); //$NON-NLS-1$
 				message.append(description);
-			}
-			if (node.isErrorNode()) {
-			    String problem= node.getProblemMessage();
-			    if (problem != null) {
-			        message.append(" : "); //$NON-NLS-1$
-			        message.append(problem);
-			    }
 			}
 			return message.toString();
 		} else if (node instanceof AntTargetNode) {
@@ -440,13 +433,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				message.append(AntViewMessages.getString("AntView.4")); //$NON-NLS-1$
 				message.append(description);
 				message.append('\"');
-			}
-			if (node.isErrorNode()) {
-			    String problem= node.getProblemMessage();
-			    if (problem != null) {
-			        message.append(" Error message: "); //$NON-NLS-1$
-			        message.append(problem);
-			    }
 			}
 			return message.toString();
 		}
