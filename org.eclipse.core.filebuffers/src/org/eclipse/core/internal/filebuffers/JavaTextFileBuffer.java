@@ -201,7 +201,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			return;
 		
 		IDocument original= null;
-		IStatus status= null;
+		fStatus= null;
 		
 		try {
 			original= fManager.createEmptyDocument(getLocation());
@@ -210,21 +210,27 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			if (stream != null)
 				setDocumentContent(original, stream, fEncoding);
 		} catch (CoreException x) {
-			status= x.getStatus();
+			fStatus= x.getStatus();
 		}
-			
-		fStatus= status;
-			
-		if (original != null) {
-			
-			String originalContents= original.get();
-			boolean replaceContents= !originalContents.equals(fDocument.get());
+					
+		if (original == null)
+			return;
+		
+		String originalContents= original.get();
+		boolean replaceContents= !originalContents.equals(fDocument.get());
+		
+		if (!replaceContents && !fCanBeSaved)
+			return;
+				
+		fManager.fireStateChanging(this);
+		try {
 			
 			if (replaceContents)  {
 				fManager.fireBufferContentAboutToBeReplaced(this);
 				fDocument.set(original.get());
 			}
 			
+			boolean fireDirtyStateChanged= fCanBeSaved;
 			if (fCanBeSaved) {
 				fCanBeSaved= false;
 				addFileBufferContentListeners();
@@ -232,11 +238,16 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			
 			if (replaceContents)
 				fManager.fireBufferContentReplaced(this);
-				
+			
 			if (fFile != null)
 				fSynchronizationStamp= fFile.lastModified();
 			
-			fManager.fireDirtyStateChanged(this, fCanBeSaved);
+			if (fireDirtyStateChanged)
+				fManager.fireDirtyStateChanged(this, fCanBeSaved);
+			
+		} catch (RuntimeException x) {
+			fManager.fireStateChangeFailed(this);
+			throw x;
 		}
 	}
 	

@@ -20,6 +20,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 /**
  * A text file buffer manager manages text file buffers for files whose contents
  * is considered text.
+ * <p>
+ * Clients are not supposed to implement that interface.
  * 
  * @since 3.0
  */
@@ -49,7 +51,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	String getDefaultEncoding();
 	
 	/**
-	 * Creates a new empty document . The document is set up in the same way as
+	 * Creates a new empty document. The document is set up in the same way as
 	 * it would be used in a text file buffer for a file at the given location.
 	 * <p>
 	 * The provided location is either a full path of a workspace resource or
@@ -65,9 +67,37 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	
 	/**
 	 * Creates a new annotation for the given location.
+	 * <p>
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
+	 * resources.
+	 * </p>
 	 * 
-	 * @param location the location
+	 * @param location the location used to create the new annotation model
 	 * @return the newly created annotation model
 	 */
 	IAnnotationModel createAnnotationModel(IPath location);
+	
+	/**
+	 * Returns whether a file at the given location is or can be considered a
+	 * text file. If the file exists, the concrete content type of the file is
+	 * checked. If the concrete content type for the existing file can not be
+	 * determined, this method returns <code>true</code>. If the file does
+	 * not exist, it is checked whether a text content type is associated with
+	 * the given location. If no content type is associated with the location,
+	 * this method returns <code>true</code>.
+	 * <p>
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
+	 * resources.
+	 * </p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @param location the location to check
+	 * @return <code>true</code> if the location is a text file location
+	 * @since 3.1
+	 */
+	boolean isTextFileLocation(IPath location);
 }

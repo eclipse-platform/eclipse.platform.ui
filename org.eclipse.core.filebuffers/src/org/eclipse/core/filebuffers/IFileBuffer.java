@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 
 /**
@@ -45,6 +46,13 @@ public interface IFileBuffer {
 	 * @return the location of this file buffer
 	 */
 	IPath getLocation();
+	
+	/**
+	 * Returns whether this file buffer is shared by more than one client.
+	 * 
+	 * @return <code>true</code> if this file buffer is shared by more than one client
+	 */
+	boolean isShared();
 
 	/**
 	 * Returns whether this file buffer is synchronized with the file system. This is when
@@ -56,14 +64,33 @@ public interface IFileBuffer {
 	boolean isSynchronized();
 	
 	/**
-	 * Reverts the contents of this file buffer to the content of its underlying file. After 
-	 * that call successfully returned, <code>isDirty</code> returns <code>false</code> and
-	 * <code>isSynchronized</code> returns <code>true</code>.
+	 * Returns the modification stamp of the file underlying this file buffer.
 	 * 
-	 * @param monitor the progress monitor
-	 * @throws CoreException  if reading or accessing the underlying file fails
+	 * @return the modification stamp of the file underlying this file buffer
 	 */
-	void revert(IProgressMonitor monitor) throws CoreException;
+	long getModificationStamp();
+	
+	/**
+	 * Returns whether this file buffer is commitable. This is the case when the
+	 * file buffer's state has been successfully validated.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @return <code>true</code> if the file buffer is commitable,
+	 *         <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	boolean isCommitable();
+	
+	/**
+	 * Computes the scheduling rule that is required for committing a changed buffer.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @return the commit scheduling rule or <code>null</code>
+	 * @since 3.1
+	 */
+	ISchedulingRule computeCommitRule();
 	
 	/**
 	 * Commits this file buffer by changing the contents of the underlying file to
@@ -78,6 +105,16 @@ public interface IFileBuffer {
 	void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 	
 	/**
+	 * Reverts the contents of this file buffer to the content of its underlying file. After 
+	 * that call successfully returned, <code>isDirty</code> returns <code>false</code> and
+	 * <code>isSynchronized</code> returns <code>true</code>.
+	 * 
+	 * @param monitor the progress monitor
+	 * @throws CoreException  if reading or accessing the underlying file fails
+	 */
+	void revert(IProgressMonitor monitor) throws CoreException;
+	
+	/**
 	 * Returns whether changes have been applied to this file buffer since initialization, or the most
 	 * recent <code>revert</code> or <code>commit</code> call.
 	 * 
@@ -86,11 +123,26 @@ public interface IFileBuffer {
 	boolean isDirty();
 	
 	/**
-	 * Returns whether this file buffer is shared by more than one client.
+	 * Sets the dirty state of the file buffer to the given value. A direct
+	 * subsequent call to <code>isDirty</code> returns the previously set 
+	 * value.
+	 * <p>
+	 * Not yet for public use. API under construction.
 	 * 
-	 * @return <code>true</code> if this file buffer is shared by more than one client
+	 * @param isDirty <code>true</code> if the buffer should be marked dirty, <code>false</code> otherwise
+	 * @since 3.1
 	 */
-	boolean isShared();
+	void setDirty(boolean isDirty);
+		
+	/**
+	 * Computes the scheduling rule that is required for validating the state of the buffer.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @return the validate state scheduling rule or <code>null</code>
+	 * @since 3.1
+	 */
+	ISchedulingRule computeValidateStateRule();
 	
 	/**
 	 * Validates the state of this file buffer and tries to bring the buffer's
@@ -98,10 +150,8 @@ public interface IFileBuffer {
 	 * validation is not supported this operation does nothing.
 	 * 
 	 * @param monitor the progress monitor
-	 * @param computationContext the context in which the validation is
-	 *               performed, e.g., a SWT shell
-	 * @exception CoreException if the underlying file can not be accessed to
-	 *                    it's state cannot be changed
+	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell
+	 * @exception CoreException if the underlying file can not be accessed to it's state cannot be changed
 	 */
 	void validateState(IProgressMonitor monitor, Object computationContext) throws CoreException;
 	
@@ -109,8 +159,7 @@ public interface IFileBuffer {
 	 * Returns whether the state of this file buffer has been validated. If
 	 * state validation is not supported this method always returns <code>true</code>.
 	 * 
-	 * @return <code>true</code> if the state has been validated, <code>false</code>
-	 *            otherwise
+	 * @return <code>true</code> if the state has been validated, <code>false</code> otherwise
 	 */
 	boolean isStateValidated();
 	
@@ -129,9 +178,34 @@ public interface IFileBuffer {
 	IStatus getStatus();
 	
 	/**
-	 * Returns the modification stamp of the file underlying this file buffer.
+	 * The caller requests that the synchronization context is used to
+	 * synchronize this file buffer with its underlying file.
+	 * <p>
+	 * Not yet for public use. API under construction.
 	 * 
-	 * @return the modification stamp of the file underlying this file buffer
+	 * @since 3.1
 	 */
-	long getModificationStamp();
+	void requestSynchronizationContext();
+
+	/**
+	 * The caller no longer requests the synchronization context for this file
+	 * buffer.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @since 3.1
+	 */
+	void releaseSynchronizationContext();
+	
+	/**
+	 * Returns whether a synchronization context has been requested for this
+	 * file buffer and not yet released.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @return <code>true</code> if a synchronization context is requested,
+	 *         <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	boolean isSynchronizationContextRequested();
 }

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -57,21 +58,11 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	
 	abstract protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 	
-	/**
-	 * Returns the file at the given location or <code>null</code> if
-	 * there is no such file.
-	 * 
-	 * @param location the location
-	 * @return the file at the given location
-	 */
-	private File getFileAtLocation(IPath location) {
-		File file=  FileBuffers.getSystemFileAtLocation(location);
-		return file.exists() ? file : null;
-	}
-	
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
-		fFile= getFileAtLocation(location);
+		File file= FileBuffers.getSystemFileAtLocation(location);
+		if (file.exists())
+			fFile= file;
 		initializeFileBufferContent(monitor);
 		if (fFile != null)
 			fSynchronizationStamp= fFile.lastModified();
@@ -126,6 +117,13 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);
 		}
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeCommitRule()
+	 */
+	public ISchedulingRule computeCommitRule() {
+		return null;
+	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isDirty()
@@ -135,10 +133,24 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	}
 	
 	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#setDirty(boolean)
+	 */
+	public void setDirty(boolean isDirty) {
+		fCanBeSaved= isDirty;
+	}
+	
+	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isShared()
 	 */
 	public boolean isShared() {
 		return fReferenceCount > 1;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeValidateStateRule()
+	 */
+	public ISchedulingRule computeValidateStateRule() {
+		return null;
 	}
 
 	/*
@@ -196,17 +208,39 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 		return fFile != null ? fFile.lastModified() : IResource.NULL_STAMP;
 	}
 	
-	/**
-	 * Requests the file buffer manager's synchronization context for this file buffer.
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()
 	 */
 	public void requestSynchronizationContext() {
 		++ fSynchronizationContextCount;
 	}
 	
-	/**
-	 * Releases the file buffer manager's synchronization context for this file buffer.
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#releaseSynchronizationContext()
 	 */
 	public void releaseSynchronizationContext() {
 		-- fSynchronizationContextCount;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronizationContextRequested()
+	 */
+	public boolean isSynchronizationContextRequested() {
+		return fSynchronizationContextCount > 0;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
+	 */
+	public boolean isCommitable() {
+		File file= FileBuffers.getSystemFileAtLocation(getLocation());
+		return file.exists() && file.canWrite();
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChanged(boolean, org.eclipse.core.runtime.IStatus)
+	 */
+	public void validationStateChanged(boolean validationState, IStatus status) {
+		//nop
 	}
 }

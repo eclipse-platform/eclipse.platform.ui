@@ -30,13 +30,17 @@ public class UISynchronizationContext implements ISynchronizationContext {
 	 * @see org.eclipse.core.filebuffers.ISynchronizationContext#run(java.lang.Runnable)
 	 */
 	public void run(Runnable runnable) {
-		IWorkbench workbench= PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		if (windows != null && windows.length > 0) {
-			Display display= windows[0].getShell().getDisplay();
-			display.asyncExec(runnable);
-		} else {
+		if (Display.getCurrent() != null) {
 			runnable.run();
+		} else {
+			IWorkbench workbench= PlatformUI.getWorkbench();
+			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+			if (windows != null && windows.length > 0) {
+				Display display= windows[0].getShell().getDisplay();
+				display.asyncExec(runnable);
+			} else {
+				runnable.run();
+			}
 		}
 	}
 }

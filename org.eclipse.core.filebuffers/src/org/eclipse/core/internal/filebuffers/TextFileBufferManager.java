@@ -10,18 +10,31 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
@@ -29,6 +42,8 @@ import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
+import org.eclipse.core.filebuffers.IStateValidationSupport;
 import org.eclipse.core.filebuffers.ISynchronizationContext;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -65,7 +80,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			
 			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, FileBuffersMessages.getString("FileBufferManager.error.canNotCreateFilebuffer"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.getString("FileBufferManager.error.canNotCreateFilebuffer"), null)); //$NON-NLS-1$
 			
 			fileBuffer.create(location, monitor);
 			fileBuffer.connect();
@@ -94,24 +109,62 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 	
-	private AbstractFileBuffer createFileBuffer(IPath location) {
-		if (!isTextFile(location))
-			return null;
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isTextFileLocation(IPath location) {
+		IContentTypeManager manager= Platform.getContentTypeManager();
+		IContentType text= manager.getContentType("org.eclipse.core.runtime.text"); //$NON-NLS-1$
 		
-		if (isWorkspaceResource(location))
-			return new ResourceTextFileBuffer(this);
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		if (file != null) {
+			
+			try {
+				IContentDescription description= file.getContentDescription();
+				if (description != null) {
+					IContentType type= description.getContentType();
+					if (type != null)
+						return type.isKindOf(text);
+				}
+			} catch (CoreException x) {
+			}
+			
+			return true;
+			
+		}
+			
+		File externalFile= FileBuffers.getSystemFileAtLocation(location);
+		if (externalFile != null) {
+			if (externalFile.exists()) {
+				
+				try {
+					
+					IContentDescription description= manager.getDescriptionFor(new FileInputStream(externalFile), externalFile.getName(), IContentDescription.ALL);
+					if (description != null) {
+						IContentType type= description.getContentType();
+						if (type != null)
+							return type.isKindOf(text);
+					}
+					
+				} catch (IOException x) {
+				}
+				
+				return true;
+				
+			} 
+			
+			IContentType[] contentTypes= manager.findContentTypesFor(externalFile.getName());
+			if (contentTypes != null && contentTypes.length > 0) {
+				for (int i= 0; i < contentTypes.length; i++)
+					if (contentTypes[i].isKindOf(text))
+						return true;
+			}
+			return true;
+		}
 		
-		return new JavaTextFileBuffer(this);
+		return false;
 	}
-	
-	private boolean isWorkspaceResource(IPath location) {
-		return FileBuffers.getWorkspaceFileAtLocation(location) != null;
-	}
-	
-	private boolean isTextFile(IPath location) {
-		return true;
-	}
-	
+		
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
@@ -234,6 +287,15 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			runnable.run();
 	}
 	
+	private AbstractFileBuffer createFileBuffer(IPath location) {
+		if (isTextFileLocation(location)) {
+			if (FileBuffers.getWorkspaceFileAtLocation(location) != null)
+				return new ResourceTextFileBuffer(this);
+			return new JavaTextFileBuffer(this);
+		}	
+		return null;
+	}
+	
 	protected void fireDirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
@@ -312,5 +374,90 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			IFileBufferListener l= (IFileBufferListener) e.next();
 			l.bufferDisposed(buffer);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#validateState(org.eclipse.core.filebuffers.IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
+	 * @since 3.1
+	 */
+	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			public void run(IProgressMonitor progressMonitor) throws CoreException {
+				IFileBuffer[] toValidate= findFileBuffersToValidate(fileBuffers);
+				validationStateAboutToBeChanged(toValidate);
+				try {
+					IStatus status= validateEdit(toValidate, computationContext);
+					validationStateChanged(toValidate, true, status);
+				} catch (RuntimeException x) {
+					validationStateChangedFailed(toValidate);
+				}
+			}
+		};
+		ResourcesPlugin.getWorkspace().run(runnable, computeValidateStateRule(fileBuffers), IWorkspace.AVOID_UPDATE, monitor);
+	}
+	
+	private IFileBuffer[] findFileBuffersToValidate(IFileBuffer[] fileBuffers) {
+		ArrayList list= new ArrayList();
+		for (int i= 0; i < fileBuffers.length; i++) {
+			if (!fileBuffers[i].isStateValidated())
+				list.add(fileBuffers[i]);
+		}
+		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
+	}
+	
+	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
+		for (int i= 0; i < fileBuffers.length; i++) {
+			if (fileBuffers[i] instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+				support.validationStateAboutToBeChanged();
+			}
+		}
+	}
+		
+	private void validationStateChanged(IFileBuffer[] fileBuffers, boolean validationState, IStatus status) {
+		for (int i= 0; i < fileBuffers.length; i++) {
+			if (fileBuffers[i] instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+				support.validationStateChanged(validationState, status);
+			}
+		}
+	}
+		
+	private void validationStateChangedFailed(IFileBuffer[] fileBuffers) {
+		for (int i= 0; i < fileBuffers.length; i++) {
+			if (fileBuffers[i] instanceof IStateValidationSupport) {
+				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
+				support.validationStateChangeFailed();
+			}
+		}
+	}
+	
+	private IStatus validateEdit(IFileBuffer[] fileBuffers, Object computationContext) {
+		ArrayList list= new ArrayList();
+		for (int i= 0; i < fileBuffers.length; i++) {
+			IFile file= getWorkspaceFile(fileBuffers[i]);
+			if (file != null)
+				list.add(file);
+		}
+		IFile[] files= new IFile[list.size()];
+		list.toArray(files);
+		return ResourcesPlugin.getWorkspace().validateEdit(files, computationContext);
+	}
+	
+	private ISchedulingRule computeValidateStateRule(IFileBuffer[] fileBuffers) {
+		ArrayList list= new ArrayList();
+		for (int i= 0; i < fileBuffers.length; i++) {
+			IResource resource= getWorkspaceFile(fileBuffers[i]);
+			if (resource != null)
+				list.add(resource);
+		}
+		IResource[] resources= new IResource[list.size()];
+		list.toArray(resources);		
+		IResourceRuleFactory factory= ResourcesPlugin.getWorkspace().getRuleFactory();
+		return factory.validateEditRule(resources);
+	}
+	
+	private IFile getWorkspaceFile(IFileBuffer fileBuffer) {
+		return FileBuffers.getWorkspaceFileAtLocation(fileBuffer.getLocation());
 	}
 }

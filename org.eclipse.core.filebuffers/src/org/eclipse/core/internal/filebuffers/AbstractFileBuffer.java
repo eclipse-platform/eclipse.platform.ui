@@ -14,12 +14,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IStateValidationSupport;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 /**
  * @since 3.0
  */
-public abstract class AbstractFileBuffer implements IFileBuffer {
+public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidationSupport {
 	
 	
 	public abstract void create(IPath location, IProgressMonitor monitor) throws CoreException;
@@ -29,8 +32,26 @@ public abstract class AbstractFileBuffer implements IFileBuffer {
 	public abstract void disconnect() throws CoreException;
 	
 	public abstract boolean isDisposed();
-
-	public abstract void requestSynchronizationContext();
 	
-	public abstract void releaseSynchronizationContext();
+	/*
+	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateAboutToBeChanged()
+	 */
+	public void validationStateAboutToBeChanged() {
+		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
+		if (fileBufferManager instanceof TextFileBufferManager) {
+			TextFileBufferManager manager= (TextFileBufferManager) fileBufferManager;
+			manager.fireStateChanging(this);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChangeFailed()
+	 */
+	public void validationStateChangeFailed() {
+		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
+		if (fileBufferManager instanceof TextFileBufferManager) {
+			TextFileBufferManager manager= (TextFileBufferManager) fileBufferManager;
+			manager.fireStateChangeFailed(this);
+		}
+	}
 }

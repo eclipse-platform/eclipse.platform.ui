@@ -49,14 +49,20 @@ public class ContainerGenerator {
 	}
 	
 	private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 100);//$NON-NLS-1$
 		try {
-			monitor.beginTask("",2000);//$NON-NLS-1$
-		
-			projectHandle.create(new SubProgressMonitor(monitor, 1000));
+			
+			IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 50);
+			projectHandle.create(subMonitor);
+			subMonitor.done();
+			
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
-	
-			projectHandle.open(new SubProgressMonitor(monitor, 1000));
+			
+			subMonitor= new SubProgressMonitor(monitor, 50);
+			projectHandle.open(subMonitor);
+			subMonitor.done();
+			
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 				
@@ -74,7 +80,7 @@ public class ContainerGenerator {
 	public IContainer generateContainer(IProgressMonitor progressMonitor) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(FileBuffersMessages.getString("ContainerGenerator.task.creatingContainer"), 1000 * fContainerFullPath.segmentCount()); //$NON-NLS-1$
+				monitor.beginTask(FileBuffersMessages.getString("ContainerGenerator.task.creatingContainer"), fContainerFullPath.segmentCount()); //$NON-NLS-1$
 				if (fContainer != null)
 					return;
 		
@@ -97,7 +103,7 @@ public class ContainerGenerator {
 					if (resource != null) {
 						if (resource instanceof IContainer) {
 							fContainer= (IContainer) resource;
-							monitor.worked(1000);
+							monitor.worked(1);
 						} else {
 							// fContainerFullPath specifies a file as directory
 							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("ContainerGenerator.destinationMustBeAContainer", resource.getFullPath()), null)); //$NON-NLS-1$
@@ -106,11 +112,15 @@ public class ContainerGenerator {
 					else {
 						if (i == 0) {
 							IProject projectHandle= createProjectHandle(root, currentSegment);
-							fContainer= createProject(projectHandle, new SubProgressMonitor(monitor,1000));
+							IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
+							fContainer= createProject(projectHandle, subMonitor);
+							subMonitor.done();
 						}
 						else {
 							IFolder folderHandle= createFolderHandle(fContainer, currentSegment);
-							fContainer= createFolder(folderHandle, new SubProgressMonitor(monitor,1000));
+							IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
+							fContainer= createFolder(folderHandle, subMonitor);
+							subMonitor.done();
 						}
 					}
 				}

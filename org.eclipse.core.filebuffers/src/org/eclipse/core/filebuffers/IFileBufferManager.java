@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * disconnect. I.e. the file buffer manager keeps track of how often a file is
  * connected and returns the same file buffer to each client as long as the
  * file is connected.
+ * <p>
+ * Clients are not supposed to implement that interface.
  * 
  * @since 3.0
  */
@@ -83,8 +85,7 @@ public interface IFileBufferManager {
 	 * Sets the synchronization context for this file buffer manager, i.e., for
 	 * all file buffers this manager manages.
 	 * 
-	 * @param context the synchronization context managed by this file buffer
-	 *               manager
+	 * @param context the synchronization context managed by this file buffer manager
 	 */
 	void setSynchronizationContext(ISynchronizationContext context);
 
@@ -100,6 +101,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 * 
 	 * @param location the location
+	 * @deprecated as of 3.1, use {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
 	void requestSynchronizationContext(IPath location);
 
@@ -115,6 +117,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 * 
 	 * @param location the location
+	 * @deprecated as of 3.1, use {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
 	void releaseSynchronizationContext(IPath location);
 
@@ -136,4 +139,21 @@ public interface IFileBufferManager {
 	 * @param listener the listener to be removed
 	 */
 	void removeFileBufferListener(IFileBufferListener listener);
+	
+	/**
+	 * Validates the state of the given file buffers and tries to bring the
+	 * buffer's underlying file into a state in which it can be modified. File
+	 * buffers which do not support state validation are left untouched.
+	 * <p>
+	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)} should be used.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * 
+	 * @param fileBuffers the file buffers to validate
+	 * @param monitor the progress monitor
+	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell
+	 * @exception CoreException if the underlying file can not be accessed to it's state cannot be changed
+	 * @since 3.1
+	 */
+	void validateState(IFileBuffer[] fileBuffers, IProgressMonitor monitor, Object computationContext) throws CoreException;
 }

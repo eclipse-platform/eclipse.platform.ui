@@ -19,6 +19,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,9 +29,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -97,13 +96,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected IDocumentListener fDocumentListener= new DocumentListener();
 	/** The element's annotation model */
 	protected IAnnotationModel fAnnotationModel;
-	/**
-	 * The encoding which has explicitly been set on the file.
-	 */
+	/** The encoding which has explicitly been set on the file. */
 	private String fExplicitEncoding;
-	/**
-	 * Tells whether the file on disk has a BOM.
-	 */
+	/** Tells whether the file on disk has a BOM. */
 	private boolean fHasBOM;
 
 
@@ -112,7 +107,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#getDocument()
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getDocument()
 	 */
 	public IDocument getDocument() {
 		return fDocument;
@@ -126,14 +121,14 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#getEncoding()
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getEncoding()
 	 */
 	public String getEncoding() {
 		return fEncoding;
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#setEncoding(java.lang.String)
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#setEncoding(java.lang.String)
 	 */
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
@@ -150,7 +145,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 	
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedFile#getStatus()
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getStatus()
 	 */
 	public IStatus getStatus() {
 		if (!isDisposed()) {
@@ -159,58 +154,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
 		}
 		return STATUS_ERROR;	
-	}
-	
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#revert(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void revert(IProgressMonitor monitor) throws CoreException {
-		if (isDisposed())
-			return;
-		
-		refreshFile(monitor);
-				
-		IDocument original= null;
-		IStatus status= null;
-		
-		try {
-			cacheEncodingState();
-			original= fManager.createEmptyDocument(fFile.getLocation());
-			setDocumentContent(original, fFile.getContents(), fEncoding);
-		} catch (CoreException x) {
-			status= x.getStatus();
-		}
-			
-		fStatus= status;			
-			
-		if (original != null) {
-			
-			String originalContents= original.get();
-			boolean replaceContents= !originalContents.equals(fDocument.get());
-			
-			if (replaceContents)  {
-				fManager.fireBufferContentAboutToBeReplaced(this);
-				fDocument.set(original.get());
-			}
-			
-			if (fCanBeSaved) {
-				fCanBeSaved= false;
-				addFileBufferContentListeners();
-			}
-			
-			if (replaceContents)
-				fManager.fireBufferContentReplaced(this);
-			
-			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
-				persistableModel.revert(fDocument);
-			}
-			
-			fSynchronizationStamp= fFile.getModificationStamp();
-			
-			fManager.fireDirtyStateChanged(this, fCanBeSaved);
-			
-		}
 	}
 	
 	/*
@@ -340,13 +283,19 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				
 			} else {
 
+				monitor= Progress.getMonitor(monitor);
 				try {
-					monitor.beginTask("Saving", 2000); //$NON-NLS-1$
+					monitor.beginTask("Saving", 2); //$NON-NLS-1$
 					ContainerGenerator generator = new ContainerGenerator(fFile.getWorkspace(), fFile.getParent().getFullPath());
-					generator.generateContainer(new SubProgressMonitor(monitor, 1000));
-					fFile.create(stream, false, new SubProgressMonitor(monitor, 1000));
-				}
-				finally {
+					IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
+					generator.generateContainer(subMonitor);
+					subMonitor.done();
+					
+					subMonitor= new SubProgressMonitor(monitor, 1);
+					fFile.create(stream, false, subMonitor);
+					subMonitor.done();
+					
+				} finally {
 					monitor.done();
 				}
 				
@@ -368,15 +317,15 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
 		try {
-		/*
-		 * FIXME
-		 * Check whether explicit encoding has been set via properties dialog.
-		 * This is needed because no notification is sent when this property
-		 * changes, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64077
-		 */ 
-		fExplicitEncoding= fFile.getCharset(false);
-		if (fExplicitEncoding != null)
-			return fExplicitEncoding;
+			/*
+			 * FIXME
+			 * Check whether explicit encoding has been set via properties dialog.
+			 * This is needed because no notification is sent when this property
+			 * changes, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64077
+			 */ 
+			fExplicitEncoding= fFile.getCharset(false);
+			if (fExplicitEncoding != null)
+				return fExplicitEncoding;
 		} catch (CoreException e) {
 		}
 		
@@ -428,12 +377,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		setHasBOM();
 	}
 	
-	/**
-	 * Updates the element info to a change of the file content and sends out appropriate notifications.
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#handleFileContentChanged()
 	 */
-	protected void handleFileContentChanged() {
-		if (isDisposed())
-			return;
+	protected void handleFileContentChanged(boolean revert) throws CoreException {
 		
 		IDocument document= fManager.createEmptyDocument(fFile.getLocation());
 		IStatus status= null;
@@ -446,39 +393,34 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		}
 		
 		String newContent= document.get();
-		
-		if ( !newContent.equals(fDocument.get())) {
+		boolean replaceContent= !newContent.equals(fDocument.get());
 			
+		if (replaceContent)
 			fManager.fireBufferContentAboutToBeReplaced(this);
-			
-			removeFileBufferContentListeners();
-			fDocument.set(newContent);
-			fCanBeSaved= false;
-			fSynchronizationStamp= fFile.getModificationStamp();
-			fStatus= status;
-			addFileBufferContentListeners();
-			
-			fManager.fireBufferContentReplaced(this);
-			
-			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
-				try {
+		
+		removeFileBufferContentListeners();
+		fDocument.set(newContent);
+		fCanBeSaved= false;
+		fSynchronizationStamp= fFile.getModificationStamp();
+		fStatus= status;
+		addFileBufferContentListeners();
+		
+		if (replaceContent)
+			fManager.fireBufferContentReplaced(this);			
+		
+		if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+			IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+			try {
+				if (revert)
+					persistableModel.revert(fDocument);
+				else
 					persistableModel.reinitialize(fDocument);
-				} catch (CoreException x) {
-					fStatus= status;
-				}
+			} catch (CoreException x) {
+				fStatus= x.getStatus();
 			}
-			
-		} else {
-			
-			removeFileBufferContentListeners();
-			fCanBeSaved= false;
-			fSynchronizationStamp= fFile.getModificationStamp();
-			fStatus= status;
-			addFileBufferContentListeners();
-			
-			fManager.fireDirtyStateChanged(this, fCanBeSaved);
 		}
+		
+		fManager.fireDirtyStateChanged(this, fCanBeSaved);
 	}
 	
 	/**
