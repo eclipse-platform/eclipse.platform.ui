@@ -18,9 +18,6 @@ import java.net.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 //PAL cdcFoundation
 //import javax.xml.transform.*;
 //import javax.xml.transform.dom.*;
@@ -46,7 +43,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+//	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	private static final String XML_ENCODING = "UTF-8";
 
 	private Configuration config;
@@ -1103,67 +1100,70 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return installURL;
 	}
 	
-	private void saveAsXML(OutputStream stream) throws CoreException {	
-		StreamResult result = null;
-		try {
-			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.newDocument();
-
-			if (config == null)
-				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
-			
-			config.setDate(new Date());
-			doc.appendChild(doc.createComment("Created on " + config.getDate().toString())); //$NON-NLS-1$
-			Element configElement = config.toXML(doc);
-			doc.appendChild(configElement);
-
-			// Write out to a file
-			
-			Transformer transformer=transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-			DOMSource source = new DOMSource(doc);
-			result = new StreamResult(stream);
-
-			transformer.transform(source,result);
-			//will close the stream in the caller
-			//stream.close();
-		} catch (Exception e) {
-			throw Utils.newCoreException("", e); //$NON-NLS-1$
-		} finally {
-			result.setOutputStream(null);
-			result = null;
-		}
-	}
-
-//	private void saveAsXML(OutputStream stream) throws CoreException,IOException {	
-//		OutputStreamWriter xmlWriter = new OutputStreamWriter(stream,XML_ENCODING);
+	// Patch from Phil to support cdc/foundation: will use the method below instead of this one.
+//	private void saveAsXML(OutputStream stream) throws CoreException {	
+//		StreamResult result = null;
 //		try {
-//			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//			factory.setExpandEntityReferences(false);
-//			factory.setValidating(false);
-//			factory.setIgnoringComments(true);
-//			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+//			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
 //			Document doc = docBuilder.newDocument();
-//			
+//
 //			if (config == null)
 //				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
 //			
 //			config.setDate(new Date());
+//			doc.appendChild(doc.createComment("Created on " + config.getDate().toString())); //$NON-NLS-1$
 //			Element configElement = config.toXML(doc);
 //			doc.appendChild(configElement);
+//
+//			// Write out to a file
 //			
-//			//XMLPrintHandler.printComment(xmlWriter,"Created on " + config.getDate().toString());
-//			XMLPrintHandler.printNode(xmlWriter,doc,XML_ENCODING);
-//			
+//			Transformer transformer=transformerFactory.newTransformer();
+//			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+//			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+//			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+//			DOMSource source = new DOMSource(doc);
+//			result = new StreamResult(stream);
+//
+//			transformer.transform(source,result);
+//			//will close the stream in the caller
+//			//stream.close();
 //		} catch (Exception e) {
 //			throw Utils.newCoreException("", e); //$NON-NLS-1$
 //		} finally {
-//			xmlWriter.close();
-//			xmlWriter = null;
+//			result.setOutputStream(null);
+//			result = null;
 //		}
-//	} 
+//	}
+
+	private void saveAsXML(OutputStream stream) throws CoreException,IOException {			
+		BufferedWriter xmlWriter = new BufferedWriter(new OutputStreamWriter(stream,XML_ENCODING));
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setExpandEntityReferences(false);
+			factory.setValidating(false);
+			factory.setIgnoringComments(true);
+			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			
+			if (config == null)
+				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
+			
+			config.setDate(new Date());
+			Element configElement = config.toXML(doc);
+			doc.appendChild(configElement);
+			
+			// This is not DBCS friendly... PAL
+			//XMLPrintHandler.printComment(xmlWriter,"Created on " + config.getDate().toString());
+			XMLPrintHandler.printNode(xmlWriter,doc,XML_ENCODING);
+			
+		} catch (Exception e) {
+			throw Utils.newCoreException("", e); //$NON-NLS-1$
+		} finally {
+			xmlWriter.flush();
+			// will close the stream in the caller	
+			//xmlWriter.close();
+		}
+	} 
 	
 	private void reconcile() throws CoreException {
 		long lastChange = config.getDate().getTime();

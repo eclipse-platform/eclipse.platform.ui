@@ -11,13 +11,9 @@
 
 package org.eclipse.update.internal.configurator;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 
 public class XMLPrintHandler {
@@ -33,14 +29,14 @@ public class XMLPrintHandler {
 	public static final String XML_EQUAL = "=";
 	public static final String XML_SLASH = "/";
 
-	public static void printBeginElement(OutputStreamWriter xmlWriter, String elementString) throws IOException{
+	public static void printBeginElement(Writer xmlWriter, String elementString) throws IOException{
 		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
 		temp.append(elementString).append(XML_END_TAG).append("\n");
 		xmlWriter.write(temp.toString());
 
 	}
 
-	public static void printEndElement(OutputStreamWriter xmlWriter, String elementString) throws IOException{
+	public static void printEndElement(Writer xmlWriter, String elementString) throws IOException{
 		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n");
 		xmlWriter.write(temp.toString());
@@ -48,17 +44,17 @@ public class XMLPrintHandler {
 	}
 
 	
-	public static void printText(OutputStreamWriter xmlWriter, String text) throws IOException{
+	public static void printText(Writer xmlWriter, String text) throws IOException{
 		xmlWriter.write(encode(text).toString());
 	}
 
-	public static void printComment(OutputStreamWriter xmlWriter, String comment)throws IOException {
+	public static void printComment(Writer xmlWriter, String comment)throws IOException {
 		StringBuffer temp = new StringBuffer(XML_COMMENT_BEGIN_TAG);
 		temp.append(encode(comment)).append(XML_COMMENT_END_TAG).append("\n");
 		xmlWriter.write(temp.toString());
 	}
 
-	public static void printHead(OutputStreamWriter xmlWriter, String encoding) throws IOException {
+	public static void printHead(Writer xmlWriter, String encoding) throws IOException {
 		StringBuffer temp = new StringBuffer(XML_HEAD);
 		temp.append(encoding).append(XML_DBL_QUOTES).append(XML_HEAD_END_TAG).append("\n");
 		xmlWriter.write(temp.toString());
@@ -72,7 +68,7 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printNode(OutputStreamWriter xmlWriter, Node node,String encoding)  throws Exception{
+	public static void printNode(Writer xmlWriter, Node node,String encoding)  throws Exception{
 		if (node == null) {
 			return;
 		}
