@@ -74,10 +74,9 @@ public class AntEnvironmentTab extends EnvironmentTab {
 		table.setBackground(tableColor);
 		warningLabel.setForeground(labelColor);
 		envAddButton.setEnabled(enabled);
-		envEditButton.setEnabled(enabled);
-		envRemoveButton.setEnabled(enabled);
 		envSelectButton.setEnabled(enabled);
-		appendEnvironment.setEnabled(enabled);
-		replaceEnvironment.setEnabled(enabled);
+		updateAppendReplace();
+		//update the enabled state of the edit and remove buttons
+		environmentTable.setSelection(environmentTable.getSelection());
 	}
 }
