@@ -67,6 +67,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 
 /**
  * This class acts as both the ITeamNature and the ITeamProvider instances
@@ -451,59 +452,17 @@ public class CVSTeamProvider extends RepositoryProvider {
 	
 	public void get(final IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		try {
+			
 			progress.beginTask(null, 100);
 			
-			workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-
-					monitor.beginTask(null, 100);
-					final IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 100);
-					
-					// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
-					ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
-						public void visitFile(ICVSFile file) throws CVSException {
-							ResourceSyncInfo info = file.getSyncInfo();
-							if (info == null || info.isAdded()) {
-								// Delete the file if it's unmanaged or doesn't exist remotely
-								file.delete();
-								file.unmanage(null);
-							} else if (info.isDeleted()) {
-								// If deleted, null the sync info so the file will be refetched
-								file.unmanage(null);
-							}
-							subProgress.worked(1);
-						}
-			
-						public void visitFolder(ICVSFolder folder) throws CVSException {
-							// Visit the children of the folder as appropriate
-							if (depth == IResource.DEPTH_INFINITE)
-								folder.acceptChildren(this);
-							else if (depth == IResource.DEPTH_ONE) {
-								ICVSFile[] files = folder.getFiles();
-								for (int i = 0; i < files.length; i++) {
-									files[i].accept(this);
-								}
-							}
-							subProgress.worked(1);
-						}
-					};
-					
-					subProgress.beginTask(null, 512);
-					for (int i = 0; i < resources.length; i++) {
-						subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString())); //$NON-NLS-1$
-						IResource resource = resources[i];
-						workspaceRoot.getLocalRoot().getChild(resource.getProjectRelativePath().toString()).accept(visitor);
-					}
-					subProgress.done();
-				}
-
-			}, Policy.subMonitorFor(progress, 30));
-					
+			// Prepare for the replace (special handling for "cvs added" and "cvs removed" resources
+			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30));
+						
 			// Perform an update, ignoring any local file modifications
 			List options = new ArrayList();
 			options.add(Update.IGNORE_LOCAL_CHANGES);
 			if(depth != IResource.DEPTH_INFINITE) {
-			 options.add(Command.DO_NOT_RECURSE);
+				options.add(Command.DO_NOT_RECURSE);
 			}
 			LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
 			update(resources, commandOptions, tag, true /*createBackups*/, Policy.subMonitorFor(progress, 70));
