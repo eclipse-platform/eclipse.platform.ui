@@ -509,7 +509,7 @@ public class PreferenceDialog
 	/**
 	 * Creates a TreeItem structure that reflects to the page hierarchy.
 	 */
-	private void createTreeItemFor(Widget parent, IPreferenceNode node) {
+	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
 		TreeItem item = null;
 		if (parent instanceof Tree)
 			item = new TreeItem((Tree) parent, SWT.DEFAULT);
