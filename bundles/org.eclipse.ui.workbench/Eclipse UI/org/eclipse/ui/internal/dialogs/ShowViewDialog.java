@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -52,6 +53,9 @@ public class ShowViewDialog extends Dialog implements
     private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME
             + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$    
 
+    private static final String STORE_SELECTED_VIEW_ID = DIALOG_SETTING_SECTION_NAME
+            + ".STORE_SELECTED_VIEW_ID"; //$NON-NLS-1$    
+
     private TreeViewer tree;
 
     private Button okButton;
@@ -62,6 +66,9 @@ public class ShowViewDialog extends Dialog implements
 
     /**
      * Constructs a new ShowViewDialog.
+     * 
+     * @param parentShell the parent shell
+     * @param viewReg the view registry
      */
     public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
         super(parentShell);
@@ -119,7 +126,7 @@ public class ShowViewDialog extends Dialog implements
      * Creates and returns the contents of the upper part of this dialog (above
      * the button bar).
      * 
-     * @param the parent composite to contain the dialog area
+     * @param parent the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -188,6 +195,8 @@ public class ShowViewDialog extends Dialog implements
 
     /**
      * Returns the descriptors for the selected views.
+     * 
+     * @return the descriptors for the selected views
      */
     public IViewDescriptor[] getSelection() {
         return viewDescs;
@@ -227,6 +236,14 @@ public class ShowViewDialog extends Dialog implements
 
         if (!categoriesToExpand.isEmpty())
             tree.setExpandedElements(categoriesToExpand.toArray());
+        
+        String selectedViewId = settings.get(STORE_SELECTED_VIEW_ID);
+        if (selectedViewId != null) {
+            IViewDescriptor viewDesc = reg.find(selectedViewId);
+            if (viewDesc != null) {
+                tree.setSelection(new StructuredSelection(viewDesc), true);
+            }
+        }
     }
 
     /**
@@ -244,7 +261,14 @@ public class ShowViewDialog extends Dialog implements
 
         // Save them for next time.
         settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);
-
+        
+        String selectedViewId = ""; //$NON-NLS-1$
+        if (viewDescs.length > 0) {
+            // in the case of a multi-selection, it's probably less confusing
+            // to store just the first rather than the whole multi-selection
+            selectedViewId = viewDescs[0].getID();
+        }
+        settings.put(STORE_SELECTED_VIEW_ID, selectedViewId);
     }
 
     /**
@@ -261,7 +285,9 @@ public class ShowViewDialog extends Dialog implements
      * Update the button enablement state.
      */
     protected void updateButtons() {
-        okButton.setEnabled(getSelection().length > 0);
+        if (okButton != null) {
+            okButton.setEnabled(getSelection().length > 0);
+        }
     }
 
     /**
