@@ -51,7 +51,10 @@ public class FormWidgetFactory {
 					gc.setForeground(c.getBackground());
 					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
 					gc.setForeground(foregroundColor);
-					gc.drawRectangle(b.x - 2, b.y - 2, b.width + 3, b.height + 3);
+					if (c instanceof CCombo)
+						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
+					else 
+						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
 				} else if (c instanceof Table || c instanceof Tree || c instanceof TableTree) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
