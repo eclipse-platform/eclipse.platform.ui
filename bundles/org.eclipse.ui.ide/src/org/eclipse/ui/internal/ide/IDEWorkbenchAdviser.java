@@ -83,10 +83,12 @@ import org.eclipse.update.core.SiteManager;
  * 
  * @since 3.0
  */
-class IDEWorkbenchAdviser extends WorkbenchAdviser {
+public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	
+	private static IDEWorkbenchAdviser workbenchAdviser = null;
+
 	/**
 	 * Special object for configuring the workbench.
 	 */
@@ -127,8 +129,20 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/**
 	 * Creates a new workbench adviser instance.
 	 */
-	IDEWorkbenchAdviser() {
+	protected IDEWorkbenchAdviser() {
 		super();
+		if (workbenchAdviser != null) {
+			throw new IllegalStateException();
+		}
+		workbenchAdviser = this;
+	}
+
+	/**
+	 * Returns the single instance for this adviser. Can
+	 * be <code>null</code> if not created yet.
+	 */
+	/* package */ static final IDEWorkbenchAdviser getAdviser() {
+		return workbenchAdviser;
 	}
 	
 	/**

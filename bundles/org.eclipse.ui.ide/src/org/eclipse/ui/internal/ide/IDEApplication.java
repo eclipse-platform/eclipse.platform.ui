@@ -25,7 +25,6 @@ import org.eclipse.ui.WorkbenchException;
  * @since 3.0
  */
 public final class IDEApplication implements IPlatformRunnable, IExecutableExtension {
-	private static final IDEWorkbenchAdviser workbenchAdviser = new IDEWorkbenchAdviser();
 	
 	/**
 	 * Creates a new IDE application.
@@ -43,7 +42,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		// N.B. createWorkbench remembers the adviser, and also registers the
 		// workbench globally so that all UI plug-ins can find it using
 		// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-		int returnCode = PlatformUI.createAndRunWorkbench(workbenchAdviser);
+		int returnCode = PlatformUI.createAndRunWorkbench(new IDEWorkbenchAdviser());
 		
 		// exit the application with an appropriate return code
 		if (returnCode == PlatformUI.RETURN_RESTART) {
@@ -64,13 +63,13 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 * Returns the about information of the primary feature
 	 */
 	public static AboutInfo getPrimaryInfo() throws WorkbenchException {
-		return workbenchAdviser.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+		return IDEWorkbenchAdviser.getAdviser().getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
 	}
 	
 	/**
 	 * Returns the about information of all features
 	 */
 	public static AboutInfo[] getFeatureInfos() throws WorkbenchException {
-		return workbenchAdviser.getWorkbenchConfigurer().getAllFeaturesAboutInfo();
+		return IDEWorkbenchAdviser.getAdviser().getWorkbenchConfigurer().getAllFeaturesAboutInfo();
 	}
 }
