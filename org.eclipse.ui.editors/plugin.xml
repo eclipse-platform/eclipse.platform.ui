@@ -97,6 +97,24 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
+            name="%ActionDefinition.quickDiff.revert.name"
+            categoryId="org.eclipse.ui.category.edit"
+            description="%ActionDefinition.quickDiff.revert.description"
+            id="org.eclipse.ui.editors.quickdiff.revert">
+      </command>
+      <command
+            name="%ActionDefinition.quickDiff.revertLine.name"
+            categoryId="org.eclipse.ui.category.edit"
+            description="%ActionDefinition.quickDiff.revertLine.description"
+            id="org.eclipse.ui.editors.quickdiff.revertLine">
+      </command>
+      <command
+            name="%ActionDefinition.lineNumberToggle.name"
+            categoryId="org.eclipse.ui.category.edit"
+            description="%ActionDefinition.lineNumberToggle.description"
+            id="org.eclipse.ui.editors.lineNumberToggle">
+      </command>
+      <command
             name="%command.folding.toggle.name"
             description="%command.folding.toggle.description"
             categoryId="org.eclipse.ui.category.textEditor"
@@ -301,15 +319,6 @@
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
-         <action
-               label="%quickdiff.toggle.enable"
-               style="push"
-               helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
-               definitionId="org.eclipse.quickdiff.toggle"
-               menubarPath="quickdiff"
-               id="quickdiff.toggle">
-         </action>
       </viewerContribution>
    </extension>
    <extension
@@ -329,16 +338,6 @@
                class="org.eclipse.ui.texteditor.SelectRulerAction"
                actionID="RulerClick"
                id="org.eclipse.ui.texteditor.SelectRulerAction">
-         </action>
-      </editorContribution>
-      <editorContribution
-            targetID="org.eclipse.ui.DefaultTextEditor"
-            id="org.eclipse.quickdiff.editoractions.texteditor">
-         <action
-               definitionId="org.eclipse.quickdiff.toggle"
-               label="%quickdiff.toggle.enable"
-               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
-               id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
          </action>
       </editorContribution>
    </extension>

@@ -452,9 +452,37 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String TOGGLE_INSERT_MODE= "org.eclipse.ui.edit.text.toggleInsertMode"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> change encoding action
 	 * Value: <code>"org.eclipse.ui.edit.text.changeEncoding"</code>).
 	 * @since 3.1
 	 */
 	public static final String CHANGE_ENCODING= "org.eclipse.ui.edit.text.changeEncoding"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the revert line action
+	 * Value: <code>"org.eclipse.ui.editors.quickdiff.revertLine"</code>).
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERTLINE= "org.eclipse.ui.editors.quickdiff.revertLine"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the revert selection/block action
+	 * Value: <code>"org.eclipse.ui.editors.quickdiff.revert"</code>).
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERT= "org.eclipse.ui.editors.quickdiff.revert"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the toggle quick diff action. The name has no proper prefix for
+	 * historical reasons.
+	 * Value: <code>"org.eclipse.quickdiff.toggle"</code>).
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_TOGGLE= "org.eclipse.quickdiff.toggle"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the toggle display of line numbers
+	 * Value: <code>"org.eclipse.ui.editors.lineNumberToggle"</code>).
+	 * @since 3.1
+	 */
+	static final String LINENUMBER_TOGGLE= "org.eclipse.ui.editors.lineNumberToggle"; //$NON-NLS-1$
 }

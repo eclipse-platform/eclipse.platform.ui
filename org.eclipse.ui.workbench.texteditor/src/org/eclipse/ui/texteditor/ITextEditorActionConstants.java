@@ -433,4 +433,88 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.0
 	 */
 	static final String TOGGLE_INSERT_MODE= "TOGGLE_INSERT_MODE"; //$NON-NLS-1$
+
+	/** 
+	 * Context menu group for preference related actions. 
+	 * Value: <code>"settings"</code>
+	 * @since 3.1
+	 */
+	static final String GROUP_SETTINGS= "settings"; //$NON-NLS-1$
+
+	/** 
+	 * Context menu group for ruler column related actions. 
+	 * Value: <code>"rulers"</code>
+	 * @since 3.1
+	 */
+	static final String GROUP_RULERS= "rulers"; //$NON-NLS-1$
+
+	/** 
+	 * Context menu group for quick diff revert related actions. 
+	 * Value: <code>"restore"</code>
+	 * @since 3.1
+	 */
+	static final String GROUP_RESTORE= "restore"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for showing the preferences from the editor context
+	 * menu. Value: <code>"Preferences.ContextAction"</code>
+	 * @since 3.1
+	 */
+	static final String CONTEXT_PREFERENCES= "Preferences.ContextAction"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for showing the preferences from the editor ruler
+	 * context menu. Value: <code>"Preferences.RulerAction"</code>
+	 * @since 3.1
+	 */
+	static final String RULER_PREFERENCES= "Preferences.RulerAction"; //$NON-NLS-1$
+
+	/** 
+	 * Name of the action for toggling line number display. 
+	 * Value: <code>"Linenumbers.Toggle"</code>
+	 * @since 3.1
+	 */
+	static final String LINENUMBERS_TOGGLE= "Linenumbers.Toggle"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for reverting deleted lines at the current selection.
+	 * Value: <code>"QuickDiff.RevertDeletion"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERTDELETION= "QuickDiff.RevertDeletion"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for reverting the line at the current selection.
+	 * Value: <code>"QuickDiff.RevertLine"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERTLINE= "QuickDiff.RevertLine"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for reverting the selection or the block at the
+	 * current selection. Value: <code>"QuickDiff.Revert"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERT= "QuickDiff.Revert"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for reverting the block at the current selection.
+	 * Value: <code>"QuickDiff.RevertBlock"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERTBLOCK= "QuickDiff.RevertBlock"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for reverting the current selection.
+	 * Value: <code>"QuickDiff.RevertBlock"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_REVERTSELECTION= "QuickDiff.RevertSelection"; //$NON-NLS-1$
+
+	/** 
+	 * Name of the action for toggling quick diff display. 
+	 * Value: <code>"QuickDiff.Toggle"</code>
+	 * @since 3.1
+	 */
+	static final String QUICKDIFF_TOGGLE= "QuickDiff.Toggle"; //$NON-NLS-1$
 }

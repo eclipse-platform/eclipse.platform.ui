@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -74,7 +73,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
-import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertLineAction;
@@ -1102,6 +1100,61 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CHANGE_ENCODING);
 		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);
 		markAsPropertyDependentAction(ITextEditorActionConstants.CHANGE_ENCODING, true);
+		
+		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.ToggleLineNumbersAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+			public void run() {
+				toggleLineNumberRuler();
+			}
+		};
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
+		setAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE, action);
+		
+		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.ToggleQuickDiffAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+			public void run() {
+				toggleQuickDiffRuler();
+			}
+		};
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_TOGGLE);
+		setAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE, action);
+		
+		action= new RevertLineAction(this);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERTLINE);
+		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE, action);
+		
+		action= new RevertSelectionAction(this);
+		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION, action);
+		
+		action= new RevertBlockAction(this);
+		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK, action);
+		
+		action= new RestoreAction(this);
+		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION, action);
+
+		IAction action2= new CombineAction(new IAction[] { 
+		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
+		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
+										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION)});
+		action2.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERT);
+		setAction(ITextEditorActionConstants.QUICKDIFF_REVERT, action2);
+
+		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
+			public void run() {
+				String[] preferencePages= collectRulerMenuPreferencePages();
+				if (preferencePages.length > 0)
+					WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+			}
+
+		};
+		setAction(ITextEditorActionConstants.RULER_PREFERENCES, action);
+		
+		action= new ResourceAction(TextEditorMessages.getResourceBundle(), "Editor.ContextPreferencesAction.") { //$NON-NLS-1$
+			public void run() {
+				String[] preferencePages= collectContextMenuPreferencePages();
+				if (preferencePages.length > 0)
+					WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+			}
+		};
+		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 	}
 	
 	/*
@@ -1172,79 +1225,62 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 * @since 3.1
 	 */
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
-		// create and add rulers menu
-
 		// XXX this is a hack
-		// pre-install menus for contributions
-		menu.add(new Separator("debug"));
+		// pre-install menus for contributions and call super
+		menu.add(new Separator("debug")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		String GROUP_RESTORE= "restore";
-		menu.add(new GroupMarker(GROUP_RESTORE));
-		menu.add(new Separator("add"));
-		menu.add(new Separator("rulers"));
+		menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_RESTORE));
+		menu.add(new Separator("add")); //$NON-NLS-1$
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_RULERS));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
 		super.rulerContextMenuAboutToShow(menu);
 		
 		/* quick diff */
-		IAction quickdiffAction= new Action("QuickDiff", IAction.AS_CHECK_BOX) {
-			public void run() {
-				toggleQuickDiffRuler();
-			}
-		};
+		IAction quickdiffAction= getAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE);
 		quickdiffAction.setChecked(isChangeInformationShowing());
-		quickdiffAction.setActionDefinitionId("org.eclipse.quickdiff.toggle");
-		menu.appendToGroup("rulers", quickdiffAction);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, quickdiffAction);
 		
 		if (isChangeInformationShowing()) {
-			QuickDiffRestoreAction[] restoreActions= 
-				new QuickDiffRestoreAction[] { 
-					new RevertSelectionAction(this), 
-					new RevertBlockAction(this), 
-					new RevertLineAction(this), 
-					new RestoreAction(this)
-			};
-			for (int i= 0; i < restoreActions.length; i++) {
-				restoreActions[i].update();
-			}
+			TextEditorAction revertSelection= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION);
+			TextEditorAction revertBlock= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK);
+			TextEditorAction revertLine= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
+			TextEditorAction revertDeletion= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
+			
+			revertSelection.update();
+			revertBlock.update();
+			revertLine.update();
+			revertDeletion.update();
+			
 			// only add block action if selection action is not enabled
-			if (restoreActions[0].isEnabled())
-				menu.appendToGroup(GROUP_RESTORE, restoreActions[0]);
-			else if (restoreActions[1].isEnabled())
-				menu.appendToGroup(GROUP_RESTORE, restoreActions[1]);
-			if (restoreActions[2].isEnabled())
-				menu.appendToGroup(GROUP_RESTORE, restoreActions[2]);
-			if (restoreActions[3].isEnabled())
-				menu.appendToGroup(GROUP_RESTORE, restoreActions[3]);
+			if (revertSelection.isEnabled())
+				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
+			else if (revertBlock.isEnabled())
+				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertBlock);
+			if (revertLine.isEnabled())
+				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertLine);
+			if (revertDeletion.isEnabled())
+				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
 		}
 
-		IAction lineNumberAction= new Action("Line Numbers", IAction.AS_CHECK_BOX) {
-			public void run() {
-				toggleLineNumberRuler();
-			}
-		};
+		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
 		lineNumberAction.setChecked(fLineNumberRulerColumn != null);
-		menu.appendToGroup("rulers", lineNumberAction);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, lineNumberAction);
 		
-		IAction preferencesAction= new Action("Preferences...") {
-			public void run() {
-				String[] preferencePages= {
-					"org.eclipse.ui.preferencePages.GeneralTextEditor",
-					"org.eclipse.ui.editors.preferencePages.QuickDiff",
-					"org.eclipse.ui.preferencePages.TextEditor",
-					"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", // TODO move down and create extension mechanism for ruler providers to specify their preferences url.
-				};
-				// TODO use the filtering capability as soon as released
-//				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
-				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0]).open();
-			}
-		};
-		menu.appendToGroup("rulers", new GroupMarker("ruler_settings"));
-		menu.appendToGroup("ruler_settings", preferencesAction);
+		IAction preferencesAction= getAction(ITextEditorActionConstants.RULER_PREFERENCES);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, new GroupMarker(ITextEditorActionConstants.GROUP_SETTINGS));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 	}
 
+	/**
+	 * Toggles the line number global preference and shows the line number ruler
+	 * accordingly.
+	 * 
+	 * @since 3.1
+	 */
 	private void toggleLineNumberRuler() {
 		boolean newSetting= fLineNumberRulerColumn == null;
 		// locally
@@ -1260,6 +1296,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 	}
 	
+	/**
+	 * Toggles the quick diff global preference and shows the quick diff ruler
+	 * accordingly.
+	 * 
+	 * @since 3.1
+	 */
 	private void toggleQuickDiffRuler() {
 		boolean newSetting= !isChangeInformationShowing();
 		// change locally to ensure we get it right even if our setting
@@ -1274,24 +1316,53 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 	}
 	
-	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 * @since 3.1
+	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 
-		IAction preferencesAction= new Action("Preferences...") {
-			public void run() {
-				String[] preferencePages= {
-					"org.eclipse.ui.preferencePages.GeneralTextEditor",
-					"org.eclipse.ui.editors.preferencePages.QuickDiff",
-					"org.eclipse.ui.preferencePages.TextEditor",
-					"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", // TODO move down and create extension mechanism for ruler providers to specify their preferences url.
-				};
-				// TODO use the filtering capability as soon as released
-//				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
-				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0]).open();
-			}
-		};
-		menu.appendToGroup("additions", new GroupMarker("settings"));
-		menu.appendToGroup("settings", preferencesAction);
+		IAction preferencesAction= getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
+		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new GroupMarker(ITextEditorActionConstants.GROUP_SETTINGS));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 	}
+
+	/**
+	 * Returns the preference page ids of the preference pages to be shown
+	 * when executing the preferences action from the editor context menu.
+	 * <p>
+	 * Subclasses may extend or replace.
+	 * </p>
+	 * 
+	 * @return the preference page ids to show, may be empty
+	 * @since 3.1
+	 */
+	protected String[] collectContextMenuPreferencePages() {
+		return new String[] {
+			"org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
+			"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
+			"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
+			"org.eclipse.ui.editors.preferencePages.Accessibility", //$NON-NLS-1$
+		};
+	}
+	
+	/**
+	 * Returns the preference page ids of the preference pages to be shown when
+	 * executing the preferences action from the editor ruler context menu.
+	 * <p>
+	 * The default is to return the same list as
+	 * <code>collectContextMenuPreferencePages</code>.
+	 * </p>
+	 * <p>
+	 * Subclasses may extend or replace.
+	 * </p>
+	 * 
+	 * @return the preference page ids to show, may be empty
+	 * @since 3.1
+	 */
+	protected String[] collectRulerMenuPreferencePages() {
+		return collectContextMenuPreferencePages();
+	}
+
 }
