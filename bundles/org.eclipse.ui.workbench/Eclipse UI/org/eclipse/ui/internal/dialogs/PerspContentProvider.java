@@ -15,24 +15,18 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.activities.ws.FilterableObject;
 
 public class PerspContentProvider
-	extends FilterableObject
 	implements IStructuredContentProvider {
 
 	/**
 	 * Create a new <code>PerspContentProvider</code>.
-	 * 
-	 * @param filtering
-	 *            the initial filtering state.
 	 */
-	public PerspContentProvider(boolean filtering) {
-		super(filtering);
+	public PerspContentProvider() {
+	    //no-op
 	}
 
 	/*
@@ -41,6 +35,7 @@ public class PerspContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+	    //no-op
 	}
 
 	/**
@@ -53,10 +48,7 @@ public class PerspContentProvider
 	 */
 	IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
-		if (!getFiltering())
-			return descriptors;
-
-		Collection filtered = new ArrayList();
+		Collection filtered = new ArrayList(descriptors.length);
 
 		for (int i = 0; i < descriptors.length; i++) {
             if (WorkbenchActivityHelper.filterItem(descriptors[i]))
@@ -88,5 +80,6 @@ public class PerspContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	    //no-op
 	}
 }

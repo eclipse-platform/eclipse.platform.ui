@@ -23,9 +23,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,11 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
@@ -49,11 +44,8 @@ public class SelectPerspectiveDialog
 
 	final private static int LIST_HEIGHT = 300;
 	final private static int LIST_WIDTH = 200;
-	private TableViewer filteredList, unfilteredList;
+	private TableViewer list;
 	private Button okButton;
-	private StackLayout stackLayout;
-	private Composite stackComposite;
-	private Button showAllCheck;	
 	private IPerspectiveDescriptor perspDesc;
 	private IPerspectiveRegistry perspReg;
 
@@ -124,45 +116,8 @@ public class SelectPerspectiveDialog
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setFont(parent.getFont());
 
-		stackComposite = new Composite(composite, SWT.NONE);
-		stackLayout = new StackLayout();
-		stackComposite.setLayout(stackLayout);
-		layoutTopControl(stackComposite);
-		filteredList = createViewer(stackComposite, true);
-		
-		if (WorkbenchActivityHelper.showAll()) {
-
-			unfilteredList = createViewer(stackComposite, false);
-
-			showAllCheck = new Button(composite, SWT.CHECK);
-			showAllCheck.setSelection(false);
-			showAllCheck.setText(ActivityMessages.getString("ActivityFiltering.showAll")); //$NON-NLS-1$
-						
-			// flipping tabs updates the selected node
-			showAllCheck.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (!showAllCheck.getSelection()) {
-					    filteredList.setSelection(unfilteredList.getSelection());
-						stackLayout.topControl = filteredList.getControl();	
-						stackComposite.layout();						
-						selectionChanged(
-							new SelectionChangedEvent(
-								filteredList,
-								filteredList.getSelection()));
-					} else {
-					    unfilteredList.setSelection(filteredList.getSelection());
-						stackLayout.topControl = unfilteredList.getControl();	
-						stackComposite.layout();						
-						selectionChanged(
-							new SelectionChangedEvent(
-								unfilteredList,
-								unfilteredList.getSelection()));
-					}
-				}
-			});
-		} 
-		
-		stackLayout.topControl = filteredList.getControl();
+		createViewer(composite);
+		layoutTopControl(list.getControl());		
 
 		// Return results.
 		return composite;
@@ -172,17 +127,14 @@ public class SelectPerspectiveDialog
 	 * Create a new viewer in the parent.
 	 * 
 	 * @param parent the parent <code>Composite</code>.
-	 * @param filtering whether the viewer should be filtering based on
-	 *            activities.
-	 * @return <code>TableViewer</code>
 	 */
-	private TableViewer createViewer(Composite parent, boolean filtering) {
+	private void  createViewer(Composite parent) {
 		// Add perspective list.
-		TableViewer list =
+		list =
 			new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		list.getTable().setFont(parent.getFont());
 		list.setLabelProvider(new PerspectiveLabelProvider());
-		list.setContentProvider(new PerspContentProvider(filtering));
+		list.setContentProvider(new PerspContentProvider());
 		list.setSorter(new ViewerSorter());
 		list.setInput(perspReg);
 		list.addSelectionChangedListener(this);
@@ -191,7 +143,6 @@ public class SelectPerspectiveDialog
 				handleDoubleClickEvent();
 			}
 		});
-		return list;
 	}
 
 	/**
