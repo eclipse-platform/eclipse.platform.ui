@@ -38,7 +38,7 @@
             name="%CVSWorkspaceParticipant"
             type="static"
             multipleInstances="false"
-            icon="icons/full/cview16/cvs_persp.gif"
+            icon="icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
       </participant>
@@ -55,7 +55,7 @@
             type="dynamic"
             multipleInstances="true"
             persistent="false"
-            icon="icons/full/cview16/compare_view.gif"
+            icon="icons/full/eview16/compare_view.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             id="org.eclipse.team.cvs.ui.compare-participant">
       </participant>
@@ -812,7 +812,7 @@
       </category>
       <view
             name="%RepositoriesView.name"
-            icon="icons/full/cview16/repo_rep.gif"
+            icon="icons/full/eview16/repo_rep.gif"
             fastViewWidthRatio="0.5"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.repo.RepositoriesView"
@@ -820,21 +820,21 @@
       </view>
       <view
             name="%HistoryView.name"
-            icon="icons/full/cview16/history_view.gif"
+            icon="icons/full/eview16/history_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.HistoryView"
             id="org.eclipse.team.ccvs.ui.HistoryView">
       </view>
       <view
             name="%EditorsView.name"
-            icon="icons/full/cview16/rep_editors_view.gif"
+            icon="icons/full/eview16/rep_editors_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.EditorsView"
             id="org.eclipse.team.ccvs.ui.EditorsView">
       </view>
       <view
             name="%AnnotateView.name"
-            icon="icons/full/cview16/annotate_view.gif"
+            icon="icons/full/eview16/annotate_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.AnnotateView"
             id="org.eclipse.team.ccvs.ui.AnnotateView">
@@ -926,7 +926,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%CVSRepositoryExploring"
-            icon="icons/full/cview16/cvs_persp.gif"
+            icon="icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.CVSPerspective"
             id="org.eclipse.team.cvs.ui.cvsPerspective">
       </perspective>

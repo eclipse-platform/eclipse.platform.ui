@@ -11,10 +11,11 @@
 package org.eclipse.team.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-
+import java.net.URL;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -33,17 +34,23 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 	private ISchedulingRule schedulingRule;
 	private boolean postponeBuild;
 	private boolean isUser;
+	private URL icon;
+	private boolean keep;
+	private IAction gotoAction;
 
 	public JobRunnableContext(String jobName) {
-		this(jobName, null, null);
+		this(jobName, null, null, false, null, null);
 	}
 	
-	public JobRunnableContext(String jobName, IJobChangeListener listener, IWorkbenchSite site) {
+	public JobRunnableContext(String jobName, URL icon, IAction action, boolean keep, IJobChangeListener listener, IWorkbenchSite site) {
 		this.jobName = jobName;
 		this.listener = listener;
 		this.site = site;
 		// By default team actions are user initiated. 
 		this.isUser = true;
+		this.gotoAction = action;
+		this.icon = icon;
+		this.keep = keep;
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +70,17 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 			job.addJobChangeListener(listener);
 		}
 		job.setUser(isUser());
+		configureJob(job);
 		Utils.schedule(job, site);
+	}
+	
+	private void configureJob(Job job) {
+		if(keep)
+			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE); //$NON-NLS-1$ //$NON-NLS-2$
+		if(gotoAction != null)
+			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), gotoAction); //$NON-NLS-1$ //$NON-NLS-2$
+		if(icon != null)
+			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), icon);  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)

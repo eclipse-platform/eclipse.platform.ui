@@ -11,9 +11,10 @@
 package org.eclipse.team.ui;
 
 import java.lang.reflect.InvocationTargetException;
-
+import java.net.URL;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -25,7 +26,7 @@ import org.eclipse.ui.IWorkbenchSite;
 /**
  * An operation that can be configured to run in the foreground using
  * the {@link org.eclipse.ui.progress.IProgressService} or the background
- * as a {@link org.eclipse.core.runtime.Job}. The executione context is determined
+ * as a {@link org.eclipse.core.runtime.Job}. The execution context is determined
  * by what is returned by the {@link #canRunAsJob()} hint which may be overriden by subclasses. 
  * Subsclass must override the <code>run(IProgressMonitor)</code> method to perform 
  * the behavior of the operation in the desired execution context.
@@ -124,6 +125,33 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	}
 	
 	/**
+	 * This method is called to allow subclasses to configure an action that could be run to show
+	 * the results of the action to the user. Default is to return null.
+	 * @return an action that could be run to see the results of this operation
+	 */
+	protected IAction getGotoAction() {
+		return null;
+	}
+	
+	/**
+	 * This method is called to allow subclasses to configure an icon to show when running this
+	 * operation.
+	 * @return an URL to an icon
+	 */
+	protected URL getOperationIcon() {
+		return null;
+	}
+	
+	/**
+	 * This method is called to allow subclasses to have the operation remain in the progress
+	 * indicator even after the job is done.
+	 * @return <code>true</code> to keep the operation and <code>false</code> otherwise.
+	 */
+	protected boolean getKeepOperation() {
+		return false;
+	}
+	
+	/**
 	 * Return a shell that can be used by the operation to display dialogs, etc.
 	 * @return a shell
 	 */
@@ -152,7 +180,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 */
 	private ITeamRunnableContext getRunnableContext() {
 		if (canRunAsJob()) {
-			JobRunnableContext context = new JobRunnableContext(getJobName(), this, getSite());
+			JobRunnableContext context = new JobRunnableContext(getJobName(), getOperationIcon(), getGotoAction(), getKeepOperation(), this, getSite());
 			context.setPostponeBuild(isPostponeAutobuild());
 			context.setSchedulingRule(getSchedulingRule());
 			return context;

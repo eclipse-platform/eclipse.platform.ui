@@ -18,7 +18,8 @@ public interface ICVSUIConstants {
 	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
 	// images
-	public final String IMG_CVS_CONSOLE = "cview16/console_view.gif"; //$NON-NLS-1$
+	public final String IMG_CVS_CONSOLE = "eview16/console_view.gif"; //$NON-NLS-1$
+	public final String IMG_CVS_PERSPECTIVE = "eview16/cvs_persp.gif"; //$NON-NLS-1$
 	
 	// overlays
 	public final String IMG_MERGEABLE_CONFLICT = "ovr16/confauto_ov.gif"; //$NON-NLS-1$
@@ -32,17 +33,17 @@ public interface ICVSUIConstants {
 	public final String IMG_TAG = "obj16/tag.gif"; //$NON-NLS-1$
 	public final String IMG_BRANCHES_CATEGORY = "obj16/branches_rep.gif"; //$NON-NLS-1$
 	public final String IMG_VERSIONS_CATEGORY = "obj16/versions_rep.gif"; //$NON-NLS-1$
-	public final String IMG_DATES_CATEGORY = "obj16/dates.gif"; //
+	public final String IMG_DATES_CATEGORY = "obj16/dates.gif"; //$NON-NLS-1$
 	
 	public final String IMG_MODULE = "obj16/module_rep.gif"; //$NON-NLS-1$
 	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif"; //$NON-NLS-1$
 	public final String IMG_DATE = "obj16/date.gif"; //$NON-NLS-1$
 	
 	// toolbar
-	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
-	public final String IMG_CLEAR = "clcl16/clear_co.gif"; //$NON-NLS-1$
-	public final String IMG_COLLAPSE_ALL = "clcl16/collapseall.gif"; //$NON-NLS-1$
-	public final String IMG_LINK_WITH_EDITOR = "clcl16/synced.gif"; //$NON-NLS-1$
+	public final String IMG_REFRESH = "elcl16/refresh.gif"; //$NON-NLS-1$
+	public final String IMG_CLEAR = "elcl16/clear_co.gif"; //$NON-NLS-1$
+	public final String IMG_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
+	public final String IMG_LINK_WITH_EDITOR = "elcl16/synced.gif"; //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
@@ -127,7 +128,6 @@ public interface ICVSUIConstants {
 	public final String IMG_WIZBAN_DIFF = "wizban/createpatch_wizban.gif";   //$NON-NLS-1$
 	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.gif"; //$NON-NLS-1$
 	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.gif"; //$NON-NLS-1$
-	// XXX checkout is same as ne connect. If it changes, it must be initialized
 	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	
 	// Properties
