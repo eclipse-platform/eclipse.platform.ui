@@ -14,7 +14,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.AboutAction;
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
@@ -261,22 +260,6 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new SaveAsAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-		
-	/**
-	 * Workbench action: Displays the About dialog.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new AboutAction(window);
 			action.setId(getId());
 			return action;
 		}
@@ -831,7 +814,6 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.selectAll.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
-			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
@@ -851,7 +833,6 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.move.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.move"); //$NON-NLS-1$
-			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
@@ -871,7 +852,6 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.rename.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.rename"); //$NON-NLS-1$
-			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
