@@ -141,7 +141,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 
 	/**
 	 * Start listening to an Ant build. Start a server connection that
-	 * the RemoteAntBuildLogger can connect to.
+	 * the RemoteAntDebugBuildLogger can connect to.
 	 * 
 	 * @param port The port number to create the server connection on
 	 */
