@@ -16,6 +16,16 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
+/**
+ * An instance of this class represents a request to handle a command, under
+ * particular conditions.
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * 
+ * @since 3.0
+ * @see IWorkbenchCommandSupport
+ */
 public final class HandlerSubmission implements Comparable {
 
     private final static int HASH_FACTOR = 89;
@@ -28,9 +38,6 @@ public final class HandlerSubmission implements Comparable {
     private Shell activeShell;
 
     private IWorkbenchPartSite activeWorkbenchPartSite;
-
-    // TODO remove before 3.0
-    private IWorkbenchWindow activeWorkbenchWindow;
 
     private String commandId;
 
@@ -62,7 +69,6 @@ public final class HandlerSubmission implements Comparable {
         if (activeWorkbenchSite instanceof IWorkbenchPartSite)
                 this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
 
-        this.activeWorkbenchWindow = activeWorkbenchWindow;
         this.commandId = commandId;
         this.handler = handler;
 
@@ -122,10 +128,30 @@ public final class HandlerSubmission implements Comparable {
         }
     }
 
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param activePartId
+     *            the identifier of the part that must be active for this
+     *            request to be considered. May be <code>null</code>.
+     * @param activeShell
+     *            the shell that must be active for this request to be
+     *            considered. May be <code>null</code>.
+     * @param activeWorkbenchPartSite
+     *            the workbench part site of the part that must be active for
+     *            this request to be considered. May be <code>null</code>.
+     * @param commandId
+     *            the identifier of the command to be handled. Must not be
+     *            <code>null</code>.
+     * @param handler
+     *            the handler. Must not be <code>null</code>.
+     * @param priority
+     *            the priority. Must not be <code>null</code>.
+     */
     public HandlerSubmission(String activePartId, Shell activeShell,
             IWorkbenchPartSite activeWorkbenchPartSite, String commandId,
             IHandler handler, Priority priority) {
-        if (commandId == null || handler == null)
+        if (commandId == null || handler == null || priority == null)
                 throw new NullPointerException();
 
         this.activePartId = activePartId;
@@ -142,8 +168,7 @@ public final class HandlerSubmission implements Comparable {
                 castedObject.activeWorkbenchPartSite);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(activeWorkbenchWindow,
-                    castedObject.activeWorkbenchWindow);
+            compareTo = Util.compare(activePartId, castedObject.activePartId);
 
             if (compareTo == 0) {
                 compareTo = Util.compare(activeShell, castedObject.activeShell);
@@ -166,26 +191,62 @@ public final class HandlerSubmission implements Comparable {
         return compareTo;
     }
 
+    /**
+     * Returns the identifier of the part that must be active for this request
+     * to be considered.
+     * 
+     * @return the identifier of the part that must be active for this request
+     *         to be considered. May be <code>null</code>.
+     */
+    public String getActivePartId() {
+        return activePartId;
+    }
+
+    /**
+     * Returns the shell that must be active for this request to be considered.
+     * 
+     * @return the shell that must be active for this request to be considered.
+     *         May be <code>null</code>.
+     */
     public Shell getActiveShell() {
         return activeShell;
     }
 
+    /**
+     * Returns the workbench part site of the part that must be active for this
+     * request to be considered.
+     * 
+     * @return the workbench part site of the part that must be active for this
+     *         request to be considered. May be <code>null</code>.
+     */
     public IWorkbenchPartSite getActiveWorkbenchPartSite() {
         return activeWorkbenchPartSite;
     }
 
-    public IWorkbenchWindow getActiveWorkbenchWindow() {
-        return activeWorkbenchWindow;
-    }
-
+    /**
+     * Returns the identifier of the command to be handled.
+     * 
+     * @return the identifier of the command to be handled. Guaranteed not to be
+     *         <code>null</code>.
+     */
     public String getCommandId() {
         return commandId;
     }
 
+    /**
+     * Returns the handler.
+     * 
+     * @return the handler. Guaranteed not to be <code>null</code>.
+     */
     public IHandler getHandler() {
         return handler;
     }
 
+    /**
+     * Returns the priority.
+     * 
+     * @return the priority. Guaranteed not to be <code>null</code>.
+     */
     public Priority getPriority() {
         return priority;
     }
@@ -193,11 +254,10 @@ public final class HandlerSubmission implements Comparable {
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activePartId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activeWorkbenchPartSite);
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activeWorkbenchWindow);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(priority);
@@ -210,12 +270,12 @@ public final class HandlerSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activeShell="); //$NON-NLS-1$
+            stringBuffer.append("[activePartId="); //$NON-NLS-1$
+            stringBuffer.append(activePartId);
+            stringBuffer.append("activeShell="); //$NON-NLS-1$
             stringBuffer.append(activeShell);
             stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchPartSite);
-            stringBuffer.append(",activeWorkbenchWindow="); //$NON-NLS-1$
-            stringBuffer.append(activeWorkbenchWindow);
             stringBuffer.append(",commandId="); //$NON-NLS-1$
             stringBuffer.append(commandId);
             stringBuffer.append(",handler="); //$NON-NLS-1$

@@ -187,7 +187,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                         .getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
                 // TODO trace back and remove field 'priority'. no longer used..
                 final HandlerSubmission submission = new HandlerSubmission(
-                        null, null, null, commandId, proxy, Priority.LOW /*priority.intValue()*/);
+                        null, null, null, commandId, proxy, Priority.LOW /* priority.intValue() */);
                 submissions.add(submission);
             } catch (final NoSuchAttributeException e) {
                 // This submission can't be created. Nothing to do.
@@ -349,8 +349,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             && activeWorkbenchSite2 != newWorkbenchSite)
                             continue;
 
-                    IWorkbenchWindow activeWorkbenchWindow2 = handlerSubmission
-                            .getActiveWorkbenchWindow();
+                    // TODO remove code dependant on this before 3.0
+                    IWorkbenchWindow activeWorkbenchWindow2 = null /*
+                                                                    * handlerSubmission
+                                                                    * .getActiveWorkbenchWindow()
+                                                                    */;
 
                     if (activeWorkbenchWindow2 != null
                             && ((activeWorkbenchWindow2 != newWorkbenchWindow) || activeWorkbenchWindow2
@@ -369,9 +372,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                         .getActiveWorkbenchPartSite());
 
                         if (compareTo == 0) {
+                            // TODO remove code dependant on this before 3.0
                             compareTo = Util.compare(activeWorkbenchWindow2,
-                                    bestHandlerSubmission
-                                            .getActiveWorkbenchWindow());
+                                    null
+                            /*
+                             * bestHandlerSubmission .getActiveWorkbenchWindow()
+                             */);
 
                             if (compareTo == 0)
                                     compareTo = Util.compare(activeShell2,
