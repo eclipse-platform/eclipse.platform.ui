@@ -152,7 +152,8 @@ public class CloseResourceAction extends WorkspaceAction implements
      * Method declared on WorkspaceAction.
      */
     String getOperationMessage() {
-        return ""; //$NON-NLS-1$
+        return IDEWorkbenchMessages
+        .getString("CloseResourceAction.operationMessage"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
