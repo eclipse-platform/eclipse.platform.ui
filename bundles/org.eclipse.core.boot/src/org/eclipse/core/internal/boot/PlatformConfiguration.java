@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.*;
-import sun.security.action.GetPropertyAction;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
