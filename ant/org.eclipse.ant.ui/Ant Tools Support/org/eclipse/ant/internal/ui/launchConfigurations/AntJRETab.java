@@ -255,9 +255,7 @@ public class AntJRETab extends JavaJRETab {
 			antHomeEntries.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
 			additionalEntries.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
 		} else {
-			
-				AntUtil.getCustomClasspaths(configuration, antHomeEntries, additionalEntries);
-			
+			AntUtil.getCustomClasspaths(configuration, antHomeEntries, additionalEntries);
 		}
 	}
 
