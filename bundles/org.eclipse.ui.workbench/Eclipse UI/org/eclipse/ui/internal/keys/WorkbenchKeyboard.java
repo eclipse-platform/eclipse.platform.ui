@@ -349,7 +349,7 @@ public class WorkbenchKeyboard {
 	private boolean executeCommand(String commandId, Event event) {
 		// Reset the key binding state (close window, clear status line, etc.)
 		resetState();
-		
+
 		// Dispatch to the handler.
 		Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
 		org.eclipse.ui.commands.IAction action =
@@ -482,14 +482,20 @@ public class WorkbenchKeyboard {
 		state.setAssociatedWindow(workbench.getActiveWorkbenchWindow());
 
 		// After 1s, open a shell displaying the possible completions.
-		final Display display = workbench.getDisplay();
-		display.timerExec(1000, new Runnable() {
-			public void run() {
-				if (System.currentTimeMillis() > (startTime - 1000L)) {
-					openMultiKeyAssistShell(display);
+		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST)) {
+			final Display display = workbench.getDisplay();
+			display
+				.timerExec(
+					store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME),
+					new Runnable() {
+				public void run() {
+					if (System.currentTimeMillis() > (startTime - 1000L)) {
+						openMultiKeyAssistShell(display);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	/**
@@ -576,7 +582,7 @@ public class WorkbenchKeyboard {
 			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		} else {
 			final Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
-			final List commands = new ArrayList();
+			final List commands = new ArrayList(); // remember commands
 			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 			new TableColumn(completionsTable, SWT.LEFT);
 			new TableColumn(completionsTable, SWT.LEFT);
@@ -596,10 +602,9 @@ public class WorkbenchKeyboard {
 				}
 			}
 
-			// If you double-click on the table, it should go to the select
-			// key.
+			// If you double-click on the table, it should execute the selected
+			// command.
 			completionsTable.addSelectionListener(new SelectionListener() {
-
 				public void widgetDefaultSelected(SelectionEvent e) {
 					int selectionIndex = completionsTable.getSelectionIndex();
 					if (selectionIndex >= 0) {
@@ -607,6 +612,7 @@ public class WorkbenchKeyboard {
 						executeCommand(command.getId(), new Event());
 					}
 				}
+
 				public void widgetSelected(SelectionEvent e) {
 					// Do nothing
 				}
