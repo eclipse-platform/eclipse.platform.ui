@@ -24,29 +24,21 @@ import java.util.*;
  * </p>
  * <p>
  * <ul>
- *  <li>brief product name - <code>"name"</code> entry (required) </li>
- *  <li>full product name - <code>"detailedName"</code> entry (required) </li>
+ *  <li>brief product name - <code>"name"</code> entry</li>
+ *  <li>full product name - <code>"detailedName"</code> entry</li>
  *  <li>app name - <code>"appName"</code> entry sets the application name 
- *      (on Motif, for example, this can be used to set the name used for resource lookup)
- *      (optional) </li>
- *  <li>version number - <code>"version"</code> entry (required) </li>
- *  <li>product build id - <code>"buildID"</code> entry (required) </li>
- *  <li>copyright notice - <code>"copyright"</code> entry (required) </li>
- *  <li>product URL - <code>"productURL"</code> entry (required) </li>
- *  <li>splash image - <code>"splashImage"</code> entry contains file name 
- *      (optional) </li>
- *  <li>about image - <code>"aboutImage"</code> entry contains file name
- *      (optional) </li>
- *  <li>welcome image - <code>"welcomeImage"</code> entry contains file name
- *      (optional) </li>
- *  <li>welcome page - <code>"welcomePageURL"</code> entry contains URL
- *      (optional) </li>
- *  <li>product image - <code>"image"</code> entry contains file name
- *      (optional) </li>
- *  <li>default perspective id - <code>"defaultPerspectiveId"</code> entry
- *      (optional) </li>
- *  <li>perspective shortcuts - <code>"perspectiveShortcut.[x]"</code> entry
- *      (optional) </li>
+ *      (on Motif, for example, this can be used to set the name used for resource lookup)</li>
+ *  <li>version number - <code>"version"</code> entry</li>
+ *  <li>product build id - <code>"buildID"</code> entry</li>
+ *  <li>copyright notice - <code>"copyright"</code> entry</li>
+ *  <li>product URL - <code>"productURL"</code> entry</li>
+ *  <li>splash image - <code>"splashImage"</code> entry contains file name</li>
+ *  <li>about image - <code>"aboutImage"</code> entry contains file name</li>
+ *  <li>welcome image - <code>"welcomeImage"</code> entry contains file name</li>
+ *  <li>welcome page - <code>"welcomePageURL"</code> entry contains URL</li>
+ *  <li>product image - <code>"image"</code> entry contains file name</li>
+ *  <li>default perspective id - <code>"defaultPerspectiveId"</code> entry</li>
+ *  <li>perspective shortcuts - <code>"perspectiveShortcut.[x]"</code> entry</li>
  * </ul>
  * </p>
  */
