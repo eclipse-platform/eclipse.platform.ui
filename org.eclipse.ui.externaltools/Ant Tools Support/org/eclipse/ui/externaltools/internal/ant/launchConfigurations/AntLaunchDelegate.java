@@ -20,15 +20,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.ui.console.IConsoleContentProvider;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.program
-	.launchConfigurations
-	.BackgroundResourceRefresher;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
+import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 /**
@@ -117,7 +112,12 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		runner.addBuildLogger(ANT_LOGGER_CLASS);
 		runner.setInputHandler(INPUT_HANDLER_CLASS);
 		runner.setArguments(runnerArgs);
-		// TODO: set targets
+		
+		String attribute= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
+		String[] targets = AntUtil.parseRunTargets(attribute);
+		if (targets.length > 0) {
+			runner.setExecutionTargets(targets);
+		}
 								
 		if (monitor.isCanceled()) {
 			return;

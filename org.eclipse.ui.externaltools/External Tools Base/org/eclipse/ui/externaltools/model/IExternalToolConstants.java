@@ -298,5 +298,12 @@ public interface IExternalToolConstants {
 	 * Boolean attribute indicating if a refresh scope is recursive. Default
 	 * value is <code>false</code>.
 	 */
-	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$		
+	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute indicating the Ant targets to execute. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_TARGETS = PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$					
 }
