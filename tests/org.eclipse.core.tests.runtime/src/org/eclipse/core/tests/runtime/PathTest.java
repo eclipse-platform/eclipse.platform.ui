@@ -458,7 +458,7 @@ public class PathTest extends RuntimeTest {
 		// negative
 		if (WINDOWS) {
 			assertTrue("2.1", !test.isValidPath("c:b:"));
-			assertTrue("2.2", !test.isValidPath("a/b:"));
+			assertTrue("2.2", !test.isValidPath("c:a/b:"));
 		}
 	}
 
