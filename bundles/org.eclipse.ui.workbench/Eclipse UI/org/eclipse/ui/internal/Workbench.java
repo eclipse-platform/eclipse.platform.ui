@@ -1424,7 +1424,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public void setActiveAcceleratorConfiguration(Configuration configuration) {
 		if (configuration != null) {
 			acceleratorConfiguration = configuration; 
- 			String id = configuration.getId();						
+ 			String id = configuration.getLabel().getId();						
 			KeyManager keyManager = KeyManager.getInstance();
 			keyManager.getKeyMachine().setConfiguration(id);
 			keyManager.update();		
