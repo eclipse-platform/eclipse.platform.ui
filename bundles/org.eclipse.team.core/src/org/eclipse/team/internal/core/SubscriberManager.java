@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ISubscriberManager2;
+import org.eclipse.team.core.subscribers.ISubscriberManager;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -37,7 +37,7 @@ import org.eclipse.team.core.subscribers.TeamSubscriberFactory;
 /**
  * This class provides the private implementation of <code>ISubscriberManager</code>.
  */
-public class SubscriberManager implements ISubscriberManager2, ISaveParticipant {
+public class SubscriberManager implements ISubscriberManager, ISaveParticipant {
 
 	private static String SUBSCRIBER_EXTENSION = "subscriber"; //$NON-NLS-1$
 	final static private String SAVECTX_SUBSCRIBERS = "subscribers";  //$NON-NLS-1$
@@ -49,11 +49,11 @@ public class SubscriberManager implements ISubscriberManager2, ISaveParticipant 
 	private List listeners = new ArrayList(1);
 	private Map factories = new HashMap();
 	
-	static private ISubscriberManager2 instance;
+	static private ISubscriberManager instance;
 	
 	private static final Object GET_INSTANCE_LOCK = new Object();
 	
-	public static ISubscriberManager2 getInstance() {
+	public static ISubscriberManager getInstance() {
 		boolean startup = false;
 		synchronized(GET_INSTANCE_LOCK) {
 			if (instance == null) {
