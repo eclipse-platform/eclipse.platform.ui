@@ -250,17 +250,9 @@ protected void setSelection(List items) {
 	if(haveSameData(items,current))
 		return;
 	 
-	//Cache the current position first
-	Tree cachedTree = getTree();
-	TreeItem topItem = cachedTree.getTopItem();
-	
 	TreeItem[] newItems = new TreeItem[items.size()];
 	items.toArray(newItems);
 	getTree().setSelection(newItems);
-		
-	//Restore the current position
-	if(topItem != null)
-		cachedTree.setTopItem(topItem);		
 }
 
 private boolean haveSameData(List items, Item[] current){
