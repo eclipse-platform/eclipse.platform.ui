@@ -346,7 +346,6 @@ public interface IExternalToolConstants {
 	 */
 	public static final String ATTR_ANT_PROPERTY_FILES = PLUGIN_ID + ".ATTR_ANT_PROPERTY_FILES"; //$NON-NLS-1$
 	
-	// -------- Process ID ----------
 	/**
 	 * Identifier for ant processes (value <code>ant</code>). This identifier is
 	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
