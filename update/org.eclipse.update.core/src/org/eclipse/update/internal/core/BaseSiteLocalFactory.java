@@ -31,7 +31,7 @@ public class BaseSiteLocalFactory {
 	 * 
 	 */
 	public ConfigurationSiteModel createConfigurationSiteModel() {
-		return new ConfigurationSite();
+		return new ConfiguredSite();
 	}
 
 	/*

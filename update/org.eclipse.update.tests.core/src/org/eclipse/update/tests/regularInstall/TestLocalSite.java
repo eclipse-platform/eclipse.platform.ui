@@ -101,7 +101,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);
+		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 
@@ -120,7 +120,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("too many features configured",configSite2.getConfiguredFeatures().length==1);
 		
 		// no feature unconfigured
-		assertTrue("too many unconfigured features",configSite2.getConfigurationPolicy().getUnconfiguredFeatures().length==0);
+		assertTrue("too many unconfigured features",((ConfiguredSite)configSite2).getConfigurationPolicy().getUnconfiguredFeatures().length==0);
 		
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
@@ -177,7 +177,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
+		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 		site.save();
@@ -248,7 +248,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
+		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 		site.save();

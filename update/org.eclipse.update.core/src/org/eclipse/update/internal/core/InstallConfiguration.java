@@ -67,7 +67,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			IConfiguredSite[] sites = config.getConfigurationSites();
 			if (sites != null) {
 				for (int i = 0; i < sites.length; i++) {
-					ConfigurationSite configSite = new ConfigurationSite(sites[i]);
+					ConfiguredSite configSite = new ConfiguredSite(sites[i]);
 					addConfigurationSiteModel(configSite);
 				}
 			}
@@ -207,10 +207,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		for (int i = 0; i < configurationSites.length; i++) {
 			IConfiguredSite element = (IConfiguredSite) configurationSites[i];
-			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
+			ConfigurationPolicy configurationPolicy = ((ConfiguredSite) element).getConfigurationPolicy();
 
 			// obtain the list of plugins
-			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(), element.getPreviousPluginPath());
+			ConfiguredSite cSite = ((ConfiguredSite)element);
+			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(), cSite.getPreviousPluginPath());
 
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
@@ -279,7 +280,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (getConfigurationSitesModel() != null) {
 			ConfigurationSiteModel[] sites = getConfigurationSitesModel();
 			for (int i = 0; i < sites.length; i++) {
-				ConfigurationSite element = (ConfigurationSite) sites[i];
+				ConfiguredSite element = (ConfiguredSite) sites[i];
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
@@ -327,14 +328,14 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				if (oldSite != null) {
 					// the Site existed before, calculate teh delta between its current state and the
 					// state we are reverting to
-					 ((ConfigurationSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
+					 ((ConfiguredSite) oldSite).deltaWith(nowConfigSites[i], monitor, handler);
 					nowConfigSites[i] = oldSite;
 				} else {
 					// the site didn't exist in the InstallConfiguration we are reverting to
 					// unconfigure everything from this site so it is still present
 					IFeatureReference[] featuresToUnconfigure = nowConfigSites[i].getSite().getFeatureReferences();
 					for (int j = 0; j < featuresToUnconfigure.length; j++) {
-						nowConfigSites[i].unconfigure(featuresToUnconfigure[j], null);
+						nowConfigSites[i].unconfigure(featuresToUnconfigure[j].getFeature(), null);
 					}
 				}
 			}

@@ -19,7 +19,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 /**
  * 
  */
-public class ConfigurationPolicy extends ConfigurationPolicyModel implements IConfigurationPolicy {
+public class ConfigurationPolicy extends ConfigurationPolicyModel{
 
 
 	/**
@@ -32,7 +32,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	/**
 	 * Copy Constructor for ConfigurationPolicyModel.
 	 */
-	public ConfigurationPolicy(IConfigurationPolicy configPolicy) {
+	public ConfigurationPolicy(ConfigurationPolicy configPolicy) {
 		super();
 		setPolicy(configPolicy.getPolicy());
 		setConfiguredFeatureReferences(configPolicy.getConfiguredFeatures());
@@ -51,18 +51,24 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	 * adds teh feature to teh list of features if the policy is USER_INCLUDE
 	 */
 	/*package*/
-	void configure(IFeatureReference feature) throws CoreException {
+	void configure(IFeatureReference featureReference) throws CoreException {
 
+
+		if (featureReference==null) return;
+		
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-		activity.setLabel(feature.getFeature().getVersionedIdentifier().toString());
-		activity.setDate(new Date());
-
-		addConfiguredFeatureReference((FeatureReferenceModel)feature);
-
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+		IFeature feature = featureReference.getFeature();
+		if (feature!=null){
+			activity.setLabel(feature.getVersionedIdentifier().toString());
+			activity.setDate(new Date());
+	
+			addConfiguredFeatureReference((FeatureReferenceModel)featureReference);
+	
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+		} 
 	}
 
 	/**
@@ -70,14 +76,16 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
-	boolean unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
+	boolean unconfigure(IFeatureReference featureReference, IProblemHandler handler) throws CoreException {
 
+		if (featureReference==null) return false;
+		
 		boolean unconfigure = true;
 		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, "Some plugin of this feature are required by the following running plugins", null);
 
 		// plugins to remove		
-		IPluginEntry[] pluginsToRemove = ((SiteLocal) SiteManager.getLocalSite()).getUnusedPluginEntries(feature.getFeature());
+		IPluginEntry[] pluginsToRemove = ((SiteLocal) SiteManager.getLocalSite()).getUnusedPluginEntries(featureReference.getFeature());
 
 		// all other plugins that are configured
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
@@ -96,10 +104,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 		if (unconfigure) {
 			// FIXME: Start UOW ?
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(feature.getFeature().getVersionedIdentifier().toString());
+			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
-			addUnconfiguredFeatureReference((FeatureReferenceModel)feature);
+			addUnconfiguredFeatureReference((FeatureReferenceModel)featureReference);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);

@@ -78,7 +78,7 @@ public class ConfigurationSiteModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */
-	public void setInstallSite(boolean installable) {
+	public void isUpdateable(boolean installable) {
 		assertIsWriteable();
 		this.installable = installable;
 	}

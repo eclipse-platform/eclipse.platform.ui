@@ -29,8 +29,8 @@ public interface ISite {
 	
 	/**
 	 * Notify listener of installation of the feature
-	 * returns the newly created feature reference
-	 * @param feature the DefaultFeature to install
+	 * returns the newly created feature Reference
+	 * @param feature the Feature to install
 	 * @param monitor the Progress Monitor
 	 * @since 2.0 
 	 */

@@ -57,7 +57,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		IFeatureReference installedFeature = configSite.install(feature,null);
 		site.save();
 
-		configSite.unconfigure(installedFeature,null);
+		configSite.unconfigure(installedFeature.getFeature(),null);
 
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration(null,"new Label2");
@@ -94,7 +94,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		assertTrue("Wrong number of configured features",oldNumber==newNumber);
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of unconfigured features",newConfigSite.getConfigurationPolicy().getUnconfiguredFeatures().length==2);
+		assertTrue("wrong number of unconfigured features",((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length==2);
 		
 		// cleanup
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());

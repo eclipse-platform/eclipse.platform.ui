@@ -50,24 +50,12 @@ public interface IConfiguredSite {
 	 * @since 2.0 
 	 */
 
-	void setInstallSite(boolean installable);
+	void isUpdateable(boolean installable);
 
 
 	
-	/**
-	 * returns the policy for this configuration Site
-	 * @since 2.0 
-	 */
-
-	IConfigurationPolicy getConfigurationPolicy();
-	
-	/**
-	 * Sets a new policy. The configured features are recaculated
-	 * @since 2.0 
-	 */
-
-	void setConfigurationPolicy(IConfigurationPolicy policy);
-	
+		
+		
 		
 	/**
 	 * 
@@ -92,17 +80,16 @@ public interface IConfiguredSite {
 	 * @since 2.0 
 	 */
 
-	void configure(IFeatureReference feature) throws CoreException;
-	
+	void configure(IFeature feature) throws CoreException;
+
 	/**
 	 * Unconfigure the feature from the execution path.
 	 * returns false if the unconfigure is not sucessful
 	 * @since 2.0 
 	 */
 
-	boolean unconfigure(IFeatureReference feature,IProblemHandler handler) throws CoreException;
-	
-		
+	boolean unconfigure(IFeature feature,IProblemHandler handler) throws CoreException;
+
 	/**
 	 * returns the feature used in this configurationSite
 	 * This is a subset of the feature of teh site
@@ -116,12 +103,6 @@ public interface IConfiguredSite {
 	 * @since 2.0
 	 */
 	IInstallConfiguration getInstallConfiguration();
-	
-	/**
-	 * returns the plugin path declared in the platform.
-	 * This is the exact list of the plugin URL saved in the platform configuration.
-	 */
-	String[] getPreviousPluginPath();
 	
 }
 

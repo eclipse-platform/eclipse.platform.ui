@@ -74,7 +74,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
 		assertTrue(ref.length==0);
-		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
+		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
 		assertTrue(ref.length==1);
 		
 		removeConfigSite(url);
@@ -100,7 +100,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
 		assertTrue(ref.length==0);
-		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
+		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
 		assertTrue(ref.length==1);
 		removeConfigSite(url);
 	}
@@ -128,7 +128,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
 		assertEquals("Wrong number of configured features",1,ref.length);
-		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
+		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
 		assertEquals("Wrong number of unconfigured features",0,ref.length);
 		
 		removeConfigSite(url);
@@ -155,7 +155,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
 		assertEquals("Wrong number of configured features",1,ref.length);
-		ref = newSite.getConfigurationPolicy().getUnconfiguredFeatures();
+		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
 		assertEquals("Wrong number of unconfigured features",0,ref.length);
 
 		removeConfigSite(url);

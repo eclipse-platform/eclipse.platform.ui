@@ -157,7 +157,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		// install
 		String installString = attributes.getValue("install");
 		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false;
-		configSite.setInstallSite(installable);
+		configSite.isUpdateable(installable);
 
 		// add to install configuration
 		config.addConfigurationSiteModel(configSite);

@@ -400,12 +400,12 @@ public class InternalSiteManager {
 
 		//create config site
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
-		ConfigurationSite configSite =
-			(ConfigurationSite) factory.createConfigurationSiteModel(
+		ConfiguredSite configSite =
+			(ConfiguredSite) factory.createConfigurationSiteModel(
 				(SiteMapModel) site,
 				policy);
 		configSite.setPlatformURLString(site.getURL().toExternalForm());
-		configSite.setInstallSite(true);
+		configSite.isUpdateable(true);
 
 		// obtain the list of plugins
 		IPlatformConfiguration runtimeConfiguration =

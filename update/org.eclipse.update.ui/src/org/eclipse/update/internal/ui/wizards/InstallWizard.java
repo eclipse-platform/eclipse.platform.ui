@@ -185,42 +185,14 @@ public class InstallWizard extends Wizard {
 	private boolean unconfigure(IFeature feature) throws CoreException {
 		IConfiguredSite site = findConfigSite(feature);
 		if (site != null) {
-			// get the feature reference
-			IFeatureReference fref = site.getSite().getFeatureReference(feature);
-			if (fref != null)
-				return site.unconfigure(fref, new UIProblemHandler());
-			else {
-				String message = "Unable to locate feature reference";
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						UpdateUIPlugin.getPluginId(),
-						IStatus.OK,
-						message,
-						null);
-				throw new CoreException(status);
-			}
+			return site.unconfigure(feature, new UIProblemHandler());
 		}
 		return false;
 	}
 	private void configure(IFeature feature) throws CoreException {
 		IConfiguredSite site = findConfigSite(feature);
 		if (site != null) {
-			// get the feature reference
-			IFeatureReference fref = site.getSite().getFeatureReference(feature);
-			if (fref != null)
-				site.configure(fref);
-			else {
-				String message = "Unable to locate feature reference";
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						UpdateUIPlugin.getPluginId(),
-						IStatus.OK,
-						message,
-						null);
-				throw new CoreException(status);
-			}
+			site.configure(feature);
 		}
 	}
 }
