@@ -126,6 +126,28 @@
   For example, when debugging on a server a delegate could create a new launch 
   object or may reuse an existing launch object if the server is already running 
   in debug mode.</p>
+<h3>Retargettable Actions</h3>
+<p>The debug platform now provides retargettable actions for the following actions.</p>
+<ul>
+  <li>Run to Line</li>
+  <li>Toggle Line Breakpoint</li>
+  <li>Toggle Method Breakpoint</li>
+  <li>Toggle Watchpoint</li>
+</ul>
+<p>Debug implementations can plug into the retargettable actions by providing 
+  appropriate adapters for relevant editors and model objects that perform the 
+  actual operations (<code>IRunToLineTarget</code> and <code>IToggleBreakpointsTarget</code>, 
+  defined in the <code>org.eclipse.debug.ui.actions</code> package). A retargettable 
+  action works on the active part. First the part is asked for a target adapter. 
+  If the part does not provide an adapter, the selected objects within the part 
+  are consulted for adapters.</p>
+<p>As well, action delegates actions are provided by the debug platform such that 
+  debug implementations can contribute appropriate actions to context menus. An 
+  editor actions delegate is provided for the run to line action, and an object 
+  action delegate is provided for toggling method breakpoints and watchpoints. 
+  See the following classes: <code>RunToLineActionDelegate</code>, <code>ToggleMethodBreakpointActionDelegate</code>, 
+  and <code>ToggleWatchpointActionDelegate</code> in the <code>org.eclipse.debug.ui.actions</code> 
+  package.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
