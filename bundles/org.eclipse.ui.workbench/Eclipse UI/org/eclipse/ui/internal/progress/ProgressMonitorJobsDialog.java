@@ -46,7 +46,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	private long watchTime = -1;
 	
-	private boolean alreadyClosed = false;
+	protected boolean alreadyClosed = false;
 	private IProgressMonitor wrapperedMonitor;
 
 	//Cache initial enablement in case the enablement state is set
@@ -317,6 +317,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
+						//Try again if still not safe
+						if(!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this))
+							return;
+						
 						if(!alreadyClosed)
 							open();
 					}
@@ -439,9 +443,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
 	 */
 	public boolean close() {
+		alreadyClosed = true;//As this sometimes delayed cache if it was already closed
 		boolean result = super.close();
-		if (result) {//As this sometimes delayed cache if it was already closed
-			alreadyClosed = true;
+		if (!result) {//If it fails reset the flag
+			alreadyClosed = false;
 		}
 		return result;
 	}

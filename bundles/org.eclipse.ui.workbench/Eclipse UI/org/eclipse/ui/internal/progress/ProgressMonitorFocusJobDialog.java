@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -86,6 +87,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			public void widgetSelected(SelectionEvent e) {
 				Rectangle shellPosition = getShell().getBounds();
 				job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
+				decrementNestingDepth();
 				close();
 				ProgressManagerUtil.animateDown(shellPosition);
 			}
@@ -193,6 +195,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					 */
 					public void run() {
 						getProgressMonitor().done();
+						finishedRun();
 					}
 				});
 			}
@@ -223,15 +226,24 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				return getProgressMonitor().isCanceled();
 			}
 			/**
-			 * Run the runnable as an asyncExec.
+			 * Run the runnable as an asyncExec if we are already
+			 * open.
 			 * 
 			 * @param runnable
 			 */
 			private void runAsync(Runnable runnable) {
-				Shell currentShell = getShell();
-				if (currentShell == null || currentShell.isDisposed())
+				
+				if (alreadyClosed)
 					return;
-				currentShell.getDisplay().asyncExec(runnable);
+				Shell currentShell = getShell();
+				
+				Display display;
+				if(currentShell == null)
+					 display = Display.getDefault();
+				else
+					display = currentShell.getDisplay();	
+				
+				display.asyncExec(runnable);
 			}
 			/*
 			 * (non-Javadoc)
@@ -314,8 +326,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	public int open() {
 		int result = super.open();
 		//after the dialog is opened we can get access to its monitor
-		ProgressManager.getInstance().progressFor(job).addProgressListener(
-				getBlockingProgressMonitor());
 		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(true));
 		
 		//add a listener that will close the dialog when the job completes.
@@ -336,6 +346,12 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 */
 	public void show(Job jobToWatch) {
 		job = jobToWatch;
+		
+		ProgressManager.getInstance().progressFor(job).addProgressListener(
+				getBlockingProgressMonitor());
+		
+		setOpenOnRun(false);
+		aboutToRun();
 		//start with a quick busy indicator. Lock the UI as we
 		//want to preserve modality
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), new Runnable() {
