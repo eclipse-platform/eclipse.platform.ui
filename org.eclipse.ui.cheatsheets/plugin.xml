@@ -58,6 +58,8 @@
             class="org.eclipse.ui.internal.cheatsheets.views.CheatSheetView"
             id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
       </view>
+      <stickyView
+      		id="org.eclipse.ui.cheatsheets.views.CheatSheetView"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
