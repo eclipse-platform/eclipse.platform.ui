@@ -15,6 +15,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -121,28 +123,49 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		// Listen to workbench page lifecycle methods to enable
 		// and disable the perspective menu items as needed.
-		// Note, the show view action already does its own
-		// listening so no need to do it here.
 		window.addPageListener(new IPageListener() {
 			public void pageActivated(IWorkbenchPage page) {
-				enableActions(true);
+				enableActions(page.getPerspective() != null);
 			}
 			public void pageClosed(IWorkbenchPage page) {
-				enableActions(window.getActivePage() != null);
+				IWorkbenchPage pg = window.getActivePage();
+				enableActions(pg != null && pg.getPerspective() != null);
 			}
 			public void pageOpened(IWorkbenchPage page) {
 			}
-			private void enableActions(boolean value) {
-				hideShowEditorAction.setEnabled(value);
-				savePerspectiveAction.setEnabled(value);
-				resetPerspectiveAction.setEnabled(value);
-				editActionSetAction.setEnabled(value);
-				closePerpsAction.setEnabled(value);
-				closeAllPerspsAction.setEnabled(value);
-				newWizardMenu.setEnabled(value);
-				newWizardDropDownAction.setEnabled(value);
+		});
+							
+		// Listen to workbench perspective lifecycle methods to enable
+		// and disable the perspective menu items as needed.
+		window.getPerspectiveService().addPerspectiveListener(new IInternalPerspectiveListener() {
+			public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+				enableActions(page.getPerspective() != null);
+			}
+			public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			}
+			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+				enableActions(true);
+			}
+			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}
 		});
+	}
+
+	/**
+	 * Enables the menu items dependent on an active
+	 * page and perspective.
+	 * Note, the show view action already does its own 
+	 * listening so no need to do it here.
+	 */
+	private void enableActions(boolean value) {
+		hideShowEditorAction.setEnabled(value);
+		savePerspectiveAction.setEnabled(value);
+		resetPerspectiveAction.setEnabled(value);
+		editActionSetAction.setEnabled(value);
+		closePerpsAction.setEnabled(value);
+		closeAllPerspsAction.setEnabled(value);
+		newWizardMenu.setEnabled(value);
+		newWizardDropDownAction.setEnabled(value);
 	}
 	
 	/**

@@ -35,12 +35,24 @@ protected void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescrip
 	perspectiveListeners.firePerspectiveActivated(page, perspective);
 }
 /**
+ * Fires perspective changed
+ */
+protected void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+	perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
+}
+/**
  * Fires perspective reset
  */
-protected void firePerspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-	perspectiveListeners.firePerspectiveReset(page, perspective);
+protected void firePerspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveListeners.firePerspectiveClosed(page, perspective);
 }
-/*
+/**
+ * Fires perspective reset
+ */
+protected void firePerspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveListeners.firePerspectiveOpened(page, perspective);
+}
+/**
  * Returns the active perspective descriptor in the active workbench page.
  *
  * @return the active perspective descriptor, or <code>null</code> if no perspective is currently active

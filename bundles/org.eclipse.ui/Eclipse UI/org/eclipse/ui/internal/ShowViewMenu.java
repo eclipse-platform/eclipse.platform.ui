@@ -75,6 +75,10 @@ protected void fillMenu() {
 	if (page == null)
 		return;
 		
+	// If no active perspective disable all
+	if (page.getPerspective() == null)
+		return;
+		
 	// Get visible actions.
 	List viewIds = ((WorkbenchPage) page).getShowViewActions();
 	viewIds = addOpenedViews(viewIds);

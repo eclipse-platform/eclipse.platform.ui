@@ -246,7 +246,6 @@ private void busyResetPerspective() {
 	setPerspective(newPersp);
 
 	// Notify listeners.
-	window.firePerspectiveReset(this, desc);
 	window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 	
 	// Destroy old persp.
@@ -513,6 +512,7 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 	try {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
+		window.firePerspectiveOpened(this, desc);
 		IViewPart parts[] = persp.getViews();
 		for (int i = 0; i < parts.length; i++) {
 			addPart(parts[i]);
@@ -595,6 +595,7 @@ public void dispose() {
 	while (enum.hasNext()) {
 		Perspective perspective = (Perspective) enum.next();
 		window.removePerspectiveShortcut(perspective, this);
+		window.firePerspectiveClosed(this, perspective.getDesc());
 		perspective.dispose();
 	}
 	perspList = new PerspectiveList();
@@ -624,6 +625,7 @@ private void disposePerspective(Perspective persp) {
 	
 	// Get rid of perspective.
 	perspList.remove(persp);
+	window.firePerspectiveClosed(this, persp.getDesc());
 	persp.dispose();
 
 	// Loop through the views.
@@ -657,8 +659,7 @@ public boolean editActionSets() {
 	boolean ret = (dlg.open() == Window.OK);
 	if (ret) {
 		window.updateActionSets();
-		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
-		window.firePerspectiveReset(this, getPerspective());
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET);
 	}
 	return ret;
 }

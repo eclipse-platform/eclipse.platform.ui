@@ -15,14 +15,23 @@ import org.eclipse.ui.*;
  *
  * @see IPerspectiveService
  */
-public interface IInternalPerspectiveListener extends IPerspectiveListener{
-;
-/**
- * Notifies this listener that the given page's perspective
- * has been reset to its last saved layout.
- *
- * @param page the page whose perspective was reset
- * @param perspective the perspective descriptor
- */
-public void perspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective);
+public interface IInternalPerspectiveListener extends IPerspectiveListener {
+	
+	/**
+	 * Notifies this listener that the given page's perspective
+	 * has been closed.
+	 *
+	 * @param page the page whose perspective was closed
+	 * @param perspective the descriptor of the perspective that was closed
+	 */
+	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective);
+
+	/**
+	 * Notifies this listener that the given page's perspective
+	 * has been opened. The perspective is not active yet.
+	 *
+	 * @param page the page whose perspective was opened
+	 * @param perspective the descriptor of the perspective that was opened
+	 */
+	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective);
 }

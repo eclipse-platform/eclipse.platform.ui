@@ -123,10 +123,13 @@ public void pageOpened(IWorkbenchPage page) {
 public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
     updateMenu();
 }
-public void perspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective){
+public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String id){
     updateMenu();
 }
-public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String id){
+public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective){
+    updateMenu();
+}
+public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective){
     updateMenu();
 }
 

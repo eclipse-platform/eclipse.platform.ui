@@ -497,12 +497,19 @@ void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspe
  */
 void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
+	perspectiveService.firePerspectiveChanged(page, perspective, changeId);
 }
 /**
- * Fires perspective reset
+ * Fires perspective closed
  */
-void firePerspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-	perspectiveService.firePerspectiveReset(page, perspective);
+void firePerspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveService.firePerspectiveClosed(page, perspective);
+}
+/**
+ * Fires perspective opened
+ */
+void firePerspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveService.firePerspectiveOpened(page, perspective);
 }
 /**
  * Returns the action bars for this window.
@@ -903,7 +910,8 @@ public void setActivePage(final IWorkbenchPage in) {
 			if (newPage != null) {
 				newPage.onActivate();
 				firePageActivated(newPage);
-				firePerspectiveActivated(newPage, newPage.getPerspective());
+				if (newPage.getPerspective() != null)
+					firePerspectiveActivated(newPage, newPage.getPerspective());
 			}
 
 			if(isClosing())
