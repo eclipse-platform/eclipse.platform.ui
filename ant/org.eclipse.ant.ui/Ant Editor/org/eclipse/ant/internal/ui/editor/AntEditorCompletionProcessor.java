@@ -248,9 +248,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     private ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
         String taskString = null;
 		ICompletionProposal[] proposals= null;
-        /*
-         * Completions will be determined depending on the proposal mode.
-         */
         switch (determineProposalMode(document, cursorPosition, prefix)) {
 
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
@@ -922,6 +919,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     		return null;
     	}
     	AntElementNode node= project.getNode(offset);
+    	if (node == null) {
+    		node= antModel.getOpenElement();
+    	}
     	if (node == null) {
     		return ""; //$NON-NLS-1$
     	} else if (node instanceof AntTaskNode) {
