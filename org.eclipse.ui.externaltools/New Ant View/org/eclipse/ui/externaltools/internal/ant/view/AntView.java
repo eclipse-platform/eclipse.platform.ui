@@ -211,7 +211,6 @@ public class AntView extends ViewPart {
 		IMemento[] targets= memento.getChildren(TAG_TARGET);
 		for (int i = 0; i < targets.length; i++) {
 			IMemento target= targets[i];
-			TargetNode targetNode= null;
 			String buildFileName= target.getString(TAG_PATH);
 			String targetName= target.getString(TAG_NAME);
 			ProjectNode[] projects= restoredRoot.getProjects();
