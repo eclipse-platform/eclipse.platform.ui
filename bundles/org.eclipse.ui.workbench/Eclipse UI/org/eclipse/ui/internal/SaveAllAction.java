@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;

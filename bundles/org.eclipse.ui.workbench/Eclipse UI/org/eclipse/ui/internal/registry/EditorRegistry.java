@@ -178,6 +178,7 @@ public class EditorRegistry implements IEditorRegistry {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IEditorRegistry.
+	 * @deprecated
 	 */
 	public IEditorDescriptor getDefaultEditor() {
 		// the default editor will always be the system external editor

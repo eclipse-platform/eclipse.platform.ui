@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
