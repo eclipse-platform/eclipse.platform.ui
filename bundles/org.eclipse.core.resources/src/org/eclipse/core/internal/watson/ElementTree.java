@@ -94,9 +94,9 @@ public class ElementTree {
 		IPath[] childPaths;
 	}
 
-	ChildIDsCache childIDsCache = null;
+	private volatile ChildIDsCache childIDsCache = null;
 
-	DataTreeLookup lookupCache = null;
+	private volatile DataTreeLookup lookupCache = null;
 
 	private static int treeCounter = 0;
 	private int treeStamp;
@@ -158,8 +158,7 @@ public class ElementTree {
 	 */
 	ElementTree(ElementSubtree subtree) {
 		DataTreeNode rootNode = nodeFor(null, null, subtree.getChildren());
-		DeltaDataTree tree = new DeltaDataTree(rootNode);
-		initialize(tree);
+		initialize(new DeltaDataTree(rootNode));
 	}
 
 	/**
@@ -603,14 +602,14 @@ public class ElementTree {
 		 * If this tree has been closed, the ancestor chain is flipped
 		 */
 		if (this.tree.isImmutable()) {
-			for (ElementTree tree = oldTree.getParent(); tree != null; tree = tree.getParent()) {
-				if (tree == this) {
+			for (ElementTree parent = oldTree.getParent(); parent != null; parent = parent.getParent()) {
+				if (parent == this) {
 					return true;
 				}
 			}
 		} else {
-			for (ElementTree tree = this.getParent(); tree != null; tree = tree.getParent()) {
-				if (tree == oldTree) {
+			for (ElementTree parent = this.getParent(); parent != null; parent = parent.getParent()) {
+				if (parent == oldTree) {
 					return true;
 				}
 			}
@@ -709,13 +708,13 @@ public class ElementTree {
 		initialize(new DeltaDataTree(new DataTreeNode(null, null, new AbstractDataTreeNode[] {rootNode})));
 	}
 
-	protected void initialize(DeltaDataTree tree) {
+	protected void initialize(DeltaDataTree newTree) {
 		// Keep this element tree as the data of the root node.
 		// Useful for canonical results for ElementTree.getParent().
 		// see getParent().
 		treeStamp = treeCounter++;
-		tree.setData(tree.rootKey(), this);
-		this.tree = tree;
+		newTree.setData(newTree.rootKey(), this);
+		this.tree = newTree;
 	}
 
 	/**
@@ -936,7 +935,7 @@ public class ElementTree {
 	public String toDebugString() {
 		final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
 		IElementContentVisitor visitor = new IElementContentVisitor() {
-			public boolean visitElement(ElementTree tree, IPathRequestor elementID, Object elementContents) {
+			public boolean visitElement(ElementTree aTree, IPathRequestor elementID, Object elementContents) {
 				buffer.append(elementID.requestPath() + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			}
