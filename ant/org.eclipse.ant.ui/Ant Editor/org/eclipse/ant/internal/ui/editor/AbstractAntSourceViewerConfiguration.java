@@ -67,7 +67,16 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    reconciler.setDamager(dr, AntEditorPartitionScanner.XML_TAG);
 	    reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 	
-	    xmlCommentAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR));
+	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+	    int style= SWT.NORMAL;
+	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+	    	style= style | SWT.BOLD;
+	    }
+	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+	    	style= style | SWT.ITALIC;
+	    }
+		
+	    xmlCommentAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR), null, style);
 		damageRepairer= new MultilineDamagerRepairer(null, xmlCommentAttribute);
 	    reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	    reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
