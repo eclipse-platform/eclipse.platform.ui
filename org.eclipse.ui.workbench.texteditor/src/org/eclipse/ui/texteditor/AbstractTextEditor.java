@@ -106,6 +106,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+import org.eclipse.ui.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -1030,6 +1031,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	/** The current navigation history location */
+	private INavigationLocation fUserCurrentLocation;
+	
 	/** 
 	 * The editor's activation listener
 	 * @since 2.0
@@ -1443,7 +1447,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						// check whether editor has not been disposed yet
 						if (fSourceViewer != null) {
 							updateSelectionDependentActions();
-							handleCursorPositionChanged();
 						}
 					}
 				};
@@ -1453,7 +1456,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (fDisplay == null)
 						fDisplay= getSite().getShell().getDisplay();
-					fDisplay.asyncExec(fRunnable);	
+					fDisplay.asyncExec(fRunnable);
+					handleCursorPositionChanged();
 				}
 			};
 		}
@@ -3352,17 +3356,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
 	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
-	public NavigationLocation createNavigationLocation() {
-		return new TextSelectionNavigationLocation(this);
+	public INavigationLocation createLocation() {
+		return new TextSelectionNavigationLocation(this,false);
 	}
-	
+	/*
+	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
+	 * 2.1 - WORK_IN_PROGRESS do not use.
+	 */
+	public INavigationLocation createCurrentLocation() {
+		return new TextSelectionNavigationLocation(this,true);
+	}	
 	/**
 	 * Writes a check mark of the given situation into the navigation history.
 	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
 	protected void markInNavigationHistory() {
 		IWorkbenchPage page= getEditorSite().getPage();
-		page.addNavigationHistoryEntry(this, createNavigationLocation());
+		page.getNavigationHistory().markLocation();
+		fUserCurrentLocation = null;
 	}
 	
 	/**
@@ -3371,11 +3382,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void editorSaved() {
 		IWorkbenchPage page= getEditorSite().getPage();
-		NavigationLocation[] locations= page.getNavigationHistoryEntries(getEditorInput());
+		INavigationLocation[] locations= page.getNavigationHistory().getLocations();
+		IEditorInput input = getEditorInput();		
 		for (int i= 0; i < locations.length; i++) {
 			if (locations[i] instanceof TextSelectionNavigationLocation) {
-				TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) locations[i];
-				location.partSaved(this);
+				if(input.equals(locations[i].getInput())) {
+					TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) locations[i];
+					location.partSaved(this);
+				}
 			}
 		}
 	}
@@ -3435,6 +3449,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void handleCursorPositionChanged() {
 		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+		INavigationHistory history = getSite().getPage().getNavigationHistory();
+		if(fUserCurrentLocation == null) {
+			INavigationLocation location = history.getCurrentLocation();
+			markInNavigationHistory();
+			INavigationLocation newLocation = history.getCurrentLocation();
+			if(newLocation != location)
+				fUserCurrentLocation = newLocation;
+		}
 	}
 	
 	/**

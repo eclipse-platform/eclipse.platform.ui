@@ -11,6 +11,7 @@ Contributors:
 
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -20,6 +21,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.NavigationLocation;
@@ -43,13 +45,23 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	private Position fSavedPosition;
 	
 	
-	public TextSelectionNavigationLocation(ITextEditor part) {
-		
+	public TextSelectionNavigationLocation(ITextEditor part,boolean initialize) {
 		super(part);
+		if(!initialize)
+			return;
 		
 		ISelection s= part.getSelectionProvider().getSelection();
-		ITextSelection selection= (ITextSelection) s;
+		//TBD: AbstractTextEditor doGetSelection may return null but the API getSelection()
+		//does not specify that it can return null. Shouldn't it return an empty selection
+		//instead?
+		
 		IDocument document= getDocument(part);
+		if(s == null)
+			return;
+		
+		ITextSelection selection= (ITextSelection) s;
+		if(selection.getOffset() == 0 && selection.getLength() == 0)
+			return;
 		
 		Position position= new Position(selection.getOffset(), selection.getLength());
 		if (installOnDocument(document, position)) {
@@ -111,7 +123,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return "Selection<" + fPosition + ">";
 	}
 	
-	public boolean equalsLocationOf(IEditorPart part) {
+	private boolean equalsLocationOf(IEditorPart part) {
 		
 		if (fPosition == null)
 			return true;
@@ -145,14 +157,16 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		super.dispose();
 	}
 
-	public void clearState() {
+	public void releaseState() {
+		// deactivate
+		uninstallFromDocument(fDocument, fPosition);		
 		fDocument= null;
 		fPosition= null;
 		fSavedPosition= null;
-		super.clearState();
+		super.releaseState();
 	}
 	
-	public boolean mergeInto(NavigationLocation location) {
+	public boolean mergeInto(INavigationLocation location) {
 		
 		if (location == null)
 			return false;
@@ -176,7 +190,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return s.fDocument == fDocument && s.fPosition.equals(fPosition);
 	}
 	
-	public void restore() {
+	public void restoreLocation() {
 		if (fPosition == null || fPosition.isDeleted)
 			return;
 			
@@ -218,9 +232,6 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			memento.putInteger(IWorkbenchConstants.TAG_Y, fSavedPosition.length);
 			memento.putString(IWorkbenchConstants.TAG_INFO, (fSavedPosition.isDeleted ? DELETED : NOT_DELETED));
 		}
-		
-		// deactivate
-		uninstallFromDocument(fDocument, fPosition);
 	}
 	
 	public void partSaved(IEditorPart part) {
@@ -234,5 +245,28 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		fSavedPosition.offset= fPosition.offset;
 		fSavedPosition.length= fPosition.length;
 		fSavedPosition.isDeleted= fPosition.isDeleted;
+	}
+	public void update() {
+		ITextEditor part = (ITextEditor)getEditorPart();
+		if(equalsLocationOf(part))
+			return;
+			
+		uninstallFromDocument(fDocument,fPosition);
+		ISelection s= part.getSelectionProvider().getSelection();
+		if(s == null)
+			return;
+		
+		ITextSelection selection= (ITextSelection) s;
+		if(selection.getOffset() == 0 && selection.getLength() == 0)
+			return;
+		
+		Position position= new Position(selection.getOffset(), selection.getLength());
+		if (installOnDocument(fDocument, position)) {
+			fPosition= position;
+			
+			if (!part.isDirty())
+				fSavedPosition= new Position(fPosition.offset, fPosition.length);
+		}					
+		
 	}
 }
