@@ -565,6 +565,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			os = new FileOutputStream(cfigTmp);
 			try {
 				saveAsXML(os);
+				// Try flushing any internal buffers, and synchronize with the disk
+				try {
+					os.flush();
+					((FileOutputStream)os).getFD().sync();
+				} catch (SyncFailedException e2) {
+					Utils.log(e2.getMessage());
+				} catch (IOException e2) {
+					Utils.log(e2.getMessage());
+				}
 				try {
 					os.close();
 					os = null;
