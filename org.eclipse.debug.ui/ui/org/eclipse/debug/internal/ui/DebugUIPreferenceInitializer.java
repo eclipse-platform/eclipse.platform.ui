@@ -17,7 +17,6 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.WorkbenchEncoding;
 
 public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
