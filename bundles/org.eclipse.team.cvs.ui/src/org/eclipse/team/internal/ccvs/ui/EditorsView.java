@@ -119,7 +119,7 @@ public class EditorsView extends ViewPart {
 					break;
 			}
 			// This method must not return null
-			if (result == null) result = ""; //$NON-NLS-1
+			if (result == null) result = ""; //$NON-NLS-1$
 			return result;
 
 		}

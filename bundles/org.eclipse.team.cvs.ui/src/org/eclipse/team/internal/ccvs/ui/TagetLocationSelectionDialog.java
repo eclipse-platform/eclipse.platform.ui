@@ -119,7 +119,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup,SWT.NONE);
-		projectLabel.setText(Policy.bind("TargetLocationSelectionDialog.projectNameLabel"));
+		projectLabel.setText(Policy.bind("TargetLocationSelectionDialog.projectNameLabel")); //$NON-NLS-1$
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -181,7 +181,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 			}
 			if (location == null) {
 				targetLocation = null;
-				locationPathField.setText("");
+				locationPathField.setText(""); //$NON-NLS-1$
 			} else {
 				if (isSingleCheckout()) {
 					targetLocation = location.toOSString();
@@ -241,9 +241,9 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 		// location label
 		locationLabel = new Label(projectGroup, SWT.NONE);
 		if (isSingleCheckout()) {
-			locationLabel.setText(Policy.bind("TargetLocationSelectionDialog.locationLabel"));
+			locationLabel.setText(Policy.bind("TargetLocationSelectionDialog.locationLabel")); //$NON-NLS-1$
 		} else {
-			locationLabel.setText(Policy.bind("TargetLocationSelectionDialog.parentDirectoryLabel"));
+			locationLabel.setText(Policy.bind("TargetLocationSelectionDialog.parentDirectoryLabel")); //$NON-NLS-1$
 		}
 		locationLabel.setEnabled(enabled);
 
@@ -256,7 +256,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText(Policy.bind("TargetLocationSelectionDialog.browseLabel"));
+		this.browseButton.setText(Policy.bind("TargetLocationSelectionDialog.browseLabel")); //$NON-NLS-1$
 		this.browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
@@ -279,9 +279,9 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 	private void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 		if (isSingleCheckout()) {
-			dialog.setMessage(Policy.bind("TargetLocationSelectionDialog.messageForSingle", newProjectName));
+			dialog.setMessage(Policy.bind("TargetLocationSelectionDialog.messageForSingle", newProjectName)); //$NON-NLS-1$
 		} else {
-			dialog.setMessage(Policy.bind("TargetLocationSelectionDialog.messageForMulti", new Integer(targetProjects.length).toString()));
+			dialog.setMessage(Policy.bind("TargetLocationSelectionDialog.messageForMulti", new Integer(targetProjects.length).toString())); //$NON-NLS-1$
 		}
 	
 		String dirName = locationPathField.getText();
@@ -378,7 +378,7 @@ public class TagetLocationSelectionDialog extends SelectionDialog {
 			else{
 				IPath path = new Path("");//$NON-NLS-1$
 				if (!path.isValidPath(targetLocation)) {
-					return Policy.bind("TagetLocationSelectionDialog.invalidLocation");
+					return Policy.bind("TagetLocationSelectionDialog.invalidLocation"); //$NON-NLS-1$
 				}
 			}
 
