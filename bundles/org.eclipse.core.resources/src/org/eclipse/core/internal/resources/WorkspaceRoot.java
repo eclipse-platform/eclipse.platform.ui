@@ -128,7 +128,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		//first check our project cache
 		Project result = (Project) projectTable.get(name);
 		if (result == null) {
-			IPath path = Path.ROOT.append(name);
+			IPath path = new Path(null, name).makeAbsolute();
 			String message = "Path for project must have only one segment."; //$NON-NLS-1$
 			Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 			result = new Project(path, workspace);
