@@ -5,13 +5,13 @@
 org.eclipse.core.resources/debug=true
 
 # Debug build failure cases such as failure to retrieve deltas.
-org.eclipse.core.resources/build/failure=true
+org.eclipse.core.resources/build/failure=false
 
 # Reports the start and end of all builder invocations
-org.eclipse.core.resources/build/invoking=true
+org.eclipse.core.resources/build/invoking=false
 
 # Reports the start and end of build delta calculations
-org.eclipse.core.resources/build/delta=true
+org.eclipse.core.resources/build/delta=false
 
 # For incremental builds, displays which builder is being run
 # and because of changes in which project.
@@ -19,3 +19,6 @@ org.eclipse.core.resources/build/needbuild=false
 
 # Reports configuration and deconfiguration of project natures
 org.eclipse.core.resources/natures=false
+
+# Report history store debugging.
+org.eclipse.core.resources/history=false

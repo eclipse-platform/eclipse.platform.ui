@@ -113,6 +113,8 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
  * @return true if state added to history store and false otherwise.
  */
 public UniversalUniqueIdentifier addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+	if (Policy.DEBUG_HISTORY)
+		System.out.println("History: Adding state for key: " + key + ", file: " + localFile + ", timestamp: " + lastModified + ", size: " + localFile.length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	if (!isValid(localFile))
 		return null;
 	UniversalUniqueIdentifier uuid = null;
@@ -228,7 +230,13 @@ public IFileState[] getStates(final IPath key) {
  */
 public boolean isValid(java.io.File localFile) {
 	WorkspaceDescription description = workspace.internalGetDescription();
-	return localFile.length() <= description.getMaxFileStateSize();
+	boolean result = localFile.length() <= description.getMaxFileStateSize();
+	if (Policy.DEBUG_HISTORY && !result)
+		System.out.println(
+			"History: Ignoring file (too large). File: " + localFile.getAbsolutePath() +  //$NON-NLS-1$
+			", size: " + localFile.length() +  //$NON-NLS-1$
+			", max: " + description.getMaxFileStateSize()); //$NON-NLS-1$
+	return result;
 }
 protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
 	blobStore.deleteBlob(entry.getUUID());

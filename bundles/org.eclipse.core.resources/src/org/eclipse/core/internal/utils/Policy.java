@@ -45,6 +45,7 @@ public class Policy {
 	public static boolean DEBUG_BUILD_INVOKING = false;
 	public static boolean DEBUG_BUILD_DELTA = false;
 	public static boolean DEBUG_NATURES = false;
+	public static boolean DEBUG_HISTORY = false;
 
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
@@ -56,6 +57,7 @@ public class Policy {
 			DEBUG_BUILD_INVOKING = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_BUILD_DELTA = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_NATURES = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_HISTORY = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
