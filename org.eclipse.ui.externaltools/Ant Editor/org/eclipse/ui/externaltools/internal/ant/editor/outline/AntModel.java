@@ -215,4 +215,11 @@ public class AntModel {
 		rootElement.addChildNode(errorNode);
 		return rootElement;
 	}
+	
+	/**
+	 * @return ILocationProvider
+	 */
+	public ILocationProvider getLocationProvider() {
+		return fLocationProvider;
+	}
 }

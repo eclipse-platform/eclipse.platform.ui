@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -46,6 +48,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -53,13 +56,14 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
  * Content outline page for planty.
  */
-public class PlantyContentOutlinePage extends ContentOutlinePage {//implements IShowInSource, IAdaptable {
+public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
 	
 	private static final int EXPAND_TO_LEVEL= 2;
 
@@ -333,7 +337,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {//implements I
 		});
 	}
 	
-	protected void setViewerInput(Object newInput) {
+	private void setViewerInput(Object newInput) {
 		TreeViewer tree= getTreeViewer();
 		Object oldInput= tree.getInput();
 		
@@ -364,7 +368,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {//implements I
 		}
 	}
 		
-	protected IDocumentModelListener createAntModelChangeListener() {
+	private IDocumentModelListener createAntModelChangeListener() {
 		return new IDocumentModelListener() {
 			public void documentModelChanged(final DocumentModelChangeEvent event) {
 				if (event.getModel() == fModel && !getControl().isDisposed()) {
@@ -400,7 +404,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {//implements I
 	}
  	
 	
-	protected void firePostSelectionChanged(ISelection selection) {
+	private void firePostSelectionChanged(ISelection selection) {
 		// create an event
 		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
  
@@ -462,34 +466,25 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {//implements I
 		return false;
 	}
 
-	protected IPath getLocation(Object input) {
-		return ((IFile) input).getLocation();
-	}
-
-	/**
-	 * Returns whether current line separator is multicharacter
-	 */
-	protected boolean isLineSeparatorMulticharacter() {
-		String tempSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-		if(tempSeparator.length() > 1) {
-			return true;
-		}
-		return false;
-	}
-
-	protected void update(XmlElement contentOutline) {
-		getControl().setRedraw(false);
-		getTreeViewer().setInput(contentOutline);
-		getTreeViewer().expandToLevel(2);
-		getControl().setRedraw(true);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class key) {
 		if (key == IShowInSource.class) {
 			return this;
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
+	 */
+	public ShowInContext getShowInContext() {
+		if (fModel != null) {
+			ILocationProvider locationProvider= fModel.getLocationProvider();
+			IFile file= AntUtil.getFile(locationProvider.getLocation().toOSString());
+			ISelection selection= new StructuredSelection(file);
+			return new ShowInContext(null, selection);
 		}
 		return null;
 	}
