@@ -52,6 +52,8 @@ public class ActivityConstraints {
 	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive";
 	private static final String KEY_WRONG_TIMELINE =
 		"ActivityConstraints.timeline";
+	private static final String KEY_NO_LICENSE = 
+		"ActivityConstraints.noLicense";
 
 	/*
 	 * Called by UI before performing operation
@@ -270,6 +272,7 @@ public class ActivityConstraints {
 			features =
 				computeFeaturesAfterOperation(features, newFeature, oldFeature);
 			checkConstraints(features, status);
+			checkLicense(newFeature, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
@@ -330,6 +333,7 @@ public class ActivityConstraints {
 
 				IFeature newFeature = job.getFeature();
 				IFeature oldFeature = job.getOldFeature();
+				checkLicense(newFeature, status);
 				if (jobs.length > 1 && newFeature.isExclusive()) {
 					nexclusives++;
 					status.add(
@@ -452,6 +456,7 @@ public class ActivityConstraints {
 						newFeature,
 						oldFeature);
 				checkConstraints(features, status);
+				checkLicense(newFeature, status);
 				if (status.size() > 0) {
 					IStatus conflict =
 						createStatus(
@@ -545,6 +550,16 @@ public class ActivityConstraints {
 			}
 		}
 		return features;
+	}
+	
+	private static void checkLicense(IFeature feature, ArrayList status) {
+		IURLEntry licenseEntry = feature.getLicense();
+		if (licenseEntry!=null) {
+			String license = licenseEntry.getAnnotation();
+			if (license!=null && license.trim().length()>0)
+				return;
+		}
+		status.add(createStatus(feature, UpdateUI.getString(KEY_NO_LICENSE)));
 	}
 
 	/*

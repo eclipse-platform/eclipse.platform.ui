@@ -710,8 +710,12 @@ public class DetailsForm extends PropertyWebForm {
 		} else {
 			// found on a remote site
 			// Cannot install feature without a license
+			/* Commenting - license is now checked in
+			 * ActivityConstraints - bug #33582
+
 			if (!UpdateModel.hasLicense(currentFeature))
 				return false;
+			*/
 		}
 		// Random site feature
 		if (alreadyInstalled) {
