@@ -170,6 +170,8 @@ public class SearchData extends RequestData {
 		TocData tocData = new TocData(context, request);
 		String href = tocData.getTocHref(toc);
 		String[] books = request.getParameterValues("scope");
+		if (books == null)
+			return false;
 		for (int i = 0; i < books.length; i++) {
 			if (books[i].equals(href)) {
 				return true;
