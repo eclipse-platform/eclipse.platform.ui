@@ -1,27 +1,70 @@
 package org.eclipse.ui.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-**********************************************************************/
-import java.io.*;
-import java.util.*;
+http://www.eclipse.org/legal/cpl-v10.html
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -40,6 +83,7 @@ public class Perspective
 	private ArrayList showViewActionIds;
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
+	private ArrayList showInPartIds;
 	private IViewReference activeFastView;
 	private IViewReference previousActiveFastView;
 	private IMemento memento;
@@ -361,8 +405,15 @@ private float getFastViewWidthRatio(String id) {
 	}
 }
 /**
- * Returns the show view actions the page.
- * This is List of Strings.
+ * Returns the ids of the parts to list in the Show In... dialog.
+ * This is a List of Strings.
+ */
+public ArrayList getShowInPartIds() {
+	return showInPartIds;
+}
+/**
+ * Returns the ids of the views to list in the Show View shortcuts.
+ * This is a List of Strings.
  */
 public ArrayList getShowViewActionIds() {
 	return showViewActionIds;
@@ -614,6 +665,7 @@ private void loadPredefinedPersp(
 	newWizardActionIds = layout.getNewWizardActionIds();
 	showViewActionIds = layout.getShowViewActionIds();
 	perspectiveActionIds = layout.getPerspectiveActionIds();
+	showInPartIds = layout.getShowInPartIds();
 	
 	// Create fast views
 	fastViews = layout.getFastViews();
@@ -700,6 +752,19 @@ public void partActivated(IWorkbenchPart activePart) {
 	if (activeFastView != null && activeFastView.getPart(false) != activePart)
 		setActiveFastView(null);
 }
+
+/**
+ * The user successfully performed a Show In... action on the specified part.
+ * Update the list of Show In items accordingly.
+ */
+public void performedShowIn(String partId) {
+	// move it to the front of the list;
+	// check to ensure we're just reordering, not adding
+	if (showInPartIds.remove(partId)) {
+		showInPartIds.add(0, partId);
+	}
+}
+
 /**
  * Sets the fast view attribute.
  * Note: The page is expected to update action bars.
@@ -925,6 +990,16 @@ public IStatus restoreState() {
 		showViewActionIds.add(id);
 	}
 	
+	// Load "show in parts".
+	actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_PART);
+	showInPartIds = new ArrayList(actions.length);
+	for (int x = 0; x < actions.length; x ++) {
+		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+		if (id != null) {
+			showInPartIds.add(id);
+		}
+	}
+	
 	// Load "new wizard actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
 	newWizardActionIds = new ArrayList(actions.length);
@@ -1055,6 +1130,14 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	while (enum.hasNext()) {
 		String str = (String)enum.next();
 		IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
+		child.putString(IWorkbenchConstants.TAG_ID, str);
+	}
+
+	// Save "show in parts"
+	enum = showInPartIds.iterator();
+	while (enum.hasNext()) {
+		String str = (String)enum.next();
+		IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_IN_PART);
 		child.putString(IWorkbenchConstants.TAG_ID, str);
 	}
 
@@ -1230,8 +1313,15 @@ public void setPerspectiveActionIds(ArrayList list) {
 	perspectiveActionIds = list;
 }
 /**
- * Sets the show view actions for the page.
- * This is List of Strings.
+ * Sets the ids of the parts to list in the Show In... prompter.
+ * This is a List of Strings.
+ */
+public void setShowInPartIds(ArrayList list) {
+	showInPartIds = list;
+}
+/**
+ * Sets the ids of the views to list in the Show View shortcuts.
+ * This is a List of Strings.
  */
 public void setShowViewActionIds(ArrayList list) {
 	showViewActionIds = list;

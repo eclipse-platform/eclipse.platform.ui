@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -119,6 +126,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_ALWAYS_ON_ACTION_SET = "alwaysOnActionSet"; //$NON-NLS-1$
 	public static final String TAG_ALWAYS_OFF_ACTION_SET = "alwaysOffActionSet"; //$NON-NLS-1$
 	public static final String TAG_SHOW_VIEW_ACTION = "show_view_action"; //$NON-NLS-1$
+	public static final String TAG_SHOW_IN_PART = "show_in_part"; //$NON-NLS-1$
 	public static final String TAG_NEW_WIZARD_ACTION = "new_wizard_action"; //$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_ACTION = "perspective_action"; //$NON-NLS-1$
 	public static final String TAG_VIEW = "view"; //$NON-NLS-1$

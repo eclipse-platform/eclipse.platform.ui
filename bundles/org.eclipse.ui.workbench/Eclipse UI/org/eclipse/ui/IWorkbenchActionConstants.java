@@ -514,8 +514,18 @@ public interface IWorkbenchActionConstants {
 	/**
 	 * Navigate menu: name of standard Sync With Editor global action (value
 	 * <code>"syncEditor"</code>).
+	 * 
+	 * @deprecated this action will be removed soon; use SHOW_IN instead 
 	 */
 	public static final String SYNC_EDITOR = "syncEditor";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of standard Show In... action (value
+	 * <code>"showIn"</code>).
+	 * 
+	 * @see org.eclipse.ui.actions.ShowInAction
+	 */
+	public static final String SHOW_IN = "showIn";	//$NON-NLS-1$
 
 	/**
 	 * Navigate menu: name of standard Back global action

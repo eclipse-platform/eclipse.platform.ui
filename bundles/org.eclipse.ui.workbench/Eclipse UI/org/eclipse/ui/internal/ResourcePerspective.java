@@ -48,7 +48,9 @@ public void defineActions(IPageLayout layout) {
 	layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 	layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 	
-	layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);	
+	layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);
+	
+	layout.addShowInPart(IPageLayout.ID_RES_NAV);	
 }
 /**
  * Defines the initial layout for a page.  

@@ -55,6 +55,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll";	 //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory";	 //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory";	 //$NON-NLS-1$
+	private static final String showInActionDefId = "org.eclipse.ui.navigate.showIn";	 //$NON-NLS-1$
 
 	private static final String workbenchToolGroupId = "org.eclipse.ui.internal"; //$NON-NLS-1$
 	
@@ -104,6 +105,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ActivateEditorAction activateEditorAction;
 	
 	private WorkbenchEditorsAction workbenchEditorsAction;
+	private WorkbenchShowInAction showInAction;
 	
 	// retarget actions.
 	private RetargetAction undoAction;
@@ -116,7 +118,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
 	private RetargetAction addTaskAction;
-	private RetargetAction syncWithEditorAction;
 	private RetargetAction printAction;
 	
 	private RetargetAction revertAction;
@@ -371,7 +372,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT + i));
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
-		menu.add(syncWithEditorAction);
+		menu.add(showInAction);
 		for (int i = 2; i < 5; ++i) {
 			menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
 		}
@@ -778,8 +779,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
 
-		syncWithEditorAction = createGlobalAction(IWorkbenchActionConstants.SYNC_EDITOR, "navigate", false); //$NON-NLS-1$
-		syncWithEditorAction.setEnabled(false);
+		showInAction = new WorkbenchShowInAction(window);
+		partService.addPartListener(showInAction);
+		showInAction.setActionDefinitionId(showInActionDefId);
+		keyBindingService.registerGlobalAction(showInAction);					
 		
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$

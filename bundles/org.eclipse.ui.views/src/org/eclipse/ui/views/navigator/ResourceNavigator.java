@@ -28,6 +28,9 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.dialogs.IShowInSource;
+import org.eclipse.ui.dialogs.IShowInTarget;
+import org.eclipse.ui.dialogs.ShowInContext;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -1063,5 +1066,71 @@ public class ResourceNavigator
 	protected void setActionGroup(ResourceNavigatorActionGroup actionGroup) {
 		this.actionGroup = actionGroup;
 	}
+	
+	/**
+	 * @see IWorkbenchPart#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IShowInSource.class) {
+			return getShowInSource();
+		}
+		if (adapter == IShowInTarget.class) {
+			return getShowInTarget();
+		}
+		return null;
+	}
 
+	/**
+	 * Returns the <code>IShowInSource</code> for this view.
+	 */
+	protected IShowInSource getShowInSource() {
+		return new IShowInSource() {
+			public ShowInContext getShowInContext() {
+				return new ShowInContext(
+					getViewer().getInput(),
+					getViewer().getSelection());
+			}
+		};
+	}
+	
+	/**
+	 * Returns the <code>IShowInTarget</code> for this view.
+	 */
+	protected IShowInTarget getShowInTarget() {
+		return new IShowInTarget() {
+			public boolean show(ShowInContext context) {
+				IResource res = null;
+				ISelection sel = context.getSelection();
+				if (sel instanceof IStructuredSelection) {
+					Object o = ((IStructuredSelection) sel).getFirstElement();
+					if (o instanceof IResource) {
+						res = (IResource) o;
+					}
+					else {
+						if (o instanceof IAdaptable) {
+							o = ((IAdaptable) o).getAdapter(IResource.class);
+							if (o instanceof IResource) {
+								res = (IResource) o;
+							}
+						}
+					}
+				}
+				if (res == null) {
+					Object input = context.getInput();
+					if (input instanceof IAdaptable) {
+						IAdaptable adaptable = (IAdaptable) input;
+						Object o = adaptable.getAdapter(IResource.class);
+						if (o instanceof IResource) {
+							res = (IResource) o;
+						}
+					}
+				}
+				if (res != null) {
+					selectReveal(new StructuredSelection(res));
+					return true;
+				}
+				return false; 
+			}
+		};
+	}
 }

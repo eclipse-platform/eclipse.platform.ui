@@ -13,15 +13,30 @@ Contributors:
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.*;
+
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.AddBookmarkAction;
+import org.eclipse.ui.actions.AddTaskAction;
+import org.eclipse.ui.actions.ExportResourcesAction;
+import org.eclipse.ui.actions.ImportResourcesAction;
+import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
@@ -36,7 +51,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected ImportResourcesAction importAction;
 	protected ExportResourcesAction exportAction;
 	protected CollapseAllAction collapseAllAction;
-	protected SyncWithEditorAction syncWithEditorAction;
 	
 	protected GotoActionGroup gotoGroup;
 	protected OpenActionGroup openGroup;
@@ -80,14 +94,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		collapseAllAction.setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
 		//TODO uncomment when image is supplied
 		//collapseAllAction.setHoverImageDescriptor(getImageDescriptor("clcl16/collapseall.gif")); //$NON-NLS-1$
-
-		syncWithEditorAction = new SyncWithEditorAction(navigator, ResourceNavigatorMessages.getString("SyncWithEditorAction.title"));//$NON-NLS-1$
-		syncWithEditorAction.setToolTipText(ResourceNavigatorMessages.getString("SyncWithEditorAction.toolTip")); //$NON-NLS-1$
-		//TODO uncomment when image is supplied
-		//syncWithEditorAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/synced.gif")); //$NON-NLS-1$
-		syncWithEditorAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif")); //$NON-NLS-1$
-		
-		navigator.getSite().getWorkbenchWindow().getPartService().addPartListener(syncWithEditorAction);
 	}
 	
 	/**
@@ -198,9 +204,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.ADD_TASK,
 			addTaskAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.SYNC_EDITOR,
-			syncWithEditorAction);
 			
 		gotoGroup.fillActionBars(actionBars);
 		openGroup.fillActionBars(actionBars);
@@ -211,8 +214,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		
-		toolBar.add(new Separator());
-		toolBar.add(syncWithEditorAction);		
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);		
 	}

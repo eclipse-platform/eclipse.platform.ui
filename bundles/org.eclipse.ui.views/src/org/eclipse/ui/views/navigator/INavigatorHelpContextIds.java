@@ -30,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 	public static final String COPY_ACTION = PREFIX + "resource_navigator_copy_action_context"; //$NON-NLS-1$
 	public static final String PASTE_ACTION = PREFIX + "resource_navigator_paste_action_context"; //$NON-NLS-1$
 	public static final String COLLAPSE_ALL_ACTION = PREFIX + "collapse_all_action_context"; //$NON-NLS-1$
-	public static final String SYNC_WITH_EDITOR_ACTION  = PREFIX + "sync_with_editor_action_context"; //$NON-NLS-1$
 
 
 	// Dialogs

@@ -1,21 +1,26 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+    Dan Rubel <dan_rubel@instantiations.com> 
+      - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
+************************************************************************/
+
 package org.eclipse.ui.internal.registry;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-  Dan Rubel <dan_rubel@instantiations.com> 
-    - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
-**********************************************************************/
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.PageLayout;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read perspective extension from the registry.
@@ -31,6 +36,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String TAG_VIEW_SHORTCUT="viewShortcut";//$NON-NLS-1$
 	private static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";//$NON-NLS-1$
 	private static final String TAG_VIEW="view";//$NON-NLS-1$
+	private static final String TAG_SHOW_IN_PART="showInPart";//$NON-NLS-1$
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
 	private static final String ATT_RELATIVE="relative";//$NON-NLS-1$
@@ -46,11 +52,11 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String VAL_FAST="fast";//$NON-NLS-1$
 	// VAL_FALSE added by dan_rubel@instantiations.com  
 	private static final String VAL_FALSE="false";//$NON-NLS-1$	
+
 /**
- * RegistryViewReader constructor comment.
+ * PerspectiveExtensionReader constructor..
  */
 public PerspectiveExtensionReader() {
-	super();
 }
 /**
  * Read the view extensions within a registry.
@@ -92,6 +98,8 @@ private boolean processExtension(IConfigurationElement element) {
 			result = processWizardShortcut(child);
 		else if (type.equals(TAG_PERSP_SHORTCUT))
 			result = processPerspectiveShortcut(child);
+		else if (type.equals(TAG_SHOW_IN_PART))
+			result = processShowInPart(child);
 		if (!result) {
 			WorkbenchPlugin.log("Unable to process element: " +//$NON-NLS-1$
 				type +
@@ -110,6 +118,17 @@ private boolean processPerspectiveShortcut(IConfigurationElement element) {
 		pageLayout.addPerspectiveShortcut(id);
 	return true;
 }
+
+/**
+ * Process a show in element.
+ */
+private boolean processShowInPart(IConfigurationElement element) {
+	String id = element.getAttribute(ATT_ID);
+	if (id != null)
+		pageLayout.addShowInPart(id);
+	return true;
+}
+
 // processView(IConfigurationElement) modified by dan_rubel@instantiations.com
 /**
  * Process a view

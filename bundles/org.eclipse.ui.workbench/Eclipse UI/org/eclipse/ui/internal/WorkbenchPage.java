@@ -1,43 +1,86 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-	IBM - Initial implementation
+    IBM - Initial implementation
 ************************************************************************/
 
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.INavigationHistory;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.dialogs.ActionSetSelectionDialog;
+import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiEditor;
  
 /**
  * A collection of views and editors in a workbench.
@@ -1412,8 +1455,31 @@ public ISelection getSelection(String partId) {
 
 
 /**
+ * Returns the ids of the parts to list in the Show In... prompter.
+ * This is a List of Strings.
+ */
+public ArrayList getShowInPartIds() {
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getShowInPartIds();
+	else
+		return new ArrayList();
+}
+
+/**
+ * The user successfully performed a Show In... action on the specified part.
+ * Update the list of Show In items accordingly.
+ */
+public void performedShowIn(String partId) {
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		persp.performedShowIn(partId);
+	}
+}
+
+/**
  * Returns the show view actions the page.
- * This is List of Strings.
+ * This is a List of Strings.
  */
 public ArrayList getShowViewActionIds() {
 	Perspective persp = getActivePerspective();

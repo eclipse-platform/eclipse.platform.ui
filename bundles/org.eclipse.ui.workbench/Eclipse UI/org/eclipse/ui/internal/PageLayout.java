@@ -58,6 +58,7 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ArrayList perspectiveActionIds = new ArrayList(3);
 	private ArrayList fastViews = new ArrayList(3);
+	private ArrayList showInPartIds = new ArrayList(3);
 
 /**
  * LayoutFactory constructor comment.
@@ -173,6 +174,14 @@ public void addPlaceholder(String viewId, int relationship, float ratio, String 
 	// Create the placeholder.
 	PartPlaceholder newPart = new PartPlaceholder(viewId);
 	addPart(newPart, viewId, relationship, ratio, refId);
+}
+/**
+ * @see IPageLayout#addShowInPart
+ */
+public void addShowInPart(String id) {	
+	if (!showInPartIds.contains(id)) {
+		showInPartIds.add(id);
+	}
 }
 /**
  * Adds a view to the Show View menu.
@@ -336,8 +345,15 @@ public RootLayoutContainer getRootLayoutContainer() {
 	return rootLayoutContainer;
 }
 /**
- * Returns the show view actions the page.
- * This is List of Strings.
+ * Returns the ids of the parts to list in the Show In... prompter.
+ * This is a List of Strings.
+ */
+public ArrayList getShowInPartIds() {
+	return showInPartIds;
+}
+/**
+ * Returns the ids of the views to list in the Show View shortcuts.
+ * This is a List of Strings.
  */
 public ArrayList getShowViewActionIds() {
 	return showViewActionIds;

@@ -102,6 +102,7 @@ public interface IHelpContextIds {
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action_context"; //$NON-NLS-1$
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_action_context"; //$NON-NLS-1$
 	public static final String EDIT_WORKING_SET_ACTION = PREFIX + "edit_working_set_action_context"; //$NON-NLS-1$
+	public static final String SHOW_IN_ACTION = PREFIX + "show_in_action_context"; //$NON-NLS-1$
 		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$

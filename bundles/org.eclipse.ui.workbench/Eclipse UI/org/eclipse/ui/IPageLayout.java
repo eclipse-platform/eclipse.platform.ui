@@ -214,6 +214,16 @@ public void addPerspectiveShortcut(String id);
  *   or the special editor area id returned by <code>getEditorArea</code>
  */
 public void addPlaceholder(String viewId, int relationship, float ratio, String refId);
+
+/**
+ * Adds an item to the Show In... prompter.
+ * The id must name a view extension contributed to the 
+ * workbench's extension point (named <code>"org.eclipse.ui.views"</code>).
+ *
+ * @param id the view id
+ */
+public void addShowInPart(String id);
+
 /**
  * Adds a view to the Show View menu.
  * The id must name a view extension contributed to the 
