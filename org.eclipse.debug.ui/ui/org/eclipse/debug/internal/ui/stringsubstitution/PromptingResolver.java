@@ -13,8 +13,12 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
@@ -85,7 +89,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IDynamicVariable variable, String argument) {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		String value = null;
 		setupDialog(argument);
 
@@ -97,6 +101,9 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		if (dialogResultString != null) {
 			value = dialogResultString;
 			lastValue = dialogResultString;
+		} else {
+			// dialogResultString == null means prompt was cancelled
+			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format("Failed to expand {0}. Input was cancelled.", new String[] { variable.getName() }), null));
 		}
 		return value;
 	}

@@ -894,6 +894,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					return;
 				}
 			}
+			if ((ce.getStatus().getSeverity() & (IStatus.ERROR | IStatus.WARNING)) == 0) {
+				// If the exception is a CoreException with a status other
+				// than ERROR or WARNING, don't open an error dialog.
+				return;
+			}
 		}
 		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$		
 	}
