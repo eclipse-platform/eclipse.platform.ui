@@ -7,7 +7,7 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 import java.util.Iterator;
 
-import org.apache.lucene.HTMLParser.HTMLParser;
+import org.apache.lucene.demo.html.HTMLParser;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
