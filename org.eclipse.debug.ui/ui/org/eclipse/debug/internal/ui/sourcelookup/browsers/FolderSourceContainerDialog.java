@@ -20,9 +20,9 @@ import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.dialogs.ResourceSorter;
 
 /**
@@ -54,7 +54,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setDoubleClickSelects(true);
 		setAllowMultiple(true);
 		setMessage(SourceLookupUIMessages.getString("folderSelection.label")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
 	}
 	
 }

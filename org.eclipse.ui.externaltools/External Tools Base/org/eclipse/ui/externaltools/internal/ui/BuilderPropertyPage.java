@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -81,7 +80,6 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -277,7 +275,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	protected Control createContents(Composite parent) {
 		
-		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
 		
 		Font font = parent.getFont();
 

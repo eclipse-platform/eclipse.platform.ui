@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The dialog for selecting the project for which a source container will be created.
@@ -62,7 +62,7 @@ public class ProjectSourceContainerDialog extends ListSelectionDialog {
 		addRequired.setFont(font);		
 		
 		applyDialogFont(composite);
-		WorkbenchHelp.setHelp(getShell(),  IDebugHelpContextIds.ADD_PROJECT_CONTAINER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),  IDebugHelpContextIds.ADD_PROJECT_CONTAINER_DIALOG);
 		return composite;
 	}
 	

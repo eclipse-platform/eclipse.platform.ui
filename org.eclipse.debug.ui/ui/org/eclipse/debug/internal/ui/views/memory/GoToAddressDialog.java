@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.0
@@ -49,7 +49,7 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 	 */
 	public GoToAddressDialog(Shell parentShell) {
 		super(parentShell);
-		WorkbenchHelp.setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".GoToAddressDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".GoToAddressDialog_context"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

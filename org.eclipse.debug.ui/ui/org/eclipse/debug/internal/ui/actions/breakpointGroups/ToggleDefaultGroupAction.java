@@ -64,5 +64,4 @@ public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
         action.setEnabled(false);
         action.setChecked(false);
     }
-
 }

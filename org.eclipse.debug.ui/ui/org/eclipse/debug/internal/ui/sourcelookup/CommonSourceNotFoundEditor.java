@@ -55,7 +55,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -161,7 +161,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		
 		Dialog.applyDialogFont(parent);
 		
-		WorkbenchHelp.setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
 	}
 	
 	/**

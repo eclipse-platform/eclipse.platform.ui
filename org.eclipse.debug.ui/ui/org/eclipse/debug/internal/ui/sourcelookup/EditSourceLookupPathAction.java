@@ -22,8 +22,8 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The action for editing the source lookup path. Brings up the 
@@ -39,7 +39,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	public EditSourceLookupPathAction(LaunchView view) {
 		super(SourceLookupUIMessages.getString("EditSourceLookupPathAction.0")); //$NON-NLS-1$
 		setEnabled(false);
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
 		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU));
 		fView = view;
 	}

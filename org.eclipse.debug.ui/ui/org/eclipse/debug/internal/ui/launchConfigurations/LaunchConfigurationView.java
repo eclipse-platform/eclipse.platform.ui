@@ -40,7 +40,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -128,7 +128,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				if (configType != null) {
 					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType, getLaunchGroup().getMode());
 					if (helpContextId != null) {
-						WorkbenchHelp.displayHelp(helpContextId);
+						PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextId);
 					}
 				}
 			}
@@ -335,7 +335,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fViewer = createViewer(parent);
 		createActions();
 		createContextMenu(getViewer().getControl());
-		WorkbenchHelp.setHelp(parent, getHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, getHelpContextId());
 		getViewer().getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);

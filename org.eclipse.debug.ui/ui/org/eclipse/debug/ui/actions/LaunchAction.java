@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Launches a launch configuration in a specific mode.
@@ -54,7 +54,7 @@ public class LaunchAction extends Action {
 		fMode = mode;
 		setText(configuration.getName());
 		setImageDescriptor(DebugUITools.getDefaultImageDescriptor(configuration));
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.RELAUNCH_HISTORY_ACTION);
 	}

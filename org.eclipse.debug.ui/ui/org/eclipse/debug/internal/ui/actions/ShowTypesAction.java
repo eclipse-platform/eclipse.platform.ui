@@ -21,7 +21,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An action that toggles the state of a viewer to
@@ -41,7 +41,7 @@ public class ShowTypesAction extends Action {
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ShowTypesAction"); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_TYPES_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SHOW_TYPES_ACTION);
 	}
 
 	/**

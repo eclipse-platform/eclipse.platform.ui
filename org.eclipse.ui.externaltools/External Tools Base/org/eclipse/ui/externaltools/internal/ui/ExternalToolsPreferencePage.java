@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Preference page that allows the user to customize external tools
@@ -42,7 +42,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

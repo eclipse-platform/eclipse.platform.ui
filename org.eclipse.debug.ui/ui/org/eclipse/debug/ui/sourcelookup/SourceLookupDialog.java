@@ -25,7 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog for editing the source lookup path of a
@@ -83,7 +83,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fPanel.initializeFrom(fDirector);
 		
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(getShell(),  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
 		
 		return composite;
 	}

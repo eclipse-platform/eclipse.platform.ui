@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -39,7 +38,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -209,7 +208,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	 */
 	public void createPartControl(Composite parent) {
 
-		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
 		fSelectionProvider = new MemoryViewSelectionProvider();

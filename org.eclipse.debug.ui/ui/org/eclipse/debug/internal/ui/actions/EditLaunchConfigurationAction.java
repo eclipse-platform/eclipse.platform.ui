@@ -26,8 +26,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Opens the launch configuration dialog on a single launch configuration, based
@@ -44,7 +44,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	public EditLaunchConfigurationAction() {
 		super(""); //$NON-NLS-1$
 		setEnabled(false);
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
 
 	/**

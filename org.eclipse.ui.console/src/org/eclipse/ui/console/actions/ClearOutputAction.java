@@ -15,10 +15,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.TextConsole;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 import org.eclipse.ui.internal.console.ConsolePluginImages;
 import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
@@ -48,7 +48,7 @@ public class ClearOutputAction extends Action {
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_LCL_CLEAR));		
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_CLEAR));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLEAR));
-		WorkbenchHelp.setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);	    
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);	    
 	}
 	
 	/**

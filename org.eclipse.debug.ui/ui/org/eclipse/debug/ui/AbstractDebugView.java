@@ -48,7 +48,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.Page;
@@ -309,7 +309,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		String helpId = getHelpContextId();
 		if (helpId != null) {
-			WorkbenchHelp.setHelp(parent, helpId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 		}
 		if (viewer != null) {
 			getViewer().getControl().addKeyListener(new KeyAdapter() {

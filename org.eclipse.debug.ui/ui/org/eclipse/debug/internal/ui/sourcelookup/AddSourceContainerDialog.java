@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The dialog for adding new source containers. Presents the user with a list of
@@ -114,7 +114,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 			fViewer.setInput(types);
 		}
 		Dialog.applyDialogFont(parent);
-		WorkbenchHelp.setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
 		return parent;
 	}	
 	

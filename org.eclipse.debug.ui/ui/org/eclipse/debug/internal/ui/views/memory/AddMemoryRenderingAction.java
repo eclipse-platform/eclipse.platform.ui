@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Toolbar "Add Memory Rendering Action" from Memory Rendering Pane
@@ -36,7 +36,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	{
 		super(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings"), AS_PUSH_BUTTON); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
 		fViewPane = viewPane;
 	}
 	

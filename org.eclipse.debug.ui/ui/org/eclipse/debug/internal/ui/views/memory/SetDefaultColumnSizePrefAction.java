@@ -15,7 +15,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 public class SetDefaultColumnSizePrefAction extends Action {
@@ -28,7 +28,7 @@ public class SetDefaultColumnSizePrefAction extends Action {
 	{
 		setText(DebugUIMessages.getString(DEFAULT_COLUMN_SIZE));
 		setToolTipText(DebugUIMessages.getString(SET_DEFAULT_COLUMN_SIZE));
-		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".DefaultColumnSizePrefAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".DefaultColumnSizePrefAction_context"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

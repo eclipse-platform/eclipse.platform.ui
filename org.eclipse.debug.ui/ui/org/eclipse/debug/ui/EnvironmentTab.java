@@ -66,8 +66,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Launch configuration tab for configuring the environment passed
@@ -191,7 +191,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create main composite
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

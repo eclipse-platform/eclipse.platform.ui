@@ -14,7 +14,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -45,7 +44,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * PerspectivesTab
@@ -178,7 +176,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	public void createControl(Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
-		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_PERSPECTIVE_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_PERSPECTIVE_TAB);
 		final GridLayout layout = new GridLayout(2, false);
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);

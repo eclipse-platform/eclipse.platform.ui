@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A page to set the preferences for the console
@@ -85,7 +85,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			getControl(),
 			IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE );
 	}

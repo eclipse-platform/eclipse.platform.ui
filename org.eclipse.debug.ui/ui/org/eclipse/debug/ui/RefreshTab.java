@@ -51,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A launch configuration tab which allows the user to specify
@@ -118,7 +117,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
 		
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

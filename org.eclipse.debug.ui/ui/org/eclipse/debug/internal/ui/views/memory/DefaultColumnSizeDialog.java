@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog for setting default column size in Memory View
@@ -54,7 +54,7 @@ public class DefaultColumnSizeDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".DefaultColumnSizeDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".DefaultColumnSizeDialog_context"); //$NON-NLS-1$
 		
 		getShell().setText(DebugUIMessages.getString(DEFAULT_COLUMN_SIZE));
 		

@@ -45,8 +45,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Dialog allowing user to add a memory rendering
@@ -320,7 +320,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	public AddMemoryRenderingDialog(Shell parent, IMemoryViewPane viewPane) {
 		super(parent);
 		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fViewPane = viewPane;
 	}

@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Resize all columns
@@ -30,7 +30,7 @@ public class ReformatAction extends Action {
 	public ReformatAction(ITableMemoryViewTab viewTab)
 	{
 		super(DebugUIMessages.getString(TITLE));
-		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ReformatAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ReformatAction_context"); //$NON-NLS-1$
 		fViewTab = viewTab;
 	}
 

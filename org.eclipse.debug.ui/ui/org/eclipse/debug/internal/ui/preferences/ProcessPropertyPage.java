@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ProcessPropertyPage extends PropertyPage {
 
@@ -82,7 +82,7 @@ public class ProcessPropertyPage extends PropertyPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			getControl(),
 			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
 	}

@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A launch configuration tab that displays and edits the source
@@ -62,7 +62,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 200;
 		gd.widthHint = 250;
 		Dialog.applyDialogFont(comp);
-		WorkbenchHelp.setHelp(comp,IDebugHelpContextIds.SOURCELOOKUP_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp,IDebugHelpContextIds.SOURCELOOKUP_TAB);
 	}
 	
 	/* (non-Javadoc)

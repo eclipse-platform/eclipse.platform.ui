@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -43,8 +42,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An action delegate that builds a context menu with applicable launch shortcuts
@@ -266,7 +265,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		action.setActionDefinitionId(ext.getId() + "." + mode); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
-			WorkbenchHelp.setHelp(action, helpContextId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
 		StringBuffer label= new StringBuffer();
 		if (accelerator >= 0 && accelerator < 10) {

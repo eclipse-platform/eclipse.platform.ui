@@ -21,7 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An action which toggles the breakpoint manager's enablement.
@@ -41,7 +41,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		setToolTipText(ActionMessages.getString("SkipAllBreakpointsAction.0")); //$NON-NLS-1$
 		setDescription(ActionMessages.getString("SkipAllBreakpointsAction.2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_SKIP_BREAKPOINTS));
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
 		updateActionCheckedState();
 	}
 	

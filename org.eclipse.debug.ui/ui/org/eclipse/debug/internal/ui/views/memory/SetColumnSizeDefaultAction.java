@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -35,7 +35,7 @@ public class SetColumnSizeDefaultAction extends Action
 	{
 		super (DebugUIMessages.getString(LABEL));
 		fViewTab = viewTab;
-		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".SetColumnSizeDefaultAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".SetColumnSizeDefaultAction_context"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

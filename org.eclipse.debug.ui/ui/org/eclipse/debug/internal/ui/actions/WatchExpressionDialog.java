@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog for edit watch expression.
@@ -57,7 +57,7 @@ public class WatchExpressionDialog extends StatusDialog {
 			setTitle(ActionMessages.getString("WatchExpressionDialog.1")); //$NON-NLS-1$
 			helpContextId = IDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
 		}
-		WorkbenchHelp.setHelp(parent, helpContextId);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpContextId);
 	}
 
 	/**

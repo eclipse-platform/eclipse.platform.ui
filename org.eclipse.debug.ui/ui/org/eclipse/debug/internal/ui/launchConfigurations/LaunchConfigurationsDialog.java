@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -72,7 +71,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
  
 
 /**
@@ -664,9 +662,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(getShellTitle());
-		WorkbenchHelp.setHelp(
-			shell,
-			getHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, getHelpContextId());
 	}
 	
 	protected String getHelpContextId() {

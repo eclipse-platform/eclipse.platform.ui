@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Opens the launch configuration dialog in the context of a launch group.
@@ -62,7 +62,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 			setText(extension.getLabel() + "..."); //$NON-NLS-1$
 			setImageDescriptor(extension.getImageDescriptor());
 		}
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
 	}
 
 	/**

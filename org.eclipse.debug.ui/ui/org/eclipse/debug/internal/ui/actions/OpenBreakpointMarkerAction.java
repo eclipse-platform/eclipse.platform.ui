@@ -22,8 +22,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 
 public class OpenBreakpointMarkerAction extends SelectionProviderAction {
@@ -37,7 +37,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		setToolTipText(ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_File_for_Breakpoint_2")); //$NON-NLS-1$
 		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_OPEN_MARKER));
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
 		setEnabled(false);

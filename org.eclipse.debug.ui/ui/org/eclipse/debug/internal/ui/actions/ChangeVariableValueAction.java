@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.actions;
  
 import java.text.MessageFormat;
 import java.util.Iterator;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
@@ -29,8 +28,8 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action for changing the value of primitives and <code>String</code> variables.
@@ -54,7 +53,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CHANGE_VARIABLE_VALUE));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CHANGE_VARIABLE_VALUE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CHANGE_VARIABLE_VALUE));
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
 		fView= view;

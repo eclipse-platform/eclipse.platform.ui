@@ -36,8 +36,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -190,7 +190,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		action.setActionDefinitionId(ext.getId() + "." + getMode()); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
-			WorkbenchHelp.setHelp(action, helpContextId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
 		/*if (fKeyBindingService != null) {
 			fKeyBindingService.registerGlobalAction(action);	

@@ -16,8 +16,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Does source lookup for the selected stack frame again.
@@ -33,7 +33,7 @@ public class LookupSourceAction extends SelectionListenerAction {
 	public LookupSourceAction(LaunchView view) {
 		super(SourceLookupUIMessages.getString("LookupSourceAction.0")); //$NON-NLS-1$
 		setEnabled(false);
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.LOOKUP_SOURCE_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.LOOKUP_SOURCE_ACTION);
 		fView = view;
 	}
 	

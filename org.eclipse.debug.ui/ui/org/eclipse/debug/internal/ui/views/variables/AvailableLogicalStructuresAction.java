@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.variables;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
@@ -29,7 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Drop down action that displays available logical structures for a selected
@@ -46,7 +45,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("AvailableLogicalStructuresAction.0")); //$NON-NLS-1$
 		setText(VariablesViewMessages.getString("AvailableLogicalStructuresAction.1")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_LOGICAL_STRUCTURE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_LOGICAL_STRUCTURE);
 		setEnabled(false);
 		setMenuCreator(this);
 		init();

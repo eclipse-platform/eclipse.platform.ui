@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -47,7 +46,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
 
@@ -85,7 +84,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 */
 	public Control createViewPane(Composite parent, String paneId)
 	{	
-		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fPaneId = paneId;
 		fCanvas = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

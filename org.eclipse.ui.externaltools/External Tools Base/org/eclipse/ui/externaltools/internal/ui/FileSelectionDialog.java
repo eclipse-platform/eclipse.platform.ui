@@ -13,7 +13,6 @@ package org.eclipse.ui.externaltools.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -33,8 +32,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -107,9 +106,7 @@ public class FileSelectionDialog extends MessageDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(
-			shell,
-			IExternalToolsHelpContextIds.FILE_SELECTION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IExternalToolsHelpContextIds.FILE_SELECTION_DIALOG);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

@@ -28,8 +28,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Adds the selected launch configuration to the launch favorites.
@@ -46,7 +46,7 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	public AddToFavoritesAction() {
 		super(""); //$NON-NLS-1$
 		setEnabled(false);
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
 
 	/**

@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -44,7 +43,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class RenderingViewPane extends AbstractMemoryViewPane implements IRenderingViewPane{
 
@@ -1016,7 +1015,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	public Control createViewPane(Composite parent, String paneId) {
 		Control control =  super.createViewPane(parent, paneId);
 		fRenderingMgr = new ViewPaneRenderingMgr(this);
-		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryRenderingView_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryRenderingView_context"); //$NON-NLS-1$
 		return control;
 	}
 	

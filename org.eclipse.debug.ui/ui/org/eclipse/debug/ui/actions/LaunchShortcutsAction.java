@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -48,8 +47,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -221,7 +220,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		action.setActionDefinitionId(ext.getId() + "." + mode); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
-			WorkbenchHelp.setHelp(action, helpContextId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);
 		}
 		StringBuffer label= new StringBuffer();
 		if (accelerator >= 0 && accelerator < 10) {

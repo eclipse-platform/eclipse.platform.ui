@@ -19,7 +19,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -43,7 +43,7 @@ public class GoToAddressAction extends Action
 		fViewTab = viewTab;
 		setToolTipText(DebugUIMessages.getString(TOOLTIP));
 		
-		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".GoToAddressAction_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".GoToAddressAction_context"); //$NON-NLS-1$
 		
 		// TODO:  set image
 	}
