@@ -38,12 +38,17 @@ public class UserPreferencePromptDialog extends MessageDialog {
 	public static final String PROMPT = "prompt"; //$NON-NLS-1$
 	public static final String OK = "ok"; //$NON-NLS-1$
 	
+	
 	/**
 	 * The message displayed to the user, with the toggle button
 	 */
 	protected String toggleMessage = null;
 	protected boolean toggleState = false;
 	protected Button toggleButton = null;
+	
+	protected Button[] buttons;
+	protected String[] buttonLabels;
+	protected int defaultButtonIndex;
 	
 	/**
 	 * The preference store which will be affected by the toggle button.
@@ -53,7 +58,8 @@ public class UserPreferencePromptDialog extends MessageDialog {
 	/**
 	 * The preference store key that will be used to store the value.
 	 */
-	protected String prefKey = null; 
+	protected String prefKey = null;
+	 
 	
 	/**
 	 * Creates a message dialog with a toggle.
@@ -68,6 +74,7 @@ public class UserPreferencePromptDialog extends MessageDialog {
 		super(parentShell, dialogTitle, image, message, dialogImageType, dialogButtonLabels, defaultIndex);
 		this.toggleMessage = toggleMessage;
 		this.toggleState = toggleState; 
+		this.buttonLabels = dialogButtonLabels;
 	}
 	
 	/**
@@ -102,6 +109,30 @@ public class UserPreferencePromptDialog extends MessageDialog {
 		toggleButton = createToggleButton(dialogArea);
 		return dialogArea;
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		buttons = new Button[buttonLabels.length];
+		for (int i = 0; i < buttonLabels.length; i++) {
+			int id = i;
+			String label = buttonLabels[i];
+			if (label == IDialogConstants.OK_LABEL) {
+				id = IDialogConstants.OK_ID;
+			} else if (label == IDialogConstants.YES_LABEL) {
+				id = IDialogConstants.YES_ID;
+			} else if (label == IDialogConstants.NO_LABEL) {
+				id = IDialogConstants.NO_ID;
+			} else if (label == IDialogConstants.CANCEL_LABEL) {
+				id = IDialogConstants.CANCEL_ID;
+			}
+			Button button = createButton(parent, id, label, defaultButtonIndex == i);
+			buttons[i] = button;
+		}
+	}
+	
 	
 	/**
 	 * Creates a toggle button with the toggle message and state.
@@ -153,7 +184,7 @@ public class UserPreferencePromptDialog extends MessageDialog {
 			} else if (buttonId == IDialogConstants.NO_ID) {
 				prefStore.setValue(prefKey, NEVER);
 			} else if (buttonId == IDialogConstants.OK_ID) {
-				prefStore.setValue(prefKey, OK);
+				prefStore.setValue(prefKey, ALWAYS);
 			}
 		}
 	}
@@ -348,4 +379,11 @@ public class UserPreferencePromptDialog extends MessageDialog {
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getButton(int)
+	 */
+//	protected Button getButton(int index) {
+//		// TODO Auto-generated method stub
+//		return super.getButton(index);
+//	}
 }

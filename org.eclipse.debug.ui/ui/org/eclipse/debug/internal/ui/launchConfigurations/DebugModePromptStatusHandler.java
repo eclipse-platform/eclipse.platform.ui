@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.UserPreferencePromptDialog;
@@ -49,16 +49,16 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
 		if (pref != null) {
-			if (pref.equals(AlwaysNeverDialog.NEVER)) {
+			if (pref.equals(UserPreferencePromptDialog.NEVER)) {
 				return new Boolean(false);
-			} else if (pref.equals(AlwaysNeverDialog.ALWAYS)) { 
+			} else if (pref.equals(UserPreferencePromptDialog.ALWAYS)) { 
 				relaunchInDebugMode(configuration);
 				return new Boolean(true);
 			}
 		}
 		
 		UserPreferencePromptDialog dialog = UserPreferencePromptDialog.openYesNoQuestion(activeShell, title, message, LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.2"), false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); //$NON-NLS-1$
-		if (dialog.getReturnCode() == IDialogConstants.OK_ID) { 
+		if (dialog.getReturnCode() == IDialogConstants.YES_ID) { 
 			relaunchInDebugMode(configuration);
 			return new Boolean(true);
 		}
