@@ -110,7 +110,7 @@ public class ConfiguredSite
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
-					ISite featureSite = (ISite) ((FeatureReference) element).getSite();
+					ISite featureSite = (ISite) ((InternalFeatureReference) element).getSite();
 					URLInfoString =
 						UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
