@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
+import org.eclipse.test.performance.*;
 
-public class UIStartupTest extends StartupTest {
+public class UIStartupTest extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(UIStartupTest.class);
@@ -21,5 +21,16 @@ public class UIStartupTest extends StartupTest {
 
 	public UIStartupTest(String methodName) {
 		super(methodName);
+	}
+
+	public void testUIApplicationStartup() {
+		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + '.' + getName());
+		try {
+			meter.stop();
+			meter.commit();
+			Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);
+		} finally {
+			meter.dispose();
+		}
 	}
 }
