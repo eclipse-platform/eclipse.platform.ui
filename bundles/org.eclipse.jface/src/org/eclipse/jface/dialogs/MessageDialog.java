@@ -55,17 +55,17 @@ public class MessageDialog extends IconAndMessageDialog {
 	/**
 	 * Labels for buttons in the button bar (localized strings).
 	 */
-	private String[] buttonLabels;
+	protected String[] buttonLabels;
 
 	/**
 	 * The buttons. Parallels <code>buttonLabels</code>.
 	 */
-	private Button[] buttons;
+	protected Button[] buttons;
 
 	/**
 	 * Index into <code>buttonLabels</code> of the default button.
 	 */
-	private int defaultButtonIndex;
+	protected int defaultButtonIndex;
 
 	/**
 	 * Dialog title (a localized string).

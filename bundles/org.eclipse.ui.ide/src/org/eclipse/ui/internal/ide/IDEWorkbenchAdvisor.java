@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -64,7 +65,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
@@ -235,50 +235,54 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowShellClose
-	 */
-	public boolean preWindowShellClose(IWorkbenchWindowConfigurer windowConfigurer) {
-		if (getWorkbenchConfigurer().getWorkbench().getWorkbenchWindowCount() > 1) {
-			return true;
-		}
-		// the user has asked to close the last window, while will cause the
-		// workbench to close in due course - prompt the user for confirmation
- 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean promptOnExit =	store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
+	/*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowShellClose
+     */
+    public boolean preWindowShellClose(
+            IWorkbenchWindowConfigurer windowConfigurer) {
+        if (getWorkbenchConfigurer().getWorkbench().getWorkbenchWindowCount() > 1) { return true; }
+        // the user has asked to close the last window, while will cause the
+        // workbench to close in due course - prompt the user for confirmation
+        IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
+                .getPreferenceStore();
+        boolean promptOnExit = store
+                .getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
-		if (promptOnExit) {
-			String message;
-			String productName = null;
-			AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-			if (about != null) {
-				productName = about.getProductName();
-			}
-			if (productName == null) {
-				message = IDEWorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
-			} else {
-				message = IDEWorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
-			}
+        if (promptOnExit) {
+            String message;
+            String productName = null;
+            AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
+            if (about != null) {
+                productName = about.getProductName();
+            }
+            if (productName == null) {
+                message = IDEWorkbenchMessages
+                        .getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
+            } else {
+                message = IDEWorkbenchMessages
+                        .format(
+                                "PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
+            }
 
-			MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
-				windowConfigurer.getWindow().getShell(), 
-				IDEWorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
-				message,
-				IDEWorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
-				false);
+            MessageDialogWithToggle dlg = MessageDialogWithToggle
+                    .openYesNoQuestion(
+                            windowConfigurer.getWindow().getShell(),
+                            IDEWorkbenchMessages
+                                    .getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
+                            message,
+                            IDEWorkbenchMessages
+                                    .getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
+                            false,
+                            store,
+                            IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
-			if (dlg.getReturnCode() == Window.OK) {
-				store.setValue(
-					IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
-					!dlg.getToggleState());
-				return true;
-			} else {
-				return false;
-			}
-		}
+            return (dlg.getReturnCode() == Window.OK);
+        }
 
-		return true;
-	}
+        return true;
+    }
 	
 	
 	/* (non-Javadoc)

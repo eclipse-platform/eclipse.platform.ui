@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+
 /**
  * The IDEInternalPreferences are the internal constants used by the Workbench.
  */
@@ -34,9 +36,9 @@ public interface IDEInternalPreferences {
 
 	// Switch perspectives when creating a new project
 	public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
-	public static final String PSPM_PROMPT = "prompt"; //$NON-NLS-1$
-	public static final String PSPM_ALWAYS = "always"; //$NON-NLS-1$
-	public static final String PSPM_NEVER = "never"; //$NON-NLS-1$
+	public static final String PSPM_PROMPT = MessageDialogWithToggle.PROMPT; //$NON-NLS-1$
+	public static final String PSPM_ALWAYS = MessageDialogWithToggle.ALWAYS; //$NON-NLS-1$
+	public static final String PSPM_NEVER = MessageDialogWithToggle.NEVER; //$NON-NLS-1$
 
 	// (boolean) Whether or not to display the Welcome dialog on startup.
 	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
