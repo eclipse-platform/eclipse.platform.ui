@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.ui.internal.util.Util;
@@ -22,17 +24,25 @@ final class State implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = State.class.getName().hashCode();
 
-	static State getInstance(List paths) {
-		return new State(paths);
-	}
-
 	private List paths;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	private State(List paths) {
+	State() {
+		this(Collections.EMPTY_LIST);
+	}
+
+	State(Path path) {
+		this(Collections.singletonList(path));
+	}
+
+	State(Path[] paths) {
+		this(Arrays.asList(paths));
+	}
+
+	State(List paths) {
 		this.paths = Util.safeCopy(paths, Path.class);
 		
 		if (this.paths.size() >= MAXIMUM_PATHS)

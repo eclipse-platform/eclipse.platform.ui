@@ -28,25 +28,21 @@ final class Path implements Comparable {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	static Path getInstance() {
-		return new Path(Collections.EMPTY_LIST);
-	}
-
-	static Path getInstance(String string) {
-		return new Path(Collections.singletonList(string));
-	}
-
-	static Path getInstance(String[] strings) {
-		return new Path(Arrays.asList(strings));
-	}
-
-	static Path getInstance(List strings) {
-		return new Path(strings);
-	}
-
 	private List strings;
 
-	private Path(List strings) {
+	Path() {
+		this(Collections.EMPTY_LIST);
+	}
+
+	Path(String string) {
+		this(Collections.singletonList(string));
+	}
+
+	Path(String[] strings) {
+		this(Arrays.asList(strings));
+	}
+
+	Path(List strings) {
 		this.strings = Util.safeCopy(strings, String.class);
 
 		if (this.strings.size() >= MAXIMUM_STRINGS)
