@@ -1,4 +1,4 @@
-package org.eclipse.ant.ui.internal.toolscripts;
+package org.eclipse.ant.internal.ui.toolscripts;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

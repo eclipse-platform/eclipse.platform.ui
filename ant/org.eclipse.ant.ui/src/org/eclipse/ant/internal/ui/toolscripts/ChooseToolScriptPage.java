@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.ant.ui.internal.toolscripts;
+package org.eclipse.ant.internal.ui.toolscripts;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;

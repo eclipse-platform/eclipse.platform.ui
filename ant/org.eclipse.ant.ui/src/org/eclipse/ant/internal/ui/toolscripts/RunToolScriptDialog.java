@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.ant.ui.internal.toolscripts;
+package org.eclipse.ant.internal.ui.toolscripts;
 
 import org.eclipse.ant.core.toolscripts.ExternalToolScript;
 import org.eclipse.ant.core.toolscripts.ToolScript;
