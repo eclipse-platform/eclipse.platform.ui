@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.*;
@@ -42,6 +43,8 @@ public class TargetPage extends BannerPage {
 		"InstallWizard.TargetPage.location.error.title";
 	private static final String KEY_LOCATION_ERROR_MESSAGE =
 		"InstallWizard.TargetPage.location.error.message";
+	private static final String KEY_ERROR_REASON =
+		"InstallWizard.TargetPage.location.error.reason";	
 	private static final String KEY_SIZE =
 		"InstallWizard.TargetPage.size";
 	private static final String KEY_SIZE_UNKNOWN = 
@@ -233,12 +236,14 @@ public class TargetPage extends BannerPage {
 			try {
 				File file = new File(path);
 				IConfiguredSite csite = config.createConfiguredSite(file);
-				if (csite.verifyUpdatableStatus().isOK())
+				IStatus status = csite.verifyUpdatableStatus();
+				if (status.isOK())
 					config.addConfiguredSite(csite);
 				else {
 					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
-					String message =
-						UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE, path);
+					String message = UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE, path);
+					String message2 = UpdateUIPlugin.getFormattedMessage(KEY_ERROR_REASON, status.getMessage());
+					message = message + "\r\n"+message2;						
 					MessageDialog.openError(getContainer().getShell(), title, message);
 				}
 			} catch (CoreException e) {
