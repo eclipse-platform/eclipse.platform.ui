@@ -81,7 +81,9 @@ public class ResourceSyncInfo {
 		}
 		// override the timestamp that may of been in entryLine. In some cases the timestamp is not in the
 		// entry line (e.g. receiving entry lines from the server versus reading them from the Entry file).
-		if(timestamp!=null) {
+		if (isAdded()) {
+			this.timeStamp = DUMMY_TIMESTAMP;
+		} else if(timestamp!=null) {
 			this.timeStamp = timestamp;
 		}
 	}
