@@ -99,6 +99,8 @@ public void partActivated(IWorkbenchPart part) {
 public void partClosed(IWorkbenchPart part) {
 	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
 	if(activePart != null)
+		// We are going to get a part activated message so don't bother setting the 
+		// action handler to null. This prevents enablement flash in the toolbar
 		return;
 	if (part == getActivePart())
 		setActionHandler(null);
@@ -111,12 +113,16 @@ public void partClosed(IWorkbenchPart part) {
  */
 public void partDeactivated(IWorkbenchPart part) {
 	super.partDeactivated(part);
-	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
-	if(activePart != null)
-		return;
 	IWorkbenchPartSite site = part.getSite();
 	SubActionBars bars = (SubActionBars) ((PartSite)site).getActionBars();
 	bars.removePropertyChangeListener(propertyChangeListener);
+
+	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
+	if(activePart != null)
+		// We are going to get a part activated message so don't bother setting the 
+		// action handler to null. This prevents enablement flash in the toolbar
+		return;
+
 	setActionHandler(null);
 }
 /**
