@@ -91,13 +91,20 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * Polls the filesystem under the root containers for changes.
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
-		//sleep on the first run to avoid colliding with the startup process
+		//sleep until resources plugin has finished starting
 		if (firstRun) {
 			firstRun = false;
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				//ignore
+			Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
+			long waitStart = System.currentTimeMillis();
+			while (bundle.getState() == Bundle.STARTING) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					//ignore
+				}
+				//don't wait forever
+				if ((System.currentTimeMillis() -waitStart) > 90000)
+					break;
 			}
 		}
 		long time = System.currentTimeMillis();
