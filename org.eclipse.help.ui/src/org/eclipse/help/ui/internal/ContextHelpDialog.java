@@ -325,8 +325,4 @@ public class ContextHelpDialog {
 			}
 		});
 	}
-	
-	public void dispose() {
-		System.out.println("dispose");
-	}
 }
