@@ -169,7 +169,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        if (getProcess().equals(DebugUITools.getCurrentProcess())) {
+        if (fView != null && getProcess().equals(DebugUITools.getCurrentProcess())) {
             fView.display(fConsole);
         }
 	}
