@@ -16,7 +16,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -30,7 +32,7 @@ import org.eclipse.ui.IEditorInput;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -52,7 +54,19 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	 * Temp holding for listeners - we do not add to presentation until
 	 * it needs to be instantiated.
 	 */
-	protected ListenerList fListeners= new ListenerList(5);		
+	protected ListenerList fListeners= new ListenerList(5);	
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#getInstructionPointerImage(org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Image getInstructionPointerImage(IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IDebugEditorPresentation) {
+			return ((IDebugEditorPresentation)presentation).getInstructionPointerImage(frame);
+		}
+		return null;
+	}
+
 	/**
 	 * Constructs a lazy presentation from the config element.
 	 */

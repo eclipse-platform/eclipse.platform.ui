@@ -24,8 +24,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -41,7 +43,7 @@ import org.eclipse.ui.IEditorInput;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -52,6 +54,19 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * A table of label providers keyed by debug model identifiers.
 	 */
 	private HashMap fLabelProviders= new HashMap(5);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#getInstructionPointerImage(org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public Image getInstructionPointerImage(IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation != null) {
+			if (presentation instanceof IDebugEditorPresentation) {
+				return ((IDebugEditorPresentation)presentation).getInstructionPointerImage(frame);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Constructs a new DelegatingLabelProvider that delegates to extensions

@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -69,11 +70,16 @@ public class InstructionPointerAnnotation extends Annotation {
 	 * Retrieve the image associated with the instruction pointer.
 	 */
 	protected Image getInstructionPointerImage(boolean topStackFrame) {
-		if (topStackFrame) {
-			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
-		} else {
-			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);			
+		IDebugEditorPresentation presentation = (IDebugEditorPresentation)DebugUIPlugin.getModelPresentation();
+		Image image = presentation.getInstructionPointerImage(getStackFrame());
+		if (image == null) {
+			if (topStackFrame) {
+				image = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
+			} else {
+				image = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);			
+			}
 		}
+		return image;
 	}
 	
 	/**
