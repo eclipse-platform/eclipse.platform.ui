@@ -12,6 +12,7 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.util.jar.*;
 
+import org.eclipse.osgi.util.*;
 import org.osgi.framework.*;
 /**
  * Parses MANIFEST.MF
@@ -66,11 +67,20 @@ public class BundleManifest implements IConfigurationConstants {
 			Manifest m = new Manifest(in);
 			Attributes a = m.getMainAttributes();
 			// plugin id
-			String id = a.getValue(Constants.BUNDLE_SYMBOLICNAME);
-			if (id == null) {
+			String symbolicName = a.getValue(Constants.BUNDLE_SYMBOLICNAME);
+			if (symbolicName == null) {
 				// In Eclipse manifest must have Bundle-SymbolicName attribute
 				return;
 			}
+			String id;
+			try {
+				ManifestElement[] elements = ManifestElement.parseHeader(
+						Constants.BUNDLE_SYMBOLICNAME, symbolicName);
+				id = elements[0].getValue();
+			} catch (BundleException be) {
+				throw new IOException(be.getMessage());
+			}
+			// plugin version
 			String version = a.getValue(Constants.BUNDLE_VERSION);
 			String hostPlugin = a.getValue(Constants.FRAGMENT_HOST);
 			pluginEntry = new PluginEntry();
