@@ -68,17 +68,20 @@ public void defineComponentOperation(UMSessionManagerParcel parcel, IInstallable
 
 	// Create apply operation for plug-ins		
 	//------------------------------------
-
-	operation = parcel.createOperation();
-	operation.setAction(UpdateManagerConstants.OPERATION_UNZIP_PLUGINS);
-	operation.setId(componentDescriptor.getUniqueIdentifier());
-	operation.setSource(downloadTarget);
-	// by specifiying the install dir with a trailing slash, the unzip method
-	// will just unzip the contents of the jar into the dir
-	applyTarget = UMEclipseTree.getBaseInstallURL().toExternalForm();
-	//	applyTarget = "file:///c:/temp/x/" ;
-	operation.setTarget(applyTarget);
-	operation.setData(descriptor);
+	IPluginEntryDescriptor[] plugins = componentDescriptor.getPluginEntries();
+	IFragmentEntryDescriptor[] fragments = componentDescriptor.getFragmentEntries();
+	if ((plugins.length > 0) || (fragments.length >0)) {
+		operation = parcel.createOperation();
+		operation.setAction(UpdateManagerConstants.OPERATION_UNZIP_PLUGINS);
+		operation.setId(componentDescriptor.getUniqueIdentifier());
+		operation.setSource(downloadTarget);
+		// by specifiying the install dir with a trailing slash, the unzip method
+		// will just unzip the contents of the jar into the dir
+		applyTarget = UMEclipseTree.getBaseInstallURL().toExternalForm();
+		//	applyTarget = "file:///c:/temp/x/" ;
+		operation.setTarget(applyTarget);
+		operation.setData(descriptor);
+	}
 
 }
 /**
