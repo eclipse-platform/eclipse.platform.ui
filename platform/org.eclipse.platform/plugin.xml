@@ -78,7 +78,7 @@
             </link>
             <link
                   label="%root.gotoworkbench.label"
-                  url="http://org.eclipse.ui.intro/setStandbyMode?standby=true"
+                  url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp"
                   id="workbench">
                <text>
                   %root.gotoworkbench.desc
