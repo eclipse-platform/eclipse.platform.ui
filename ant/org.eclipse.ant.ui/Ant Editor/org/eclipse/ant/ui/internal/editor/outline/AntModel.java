@@ -134,57 +134,52 @@ public class AntModel {
 		 * The root element is returned here.
 		 */
          
-		String tempWholeDocumentString= input.get();
-         
 		// Create the parser
-		SAXParser tempParser;
+		SAXParser parser;
 		try {
-			tempParser = new SAXParser();
-			tempParser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
+			parser = new SAXParser();
+			parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
 		} catch (SAXException e) {
 			AntUIPlugin.log(e);
 			return null;
 		}
 
 		// Create the handler
-		OutlinePreparingHandler tempHandler = null;
-
-		tempHandler = new OutlinePreparingHandler(fLocationProvider);
-		tempHandler.setProblemRequestor(fProblemRequestor);
-		tempHandler.setDocument(input);
+		OutlinePreparingHandler handler = new OutlinePreparingHandler(fLocationProvider);
+		handler.setProblemRequestor(fProblemRequestor);
+		handler.setDocument(input);
 		
-		tempParser.setContentHandler(tempHandler);
-		tempParser.setDTDHandler(tempHandler);
-		tempParser.setEntityResolver(tempHandler);
-		tempParser.setErrorHandler(tempHandler);
-//		tempParser.setLocale(...);
+		parser.setContentHandler(handler);
+		parser.setDTDHandler(handler);
+		parser.setEntityResolver(handler);
+		parser.setErrorHandler(handler);
+//		parser.setLocale(...);
         
 		// Parse!
 		try {
-			tempHandler.begin();
-			InputSource tempInputSource = new InputSource(new StringReader(tempWholeDocumentString));
+			handler.begin();
+			String wholeDocString= input.get();
+			InputSource inputSource = new InputSource(new StringReader(wholeDocString));
 			IPath location= fLocationProvider.getLocation();
 			if (location != null) {
 				//needed for resolving relative external entities
-				tempInputSource.setSystemId(location.toOSString());
+				inputSource.setSystemId(location.toOSString());
 			}
-			tempParser.setProperty("http://xml.org/sax/properties/lexical-handler", tempHandler); //$NON-NLS-1$
-			tempParser.parse(tempInputSource);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
+			parser.parse(inputSource);
 		} catch(SAXParseException e) {
-			tempHandler.fixEndLocations(e);
+			handler.fixEndLocations(e);
 		} catch (SAXException e) {
 			AntUIPlugin.log(e);
 			return null;
 		} catch (IOException e) {
-			XmlElement tempElement= tempHandler.getLastOpenElement();
-			tempHandler.fixEndLocations();
-			generateExceptionOutline(tempElement);
+			handler.fixEndLocations();
+			generateExceptionOutline(handler.getLastOpenElement());
 		} finally {
-			tempHandler.end();			
+			handler.end();			
 		}
         
-		XmlElement tempRootElement = tempHandler.getRootElement();
-		return tempRootElement;
+		return handler.getRootElement();
 	}
 
 	private void generateExceptionOutline(XmlElement openElement) {
