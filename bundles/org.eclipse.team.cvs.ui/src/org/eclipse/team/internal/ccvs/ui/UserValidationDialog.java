@@ -88,14 +88,15 @@ public class UserValidationDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		main.setLayout(layout);
-		main.setLayoutData(new GridData(GridData.FILL_BOTH));
+		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		if (message != null) {
 			Label messageLabel = new Label(main, SWT.WRAP);
 			messageLabel.setText(message);
 			messageLabel.setForeground(messageLabel.getDisplay().getSystemColor(SWT.COLOR_RED));
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			data.horizontalSpan = 3;
+			data.widthHint = 400;
 			messageLabel.setLayoutData(data);
 		}
 		
@@ -105,8 +106,9 @@ public class UserValidationDialog extends Dialog {
 		} else {
 			label.setText(Policy.bind("UserValidationDialog.labelPassword", new Object[] {defaultUsername, domain})); //$NON-NLS-1$
 		}
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = 3;
+		data.widthHint = 400;
 		label.setLayoutData(data);
 		
 		createUsernameFields(main);
@@ -124,12 +126,10 @@ public class UserValidationDialog extends Dialog {
 		
 		passwordField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		passwordField.setLayoutData(data);
 		passwordField.setEchoChar('*');
-		
-		// spacer
-		new Label(parent, SWT.NONE);
 	}
 	/**
 	 * Creates the three widgets that represent the user name entry area.
@@ -141,11 +141,9 @@ public class UserValidationDialog extends Dialog {
 		
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		usernameField.setLayoutData(data);
-		
-		// spacer
-		new Label(parent, SWT.NONE);
 	}
 	/**
 	 * Returns the password entered by the user, or null
