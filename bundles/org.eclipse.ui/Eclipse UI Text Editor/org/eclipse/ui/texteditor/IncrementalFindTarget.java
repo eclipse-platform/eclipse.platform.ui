@@ -332,7 +332,6 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		if (!event.doit)
 			return;
 
-		boolean found = fFound;
 		if (event.character == 0) {
 	
 			switch (event.keyCode) {
