@@ -43,7 +43,9 @@ public void pageActivated(org.eclipse.ui.IWorkbenchPage page) {
  * @param page the page that was closed
  * @see IWorkbenchPage#close
  */
-public void pageClosed(org.eclipse.ui.IWorkbenchPage page) {}
+public void pageClosed(org.eclipse.ui.IWorkbenchPage page) {
+	updateState();
+}
 /**
  * Notifies this listener that the given page has been opened.
  *
