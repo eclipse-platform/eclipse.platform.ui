@@ -82,7 +82,7 @@ public interface IEditorInput extends IAdaptable {
      * For instance, MyClass.java in folder X and MyClass.java in folder Y.
      * The format of the text varies between input types.
      * </p>
-     * @return the tool tip text
+     * @return the tool tip text; never <code>null</code>.
      */
     public String getToolTipText();
 }
