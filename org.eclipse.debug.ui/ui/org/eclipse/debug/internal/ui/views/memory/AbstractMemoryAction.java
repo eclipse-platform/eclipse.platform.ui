@@ -96,7 +96,6 @@ abstract public class AbstractMemoryAction extends Action
 				return null;
 			}
 		}
-		else
-			return null;
+        return null;
 	}
 }
