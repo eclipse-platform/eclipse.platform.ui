@@ -391,11 +391,12 @@ public void createPartControl(Composite parent) {
 	
 	CellEditor editors[] = new CellEditor[columnHeaders.length];
 	editors[1] = new CheckboxCellEditor(table);
-	editors[2] = new ComboBoxCellEditor(table,new String[] {
-		TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
-		TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
-		TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
-	});
+	String[] priorities = new String[] {
+			TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
+			TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
+			TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
+		};
+	editors[2] = new ComboBoxCellEditor(table, priorities, SWT.READ_ONLY);
 	editors[3] = descriptionEditor = new TextCellEditor(table);
 	viewer.setCellEditors(editors);
 	viewer.setCellModifier(cellModifier);
