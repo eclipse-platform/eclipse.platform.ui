@@ -93,8 +93,8 @@ public class ViewPane extends PartPane
 /**
  * Constructs a view pane for a view part.
  */
-public ViewPane(IViewPart part, WorkbenchPage persp) {
-	super(part, persp);
+public ViewPane(IViewPart part, WorkbenchPage page) {
+	super(part, page);
 }
 /**
  * Create control. Add the title bar.

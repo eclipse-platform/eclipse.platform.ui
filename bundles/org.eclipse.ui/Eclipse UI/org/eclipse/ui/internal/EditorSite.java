@@ -24,10 +24,10 @@ public class EditorSite extends PartSite
  * Constructs an EditorSite for an editor.  The resource editor descriptor
  * may be omitted for an OLE editor.
  */
-public EditorSite(IEditorPart editor, WorkbenchPage persp, 
+public EditorSite(IEditorPart editor, WorkbenchPage page, 
 	EditorDescriptor desc) 
 {
-	super(editor, persp);
+	super(editor, page);
 	if (desc != null) {
 		this.desc = desc;
 		setConfigurationElement(desc.getConfigurationElement());

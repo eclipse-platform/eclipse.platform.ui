@@ -56,7 +56,7 @@ public void pageActivated(IWorkbenchPage page) {
 /**
  * Notifies the listener that a page has been closed
  */
-public void pageClosed(IWorkbenchPage persp) {
+public void pageClosed(IWorkbenchPage page) {
 	activePage = null;
 	refreshTargets();
 	testEnable();
@@ -120,9 +120,9 @@ protected void refreshTargets() {
  * and saves those that need it.
  */
 public void run() {
-	IWorkbenchPage persp = window.getActivePage();
-	if (persp != null)
-		persp.saveAllEditors(false);
+	IWorkbenchPage page = window.getActivePage();
+	if (page != null)
+		page.saveAllEditors(false);
 }
 /**
  * Updates availability depending on number of

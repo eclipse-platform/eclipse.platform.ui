@@ -199,9 +199,9 @@ private void runInNewWindow(IPerspectiveDescriptor desc) {
  * Run the action.
  */
 private void runReplaceCurrent(IPerspectiveDescriptor desc) {
-	IWorkbenchPage persp = getWindow().getActivePage();
-	if (persp != null) {
-		persp.setPerspective(desc);
+	IWorkbenchPage page = getWindow().getActivePage();
+	if (page != null) {
+		page.setPerspective(desc);
 	} else {
 		runInNewPage(desc);
 	}

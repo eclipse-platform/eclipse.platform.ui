@@ -20,8 +20,8 @@ public class ViewSite extends PartSite
 /**
  * ViewSite constructor comment.
  */
-public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc) {
-	super(view, persp);
+public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
+	super(view, page);
 	setConfigurationElement(desc.getConfigurationElement());
 }
 /**

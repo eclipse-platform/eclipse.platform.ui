@@ -25,8 +25,8 @@ public class EditorPane extends PartPane {
 /**
  * Constructs an editor pane for an editor part.
  */
-public EditorPane(IEditorPart part, WorkbenchPage persp, EditorWorkbook workbook) {
-	super(part, persp);
+public EditorPane(IEditorPart part, WorkbenchPage page, EditorWorkbook workbook) {
+	super(part, page);
 	this.workbook = workbook;
 }
 protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {

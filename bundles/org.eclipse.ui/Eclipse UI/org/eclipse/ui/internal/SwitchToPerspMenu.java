@@ -49,9 +49,9 @@ public void fill(Menu menu, int index) {
  * Run the action.
  */
 public void run(IPerspectiveDescriptor desc) {
-	IWorkbenchPage persp = getWindow().getActivePage();
-	if (persp != null) {
-		persp.setPerspective(desc);
+	IWorkbenchPage page = getWindow().getActivePage();
+	if (page != null) {
+		page.setPerspective(desc);
 	}
 }
 /**
