@@ -127,14 +127,19 @@ public class StringMatcher {
 
 		int curPos= start;
 		int matchStart= -1;
-		for (int i= 0; i < segCount && curPos < end; ++i) {
+		int i;
+		for (i= 0; i < segCount && curPos < end; ++i) {
 			String current= fSegments[i];
 			int nextMatch= regExpPosIn(text, curPos, end, current);
 			if (nextMatch < 0)
 				return null;
-			if (i == 0)
+			if (i == 0) {
 				matchStart= nextMatch;
+			}
 			curPos= nextMatch + current.length();
+		}
+		if (i < segCount) {
+			return null;
 		}
 		return new Position(matchStart, curPos);
 	}
