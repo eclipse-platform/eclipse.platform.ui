@@ -1068,6 +1068,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
+	
+	/**
+	 * Returns the refresh manager for this workspace
+	 */
+	public RefreshManager getRefreshManager() {
+		return refreshManager;
+	}
 
 	/**
 	 * Returns the resource info for the identified resource.

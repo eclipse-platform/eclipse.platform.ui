@@ -9,6 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.resources.refresh;
 
+import org.eclipse.core.internal.refresh.InternalRefreshProvider;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -20,11 +21,32 @@ import org.eclipse.core.resources.IResource;
  * All auto-refresh providers must subclass this class. A 
  * <code>RefreshProvider</code> is responsible for creating 
  * <code>IRefreshMonitor</code> objects.  The provider must decide if 
- * it is capable of monitoring the file, or folder and subtree under the path that is given.
+ * it is capable of monitoring the file, or folder and subtree under the path that is provided.
  * 
  * @since 3.0
  */
-public abstract class RefreshProvider {
+public abstract class RefreshProvider extends InternalRefreshProvider {
+	/**
+	 * Creates a new refresh monitor that performs naive polling of the resource
+	 * in the file system to detect changes. The returned monitor will immediately begin
+	 * monitoring the specified resource root and report changes back to the workspace.
+	 * <p>
+	 * This default monitor can be returned by subclasses  when
+	 * <code>installMonitor</code> is called.
+	 * <p>
+	 * If the returned monitor is not immediately returned from the <code>installMonitor</code>
+	 * method, then clients are responsible for telling the returned monitor to
+	 * stop polling when it is no longer needed. The returned monitor can be told to 
+	 * stop working by invoking <code>IRefreshMonitor.unmonitor(IResource)</code>.
+	 * 
+	 * @param resource The resource to begin monitoring
+	 * @return A refresh monitor instance
+	 * @see #installMonitor(IResource, IRefreshResult)
+	 */
+	protected IRefreshMonitor createPollingMonitor(IResource resource) {
+		return super.createPollingMonitor(resource);
+	}
+
 	/**
 	 * Returns an <code>IRefreshMonitor</code> that will monitor a resource. If
 	 * the resource is an <code>IContainer</code> the monitor will also
@@ -41,6 +63,21 @@ public abstract class RefreshProvider {
 	 * refreshing
 	 * @return a monitor on the resource, or <code>null</code>
 	 * if the resource cannot be monitored
+	 * @see #createPollingMonitor(IResource)
 	 */
 	public abstract IRefreshMonitor installMonitor(IResource resource, IRefreshResult result);
+	
+	/**
+	 * Resets the installed monitors for the given resource.  This will remove all
+	 * existing monitors that are installed on the resource, and then ask all
+	 * refresh providers to begin monitoring the resource again.
+	 * <p>
+	 * This method is intended to be used by refresh providers that need to change
+	 * the refresh monitor that they previously used to monitor a resource.
+	 * 
+	 * @param resource The resource to reset the monitors for
+	 */
+	public void resetMonitors(IResource resource) {
+		super.resetMonitors(resource);
+	}
 }

@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.jobs.Job;
  * from the set and searches for changes for a fixed period of time.
  * This ensures that the refresh job is broken into very small discrete
  * operations that do not interrupt the user's mainline activity.
+ * 
+ * @since 3.0
  */
 public class PollingMonitor extends Job implements IRefreshMonitor {
 	/**

@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.jobs.Job;
  * The <code>RefreshJob</code> class maintains a list of resources that
  * need to be refreshed, and periodically schedules itself to perform the
  * refreshes in the background.
+ * 
+ * @since 3.0
  */
 public class RefreshJob extends WorkspaceJob {
 	private static final long UPDATE_DELAY = 200;

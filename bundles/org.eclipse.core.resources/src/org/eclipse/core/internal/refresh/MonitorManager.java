@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.*;
  * Manages monitors by creating new monitors when projects are added and
  * removing monitors when projects are removed. Also handles the polling
  * mechanism when contributed native monitors cannot handle a project.
+ * 
+ * @since 3.0
  */
 class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, IPathVariableChangeListener {
 	/**
@@ -116,7 +118,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 	 * Installs a monitor on the given resource. Returns true if the polling
 	 * monitor was installed, and false if a refresh provider was installed.
 	 */
-	private boolean monitor(IResource resource) {
+	boolean monitor(IResource resource) {
 		if (isMonitoring(resource))
 			return false;
 		boolean pollingMonitorNeeded = true;
@@ -246,7 +248,6 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				 */
 				IProject project = (IProject) event.getResource();
 				unmonitor(project);
-				unmonitorLinkedContents(project);
 				break;
 			default :
 				try {
@@ -292,7 +293,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			System.out.println(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
 	}
 
-	private void unmonitor(IResource resource) {
+	void unmonitor(IResource resource) {
 		if (resource == null || !isMonitoring(resource))
 			return;
 		synchronized (registeredMonitors) {
@@ -305,6 +306,8 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				}
 			}
 		}
+		if (resource.getType() == IResource.PROJECT)
+			unmonitorLinkedContents((IProject)resource);
 	}
 
 	private void unmonitorLinkedContents(IProject project) {
