@@ -21,6 +21,8 @@ public class Policy {
 
     public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 
+    public static boolean DEBUG_SWT_DEBUG = DEFAULT;
+
     public static boolean DEBUG_PART_CREATE = DEFAULT;
 
     public static boolean DEBUG_PART_ACTIVATE = DEFAULT;
@@ -110,6 +112,7 @@ public class Policy {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
             DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
+            DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
             DEBUG_PART_CREATE = getDebugOption("/trace/part.create"); //$NON-NLS-1$
             DEBUG_PERSPECTIVE = getDebugOption("/trace/perspective"); //$NON-NLS-1$
             DEBUG_RESTORE_WORKBENCH = getDebugOption("/trace/workbench.restore"); //$NON-NLS-1$

@@ -295,9 +295,10 @@ public final class Workbench implements IWorkbench {
 
         // create the display
         Display newDisplay = null;
-        if (Policy.DEBUG_SWT_GRAPHICS) {
+        if (Policy.DEBUG_SWT_GRAPHICS || Policy.DEBUG_SWT_DEBUG) {
             DeviceData data = new DeviceData();
-            data.tracking = true;
+            if(Policy.DEBUG_SWT_GRAPHICS) data.tracking = true;
+            if(Policy.DEBUG_SWT_DEBUG) data.debug = true;
             newDisplay = new Display(data);
         } else {
             newDisplay = new Display();

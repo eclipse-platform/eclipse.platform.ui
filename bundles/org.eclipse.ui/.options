@@ -9,6 +9,9 @@ org.eclipse.ui/debug/internalerror/openDialog=false
 # Enable the trace of SWT graphics.
 org.eclipse.ui/trace/graphics=false
 
+# Enable extended SWT debugging.
+org.eclipse.ui/debug/swtdebug=false
+
 # Reports the time to create a part.
 org.eclipse.ui/trace/part.create=false
 
