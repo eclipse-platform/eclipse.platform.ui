@@ -190,6 +190,24 @@ public class UpdateManagerUtils {
 	 * platforms. This is a temporary fix
 	 */
 	public static void checkPermissions(String filePath) {
+		if (filePath != null
+			&& BootLoader.OS_HPUX.equals(BootLoader.getOS())
+			&& filePath.endsWith(".sl")) {
+			// chmod 555 *.sl
+			try {
+				Process pr =
+					Runtime.getRuntime().exec(
+						new String[] { "chmod", "555", filePath });
+				Thread chmodOutput = new StreamConsumer(pr.getInputStream());
+				chmodOutput.setName("chmod output reader");
+				chmodOutput.start();
+				Thread chmodError = new StreamConsumer(pr.getErrorStream());
+				chmodError.setName("chmod error reader");
+				chmodError.start();
+			} catch (IOException ioe) {
+			}
+
+		}
 	}
 	
 	/**
@@ -458,7 +476,7 @@ public class UpdateManagerUtils {
 	 * thow an IO exception
 	 * 
 	 */
-	 public static void checkConnectionResult(URLConnection connection)throws IOException {
+	public static void checkConnectionResult(URLConnection connection)throws IOException {
 		// did the server return an error code ?
 		if (connection instanceof HttpURLConnection) {
 			int result = HttpURLConnection.HTTP_OK;
@@ -477,6 +495,24 @@ public class UpdateManagerUtils {
 				throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] {new Integer(result), serverMsg,url})); //$NON-NLS-1$						
 			}
 		}	 	
-	 }
-	  
+	}
+	
+	public static class StreamConsumer extends Thread {
+		InputStream is;
+		byte[] buf;
+		public StreamConsumer(InputStream inputStream) {
+			super();
+			this.setDaemon(true);
+			this.is = inputStream;
+			buf = new byte[512];
+		}
+		public void run() {
+			try {
+				int n = 0;
+				while (n >= 0)
+					n = is.read(buf);
+			} catch (IOException ioe) {
+			}
+		}
+	}
 }
