@@ -19,7 +19,7 @@
 function loadTOC(tocId)
 {
 	// navigate to this toc
-	window.location.href = "toc.jsp?toc="+tocId;
+	window.location.replace("toc.jsp?toc="+tocId);
 	// keep track of it
 	parent.loadedTOC = tocId;
 }

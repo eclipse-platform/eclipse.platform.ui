@@ -47,7 +47,7 @@
 <body onload="onloadHandler('<%=label%>')">
 
 	<ul><li class='bookshelf'>
-    <a target='_self' href='tocs.jsp'><nobr>Bookshelf</nobr></a>
+    <a target='_self' href='javascript:window.location.replace("tocs.jsp")'><nobr>Bookshelf</nobr></a>
     </li></ul>
 
 <%
