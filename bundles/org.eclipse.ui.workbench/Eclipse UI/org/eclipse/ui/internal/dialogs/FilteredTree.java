@@ -34,7 +34,8 @@ public class FilteredTree extends Composite{
     private PatternFilter patternFilter;
     
     /**
-     * Create a new instance of the receiver.
+     * Create a new instance of the receiver.  It will be created with a default
+     * pattern filter.
      * 
      * @param parent the parent composite
      * @param treeStyle the SWT style bits to be passed to the tree viewer 
@@ -42,7 +43,15 @@ public class FilteredTree extends Composite{
     public FilteredTree(
             Composite parent, 
             int treeStyle) {
+    	this(parent, treeStyle, new PatternFilter());
+    }
+    
+    public FilteredTree(
+    		Composite parent,
+			int treeStyle,
+			PatternFilter filter) {
         super(parent, SWT.NONE);
+        patternFilter = filter;
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -63,7 +72,7 @@ public class FilteredTree extends Composite{
         treeViewer = new TreeViewer(this, treeStyle);
         data = new GridData(GridData.FILL_BOTH);
         treeViewer.getControl().setLayoutData(data);
-        treeViewer.addFilter(patternFilter = new PatternFilter());
+        treeViewer.addFilter(patternFilter);
      }
     
     /**

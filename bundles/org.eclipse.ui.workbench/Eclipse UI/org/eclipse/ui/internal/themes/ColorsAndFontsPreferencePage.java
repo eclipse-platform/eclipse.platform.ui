@@ -30,15 +30,18 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -70,6 +73,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.FilteredTree;
+import org.eclipse.ui.internal.dialogs.PatternFilter;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -731,9 +735,25 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	private void createTree(Composite parent) {
 		labelProvider = new PresentationLabelProvider();
+		// create a new tree with a custom pattern matcher that will allow
+		// non-category elements to be returned in the event that their children
+		// do not
 	    tree = new FilteredTree(
 	            parent, 
-	            SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	            SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
+				new PatternFilter() {
+	            /* (non-Javadoc)
+				 * @see org.eclipse.ui.internal.dialogs.PatternFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+				 */
+				public boolean select(Viewer viewer, Object parentElement,
+						Object element) {
+			        Object [] children = ((ITreeContentProvider)((AbstractTreeViewer)viewer).getContentProvider()).getChildren(element);
+			        if (children.length > 0 && element instanceof ThemeElementCategory)       
+			            return filter(viewer, element, children).length > 0;
+			        
+			        String labelText = ((ILabelProvider)((StructuredViewer)viewer).getLabelProvider()).getText(element);
+			        return match(labelText);
+				}});
 	    
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));		

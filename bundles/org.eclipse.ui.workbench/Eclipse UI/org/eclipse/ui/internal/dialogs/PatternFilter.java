@@ -60,7 +60,7 @@ public class PatternFilter extends ViewerFilter {
             return filter(viewer, element, children).length > 0;
         
         String labelText = ((ILabelProvider)((StructuredViewer)viewer).getLabelProvider()).getText(element);
-        return matcher.match(labelText);
+        return match(labelText);
     }
     
     /**
@@ -73,5 +73,15 @@ public class PatternFilter extends ViewerFilter {
             matcher = null;
         else
             matcher = new StringMatcher(patternString + "*", true, false); //$NON-NLS-1$
+    }
+    
+    /**
+     * Answers whether the given String matches the pattern.
+     * 
+     * @param string the String to test
+     * @return whether the string matches the pattern
+     */
+    protected boolean match(String string) {
+    	return matcher.match(string);
     }
 }
