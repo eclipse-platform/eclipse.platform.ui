@@ -1,26 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-  name="Eclipse Core Tests Resources"
-  id="org.eclipse.core.tests.resources"
-  version="3.1.0"
-  provider-name="Eclipse.org">
+<plugin>
 
-  <requires>
-	<import plugin="org.eclipse.osgi.services"/>
-    <import plugin="org.eclipse.core.runtime.compatibility"/> 
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.core.tests.harness"/>
-    <import plugin="org.junit"/>
-    <import plugin="org.eclipse.test.performance" optional="true"/>
-  </requires>
-
-  <runtime>
-    <library name="resourcestests.jar">
-      <export name="*"/>
-    </library>
-  </runtime>
- <extension point="org.eclipse.core.tests.harness.tests">
+    <extension point="org.eclipse.core.tests.harness.tests">
 	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
 		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
 	</test>
