@@ -565,18 +565,20 @@ public abstract class PreferencePage
 	}
 
 	/**
-	 * Returns the applyButton.
-	 * @return Button
+	 * Returns the Apply button.
+	 * 
+	 * @return the Apply button
 	 */
 	protected Button getApplyButton() {
 		return applyButton;
 	}
 
 	/**
-	 * Returns the defaultsButton.
-	 * @return Button
+	 * Returns the Restore Defaults button.
+	 * 
+	 * @return the Restore Defaults button
 	 */
-		protected Button getDefaultsButton() {
+	protected Button getDefaultsButton() {
 		return defaultsButton;
 	}
 
