@@ -88,6 +88,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			}	
 		});
 
+		buttonCustomize.setVisible(false);
+
 		//WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
 		return composite;	
 	}
