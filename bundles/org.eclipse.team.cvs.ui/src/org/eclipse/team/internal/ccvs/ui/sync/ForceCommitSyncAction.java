@@ -156,6 +156,10 @@ public class ForceCommitSyncAction extends MergeAction {
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
 				collectIncomingDeletions(node, incomingDeletions, monitor);
+				if ((node instanceof TeamFile) && !additions.contains(node)) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+					element.makeOutgoing(monitor);
+				}
 			}
 			it = incomingDeletions.iterator();
 			while (it.hasNext()) {

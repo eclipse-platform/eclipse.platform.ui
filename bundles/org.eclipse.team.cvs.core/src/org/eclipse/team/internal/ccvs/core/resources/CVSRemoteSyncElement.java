@@ -163,8 +163,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				if (remote == null) {
 					info.setAdded();
 				} else {
-					// Otherwise change the revision to the remote revision
+					// Otherwise change the revision to the remote revision and dirty the file
 					info.setRevision(remote.getSyncInfo().getRevision());
+					info.setTimeStamp(null);
 				}
 			} else {
 				// We have an incoming add, turn it around as an outgoing delete
