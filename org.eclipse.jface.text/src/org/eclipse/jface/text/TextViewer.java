@@ -1173,8 +1173,10 @@ public class TextViewer extends Viewer implements
 			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
 		}
-		
-		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {			
+
+//		TODO: must be reviewed		
+//		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {			
+		if (fHoverControlCreator != null && fTextHoverManager == null) {			
 			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
 			fTextHoverManager.install(this.getTextWidget());
 		}
