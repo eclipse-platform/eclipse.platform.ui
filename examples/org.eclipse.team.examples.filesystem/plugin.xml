@@ -32,10 +32,16 @@
          point="org.eclipse.team.core.repository">
       <repository
             class="org.eclipse.team.examples.filesystem.FileSystemProvider"
+            typeClass="org.eclipse.team.examples.filesystem.FileSystemProviderType"
             id="org.eclipse.team.examples.filesystem.FileSystemProvider">
       </repository>
    </extension>
-   
+
+<!-- ************** Project Sets **************** -->
+	<extension point="org.eclipse.team.core.projectSets">
+		<projectSet id="org.eclipse.team.examples.filesystem.FileSystemProvider" class="org.eclipse.team.examples.filesystem.ui.ProjectSetSerializer"/>
+	</extension>
+	
 <!-- *************** Deployment Provider **************** -->
    <extension
          point="org.eclipse.team.core.deployment">
