@@ -46,6 +46,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
+import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
@@ -115,6 +116,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
 	
+	private VariablesContentProviderManager fVariablesContentProviderManager;
+	
 	/**
 	 * Collection of launch configuration variables
 	 */
@@ -154,6 +157,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
+	
+	public VariablesContentProviderManager getVariablesContentProviderManager() {
+		if (fVariablesContentProviderManager == null) {
+			fVariablesContentProviderManager = new VariablesContentProviderManager();
+		}
+		return fVariablesContentProviderManager;
+	}
+	
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */

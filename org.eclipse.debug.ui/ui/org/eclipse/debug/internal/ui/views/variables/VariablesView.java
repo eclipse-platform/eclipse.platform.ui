@@ -51,6 +51,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
@@ -83,14 +84,18 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -483,12 +488,21 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	public Viewer createViewer(Composite parent) {
+		TreeViewer variablesViewer = createTreeViewer(parent);
+		createDetailsViewer();
+		getSashForm().setMaximizedControl(variablesViewer.getControl());
+		return variablesViewer;
+	}
 		
+	/**
+	 * Create and return the main tree viewer that displays variable.
+	 */
+	protected TreeViewer createTreeViewer(Composite parent) {
 		fModelPresentation = new VariablesViewModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
-		fSashForm = new SashForm(parent, SWT.NONE);
+		setSashForm(new SashForm(parent, SWT.NONE));
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String orientString = prefStore.getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION);
 		setDetailPaneOrientation(orientString);
@@ -513,18 +527,45 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		variablesViewer.addSelectionChangedListener(getTreeSelectionChangedListener());
 		getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(variablesViewer);
 		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
+
+		// listen to selection in debug view
+		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		setEventHandler(createEventHandler(variablesViewer));
+
+		return variablesViewer;
+	}
+	
+	/**
+	 * Create the widgetry for the details viewer.
+	 */
+	protected void createDetailsViewer() {
+		ViewForm viewForm = new ViewForm(getSashForm(), SWT.FLAT);
 		
-		// add text viewer
-		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
+		CLabel detailsLabel = new CLabel(viewForm, SWT.NONE);
+		detailsLabel.setText("Details");
+		detailsLabel.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES));
+		viewForm.setTopLeft(detailsLabel);
+								
+		ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
+		ToolBarManager toolBarMgr= new ToolBarManager(toolBar);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
+		toolBar.setLayoutData(gd);
+		viewForm.setTopCenter(toolBar);
+
+		// Create & configure a SourceViewer
+		SourceViewer detailsViewer= new SourceViewer(viewForm, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		setDetailViewer(detailsViewer);
 		detailsViewer.setDocument(getDetailDocument());
 		detailsViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		detailsViewer.setEditable(false);
-		getSashForm().setMaximizedControl(variablesViewer.getControl());
+		Control control = detailsViewer.getControl();
+		gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
+		viewForm.setContent(control);
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
-
 		detailsViewer.getControl().addFocusListener(new FocusAdapter() {
 			/**
 			 * @see FocusListener#focusGained(FocusEvent)
@@ -537,14 +578,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				setFocusViewer((Viewer)getDetailViewer());
 			}
 		});
+		
 		// add a context menu to the detail area
-		createDetailContextMenu(detailsViewer.getTextWidget());
-		
-		// listen to selection in debug view
-		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		setEventHandler(createEventHandler(variablesViewer));
-		
-		return variablesViewer;
+		createDetailContextMenu(detailsViewer.getTextWidget());		
 	}
 	
 	/**
@@ -613,17 +649,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void toggleDetailPaneWordWrap(boolean on) {
 		fDetailViewer.getTextWidget().setWordWrap(on);
-	}
-	
-	/**
-	 * Ask the variables tree for its current selection, and use this to populate
-	 * the detail pane.
-	 */
-	public void populateDetailPane() {
-		if (isDetailPaneVisible()) {
-			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
-			populateDetailPaneFromSelection(selection);		
-		}
 	}
 	
 	/**
@@ -818,6 +843,17 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 	
 	/**
+	 * Ask the variables tree for its current selection, and use this to populate
+	 * the detail pane.
+	 */
+	public void populateDetailPane() {
+		if (isDetailPaneVisible()) {
+			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+			populateDetailPaneFromSelection(selection);		
+		}
+	}
+	
+	/**
 	 * Show the details associated with the first of the selected variables in the 
 	 * detail pane.
 	 */
@@ -974,6 +1010,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	
 	protected SashForm getSashForm() {
 		return fSashForm;
+	}
+	
+	private void setSashForm(SashForm sashForm) {
+		fSashForm = sashForm;
 	}
 	
 	/**
@@ -1168,4 +1208,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailSite#getDetailViewerParent()
+	 */
+	public Composite getDetailViewerParent() {
+		return getSashForm();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailSite#isMainViewerAvailable()
+	 */
+	public boolean isMainViewerAvailable() {
+		return isAvailable();
+	}
+
 }

@@ -33,6 +33,7 @@
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
    <extension-point id="launchConfigurationVariables" name="%LaunchConfigurationVariablesName"/>
+   <extension-point id="variablesContentProviders" name="%VariablesContentProvidersName"/>
 	
 <!-- Extensions -->
    <extension

@@ -40,7 +40,7 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 					children= value.getVariables();
 				}
 			} else if (parent instanceof IVariable) {
-				children = ((IVariable)parent).getValue().getVariables();
+				children = getModelSpecificVariableChildren((IVariable)parent);
 			}
 			if (children != null) {
 				cache(parent, children);

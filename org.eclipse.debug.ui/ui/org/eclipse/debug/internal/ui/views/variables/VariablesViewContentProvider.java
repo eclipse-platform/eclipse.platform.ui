@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.debug.ui.IVariablesContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -30,6 +32,12 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class VariablesViewContentProvider implements ITreeContentProvider {
 	
+	/**
+	 * The variables content provider used if one is not specified for 
+	 * a particular debug model.
+	 */
+	private IVariablesContentProvider fDefaultContentProvider;
+
 	/**
 	 * A table that maps children to their parent element
 	 * such that this content provider can walk back up the
@@ -44,12 +52,23 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	private IDebugExceptionHandler fExceptionHandler = null;
 	
+	/**
+	 * A mapping of debug model ids to 
+	 */
+	private Map fContentProviderMap;
 	
 	/**
 	 * Constructs a new provider
 	 */
 	public VariablesViewContentProvider() {
 		fParentCache = new HashMap(10);
+	}
+
+	/**
+	 * Returns the <code>IVariable</code>s for the given <code>IDebugElement</code>.
+	 */
+	public Object[] getElements(Object parent) {
+		return getChildren(parent);
 	}
 
 	/**
@@ -61,7 +80,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 			if (parent instanceof IStackFrame) {
 				children = ((IStackFrame)parent).getVariables();
 			} else if (parent instanceof IVariable) {
-				children = ((IVariable)parent).getValue().getVariables();
+				children = getModelSpecificVariableChildren((IVariable)parent);
 			}
 			if (children != null) {
 				cache(parent, children);
@@ -76,14 +95,12 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		}
 		return new Object[0];
 	}
-
-	/**
-	 * Returns the <code>IVariable</code>s for the given <code>IDebugElement</code>.
-	 */
-	public Object[] getElements(Object parent) {
-		return getChildren(parent);
+	
+	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
+		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
+		return contentProvider.getVariableChildren(parent);
 	}
-
+	
 	/**
 	 * Caches the given elememts as children of the given
 	 * parent.
@@ -103,7 +120,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	public Object getParent(Object item) {
 		return fParentCache.get(item);
 	}
-
 
 	/**
 	 * Unregisters this content provider from the debug plugin so that
@@ -140,8 +156,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		try {
 			if (element instanceof IVariable) {
-				IValue v = ((IVariable)element).getValue();
-				return v != null && v.hasVariables();
+				return hasModelSpecificVariableChildren((IVariable)element);
 			}
 			if (element instanceof IValue) {
 				return ((IValue)element).hasVariables();
@@ -149,13 +164,18 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 			if (element instanceof IStackFrame) {
 				return ((IStackFrame)element).hasVariables();
 			}
-		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
+		} catch (DebugException de) {
+			DebugUIPlugin.log(de);
 			return false;
 		}
 		return false;
 	}
-
+	
+	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
+		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
+		return contentProvider.hasVariableChildren(parent);
+	}
+	
 	/**
 	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
@@ -200,6 +220,19 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		return false;
 	}
 	
+	/**
+	 * Extract the debug model id from the specified <code>IDebugElement</code>
+	 * and return it.
+	 */
+	private  String getDebugModelId(IDebugElement debugElement) {
+		return debugElement.getModelIdentifier();
+	}
+		
+	protected IVariablesContentProvider getContentProvider(String debugModelId) {
+		VariablesContentProviderManager mgr = DebugUIPlugin.getDefault().getVariablesContentProviderManager();
+		return mgr.getContentProvider(debugModelId);		
+	}
+
 	/**
 	 * Sets an exception handler for this content provider.
 	 * 

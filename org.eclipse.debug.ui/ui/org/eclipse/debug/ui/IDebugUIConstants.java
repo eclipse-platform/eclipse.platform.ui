@@ -761,4 +761,12 @@ public interface IDebugUIConstants {
 	 */
 	public static final String EXTENSION_POINT_CONSOLE_LINE_TRACKERS = "consoleLineTrackers";	 //$NON-NLS-1$		
 		
+	/**
+	 * Variables content providers extension point identifier (value
+	 * <code>"variablesContentProviders"</code>).
+	 *
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_VARIABLES_CONTENT_PROVIDERS = "variablesContentProviders";	 //$NON-NLS-1$		
+		
 }
