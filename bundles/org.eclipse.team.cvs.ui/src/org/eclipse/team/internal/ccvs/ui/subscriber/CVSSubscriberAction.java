@@ -12,12 +12,20 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -31,6 +39,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.team.ui.sync.SyncInfoSet;
@@ -117,7 +126,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		SyncInfoSet syncSet = getFilteredSyncInfoSet(getFilteredSyncInfos());
 		if (syncSet == null || syncSet.isEmpty()) return;
 		try {
-			getRunnableContext().run(true /* fork */, true /* cancelable */, getRunnable(syncSet));
+			getRunnableContext(syncSet).run(true /* fork */, true /* cancelable */, getRunnable(syncSet));
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
@@ -156,10 +165,73 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 
 	protected abstract void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException;
 
-	protected IRunnableContext getRunnableContext() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	protected IRunnableContext getRunnableContext(final SyncInfoSet syncSet) {
+		if (canRunAsJob() && areJobsEnabled()) {
+			return new IRunnableContext() {
+				public void run(boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+					Job job = new Job(getJobName(syncSet)) {
+						public IStatus run(IProgressMonitor monitor) {
+							try {
+								runnable.run(monitor);
+							} catch (InvocationTargetException e) {
+								return CVSException.wrapException(e).getStatus();
+							} catch (InterruptedException e) {
+								return Status.OK_STATUS;
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setRule(getSchedulingRule(syncSet));
+					job.schedule();
+
+				}
+			};
+		} else {
+			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		}
 	}
 	
+	protected boolean areJobsEnabled() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS);
+	}
+	
+	/**
+	 * Return the job name to be used if the action can run as a job.
+	 * 
+	 * @param syncSet
+	 * @return
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("CVSSubscriberAction.jobName", new Integer(syncSet.size()).toString());
+	}
+
+	/**
+	 * Return a scheduling rule that includes all resources that will be operated 
+	 * on by the subscriber action. The default behavior is to include all projects
+	 * effected by the operation. Subclasses may override.
+	 * 
+	 * @param syncSet
+	 * @return
+	 */
+	protected ISchedulingRule getSchedulingRule(SyncInfoSet syncSet) {
+		IResource[] resources = syncSet.getResources();
+		Set set = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			set.add(resource.getProject());
+		}
+		IProject[] projects = (IProject[]) set.toArray(new IProject[set.size()]);
+		if (projects.length == 1) {
+			return projects[0];
+		} else {
+			return new MultiRule(projects);
+		}
+	}
+
+	protected boolean canRunAsJob() {
+		return true;
+	}
+
 	/**
 	 * Filter the sync resource set using action specific criteria or input from the user.
 	 */
