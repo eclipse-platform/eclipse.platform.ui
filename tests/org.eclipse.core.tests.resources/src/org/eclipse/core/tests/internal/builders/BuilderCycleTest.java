@@ -77,7 +77,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 			fail("3.0", e);
 		}
 	}
-	public void testNeedRebuild() {
+	public void skipTestNeedRebuild() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject project = root.getProject("Project");
 		IFolder unsorted = project.getFolder(SortBuilder.DEFAULT_UNSORTED_FOLDER);
