@@ -71,7 +71,7 @@ public interface IBreakpoint extends IAdaptable {
 	
 	/**
 	 * Root breakpoint marker type	
-	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
+	 * (value <code>"org.eclipse.debug.core.breakpointMarker"</code>).
 	 */
 	public static final String BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".breakpointMarker"; //$NON-NLS-1$
 	
