@@ -736,19 +736,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		super.createPartControl(parent);
 		
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer(); 
-
+        createFoldingSupport(projectionViewer);
         if (isFoldingEnabled()) {
-        	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-        	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
-    			public IInformationControl createInformationControl(Shell shell) {
-    				return new AntSourceViewerInformationControl(shell);
-    			}
-    		});
-            fProjectionSupport.install();
-			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
-			((ProjectionViewer)getViewer()).addProjectionListener(this);
+        	projectionViewer.doOperation(ProjectionViewer.TOGGLE);
         }
-
 		if (isTabConversionEnabled()) {
 			startTabConversion();		
 		}
@@ -756,6 +747,19 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
 	
+	private void createFoldingSupport(ProjectionViewer projectionViewer) {
+		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+    	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				return new AntSourceViewerInformationControl(shell);
+			}
+		});
+        fProjectionSupport.install();
+		((ProjectionViewer)getViewer()).addProjectionListener(this);
+        
+	}
+
+
 	private boolean isFoldingEnabled() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
@@ -934,6 +938,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		return new ChainedPreferenceStore(new IPreferenceStore[] { antStore, generalTextStore });
 	}
 
+    /**
+     * Returns the viewer associated with this editor
+     * @return The viewer associated with this editor
+     */
     public ISourceViewer getViewer() {
         return getSourceViewer();
     }
@@ -941,7 +949,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     protected FoldingActionGroup getFoldingActionGroup() {
         return fFoldingGroup;
     }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
@@ -951,7 +958,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(getEditorInput()));
 		fFoldingStructureProvider.updateFoldingRegions(getAntModel());
     }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
