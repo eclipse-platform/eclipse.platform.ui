@@ -13,22 +13,20 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.*;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.INavigationHistory;
+import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.NavigationLocation;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
@@ -97,7 +95,10 @@ public void markLocation() {
  */		
 public INavigationLocation[] getLocations() {
 	INavigationLocation result[] = new INavigationLocation[history.size()];
-	history.toArray(result);
+	for (int i= 0; i < result.length; i++) {
+		HistoryEntry e= (HistoryEntry) history.get(i);
+		result[i]= e.location;
+	}
 	return result;
 }
 /*
