@@ -27,6 +27,7 @@ import org.osgi.framework.Bundle;
  * @see IBundleGroupProvider
  * @since 3.0
  */
+//TODO Put a reference to org.ecli[se.ui.branding.IBundleGroupConstants
 public interface IBundleGroup {
 
 	/**

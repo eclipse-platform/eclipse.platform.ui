@@ -28,6 +28,8 @@ package org.eclipse.core.runtime;
  * @see IProductProvider
  * @since 3.0
  */
+
+//TODO Need to put a reference to the org.eclipse.ui.branding.IProductConstants 
 public interface IProduct {
 	/**
 	 * Returns the applicatoin associated with this product.  This information is used 
