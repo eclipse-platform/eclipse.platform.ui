@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 
@@ -109,6 +110,105 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 
 		}
 		return duplicateCategorizedactivities.toArray();
+	}
+
+	/**
+	 * Get the child required activities.
+	 * 
+	 * @param activityId
+	 *            The parent activity id.
+	 * @return the list of child required activities.
+	 */
+	public Object[] getChildRequiredActivities(String activityId) {
+		ArrayList childRequiredActivities = new ArrayList();
+		IActivity activity = manager.getActivity(activityId);
+		Set actvitiyRequirementBindings = activity
+				.getActivityRequirementBindings();
+		String requiredActivityId = null;
+		IActivityRequirementBinding currentActivityRequirementBinding = null;
+		Object[] currentCategoryIds = null;
+		for (Iterator i = actvitiyRequirementBindings.iterator(); i.hasNext();) {
+			currentActivityRequirementBinding = (IActivityRequirementBinding) i
+					.next();
+			requiredActivityId = currentActivityRequirementBinding
+					.getRequiredActivityId();
+			currentCategoryIds = getActivityCategories(requiredActivityId);
+			for (int index = 0; index < currentCategoryIds.length; index++) {
+				childRequiredActivities.add(new CategorizedActivity(manager
+						.getCategory((String) currentCategoryIds[index]),
+						manager.getActivity(requiredActivityId)));
+			}
+
+		}
+
+		return childRequiredActivities.toArray();
+	}
+
+	/**
+	 * Get the parent required activities.
+	 * 
+	 * @param activityId
+	 *            The child activity id.
+	 * @return the list of parent required activities.
+	 */
+	public Object[] getParentRequiredActivities(String activityId) {
+		ArrayList parentRequiredActivities = new ArrayList();
+		Set definedActivities = manager.getDefinedActivityIds();
+		String currentActivityId = null;
+		Set activityRequirementBindings = null;
+		IActivityRequirementBinding currentActivityRequirementBinding = null;
+		Object[] currentCategoryIds = null;
+		for (Iterator i = definedActivities.iterator(); i.hasNext();) {
+			currentActivityId = (String) i.next();
+			activityRequirementBindings = manager
+					.getActivity(currentActivityId)
+					.getActivityRequirementBindings();
+			for (Iterator j = activityRequirementBindings.iterator(); j
+					.hasNext();) {
+				currentActivityRequirementBinding = (IActivityRequirementBinding) j
+						.next();
+				if (currentActivityRequirementBinding.getRequiredActivityId()
+						.equals(activityId)) {
+					// We found one - add it to the list
+					currentCategoryIds = getActivityCategories(currentActivityId);
+					for (int index = 0; index < currentCategoryIds.length; index++) {
+						parentRequiredActivities
+								.add(new CategorizedActivity(
+										manager
+												.getCategory((String) currentCategoryIds[index]),
+										manager.getActivity(currentActivityId)));
+					}
+				}
+			}
+
+		}
+		return parentRequiredActivities.toArray();
+	}
+
+	/**
+	 * Get the activity's categories (there could be more than one).
+	 * 
+	 * @param activityId
+	 *            The activity id.
+	 * @return the activity's categories.
+	 */
+	private Object[] getActivityCategories(String activityId) {
+		ArrayList activityCategories = new ArrayList();
+		Set categoryIds = manager.getDefinedCategoryIds();
+		String currentCategoryId = null;
+		IActivity[] categoryActivities = null;
+		for (Iterator i = categoryIds.iterator(); i.hasNext();) {
+			currentCategoryId = (String) i.next();
+			categoryActivities = getCategoryActivities(manager
+					.getCategory(currentCategoryId));
+			for (int index = 0; index < categoryActivities.length; index++) {
+				if (categoryActivities[index].getId().equals(activityId)) {
+					activityCategories.add(currentCategoryId);
+					break;
+				}
+			}
+		}
+		return activityCategories.toArray();
 	}
 
     /* (non-Javadoc)

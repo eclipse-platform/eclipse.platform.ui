@@ -183,7 +183,56 @@ public class ActivityEnabler {
 
 			dualViewer.setGrayed(proxy.getCategory(), state == SOME);
 			dualViewer.setCheckedElements(checked.toArray());
+			// Check child required activities and uncheck parent required activities
+			// if needed
+			handleRequiredActivities(checked, element);
 		}
+
+		/**
+		 * Handle the activity's required activities (parent and child).
+		 * 
+		 * @param checked
+		 *            The set of checked elements in the viewer.
+		 * @param element
+		 *            The checked element.
+		 *  
+		 */
+		private void handleRequiredActivities(Set checked, Object element) {
+			Object[] requiredActivities = null;
+			// An element has been checked - we want to check its child required
+			// activities
+			if (checked.contains(element)) {
+				requiredActivities = provider
+						.getChildRequiredActivities(((CategorizedActivity) element)
+								.getId());
+				for (int index = 0; index < requiredActivities.length; index++) {
+					// We want to check the element if it is unchecked
+					if (!checked.contains(requiredActivities[index])) {
+						dualViewer.setChecked(requiredActivities[index], true);
+						handleActivityCheck(new HashSet(Arrays
+								.asList(dualViewer.getCheckedElements())),
+								requiredActivities[index]);
+					}
+				}
+			}
+			// An element has been unchecked - we want to uncheck its parent
+			// required activities
+			else {
+				requiredActivities = provider
+						.getParentRequiredActivities(((CategorizedActivity) element)
+								.getId());
+				for (int index = 0; index < requiredActivities.length; index++) {
+					// We want to uncheck the element if it is checked
+					if (checked.contains(requiredActivities[index])) {
+						dualViewer.setChecked(requiredActivities[index], false);
+						handleActivityCheck(new HashSet(Arrays
+								.asList(dualViewer.getCheckedElements())),
+								requiredActivities[index]);
+					}
+				}
+			}
+		}
+
 	};
 
 	protected CheckboxTreeViewer dualViewer;
