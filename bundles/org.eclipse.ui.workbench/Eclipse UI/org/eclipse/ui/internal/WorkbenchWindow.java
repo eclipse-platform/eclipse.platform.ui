@@ -256,7 +256,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	// if the command line option -showlocation is specified
 	String[] args = Platform.getCommandLineArgs();
 	for (int i = 0; i < args.length; i++) {
-		if ("-showlocation".equals(args[i])) { //$NON-NLS-1$
+		if ("-showlocation".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
 			workspaceLocation = Platform.getLocation().toOSString();
 			break;
 		}
