@@ -11,30 +11,82 @@ Contributors:
 
 package org.eclipse.ui.views.navigator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ViewsPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.TreeFrame;
@@ -54,6 +106,7 @@ public class ResourceNavigator
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
 	private ResourceWorkingSetFilter workingSetFilter =
 		new ResourceWorkingSetFilter();
+	private boolean linkingEnabled;
 
 	/** 
 	 * Settings constant for section name (value <code>ResourceNavigator</code>).
@@ -122,7 +175,7 @@ public class ResourceNavigator
 			}
 		}
 	};
-
+	
 	/**
 	 * Constructs a new resource navigator view.
 	 */
@@ -134,6 +187,8 @@ public class ResourceNavigator
 			settings = viewsSettings.addNewSection(STORE_SECTION);
 			migrateDialogSettings();
 		}
+		
+		initLinkingEnabled();
 	}
 	/**
 	 * Converts the given selection into a form usable by the viewer,
@@ -168,8 +223,10 @@ public class ResourceNavigator
 		TreeViewer viewer = createViewer(parent);
 		this.viewer = viewer;
 
-		if (memento != null)
+		if (memento != null) {
 			restoreFilters();
+			restoreLinkingEnabled();
+		}
 		frameList = createFrameList();
 		initDragAndDrop();
 		updateTitle();
@@ -287,6 +344,18 @@ public class ResourceNavigator
 	}
 
 	/**
+	 * Initializes the linking enabled setting from the preference store.
+	 */
+	private void initLinkingEnabled() {
+		// Use the UI plugin's preference store since this is a public preference.
+		AbstractUIPlugin uiPlugin =
+			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		linkingEnabled =
+			uiPlugin.getPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
+	}
+	
+	/**
 	 * Adds the listeners to the viewer.
 	 * 
 	 * @param viewer the viewer
@@ -338,11 +407,13 @@ public class ResourceNavigator
 	 * An editor has been activated.  Sets the selection in this navigator
 	 * to be the editor's input, if linking is enabled.
 	 * 
+	 * @param editor the active editor
 	 * @since 2.0
 	 */
 	protected void editorActivated(IEditorPart editor) {
-		if (!isLinkingEnabled())
+		if (!isLinkingEnabled()) {
 			return;
+		}
 
 		IEditorInput input = editor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
@@ -353,7 +424,6 @@ public class ResourceNavigator
 				getTreeViewer().setSelection(newSelection);
 			}
 		}
-
 	}
 
 	/**
@@ -674,13 +744,14 @@ public class ResourceNavigator
 	}
 
 	/**
-	 * Returns whether the preference to link navigator selection to active
-	 * editor is enabled.  This option is no longer supported, so answer false.
-	 * 
-	 * @since 2.0
+	 * Returns whether the navigator selection automatically tracks the active
+	 * editor.
+	 *
+	 * @return <code>true</code> if linking is enabled, <code>false</code> if not  
+	 * @since 2.0 (this was protected in 2.0, but was made public in 2.1)
 	 */
-	protected boolean isLinkingEnabled() {
-		return false;
+	public boolean isLinkingEnabled() {
+		return linkingEnabled;
 	}
 
 	/**
@@ -820,6 +891,16 @@ public class ResourceNavigator
 			}
 		}
 	}
+	
+	/**
+	 * Restores the linking enabled state.
+	 */
+	private void restoreLinkingEnabled() {
+		Integer val = memento.getInteger(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
+		if (val != null) {
+			linkingEnabled = val.intValue() != 0;
+		}
+	}
 
 	/**	
 	 * @see ViewPart#saveState
@@ -877,6 +958,17 @@ public class ResourceNavigator
 				}
 			}
 		}
+		
+		saveLinkingEnabled(memento);
+	}
+	
+	/**
+	 * Saves the linking enabled state.
+	 */
+	private void saveLinkingEnabled(IMemento memento) {
+		memento.putInteger(
+			IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
+			linkingEnabled ? 1 : 0);
 	}
 
 	/**
@@ -937,6 +1029,19 @@ public class ResourceNavigator
 		// do nothing
 	}
 
+	/**
+	 * @see IResourceNavigator#setLinkingEnabled(boolean)
+	 */
+	public void setLinkingEnabled(boolean enabled) {
+		this.linkingEnabled = enabled;
+		if (enabled) {
+			IEditorPart editor = getSite().getPage().getActiveEditor();
+			if (editor != null) {
+				editorActivated(editor);
+			}
+		}
+	}
+	
 	/**
 	 * Sets the resource sorter.
 	 * 
