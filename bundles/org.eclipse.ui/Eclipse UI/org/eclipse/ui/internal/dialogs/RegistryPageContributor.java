@@ -7,7 +7,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
@@ -30,6 +30,16 @@ public class RegistryPageContributor implements IPropertyPageContributor {
 	private boolean isResourceContributor = false;
 	private IConfigurationElement pageElement;
 	private HashMap filterProperties;
+	
+	private static String [] resourceClassNames =
+		{
+			IResource.class.getName(),
+			IContainer.class.getName(),
+			IFolder.class.getName(),
+			IProject.class.getName(),
+			IFile.class.getName()
+		};
+			
 /**
  * PropertyPageContributor constructor.
  */
@@ -143,50 +153,21 @@ private boolean testCustom(Object object, IActionFilter filter) {
 
 /**
  * Check if the object class name is for a class that
- * conforms to IResource. If so mark the receiver as 
+ * inherits from IResource. If so mark the receiver as 
  * a resource contributor
  */
 
 private void checkIsResourcePage(String objectClassName){
-	try{
-		
-		Class clazz =  Class.forName(objectClassName);
-		if(checkInterfaces(clazz))
-			return;
-	}
-	catch (ClassNotFoundException exception){
-		//Nothing to do if it can't be found
-		return;
-	}
-}
-
-/**
- * Check the interfaces for the required class to see if
- * any of them are IResource. Return true if a match is found.
- */
-
-private boolean checkInterfaces(Class clazz){
 	
-	//Handle the case where the class is passed in
-	if(clazz.equals(IResource.class)){
-		isResourceContributor = true;
-		return true;
-	}
-		
-	Class[] interfaces = clazz.getInterfaces();
-	for(int i = 0; i < interfaces.length;i ++){
-		if(interfaces[i].equals(IResource.class)){
+	for(int i = 0; i < resourceClassNames.length; i++){
+		if(resourceClassNames[i].equals(objectClassName)){
 			isResourceContributor = true;
-			return true;
-		}
-		else{//Keep going up
-			return checkInterfaces(interfaces[i]);
+			return;
 		}
 	}
-	
-	return false;	
 }
-	
+
+
 /*
  * @see IObjectContributor#canAdapt()
  */
