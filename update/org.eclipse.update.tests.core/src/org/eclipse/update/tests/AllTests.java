@@ -23,7 +23,7 @@ import org.eclipse.update.tests.reconciliation.AllReconciliationTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
 import org.eclipse.update.tests.regularRemove.AllRegularRemoveTests;
 import org.eclipse.update.tests.sitevalidation.AllSiteValidationTests;
-import org.eclipse.update.tests.standalone.*;
+//import org.eclipse.update.tests.standalone.*;
 import org.eclipse.update.tests.types.AllTypesTests;
 import org.eclipse.update.tests.uivalues.AllCoreUITests;
 

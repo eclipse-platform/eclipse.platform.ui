@@ -11,7 +11,6 @@
 package org.eclipse.update.tests;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateCore;
 
 /**
