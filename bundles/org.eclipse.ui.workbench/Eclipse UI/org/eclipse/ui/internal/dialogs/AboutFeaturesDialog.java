@@ -13,12 +13,6 @@ Contributors:
 
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
- * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
- * font should be activated and used by other components.
- */
-
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
