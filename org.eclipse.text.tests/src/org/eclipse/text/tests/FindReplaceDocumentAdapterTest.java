@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		"		public void method2() {\n" + //$NON-NLS-1$
 		"		}\n" + //$NON-NLS-1$
 		"	}\n" + //$NON-NLS-1$S
-		"// Gelöst"; //$NON-NLS-1$S
+		"// Gelï¿½st"; //$NON-NLS-1$S
 	
 		fDocument.set(text);
 	}
@@ -151,15 +151,15 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			IRegion result= new Region(153, 6);
 			
 			// Find case-sensitive
-			IRegion r= findReplaceDocumentAdapter.find(0, "Gelöst", true, true, false, false); //$NON-NLS-1$
+			IRegion r= findReplaceDocumentAdapter.find(0, "Gelï¿½st", true, true, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
-			r= findReplaceDocumentAdapter.find(0, "Gelöst", true, true, false, false); //$NON-NLS-1$
+			r= findReplaceDocumentAdapter.find(0, "Gelï¿½st", true, true, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
 			
 			// Find non-case-sensitive
-			r= findReplaceDocumentAdapter.find(0, "GelÖst", true, false, false, false); //$NON-NLS-1$
+			r= findReplaceDocumentAdapter.find(0, "Gelï¿½st", true, false, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
-			r= findReplaceDocumentAdapter.find(0, "GelÖst", true, false, false, false); //$NON-NLS-1$
+			r= findReplaceDocumentAdapter.find(0, "Gelï¿½st", true, false, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
 			
 		} catch (BadLocationException e) {
@@ -203,7 +203,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 				"		private void method2() {\n" + //$NON-NLS-1$
 				"		}\n" + //$NON-NLS-1$
 				"	}\n" + //$NON-NLS-1$
-				"// Gelöst"; //$NON-NLS-1$S
+				"// Gelï¿½st"; //$NON-NLS-1$S
 			assertEquals(text, fDocument.get());
 			
 		} catch (BadLocationException e) {
