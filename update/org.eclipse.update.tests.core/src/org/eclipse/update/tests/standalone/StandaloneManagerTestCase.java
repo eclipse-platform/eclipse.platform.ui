@@ -27,6 +27,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	public static StringBuffer errOutput;
 	public static Integer exitValue= new Integer(-1);
 	public static URL TARGET_FILE_SITE;
+	private boolean oldCache = false;
 	
 	static {
 		File targetDir = new File(System.getProperty("java.io.tmpdir"));
@@ -43,8 +44,25 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	
 	public StandaloneManagerTestCase (String arg0){
 		super(arg0);
+	}
+	
+	/**
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
+	 */
+	protected void umSetUp() {
 		// setup cache site to true
+		oldCache = InternalSiteManager.globalUseCache;
 		InternalSiteManager.globalUseCache = true;
+	}
+	
+	/**
+	 * Tears down the fixture, for example, close a network connection.
+	 * This method is called after a test is executed.
+	 */
+	protected void umTearDown() {
+		// do nothing.
+		InternalSiteManager.globalUseCache = oldCache;
 	}
 	
 	public void checkConfiguredSites(){

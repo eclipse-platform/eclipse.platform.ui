@@ -29,7 +29,8 @@ public class TestFeatureDisable extends StandaloneManagerTestCase {
 	}
 
 	public void umSetUp() {
-
+		super.umSetUp();
+		
 		String featureId = "my.alphabet";
 		String version = "1.0.0";
 

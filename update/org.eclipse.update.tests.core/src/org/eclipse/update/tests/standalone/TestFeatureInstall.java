@@ -11,7 +11,7 @@
 
 package org.eclipse.update.tests.standalone;
 
-import java.net.*;
+
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -28,6 +28,7 @@ public class TestFeatureInstall extends StandaloneManagerTestCase {
 	}
 
 	public void umSetUp() {
+		super.umSetUp();
 		//System.out.println("looking at configured sites available....");
 		//checkConfiguredSites();
 		
