@@ -123,14 +123,14 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 			coolBar.setLocked(false);
 			coolBar.addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event event) {
-					coolBar.getParent().getParent().layout(true);
+					coolBar.getShell().layout(true);
 					
 					//TODO: Temporary code for resize issues
 					FormData data = (FormData) coolBar.getParent().getLayoutData();
 					if(data == null)
 						return;
 					FormAttachment attach = data.left;
-					int width = coolBar.getParent().getClientArea().width;
+					int width = coolBar.getShell().getClientArea().width;
 					if (attach != null && attach.control != null) {
 						Rectangle rect = attach.control.getBounds();
 						width -= rect.x + rect.width;
