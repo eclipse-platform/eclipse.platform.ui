@@ -250,36 +250,22 @@ final class Persistence {
                 sourceId);
     }
 
-    /**
-     * Reads all of the active key configuration definitions from the registry.
-     * This looks in two places for active key configurations: the commands
-     * extension point, and the plug-in customization file.
-     * 
-     * @param memento
-     *            The commands extension point memento; should not be
-     *            <code>null</code>.
-     * @param name
-     *            The name of the active key configuration element; should not
-     *            be <code>null</code>.
-     * @param sourceIdOverride
-     *            ???
-     * @return The list of all active key configurations. The preferred key
-     *         configuration is at the end of the list. This value may be empty,
-     *         but it is never <code>null</code>.
-     */
-    static final List readActiveKeyConfigurationDefinitions(
-            final IMemento memento, final String name,
-            final String sourceIdOverride) {
-        final List list = new ArrayList();
+    static List readActiveKeyConfigurationDefinitions(IMemento memento,
+            String name, String sourceIdOverride) {
+        if (memento == null || name == null)
+            throw new NullPointerException();
 
-        // Read each of the active key configuration definitions.
-        final IMemento[] mementos = memento.getChildren(name);
-        if (mementos != null) {
-            for (int i = 0; i < mementos.length; i++)
-                list.add(readActiveKeyConfigurationDefinition(mementos[i],
-                        sourceIdOverride));
-        }
+        IMemento[] mementos = memento.getChildren(name);
 
+        if (mementos == null)
+            throw new NullPointerException();
+
+        List list = new ArrayList(mementos.length);
+
+        for (int i = 0; i < mementos.length; i++)
+            list.add(readActiveKeyConfigurationDefinition(mementos[i],
+                    sourceIdOverride));
+        
         // Add the standalone preference key.
         final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = readActiveKeyConfigurationDefinition();
         if (activeKeyConfigurationDefinition != null) {
