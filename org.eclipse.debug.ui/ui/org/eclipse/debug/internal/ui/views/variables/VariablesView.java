@@ -793,6 +793,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			fTreeSelectionChangedListener = new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (event.getSelectionProvider().equals(getVariablesViewer())) {
+						clearStatusLine();
 						getVariablesViewSelectionProvider().fireSelectionChanged(event);				
 						// if the detail pane is not visible, don't waste time retrieving details
 						if (getSashForm().getMaximizedControl() == getViewer().getControl()) {

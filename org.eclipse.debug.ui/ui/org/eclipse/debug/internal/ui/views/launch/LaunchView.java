@@ -441,6 +441,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
+		clearStatusLine();
 		updateObjects();
 		showEditorForCurrentSelection();
 	}

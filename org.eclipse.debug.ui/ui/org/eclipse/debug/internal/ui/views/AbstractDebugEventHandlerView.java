@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views;
 
  
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.jface.action.IStatusLineManager;
 
 /**
  * A debug view that uses an event handler to update its
@@ -66,6 +67,12 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	protected void becomesVisible() {
 		super.becomesVisible();
 		getEventHandler().viewBecomesVisible();
+	}
+	
+	protected void clearStatusLine() {
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager(); 
+		manager.setErrorMessage(null);
+		manager.setMessage(null);
 	}
 
 }
