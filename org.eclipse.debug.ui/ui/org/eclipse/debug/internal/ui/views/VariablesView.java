@@ -6,10 +6,8 @@ package org.eclipse.debug.internal.ui.views;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,15 +16,14 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
-import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.ShowDetailPaneAction;
+import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -50,6 +47,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -67,7 +65,6 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -301,7 +298,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
-				setAction(COPY, getAction(VARIABLES_COPY_ACTION));
+				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -326,7 +323,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(getDetailViewer().getSelectionProvider());
 				setAction(SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
-				setAction(COPY, getAction(DETAIL_COPY_ACTION));
+				setAction(COPY_ACTION, getAction(DETAIL_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -823,4 +820,28 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			setViewerInput((IStructuredSelection) selection);
 		}
 	}
+	
+	/**
+	 * Delegate to the <code>DOUBLE_CLICK_ACTION</code>,
+	 * if any.
+	 *  
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		IAction action = getAction(DOUBLE_CLICK_ACTION);
+		if (action != null && action.isEnabled()) {
+			action.run();
+		} else {
+			ISelection selection= event.getSelection();
+			if (!(selection instanceof IStructuredSelection)) {
+				return;
+			}
+			IStructuredSelection ss= (IStructuredSelection)selection;
+			Object o= ss.getFirstElement();
+			
+			TreeViewer tViewer= (TreeViewer)getViewer();
+			boolean expanded= tViewer.getExpandedState(o);
+			tViewer.setExpandedState(o, !expanded);
+		}
+	}	
 }
