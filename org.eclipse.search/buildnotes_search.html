@@ -21,9 +21,16 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 ========== Eclipse Build Input August 19th 2003 ==========<br>
 <!-- Add what's new below and end each line with br tag -->
-- Enclosing Project scope can be requested via XML if it is implemented in the
-  search page (sse attribute "canSearchEnclosingProjects").<br>
+<pre>
+- Added a new attribute "canSearchEnclosingProjects" to the extension point
+  "org.eclipse.search.searchPages". If the attribute is set to true, the search
+  dialog scope area will have a new radio button labeled "Enclosing Projects".
+  Search page contributors whishing to support search in projects enclosing the
+  current selection have to set this attribute to true and handle the new search
+  scope constant org.eclipse.search.ui.ISearchPageContainer.SELECTED_PROJECTS_SCOPE.
+  The file search page supports search in enclosing projects.
 - Improved project scope
+</pre>
 <br>
 <br>
 ========== Eclipse Build Input August 12th 2003 ==========<br>
