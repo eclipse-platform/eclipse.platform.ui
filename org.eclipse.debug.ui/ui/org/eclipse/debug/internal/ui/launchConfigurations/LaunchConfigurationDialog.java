@@ -95,6 +95,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private ILaunchConfiguration fFirstConfig;
 	
 	/**
+	 * Whether to perform single-click lanuching when
+	 * opened (if the pref is on).
+	 */
+	private boolean fTrySingleClick = true;
+	
+	/**
 	 * The starting mode, as specified by the caller
 	 */
 	private String fMode;
@@ -355,7 +361,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public int open() {		
 		try {
-			if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
+			if (isAttemptSingleClickLaunch()) {
 				// single click
 				fFirstConfig = determineConfigFromContext();
 				if (fFirstConfig != null) {
@@ -2218,6 +2224,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return fInitializingTabs;
 	}	
 
+	/**
+	 * Returns whether the dialog should attempt single
+	 * click launching when opened.
+	 */
+	protected boolean isAttemptSingleClickLaunch() {
+		return fTrySingleClick && getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING);
+	}
+	
+	/**
+	 * Enables/disabled single click launching when opened.
+	 */
+	public void setSingleClickLaunch(boolean enabled) {
+		fTrySingleClick = enabled;
+	}
 }
 
 

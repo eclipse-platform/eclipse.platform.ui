@@ -83,6 +83,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 				ss = new StructuredSelection();
 			}
 			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, getMode());
+			dialog.setSingleClickLaunch(false);
 			dialog.open();
 		}		
 	}
