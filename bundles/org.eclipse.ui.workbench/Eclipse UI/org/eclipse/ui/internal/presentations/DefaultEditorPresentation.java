@@ -52,6 +52,7 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
                 int tabLocation = preferenceStore
                         .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
                 getTabFolder().setTabPosition(tabLocation);
+                layout(false);
             } else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {

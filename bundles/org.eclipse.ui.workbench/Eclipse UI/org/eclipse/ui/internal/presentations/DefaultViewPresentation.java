@@ -42,6 +42,7 @@ public class DefaultViewPresentation extends DefaultPartPresentation {
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 				getTabFolder().setTabPosition(tabLocation);
+				layout(false);
 			} else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				boolean traditionalTab = apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
 				setTabStyle(traditionalTab);
