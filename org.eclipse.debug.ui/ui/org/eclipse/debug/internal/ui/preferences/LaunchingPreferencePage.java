@@ -41,7 +41,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 
 		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
-		setDescription("General Settings for Launching");
+		setDescription(DebugPreferencesMessages.getString("LaunchingPreferencePage.20")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -127,6 +127,5 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
 	}
 }
