@@ -8,7 +8,7 @@
    class="org.eclipse.update.internal.ui.UpdateUI">
 
    <runtime>
-      <library name="updateui.jar">
+      <library name=".">
          <export name="*"/>
       </library>
    </runtime>

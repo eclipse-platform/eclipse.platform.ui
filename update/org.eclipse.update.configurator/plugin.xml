@@ -8,7 +8,7 @@
    class="org.eclipse.update.internal.configurator.ConfigurationActivator">
 
    <runtime>
-      <library name="configurator.jar">
+      <library name=".">
          <export name="*"/>
       </library>
    </runtime>

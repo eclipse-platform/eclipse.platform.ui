@@ -8,7 +8,7 @@
    class="org.eclipse.update.internal.scheduler.UpdateScheduler">
 
    <runtime>
-      <library name="scheduler.jar">
+      <library name=".">
          <export name="*"/>
       </library>
    </runtime>
