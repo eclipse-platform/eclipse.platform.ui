@@ -4,6 +4,7 @@
  */
 package org.eclipse.search.internal.ui.util;
 
+import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.runtime.IPath;
@@ -24,9 +25,10 @@ public class FileLabelProvider extends LabelProvider {
 	public static final int SHOW_PATH_LABEL= 3;
 	public static final int SHOW_PATH= 4;
 	
-	private static final String fgSeparatorString= " - ";
+	private static final String fgSeparatorFormat= SearchMessages.getString("FileLabelProvider.dashSeparated");
 	
 	private int fOrder;
+	private String[] fArgs= new String[2];
 
 	private WorkbenchLabelProvider fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 	
@@ -51,21 +53,27 @@ public class FileLabelProvider extends LabelProvider {
 		if (path.getDevice() == null)
 			path= path.makeRelative();
 		if (fOrder == SHOW_LABEL || fOrder == SHOW_LABEL_PATH) {
-			buf= new StringBuffer(fWorkbenchLabelProvider.getText(resource));
+			String resourceString= fWorkbenchLabelProvider.getText(resource);
 			if (path != null && fOrder == SHOW_LABEL_PATH) {
-				buf.append(fgSeparatorString);
-				buf.append(path.toString());
+				fArgs[0]= resourceString;
+				fArgs[1]= path.toString();
+				return MessageFormat.format(fgSeparatorFormat, fArgs);
 			}
+			else
+				return resourceString;
 		} else {
-			buf= new StringBuffer();
+			String pathString;
 			if (path != null)
-				buf.append(path.toString());
+				pathString= path.toString();
+			else
+				pathString= "";
 			if (fOrder == SHOW_PATH_LABEL) {
-				buf.append(fgSeparatorString);
-				buf.append(fWorkbenchLabelProvider.getText(resource));
-			}
+				fArgs[0]= pathString;
+				fArgs[1]= fWorkbenchLabelProvider.getText(resource);
+				return MessageFormat.format(fgSeparatorFormat, fArgs);
+			} else
+			 return pathString;
 		}
-		return buf.toString();
 	}
 
 	public Image getImage(Object element) {
