@@ -11,6 +11,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+
 import java.util.*;
 
 /**
@@ -21,7 +22,10 @@ public class ObjectActionContributor extends PluginActionBuilder
 {
 	private IConfigurationElement config;
 	private boolean configRead=false;
+	private boolean adaptable = false;
 	static final String ATT_NAME_FILTER="nameFilter";//$NON-NLS-1$
+	static final String ATT_ADAPTABLE="adaptable";//$NON-NLS-1$
+	static final String P_TRUE="true";//$NON-NLS-1$
 	private ObjectFilterTest filterTest;
 	private ActionExpression visibilityTest;
 /**
@@ -148,9 +152,14 @@ protected boolean readElement(IConfigurationElement element) {
 			filterTest = new ObjectFilterTest();
 		filterTest.addFilterElement(element);
 		return true;
-	} else {
-		return super.readElement(element);
+	} 
+	
+	if(tag.equals(ATT_ADAPTABLE)){
+		adaptable = P_TRUE.equals(element.getValue());
+		return true;
 	}
+	
+	return super.readElement(element);
 }
 /**
  * Returns whether the current selection matches the contribution name filter.
@@ -168,4 +177,12 @@ private boolean testName(Object object) {
 	}
 	return SelectionEnabler.verifyNameMatch(objectName, nameFilter);
 }
+	
+/*
+ * @see IObjectContributor#canAdapt()
+ */
+public boolean canAdapt() {
+	return adaptable;
+}
+
 }

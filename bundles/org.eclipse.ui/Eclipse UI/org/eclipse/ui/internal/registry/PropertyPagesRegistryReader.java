@@ -26,6 +26,9 @@ public class PropertyPagesRegistryReader extends RegistryReader {
 	private static final String ATT_ID = "id";//$NON-NLS-1$
 	private static final String ATT_ICON = "icon";//$NON-NLS-1$
 	private static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
+	private static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
+	
+	private static final String P_TRUE = "true";//$NON-NLS-1$
 	
 	private HashMap filterProperties; 
 	private PropertyPageContributorManager manager;
@@ -83,6 +86,7 @@ private void processPageElement(IConfigurationElement element) {
 	String iconName = element.getAttribute(ATT_ICON);
 	String pageClassName = element.getAttribute(ATT_CLASS);
 	String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
+	String adaptable = element.getAttribute(ATT_ADAPTABLE);
 
 	if (pageId==null) {
 		logMissingAttribute(element, ATT_ID);
@@ -103,7 +107,15 @@ private void processPageElement(IConfigurationElement element) {
 		processChildElement(children[i]);
 	}
 
-	IPropertyPageContributor contributor = new RegistryPageContributor(pageId, pageName, iconName, filterProperties, element);
+	IPropertyPageContributor contributor = 
+		new RegistryPageContributor(
+			pageId, 
+			pageName, 
+			iconName, 
+			filterProperties, 
+			objectClassName, 
+			P_TRUE.equals(adaptable),
+			element);
 	registerContributor(objectClassName, contributor);
 }
 /**

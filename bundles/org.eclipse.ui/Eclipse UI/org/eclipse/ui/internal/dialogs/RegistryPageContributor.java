@@ -4,17 +4,17 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.jface.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.*;
+import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This property page contributor is created from page entry
@@ -27,17 +27,22 @@ public class RegistryPageContributor implements IPropertyPageContributor {
 	private String pageName;
 	private String iconName;
 	private String pageId;
+	private boolean isResourceContributor = false;
 	private IConfigurationElement pageElement;
 	private HashMap filterProperties;
 /**
  * PropertyPageContributor constructor.
  */
-public RegistryPageContributor(String pageId, String pageName, String iconName, HashMap filterProperties, IConfigurationElement pageElement) {
+public RegistryPageContributor(String pageId, String pageName, String iconName, HashMap filterProperties, String objectClassName, boolean adaptable, IConfigurationElement pageElement) {
 	this.pageId = pageId;
 	this.pageName = pageName;
 	this.iconName = iconName;
 	this.filterProperties = filterProperties;
 	this.pageElement = pageElement;
+	
+	//Only adapt if explicitly allowed to do so
+	if(adaptable)
+		checkIsResourcePage(objectClassName);
 }
 /**
  * Implements the interface by creating property page specified with
@@ -55,7 +60,11 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
 	IWorkbenchPropertyPage ppage = null;
 	ppage = (IWorkbenchPropertyPage)WorkbenchPlugin.createExtension(
 		pageElement, PropertyPagesRegistryReader.ATT_CLASS);
-	ppage.setElement(element);
+		
+	if(isResourceContributor)
+		ppage.setElement((IAdaptable) element.getAdapter(IResource.class));
+	else
+		ppage.setElement(element);
 	ppage.setTitle(pageName);
 	return ppage;
 }
@@ -131,4 +140,58 @@ private boolean testCustom(Object object, IActionFilter filter) {
 	}
 	return true;
 }
+
+/**
+ * Check if the object class name is for a class that
+ * conforms to IResource. If so mark the receiver as 
+ * a resource contributor
+ */
+
+private void checkIsResourcePage(String objectClassName){
+	try{
+		
+		Class clazz =  Class.forName(objectClassName);
+		if(checkInterfaces(clazz))
+			return;
+	}
+	catch (ClassNotFoundException exception){
+		//Nothing to do if it can't be found
+		return;
+	}
+}
+
+/**
+ * Check the interfaces for the required class to see if
+ * any of them are IResource. Return true if a match is found.
+ */
+
+private boolean checkInterfaces(Class clazz){
+	
+	//Handle the case where the class is passed in
+	if(clazz.equals(IResource.class)){
+		isResourceContributor = true;
+		return true;
+	}
+		
+	Class[] interfaces = clazz.getInterfaces();
+	for(int i = 0; i < interfaces.length;i ++){
+		if(interfaces[i].equals(IResource.class)){
+			isResourceContributor = true;
+			return true;
+		}
+		else{//Keep going up
+			return checkInterfaces(interfaces[i]);
+		}
+	}
+	
+	return false;	
+}
+	
+/*
+ * @see IObjectContributor#canAdapt()
+ */
+public boolean canAdapt() {
+	return isResourceContributor;
+}
+
 }

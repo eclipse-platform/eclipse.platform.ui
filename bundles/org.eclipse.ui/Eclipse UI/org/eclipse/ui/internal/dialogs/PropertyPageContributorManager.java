@@ -4,13 +4,17 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.misc.Sorter;
-import java.text.Collator;
-import java.util.*;
+import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 /**
  * Extends generic object contributor manager by loading property page
@@ -67,12 +71,17 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 	// Lazy initialize
 	if (!contributorsLoaded)
 		loadContributors();
-
-	// Get all the property page contributors registered for the object
-	List result = super.getContributors(object.getClass());
-	if (result == null || result.size() == 0)
+		
+	Object adaptedObject = getAdaptedObject(object);
+	List result;
+	if(adaptedObject == null)
+		result = getContributors(object.getClass());
+	else
+		result = getContributors(object.getClass(),adaptedObject.getClass());
+	
+	if (result == null | result.size() == 0)
 		return false;
-
+	
 	// Sort the results 
 	Object[] sortedResult = sorter.sort(result.toArray());
 
@@ -113,4 +122,20 @@ private void loadContributors() {
 	contributorsLoaded=true;
 	
 }
+
+/**
+ * Get the Resource this object adapts to so long
+ * as it is not already an IResource.
+ * @return IResource or null.
+ * @param IAdaptable the object to adapt.
+ */
+
+private Object getAdaptedObject(IAdaptable object){
+
+	if(object instanceof IResource)
+		return null;
+	else
+		return object.getAdapter(IResource.class);
+}
+		
 }

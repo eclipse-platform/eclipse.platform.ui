@@ -166,38 +166,6 @@ private void loadContributors() {
 	reader.readPopupContributors(this);
 }
 
-/**
- * Returns all the contributors registered against
- * the given object class and the resource class that
- * it has an Adaptable for.
- */
-protected List getContributors(Class objectClass, Class resourceClass) {
-	
-	// If there's a cache look for the object class.
-	if (lookup!=null) {
-		List result = (ArrayList) lookup.get(objectClass);
-		if (result != null)
-		   return result;
-	}
-	
-	// Class not found.  Build the result set for classes and interfaces.
-	List result = addContributorsFor(objectClass);
-	
-	
-	//Get the resource actions. 
-	
-	result.addAll(addContributorsFor(resourceClass));
-	
-	if (result.size()==0) 
-		return null;
-
-	// Store the result set in the cache.
-	if (lookup==null)
-	   lookup = new HashMap();
-	lookup.put(objectClass, result);
-	
-	return result;
-}
 	
 
 /**

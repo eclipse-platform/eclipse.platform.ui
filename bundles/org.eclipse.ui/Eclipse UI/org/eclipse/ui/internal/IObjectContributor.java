@@ -26,4 +26,9 @@ public interface IObjectContributor {
  * for the given object.
  */
 public boolean isApplicableTo(Object object);
+
+/**
+ * Return whether or not the receiver can adapt to IResource.
+ */
+public boolean canAdapt();
 }
