@@ -5,6 +5,9 @@ package org.eclipse.team.core.sync;
  * All Rights Reserved.
  */
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -22,7 +26,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.internal.Assert;
 
-public abstract class RemoteSyncElement implements IRemoteSyncElement {
+public abstract class RemoteSyncElement extends LocalSyncElement implements IRemoteSyncElement {
 	
 	/*
 	 * @see ILocalSyncElement#getName()
@@ -172,7 +176,200 @@ public abstract class RemoteSyncElement implements IRemoteSyncElement {
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
-		return IN_SYNC;
+		int description = IN_SYNC;
+	
+		IResource local = getLocal();
+		boolean localExists = getLocal().exists();
+		IRemoteResource remote = getRemote();
+		IRemoteResource base = getBase();
+		
+		boolean isDirty = isDirty();
+		boolean isOutOfDate = isOutOfDate();
+	
+		boolean threeWay = (base != null ? true : false);
+	
+
+		// XXX projects are always in sync.
+		if(local.getType() == IResource.PROJECT) {
+			return description;
+		}
+
+		if (threeWay) {
+			if (base == null) {
+				if (remote == null) {
+					if (!localExists) {
+						Assert.isTrue(false);
+  					} else {
+						description = OUTGOING | ADDITION;
+					}
+				} else {
+					if (!localExists) {
+						description = INCOMING | ADDITION;
+					} else {
+						description = CONFLICTING | ADDITION;
+						if (compare(granularity, false, local, remote))
+							description |= PSEUDO_CONFLICT;
+					}
+				}
+			} else {
+				if (!localExists) {
+					if (remote == null) {
+						description = CONFLICTING | DELETION | PSEUDO_CONFLICT;
+					} else {
+						if (compare(granularity, isOutOfDate, base, remote))
+							description = OUTGOING | DELETION;
+						else
+							description = CONFLICTING | CHANGE;
+					}
+				} else {
+					if (remote == null) {
+						if (compare(granularity, isDirty, local, base))
+							description = INCOMING | DELETION;
+						else
+							description = CONFLICTING | CHANGE;
+					} else {
+						boolean ay = compare(granularity, isDirty, local, base);
+						boolean am = compare(granularity, isOutOfDate, base, remote);
+						if (ay && am) {
+							;
+						} else if (ay && !am) {
+							description = INCOMING | CHANGE;
+						} else if (!ay && am) {
+							description = OUTGOING | CHANGE;
+						} else {
+							description = CONFLICTING | CHANGE;
+						}
+						if (description != IN_SYNC && compare(granularity, false, local, remote))
+							description |= PSEUDO_CONFLICT;
+					}
+				}
+			}
+		} else { // three-way compare without access to base contents
+			if (remote == null) {
+				if (!localExists) {
+					// this should never happen
+					Assert.isTrue(false);
+				} else {
+					// no remote but a local
+					if (!isDirty && isOutOfDate) {
+						description = INCOMING | DELETION;
+					} else if (isDirty && isOutOfDate) {
+						description = CONFLICTING | CHANGE;
+					} else if (!isDirty && !isOutOfDate) {
+						description = OUTGOING | ADDITION;
+					}
+				}
+			} else {
+				if (!localExists) {
+					// a remote but no local
+					if (!isDirty && !isOutOfDate) {
+						description = INCOMING | ADDITION;
+					} else if (isDirty && !isOutOfDate) {
+						description = OUTGOING | DELETION;
+					} else if (isDirty && isOutOfDate) {
+						description = CONFLICTING | CHANGE;
+					}
+				} else {
+					// have a local and a remote			
+					if (!isDirty && !isOutOfDate) {
+						// ignore, there is no change;
+					} else if (!isDirty && isOutOfDate) {
+						description = INCOMING | CHANGE;
+					} else if (isDirty && !isOutOfDate) {
+						description = OUTGOING | CHANGE;
+					} else {
+						description = CONFLICTING | CHANGE;
+					}
+					// if contents are the same, then mark as pseudo change
+					if (description != IN_SYNC && compare(granularity, false, local, remote))
+						description |= PSEUDO_CONFLICT;
+				}
+			}
+		}
+		return description;
+	}
+	
+	/**
+	 * Helper method for comparisons
+	 */
+	protected boolean compare(int granularity, boolean timestampDiff, InputStream is1, InputStream is2) {
+		if (granularity == GRANULARITY_CONTENTS) {
+			return timestampDiff || contentsEqual(is1, is2);
+		} else {
+			return timestampDiff;
+		}
+	}
+	
+	protected boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
+		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+	}
+	
+	protected boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
+		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
+	}
+	
+	protected InputStream getContents(IResource resource) {
+		try {
+			if (resource instanceof IStorage)
+				return new BufferedInputStream(((IStorage) resource).getContents());
+			return null;
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+	
+	protected InputStream getContents(IRemoteResource remote) {
+		try {
+			return new BufferedInputStream(remote.getContents(null));
+		} catch (TeamException exception) {
+			// The remote node has gone away.
+			return null;	
+		}
+	}
+	
+	/**
+	 * Returns <code>true</code> if both input streams byte contents is identical. 
+	 *
+	 * @param input1 first input to contents compare
+	 * @param input2 second input to contents compare
+	 * @return <code>true</code> if content is equal
+	 */
+	protected boolean contentsEqual(InputStream is1, InputStream is2) {
+		if (is1 == is2)
+			return true;
+
+		if (is1 == null && is2 == null) // no byte contents
+			return true;
+
+		try {
+			if (is1 == null || is2 == null) // only one has contents
+				return false;
+
+			while (true) {
+				int c1 = is1.read();
+				int c2 = is2.read();
+				if (c1 == -1 && c2 == -1)
+					return true;
+				if (c1 != c2)
+					break;
+
+			}
+		} catch (IOException ex) {
+		} finally {
+			if (is1 != null) {
+				try {
+					is1.close();
+				} catch (IOException ex) {
+				}
+			}
+			if (is2 != null) {
+				try {
+					is2.close();
+				} catch (IOException ex) {
+				}
+			}
+		}
+		return false;
 	}
 	
 	/*
@@ -189,4 +386,3 @@ public abstract class RemoteSyncElement implements IRemoteSyncElement {
 		}
 	}
 }
-

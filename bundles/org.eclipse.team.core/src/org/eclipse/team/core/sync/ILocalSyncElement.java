@@ -42,12 +42,12 @@ public interface ILocalSyncElement {
 	/**
 	 * Sync constant (value 3) indicating that one side was changed.
 	 */
-	public static final int CHANGED = 3;
+	public static final int CHANGE = 3;
 
 	/**
 	 * Bit mask for extracting the change type.
 	 */
-	public static final int CHANGE_MASK = CHANGED;
+	public static final int CHANGE_MASK = CHANGE;
 	
 	/*====================================================================
 	 * Constants defining synchronization direction: 
@@ -66,12 +66,12 @@ public interface ILocalSyncElement {
 	/**
 	 * Sync constant (value 12) indicating a change to both the remote and local resources.
 	 */
-	public static final int CONFLICT = 12;
+	public static final int CONFLICTING = 12;
 	
 	/**
 	 * Bit mask for extracting the synchronization direction. 
 	 */
-	public static final int DIRECTION_MASK = CONFLICT;
+	public static final int DIRECTION_MASK = CONFLICTING;
 	
 	/*====================================================================
 	 * Constants defining synchronization conflict types:
