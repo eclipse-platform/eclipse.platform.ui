@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -194,8 +195,9 @@ public void createControl(Composite parent) {
 
 	// Create control.	
 	this.parent = parent;
-	CTabFolder2.borderMiddleRGB = new RGB(121, 142, 194);
+	RGB border =  new RGB(121, 142, 194);
 	tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
+	tabFolder.setBorderColor(new Color(parent.getDisplay(),border));
 	ColorSchemeService.setTabColors(tabFolder);
 	
 	// listener to switch between visible tabItems
