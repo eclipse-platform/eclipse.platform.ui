@@ -83,12 +83,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
-	/**
-	 * Key of the projection annotation model inside the visual annotation model.
-	 */
-	protected final static Object PROJECTION_ANNOTATION_MODEL= new Object();
-		
-	
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The projection annotation model listener */
@@ -140,7 +134,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void addProjectionAnnotationModel(IAnnotationModel model) {
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			extension.addAnnotationModel(PROJECTION_ANNOTATION_MODEL, fProjectionAnnotationModel);
+			extension.addAnnotationModel(ProjectionSupport.PROJECTION, fProjectionAnnotationModel);
 			fProjectionAnnotationModel.addAnnotationModelListener(fProjectionAnnotationModelListener);
 		}
 	}
@@ -154,8 +148,19 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (model instanceof IAnnotationModelExtension) {
 			fProjectionAnnotationModel.removeAnnotationModelListener(fProjectionAnnotationModelListener);
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			extension.removeAnnotationModel(PROJECTION_ANNOTATION_MODEL);
+			extension.removeAnnotationModel(ProjectionSupport.PROJECTION);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#setDocument(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.source.IAnnotationModel, int, int)
+	 */
+	public void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength) {
+		if (fProjectionAnnotationModel != null) {
+			removeProjectionAnnotationModel(getAnnotationModel());
+			fProjectionAnnotationModel= null;
+		}
+		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
 	}
 	
 	/*
@@ -177,7 +182,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		IAnnotationModel model= getVisualAnnotationModel();
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			return (ProjectionAnnotationModel) extension.getAnnotationModel(PROJECTION_ANNOTATION_MODEL);
+			return (ProjectionAnnotationModel) extension.getAnnotationModel(ProjectionSupport.PROJECTION);
 		}
 		return null;
 	}

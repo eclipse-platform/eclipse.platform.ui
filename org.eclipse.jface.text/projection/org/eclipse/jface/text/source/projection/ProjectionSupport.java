@@ -41,7 +41,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class ProjectionSupport {
 	
-	
+	/**
+	 * Key of the projection annotation model inside the visual annotation
+	 * model. Also internally used as key for the projection drawing strategy.
+	 */
+	public final static Object PROJECTION= new Object();
+
 	private static class ProjectionAnnotationsPainter extends AnnotationPainter {
 		public ProjectionAnnotationsPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 			super(sourceViewer, access);
@@ -102,8 +107,6 @@ public class ProjectionSupport {
 			}
 		}
 	}
-	
-	private final static Object PROJECTION= new Object();
 	
 	private class ProjectionListener implements IProjectionListener {
 
@@ -183,9 +186,10 @@ public class ProjectionSupport {
 		fViewer.addPainter(fPainter);
 		
 		if (fColumn == null) {
-			fColumn= new ProjectionRulerColumn(fViewer.getProjectionAnnotationModel(), 9, fAnnotationAccess);
+			fColumn= new ProjectionRulerColumn(9, fAnnotationAccess);
 			fColumn.addAnnotationType(ProjectionAnnotation.TYPE);
 			fColumn.setHover(createProjectionAnnotationHover());
+			fColumn.setModel(fViewer.getVisualAnnotationModel());
 		}
 		fViewer.addVerticalRulerColumn(fColumn);
 	}

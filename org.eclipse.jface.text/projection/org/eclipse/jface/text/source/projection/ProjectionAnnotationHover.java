@@ -81,7 +81,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 			IAnnotationModel visual= viewerExtension.getVisualAnnotationModel();
 			if (visual instanceof IAnnotationModelExtension) {
 				IAnnotationModelExtension modelExtension= (IAnnotationModelExtension) visual;
-				model= modelExtension.getAnnotationModel(ProjectionViewer.PROJECTION_ANNOTATION_MODEL);
+				model= modelExtension.getAnnotationModel(ProjectionSupport.PROJECTION);
 			}
 		}
 		

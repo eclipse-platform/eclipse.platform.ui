@@ -29,6 +29,7 @@ import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
 
 /**
@@ -44,13 +45,24 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	private ProjectionAnnotation fCurrentAnnotation;
 
 	/**
-	 * Creates a new outliner ruler column.
+	 * Creates a new projection ruler column.
 	 * 
 	 * @param model the column's annotation model
 	 * @param width the width in pixels
+	 * @param annotationAccess the annotation access
 	 */
 	public ProjectionRulerColumn(IAnnotationModel model, int width, IAnnotationAccess annotationAccess) {
 		super(model, width, annotationAccess);
+	}
+	
+	/**
+	 * Creates a new projection ruler column.
+	 * 
+	 * @param width the width in pixels
+	 * @param annotationAccess the annotation access
+	 */
+	public ProjectionRulerColumn(int width, IAnnotationAccess annotationAccess) {
+		super(width, annotationAccess);
 	}
 	
 	/*
@@ -172,5 +184,16 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 			}
 		});
 		return control;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
+	 */
+	public void setModel(IAnnotationModel model) {
+		if (model instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+			model= extension.getAnnotationModel(ProjectionSupport.PROJECTION);
+		}
+		super.setModel(model);
 	}
 }
