@@ -67,7 +67,7 @@ public interface ICVSFile extends ICVSResource {
 	void copyTo(String filename) throws CVSException;
 	
 	/**
-	 * Answers the current timestamp for this file.
+	 * Answers the current timestamp for this file with second precision.
 	 */
 	Date getTimeStamp();
 
@@ -90,7 +90,8 @@ public interface ICVSFile extends ICVSResource {
 	boolean isModified() throws CVSException;
 	
 	/**
-	 * Get the log entries of the remote file
+	 * Answers the revision history for this file. This is similar to the
+	 * output of the log command.
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
 }
