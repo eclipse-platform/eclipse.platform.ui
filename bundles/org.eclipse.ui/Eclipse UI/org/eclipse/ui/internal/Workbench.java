@@ -78,6 +78,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private AcceleratorConfiguration acceleratorConfiguration;
 	private Object returnCode;
 	private ListenerList windowListeners = new ListenerList();
+	
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -247,8 +248,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			IWorkbenchWindow window = getActiveWorkbenchWindow();
 			if (window != null) // should never be null
 				shell = window.getShell();
-			// Temp dialog code, will need a custom dialog to directly open the update manager
-			MessageDialog.openInformation(shell, "Updates", "You have updates.\nRun the Update Manager by going to Help>Update Manager.");
+			if (MessageDialog.openQuestion(
+					shell, 
+					WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
+					WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
+				try {
+					SiteManager.handleNewChanges();
+				} catch (CoreException ex) {
+					WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
+				}
+			}
 		}
 	}
 
