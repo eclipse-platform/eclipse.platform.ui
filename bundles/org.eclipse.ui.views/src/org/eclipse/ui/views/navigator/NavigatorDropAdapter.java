@@ -70,6 +70,11 @@ public class NavigatorDropAdapter
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(DropTargetEvent)
 	 */
 	public void dragEnter(DropTargetEvent event) {
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType) &&
+			event.detail == DND.DROP_DEFAULT) {
+			// default to copy when dragging from outside Eclipse. Fixes bug 16308.
+			event.detail = DND.DROP_COPY;
+		}		
 		if (event.getSource() == event.widget) {
 			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
 			List sourceList = selection.toList();
@@ -383,8 +388,14 @@ public class NavigatorDropAdapter
 		Object target,
 		int dragOperation,
 		TransferData transferType) {
+		
 		if (dragOperation != DND.DROP_NONE) {
 			lastValidOperation = dragOperation;
+		}
+		if (FileTransfer.getInstance().isSupportedType(transferType) &&
+			lastValidOperation != DND.DROP_COPY) {
+			// only allow copying when dragging from outside Eclipse
+			return false;
 		}
 		if (super.validateDrop(target, dragOperation, transferType)) {
 			return true;
