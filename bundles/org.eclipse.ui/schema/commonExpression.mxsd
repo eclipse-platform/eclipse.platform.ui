@@ -16,7 +16,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="enablement">
       <annotation>
          <documentation>
-            This element is used to define the enablement for the action.
+            This element is used to define the enablement for the extension.
          </documentation>
       </annotation>
       <complexType>
@@ -35,7 +35,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="visibility">
       <annotation>
          <documentation>
-            This element is used to define the visibility for the action.
+            This element is used to define the visibility for the extension.
          </documentation>
       </annotation>
       <complexType>
