@@ -548,15 +548,15 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testCustomEnumeratedProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("extensionPointTaskSepVM.xml"));
 		int lineNumber= 2;
-    	int columnNumber= 23;
+    	int columnNumber= 24;
     	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
-    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
-    	assertTrue(proposals.length == 3);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "c");
+    	assertTrue(proposals.length == 2);
     	assertContains("cool", proposals);
-    	assertContains("awesome", proposals);
-    	assertContains("hot", proposals);
+    	assertContains("chillin", proposals);
+    	assertDoesNotContain("awesome", proposals);
     }
 }

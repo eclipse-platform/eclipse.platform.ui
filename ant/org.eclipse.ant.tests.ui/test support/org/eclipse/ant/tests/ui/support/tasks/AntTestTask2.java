@@ -39,11 +39,11 @@ public class AntTestTask2 extends Task {
     }
 	
 	/**
-     * Enumerated attribute with the values "cool", "hot" and "awesome".
+     * Enumerated attribute with the values "cool", "chillin" and "awesome".
      */
     public static class Cool extends EnumeratedAttribute {
         public String[] getValues() {
-            return new String[] {"cool", "hot", "awesome"};
+            return new String[] {"cool", "chillin", "awesome"};
         }
     }
 }

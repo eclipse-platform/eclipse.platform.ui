@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -567,17 +566,28 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
-	private List addAttributeValueProposalsForAttributeType(Class attributeType, String prefix, List proposals) {
-		if (prefix.length() > 5) {
-			return Collections.EMPTY_LIST;
-		}
-		
-		if (attributeType == Boolean.TYPE) {
+	private void addAttributeValueProposalsForAttributeType(Class attributeType, String prefix, List proposals) {
+		if (attributeType == Boolean.TYPE && prefix.length() <= 5) {
 			addBooleanAttributeValueProposals(prefix, proposals);
-		} else if (attributeType == EnumeratedAttribute.class) {
-			//TODO bug 56297
+		} else if (EnumeratedAttribute.class.isAssignableFrom(attributeType)) {
+			try {
+				addEnumeratedAttributeValueProposals(attributeType, prefix, proposals);
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
+			}
 		}
-		return Collections.EMPTY_LIST;
+	}
+	
+	private void addEnumeratedAttributeValueProposals(Class type, String prefix, List proposals) throws InstantiationException, IllegalAccessException { 
+		EnumeratedAttribute ea= (EnumeratedAttribute) type.newInstance();
+		String[] values = ea.getValues();
+		String enumerated;
+		for (int i = 0; i < values.length; i++) {
+			enumerated= values[i].toLowerCase();
+			if (enumerated.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(enumerated, cursorPosition - prefix.length(), prefix.length(), enumerated.length(), null, enumerated, null, AntCompletionProposal.TASK_PROPOSAL));
+			}
+		}
 	}
 
 	private void addBooleanAttributeValueProposals(String prefix, List proposals) {

@@ -28,12 +28,15 @@ package org.eclipse.ant.internal.ui.editor.outline;
  *
  */
 
+import java.util.Enumeration;
+import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 
 /**
  * Derived from the original Ant Project class
  * This class allows property values to be written multiple times.
  * This facilitates incremental parsing of the Ant build file
+ * It also attempts to ensure that we clean up after ourselves.
  */
 public class AntModelProject extends Project {
 	
@@ -43,5 +46,17 @@ public class AntModelProject extends Project {
 	public void setNewProperty(String name, String value) {
 		// always allow property values to be over-written
 		super.setProperty(name, value);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.Project#fireBuildFinished(java.lang.Throwable)
+	 */
+	public void fireBuildFinished(Throwable exception) {
+		super.fireBuildFinished(exception);
+		Enumeration e= getBuildListeners().elements();
+		while (e.hasMoreElements()) {
+			BuildListener listener = (BuildListener) e.nextElement();
+			removeBuildListener(listener);
+		}
 	}
 }
