@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.SyncView;
 
 public class GetSyncAction extends TargetSyncAction {
 
@@ -32,16 +33,17 @@ public class GetSyncAction extends TargetSyncAction {
 	 * @see TargetSyncAction#isEnabled(ITeamNode)
 	 */
 	protected boolean isEnabled(ITeamNode node) {
-		// The update action is enabled only for non-conflicting incoming changes
-		return new SyncSet(new StructuredSelection(node)).hasIncomingChanges();
+		// Get action is enabled for any changed nodes.
+		return new SyncSet(new StructuredSelection(node)).getChangedNodes().length > 0;
 	}
 
 	/**
 	 * @see TargetSyncAction#removeNonApplicableNodes(SyncSet, int)
 	 */
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		set.removeConflictingNodes();
-		set.removeOutgoingNodes();
+		if (syncMode == SyncView.SYNC_INCOMING) {
+			set.removeOutgoingNodes();
+		}
 	}
 
 	/**

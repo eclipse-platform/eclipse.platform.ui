@@ -17,6 +17,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.SyncView;
 
 public class PutSyncAction extends TargetSyncAction {
 
@@ -28,16 +29,17 @@ public class PutSyncAction extends TargetSyncAction {
 	 * @see TargetSyncAction#isEnabled(ITeamNode)
 	 */
 	protected boolean isEnabled(ITeamNode node) {
-		// The update action is enabled only for non-conflicting incoming changes
-		return new SyncSet(new StructuredSelection(node)).hasOutgoingChanges();
+		// Put action is enabled for any changed nodes.
+		return new SyncSet(new StructuredSelection(node)).getChangedNodes().length > 0;
 	}
 
 	/**
 	 * @see TargetSyncAction#removeNonApplicableNodes(SyncSet, int)
 	 */
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		set.removeConflictingNodes();
-		set.removeIncomingNodes();
+		if (syncMode == SyncView.SYNC_OUTGOING) {
+			set.removeIncomingNodes();
+		}
 	}
 
 	/**

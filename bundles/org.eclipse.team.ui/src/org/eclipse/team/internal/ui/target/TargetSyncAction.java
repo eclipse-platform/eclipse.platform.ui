@@ -144,10 +144,11 @@ public abstract class TargetSyncAction extends Action {
 						unchanged.add(children[j]);
 					}
 					parent.removeToRoot(container);
-					// No children, it will get removed below.
+					continue;
 				}
-				nodes[i].getParent().removeToRoot(nodes[i]);	
+				// No children, it will get removed below.
 			}
+			nodes[i].getParent().removeToRoot(nodes[i]);	
 		}
 	}
 

@@ -27,22 +27,22 @@ public class TargetCatchupReleaseViewer extends CatchupReleaseViewer {
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		super.fillContextMenu(manager);
-//		manager.add(new Separator());
-//		switch (getSyncMode()) {
-//			case SyncView.SYNC_INCOMING:
-//				getAction.update(SyncView.SYNC_INCOMING);
-//				manager.add(getAction);
-//				break;
-//			case SyncView.SYNC_OUTGOING:
-//				putAction.update(SyncView.SYNC_INCOMING);
-//				manager.add(putAction);
-//				break;
-//			case SyncView.SYNC_BOTH:
-//				getAction.update(SyncView.SYNC_INCOMING);
-//				manager.add(getAction);
-//				putAction.update(SyncView.SYNC_INCOMING);
-//				manager.add(putAction);
-//				break;
-//		}
+		manager.add(new Separator());
+		switch (getSyncMode()) {
+			case SyncView.SYNC_INCOMING:
+				getAction.update(SyncView.SYNC_INCOMING);
+				manager.add(getAction);
+				break;
+			case SyncView.SYNC_OUTGOING:
+				putAction.update(SyncView.SYNC_INCOMING);
+				manager.add(putAction);
+				break;
+			case SyncView.SYNC_BOTH:
+				getAction.update(SyncView.SYNC_INCOMING);
+				manager.add(getAction);
+				putAction.update(SyncView.SYNC_INCOMING);
+				manager.add(putAction);
+				break;
+		}
 	}
 }
