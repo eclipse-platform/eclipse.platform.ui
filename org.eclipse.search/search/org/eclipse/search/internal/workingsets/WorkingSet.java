@@ -150,6 +150,7 @@ public class WorkingSet implements IWorkingSet {
 	 */	
 	static void remove(IWorkingSet workingSet) {
 		fgWorkingSets.remove(workingSet);
+		saveWorkingSets();
 	}
 
 	/**
