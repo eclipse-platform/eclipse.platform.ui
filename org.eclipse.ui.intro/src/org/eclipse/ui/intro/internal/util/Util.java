@@ -61,8 +61,7 @@ public class Util {
         // this translates to giving null to this dialog which is handled by
         // Eclipse by displaying the detyailed message directly.
         if (e instanceof CoreException) {
-            if (parent == null)
-                parent = DialogUtil.getActiveShell();
+            if (parent == null) parent = DialogUtil.getActiveShell();
             DialogUtil.displayCoreErrorDialog(parent, errorId,
                     (CoreException) e);
 
@@ -70,13 +69,10 @@ public class Util {
         }
         // any other exception, use MessageDialog.
         // if errorID is null, use error message.
-        if (errorId == null)
-            errorId = e.getMessage();
-        if (parent == null)
-            parent = DialogUtil.getActiveShell();
+        if (errorId == null) errorId = e.getMessage();
+        if (parent == null) parent = DialogUtil.getActiveShell();
         DialogUtil.displayErrorMessage(parent, errorId, e);
     }
-
 
     /**
      * Utility method that will add a debug listener to the given control. All
@@ -155,7 +151,7 @@ public class Util {
                 //SWT.MouseMove,
                 SWT.MouseEnter, SWT.MouseExit, SWT.MouseHover, SWT.FocusIn,
                 SWT.FocusOut, SWT.KeyDown, SWT.KeyUp, SWT.Traverse, SWT.Show,
-                SWT.Hide};
+                SWT.Hide };
         for (int i = 0; i < allEvents.length; i++) {
             control.addListener(allEvents[i], listener);
         }
@@ -172,8 +168,6 @@ public class Util {
     public static void highlight(Control control, int color) {
         //control.setBackground(control.getDisplay().getSystemColor(color));
     }
-
-
 
     /**
      * Launch an external brwoser on the given url.
@@ -209,10 +203,10 @@ public class Util {
                         Process p = doOpenBrowser(localHref, true);
                         if (p == null) {
                             // no browser already opened. Launch new one.
-                            p = doOpenBrowser(localHref, true);
+                            p = doOpenBrowser(localHref, false);
                             if (p == null)
-                                // failed to launch new browser.
-                                throw new Exception();
+                            // failed to launch new browser.
+                                    throw new Exception();
                         }
                     } catch (Exception e) {
                         openBrowserError(display, e);
@@ -226,27 +220,34 @@ public class Util {
                     // try netscape first.
                     webBrowser = "netscape"; //$NON-NLS-1$
                     String cmd = createCommand(webBrowser, href, remote);
-                    p = Runtime.getRuntime().exec(cmd);
+                    try {
+                        p = Runtime.getRuntime().exec(cmd);
+                    } catch (IOException e) {
+                        // command failed
+                        p = null;
+                    }
                     if (p != null) {
                         int exitCode = p.waitFor();
-                        if (exitCode == 0)
-                            return p;
+                        if (exitCode == 0) return p;
                     }
 
                     // netscape failed. Try mozilla.
                     webBrowser = "mozilla"; //$NON-NLS-1$
                     cmd = createCommand(webBrowser, href, remote);
-                    p = Runtime.getRuntime().exec(cmd);
+                    try {
+                        p = Runtime.getRuntime().exec(cmd);
+                    } catch (IOException e) {
+                        // command failed
+                        p = null;
+                    }
                     if (p != null) {
                         int exitCode = p.waitFor();
-                        if (exitCode == 0)
-                            return p;
+                        if (exitCode == 0) return p;
                     }
 
                     // all failed. return null
                     return null;
                 }
-
 
                 /**
                  * Create a command to launch the given browser, with/without
@@ -271,8 +272,6 @@ public class Util {
         }
     }
 
-
-
     /**
      * Display an error message if opening an external browser failes.
      */
@@ -286,6 +285,5 @@ public class Util {
             }
         });
     }
-
 
 }
