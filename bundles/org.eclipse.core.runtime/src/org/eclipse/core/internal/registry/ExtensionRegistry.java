@@ -630,7 +630,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 				Location parentLocation = null;
 				if (currentLocation != null && (parentLocation = currentLocation.getParentLocation()) != null) {
 					try {
-						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), parentLocation.isReadOnly() ? "none" : null); //$NON-NLS-1$
+						currentFileManager = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), null, true); //$NON-NLS-1$
 						currentFileManager.open(false);
 						cacheFile = currentFileManager.lookup(TableReader.TABLE, false);
 					} catch (IOException e) {
@@ -696,6 +696,12 @@ public class ExtensionRegistry implements IExtensionRegistry {
 			return;
 		if (currentFileManager == null)
 			return;
+		if (currentFileManager.isReadOnly()) {
+			if (currentFileManager != InternalPlatform.getDefault().getRuntimeFileManager())
+				currentFileManager.close();
+			return;
+		}
+			
 		File tableFile = null;
 		File mainFile = null;
 		File extraFile = null;

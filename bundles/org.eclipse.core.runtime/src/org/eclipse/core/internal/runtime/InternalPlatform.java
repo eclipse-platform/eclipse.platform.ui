@@ -762,10 +762,10 @@ public final class InternalPlatform {
 	}
 
 	private void initializeRuntimeFileManager() throws IOException {
-		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
-		controlledDir.mkdirs();
-		runtimeFileManager = new FileManager(controlledDir, InternalPlatform.getDefault().getConfigurationLocation().isReadOnly() ? "none" : null); //$NON-NLS-1$
-		runtimeFileManager.open(true);
+		Location configuration = getConfigurationLocation();
+		File controlledDir = new File(configuration.getURL().getPath() + '/' + Platform.PI_RUNTIME);
+		runtimeFileManager = new FileManager(controlledDir, configuration.isReadOnly() ? "none" : null, configuration.isReadOnly()); //$NON-NLS-1$
+		runtimeFileManager.open(!configuration.isReadOnly());
 	}
 
 	public boolean isFragment(Bundle bundle) {
