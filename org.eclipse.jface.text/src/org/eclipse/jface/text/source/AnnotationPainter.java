@@ -893,11 +893,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Display d= fTextWidget.getDisplay();
 				if (DEBUG && event != null && event.isWorldChange()) {
 					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
-					try {
-						throw new Throwable();
-					} catch (Throwable t) {
-						t.printStackTrace(System.out);
-					}
+					new Throwable().printStackTrace(System.out);
 				}
 				
 				// TODO posting here is a problem for annotations that are being

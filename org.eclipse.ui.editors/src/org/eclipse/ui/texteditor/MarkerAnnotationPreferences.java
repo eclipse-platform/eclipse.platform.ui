@@ -200,14 +200,10 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private static void checkAccess() throws IllegalStateException {
-		try {
-			throw new Throwable();
-		} catch (Throwable t) {
-			StackTraceElement[] elements= t.getStackTrace();
-			if (!(elements[2].getClassName().equals(EditorsUI.class.getName())
-					|| elements[3].getClassName().equals(EditorsUI.class.getName())))
-				throw new IllegalStateException();
-		}
+		StackTraceElement[] elements=  new Throwable().getStackTrace();
+		if (!(elements[2].getClassName().equals(EditorsUI.class.getName())
+				|| elements[3].getClassName().equals(EditorsUI.class.getName())))
+			throw new IllegalStateException();
 	}
 
 
