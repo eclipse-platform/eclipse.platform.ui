@@ -57,7 +57,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -2517,30 +2516,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fInsertModeCaret != null) {
 			if (!fInsertModeCaret.isDisposed()) {
-				// TODO remove parent check 
-				Canvas parent= fInsertModeCaret.getParent();
-				if (parent != null && ! parent.isDisposed())
-					fInsertModeCaret.dispose();
+				Image image= fInsertModeCaret.getImage();
+				if (image != null && !image.isDisposed())
+					image.dispose();				
 			}
 			fInsertModeCaret= null;
 		}
 		
 		if (fOverwriteModeCaret != null) {
 			if (!fOverwriteModeCaret.isDisposed()) {
-				// TODO remove parent check 
-				Canvas parent= fOverwriteModeCaret.getParent();
-				if (parent != null && ! parent.isDisposed())
-					fOverwriteModeCaret.dispose();
+				Image image= fOverwriteModeCaret.getImage();
+				if (image != null && !image.isDisposed())
+					image.dispose();
 			}
 			fOverwriteModeCaret= null;
 		}
 		
 		if (fSmartInsertModeCaret != null) {
 			if (!fSmartInsertModeCaret.isDisposed()) {
-				// TODO remove parent check 
-				Canvas parent= fSmartInsertModeCaret.getParent();
-				if (parent != null && ! parent.isDisposed())
-					fSmartInsertModeCaret.dispose();
+				Image image= fSmartInsertModeCaret.getImage();
+				if (image != null && !image.isDisposed())
+					image.dispose();
 			}
 			fSmartInsertModeCaret= null;
 		}
