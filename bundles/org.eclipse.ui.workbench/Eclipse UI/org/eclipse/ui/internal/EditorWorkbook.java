@@ -1066,6 +1066,13 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         }     
     }
 
+	/**
+	 * 
+	 */
+	public void showSystemMenu() {
+		getPresentation().showSystemMenu();
+	}
+    
     public Control[] getTabList() {
         return new Control[0];
     }

@@ -307,7 +307,13 @@ public void updateTitles() {
  * Show a title label menu for this pane.
  */
 public void showPaneMenu() {
-	// TODO how to show pane menu of presentation? workbook.showPaneMenu();
+	ILayoutContainer container = getContainer();
+	
+	if (container instanceof EditorWorkbook) {
+		EditorWorkbook folder = (EditorWorkbook) container;
+		
+		folder.showSystemMenu();
+	}
 }
 /**
  * Show the context menu for this part.

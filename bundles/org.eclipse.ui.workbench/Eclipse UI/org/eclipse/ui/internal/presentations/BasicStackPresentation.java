@@ -464,10 +464,13 @@ public class BasicStackPresentation extends StackPresentation {
 		// Set up the top-right controls
 		List topRight = new ArrayList(3);
 		
+		Control currentTop = tabFolder;
+		
 		String currentTitle = getCurrentTitle();
 		
 		if (!currentTitle.equals("")) {
-			titleLabel.moveAbove(null);
+			titleLabel.moveAbove(currentTop);
+			currentTop = titleLabel;
 			topRight.add(titleLabel);
 			layout.setNumLeftAligned(1);
 			titleLabel.setText(currentTitle);
@@ -488,7 +491,8 @@ public class BasicStackPresentation extends StackPresentation {
 		IPartMenu partMenu = getPartMenu();
 		
 		if (partMenu != null) {
-			viewToolBar.moveAbove(null);
+			viewToolBar.moveAbove(currentTop);
+			currentTop = viewToolBar;
 			topRight.add(viewToolBar);
 			viewToolBar.setVisible(true);
 		} else {
