@@ -4990,7 +4990,7 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	public void register(IEditorHelper helper) {
-		Assert.isNotNull(helper);
+		Assert.isLegal(helper != null);
 		fEditorHelpers.add(helper);		
 	}
 

@@ -141,6 +141,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	private Point fSize;
+	/**
+	 * Editor helper that communicates that the completion proposal popup may
+	 * have focus while the 'logical focus' is still with the editor. 
+	 * @since 3.1
+	 */
+	private IEditorHelper fFocusHelper;
 	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -477,7 +483,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		if (fViewer instanceof IEditorHelperRegistry) {
 			IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-			registry.deregister(null);
+			registry.deregister(fFocusHelper);
 		}
 
 		if (Helper.okToUse(fProposalShell)) {
@@ -623,7 +629,30 @@ class CompletionProposalPopup implements IContentAssistListener {
 				};
 			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 			if (document != null)
-				document.addDocumentListener(fDocumentListener);		
+				document.addDocumentListener(fDocumentListener);
+			
+			if (fFocusHelper == null) {
+				fFocusHelper= new IEditorHelper() {
+					
+					public boolean isSourceOfEvent(Object event) {
+						return false;
+					}
+					
+					public boolean isValidSubjectRegion(IRegion focus) {
+						return false; // this helper just covers the focus change to the proposal shell, no remote editions
+					}
+					
+					public boolean hasShellFocus() {
+						return true;
+					}
+					
+				};
+			}
+			if (fViewer instanceof IEditorHelperRegistry) {
+				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
+				registry.register(fFocusHelper);
+			}
+
 			
 			/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
 			 * on GTK, setVisible and such may run the event loop
