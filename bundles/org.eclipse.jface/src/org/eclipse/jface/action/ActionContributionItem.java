@@ -59,11 +59,6 @@ public class ActionContributionItem extends ContributionItem {
 	private Widget widget = null;
 
 	/**
-	 * Remembers the parent widget.
-	 */
-	private Widget parentWidget = null;
-	
-	/**
 	 * Listener for action property change notifications.
 	 */
 	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
@@ -158,7 +153,20 @@ public class ActionContributionItem extends ContributionItem {
 		}
 	}
 
+/**
+ * The <code>ActionContributionItem</code> implementation of this 
+ * <code>ContributionItem</code> method extends the super implementation
+ * by also checking whether the command corresponding to this action is active.
+ */
 public boolean isVisible() {
+	return super.isVisible() && isCommandActive();
+}
+
+/**
+ * Returns whether the command corresponding to this action
+ * is active.
+ */
+private boolean isCommandActive() {
 	IAction action = getAction();
 	
 	if (action != null) {
@@ -168,8 +176,7 @@ public boolean isVisible() {
 		if (callback != null)
 			return callback.isActive(commandId);
 	}
-	
-	return true;	
+	return true;
 }
 
 /**
@@ -223,18 +230,7 @@ private void actionPropertyChange(final PropertyChangeEvent e) {
 
 	}	
 }
-/**
- * Checks whether the given menu item belongs to a context menu
- * (the one that pops up if the user presses the right mouse button).
- */
-private static boolean belongsToContextMenu(MenuItem item) {
-	Menu menu = item.getParent();
-	if (menu == null)
-		return false;
-	while (menu.getParentMenu() != null)
-		menu = menu.getParentMenu();
-	return (menu.getStyle() & SWT.BAR) == 0;
-}
+
 /**
  * Compares this action contribution item with another object.
  * Two action contribution items are equal if they refer to the identical Action.
@@ -270,7 +266,6 @@ public void fill(Composite parent) {
 		if (action.getHelpListener() != null)
 			b.addHelpListener(action.getHelpListener());
 		widget = b;
-		parentWidget = parent;
 		
 		update(null);
 		
@@ -310,7 +305,6 @@ public void fill(Menu parent, int index) {
 		else
 			mi = new MenuItem(parent, flags);
 		widget = mi;
-		parentWidget = parent;
 
 		mi.setData(this);
 		mi.addListener(SWT.Dispose, getMenuItemListener());
@@ -357,7 +351,6 @@ public void fill(ToolBar parent, int index) {
 		ti.addListener(SWT.Dispose, getToolItemListener());
 
 		widget = ti;
-		parentWidget = parent;
 		
 		update(null);
 		
@@ -617,14 +610,14 @@ public final void update() {
 public void update(String propertyName) {
 	if (widget != null) {		
 		// determine what to do			
-		boolean textChanged = propertyName == null || propertyName.equals(Action.TEXT);
-		boolean imageChanged = propertyName == null || propertyName.equals(Action.IMAGE);
-		boolean tooltipTextChanged = propertyName == null || propertyName.equals(Action.TOOL_TIP_TEXT);
-		boolean enableStateChanged = propertyName == null || propertyName.equals(Action.ENABLED) || 
+		boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
+		boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
+		boolean tooltipTextChanged = propertyName == null || propertyName.equals(IAction.TOOL_TIP_TEXT);
+		boolean enableStateChanged = propertyName == null || propertyName.equals(IAction.ENABLED) || 
 			propertyName.equals(IContributionManagerOverrides.P_ENABLED);
 		boolean checkChanged = 
 			(action.getStyle() == IAction.AS_CHECK_BOX || action.getStyle() == IAction.AS_RADIO_BUTTON)
-			&& (propertyName == null || propertyName.equals(Action.CHECKED));
+			&& (propertyName == null || propertyName.equals(IAction.CHECKED));
 					
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;
