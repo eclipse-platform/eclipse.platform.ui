@@ -145,8 +145,8 @@ public void endElement(String uri, String elementName, String qName) {
 				// descriptor
 				Vector importVector = scratchVectors[REQUIRES_INDEX];
 				if (importVector.size() > 0) {
-					PluginDescriptorModel pluginDescriptor = (PluginDescriptorModel) objectStack.peek();
-					pluginDescriptor.setRequires((PluginPrerequisiteModel[]) importVector.toArray(new PluginPrerequisiteModel[importVector.size()]));
+					PluginModel parentDescriptor = (PluginModel) objectStack.peek();
+					parentDescriptor.setRequires((PluginPrerequisiteModel[]) importVector.toArray(new PluginPrerequisiteModel[importVector.size()]));
 					scratchVectors[REQUIRES_INDEX].removeAllElements();
 				}
 			}
