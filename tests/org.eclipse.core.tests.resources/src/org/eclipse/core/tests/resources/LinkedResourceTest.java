@@ -67,7 +67,33 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
 	}
-	
+
+	protected void doCleanup() throws Exception {
+		ensureExistsInWorkspace(
+			new IResource[] { existingProject, otherExistingProject, closedProject, existingFolderInExistingProject, existingFolderInExistingFolder, existingFileInExistingProject },
+			true);
+		closedProject.close(getMonitor());
+		ensureDoesNotExistInWorkspace(
+			new IResource[] {
+				nonExistingProject,
+				nonExistingFolderInExistingProject,
+				nonExistingFolderInExistingFolder,
+				nonExistingFolderInOtherExistingProject,
+				nonExistingFolderInNonExistingProject,
+				nonExistingFolderInNonExistingFolder,
+				nonExistingFileInExistingProject,
+				nonExistingFileInOtherExistingProject,
+				nonExistingFileInExistingFolder });
+		ensureDoesNotExistInFileSystem(resolvePath(nonExistingLocation).toFile());
+		resolvePath(existingLocation).toFile().mkdirs();
+		createFileInFileSystem(resolvePath(localFile), getRandomContents());
+	}
+	/**
+	 * Maybe overridden in subclasses that use path variables.
+	 */
+	protected IPath resolvePath(IPath path) {
+		return path;
+	}
 	protected void setUp() throws Exception {
 		super.setUp();
 		existingProject = getWorkspace().getRoot().getProject("ExistingProject");
@@ -79,10 +105,10 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		nonExistingFolderInOtherExistingProject = otherExistingProject.getFolder("nonExistingFolderInOtherExistingProject");
 		nonExistingFolderInNonExistingFolder = nonExistingFolderInExistingProject.getFolder("nonExistingFolderInNonExistingFolder");
 		nonExistingFolderInExistingFolder = existingFolderInExistingProject.getFolder("nonExistingFolderInExistingFolder");
-	
+
 		nonExistingProject = getWorkspace().getRoot().getProject("NonProject");
 		nonExistingFolderInNonExistingProject = nonExistingProject.getFolder("nonExistingFolderInNonExistingProject");
-		
+
 		existingFileInExistingProject = existingProject.getFile("existingFileInExistingProject");
 		nonExistingFileInExistingProject = existingProject.getFile("nonExistingFileInExistingProject");
 		nonExistingFileInOtherExistingProject = otherExistingProject.getFile("nonExistingFileInOtherExistingProject");
@@ -92,35 +118,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		localFile = existingLocation.append(childName);
 		doCleanup();
 	}
-	protected void doCleanup() throws Exception {
-		ensureExistsInWorkspace(new IResource[] {
-			existingProject, 
-			otherExistingProject,
-			closedProject, 
-			existingFolderInExistingProject, 
-			existingFolderInExistingFolder, 
-			existingFileInExistingProject}, true);
-		closedProject.close(getMonitor());
-		ensureDoesNotExistInWorkspace(new IResource[] {
-			nonExistingProject, 
-			nonExistingFolderInExistingProject, 
-			nonExistingFolderInExistingFolder, 
-			nonExistingFolderInOtherExistingProject, 
-			nonExistingFolderInNonExistingProject, 
-			nonExistingFolderInNonExistingFolder, 
-			nonExistingFileInExistingProject, 
-			nonExistingFileInOtherExistingProject,
-			nonExistingFileInExistingFolder});
-		ensureDoesNotExistInFileSystem(resolvePath(nonExistingLocation).toFile());
-		resolvePath(existingLocation).toFile().mkdirs();
-		createFileInFileSystem(resolvePath(localFile), getRandomContents());
-	}
-	/**
-	 * Maybe overridden in subclasses that use path variables.
-	 */
-	protected IPath resolvePath(IPath path) {
-		return path;
-	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Workspace.clear(resolvePath(existingLocation).toFile());
@@ -135,7 +133,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		//get a non-existing location
 		IPath location = getRandomLocation();
 		IFolder folder = nonExistingFolderInExistingProject;
-		
+
 		//try to create without the flag (should fail)
 		try {
 			folder.createLink(location, IResource.NONE, getMonitor());
@@ -143,7 +141,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			//should fail
 		}
-	
+
 		//now try to create with the flag (should suceed)
 		try {
 			folder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
@@ -164,7 +162,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.6", e);
 		}
-	
+
 		//try to create with local path that can never exist
 		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
 			location = new Path("b:\\does\\not\\exist");
@@ -212,13 +210,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.1", e);
 		}
-		
+
 		//the blocked file should not exist in the workspace
 		assertTrue("1.2", !blockedFile.exists());
 		assertTrue("1.3", nonExistingFolderInExistingProject.exists());
 		assertTrue("1.4", nonExistingFolderInExistingProject.getFile(childName).exists());
 		assertEquals("1.5", nonExistingFolderInExistingProject.getLocation(), resolvePath(existingLocation));
-		
+
 		//now delete the link
 		try {
 			nonExistingFolderInExistingProject.delete(IResource.NONE, getMonitor());
@@ -230,20 +228,20 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		assertTrue("2.1", !nonExistingFolderInExistingProject.exists());
 		assertTrue("2.2", !nonExistingFolderInExistingProject.getFile(childName).exists());
 		assertEquals("2.3", nonExistingFolderInExistingProject.getLocation(), existingProject.getLocation().append(nonExistingFolderInExistingProject.getName()));
-		
+
 		//now refresh again to discover the blocked resource
 		try {
 			existingProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
-	
+
 		//the blocked file should now exist
 		assertTrue("3.0", blockedFile.exists());
 		assertTrue("3.1", nonExistingFolderInExistingProject.exists());
 		assertTrue("3.2", !nonExistingFolderInExistingProject.getFile(childName).exists());
 		assertEquals("3.3", nonExistingFolderInExistingProject.getLocation(), existingProject.getLocation().append(nonExistingFolderInExistingProject.getName()));
-		
+
 		//attempting to link again will fail because the folder exists in the workspace
 		try {
 			nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
@@ -252,17 +250,64 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			//expected
 		}
 	}
+	/**
+	 * This test creates a linked folder resource, then changes the directory in
+	 * the file system to be a file.  On refresh, the linked resource should
+	 * still exist, should have the correct gender, and still be a linked
+	 * resource.
+	 */
+	public void testChangeLinkGender() {
+		IFolder folder = nonExistingFolderInExistingProject;
+		IFile file = folder.getProject().getFile(folder.getProjectRelativePath());
+		IPath resolvedLocation = resolvePath(existingLocation);
+		try {
+			folder.createLink(existingLocation, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		ensureDoesNotExistInFileSystem(resolvedLocation.toFile());
+		try {
+			createFileInFileSystem(resolvedLocation, getRandomContents());
+		} catch (IOException e) {
+			fail("1.99", e);
+		}
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+
+		assertTrue("3.0", !folder.exists());
+		assertTrue("3.1", file.exists());
+		assertTrue("3.2", file.isLinked());
+		assertEquals("3.3", resolvedLocation, file.getLocation());
+		
+		//change back to folder
+		ensureDoesNotExistInFileSystem(resolvedLocation.toFile());
+		resolvedLocation.toFile().mkdirs();
+		
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		assertTrue("4.0", folder.exists());
+		assertTrue("4.1", !file.exists());
+		assertTrue("4.2", folder.isLinked());
+		assertEquals("4.3", resolvedLocation, folder.getLocation());
+	}
+
 	public void testCopyFile() {
 		final IFile source = nonExistingFileInExistingProject;
-		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder};
-		Boolean[] deepCopy = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
+		IResource[] destinationResources = new IResource[] { existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder };
+		Boolean[] deepCopy = new Boolean[] { Boolean.TRUE, Boolean.FALSE };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
 		new TestPerformer("LinkedResourceTest.testCopyFile") {
 			protected static final String CANCELLED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				IResource parent = destination.getParent();
 				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
 					return true;
@@ -275,16 +320,16 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			}
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-		 			source.createLink(localFile, IResource.NONE, null);
+				try {
+					source.createLink(localFile, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
@@ -293,7 +338,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 				if (result == CANCELLED)
 					return true;
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				if (!destination.exists())
 					return false;
 				//destination should only be linked for a shallow copy
@@ -325,15 +370,16 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 	}
 	public void testCopyFolder() {
 		final IFolder source = nonExistingFolderInExistingProject;
-		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder};
-		Boolean[] deepCopy = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
+		IResource[] destinationResources =
+			new IResource[] { existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder };
+		Boolean[] deepCopy = new Boolean[] { Boolean.TRUE, Boolean.FALSE };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
 		new TestPerformer("LinkedResourceTest.testCopyFolder") {
 			protected static final String CANCELLED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				IResource parent = destination.getParent();
 				if (destination.getType() == IResource.PROJECT)
 					return true;
@@ -348,16 +394,16 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			}
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-		 			source.createLink(existingLocation, IResource.NONE, null);
+				try {
+					source.createLink(existingLocation, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
@@ -366,7 +412,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 				if (result == CANCELLED)
 					return true;
 				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
 				if (!destination.exists())
 					return false;
 				//destination should only be linked for a shallow copy
@@ -425,7 +471,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
 			assertTrue("4.0", newFolder.isLinked());
 			assertEquals("4.1", folder.getLocation(), newFolder.getLocation());
-			
+
 			//test project deep copy
 			try {
 				destination.delete(IResource.NONE, getMonitor());
@@ -447,7 +493,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IFile file = nonExistingFileInExistingProject;
 		IFolder folder = nonExistingFolderInExistingProject;
 		IFile childFile = folder.getFile(childName);
-		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
+		IResource[] oldResources = new IResource[] { file, folder, existingProject, childFile };
 		try {
 			try {
 				createFileInFileSystem(resolvePath(fileLocation));
@@ -462,7 +508,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			IFile newFile = destination.getFile(file.getProjectRelativePath());
 			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
 			IFile newChildFile = newFolder.getFile(childName);
-			IResource[] newResources = new IResource[] {destination, newFile, newFolder, newChildFile};
+			IResource[] newResources = new IResource[] { destination, newFile, newFolder, newChildFile };
 
 			assertDoesNotExistInWorkspace("2.0", destination);
 
@@ -481,17 +527,253 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 
 			assertTrue("3.6", !newFolder.isLinked());
 			assertEquals("3.7", destination.getLocation().append(newFolder.getProjectRelativePath()), newFolder.getLocation());
-			
+
 			assertTrue("3.8", destination.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
 		}
-	}	
+	}
+	/**
+	 * Automated test of IFile#createLink
+	 */
+	public void testLinkFile() {
+		IResource[] interestingResources = new IResource[] { existingFileInExistingProject, nonExistingFileInExistingProject, nonExistingFileInExistingFolder };
+		IPath[] interestingLocations = new IPath[] { existingLocation, nonExistingLocation };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { interestingResources, interestingLocations, monitors };
+		new TestPerformer("LinkedResourceTest.testLinkFile") {
+			protected static final String CANCELLED = "cancelled";
+			public boolean shouldFail(Object[] args, int count) {
+				IResource resource = (IResource) args[0];
+				IPath location = (IPath) args[1];
+				//This resource already exists in the workspace
+				if (resource.exists())
+					return true;
+				IPath resolvedLocation = resolvePath(location);
+				//The corresponding location in the local file system does not exist.
+				if (!resolvedLocation.toFile().exists())
+					return true;
+				//The workspace contains a resource of a different type at the same path as this resource
+				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
+					return true;
+				//The parent of this resource does not exist.
+				if (!resource.getParent().isAccessible())
+					return true;
+				//The parent of this resource is not an open project
+				if (resource.getParent().getType() != IResource.PROJECT)
+					return true;
+				//The name of this resource is not valid (according to IWorkspace.validateName)
+				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
+					return true;
+				//The corresponding location in the local file system is occupied by a directory (as opposed to a file)
+				if (resolvedLocation.toFile().isDirectory())
+					return true;
+				//passed all failure case so it should suceed
+				return false;
+			}
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IFile file = (IFile) args[0];
+				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).prepare();
+				try {
+					file.createLink(location, IResource.NONE, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
+			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
+				if (result == CANCELLED)
+					return true;
+				IFile resource = (IFile) args[0];
+				IPath location = (IPath) args[1];
+				IPath resolvedLocation = resolvePath(location);
+				if (!resource.exists() || !resolvedLocation.toFile().exists())
+					return false;
+				if (!resource.getLocation().equals(resolvedLocation))
+					return false;
+				if (!resource.isSynchronized(IResource.DEPTH_INFINITE))
+					return false;
+				return true;
+			}
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+		}
+		.performTest(inputs);
+	}
+	/**
+		 * Automated test of IFolder#createLink
+		 */
+	public void testLinkFolder() {
+		IResource[] interestingResources =
+			new IResource[] {
+				existingFolderInExistingProject,
+				existingFolderInExistingFolder,
+				nonExistingFolderInExistingProject,
+				nonExistingFolderInNonExistingProject,
+				nonExistingFolderInNonExistingFolder };
+		IPath[] interestingLocations = new IPath[] { existingLocation, nonExistingLocation };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { interestingResources, interestingLocations, monitors };
+		new TestPerformer("LinkedResourceTest.testLinkFolder") {
+			protected static final String CANCELLED = "cancelled";
+			public boolean shouldFail(Object[] args, int count) {
+				IResource resource = (IResource) args[0];
+				IPath location = (IPath) args[1];
+				//This resource already exists in the workspace
+				if (resource.exists())
+					return true;
+				//The corresponding location in the local file system does not exist.
+				if (!resolvePath(location).toFile().exists())
+					return true;
+				//The workspace contains a resource of a different type at the same path as this resource
+				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
+					return true;
+				//The parent of this resource does not exist.
+				if (!resource.getParent().isAccessible())
+					return true;
+				//The parent of this resource is not an open project
+				if (resource.getParent().getType() != IResource.PROJECT)
+					return true;
+				//The name of this resource is not valid (according to IWorkspace.validateName)
+				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
+					return true;
+				//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
+				if (resolvePath(location).toFile().isFile())
+					return true;
+				//passed all failure case so it should suceed
+				return false;
+			}
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IFolder folder = (IFolder) args[0];
+				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).prepare();
+				try {
+					folder.createLink(location, IResource.NONE, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
+			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
+				if (result == CANCELLED)
+					return true;
+				IFolder resource = (IFolder) args[0];
+				IPath location = (IPath) args[1];
+				IPath resolvedLocation = resolvePath(location);
+				if (!resource.exists() || !resolvedLocation.toFile().exists())
+					return false;
+				if (!resource.getLocation().equals(resolvedLocation))
+					return false;
+				//ensure child exists
+				if (!resource.getFile(childName).exists())
+					return false;
+				return true;
+			}
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+		}
+		.performTest(inputs);
+
+	}
+	public void testMoveFile() {
+		final IFile source = nonExistingFileInExistingProject;
+		IResource[] destinationResources = new IResource[] { existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder };
+		Boolean[] deepCopy = new Boolean[] { Boolean.TRUE, Boolean.FALSE };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
+		new TestPerformer("LinkedResourceTest.testMoveFile") {
+			protected static final String CANCELLED = "cancelled";
+			public boolean shouldFail(Object[] args, int count) {
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IResource parent = destination.getParent();
+				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+					return true;
+				if (!parent.isAccessible())
+					return true;
+				if (destination.exists())
+					return true;
+				//passed all failure case so it should suceed
+				return false;
+			}
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).prepare();
+				try {
+					source.createLink(localFile, IResource.NONE, null);
+					source.move(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					 ((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
+			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
+				if (result == CANCELLED)
+					return true;
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				if (!destination.exists())
+					return false;
+				//destination should only be linked for a shallow move
+				if (isDeep) {
+					if (destination.isLinked())
+						return false;
+					if (resolvePath(localFile).equals(destination.getLocation()))
+						return false;
+					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
+						return false;
+				} else {
+					if (!destination.isLinked())
+						return false;
+					if (!resolvePath(localFile).equals(destination.getLocation()))
+						return false;
+				}
+				return true;
+			}
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+		}
+		.performTest(inputs);
+	}
+
 	public void testMoveFolder() {
-		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};	
-		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {sourceResources, destinationResources, monitors};
+		IResource[] sourceResources = new IResource[] { nonExistingFolderInExistingProject };
+		IResource[] destinationResources =
+			new IResource[] { existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder };
+		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
+		Object[][] inputs = new Object[][] { sourceResources, destinationResources, monitors };
 		new TestPerformer("LinkedResourceTest.testMoveFolder") {
 			protected static final String CANCELLED = "cancelled";
 			public boolean shouldFail(Object[] args, int count) {
@@ -512,12 +794,12 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-		 			source.createLink(existingLocation, IResource.NONE, null);
+				try {
+					source.createLink(existingLocation, IResource.NONE, null);
 					source.move(destination.getFullPath(), IResource.SHALLOW, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
+				} catch (OperationCanceledException e) {
+					return CANCELLED;
+				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
@@ -550,7 +832,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IFile file = nonExistingFileInExistingProject;
 		IFolder folder = nonExistingFolderInExistingProject;
 		IFile childFile = folder.getFile(childName);
-		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
+		IResource[] oldResources = new IResource[] { file, folder, existingProject, childFile };
 		try {
 			try {
 				createFileInFileSystem(resolvePath(fileLocation));
@@ -565,7 +847,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			IFile newFile = destination.getFile(file.getProjectRelativePath());
 			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
 			IFile newChildFile = newFolder.getFile(childName);
-			IResource[] newResources = new IResource[] {destination, newFile, newFolder, newChildFile};
+			IResource[] newResources = new IResource[] { destination, newFile, newFolder, newChildFile };
 
 			assertDoesNotExistInWorkspace("2.0", destination);
 
@@ -582,9 +864,9 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 
 			assertTrue("3.4", newFolder.isLinked());
 			assertEquals("3.5", resolvePath(existingLocation), newFolder.getLocation());
-			
+
 			assertTrue("3.6", destination.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			//now do a deep move back to the original project
 			try {
 				destination.move(existingProject.getFullPath(), IResource.NONE, getMonitor());
@@ -605,11 +887,11 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 	}
 	public void testNatureVeto() {
 		//note: simpleNature has the link veto turned on.
-		
+
 		//test create link on project with nature veto
 		try {
 			IProjectDescription description = existingProject.getDescription();
-			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			description.setNatureIds(new String[] { NATURE_SIMPLE });
 			existingProject.setDescription(description, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
@@ -626,7 +908,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			//should fail
 		}
-		
+
 		//test add nature with veto to project that already has link
 		try {
 			existingProject.delete(IResource.FORCE, getMonitor());
@@ -638,239 +920,12 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 		try {
 			IProjectDescription description = existingProject.getDescription();
-			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			description.setNatureIds(new String[] { NATURE_SIMPLE });
 			existingProject.setDescription(description, IResource.NONE, getMonitor());
 			fail("3.0");
 		} catch (CoreException e) {
 			//should fail
 		}
 	}
-	/**
-	 * Automated test of IFile#createLink
-	 */
-	public void testLinkFile() {
-		IResource[] interestingResources = new IResource[] {existingFileInExistingProject, nonExistingFileInExistingProject, nonExistingFileInExistingFolder};
-		IPath[] interestingLocations = new IPath[] {existingLocation, nonExistingLocation};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {interestingResources, interestingLocations, monitors};
-		new TestPerformer("LinkedResourceTest.testLinkFile") {
-			protected static final String CANCELLED = "cancelled";
-			public boolean shouldFail(Object[] args, int count) {
-				IResource resource = (IResource) args[0];
-				IPath location = (IPath)args[1];
-				//This resource already exists in the workspace
-				if (resource.exists())
-					return true;
-				IPath resolvedLocation = resolvePath(location);
-				//The corresponding location in the local file system does not exist.
-				if (!resolvedLocation.toFile().exists())
-					return true;
-				//The workspace contains a resource of a different type at the same path as this resource
-				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
-					return true;
-				//The parent of this resource does not exist.
-				if (!resource.getParent().isAccessible())
-					return true;
-				//The parent of this resource is not an open project
-				if (resource.getParent().getType() != IResource.PROJECT)
-					return true;
-				//The name of this resource is not valid (according to IWorkspace.validateName)
-				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
-					return true;
-				//The corresponding location in the local file system is occupied by a directory (as opposed to a file)
-				if (resolvedLocation.toFile().isDirectory())
-					return true;
-				//passed all failure case so it should suceed
-				return false;
-			}
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IFile file = (IFile) args[0];
-				IPath location = (IPath)args[1];
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-					file.createLink(location, IResource.NONE, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
-				IFile resource = (IFile) args[0];
-				IPath location = (IPath)args[1];
-				IPath resolvedLocation = resolvePath(location);
-				if (!resource.exists() || !resolvedLocation.toFile().exists())
-					return false;
-				if (!resource.getLocation().equals(resolvedLocation))
-					return false;
-				if (!resource.isSynchronized(IResource.DEPTH_INFINITE))
-					return false;
-				return true;
-			}
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
-		}
-		.performTest(inputs);
-	}/**
-	 * Automated test of IFolder#createLink
-	 */
-	public void testLinkFolder() {
-		IResource[] interestingResources = new IResource[] {existingFolderInExistingProject, existingFolderInExistingFolder,
-			nonExistingFolderInExistingProject, nonExistingFolderInNonExistingProject, nonExistingFolderInNonExistingFolder};
-		IPath[] interestingLocations = new IPath[] {existingLocation, nonExistingLocation};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {interestingResources, interestingLocations, monitors};
-		new TestPerformer("LinkedResourceTest.testLinkFolder") {
-			protected static final String CANCELLED = "cancelled";
-			public boolean shouldFail(Object[] args, int count) {
-				IResource resource = (IResource) args[0];
-				IPath location = (IPath)args[1];
-				//This resource already exists in the workspace
-				if (resource.exists())
-					return true;
-				//The corresponding location in the local file system does not exist.
-				if (!resolvePath(location).toFile().exists())
-					return true;
-				//The workspace contains a resource of a different type at the same path as this resource
-				if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
-					return true;
-				//The parent of this resource does not exist.
-				if (!resource.getParent().isAccessible())
-					return true;
-				//The parent of this resource is not an open project
-				if (resource.getParent().getType() != IResource.PROJECT)
-					return true;
-				//The name of this resource is not valid (according to IWorkspace.validateName)
-				if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
-					return true;
-				//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
-				if (resolvePath(location).toFile().isFile())
-					return true;
-				//passed all failure case so it should suceed
-				return false;
-			}
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IFolder folder = (IFolder) args[0];
-				IPath location = (IPath)args[1];
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-					folder.createLink(location, IResource.NONE, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
-				IFolder resource = (IFolder) args[0];
-				IPath location = (IPath)args[1];
-				IPath resolvedLocation = resolvePath(location);
-				if (!resource.exists() || !resolvedLocation.toFile().exists())
-					return false;
-				if (!resource.getLocation().equals(resolvedLocation))
-					return false;
-				//ensure child exists
-				if (!resource.getFile(childName).exists())
-					return false;
-				return true;
-			}
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
-		}
-		.performTest(inputs);
-	
-	}
-	public void testMoveFile() {
-		final IFile source = nonExistingFileInExistingProject;
-		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingFileInOtherExistingProject, nonExistingFileInExistingFolder};
-		Boolean[] deepCopy = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
-		new TestPerformer("LinkedResourceTest.testMoveFile") {
-			protected static final String CANCELLED = "cancelled";
-			public boolean shouldFail(Object[] args, int count) {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
-				IResource parent = destination.getParent();
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
-					return true;
-				if (!parent.isAccessible())
-					return true;
-				if (destination.exists())
-					return true;
-				//passed all failure case so it should suceed
-				return false;
-			}
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).prepare();
-				 try {
-		 			source.createLink(localFile, IResource.NONE, null);
-					source.move(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
-				 } catch (OperationCanceledException e) {
-				 	return CANCELLED;
-				 }
-				if (monitor instanceof FussyProgressMonitor)
-					 ((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean)args[1]).booleanValue();
-				if (!destination.exists())
-					return false;
-				//destination should only be linked for a shallow move
-				if (isDeep) {
-					if (destination.isLinked())
-						return false;
-					if (resolvePath(localFile).equals(destination.getLocation()))
-						return false;
-					if (!destination.getProject().getLocation().isPrefixOf(destination.getLocation()))
-						return false;
-				} else {
-					if (!destination.isLinked())
-						return false;
-					if (!resolvePath(localFile).equals(destination.getLocation()))
-						return false;
-				}
-				return true;
-			}
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
-		}
-		.performTest(inputs);
-	}
+
 }
