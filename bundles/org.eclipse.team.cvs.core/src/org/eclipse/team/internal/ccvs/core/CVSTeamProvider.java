@@ -40,9 +40,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -109,14 +109,16 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private String comment = "";  //$NON-NLS-1$
 	
 	private static IMoveDeleteHook moveDeleteHook;
-		
+	
+	// property used to indicate whether new directories should be discovered for the project
+	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
+		new QualifiedName("org.eclipse.team.cvs.core", "fetch_absent_directories");  //$NON-NLS-1$  //$NON-NLS-2$
+			
 	/**
 	 * No-arg Constructor for IProjectNature conformance
 	 */
 	public CVSTeamProvider() {
 	}
-	
-
 
 	/**
 	 * @see IProjectNature#deconfigure()
@@ -541,9 +543,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 							}
 						}, Policy.subMonitorFor(monitor, 40));
 					if (status[0].isOK()) {
-						// XXX Could use RTAG here when it works
+						// Branch using the tag
 						Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
-							new ICVSRunnable(						) {
+							new ICVSRunnable() {
 								public void run(IProgressMonitor monitor) throws CVSException {
 									status[0] = Command.CUSTOM_TAG.execute(
 										Command.NO_GLOBAL_OPTIONS,
@@ -558,7 +560,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				} else {
 					// Just branch using tag
 					Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
-						new ICVSRunnable(						) {
+						new ICVSRunnable() {
 							public void run(IProgressMonitor monitor) throws CVSException {
 								status[0] = Command.CUSTOM_TAG.execute(
 									Command.NO_GLOBAL_OPTIONS,
@@ -636,11 +638,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 			newLocation.setUserInfo(userInfo);
 	
 			// Validate that a connection can be made with the new location
+			boolean isKnown = CVSProviderPlugin.getPlugin().isKnownRepository(newLocation.getLocation());
 			try {
 				newLocation.validateConnection(Policy.subMonitorFor(monitor, 20));
 			} catch (CVSException e) {
-				// XXX We should really only do this if it didn't exist previously
-				CVSProviderPlugin.getPlugin().disposeRepository(newLocation);
+				if (!isKnown)
+					CVSProviderPlugin.getPlugin().disposeRepository(newLocation);
 				throw e;
 			}
 			
@@ -1252,6 +1255,32 @@ public class CVSTeamProvider extends RepositoryProvider {
 			} finally {
 				progress.done();
 			}
+		}
+	}
+	
+	/**
+	 * Gets the etchAbsentDirectories.
+	 * @return Returns a boolean
+	 */
+	public boolean getFetchAbsentDirectories() throws CVSException {
+		try {
+			String property = getProject().getPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY);
+			if (property == null) return CVSProviderPlugin.getPlugin().getFetchAbsentDirectories();
+			return Boolean.valueOf(property).booleanValue();
+		} catch (CoreException e) {
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingFetchProperty", project.getName()), e));
+		}
+	}
+	
+	/**
+	 * Sets the fetchAbsentDirectories.
+	 * @param etchAbsentDirectories The etchAbsentDirectories to set
+	 */
+	public void setFetchAbsentDirectories(boolean fetchAbsentDirectories) throws CVSException {
+		try {
+			getProject().setPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY, fetchAbsentDirectories ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+		} catch (CoreException e) {
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingFetchProperty", project.getName()), e));
 		}
 	}
 }

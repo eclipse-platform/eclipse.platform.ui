@@ -114,7 +114,6 @@ public class RemoteFolderTreeBuilder {
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
 		if (tag != null) {
 			if (tag.getType() == CVSTag.HEAD) {
 				localOptions.add(Update.CLEAR_STICKY);

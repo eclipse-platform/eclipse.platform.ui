@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -73,9 +74,11 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	Label moduleLabel;
 	Label portLabel;
 	Label tagLabel;
+	private Button fetchButton;
 	
 	IUserInfo info;
 	CVSTeamProvider provider;
+	private boolean fetch;
 
 	private class RepositorySelectionDialog extends Dialog {
 		ICVSRepositoryLocation[] locations;
@@ -177,6 +180,16 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		tagLabel = createLabel(composite, "", 1); //$NON-NLS-1$
 		
 		createLabel(composite, "", 1); //$NON-NLS-1$
+		
+		// Should absent directories be fetched on update
+		fetchButton = createCheckBox(composite, Policy.bind("CVSProjectPropertiesPage.fetchAbsentDirectoriesOnUpdate")); //$NON-NLS-1$
+		fetchButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				fetch = fetchButton.getSelection();
+			}
+		});
+		
+		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
@@ -241,6 +254,21 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		return label;
 	}
 	/**
+	 * Creates a new checkbox instance and sets the default layout data.
+	 *
+	 * @param group  the composite in which to create the checkbox
+	 * @param label  the string to set into the checkbox
+	 * @return the new checkbox
+	 */ 
+	protected Button createCheckBox(Composite group, String label) {
+		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		button.setLayoutData(data);
+		return button;
+	}
+	/**
 	 * Initializes the page
 	 */
 	private void initialize() {
@@ -293,6 +321,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 				label = Policy.bind("CVSPropertiesPage.virtualModule", label); //$NON-NLS-1$
 			}
 			moduleLabel.setText(label);
+			fetchButton.setSelection(provider.getFetchAbsentDirectories());
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -322,6 +351,12 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	 * @see PreferencesPage#performOk
 	 */
 	public boolean performOk() {
+		try {
+			if (fetch != provider.getFetchAbsentDirectories())
+				provider.setFetchAbsentDirectories(fetch);
+		} catch (CVSException e) {
+			handle(e.getStatus());
+		}
 		if (newLocation == null) {
 			return true;
 		}
@@ -349,7 +384,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		} catch (InterruptedException e) {
 			return false;
 		}
-					
+			
 		return true;
 	}
 	/**

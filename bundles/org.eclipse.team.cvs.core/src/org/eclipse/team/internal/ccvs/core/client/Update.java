@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -133,8 +136,28 @@ public class Update extends Command {
 		List newOptions = new ArrayList(Arrays.asList(localOptions));
 		
 		// Look for absent directories if enabled and the option is not already included
-		if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
-			newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		ICVSFolder sessionRoot = session.getLocalRoot();
+		IResource resource = null;
+		RepositoryProvider provider = null;
+		// If there is a provider, use the providers setting
+		try {
+			resource = session.getLocalRoot().getIResource();
+			if (resource != null) {
+				provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+				if (provider != null) {
+					if (((CVSTeamProvider)provider).getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
+						newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+					}
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+		// If there is no provider, use the global setting
+		if (provider == null) {
+			if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
+				newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+			}
 		}
 		
 		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
