@@ -974,12 +974,15 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     	} else if (node instanceof AntTaskNode) {
     		String name= node.getName();
     		if (offset <= node.getOffset() + name.length()) {
+    			//not really the enclosing node as the offset is within the name of the node
     			node= node.getParentNode();
     		} else {
-    			return node.getName();
+    			return name;
     		}
     	}
-    	if (node instanceof AntTargetNode) {
+    	if (node instanceof AntTaskNode) {
+    		return node.getName();
+    	} else if (node instanceof AntTargetNode) {
     		return "target"; //$NON-NLS-1$
     	} else {
     		return "project"; //$NON-NLS-1$
