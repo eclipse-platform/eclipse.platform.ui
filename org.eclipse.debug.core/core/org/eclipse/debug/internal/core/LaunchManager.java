@@ -33,6 +33,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -207,6 +208,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 		TransformerFactory factory= TransformerFactory.newInstance();
 		Transformer transformer= factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		
 		DOMSource source= new DOMSource(doc);
 		StreamResult outputTarget= new StreamResult(s);
 		transformer.transform(source, outputTarget);
