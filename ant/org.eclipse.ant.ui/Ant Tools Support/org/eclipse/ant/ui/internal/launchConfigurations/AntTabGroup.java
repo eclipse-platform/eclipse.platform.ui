@@ -16,13 +16,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
+import org.eclipse.debug.core.variables.ILaunchVariableConstants;
 import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
-import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -66,7 +66,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 				configuration.rename(name);
 				
 				StringBuffer buf = new StringBuffer();
-				VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+				VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 				String text= buf.toString();
 				if (text != null) {
 					configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION, text);
