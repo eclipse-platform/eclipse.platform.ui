@@ -15,9 +15,11 @@ import java.util.Arrays;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientData;
 import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 
@@ -26,8 +28,56 @@ import org.eclipse.swt.graphics.RGB;
  */
 public final class PresentationRegistryPopulator {
 
-    public static void populateRegistry(GradientRegistry registry, GradientDefinition [] definitions, IPreferenceStore store) {
+    public static void populateRegistry(FontRegistry registry, FontDefinition [] definitions, IPreferenceStore store) {
+		// sort the definitions by dependant ordering so that we process 
+		// ancestors before children.		
+		FontDefinition [] copyOfDefinitions = new FontDefinition[definitions.length];
+		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
+		Arrays.sort(copyOfDefinitions, FontDefinition.HIERARCHY_COMPARATOR);
+
+		for (int i = 0; i < copyOfDefinitions.length; i++) {
+			FontDefinition definition = copyOfDefinitions[i];
+			installFont(definition, registry, store);
+		}
+    }
+    
+    
+    /**
+     * @param definition
+     * @param registry
+     * @param store
+     */
+    private static void installFont(FontDefinition definition, FontRegistry registry, IPreferenceStore store) {
+		String id = definition.getId();
+		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, id) : null;
+		FontData [] defaultFont = null;
+		if (definition.getValue() != null)
+		    defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), null)};
+		else if (definition.getDefaultsTo() != null)
+		    defaultFont = registry.getFontData(definition.getDefaultsTo());
+		else
+		    defaultFont = PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT;
+		    
 		
+		if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
+		    prefFont = defaultFont;
+		}
+		
+		if (defaultFont != null && store != null) {
+			PreferenceConverter.setDefault(
+					store, 
+					id, 
+					defaultFont);
+		}
+
+		
+		if (prefFont != null) {		    
+			registry.put(id, prefFont);
+		}
+    }
+
+
+    public static void populateRegistry(GradientRegistry registry, GradientDefinition [] definitions, IPreferenceStore store) {		
 		for (int i = 0; i < definitions.length; i++) {
 			installGradient(definitions[i], registry, store);
 		}        
@@ -77,8 +127,7 @@ public final class PresentationRegistryPopulator {
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			ColorDefinition definition = copyOfDefinitions[i];
 			installColor(definition, registry, store);
-		}
-        
+		}        
     }
     
 	/**

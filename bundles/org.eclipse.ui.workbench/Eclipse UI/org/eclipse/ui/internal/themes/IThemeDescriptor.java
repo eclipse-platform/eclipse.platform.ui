@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.themes;
 
 import org.eclipse.ui.internal.presentation.ColorDefinition;
+import org.eclipse.ui.internal.presentation.FontDefinition;
+import org.eclipse.ui.internal.presentation.GradientDefinition;
 
 /**
  * Interface for the Theme descriptors
@@ -55,6 +57,17 @@ public interface IThemeDescriptor {
 	 */
 	public ColorDefinition [] getColorOverrides();
 	
+	/**
+	 * Returns the gradient overrides for this theme.
+	 * @return GradientDefinition []
+	 */
+	public GradientDefinition [] getGradientOverrides();	
+	
+	/**
+	 * Returns the font overrides for this theme.
+	 * @return GradientDefinition []
+	 */
+	public FontDefinition [] getFontOverrides();	
 	/**
 	 * Returns the descriptor of the tab theme.
 	 * @return ITabThemeDescriptor

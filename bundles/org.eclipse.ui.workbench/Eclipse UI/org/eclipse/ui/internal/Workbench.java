@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -43,9 +42,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -57,7 +54,6 @@ import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -98,7 +94,6 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
@@ -107,6 +102,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentation.ColorDefinition;
+import org.eclipse.ui.internal.presentation.FontDefinition;
 import org.eclipse.ui.internal.presentation.GradientDefinition;
 import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -954,77 +950,71 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * Initializes the workbench fonts with the stored values.
-	 * 
-	 * TODO: Investigate fix for Bug 45943.  Because of how the font values are 
-	 * loaded, the provided fix may be adequate but it proved insufficient for 
-	 * the color registry.  
+	 * Initializes the workbench fonts with the stored values. 
 	 */
 	private void initializeFonts() {
-		//Iterate through the definitions and initialize thier
-		//defaults in the preference store.
-		FontDefinition[] definitions = FontDefinition.getDefinitions();
-		initializeFonts(definitions);
+	    FontDefinition[] colorDefinitions = FontDefinition.getDefinitions();
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), colorDefinitions, getPreferenceStore());
 	}
 	
-	/**
-	 * For dynamic UI
-	 * 
-	 * @param definitions the fonts to initialize
-	 * @since 3.0
-	 */
-	public void initializeFonts(FontDefinition[] definitions) {
-		FontRegistry registry = JFaceResources.getFontRegistry();
-		IPreferenceStore store = getPreferenceStore();		
-		ArrayList fontsToSet = new ArrayList();
-
-		for (int i = 0; i < definitions.length; i++) {
-			installFont(definitions[i].getId(), registry, store);
-		}
-
-		// post-process the defaults to allow for out-of-order specification.
-		for (int i = 0; i < definitions.length; i++) {
-			FontDefinition definition = definitions[i];
-			String defaultsTo = definition.getDefaultsTo();
-			if (defaultsTo != null) {
-				PreferenceConverter.setDefault(
-					store,
-					definition.getId(),
-					PreferenceConverter.getDefaultFontDataArray(store, defaultsTo));
-
-				//If there is no value in the registry pass though the mapping
-				if (!registry.hasValueFor(definition.getId())) {
-					fontsToSet.add(definition);
-				}
-			}
-		}
-
-		/*
-		 * Now that all of the font have been initialized anything that is
-		 * still at its defaults and has a defaults to needs to have its value
-		 * set in the registry. Post process to be sure that all of the fonts
-		 * have the correct setting before there is an update.
-		 */
-		Iterator updateIterator = fontsToSet.iterator();
-		while (updateIterator.hasNext()) {
-			FontDefinition update = (FontDefinition) updateIterator.next();
-			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
-		}
-	}
-
-	/*
-	 * Installs the given font in the font registry.
-	 * 
-	 * @param fontKey the font key 
-	 * @param registry the font registry 
-	 * @param store the preference store from which to obtain font data
-	 */
-	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
-		if (store.isDefault(fontKey))
-			return;
-		FontData[] font = PreferenceConverter.getFontDataArray(store, fontKey);
-		registry.put(fontKey, font);
-	}
+//	/**
+//	 * For dynamic UI
+//	 * 
+//	 * @param definitions the fonts to initialize
+//	 * @since 3.0
+//	 */
+//	public void initializeFonts(FontDefinition[] definitions) {
+//		FontRegistry registry = JFaceResources.getFontRegistry();
+//		IPreferenceStore store = getPreferenceStore();		
+//		ArrayList fontsToSet = new ArrayList();
+//
+//		for (int i = 0; i < definitions.length; i++) {
+//			installFont(definitions[i].getId(), registry, store);
+//		}
+//
+//		// post-process the defaults to allow for out-of-order specification.
+//		for (int i = 0; i < definitions.length; i++) {
+//			FontDefinition definition = definitions[i];
+//			String defaultsTo = definition.getDefaultsTo();
+//			if (defaultsTo != null) {
+//				PreferenceConverter.setDefault(
+//					store,
+//					definition.getId(),
+//					PreferenceConverter.getDefaultFontDataArray(store, defaultsTo));
+//
+//				//If there is no value in the registry pass though the mapping
+//				if (!registry.hasValueFor(definition.getId())) {
+//					fontsToSet.add(definition);
+//				}
+//			}
+//		}
+//
+//		/*
+//		 * Now that all of the font have been initialized anything that is
+//		 * still at its defaults and has a defaults to needs to have its value
+//		 * set in the registry. Post process to be sure that all of the fonts
+//		 * have the correct setting before there is an update.
+//		 */
+//		Iterator updateIterator = fontsToSet.iterator();
+//		while (updateIterator.hasNext()) {
+//			FontDefinition update = (FontDefinition) updateIterator.next();
+//			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
+//		}
+//	}
+//
+//	/*
+//	 * Installs the given font in the font registry.
+//	 * 
+//	 * @param fontKey the font key 
+//	 * @param registry the font registry 
+//	 * @param store the preference store from which to obtain font data
+//	 */
+//	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
+//		if (store.isDefault(fontKey))
+//			return;
+//		FontData[] font = PreferenceConverter.getFontDataArray(store, fontKey);
+//		registry.put(fontKey, font);
+//	}
 
 	/*
 	 * Initialize the workbench images.

@@ -315,7 +315,7 @@ public class FontRegistry {
 	/**
 	 * Fires a PropertyChangeEvent.
 	 */
-	private void fireFontMappingChanged(String name, FontData[] oldValue, FontData[] newValue) {
+	protected void fireFontMappingChanged(String name, FontData[] oldValue, FontData[] newValue) {
 		final String finalName = name;
 		final Object[] myListeners = this.listeners.getListeners();
 		if (myListeners.length > 0) {

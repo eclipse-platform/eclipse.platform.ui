@@ -1157,6 +1157,13 @@
             %FontsPreference.TextFontDescription
          </description>
       </fontDefinition>
+      <fontDefinition
+            label="Tab Font"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.workbench.tabFont">
+         <description>
+         </description>
+      </fontDefinition>      
    </extension>
    <extension
          point="org.eclipse.ui.colorDefinitions">
@@ -1172,6 +1179,26 @@
             value="COLOR_BLACK"
             id="VIEW_TITLE_TEXT_COLOR_DEACTIVATED">
       </colorDefinition>
+      <gradientDefinition
+      		id="VIEW_TITLE_GRADIENT_COLOR_ACTIVE"
+      		label="Active Tab Gradient"
+      		direction="vertical"      		
+      		categoryId="org.eclipse.ui.workbenchMisc"
+      		initialValue="COLOR_WHITE">
+      		<gradientPart 
+      			value="COLOR_TITLE_BACKGROUND_GRADIENT" 
+	      		percentage="100"/>      		
+      </gradientDefinition>
+      <gradientDefinition
+      		id="VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"
+      		label="Inacitve Tab Gradient"
+      		direction="vertical"
+      		categoryId="org.eclipse.ui.workbenchMisc"
+      		initialValue="COLOR_WHITE"> <!-- win32 specific -->
+      		<gradientPart 
+      			value="COLOR_WIDGET_LIGHT_SHADOW" 
+	      		percentage="100"/>
+      </gradientDefinition>      
    </extension>
    <extension
          point="org.eclipse.ui.presentation">

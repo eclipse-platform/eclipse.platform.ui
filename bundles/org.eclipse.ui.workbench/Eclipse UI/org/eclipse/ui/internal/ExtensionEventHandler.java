@@ -54,10 +54,10 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.DecoratorRegistryReader;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
-import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.fonts.FontDefinitionReader;
 import org.eclipse.ui.internal.presentation.ColorDefinition;
 import org.eclipse.ui.internal.presentation.ColorDefinitionReader;
+import org.eclipse.ui.internal.presentation.FontDefinition;
+import org.eclipse.ui.internal.presentation.FontDefinitionReader;
 import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -285,10 +285,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		for (int i = 0; i < elements.length; i++) {
 			reader.readElement(elements[i]);	
 		}
-		
 		Collection fonts = reader.getValues();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
-		workbench.initializeFonts(fontDefs);
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());
 	}
 	
 	private void loadNewWizards(IExtension ext) {

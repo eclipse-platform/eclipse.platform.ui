@@ -39,6 +39,7 @@ public class ColorDefinitionReader extends RegistryReader {
 	public static String ATT_INITIALVALUE = "initialValue"; //$NON-NLS-1$
 	public static String TAG_COLORDEFINITION = "colorDefinition"; //$NON-NLS-1$
 	public static String TAG_GRADIENTDEFINITION = "gradientDefinition"; //$NON-NLS-1$
+	public static String TAG_GRADIENTOVERRIDE = "gradientOverride"; //$NON-NLS-1$
 	public static String TAG_GRADIENTPART = "gradientPart"; //$NON-NLS-1$
 	public static String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$
 
@@ -55,9 +56,9 @@ public class ColorDefinitionReader extends RegistryReader {
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	public boolean readElement(IConfigurationElement element) {
-
-	    if (element.getName().equals(TAG_COLORDEFINITION) 
-	            || element.getName().equals(TAG_COLOROVERRIDE)) {
+	    String elementName = element.getName();
+        if (elementName.equals(TAG_COLORDEFINITION) 
+	            || elementName.equals(TAG_COLOROVERRIDE)) {
 			String name = element.getAttribute(ATT_LABEL);
 	
 			String id = element.getAttribute(ATT_ID);
@@ -96,7 +97,8 @@ public class ColorDefinitionReader extends RegistryReader {
 						.getUniqueIdentifier()));
 			return true;
 	    }
-	    else if (element.getName().equals(TAG_GRADIENTDEFINITION)) {
+	    else if (elementName.equals(TAG_GRADIENTDEFINITION) 
+	            || elementName.equals(TAG_GRADIENTOVERRIDE)) {
 			String name = element.getAttribute(ATT_LABEL);
 			
 			String id = element.getAttribute(ATT_ID);

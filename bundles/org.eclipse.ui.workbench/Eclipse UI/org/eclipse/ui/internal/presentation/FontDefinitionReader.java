@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.fonts;
+package org.eclipse.ui.internal.presentation;
 
 
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ public class FontDefinitionReader extends RegistryReader {
 
 	private static String ATT_LABEL = "label"; //$NON-NLS-1$
 	private static String ATT_ID = "id"; //$NON-NLS-1$
+	private static String ATT_VALUE = "value"; //$NON-NLS-1$
 	private static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
 	private static String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
 	private static String CHILD_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -45,6 +46,13 @@ public class FontDefinitionReader extends RegistryReader {
 
 		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
 
+		String value = element.getAttribute(ATT_VALUE);
+		
+		if (value != null && defaultMapping != null) {
+			// TODO logError(element, RESOURCE_BUNDLE.getString("badDefault")); //$NON-NLS-1$
+			return true;
+		}
+		
 		String categoryId = element.getAttribute(ATT_CATEGORYID);
 		
 		String description = null;
@@ -60,6 +68,7 @@ public class FontDefinitionReader extends RegistryReader {
 				name,
 				id,
 				defaultMapping,
+				value,
 				categoryId,
 				description));
 

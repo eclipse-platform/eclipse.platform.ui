@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.Gradient;
+import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
@@ -331,7 +334,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 
 		if (tabFolder != null)
 			return;
-
+	
 		// Create control.	
 		this.parent = parent;
 		
@@ -347,6 +350,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		}
 		
 		tabFolder = new CTabFolder(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
+		
+		FontRegistry fontRegistry = page.getTheme().getFontRegistry();
+	    tabFolder.setFont(fontRegistry.get("org.eclipse.workbench.tabFont")); //$NON-NLS-1$		
 		
 		// do not support close box on unselected tabs.
 		tabFolder.setUnselectedCloseVisible(false);
@@ -1263,6 +1269,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		if (activeState && viewState == STATE_MINIMIZED) {
 			setState(STATE_RESTORED);
 		}
+		
 		drawGradient(activeState);
 	}
 	
@@ -1272,19 +1279,29 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		int[] bgPercents;
 
 		ColorRegistry colorRegistry = page.getTheme().getColorRegistry();
+		GradientRegistry gradientRegistry = page.getTheme().getGradientRegistry();
+		
+		Gradient gradient = null;
         if (activeState){
 	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
+	        gradient = gradientRegistry.get(IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_ACTIVE);
 //	        fgColor = WorkbenchColors.getActiveViewForeground();
-			bgColors = WorkbenchColors.getActiveViewGradient();
-			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
+//			bgColors = WorkbenchColors.getActiveViewGradient();
+//			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
 		} else {
-	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);		    
+	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);
+	        gradient = gradientRegistry.get(IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED);
 //			fgColor = WorkbenchColors.getActiveViewForeground();
-			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
-			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
+//			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
+//			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
 		}		
-		
-		drawGradient(fgColor, bgColors, bgPercents, activeState);	
+		drawGradient(fgColor, gradient);
+		//drawGradient(fgColor, bgColors, bgPercents, activeState);	
+	}
+	
+	protected void drawGradient(Color fgColor, Gradient gradient) {
+		tabFolder.setSelectionForeground(fgColor);
+		tabFolder.setSelectionBackground(gradient.getColors(), gradient.getPercents(), gradient.getDirection() == SWT.VERTICAL);			    
 	}
 	
 	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {

@@ -73,11 +73,12 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * Preference page for management of system colors and fonts.
+ * 
+ * TODO:  Make fonts work exactly as colors now (ie: they can have defaults or values).
  * 
  * @since 3.0
  */
@@ -219,7 +220,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	private Map colorPreferencesToSet = new HashMap(7);
 	
-	private DisposableColorRegistry colorRegistry;
+	private CascadingColorRegistry colorRegistry;
 	private Button colorResetButton;
 
 	private ColorSelector colorSelector;
@@ -256,8 +257,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
      */
     private Composite fontControls;
 	private Map fontPreferencesToSet = new HashMap(7);
-	private TemporaryFontRegistry fontRegistry;
-	private TemporaryGradientRegistry gradientRegistry;
+	private CascadingFontRegistry fontRegistry;
+	private CascadingGradientRegistry gradientRegistry;
 	private Button fontResetButton;
     private Button fontSystemButton;
 	
@@ -593,8 +594,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         }
         
         colorRegistry.dispose();
-        fontRegistry.shutdown();
-        gradientRegistry.shutdown();
+        fontRegistry.dispose();
+        gradientRegistry.dispose();
     }
 
 	/**
@@ -925,12 +926,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(workbench.getPreferenceStore());
-	    colorRegistry = new DisposableColorRegistry(
-	            JFaceResources.getColorRegistry(), 
-	            workbench.getDisplay());
-	    fontRegistry = new TemporaryFontRegistry(
+	    colorRegistry = new CascadingColorRegistry(
+	    		JFaceResources.getColorRegistry());
+	    fontRegistry = new CascadingFontRegistry(
 	            JFaceResources.getFontRegistry());
-	    gradientRegistry = new TemporaryGradientRegistry(
+	    gradientRegistry = new CascadingGradientRegistry(
 	            JFaceResources.getGradientRegistry());	            
 	}
 

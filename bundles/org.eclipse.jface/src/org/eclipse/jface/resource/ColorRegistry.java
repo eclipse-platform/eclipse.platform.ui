@@ -146,7 +146,7 @@ public class ColorRegistry {
 	 * @param oldValue the old <code>RGB</code> value.
 	 * @param newValue the new <code>RGB</code> value.
 	 */
-	private void fireColorMappingChanged(
+	protected void fireColorMappingChanged(
 		String name,
 		RGB oldValue,
 		RGB newValue) {

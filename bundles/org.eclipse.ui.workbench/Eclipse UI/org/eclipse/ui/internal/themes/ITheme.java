@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.themes;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.GradientRegistry;
 
 /**
  * @since 3.0
@@ -21,6 +22,8 @@ public interface ITheme {
     public ColorRegistry getColorRegistry();
     
     public FontRegistry getFontRegistry();
+    
+    public GradientRegistry getGradientRegistry();
 
     public void dispose();
     

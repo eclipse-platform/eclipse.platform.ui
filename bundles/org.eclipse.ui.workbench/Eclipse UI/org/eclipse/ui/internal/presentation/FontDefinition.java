@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.fonts;
+package org.eclipse.ui.internal.presentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.presentation.IPresentationDefinition;
 
 
 /**
@@ -40,6 +39,8 @@ public class FontDefinition implements IPresentationDefinition {
 	 * changes in the preference store and propogates the change
 	 * for any special cases that require updating of other
 	 * values within the workbench.
+	 * 
+	 * TODO is this necessary anymore?
 	 */
 	private static class FontPreferenceListener implements IPropertyChangeListener {
 
@@ -202,11 +203,11 @@ public class FontDefinition implements IPresentationDefinition {
 	private String defaultsTo;
 	private String categoryId;
 	private String description;
+    private String value;
 
 	//The elements for use by the preference page
 	private static FontDefinition[] definitions;
 
-	
 	/**
 	 * Get the currently defined definitions for the workbench. Read them in if
 	 * they are not set.
@@ -264,11 +265,13 @@ public class FontDefinition implements IPresentationDefinition {
 		String fontName,
 		String uniqueId,
 		String defaultsId,
+		String value,
 		String categoryId,
 		String fontDescription) {
 		this.label = fontName;
 		this.id = uniqueId;
 		this.defaultsTo = defaultsId;
+		this.value = value;
 		this.categoryId = categoryId;
 		this.description = fontDescription;
 	}
@@ -312,5 +315,14 @@ public class FontDefinition implements IPresentationDefinition {
      */
     public String getCategoryId() {
         return categoryId;
+    }
+    
+    /**
+     * Returns the value.
+     * 
+     * @return String
+     */
+    public String getValue() {
+        return value;
     }
 }

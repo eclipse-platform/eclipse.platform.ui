@@ -57,11 +57,11 @@ import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistryReader;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.presentation.FontDefinition;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IViewRegistry;

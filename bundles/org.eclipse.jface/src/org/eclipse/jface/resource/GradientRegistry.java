@@ -144,7 +144,7 @@ public class GradientRegistry {
 	 * @param oldValue the old <code>GradientData</code> value.
 	 * @param newValue the new <code>GradientData</code> value.
 	 */
-	private void fireGradientMappingChanged(
+	protected void fireGradientMappingChanged(
 		String name,
 		GradientData oldValue,
 		GradientData newValue) {

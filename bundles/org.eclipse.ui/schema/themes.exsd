@@ -364,6 +364,13 @@
          </documentation>
       </annotation>
       <complexType>
+         <attribute name="image" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specify the image to use for specified imageType.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="imageType" use="required">
             <annotation>
                <documentation>
@@ -382,13 +389,6 @@
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>
-         <attribute name="image" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Specify the image to use for specified imageType.
-               </documentation>
-            </annotation>
          </attribute>
       </complexType>
    </element>
@@ -410,7 +410,7 @@
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  the color value.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
 
 Unlike a colorDefinition, you may not supply a defaultsTo for an override.
                </documentation>
@@ -440,7 +440,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="direction">
             <annotation>
                <documentation>
-                  The direction of this gradient.  Must be vertical or horizontal. In the absence of this attribute, horizontal is assumed.
+                  the direction of this gradient.  Must be vertical or horizontal. In the absence of this attribute, horizontal is assumed.
                </documentation>
             </annotation>
             <simpleType>
@@ -455,7 +455,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="initialValue" type="string" use="required">
             <annotation>
                <documentation>
-                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  the starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
                </documentation>
             </annotation>
          </attribute>
@@ -472,14 +472,39 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="percentage" type="string" use="required">
             <annotation>
                <documentation>
-                  The percentage point at which this color appears.  This must be &gt;= 0 and &lt;= 100.  Additionally, the sequence of gradientParts must be ordered by this attribute.  Ie:  a gradientPart with percentage 10 cannot be added after a gradientPart with percentage 50.
+                  the percentage point at which this color appears.  This must be &gt;= 0 and &lt;= 100.  Additionally, the sequence of gradientParts must be ordered by this attribute.  Ie:  a gradientPart with percentage 10 cannot be added after a gradientPart with percentage 50.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  the color value of this gradientPart.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fontOverride">
+      <annotation>
+         <documentation>
+            Allows overriding of gradients defined in the org.eclipse.ui.fontDefinitions extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+&lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
