@@ -40,8 +40,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -371,13 +370,13 @@ public class WizardProjectsImportPage extends WizardPage {
 
 		});
 
-		locationPathField.addModifyListener(new ModifyListener() {
+		locationPathField.addFocusListener(new FocusAdapter() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.ModifyEvent)
 			 */
-			public void modifyText(ModifyEvent e) {
+			public void focusLost(FocusEvent e) {
 				updateProjectsList(locationPathField.getText().trim());
 			}
 		});
@@ -460,15 +459,20 @@ public class WizardProjectsImportPage extends WizardPage {
 								"WizardProjectsImportPage.CheckingMessage", new Object[] { directory //$NON-NLS-1$
 										.getPath() }));
 		File[] contents = directory.listFiles();
+		//first look for project description files
+		final String dotProject = IProjectDescription.DESCRIPTION_FILE_NAME;
 		for (int i = 0; i < contents.length; i++) {
 			File file = contents[i];
-			if (file.isDirectory())
-				collectProjectFiles(files, file, monitor);
-			else {
-				if (file.getName().equals(
-						IProjectDescription.DESCRIPTION_FILE_NAME))
-					files.add(file);
+			if (file.isFile() && file.getName().equals(dotProject)) {
+				files.add(file);
+				//don't search sub-directories since we can't have nested projects
+				return true;
 			}
+		}
+		//no project description found, so recurse into sub-directories
+		for (int i = 0; i < contents.length; i++) {
+			if (contents[i].isDirectory())
+				collectProjectFiles(files, contents[i], monitor);
 		}
 		return true;
 	}
@@ -511,52 +515,22 @@ public class WizardProjectsImportPage extends WizardPage {
 	 *         successful.
 	 */
 	public boolean createProjects() {
-		Object[] selected = projectsList.getCheckedElements();
-		for (int i = 0; i < selected.length; i++) {
-			ProjectRecord record = (ProjectRecord) selected[i];
-			if (!createExistingProject(record))
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Create the project described in record. If it is successful return true.
-	 * 
-	 * @param record
-	 * @return boolean <code>true</code> of successult
-	 */
-	private boolean createExistingProject(final ProjectRecord record) {
-
-		String projectName = record.getProjectName();
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProject project = workspace.getRoot().getProject(projectName);
-		if (record.description == null) {
-			record.description = workspace.newProjectDescription(projectName);
-			IPath locationPath = new Path(record.projectFile.getAbsolutePath());
-			// If it is under the root use the default location
-			if (Platform.getLocation().isPrefixOf(locationPath))
-				record.description.setLocation(null);
-			else
-				record.description.setLocation(locationPath);
-		} else
-			record.description.setName(projectName);
-
 		// create the new project operation
+		final Object[] selected = projectsList.getCheckedElements();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor)
 					throws CoreException {
-				monitor.beginTask("", 2000); //$NON-NLS-1$
-				project.create(record.description, new SubProgressMonitor(
-						monitor, 1000));
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				project.open(IResource.BACKGROUND_REFRESH,
-						new SubProgressMonitor(monitor, 1000));
-
+				try {
+					monitor.beginTask("", selected.length); //$NON-NLS-1$
+					for (int i = 0; i < selected.length; i++) {
+						ProjectRecord record = (ProjectRecord) selected[i];
+						createExistingProject(record, new SubProgressMonitor(monitor, 1));
+					}
+				} finally {
+					monitor.done();
+				}
 			}
 		};
-
 		// run the new project creation operation
 		try {
 			getContainer().run(true, true, op);
@@ -577,9 +551,42 @@ public class WizardProjectsImportPage extends WizardPage {
 			}
 			return false;
 		}
-
 		return true;
-
 	}
 
+	/**
+	 * Create the project described in record. 
+	 * 
+	 * @param record The project record
+	 * @param monitor The progress monitor
+	 */
+	private void createExistingProject(final ProjectRecord record, IProgressMonitor monitor) throws CoreException {
+
+		String projectName = record.getProjectName();
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IProject project = workspace.getRoot().getProject(projectName);
+		if (record.description == null) {
+			record.description = workspace.newProjectDescription(projectName);
+			IPath locationPath = new Path(record.projectFile.getAbsolutePath());
+			// If it is under the root use the default location
+			if (Platform.getLocation().isPrefixOf(locationPath))
+				record.description.setLocation(null);
+			else
+				record.description.setLocation(locationPath);
+		} else
+			record.description.setName(projectName);
+
+		// create the new project 
+		try {
+			monitor.beginTask("", 100); //$NON-NLS-1$
+			project.create(record.description, new SubProgressMonitor(
+					monitor, 50));
+			if (monitor.isCanceled())
+				throw new OperationCanceledException();
+			project.open(IResource.BACKGROUND_REFRESH,
+					new SubProgressMonitor(monitor, 50));
+		} finally {
+			monitor.done();
+		}
+	}
 }
