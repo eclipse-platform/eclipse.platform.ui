@@ -327,11 +327,6 @@ public class TaskXMLFileMerger {
 //    	} 
     }
 	
-	/**
-	 * Creates an Instance of this class and calls the
-	 * generateParsedXML() method.
-	 * @see generateParsedXML()
-	 */
 	public static void main(String[] args) {
 		
 		TaskXMLFileMerger tmpTaskXMLFileMerger = new TaskXMLFileMerger();
