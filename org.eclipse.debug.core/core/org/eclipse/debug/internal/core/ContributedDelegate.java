@@ -13,8 +13,6 @@ package org.eclipse.debug.internal.core;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -82,10 +80,11 @@ public class ContributedDelegate {
 			if (modes == null) {
 				return new HashSet(0);
 			}
-			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
-			fModes = new HashSet(tokenizer.countTokens());
-			while (tokenizer.hasMoreTokens()) {
-				fModes.add(tokenizer.nextToken().trim());
+			String[] strings = modes.split(","); //$NON-NLS-1$
+			fModes = new HashSet(3);
+			for (int i = 0; i < strings.length; i++) {
+				String string = strings[i];
+				fModes.add(string.trim());
 			}
 		}
 		return fModes;
