@@ -38,6 +38,8 @@ protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConf
 /**
  * Return all extendedn actions. */
 public ActionDescriptor[] getExtendedActions() {
+	if(cache == null)
+		return new ActionDescriptor[0];
 	ArrayList result = new ArrayList(cache.size());
 	for (Iterator iter = cache.iterator(); iter.hasNext();) {
 		Object element = (Object) iter.next();
