@@ -70,7 +70,10 @@ public class CVSTagElement extends CVSModelElement implements IAdaptable {
 		return internalGetChildren(o, null, monitor);
 	}
 	
-	public boolean isNeedsProgress() {
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isRemoteElement()
+	 */
+	public boolean isRemoteElement() {
 		return true;
 	}
 	public ImageDescriptor getImageDescriptor(Object object) {

@@ -47,7 +47,10 @@ public class CVSFolderElement extends CVSResourceElement {
 		return elements;
 	}
 	
-	public boolean isNeedsProgress() {
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isRemoteElement()
+	 */
+	public boolean isRemoteElement() {
 		return true;
 	}
 	

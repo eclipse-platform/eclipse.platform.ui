@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public abstract class CVSModelElement implements IWorkbenchAdapter {
@@ -49,7 +50,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 						}
 					}
 				};
-				getRunnableContext().run(isInterruptable() /*fork*/, isInterruptable() /*cancelable*/, runnable);
+				getRunnableContext().run(true /*fork*/, true /*cancelable*/, runnable);
 				return result[0];
 			} else {
 				return internalGetChildren(o, set, null);
@@ -90,14 +91,16 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 	 * Get the childen filtered by the given working set.
 	 */
 	public Object[] getChildren(Object o, IWorkingSet set) {
-		return getChildren(o, isNeedsProgress(), set);
+		return getChildren(o, isRemoteElement(), set);
 	}
 	
-	public boolean isNeedsProgress() {
-		return false;
-	}
-	
-	public boolean isInterruptable() {
+	/**
+	 * This method should return true for any subclass that represents a remote element
+	 * that requires network I/O to be fetched.
+	 * 
+	 * @return
+	 */
+	public boolean isRemoteElement() {
 		return false;
 	}
 	
@@ -107,11 +110,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 	 */
 	public IRunnableContext getRunnableContext() {
 		if (runnableContext == null) {
-			return new IRunnableContext() {
-				public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-					CVSUIPlugin.runWithProgress(null, cancelable, runnable);
-				}
-			};
+			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		}
 		return runnableContext;
 	}

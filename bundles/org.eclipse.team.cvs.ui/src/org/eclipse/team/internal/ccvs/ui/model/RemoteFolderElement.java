@@ -56,9 +56,9 @@ public class RemoteFolderElement extends RemoteResourceElement {
 	}
 
 	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isNeedsProgress()
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isRemoteElement()
 	 */
-	public boolean isNeedsProgress() {
+	public boolean isRemoteElement() {
 		return true;
 	}
 

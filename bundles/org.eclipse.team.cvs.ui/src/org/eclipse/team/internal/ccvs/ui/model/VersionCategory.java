@@ -137,9 +137,9 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 		return repository;
 	}
 	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isNeedsProgress()
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isRemoteElement()
 	 */
-	public boolean isNeedsProgress() {
+	public boolean isRemoteElement() {
 		return true;
 	}
 
