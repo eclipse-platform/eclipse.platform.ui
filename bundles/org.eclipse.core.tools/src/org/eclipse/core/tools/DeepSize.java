@@ -133,6 +133,7 @@ public class DeepSize {
 			Class clazz = (Class) it.next();
 			int size = ((Integer)sizes.get(clazz)).intValue();
 			System.out.println('\t' + clazz.getName() + " size: " + size); //$NON-NLS-1$
+			System.out.println("Total size of all objects: " + getSize()); //$NON-NLS-1$
 		}
 		System.out.println("*** End DeepSize report ***"); //$NON-NLS-1$
 	}
