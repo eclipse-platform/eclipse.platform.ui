@@ -10,14 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * Create an instance of the receiver in the window.
@@ -25,26 +37,34 @@ import org.eclipse.swt.widgets.ProgressBar;
  * @param workbenchWindow
  *            The window this is being created in.
  */
-public class ProgressAnimationItem extends AnimationItem {
+public class ProgressAnimationItem extends AnimationItem implements FinishedJobs.KeptJobsListener {
 
 	ProgressBar bar;
 	MouseListener mouseListener;
-	StackLayout layout;
 	Composite top;
-
+	ToolBar toolbar;
+	ToolItem toolButton;
+	ProgressRegion progressRegion;
+    Image noneImage, okImage, errorImage;
+	
+	
 	/**
 	 * Create an instance of the receiver in the supplied region.
 	 * 
 	 * @param region. The ProgressRegion that contains the receiver.
 	 */
-	ProgressAnimationItem(final ProgressRegion region) {
+	ProgressAnimationItem(ProgressRegion region) {
 		super(region.workbenchWindow);
-		mouseListener = new MouseAdapter(){
+		
+	    FinishedJobs.getInstance().addListener(this);
+		
+		progressRegion= region;
+		mouseListener = new MouseAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent e) {
-				region.processDoubleClick();
+			    progressRegion.processDoubleClick();
 			}
 		};
 	}
@@ -55,15 +75,49 @@ public class ProgressAnimationItem extends AnimationItem {
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#createAnimationItem(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createAnimationItem(Composite parent) {
+	    	    
+	    if (okImage == null) {
+	        Display display= parent.getDisplay();
+	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display);
+	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display);
+	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display);
+	    }
 		
-		top = new Composite(parent,SWT.NULL);
-		layout = new StackLayout();
-		top.setLayout(layout);
+		top = new Composite(parent, SWT.NULL);
+		top.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e) {
+        	    		FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
+                noneImage.dispose();
+    	        		okImage.dispose();
+    	    	        errorImage.dispose();
+           }
+		});
+		//top.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+		GridLayout gl= new GridLayout();
+		gl.numColumns= 2;
+		gl.marginHeight= 0;
+		gl.marginWidth= 0;
+		gl.horizontalSpacing= 0;
+		top.setLayout(gl);
 		
-		bar = new ProgressBar(top,SWT.HORIZONTAL | SWT.INDETERMINATE);
+		toolbar= new ToolBar(top, SWT.FLAT);
+		toolButton= new ToolItem(toolbar, SWT.NONE);
+		toolButton.setImage(noneImage);
+		toolButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                progressRegion.processDoubleClick();
+        			toolButton.setImage(noneImage);
+            }
+        });
+		
+		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
 		bar.addMouseListener(mouseListener);
 		
-		layout.topControl = null;
+		GridData gd= new GridData();
+		gd.widthHint= 30;
+		gd.verticalAlignment= GridData.CENTER;
+		bar.setLayoutData(gd);
+		
 		return top;
 	}
 
@@ -83,11 +137,9 @@ public class ProgressAnimationItem extends AnimationItem {
 	 */
 	void animationDone() {
 		super.animationDone();
-		if(bar.isDisposed())
+		if (bar.isDisposed())
 			return;
-		
-		layout.topControl = null;
-		top.layout();
+		bar.setVisible(false);
 	}
 
 	/*
@@ -97,11 +149,35 @@ public class ProgressAnimationItem extends AnimationItem {
 	 */
 	void animationStart() {
 		super.animationStart();
-		if(bar.isDisposed())
+		if (bar.isDisposed())
 			return;
-		layout.topControl = bar;
-		top.layout();
+		bar.setVisible(true);
 	}
 
-
+    public void removed(JobInfo info) {
+        // nothing to do here
+    }
+    
+    public void added(JobInfo info) {
+        final Job job= info.getJob();
+        if (job != null) {
+		    final Display display= Display.getDefault();
+		    display.asyncExec(new Runnable() {
+		        public void run() {
+		            setStatus(job);
+		        }
+		    });
+        }
+    }
+    
+	void setStatus(Job job) {
+	    IStatus status= job.getResult();
+	    if (status != null) {
+	        toolbar.getDisplay().beep();
+	        if (status.getSeverity() == IStatus.ERROR)
+	            toolButton.setImage(errorImage);
+	        else
+	            toolButton.setImage(okImage);
+	    }
+	}
 }
