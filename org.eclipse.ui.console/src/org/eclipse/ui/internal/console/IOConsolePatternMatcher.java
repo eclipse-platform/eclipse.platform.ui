@@ -76,7 +76,7 @@ public class IOConsolePatternMatcher implements IDocumentListener {
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchNotifier pattern = (CompiledPatternMatchNotifier) iter.next();
                 try {
-                    testForMatch(pattern, 0);
+                    testForMatch(pattern, event.fOffset);
                 } catch (BadLocationException e) {
                 }
             }
@@ -90,7 +90,7 @@ public class IOConsolePatternMatcher implements IDocumentListener {
         while(matcher.find()) {
             String group = matcher.group();
             if (group.length() > 0) {
-                notifier.matchFound(group, matcher.start());
+                notifier.matchFound(group, matcher.start()+documentOffset);
             }
         }
     }
