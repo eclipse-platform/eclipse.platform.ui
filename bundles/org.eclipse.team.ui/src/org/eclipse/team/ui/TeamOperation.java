@@ -80,7 +80,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * should run. This may include prompting the user for information, etc.
 	 * @return whether the operation should be run.
 	 */
-	public boolean shouldRun() {
+	protected boolean shouldRun() {
 		return true;
 	}
 

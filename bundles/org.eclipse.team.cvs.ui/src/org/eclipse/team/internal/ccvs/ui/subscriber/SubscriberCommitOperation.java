@@ -64,6 +64,14 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
+	 */
+	public boolean shouldRun() {
+		SyncInfoSet set = getSyncInfoSet();
+		return !set.isEmpty();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.SubscriberOperation#getSyncInfoSet()
 	 */
 	protected SyncInfoSet getSyncInfoSet() {
