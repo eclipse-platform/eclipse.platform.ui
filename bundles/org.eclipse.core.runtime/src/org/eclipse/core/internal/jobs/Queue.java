@@ -150,10 +150,6 @@ public class Queue {
 		return elements[head];
 	}
 
-	public Object peekTail() {
-		return elements[decrement(tail)];
-	}
-
 	/**
 	 * Removes an returns the item at the head of the queue.
 	 */

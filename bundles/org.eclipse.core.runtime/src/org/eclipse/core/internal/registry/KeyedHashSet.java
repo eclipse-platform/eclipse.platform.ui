@@ -10,22 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
+/**
+ * Note this is a copy of a data structure from OSGi, package
+ * org.eclipse.osgi.framework.internal.core.  Unused methods were removed
+ * from this copy.
+ */
 public class KeyedHashSet {
 	protected static final int MINIMUM_SIZE = 7;
+	private int capacity;
 	protected int elementCount = 0;
 	protected KeyedElement[] elements;
 	protected boolean replace;
-	private int capacity;
 
 	public KeyedHashSet() {
 		this(MINIMUM_SIZE, true);
-	}
-
-	public KeyedHashSet(boolean replace) {
-		this(MINIMUM_SIZE, replace);
 	}
 
 	public KeyedHashSet(int capacity) {
@@ -36,14 +34,6 @@ public class KeyedHashSet {
 		elements = new KeyedElement[Math.max(MINIMUM_SIZE, capacity * 2)];
 		this.replace = replace;
 		this.capacity = capacity;
-	}
-
-	public KeyedHashSet(KeyedHashSet original) {
-		elements = new KeyedElement[original.elements.length];
-		System.arraycopy(original.elements, 0, elements, 0, original.elements.length);
-		elementCount = original.elementCount;
-		replace = original.replace;
-		capacity = original.capacity;
 	}
 
 	/**
@@ -93,17 +83,9 @@ public class KeyedHashSet {
 		return add(element);
 	}
 
-	public void addAll(KeyedElement[] newElements) {
-		for (int i = 0; i < newElements.length; i++)
-			add(newElements[i]);
-	}
-
-	public boolean contains(KeyedElement element) {
-		return get(element) != null;
-	}
-
-	public boolean containsKey(Object key) {
-		return getByKey(key) != null;
+	public void clear() {
+		elements = new KeyedElement[Math.max(MINIMUM_SIZE, capacity * 2)];
+		elementCount = 0;
 	}
 
 	public KeyedElement[] elements() {
@@ -147,37 +129,6 @@ public class KeyedHashSet {
 	 * Returns the set element with the given id, or null
 	 * if not found.
 	 */
-	public KeyedElement getByKey(Object key) {
-		if (elementCount == 0)
-			return null;
-		int hash = keyHash(key);
-
-		// search the last half of the array
-		for (int i = hash; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return null;
-			if (element.getKey().equals(key))
-				return element;
-		}
-
-		// search the beginning of the array
-		for (int i = 0; i < hash - 1; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return null;
-			if (element.getKey().equals(key))
-				return element;
-		}
-
-		// nothing found so return null
-		return null;
-	}
-
-	/**
-	 * Returns the set element with the given id, or null
-	 * if not found.
-	 */
 	public KeyedElement get(KeyedElement key) {
 		if (elementCount == 0)
 			return null;
@@ -205,8 +156,47 @@ public class KeyedHashSet {
 		return null;
 	}
 
+	/**
+	 * Returns the set element with the given id, or null
+	 * if not found.
+	 */
+	public KeyedElement getByKey(Object key) {
+		if (elementCount == 0)
+			return null;
+		int hash = keyHash(key);
+
+		// search the last half of the array
+		for (int i = hash; i < elements.length; i++) {
+			KeyedElement element = elements[i];
+			if (element == null)
+				return null;
+			if (element.getKey().equals(key))
+				return element;
+		}
+
+		// search the beginning of the array
+		for (int i = 0; i < hash - 1; i++) {
+			KeyedElement element = elements[i];
+			if (element == null)
+				return null;
+			if (element.getKey().equals(key))
+				return element;
+		}
+
+		// nothing found so return null
+		return null;
+	}
+
+	private int hash(KeyedElement element) {
+		return Math.abs(element.getKeyHashCode()) % elements.length;
+	}
+
 	public boolean isEmpty() {
 		return elementCount == 0;
+	}
+
+	private int keyHash(Object key) {
+		return Math.abs(key.hashCode()) % elements.length;
 	}
 
 	/**
@@ -239,36 +229,6 @@ public class KeyedHashSet {
 		elements[target] = null;
 	}
 
-	public boolean removeByKey(Object key) {
-		if (elementCount == 0)
-			return false;
-		int hash = keyHash(key);
-
-		for (int i = hash; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return false;
-			if (element.getKey().equals(key)) {
-				rehashTo(i);
-				elementCount--;
-				return true;
-			}
-		}
-
-		for (int i = 0; i < hash - 1; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return false;
-			if (element.getKey().equals(key)) {
-				rehashTo(i);
-				elementCount--;
-				return true;
-			}
-		}
-
-		return true;
-	}
-
 	public boolean remove(KeyedElement toRemove) {
 		if (elementCount == 0)
 			return false;
@@ -299,17 +259,34 @@ public class KeyedHashSet {
 		return false;
 	}
 
-	private int hash(KeyedElement element) {
-		return Math.abs(element.getKeyHashCode()) % elements.length;
-	}
+	public boolean removeByKey(Object key) {
+		if (elementCount == 0)
+			return false;
+		int hash = keyHash(key);
 
-	private int keyHash(Object key) {
-		return Math.abs(key.hashCode()) % elements.length;
-	}
+		for (int i = hash; i < elements.length; i++) {
+			KeyedElement element = elements[i];
+			if (element == null)
+				return false;
+			if (element.getKey().equals(key)) {
+				rehashTo(i);
+				elementCount--;
+				return true;
+			}
+		}
 
-	public void removeAll(KeyedElement[] removedElements) {
-		for (int i = 0; i < removedElements.length; i++)
-			remove(removedElements[i]);
+		for (int i = 0; i < hash - 1; i++) {
+			KeyedElement element = elements[i];
+			if (element == null)
+				return false;
+			if (element.getKey().equals(key)) {
+				rehashTo(i);
+				elementCount--;
+				return true;
+			}
+		}
+
+		return true;
 	}
 
 	private boolean shouldGrow() {
@@ -335,64 +312,5 @@ public class KeyedHashSet {
 		}
 		result.append("}"); //$NON-NLS-1$
 		return result.toString();
-	}
-
-	public int countCollisions() {
-		int result = 0;
-		int lastHash = 0;
-		boolean found = false;
-		for (int i = 0; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				found = false;
-			else {
-				int hash = hash(element);
-				if (found)
-					if (lastHash == hash)
-						result++;
-					else
-						found = false;
-				else {
-					lastHash = hash;
-					found = true;
-				}
-			}
-		}
-		return result;
-	}
-
-	public Iterator iterator() {
-		return new KeyedHashSetIterator();
-	}
-
-	class KeyedHashSetIterator implements Iterator {
-		private int currentIndex = -1;
-		private int found;
-
-		public boolean hasNext() {
-			return found < elementCount;
-		}
-
-		public Object next() {
-			if (!hasNext())
-				throw new NoSuchElementException();
-			while (++currentIndex < elements.length)
-				if (elements[currentIndex] != null) {
-					found++;
-					return elements[currentIndex];
-				}
-			// this would mean we have less elements than we thought
-			throw new NoSuchElementException();
-		}
-
-		public void remove() {
-			// as allowed by the API
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	public void clear() {
-		elements = new KeyedElement[Math.max(MINIMUM_SIZE, capacity * 2)];
-		elementCount = 0;
 	}
 }

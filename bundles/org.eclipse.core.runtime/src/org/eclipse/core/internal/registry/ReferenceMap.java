@@ -21,7 +21,6 @@
 package org.eclipse.core.internal.registry;
 
 
-import java.io.*;
 import java.lang.ref.*;
 import java.util.*;
 
@@ -64,7 +63,7 @@ import java.util.*;
  *  provide synchronized access to a <Code>ReferenceMap</Code>.
  *
  *  @author Paul Jack 
- *  @version $Id: ReferenceMap.java,v 1.4 2004/12/16 19:19:39 prapicau Exp $
+ *  @version $Id: ReferenceMap.java,v 1.5 2005/01/19 19:26:16 prapicau Exp $
  *  @since 2.1
  *  @see java.lang.ref.Reference
  */
@@ -243,50 +242,6 @@ public class ReferenceMap extends AbstractMap {
         }
     }
 
-
-    /**
-     *  Writes this object to the given output stream.
-     *
-     *  @param out  the output stream to write to
-     *  @throws IOException  if the stream raises it
-     */
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeInt(table.length);
-
-        // Have to use null-terminated list because size might shrink
-        // during iteration
-
-        for (Iterator iter = entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            out.writeObject(entry.getKey());
-            out.writeObject(entry.getValue());
-        }
-        out.writeObject(null);
-    }
-
-
-    /**
-     *  Reads the contents of this object from the given input stream.
-     *
-     *  @param inp  the input stream to read from
-     *  @throws IOException  if the stream raises it
-     *  @throws ClassNotFoundException  if the stream raises it
-     */
-    private void readObject(ObjectInputStream inp) throws IOException, ClassNotFoundException {
-        inp.defaultReadObject();
-        table = new Entry[inp.readInt()];
-        threshold = (int)(table.length * loadFactor);
-        queue = new ReferenceQueue();
-        Object key = inp.readObject();
-        while (key != null) {
-            Object value = inp.readObject();
-            put(key, value);
-            key = inp.readObject();
-        }
-    }
-
-
     /**
      *  Constructs a reference of the given type to the given 
      *  referent.  The reference is registered with the queue
@@ -306,7 +261,6 @@ public class ReferenceMap extends AbstractMap {
             default: throw new Error();
         }
     }
-
 
     /**
      *  Returns the entry associated with the given key.

@@ -520,10 +520,6 @@ public final class ContentType implements IContentType {
 		return NOT_ASSOCIATED;
 	}
 
-	boolean hasAnyFileSpec() {
-		return fileSpecs != null && !fileSpecs.isEmpty();
-	}
-
 	boolean hasBuiltInAssociations() {
 		return builtInAssociations;
 	}

@@ -51,11 +51,6 @@ public class DataArea {
 		}
 	}
 
-	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException { //TODO Does not seems to be used
-		assertLocationInitialized();
-		return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP);
-	}
-
 	public IPath getMetadataLocation() throws IllegalStateException {
 		assertLocationInitialized();
 		return location.append(F_META_AREA);
@@ -81,14 +76,6 @@ public class DataArea {
 	public IPath getStateLocation(String bundleName) throws IllegalStateException {
 		assertLocationInitialized();
 		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundleName);
-	}
-
-	/**
-	 * Returns the read/write location of the file for storing plugin preferences.
-	 */
-	public IPath getPreferenceLocation(Bundle bundle, boolean create) throws IllegalStateException {
-		assertLocationInitialized();
-		return getPreferenceLocation(bundle.getSymbolicName(), create);
 	}
 
 	public IPath getPreferenceLocation(String bundleName, boolean create) throws IllegalStateException {

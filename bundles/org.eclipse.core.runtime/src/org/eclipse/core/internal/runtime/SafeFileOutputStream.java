@@ -29,14 +29,6 @@ public class SafeFileOutputStream extends OutputStream {
 	protected boolean failed;
 	protected static final String EXTENSION = ".bak"; //$NON-NLS-1$
 
-	public SafeFileOutputStream(File file) throws IOException {
-		this(file.getAbsolutePath(), null);
-	}
-
-	public SafeFileOutputStream(String targetName) throws IOException {
-		this(targetName, null);
-	}
-
 	/**
 	 * If targetPath is null, the file will be created in the default-temporary directory.
 	 */
