@@ -12,13 +12,15 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkingSet;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
 
 /**
  * BreakpointContainerWorkbenchAdapter
  */
-public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
+public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2{
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
@@ -39,11 +41,6 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
             if (adapter != null) {
                 return adapter.getImageDescriptor(category);
             }
-            // TODO: this should really be handled by an IWorkingSet workbench adapater
-            if (category instanceof IWorkingSet) {
-                IWorkingSet set = (IWorkingSet) category;
-                return set.getImage();
-            }
             return container.getOrganizer().getImageDescriptor();
         }
         return null;
@@ -60,11 +57,6 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
             if (adapter != null) {
                 return adapter.getLabel(category);
             }
-//          TODO: this should really be handled by an IWorkingSet workbench adapater
-            if (category instanceof IWorkingSet) {
-                IWorkingSet set = (IWorkingSet) category;
-                return set.getName();
-            }            
             return container.getOrganizer().getLabel();
         }
         return ""; //$NON-NLS-1$
@@ -74,7 +66,51 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
     public Object getParent(Object o) {
-        // not used
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
+     */
+    public RGB getForeground(Object object) {
+        if (object instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) object;
+            IAdaptable category = container.getCategory();
+            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            if (adapter != null) {
+                return adapter.getForeground(category);
+            }
+        }        
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
+     */
+    public RGB getBackground(Object object) {
+        if (object instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) object;
+            IAdaptable category = container.getCategory();
+            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            if (adapter != null) {
+                return adapter.getBackground(category);
+            }
+        }        
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
+     */
+    public FontData getFont(Object object) {
+        if (object instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) object;
+            IAdaptable category = container.getCategory();
+            IWorkbenchAdapter2 adapter = (IWorkbenchAdapter2) category.getAdapter(IWorkbenchAdapter2.class);
+            if (adapter != null) {
+                return adapter.getFont(category);
+            }
+        }        
         return null;
     }
 

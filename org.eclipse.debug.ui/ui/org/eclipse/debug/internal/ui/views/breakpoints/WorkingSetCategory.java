@@ -11,14 +11,20 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
 
 /**
- * WorkingSetCategory
+ * Represents a breakpoint category for a specific working set.
  */
-public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdapter {
+public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
     private IWorkingSet fWorkingSet;
 
@@ -49,7 +55,11 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
     public String getLabel(Object o) {
-        return fWorkingSet.getName();
+        StringBuffer name = new StringBuffer(fWorkingSet.getName());
+        if (isDefault()) {
+            name.append(DebugUIViewsMessages.getString("WorkingSetCategory.0")); //$NON-NLS-1$
+        }
+        return name.toString();
     }
 
     /* (non-Javadoc)
@@ -85,4 +95,43 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
     public int hashCode() {
         return fWorkingSet.hashCode();
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
+     */
+    public RGB getForeground(Object element) {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
+     */
+    public RGB getBackground(Object element) {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
+     */
+    public FontData getFont(Object element) {
+        if (isDefault()) {
+            FontData[] fontData = JFaceResources.getDefaultFont().getFontData();
+            if (fontData != null && fontData.length > 0) {
+                FontData data = fontData[0];
+                data.setStyle(SWT.BOLD);
+                return data;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Whether this is the default breakpoint working set.
+     * 
+     * @return whether this is the default breakpoint working set
+     */
+    private boolean isDefault() {
+        return fWorkingSet.equals(BreakpointSetOrganizer.getDefaultWorkingSet());
+    }
 }
+

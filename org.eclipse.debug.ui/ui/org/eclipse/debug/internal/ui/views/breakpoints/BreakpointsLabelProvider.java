@@ -13,17 +13,18 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Label provider for the breakpoints view
  */
-public class BreakpointsLabelProvider extends LabelProvider {
+public class BreakpointsLabelProvider extends LabelProvider implements IFontProvider {
 
-    private ILabelProvider fWorkbenchLabelProvider;
+    private WorkbenchLabelProvider fWorkbenchLabelProvider;
     private IDebugModelPresentation fPresentation;
     
     /**
@@ -61,5 +62,15 @@ public class BreakpointsLabelProvider extends LabelProvider {
             return fPresentation.getText(element);
         }
         return fWorkbenchLabelProvider.getText(element);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+     */
+    public Font getFont(Object element) {
+        if (element instanceof IBreakpoint) {
+            return null;
+        }
+        return fWorkbenchLabelProvider.getFont(element);
     }
 }

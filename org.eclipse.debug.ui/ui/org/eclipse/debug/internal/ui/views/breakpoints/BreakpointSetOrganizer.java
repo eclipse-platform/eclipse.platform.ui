@@ -42,6 +42,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
      */
     public BreakpointSetOrganizer() {
         PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
+        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
     }
 
@@ -74,6 +75,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
     public void dispose() {
         PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+        DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
         super.dispose();
     }
     
@@ -89,6 +91,14 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
         }
         if (set != null && IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
             fireCategoryChanged(new WorkingSetCategory(set));
+        }
+        if (event.getProperty().equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
+            IWorkingSet defaultWorkingSet = getDefaultWorkingSet();
+            if (defaultWorkingSet != null) {
+                fireCategoryChanged(new WorkingSetCategory(defaultWorkingSet));
+            } else {
+                fireCategoryChanged(null);
+            }
         }
     }
 

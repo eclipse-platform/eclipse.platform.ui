@@ -2375,6 +2375,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
             adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
          </factory>
          <factory 
             class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
@@ -2390,6 +2391,7 @@ M4 = Platform-specific fourth key
                class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
                adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
          </factory>         
     </extension>
  <extension

@@ -17,11 +17,12 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationTypeFactory;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerWorkbenchAdapter;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointPersistableElementAdapter;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
 
 public class DebugUIAdapterFactory implements IAdapterFactory {
 
@@ -52,6 +53,15 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
             }
         }
 		
+        if (adapterType == IWorkbenchAdapter2.class) {
+            if (obj instanceof IWorkbenchAdapter2) {
+                return obj;
+            }
+            if (obj instanceof BreakpointContainer) {
+                return new BreakpointContainerWorkbenchAdapter();
+            }
+        }
+        
 		return null;
 	}
 
@@ -59,7 +69,7 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IPersistableElement.class};
+		return new Class[] {IPersistableElement.class, IWorkbenchAdapter.class, IWorkbenchAdapter2.class};
 	}
 
 }
