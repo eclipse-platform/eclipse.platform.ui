@@ -116,7 +116,7 @@ public class NewWizardMenu extends ContributionItem {
 			WorkbenchWizardElement element = reader.findWizard(id);
 			if (element != null) {
 				action =
-					new NewWizardShortcutAction(window.getWorkbench(), element);
+					new NewWizardShortcutAction(window, element);
 				actions.put(id, action);
 			}
 		}

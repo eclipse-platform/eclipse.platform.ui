@@ -28,7 +28,7 @@ public class OpenPreferencesAction extends Action {
  * This default constructor allows the the action to be called from the welcome page.
  */
 public OpenPreferencesAction() {
-	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 }
 /**
  * Create a new <code>OpenPreferenceAction</code> and initialize it 

@@ -865,7 +865,7 @@ public class WorkbenchActionBuilder {
 		// See if a welcome page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
-				quickStartAction = new QuickStartAction(workbench);
+				quickStartAction = new QuickStartAction(window);
 				break;
 			}
 		}
