@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.security;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.*;
 import java.text.SimpleDateFormat;
@@ -23,25 +24,36 @@ import sun.security.x509.X500Name;
 public class JarVerificationDialog extends Dialog {
 	private IVerificationResult _VerificationResult = null;
 	private String _fileName = null;
-	private String _strComponentName = null;
+	private String _strFeatureName = null;
 	private String _strId = null;
 	private String _strProviderName = null;
 	private Button _buttonInstall;
 	private Button _buttonCancel;
 	private Button _buttonTrustCertificate;
 	private boolean okToInstall = false;
+	
+	private String componentVerified;
 	/**
 	 *
 	 */
 	public JarVerificationDialog(Shell shell,  IVerificationResult verificationResult) {
 		super(shell);
-		_fileName = verificationResult.getContentReference().getIdentifier();
+		try {
+			_fileName = verificationResult.getContentReference().asFile().getAbsolutePath();
+		} catch (IOException e){
+			_fileName = verificationResult.getContentReference().getIdentifier();
+		}
 		_VerificationResult = verificationResult;
 		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
-		_strComponentName =verificationResult.getFeature().getLabel();
+		_strFeatureName =verificationResult.getFeature().getLabel();
 		_strProviderName = verificationResult.getFeature().getProvider();
+		componentVerified = (verificationResult.isFeatureVerification())?"feature":"feature file";
 		okToInstall = false;
 	}
+	
+	/**
+	 * 
+	 */
 	public boolean close() {
 		okToInstall = (_buttonInstall != null ? _buttonInstall.getSelection() : false);
 		return super.close();
@@ -71,37 +83,45 @@ public class JarVerificationDialog extends Dialog {
 		StringBuffer strb = new StringBuffer();
 		switch (_VerificationResult.getVerificationCode()) {
 			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
-				strb.append(Policy.bind("JarVerificationDialog.AboutToInstall")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.AboutToInstall",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.NotDigitallySigned")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.NotDigitallySigned",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.CannotVerifyProvider")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.CannotVerifyProvider",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
+				if (_VerificationResult.isFeatureVerification()){
+					strb.append(Policy.bind("JarVerificationDialog.InstallMayCorrupt")); //$NON-NLS-1$ 
+				} else {
+					strb.append(Policy.bind("JarVerificationDialog.ContinueMayCorrupt")); //$NON-NLS-1$ 					
+				}
 				textInformation.setText(strb.toString());
 				break;
 			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
-				strb.append(Policy.bind("JarVerificationDialog.CorruptedContent")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.CorruptedContent",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.ComponentNotInstalled")); //$NON-NLS-1$
 				textInformation.setText(strb.toString());
 				break;
 			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
-				strb.append(Policy.bind("JarVerificationDialog.SignedComponent")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.SignedComponent",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.UnknownCertificate")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.UnknownCertificate",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.UnableToVerifyProvider")); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.UnableToVerifyProvider",componentVerified)); //$NON-NLS-1$ 
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
+				if (_VerificationResult.isFeatureVerification()){
+					strb.append(Policy.bind("JarVerificationDialog.InstallMayCorrupt")); //$NON-NLS-1$ 
+				} else {
+					strb.append(Policy.bind("JarVerificationDialog.ContinueMayCorrupt")); //$NON-NLS-1$ 					
+				}
 				textInformation.setText(strb.toString());
 				break;
 			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
-				strb.append(Policy.bind("JarVerificationDialog.SignedComponent")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.SignedComponent",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.KnownCertificate")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.KnownCertificate",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.ProviderKnown")); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.ProviderKnown",componentVerified)); //$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(Policy.bind("JarVerificationDialog.Caution",_strProviderName)); //$NON-NLS-1$
 				textInformation.setText(strb.toString());
@@ -118,21 +138,16 @@ public class JarVerificationDialog extends Dialog {
 		layout.verticalSpacing = 0;
 		compositeInformation.setLayout(layout);
 		compositeInformation.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Label: File name
-		//-----------------
-		Label label = new Label(compositeInformation, SWT.NULL);
-		label.setText(Policy.bind("JarVerificationDialog.FileName")); //$NON-NLS-1$ 
-		label = new Label(compositeInformation, SWT.NULL);
-		label.setText(_fileName);
-		// Component name
+		// Feature name
 		//---------------
-		if (_strComponentName != null && _strComponentName.length() > 0) {
+		Label label = null;
+		if (_strFeatureName != null && _strFeatureName.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(Policy.bind("JarVerificationDialog.FeatureName")); //$NON-NLS-1$ 
 			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(_strComponentName);
+			label.setText(_strFeatureName);
 		}
-		// Component identifier
+		// Feature identifier
 		//---------------------
 		if (_strId != null && _strId.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
@@ -147,7 +162,14 @@ public class JarVerificationDialog extends Dialog {
 			label.setText(Policy.bind("JarVerificationDialog.Provider")); //$NON-NLS-1$ 
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(_strProviderName);
-		}
+		}		
+		// Label: File name
+		//-----------------
+		label = new Label(compositeInformation, SWT.NULL);
+		label.setText(Policy.bind("JarVerificationDialog.FileName")); //$NON-NLS-1$ 
+		label = new Label(compositeInformation, SWT.NULL);
+		label.setText(_fileName);
+
 		if (_VerificationResult.getVerificationCode() != IVerificationResult.TYPE_ENTRY_CORRUPTED) {
 			// Group box
 			//----------
@@ -157,12 +179,20 @@ public class JarVerificationDialog extends Dialog {
 			// Text: Instruction
 			//------------------
 			Text textInstruction = new Text(group, SWT.MULTI | SWT.READ_ONLY);
-			textInstruction.setText(Policy.bind("JarVerificationDialog.MayChooseToInstall"));
+				if (_VerificationResult.isFeatureVerification()){
+					textInstruction.setText(Policy.bind("JarVerificationDialog.MayChooseToInstall")); //$NON-NLS-1$ 
+				} else {
+					textInstruction.setText(Policy.bind("JarVerificationDialog.MayChooseToContinue")); //$NON-NLS-1$ 					
+				}			
 			//$NON-NLS-1$
 			// Radio button: Install
 			//----------------------
 			_buttonInstall = new Button(group, SWT.RADIO);
-			_buttonInstall.setText(Policy.bind("JarVerificationDialog.Install")); //$NON-NLS-1$
+			if (_VerificationResult.isFeatureVerification()){			
+				_buttonInstall.setText(Policy.bind("JarVerificationDialog.Install")); //$NON-NLS-1$
+			} else {
+				_buttonInstall.setText(Policy.bind("JarVerificationDialog.Continue")); //$NON-NLS-1$				
+			}
 			_buttonInstall.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			// Radio button: Cancel installation
 			//----------------------------------

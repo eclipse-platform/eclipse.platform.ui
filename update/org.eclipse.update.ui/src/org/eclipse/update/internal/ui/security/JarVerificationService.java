@@ -93,6 +93,12 @@ public class JarVerificationService implements IVerificationListener {
 				break;
 			}
 			
+			// cannot verify it, don't prompt
+			case IVerificationResult.TYPE_ENTRY_UNRECOGNIZED: {
+				result.setResultCode(CHOICE_INSTALL_TRUST_ALWAYS);				
+				break;
+			}			
+			
 			default :
 				{
 					shell.getDisplay().syncExec(new Runnable() {

@@ -34,6 +34,7 @@ public class JarVerificationResult implements IVerificationResult {
 	private ContentReference contentReference;
 	private String text;
 	private IFeature feature;
+	private boolean featureVerification;
 
 	/**
 	 */
@@ -294,6 +295,22 @@ public class JarVerificationResult implements IVerificationResult {
 	 */
 	public String getText() {
 		return null;
+	}
+
+	/**
+	 * Sets the featureVerification.
+	 * @param featureVerification The featureVerification to set
+	 */
+	public void isFeatureVerification(boolean featureVerification) {
+		this.featureVerification = featureVerification;
+	}
+
+	/**
+	 * Gets the featureVerification.
+	 * @return Returns a boolean
+	 */
+	public boolean isFeatureVerification() {
+		return featureVerification;
 	}
 
 }

@@ -19,6 +19,7 @@ public interface IVerificationResult {
 	static final int VERIFICATION_CANCELLED = 7;
 	static final int TYPE_ENTRY_UNRECOGNIZED = 8;
 		
+		
 	/**
 	 * Sets the exception that may have occured while verifying
 	 */
@@ -46,6 +47,16 @@ public interface IVerificationResult {
 	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
 	 */
 	void setVerificationCode(int type);
+
+	/**
+	 * 		
+	 */
+	void isFeatureVerification(boolean verification);
+	
+	/**
+	 * 		
+	 */
+	boolean isFeatureVerification();
 
 	
 	

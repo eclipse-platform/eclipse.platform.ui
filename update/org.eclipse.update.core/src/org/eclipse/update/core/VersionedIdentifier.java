@@ -67,9 +67,18 @@ public class VersionedIdentifier {
 /**
 * @since 2.0 
 	 */
-	public boolean equals(VersionedIdentifier vid) {
+	public boolean equals(Object obj) {
+		if (!(obj instanceof VersionedIdentifier)) return false;
+		VersionedIdentifier vid = (VersionedIdentifier)obj;
 		if (!this.id.equals(vid.id)) return false;
 		return this.version.equals(vid.version);
 	}
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		return toString().hashCode();
+	}
+
 }
 

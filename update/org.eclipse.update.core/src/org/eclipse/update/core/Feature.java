@@ -281,8 +281,10 @@ public class Feature extends FeatureModel implements IFeature {
 			if (verifier != null) {
 				for (int i = 0; i < references.length; i++) {
 					vr = verifier.verify(this, references[i], monitor);
-					if (vr != null)
+					if (vr != null){
+						vr.isFeatureVerification(true);
 						promptForVerification(vr, verificationListener);
+					}
 				}
 			}
 			if (monitor != null)
@@ -295,8 +297,10 @@ public class Feature extends FeatureModel implements IFeature {
 				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
 						vr = verifier.verify(this, references[j], monitor);
-						if (vr != null)
+						if (vr != null){
+							vr.isFeatureVerification(false);
 							promptForVerification(vr, verificationListener);
+						}
 					}
 				}
 				if (monitor != null)

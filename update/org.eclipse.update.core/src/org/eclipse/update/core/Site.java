@@ -285,6 +285,7 @@ public class Site extends SiteModel implements ISite{
 	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException {
 
 		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
+		if (feature==null) return pluginsToRemove;
 
 		// get the plugins from the feature
 		IPluginEntry[] entries = feature.getPluginEntries();
@@ -294,7 +295,8 @@ public class Site extends SiteModel implements ISite{
 			IFeatureReference[] features = getFeatureReferences();
 			if (features != null) {
 				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
-					if (!features[indexFeatures].equals(feature)) {
+					IFeature featureToCompare = features[indexFeatures].getFeature();
+					if (!feature.equals(featureToCompare)) {
 						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 						if (pluginEntries != null) {
 							for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {

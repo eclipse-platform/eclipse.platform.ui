@@ -18,6 +18,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 	private ContentReference localManifest = null;
 	private ContentReference[] localFeatureFiles = new ContentReference[0];
+	private  IVerifier jarVerifier = new JarVerifier();
 
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
@@ -38,7 +39,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * @see IFeatureContentProvider#getVerifier()
 	 */
 	public IVerifier getVerifier() throws CoreException {
-		return new JarVerifier();
+		return jarVerifier;
 	}
 	
 	/**
