@@ -1,5 +1,6 @@
 package org.eclipse.core.tests.runtime.jobs;
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -8,12 +9,14 @@ import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.LockManager;
 import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
+import org.eclipse.core.tests.harness.TestProgressMonitor;
 
 
 import junit.framework.TestCase;
@@ -48,6 +51,27 @@ public class DeadlockDetectionTest extends TestCase {
 		for (Iterator it = allRunnables.iterator(); it.hasNext();) {
 			RandomTestRunnable r = (RandomTestRunnable) it.next();
 			r.kill();
+		}
+	}
+	/**
+	 * A monitor that will receive the event when a thread is blocked on a rule 
+	 *
+	 */
+	private class BlockingMonitor extends TestProgressMonitor implements IProgressMonitorWithBlocking {
+		int[] status;
+		int index;
+		
+		public BlockingMonitor(int[] status, int index) {
+			this.status = status;
+			this.index = index;
+		}
+		
+		public void setBlocked(IStatus reason) {
+			status[index] = StatusChecker.STATUS_BLOCKED;
+		}
+
+		public void clearBlocked() {
+			//leave empty for now
 		}
 	}
 	
@@ -261,6 +285,215 @@ public class DeadlockDetectionTest extends TestCase {
 		//the underlying array has to be empty
 		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
 	}
+	/**
+	 * Regression test for bug 46894. Stale rules left over in graph.
+	 */
+	public void testRuleHierarchyLockInteraction() {
+		final JobManager manager = JobManager.getInstance();
+		final int NUM_JOBS = 5;
+		final int[] status = new int[NUM_JOBS];
+		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		Job[] jobs = new Job[NUM_JOBS];
+		
+		jobs[0] = new Job("Test 0") {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						monitor.beginTask("Testing", 1);
+						manager.beginRule(rules[1], null);
+						status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+						StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+						manager.endRule(rules[1]);
+						monitor.worked(1);
+					} finally {
+						monitor.done();
+					}
+					return Status.OK_STATUS;
+				}
+		};
+		
+		jobs[1] = new Job("Test 1") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					manager.beginRule(rules[2], null);
+					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					manager.endRule(rules[2]);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		jobs[2] = new Job("Test 2") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					manager.beginRule(rules[0], new BlockingMonitor(status, 2));
+					status[2] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+					manager.endRule(rules[0]);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		jobs[3] = new Job("Test 3") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_START, 100);
+					manager.beginRule(rules[2], new BlockingMonitor(status, 3));
+					status[3] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
+					manager.endRule(rules[2]);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		jobs[4] = new Job("Test 4") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_START, 100);
+					manager.beginRule(rules[2], new BlockingMonitor(status, 4));
+					status[4] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_RUNNING, 100);
+					manager.endRule(rules[2]);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+			
+		for (int i = 0; i < jobs.length; i++) {
+			jobs[i].schedule();
+		}
+		//wait until the first job starts
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		//now let the second job start
+		status[1] = StatusChecker.STATUS_START;
+		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		
+		//let the third job register the wait
+		status[2] = StatusChecker.STATUS_START;
+		//wait until the job is blocked on the scheduling rule
+		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_BLOCKED, 100);
+		
+		//let the fourth job register the wait
+		status[3] = StatusChecker.STATUS_START;
+		//wait until the job is blocked on the scheduling rule
+		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_BLOCKED, 100);
+		
+		//end the first job, and the second job
+		status[0] = StatusChecker.STATUS_RUNNING;
+		status[1] = StatusChecker.STATUS_RUNNING;
+		
+		//wait until the third job gets the rule
+		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		
+		//let the fifth job start its wait
+		status[4] = StatusChecker.STATUS_START;
+		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_BLOCKED, 100);
+		
+		//let the third job finish
+		status[2] = StatusChecker.STATUS_RUNNING;
+		
+		//wait until the fourth job gets the rule
+		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		//let the fourth job end
+		status[3] = StatusChecker.STATUS_RUNNING;
+		
+		//wait until the fifth job gets the rule
+		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		//let the fifth job end
+		status[4] = StatusChecker.STATUS_RUNNING;
+		
+		for(int i = 0; i < jobs.length; i++) {
+			waitForCompletion(jobs[i]);
+		}
+			
+		for(int i = 0; i < jobs.length; i++) {
+			assertEquals("10." + i, Job.NONE, jobs[i].getState());
+			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
+		}
+		//the underlying graph has to be empty
+		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
+	}
+	
+	public void testVeryComplex() {
+		ArrayList allRunnables = new ArrayList();
+		LockManager manager = new LockManager();
+		OrderedLock lock1 = manager.newLock();
+		OrderedLock lock2 = manager.newLock();
+		OrderedLock lock3 = manager.newLock();
+		OrderedLock lock4 = manager.newLock();
+		OrderedLock lock5 = manager.newLock();
+		OrderedLock lock6 = manager.newLock();
+		createRunnables(new ILock[] { lock1, lock2, lock3 }, 10, allRunnables, true);
+		createRunnables(new ILock[] { lock2, lock3, lock4 }, 10, allRunnables, true);
+		createRunnables(new ILock[] { lock3, lock4, lock5 }, 10, allRunnables, true);
+		createRunnables(new ILock[] { lock4, lock5, lock6 }, 10, allRunnables, true);
+		createRunnables(new ILock[] { lock5, lock6, lock1 }, 10, allRunnables, true);
+		createRunnables(new ILock[] { lock6, lock1, lock2 }, 10, allRunnables, true);
+		start(allRunnables);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+		kill(allRunnables);
+		
+		for(int i = 0; i < allRunnables.size(); i++) {
+			try {
+				((Thread)allRunnables.get(i)).join(100000);
+			} catch (InterruptedException e1) {
+			}
+			assertTrue("1." + i, !((Thread)allRunnables.get(i)).isAlive());
+		}
+		//the underlying array has to be empty
+		assertTrue("Locks not removed from graph.", manager.isEmpty());
+	}
+	/**
+	 * Spin until the given job completes
+	 */
+	private void waitForCompletion(Job job) {
+		int i = 0;
+		while(job.getState() != Job.NONE) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			assertTrue("Timeout waiting for job to end.", ++i < 100);
+		}
+	}
+	/**
+	 * Spin until the given thread dies
+	 */
+	private void waitForThreadDeath(Thread thread) {
+		int i = 0;
+		while(thread.isAlive()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			assertTrue("Timeout waiting for job to end.", ++i < 100);
+		}
+	}
+	
 	public void testComplexRuleLockInteraction() {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_LOCKS = 5;
@@ -328,72 +561,13 @@ public class DeadlockDetectionTest extends TestCase {
 				assertTrue("Timeout waiting for jobs to finish.", ++j < 1000);
 			}
 		}
-			
+		
 		for(int i = 0; i < jobs.length; i++) {
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
 			assertEquals("10." + i, Status.OK_STATUS, jobs[i].getResult());
 		}
 		//the underlying array has to be empty
 		assertTrue("Jobs not removed from graph.", manager.getLockManager().isEmpty());
-	}
-	
-	public void testVeryComplex() {
-		ArrayList allRunnables = new ArrayList();
-		LockManager manager = new LockManager();
-		OrderedLock lock1 = manager.newLock();
-		OrderedLock lock2 = manager.newLock();
-		OrderedLock lock3 = manager.newLock();
-		OrderedLock lock4 = manager.newLock();
-		OrderedLock lock5 = manager.newLock();
-		OrderedLock lock6 = manager.newLock();
-		createRunnables(new ILock[] { lock1, lock2, lock3 }, 10, allRunnables, true);
-		createRunnables(new ILock[] { lock2, lock3, lock4 }, 10, allRunnables, true);
-		createRunnables(new ILock[] { lock3, lock4, lock5 }, 10, allRunnables, true);
-		createRunnables(new ILock[] { lock4, lock5, lock6 }, 10, allRunnables, true);
-		createRunnables(new ILock[] { lock5, lock6, lock1 }, 10, allRunnables, true);
-		createRunnables(new ILock[] { lock6, lock1, lock2 }, 10, allRunnables, true);
-		start(allRunnables);
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
-		kill(allRunnables);
-		
-		for(int i = 0; i < allRunnables.size(); i++) {
-			try {
-				((Thread)allRunnables.get(i)).join(100000);
-			} catch (InterruptedException e1) {
-			}
-			assertTrue("1." + i, !((Thread)allRunnables.get(i)).isAlive());
-		}
-		//the underlying array has to be empty
-		assertTrue("Locks not removed from graph.", manager.isEmpty());
-	}
-	/**
-	 * Spin until the given job completes
-	 */
-	private void waitForCompletion(Job job) {
-		int i = 0;
-		while(job.getState() != Job.NONE) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-			assertTrue("Timeout waiting for job to end.", ++i < 100);
-		}
-	}
-	/**
-	 * Spin until the given thread dies
-	 */
-	private void waitForThreadDeath(Thread thread) {
-		int i = 0;
-		while(thread.isAlive()) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-			assertTrue("Timeout waiting for job to end.", ++i < 100);
-		}
 	}
 	
 	public void testJobRuleCancellation() {
