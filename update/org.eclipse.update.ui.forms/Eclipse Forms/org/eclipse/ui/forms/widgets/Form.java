@@ -266,6 +266,14 @@ public class Form extends SharedScrolledComposite {
 		}
 		return toolBarManager;
 	}
+/**
+ * Updates the local tool bar manager if used. Does nothing
+ * if local tool bar manager has not been created yet.
+ */
+	public void updateToolBar() {
+		if (toolBarManager!=null)
+			toolBarManager.update(false);
+	}
 
 	/**
 	 * Recomputes the body layout and form scroll bars. The method should be

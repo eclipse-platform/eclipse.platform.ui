@@ -167,11 +167,7 @@ public class FormToolkit {
 		Button button = new Button(parent, style | SWT.FLAT);
 		if (text != null)
 			button.setText(text);
-		button.setForeground(colors.getForeground());
-		button.addFocusListener(visibilityHandler);
-		button.addKeyListener(keyboardHandler);
-		if ((style & SWT.PUSH)==0)
-			button.setBackground(colors.getBackground());
+		adapt(button, true, true);
 		return button;
 	}
 

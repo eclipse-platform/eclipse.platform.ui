@@ -34,6 +34,7 @@ public abstract class MasterDetailsBlock {
 		createMasterPart(managedForm, sashForm);
 		createDetailsPart(managedForm, sashForm);
 		createToolBarActions(managedForm);
+		form.updateToolBar();
 	}
 
 	protected abstract void createMasterPart(ManagedForm managedForm, Composite parent);
