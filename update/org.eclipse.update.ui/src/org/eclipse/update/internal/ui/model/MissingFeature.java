@@ -168,6 +168,13 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
+	 * @see IFeature#isPrimary()
+	 */
+	public boolean isPrimary() {
+		return false;
+	}
+
+	/*
 	 * @see IFeature#getApplication()
 	 */
 	public String getApplication() {
@@ -287,6 +294,5 @@ public class MissingFeature implements IFeature {
 	public IInstallHandlerEntry getInstallHandlerEntry() {
 		return null;
 	}
-
-	}
+}
 

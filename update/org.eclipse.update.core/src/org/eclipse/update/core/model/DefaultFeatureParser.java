@@ -425,6 +425,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 			// arch
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
 			feature.setArch(arch);
+			feature.setArch(arch);
+			
+			// primary
+			String primary = attributes.getValue("primary"); //$NON-NLS-1$
+			feature.isPrimary(primary != null && primary.trim().equalsIgnoreCase("true"));
 			
 			// application
 			String application = attributes.getValue("application"); //$NON-NLS-1$

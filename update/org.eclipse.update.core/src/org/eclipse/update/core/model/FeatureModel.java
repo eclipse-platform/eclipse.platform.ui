@@ -35,6 +35,7 @@ public class FeatureModel extends ModelObject {
 	private String ws;
 	private String nl;
 	private String arch;
+	private boolean isPrimary = false;
 	private String application;
 	private InstallHandlerEntryModel installHandler;
 	private URLEntryModel description;
@@ -149,6 +150,13 @@ public class FeatureModel extends ModelObject {
 	 */
 	public String getNL() {
 		return nl;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean isPrimary() {
+		return isPrimary;
 	}
 
 	/**
@@ -319,6 +327,13 @@ public class FeatureModel extends ModelObject {
 		this.arch = arch;
 	}
 
+	/**
+	 * @since 2.0
+	 */
+	public void isPrimary(boolean isPrimary) {
+		assertIsWriteable();
+		this.isPrimary = isPrimary;
+	}
 
 	/**
 	 * @since 2.0

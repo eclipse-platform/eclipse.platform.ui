@@ -315,6 +315,13 @@ public interface IFeature {
 	long getInstallSize();
 	
 	/**
+	 * Indicates whether the feature can be used as a primary feature
+     * @since 2.0 
+	 */
+
+	boolean isPrimary();
+	
+	/**
 	 * optional identifier of the Eclipse application that is to be used during
      * startup when the declaring feature is the primary feature.
      *  The application identifier must represent a valid application registered
