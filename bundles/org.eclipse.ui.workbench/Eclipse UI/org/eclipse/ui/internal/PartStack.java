@@ -34,7 +34,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
@@ -126,9 +125,22 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     private static final class PartStackDropResult extends AbstractDropTarget {
         private PartPane pane;
+        
+        // Result of the presentation's dragOver method or null if we are stacking over the
+        // client area of the pane.
         private StackDropResult dropResult;
         private PartStack stack;
         
+        /**
+         * Resets the target of this drop result (allows the same drop result object to be
+         * reused)
+         * 
+         * @param stack
+         * @param pane
+         * @param result result of the presentation's dragOver method, or null if we are
+         * simply stacking anywhere.
+         * @since 3.1
+         */
         public void setTarget(PartStack stack, PartPane pane, StackDropResult result) {
             this.pane = pane;
             this.dropResult = result;
@@ -139,18 +151,22 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             // If we're dragging a pane over itself do nothing
             //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
 
+            Object cookie = null;
+            if (dropResult != null) {
+                cookie = dropResult.getCookie();
+            }
+            
             if (pane.getContainer() != stack) {
                 // Moving from another stack
                 stack.derefPart(pane);
                 pane.reparent(stack.getParent());
-                stack.add(pane, dropResult.getCookie());
+                stack.add(pane, cookie);
                 stack.setSelection(pane);
                 pane.setFocus();
-            } else {
+            } else if (cookie != null) {
                 // Rearranging within this stack
-                stack.getPresentation().movePart(pane.getPresentablePart(), dropResult.getCookie());
+                stack.getPresentation().movePart(pane.getPresentablePart(), cookie);
             }
-
         }
 
         public Cursor getCursor() {
@@ -158,6 +174,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
 
         public Rectangle getSnapRectangle() {
+            if (dropResult == null) {
+                return DragUtil.getDisplayBounds(stack.getControl());
+            }
             return dropResult.getSnapRectangle();
         }
     };
@@ -197,7 +216,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         this.appearance = appearance;
     }
-
+    
+    protected final boolean isStandalone() {
+        return (appearance == PresentationFactoryUtil.ROLE_STANDALONE 
+             || appearance == PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE);
+    }
+    
     /**
      * Returns the currently selected IPresentablePart, or null if none
      * 
@@ -368,6 +392,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         showPart(newChild, cookie);
     }
 
+    public boolean allowsAdd(LayoutPart toAdd) {
+        return !isStandalone();
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -444,6 +472,37 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         createControl(parent, presentation);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#getDropTarget(java.lang.Object, org.eclipse.swt.graphics.Point)
+     */
+    public IDropTarget getDropTarget(Object draggedObject, Point position) {
+
+        if (!(draggedObject instanceof PartPane)) {
+            return null;
+        }
+
+        final PartPane pane = (PartPane) draggedObject;
+        if (isStandalone() 
+                || !allowsDrop(pane)) {
+            return null;
+        }
+
+        // Don't allow views to be dragged between windows
+        if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
+            return null;
+        }
+
+        final StackDropResult dropResult = getPresentation().dragOver(
+                getControl(), position);
+        
+        if (dropResult == null) {
+            return null;
+        }
+        
+        return createDropTarget(pane, dropResult); 
+    }
+    
+    
     public void createControl(Composite parent, StackPresentation presentation) {
 
         Assert.isTrue(isDisposed());
@@ -462,56 +521,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
 
         Control ctrl = getPresentation().getControl();
-
-        // Add a drop target that lets us drag views directly to a particular
-        // tab
-        DragUtil.addDragTarget(ctrl, new IDragOverListener() {
-
-            public IDropTarget drag(Control currentControl,
-                    final Object draggedObject, Point position,
-                    Rectangle dragRectangle) {
-
-                if (!(draggedObject instanceof PartPane)) {
-                    return null;
-                }
-
-                final PartPane pane = (PartPane) draggedObject;
-                if (!allowsDrop(pane)) {
-                    return null;
-                }
-
-                // Don't allow views to be dragged between windows
-                if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
-                    return null;
-                }
-
-                // Regardless of the wishes of the presentation, ignore 4 pixels around the edge of the control.
-                // This ensures that it will always be possible to dock around the edge of the control.
-                {
-                    Point controlCoordinates = currentControl.getParent()
-                            .toControl(position);
-                    Rectangle bounds = currentControl.getBounds();
-                    int closestSide = Geometry.getClosestSide(bounds,
-                            controlCoordinates);
-
-                    if (Geometry.getDistanceFromEdge(bounds,
-                            controlCoordinates, closestSide) < 5) {
-                        return null;
-                    }
-                }
-                // End of check for stacking on edge
-
-                final StackDropResult dropResult = getPresentation().dragOver(
-                        currentControl, position);
-
-                if (dropResult == null) {
-                    return null;
-                }
-                
-                return createDropTarget(pane, dropResult); 
-            }
-
-        });
 
         ctrl.setData(this);
 

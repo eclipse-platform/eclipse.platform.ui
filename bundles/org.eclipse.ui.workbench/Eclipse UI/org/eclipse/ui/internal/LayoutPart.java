@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.presentations.IPresentablePart;
 
@@ -176,6 +177,10 @@ abstract public class LayoutPart implements ISizeProvider {
     public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
     	
     	return preferredParallel;    	
+    }
+    
+    public IDropTarget getDropTarget(Object draggedObject, Point displayCoordinates) {
+        return null;
     }
 
     /**
@@ -441,6 +446,16 @@ abstract public class LayoutPart implements ISizeProvider {
         }
     }
 
+    /**
+     * Returns true iff the given part can be added to this ILayoutContainer
+     * @param toAdd
+     * @return
+     * @since 3.1
+     */
+    public boolean allowsAdd(LayoutPart toAdd) {
+        return false;
+    }
+    
     /**
      * Tests the integrity of this object. Throws an exception if the object's state
      * is not internally consistent. For use in test suites.

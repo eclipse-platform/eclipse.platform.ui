@@ -58,6 +58,11 @@
             id="org.eclipse.ui.tests.dnd.dragdrop">
       </perspective>
       <perspective
+            name="UI Test Standalone View Perspective"
+            class="org.eclipse.ui.tests.presentations.StandaloneViewPerspective"
+            id="org.eclipse.ui.tests.presentations.StandaloneViewPerspective">
+      </perspective>
+      <perspective
             name="UI Test Zoom Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.zoom.ZoomPerspectiveFactory"

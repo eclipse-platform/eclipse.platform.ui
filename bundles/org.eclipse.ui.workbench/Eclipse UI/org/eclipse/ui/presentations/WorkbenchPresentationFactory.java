@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTa
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolder;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabPositionListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
+import org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder;
 import org.eclipse.ui.internal.presentations.newapi.PresentablePartFolder;
 import org.eclipse.ui.internal.presentations.newapi.StandardEditorSystemMenu;
 import org.eclipse.ui.internal.presentations.newapi.StandardViewSystemMenu;
@@ -122,7 +123,15 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      */
     public StackPresentation createStandaloneViewPresentation(Composite parent,
             IStackPresentationSite site, boolean showTitle) {
-        return createViewPresentation(parent, site);
+        
+        if (showTitle) {
+            return createViewPresentation(parent, site);
+        } else {
+            EmptyTabFolder folder = new EmptyTabFolder(parent);
+            TabbedStackPresentation presentation = new TabbedStackPresentation(site, folder, new StandardViewSystemMenu(site));
+            
+            return presentation;
+        }
     }    
 
 }

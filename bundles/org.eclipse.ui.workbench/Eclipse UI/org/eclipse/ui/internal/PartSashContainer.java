@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
-import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
@@ -962,18 +961,32 @@ public abstract class PartSashContainer extends LayoutPart implements
             if (targetPart != null) {
                 final Control targetControl = targetPart.getControl();
 
-                int side = CompatibilityDragTarget.getRelativePosition(
-                        targetControl, position);
-
                 final Rectangle targetBounds = DragUtil
                         .getDisplayBounds(targetControl);
 
-                // Disallow stacking if this isn't a container
-                if (side == SWT.DEFAULT
-                        || (side == SWT.CENTER && !isStackType(targetPart))) {
-                    side = Geometry.getClosestSide(targetBounds, position);
+                int side = Geometry.getClosestSide(targetBounds, position);
+                int distance = Geometry.getDistanceFromEdge(targetBounds, position, side);
+                
+                // Reserve the 5 pixels around the edge of the part for the drop-on-edge cursor
+                if (distance >= 5) {
+                    // Otherwise, ask the part if it has any special meaning for this drop location
+                    IDropTarget target = targetPart.getDropTarget(draggedObject, position);
+                    if (target != null) {
+                        return target;
+                    }
                 }
-
+                
+                if (distance > 30 && isStackType(targetPart)) {
+                    if (targetPart instanceof ILayoutContainer) {
+                        ILayoutContainer targetContainer = (ILayoutContainer)targetPart;
+                        if (targetContainer.allowsAdd(sourcePart)) {
+                            side = SWT.CENTER;
+                        }
+                    }
+                }
+                
+                // If the part doesn't want to override this drop location then drop on the edge
+                
                 // A "pointless drop" would be one that will put the dragged object back where it started.
                 // Note that it should be perfectly valid to drag an object back to where it came from -- however,
                 // the drop should be ignored.
@@ -1017,8 +1030,7 @@ public abstract class PartSashContainer extends LayoutPart implements
                 if (root == null || getVisibleChildrenCount(this) <= 1) {
                     pointlessDrop = true;
                 }
-            }
-            ;
+            };
 
             int cursor = Geometry.getOppositeSide(side);
 
@@ -1102,7 +1114,7 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     protected abstract PartStack createStack();
 
-    public void stack(LayoutPart newPart, PartStack container) {
+    public void stack(LayoutPart newPart, ILayoutContainer container) {
 
         getControl().setRedraw(false);
         // Remove the part from old container.

@@ -14,6 +14,7 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.presentations.StackDropResult;
 
 /**
@@ -87,6 +88,14 @@ public class ReplaceDragHandler extends TabDragHandler {
                         dragOverIndex));
 
             } else {
+                // If the closest side is the side with the tabs, consider this a stack operation.
+                // Otherwise, let the drop fall through to whatever the default behavior is
+                Rectangle displayBounds = DragUtil.getDisplayBounds(tabFolder.getControl());
+                int closestSide = Geometry.getClosestSide(displayBounds, location);
+                if (closestSide == tabFolder.getTabPosition()) {
+                    return new StackDropResult(displayBounds, null);
+                }
+                
                 return null;
             }
         }

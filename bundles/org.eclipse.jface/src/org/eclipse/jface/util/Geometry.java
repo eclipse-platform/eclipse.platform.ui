@@ -557,6 +557,22 @@ public class Geometry {
     }
 
     /**
+     * Returns the distance from the point to the nearest edge of the given
+     * rectangle. Returns negative values if the point lies outside the rectangle.
+     * 
+     * @param boundary rectangle to test
+     * @param toTest point to test
+     * @return the distance between the given point and the nearest edge of the rectangle.
+     * Returns positive values for points inside the rectangle and negative values for points
+     * outside the rectangle.
+     * @since 3.1
+     */
+    public static int getDistanceFrom(Rectangle boundary, Point toTest) {
+        int side = getClosestSide(boundary, toTest);
+        return getDistanceFromEdge(boundary, toTest, side);
+    }
+    
+    /**
      * Returns the edge of the given rectangle is closest to the given
      * point.
      * 

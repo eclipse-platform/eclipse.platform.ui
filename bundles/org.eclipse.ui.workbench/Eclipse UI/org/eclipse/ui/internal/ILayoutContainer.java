@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal;
 
 public interface ILayoutContainer {
+    public boolean allowsAdd(LayoutPart toAdd);
+    
     /**
      * Add a child to the container.
      */
