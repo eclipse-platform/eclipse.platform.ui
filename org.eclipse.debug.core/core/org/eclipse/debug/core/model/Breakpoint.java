@@ -20,18 +20,18 @@ public abstract class Breakpoint implements IBreakpoint {
 	/**
 	 * Underlying marker.
 	 */
-	protected IMarker fMarker= null;
+	private IMarker fMarker= null;
 	
 	/**
-	 * Constructor for Breakpoint
+	 * @see IBreakpoint#setMarker(IMarker)
 	 */
-	public Breakpoint() {
-	}
-	
 	public void setMarker(IMarker marker) throws CoreException {
 		fMarker= marker;
 	}
 	
+	/**
+	 * @see Object#equals(Object)
+	 */
 	public boolean equals(Object item) {
 		if (item instanceof IBreakpoint) {
 			return getMarker().equals(((IBreakpoint)item).getMarker());
@@ -39,6 +39,9 @@ public abstract class Breakpoint implements IBreakpoint {
 		return false;
 	}
 	
+	/**
+	 * @see Object#hashCode()
+	 */
 	public int hashCode() {
 		return getMarker().hashCode();
 	}
@@ -48,22 +51,22 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled != isEnabled()) {
-			fMarker.setAttribute(ENABLED, enabled);
+			getMarker().setAttribute(ENABLED, enabled);
 		}
 	}
 	
 	/**
-	 * Returns whether the breakpoint is enabled
+	 * @see IBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CoreException {
-		return fMarker.getAttribute(ENABLED, false);
+		return getMarker().getAttribute(ENABLED, false);
 	}
 
 	/**
 	 * @see IBreakpoint#delete()
 	 */
 	public void delete() throws CoreException {
-		fMarker.delete();
+		getMarker().delete();
 	}
 
 	/**

@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.CoreException;
  * Abstract implementation of a line breakpoint. This class is
  * intended to be subclassed by debug model specific implementations
  * of line breakpoints.
+ * 
+ * @see ILineBreakpoint
  */
 
 public abstract class LineBreakpoint extends Breakpoint implements ILineBreakpoint {
