@@ -107,7 +107,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.ui.markerResolution&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.ui.ide.markerResolution&quot;&gt;
   &lt;markerResolutionGenerator
    class=&quot;org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator&quot;
    markerType=&quot;org.eclipse.ui.examples.readmetool.readmemarker&quot;&gt;

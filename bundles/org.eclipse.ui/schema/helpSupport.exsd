@@ -58,10 +58,19 @@ interface.
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0 (originally named org.eclipse.help.support)
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the support extension point:
+         The following is a sample usage of the help support extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
@@ -90,8 +99,6 @@ determine what happens when a user asks for online help or context-sensitive hel
       </appInfo>
       <documentation>
          The &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-in contains an implementation of the help system UI.
-Although this plug-in is supplied with the Eclipse platform, it is entirely optional and can be safely
-omitted from the platform configuration.
       </documentation>
    </annotation>
 

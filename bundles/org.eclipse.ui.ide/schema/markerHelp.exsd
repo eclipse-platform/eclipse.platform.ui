@@ -103,7 +103,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.ui.markerHelp&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.ui.ide.markerHelp&quot;&gt;
   &lt;markerHelp
    markerType=&quot;org.eclipse.ui.examples.readmetool.readmemarker&quot;
    helpContextId=&quot;org.eclipse.ui.examples.readmetool.marker_example1_context&quot;&gt;

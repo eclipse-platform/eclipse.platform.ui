@@ -88,7 +88,7 @@ These filters can be selected to hide resources whose names match the filter&apo
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.ui.resourceFilters&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.ui.ide.resourceFilters&quot;&gt;
   &lt;filter pattern=&quot;*.class&quot; selected=&quot;true&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
