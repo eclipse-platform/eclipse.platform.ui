@@ -49,12 +49,17 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String ATT_RATIO="ratio";//$NON-NLS-1$
 	// ATT_VISIBLE added by dan_rubel@instantiations.com  
 	private static final String ATT_VISIBLE="visible";//$NON-NLS-1$
+	private static final String ATT_CLOSEABLE="closeable";//$NON-NLS-1$
+	private static final String ATT_MOVEABLE="moveable";//$NON-NLS-1$
+	private static final String ATT_STANDALONE="standalone";//$NON-NLS-1$
+	private static final String ATT_SHOW_TITLE="showTitle";//$NON-NLS-1$
 	private static final String VAL_LEFT="left";//$NON-NLS-1$
 	private static final String VAL_RIGHT="right";//$NON-NLS-1$
 	private static final String VAL_TOP="top";//$NON-NLS-1$
 	private static final String VAL_BOTTOM="bottom";//$NON-NLS-1$
 	private static final String VAL_STACK="stack";//$NON-NLS-1$
 	private static final String VAL_FAST="fast";//$NON-NLS-1$
+	private static final String VAL_TRUE="true";//$NON-NLS-1$	
 	// VAL_FALSE added by dan_rubel@instantiations.com  
 	private static final String VAL_FALSE="false";//$NON-NLS-1$	
 
@@ -62,6 +67,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
  * PerspectiveExtensionReader constructor..
  */
 public PerspectiveExtensionReader() {
+    // do nothing
 }
 /**
  * Read the view extensions within a registry.
@@ -154,6 +160,12 @@ private boolean processView(IConfigurationElement element) {
 	String relative = element.getAttribute(ATT_RELATIVE);
 	String relationship = element.getAttribute(ATT_RELATIONSHIP);
 	String ratioString = element.getAttribute(ATT_RATIO);
+	boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
+	boolean closeable = !VAL_FALSE.equals(element.getAttribute(ATT_CLOSEABLE));
+	boolean moveable = !VAL_FALSE.equals(element.getAttribute(ATT_MOVEABLE));
+	boolean standalone = VAL_TRUE.equals(element.getAttribute(ATT_STANDALONE));
+	boolean showTitle = !VAL_FALSE.equals(element.getAttribute(ATT_SHOW_TITLE));
+	
 	float ratio;
 	
 	if (id == null || relative == null || relationship == null)
@@ -192,7 +204,6 @@ private boolean processView(IConfigurationElement element) {
 		fast = true;
 	else
 		return false;
-	boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
 
 	// If stack ..
 	if (stack) {
@@ -219,10 +230,23 @@ private boolean processView(IConfigurationElement element) {
 	if (ratio == IPageLayout.NULL_RATIO || ratio == IPageLayout.INVALID_RATIO)
 		ratio = IPageLayout.DEFAULT_VIEW_RATIO;
 
-	if (visible)
-		pageLayout.addView(id, intRelation, ratio, relative);
-	else
+	if (visible) {
+	    if (standalone) {
+	        pageLayout.addStandaloneView(id, showTitle, intRelation, ratio, relative);
+	    }
+	    else {
+	        pageLayout.addView(id, intRelation, ratio, relative);
+	    }
+	} else {
 		pageLayout.addPlaceholder(id, intRelation, ratio, relative);
+	}
+	if (!closeable) {
+	    pageLayout.getViewLayout(id).setCloseable(false);
+	}
+	if (!moveable) {
+	    pageLayout.getViewLayout(id).setMoveable(false);
+	}
+	
 	return true;
 }
 /**
