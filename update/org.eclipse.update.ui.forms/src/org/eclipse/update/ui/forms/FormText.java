@@ -48,22 +48,8 @@ public class FormText extends Canvas {
 		int textHeight = textSize.y + 2*textMarginHeight;
 		return new Point(textWidth, textHeight);
 	}
-	private Point computeTextSize(int wHint, int hHint) {
-		Point extent;
-		GC gc = new GC(this);
-		
-		gc.setFont(getFont());
-		if ((getStyle() & SWT.WRAP)!=0 && wHint != SWT.DEFAULT) {
-			extent = computeWrapSize(gc, wHint);
-		}
-		else {
-			extent = gc.textExtent(getText());
-		}
-		gc.dispose();
-		return extent;
-	}
 	
-	private Point computeWrapSize(GC gc, int width) {
+	public static int computeWrapHeight(GC gc, String text, int width) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		FontMetrics fm = gc.getFontMetrics();
@@ -72,7 +58,7 @@ public class FormText extends Canvas {
 		int saved = 0;
 		int last = 0;
 		int height = lineHeight;
-		System.out.println("Width hint: "+width);
+
 		for (int loc = wb.first();
 			     loc != BreakIterator.DONE;
 			     loc = wb.next()) {
@@ -85,9 +71,54 @@ public class FormText extends Canvas {
 		   }
 		   last = loc;
 		}
-		return new Point(width, height);
-		
+		return height;
 	}
+	
+	private Point computeTextSize(int wHint, int hHint) {
+		Point extent;
+		GC gc = new GC(this);
+		
+		gc.setFont(getFont());
+		if ((getStyle() & SWT.WRAP)!=0 && wHint != SWT.DEFAULT) {
+			int height = computeWrapHeight(gc, text, wHint);
+			extent = new Point(wHint, height);
+		}
+		else {
+			extent = gc.textExtent(getText());
+		}
+		gc.dispose();
+		return extent;
+	}
+	
+	public static void paintWrapText(GC gc, Point size, String text, int marginWidth, int marginHeight) {
+  		BreakIterator wb = BreakIterator.getWordInstance();
+		wb.setText(text);
+		FontMetrics fm = gc.getFontMetrics();
+		int lineHeight = fm.getHeight();
+
+		int saved = 0;
+		int last = 0;
+		int y = marginHeight;
+		int width = size.x - marginWidth*2;
+		for (int loc = wb.first();
+		     loc != BreakIterator.DONE;
+		     loc = wb.next()) {
+	   		String line = text.substring(saved, loc);
+	   		Point extent = gc.textExtent(line);
+	   		if (extent.x > width) {
+	   			// overflow
+	   			String prevLine = text.substring(saved, last);
+	   			gc.drawString(prevLine, marginWidth, y, true);
+	   			saved = last;
+	   			y += lineHeight;
+	   		}
+	   		last = loc;
+		}
+		// paint the last line
+		String lastLine = text.substring(saved, last);
+		gc.drawString(lastLine, marginWidth, y, true);
+	}
+	
 	private void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Point size = getSize();
@@ -96,32 +127,7 @@ public class FormText extends Canvas {
 		}
 	   	gc.setFont(getFont());
 	   	if ((getStyle() & SWT.WRAP)!=0) {
-	  		BreakIterator wb = BreakIterator.getWordInstance();
-			wb.setText(text);
-			FontMetrics fm = gc.getFontMetrics();
-			int lineHeight = fm.getHeight();
-
-			int saved = 0;
-			int last = 0;
-			int y = textMarginHeight;
-			int width = size.x - textMarginWidth*2;
-			for (int loc = wb.first();
-			     loc != BreakIterator.DONE;
-			     loc = wb.next()) {
-		   		String line = text.substring(saved, loc);
-		   		Point extent = gc.textExtent(line);
-		   		if (extent.x > width) {
-		   			// overflow
-		   			String prevLine = text.substring(saved, last);
-		   			gc.drawString(prevLine, textMarginWidth, y, true);
-		   			saved = last;
-		   			y += lineHeight;
-		   		}
-		   		last = loc;
-			}
-			// paint last line
-			String lastLine = text.substring(saved, last);
-			gc.drawString(lastLine, textMarginWidth, y, true);
+	   		paintWrapText(gc, size, text, textMarginWidth, textMarginHeight);
 	   	}
 	   	else {
 		   gc.drawText(getText(), textMarginWidth, textMarginHeight, true);

@@ -102,6 +102,7 @@ public class UpdateUIPluginImages {
 	 */
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_WIZBAN, "provider.gif");
+	public static final ImageDescriptor DESC_ITEM = create(PATH_WIZBAN, "topic.gif");
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));

@@ -6,7 +6,9 @@ package org.eclipse.update.ui.forms;
 
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import java.util.*;
@@ -33,86 +35,120 @@ import org.eclipse.swt.custom.*;
 public class WebForm extends AbstractSectionForm {
 protected ScrolledComposite scrollComposite;
 private Composite control;
-protected HTMLTableLayout layout;
-private FormText formText;
+private Composite client;
+private final static int HMARGIN = 5;
+private final static int VMARGIN = 5;
+
+class WebFormLayout extends Layout {
+
+protected void layout(Composite parent, boolean changed) {
+	Rectangle bounds = parent.getClientArea();
+	int x =0;
+	int y = 0;
+	if (isHeadingVisible()) {
+		y = getHeadingHeight(parent);
+	}
+	Point csize = client.computeSize(bounds.width, SWT.DEFAULT, changed);
+	client.setBounds(x, y, csize.x, csize.y);
+}
+
+private int getHeadingHeight(Composite parent) {
+	int width = parent.getSize().x;
+	int height =0;
+	int imageHeight = 0;
+	if (getHeadingImage()!=null) {
+		Rectangle ibounds = getHeadingImage().getBounds();
+		imageHeight = ibounds.height;
+	}
+	GC gc = new GC(parent);
+	gc.setFont(titleFont);
+	int textWidth = width - 2*HMARGIN;
+	height = FormText.computeWrapHeight(gc, getHeadingText(), textWidth);
+	height += 2*VMARGIN;
+	height = Math.max(height, imageHeight);
+	return height;
+}
+
+protected Point computeSize(Composite parent, int wHint, int hHint, boolean changed) {
+	int width = wHint;
+	int height = 0;
+	if (isHeadingVisible()) {
+		height = getHeadingHeight(parent);
+	}
+	Point csize = client.computeSize(width, SWT.DEFAULT, changed);
+	width = csize.x;
+	height += csize.y;
+	return new Point (width, height);
+}
+}
 
 public WebForm() {
 }
 
 public Control createControl(Composite parent) {
 	scrollComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-	Composite form = factory.createComposite(scrollComposite);
-	form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+	scrollComposite.setBackground(factory.getBackgroundColor());
+	final Composite form = factory.createComposite(scrollComposite);
 
 	scrollComposite.setContent(form);
-    //scrollComposite.setBackground(factory.getBackgroundColor());
     scrollComposite.addListener (SWT.Resize,  new Listener () {
 		public void handleEvent (Event e) {
 			Rectangle ssize = scrollComposite.getClientArea();
 			int swidth = ssize.width;
-			Point size = layout.computeSize(control, swidth, SWT.DEFAULT, true);
-			System.out.println("size.x="+size.x+", swidth="+swidth);
+			WebFormLayout layout = (WebFormLayout)form.getLayout();
+			Point size = layout.computeSize(form, swidth, SWT.DEFAULT, true);
 			if (size.x < swidth) size.x = swidth;
-			//Rectangle trim = control.computeTrim(0, 0, size.x, size.y);
-			//size = new Point(trim.width, trim.height);
+			Rectangle trim = form.computeTrim(0, 0, size.x, size.y);
+			size = new Point(trim.width, trim.height);
 			control.setSize(size);
 		}
 	});
-	layout = new HTMLTableLayout();
-	layout.leftMargin = layout.rightMargin = 0;
-	layout.topMargin = layout.bottomMargin = 0;
+	WebFormLayout layout = new WebFormLayout();
 	form.setLayout(layout);
-	formText = new FormText(form, SWT.WRAP);
-	//formText.setBackground(factory.getBackgroundColor());
-	formText.setBackground(formText.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-	formText.setForeground(factory.getForegroundColor());
-	formText.setFont(titleFont);
-	TableData td = new TableData();
-	td.align = TableData.FILL;
-	formText.setLayoutData(td);
+	form.addPaintListener(new PaintListener() {
+		public void paintControl(PaintEvent e) {
+			paint(e);
+		}
+	});
 	this.control = form;
-	createClient(form);
+	client = factory.createComposite(form);
+	createContents(client);
 	form.setFocus();
 	return scrollComposite;
 }
 
-protected void createClient(Composite parent) {
-	Composite comp = factory.createComposite(parent);
-	//TableData td = new TableData();
-	//td.colspan = getNumColumns();
-	//td.align = TableData.FILL;
-	//td.valign = TableData.FILL;
-	//comp.setLayoutData(td);
+protected void createContents(Composite parent) {
 }
 
 public Control getControl() {
 	return control;
 }
 
-public void setHeadingText(String text) {
-	super.setHeadingText(text);
-	if (formText!=null)
-	   formText.setText(text);
-}
-
-public void setHeadingImage(Image image) {
-	super.setHeadingImage(image);
-	if (formText!=null)
-	   formText.setBackgroundImage(image);
-}
-
 public void setHeadingVisible(boolean newHeadingVisible) {
 	super.setHeadingVisible(newHeadingVisible);
 	if (control != null)
-		control.layout(true);
+		control.layout();
 }
 
 public void propertyChange(PropertyChangeEvent event) {
 	titleFont = JFaceResources.getHeaderFont();
 	if (control!=null) { 
-		formText.setFont(titleFont);
 		control.layout();
 	}
+}
+
+private void paint(PaintEvent e) {
+	GC gc = e.gc;
+	if (headingImage!=null) {
+		gc.drawImage(headingImage, 0, 0);
+	}
+	Point size = control.getSize();
+	if (getHeadingBackground()!=null)
+		gc.setBackground(getHeadingBackground());
+	if (getHeadingForeground()!=null)
+		gc.setForeground(getHeadingForeground());
+	gc.setFont(titleFont);
+	FormText.paintWrapText(gc, size, getHeadingText(), HMARGIN, VMARGIN);
 }
 
 }
