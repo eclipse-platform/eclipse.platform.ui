@@ -30,7 +30,6 @@ private Label osLabel;
 private Label wsLabel;
 private Label nlLabel;
 private Label descriptionText;
-private Composite control;
 private URL infoLinkURL;
 private Label infoLinkLabel;
 private InfoGroup licenseGroup;
@@ -233,24 +232,27 @@ Label createHeading(Composite parent, String text) {
 	return l;
 }
 
-public void expandTo(Object obj) {
-	if (obj instanceof IFeature) {
-		inputChanged((IFeature)obj);
-	}
-	else if (obj instanceof CategorizedFeature) {
-		try {
-			IFeature feature = ((CategorizedFeature)obj).getFeature();
-			inputChanged(feature);
+public void expandTo(final Object obj) {
+	BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+		public void run() {
+			if (obj instanceof IFeature) {
+				inputChanged((IFeature)obj);
+			}
+			else if (obj instanceof CategorizedFeature) {
+				try {
+					IFeature feature = ((CategorizedFeature)obj).getFeature();
+					inputChanged(feature);
+				}
+				catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+			else if (obj instanceof ChecklistJob) {
+				inputChanged(((ChecklistJob)obj).getFeature());
+			}
+			else inputChanged(null);
 		}
-		catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
-		}
-
-	}
-	else if (obj instanceof ChecklistJob) {
-		inputChanged(((ChecklistJob)obj).getFeature());
-	}
-	else inputChanged(null);
+	});
 }
 
 private void inputChanged(IFeature feature) {
@@ -280,7 +282,6 @@ private void inputChanged(IFeature feature) {
 	
 	licenseGroup.setInfo(feature.getLicense());
 	copyrightGroup.setInfo(feature.getCopyright());
-	System.out.println("Reflow starts...");
 	reflow();
 	updateSize();
 	((Composite)getControl()).redraw();
@@ -290,7 +291,6 @@ private void inputChanged(IFeature feature) {
 	doButton.setVisible(true);
 
 	currentFeature = feature;
-	System.out.println("Done.");
 }
 
 private void reflow() {
