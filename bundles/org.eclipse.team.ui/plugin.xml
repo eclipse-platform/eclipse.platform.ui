@@ -274,7 +274,7 @@
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
          <view
-               relative="org.eclipse.ui.views.TaskList"
+               relative="org.eclipse.ui.views.ResourceNavigator"
                visible="false"
                relationship="stack"
                id="org.eclipse.team.ui.sync.SyncView">
@@ -285,6 +285,12 @@
                relationship="stack"
                id="org.eclipse.team.ui.target.SiteExplorerView">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective">
+         <showInPart
+               id="org.eclipse.ui.views.ResourceNavigator">
+         </showInPart>
       </perspectiveExtension>
    </extension>
 <!-- ***************** Commands ********************** -->
