@@ -7,7 +7,6 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Date;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -17,7 +16,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Handles any "Updated" and "Merged" responses
@@ -83,25 +81,7 @@ class UpdatedHandler extends ResponseHandler {
 		
 		// Get the local file
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
-		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
-		if (! mParent.exists()) {
-			// First, check if the parent is a phantom
-			IContainer container = (IContainer)mParent.getIResource();
-			if (container != null && container.isPhantom()) {
-				// Create all the parents as need
-				recreatePhatomFolders(mParent);
-			} else {
-				// It is possible that we have a case variant.
-				localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
-				mParent = session.getLocalRoot().getFolder(localDir);
-				if (!mParent.exists()) {
-					// It is also possible that the path is invalid for this platform
-					localDir = session.getUniquePathForInvalidPath(localDir);
-					mParent = session.getLocalRoot().getFolder(localDir);
-					Assert.isTrue(mParent.exists());
-				}
-			}
-		}
+		ICVSFolder mParent = getExistingFolder(session, localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		boolean binary = info.getKeywordMode().isBinary();
@@ -138,17 +118,4 @@ class UpdatedHandler extends ResponseHandler {
 		}
 		mFile.setSyncInfo(newInfoWithTimestamp);
 	}
-
-	/**
-	 * Method recreatePhatomFolders.
-	 * @param mParent
-	 */
-	private void recreatePhatomFolders(ICVSFolder folder) throws CVSException {
-		ICVSFolder parent = folder.getParent();
-		if (!parent.exists()) {
-			recreatePhatomFolders(parent);
-		}
-		folder.mkdir();
-	}
-
 }

@@ -5,11 +5,13 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -130,6 +132,42 @@ public abstract class ResponseHandler {
 				null, false));
 		}
 		return folder;
+	}
+
+	protected ICVSFolder getExistingFolder(Session session, String localDir)
+		throws CVSException {
+			ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
+			if (! mParent.exists()) {
+				// First, check if the parent is a phantom
+				IContainer container = (IContainer)mParent.getIResource();
+				if (container != null && container.isPhantom()) {
+					// Create all the parents as need
+					recreatePhatomFolders(mParent);
+				} else {
+					// It is possible that we have a case variant.
+					localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
+					mParent = session.getLocalRoot().getFolder(localDir);
+					if (!mParent.exists()) {
+						// It is also possible that the path is invalid for this platform
+						localDir = session.getUniquePathForInvalidPath(localDir);
+						mParent = session.getLocalRoot().getFolder(localDir);
+						Assert.isTrue(mParent.exists());
+					}
+				}
+			}
+			return mParent;
+		}
+
+	/**
+	 * Method recreatePhatomFolders.
+	 * @param mParent
+	 */
+	private void recreatePhatomFolders(ICVSFolder folder) throws CVSException {
+		ICVSFolder parent = folder.getParent();
+		if (!parent.exists()) {
+			recreatePhatomFolders(parent);
+		}
+		folder.mkdir();
 	}
 }
 

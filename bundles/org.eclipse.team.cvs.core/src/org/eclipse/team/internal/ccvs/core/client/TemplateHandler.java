@@ -39,7 +39,7 @@ public class TemplateHandler extends ResponseHandler {
 	 */
 	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
 		String remoteDir = session.readLine();
-		ICVSFolder localFolder = session.getLocalRoot().getFolder(localDir);
+		ICVSFolder localFolder = getExistingFolder(session, localDir);
 		IContainer container = (IContainer)localFolder.getIResource();
 		if (container == null) return;
 		ICVSFile templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));

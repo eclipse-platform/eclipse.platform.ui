@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
@@ -27,12 +28,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
@@ -52,7 +53,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		
 		final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 		if (folders.length != 1) return;
-		final String name = folders[0].getName();
+		final String remoteFolderName = folders[0].getName();
 		// make a copy of the folder so that we will not effect the original folder when we refetch the members
 		final ICVSRemoteFolder folder = (ICVSRemoteFolder)folders[0].forTag(folders[0].getTag());
 		
@@ -88,54 +89,55 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		
 		// Prompt outside a workspace runnable so that the project creation delta can be heard
 		IProject newProject = null;
-		if ( ! hasProjectMetaFile[0]) {
-			newProject = getNewProject(name);
+		IProjectDescription newDesc = null;
+		if (hasProjectMetaFile[0]) {
+			
+			// prompt for the project name and location
+			newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(remoteFolderName);
+			ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(getShell(), newProject);
+			dialog.setTitle(Policy.bind("CheckoutAsAction.enterProjectTitle", remoteFolderName)); //$NON-NLS-1$
+			int result = dialog.open();
+			if (result != Dialog.OK) return;
+			Object[] destinationPaths = dialog.getResult();
+			if (destinationPaths == null) return;
+			String newName = (String) destinationPaths[0];
+			IPath newLocation = new Path((String) destinationPaths[1]);
+			
+			// create the project description for a custom location
+			boolean useDefaultLocation = newLocation.equals(Platform.getLocation());
+			if (!useDefaultLocation) {
+				newDesc = ResourcesPlugin.getWorkspace().newProjectDescription(newProject.getName());
+				newDesc.setLocation(newLocation);
+			}
+			
+			// prompt if the project or location exists locally
+			newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
+			PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { newProject },
+				getOverwriteLocalAndFileSystemPrompt(newDesc), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+			if (prompt.promptForMultiple().length == 0) return;
+			
+		} else {
+			newProject = getNewProject(remoteFolderName);
 			if (newProject == null) return;
 		}
 		
-		final IProject createdProject = newProject;
+		final IProject project = newProject;
+		final IProjectDescription desc = newDesc;
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					IProject project;
 					if (hasProjectMetaFile[0]) {
-						// Prompt for name
-						final Shell shell = getShell();
-						final int[] result = new int[] { Dialog.OK };
-						project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						final ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(shell, project);
-						dialog.setTitle(Policy.bind("CheckoutAsAction.enterProjectTitle", name)); //$NON-NLS-1$
-	
-						shell.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								result[0] = dialog.open();
-							}
-						});
-						if (result[0] != Dialog.OK) return;
-	
-						Object[] destinationPaths = dialog.getResult();
-						if (destinationPaths == null) return;
-						String newName = (String) destinationPaths[0];
-						IPath newLocation = new Path((String) destinationPaths[1]);
-	
-						// prompt if the project exists locally
-						project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
-						PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { project },
-							getOverwriteLocalAndFileSystemPrompt(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
-						if (prompt.promptForMultiple().length == 0) return;
 	
 						monitor.beginTask(null, 100);
-						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, newName)); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", remoteFolderName, project.getName())); //$NON-NLS-1$
 	
 						// create the project
 						try {
-							if (newLocation.equals(Platform.getLocation())) {
+							if (desc == null) {
 								// create in default location
 								project.create(Policy.subMonitorFor(monitor, 3));
 							} else {
 								// create in some other location
-								IProjectDescription desc = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
-								desc.setLocation(newLocation);
 								project.create(desc, Policy.subMonitorFor(monitor, 3));
 							}
 							project.open(Policy.subMonitorFor(monitor, 2));
@@ -143,9 +145,8 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 							throw CVSException.wrapException(e);
 						}
 					} else {
-						project = createdProject;
 						monitor.beginTask(null, 95);
-						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, createdProject.getName())); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", remoteFolderName, project.getName())); //$NON-NLS-1$
 					}
 
 					CVSWorkspaceRoot.checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 95));
@@ -230,5 +231,41 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 	protected String getErrorTitle() {
 		return Policy.bind("CheckoutAsAction.checkoutFailed"); //$NON-NLS-1$
 	}
-
+	
+	protected IPromptCondition getOverwriteLocalAndFileSystemPrompt(final IProjectDescription desc) {
+		return new IPromptCondition() {
+			// prompt if resource in workspace exists or exists in local file system
+			public boolean needsPrompt(IResource resource) {
+				
+				// First, check the description location
+				if (desc != null) {
+					File localLocation = desc.getLocation().toFile();
+					return localLocation.exists();
+				}
+				
+				// Next, check if the resource itself exists
+				if (resource.exists()) return true;
+				
+				// Finally, check if the location in the workspace exists;
+				File localLocation  = getFileLocation(resource);
+				if (localLocation.exists()) return true;
+				
+				// The target doesn't exist
+				return false;
+			}
+			public String promptMessage(IResource resource) {
+				if (desc != null) {
+					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", desc.getLocation().toString());//$NON-NLS-1$
+				} else if(resource.exists()) {
+					return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());//$NON-NLS-1$
+				} else {
+					File localLocation  = getFileLocation(resource);
+					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", localLocation.toString());//$NON-NLS-1$
+				}
+			}
+			private File getFileLocation(IResource resource) {
+				return new File(resource.getParent().getLocation().toFile(), resource.getName());
+			}
+		};
+	}
 }
