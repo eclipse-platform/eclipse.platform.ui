@@ -109,8 +109,7 @@ private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree tree, 
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("events.building.0");
-		monitor.beginTask(message, Policy.opWork);
+		monitor.beginTask(null, Policy.opWork);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -1242,9 +1241,8 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		IManager[] managers = { buildManager, notificationManager, propertyManager, fileSystemManager, markerManager, saveManager, workManager };
-		String message = Policy.bind("resources.shuttingDown");
-		monitor.beginTask(message, managers.length);
-		message = Policy.bind("resources.shutdownProblems");
+		monitor.beginTask(null, managers.length);
+		String message = Policy.bind("resources.shutdownProblems");
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		// best effort to shutdown every object and free resources
 		for (int i = 0; i < managers.length; i++) {

@@ -75,8 +75,7 @@ public ISavedState addParticipant(Plugin plugin, ISaveParticipant participant) t
 protected void broadcastLifecycle(final int lifecycle, Map contexts, final MultiStatus warnings, IProgressMonitor monitor) {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String taskname = Policy.bind("resources.broadcasting");
-		monitor.beginTask(taskname, contexts.size());
+		monitor.beginTask(null, contexts.size());
 		for (final Iterator it = contexts.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry) it.next();
 			Plugin plugin = (Plugin) entry.getKey();
@@ -406,7 +405,7 @@ protected DataInputStream resetStream(DataInputStream input, IPath location, IPa
 protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("resources.restoring"), 40);
+		monitor.beginTask(null, 40);
 		if (project.isOpen()) {
 			restoreTree(project, Policy.subMonitorFor(monitor, 10));
 		} else {
@@ -427,7 +426,7 @@ protected void restore(Project project, IProgressMonitor monitor) throws CoreExc
 protected void restore(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("resources.restoring"), 50);
+		monitor.beginTask(null, 50);
 		// need to open the tree to restore, but since we're not 
 		// inside an operation, be sure to close it afterwards
 		workspace.newWorkingTree();
@@ -532,8 +531,7 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.restoring");
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask(null, Policy.totalWork);
 		IPath snapLocation = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 		java.io.File localFile = snapLocation.toFile();
 
@@ -601,8 +599,7 @@ protected void restoreTree(Project project, IProgressMonitor monitor) throws Cor
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.restoring");
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask(null, Policy.totalWork);
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists())
@@ -771,8 +768,7 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.snapshoting");
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask(null, Policy.totalWork);
 		// don't need to snapshot if there are no changes 
 		if (tree == lastSnap)
 			return;
@@ -868,8 +864,7 @@ public void startup(IProgressMonitor monitor) throws CoreException {
 protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.writing");
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask(null, Policy.totalWork);
 		boolean wasImmutable = false;
 		try {
 			// Create an array of trees to save. Ensure that the current one is in the list
@@ -950,8 +945,7 @@ protected void writeTree(Project project, int depth) throws CoreException {
 protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.writing");
-		monitor.beginTask(message, 10);
+		monitor.beginTask(null, 10);
 		boolean wasImmutable = false;
 		try {
 			/**
