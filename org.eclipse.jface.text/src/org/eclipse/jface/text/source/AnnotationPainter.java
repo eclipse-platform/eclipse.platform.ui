@@ -122,17 +122,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						continue;
 						
 					Color color= null;
-					if (fAnnotationTypes.contains(annotationType)) {
+					if (fAnnotationTypes.contains(annotationType))
 						color= (Color) fColorTable.get(annotationType);
-						if (color == null)
-							continue;
+					
+					if (color != null) {
+						Decoration pp= new Decoration();
+						pp.fPosition= fModel.getPosition(annotation);
+						pp.fColor= color;
+						pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
+						fDecorations.add(pp);
 					}
-										
-					Decoration pp= new Decoration();
-					pp.fPosition= fModel.getPosition(annotation);
-					pp.fColor= color;
-					pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
-					fDecorations.add(pp);
 				}
 			}
 		}
