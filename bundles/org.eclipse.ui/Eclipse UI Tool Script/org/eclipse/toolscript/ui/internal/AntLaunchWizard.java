@@ -96,31 +96,14 @@ public class AntLaunchWizard extends Wizard {
 	public void addPages() {
 		page1 = new AntLaunchWizardPage(antProject);
 		addPage(page1);
+		
 		String args = antScript.getArguments();
-
-		page1.setInitialTargets(getInitialTargets());
-		page1.setInitialArguments(getInitialArguments());
+		StringBuffer buf = new StringBuffer();
+		String[] targets = ToolUtil.extractVariableArguments(args, ToolScript.VAR_ANT_TARGET, buf);
+		
+		page1.setInitialTargets(targets);
+		page1.setInitialArguments(buf.toString());
 		page1.setInitialDisplayLog(antScript.getShowLog());
-	}
-	
-	/**
-	 * Returns the initial Ant targets to use. This information is
-	 * restored from the tool script created the last time it was run.
-	 * 
-	 * @return String[] the name of the targets
-	 */
-	public String[] getInitialTargets() {
-		return new String[0];
-	}
-	
-	/**
-	 * Returns the initial arguments to use. This information is
-	 * restored from the tool script created the last time it was run.
-	 * 
-	 * @return String the arguments string
-	 */
-	public String getInitialArguments() {
-		return ""; //$NON-NLS-1$;
 	}
 	
 	/* (non-Javadoc)
@@ -151,7 +134,7 @@ public class AntLaunchWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, ToolScriptPlugin.PLUGIN_ID, 0, ToolScriptMessages.getString("AntLaunchWizard.runAntProblem"), e); //$NON-NLS-1$;
+			IStatus status = new Status(IStatus.ERROR, ToolScriptPlugin.PLUGIN_ID, 0, ToolScriptMessages.getString("AntLaunchWizard.internalAntError"), e); //$NON-NLS-1$;
 			ErrorDialog.openError(
 				getShell(), 
 				ToolScriptMessages.getString("AntLaunchWizard.runErrorTitle"), //$NON-NLS-1$;
