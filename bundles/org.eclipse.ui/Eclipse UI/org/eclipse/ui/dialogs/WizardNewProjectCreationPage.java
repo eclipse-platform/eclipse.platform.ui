@@ -109,6 +109,14 @@ private final void createProjectLocationGroup(Composite parent) {
 	layout.numColumns = 3;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+ 
+	// new project label
+	Label projectContentsLabel = new Label(projectGroup,SWT.NONE);
+	projectContentsLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
+
+	GridData labelData = new GridData();
+	labelData.horizontalSpan = 3;
+	projectContentsLabel.setLayoutData(labelData);
 
 	final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 	useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
