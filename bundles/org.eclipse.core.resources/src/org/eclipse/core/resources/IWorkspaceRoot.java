@@ -5,6 +5,8 @@ package org.eclipse.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -112,4 +114,12 @@ public IProject getProject(String name);
  * @see #getProject
  */
 public IProject[] getProjects();
+/**
+ * @see IWorkspaceRoot
+ */
+public void importProjects(IPath location, InputStream target, IProgressMonitor monitor) throws CoreException;
+/**
+ * @see IWorkspaceRoot
+ */
+public void exportProjects(IProject[] projects, OutputStream target, IProgressMonitor monitor) throws CoreException;
 }

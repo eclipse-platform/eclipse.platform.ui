@@ -30,17 +30,13 @@ protected String[] getReferencedProjects(ProjectDescription description) {
 	return result;
 }
 /**
- * The OutputStream is closed in this method.
+ * The OutputStream is NOT closed. Should be closed by the caller. This gives more flexibility
+ * to this method, allowing it to be reused.
  */
 public void write(Object object, OutputStream output) throws IOException {
-	try {
-		XMLWriter writer = new XMLWriter(output);
-		write(object, writer);
-		writer.flush();
-		writer.close();
-	} finally {
-		output.close();
-	}
+	XMLWriter writer = new XMLWriter(output);
+	write(object, writer);
+	writer.flush();
 }
 protected void write(Object obj, XMLWriter writer) throws IOException {
 	if (obj instanceof BuildCommand) {
@@ -65,12 +61,11 @@ protected void write(Object obj, XMLWriter writer) throws IOException {
 public void write(Object object, IPath location, IPath tempLocation) throws IOException {
 	SafeFileOutputStream file = null;
 	String tempPath = tempLocation == null ? null : tempLocation.toOSString();
+	file = new SafeFileOutputStream(location.toOSString(), tempPath);
 	try {
-		file = new SafeFileOutputStream(location.toOSString(), tempPath);
 		write(object, file);
 	} finally {
-		if (file != null)
-			file.close();
+		file.close();
 	}
 }
 protected void write(String name, String elementTagName, String[] array, XMLWriter writer) throws IOException {

@@ -5,6 +5,8 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.eclipse.core.internal.utils.Assert;
@@ -202,5 +204,46 @@ public boolean synchronizing() {
  */
 public void touch(IProgressMonitor monitor) throws CoreException {
 	// do nothing for the workspace root
+}
+/**
+ * @see IWorkspaceRoot
+ */
+public void importProjects(IPath location, InputStream target, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		// FIXME: add message to catalog
+		String title = Policy.bind("resources.importingProject");
+		monitor.beginTask(title, Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			workspace.beginOperation(true);
+			// FIXME: test location for overlapping
+			new ProjectImporterExporter(workspace).importProjects(location, target, Policy.subMonitorFor(monitor, Policy.opWork));
+		} finally {
+			workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
+}
+/**
+ * @see IWorkspaceRoot
+ */
+public void exportProjects(IProject[] projects, OutputStream target, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		// FIXME: add message to catalog
+		String title = Policy.bind("resources.exportingProject", getFullPath().toString());
+		monitor.beginTask(title, Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			workspace.beginOperation(true);
+			new ProjectImporterExporter(workspace).exportProjects(projects, target, Policy.subMonitorFor(monitor, Policy.opWork));
+		} finally {
+			workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
 }
 }

@@ -1508,4 +1508,50 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 	message = Policy.bind("resources.validLocation");
 	return new ResourceStatus(IResourceStatus.OK, message);
 }
+public IStatus refreshLocal(IResource[] resources, int depth, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		int opWork = Math.max(resources.length, 1);
+		int totalWork = Policy.totalWork * opWork / Policy.opWork;
+		// FIXME: add message to catalog
+		String message = Policy.bind("resources.refreshing.0");
+		monitor.beginTask(message, totalWork);
+		Assert.isLegal(resources != null);
+		if (resources.length == 0)
+			return ResourceStatus.OK_STATUS;
+		// to avoid concurrent changes to this array
+		resources = (IResource[]) resources.clone();
+		// FIXME: add message to catalog
+		message = Policy.bind("resources.refreshProblem");
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
+		try {
+			prepareOperation();
+			beginOperation(true);
+			for (int i = 0; i < resources.length; i++) {
+				Policy.checkCanceled(monitor);
+				IResource resource = resources[i];
+				if (resource == null || isDuplicate(resources, i)) {
+					monitor.worked(1);
+					continue;
+				}
+				try {
+					resource.refreshLocal(depth, Policy.subMonitorFor(monitor, 1));
+				} catch (CoreException e) {
+					monitor.worked(1);
+					status.merge(e.getStatus());
+				}
+			}
+		} catch (OperationCanceledException e) {
+			getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			endOperation(true, Policy.subMonitorFor(monitor, totalWork - opWork));
+		}
+		if (status.matches(IStatus.ERROR))
+			throw new ResourceException(status);
+		return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
+	} finally {
+		monitor.done();
+	}
+}
 }
