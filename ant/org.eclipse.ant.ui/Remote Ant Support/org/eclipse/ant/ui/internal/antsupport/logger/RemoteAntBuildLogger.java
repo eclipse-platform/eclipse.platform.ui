@@ -236,12 +236,17 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		super.messageLogged(event);
-		
 		if (fCancelled) {
 			shutDown();
 			System.exit(0);
 		}
+		int priority = event.getPriority();
+		
+		if (priority > msgOutputLevel) {
+			return;
+		}
+		super.messageLogged(event);
+		
 		if (!fSentProcessId) {
 			if (fEventQueue == null){
 				fEventQueue= new ArrayList(10);
