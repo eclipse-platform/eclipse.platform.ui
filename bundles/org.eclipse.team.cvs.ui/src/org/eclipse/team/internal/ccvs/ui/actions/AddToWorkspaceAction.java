@@ -14,7 +14,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
@@ -22,6 +21,7 @@ import org.eclipse.team.ccvs.core.IRemoteRoot;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Add some remote resources to the workspace. Current implementation:
@@ -64,8 +64,8 @@ public class AddToWorkspaceAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					IRemoteFolder[] folders = getSelectedRemoteFolders();
 					IProject[] projects = new IProject[folders.length];

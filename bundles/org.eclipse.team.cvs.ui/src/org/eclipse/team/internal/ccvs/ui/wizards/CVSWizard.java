@@ -14,7 +14,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public abstract class CVSWizard extends Wizard {
 	/**
@@ -28,7 +29,7 @@ public abstract class CVSWizard extends Wizard {
 		IStatus errors = null;
 		boolean internalError = false;
 		try {
-			new ProgressMonitorDialog(getShell()).run(false, false, runnable);
+			new ProgressMonitorDialog(getShell()).run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {

@@ -11,12 +11,14 @@ import java.util.Properties;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * This wizard helps the user to check out an existing project from
@@ -57,10 +59,15 @@ public class CheckoutWizard extends ConnectionWizard {
 	 * @see IWizard#performFinish
 	 */
 	public boolean performFinish() {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					getMainPage().finish(monitor);
+					// Get the values. Run in UI thread.
+					getMainPage().getControl().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							getMainPage().finish(new NullProgressMonitor());
+						}
+					});
 					Properties properties = getProperties();
 					// Prepare the location
 					String projectName = properties.getProperty("project");

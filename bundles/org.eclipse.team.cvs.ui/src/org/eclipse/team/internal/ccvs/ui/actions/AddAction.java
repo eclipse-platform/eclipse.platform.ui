@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
@@ -23,6 +22,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * AddAction performs a 'cvs add' command on the selected resources. If a
@@ -33,8 +33,8 @@ public class AddAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-			run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();

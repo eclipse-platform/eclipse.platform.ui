@@ -23,6 +23,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * UpdateAction performs a 'cvs update' command on the selected resources.
@@ -36,8 +37,8 @@ public class UpdateAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
