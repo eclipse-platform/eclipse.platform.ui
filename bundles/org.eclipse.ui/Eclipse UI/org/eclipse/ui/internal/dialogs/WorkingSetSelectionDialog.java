@@ -4,13 +4,16 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 
+
 import java.util.*;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -162,39 +166,53 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		return control;
 	}
 	/**
-	 * Called when the user selects to create a new working set.
+	 * Opens a working set wizard for creating a new working set.
 	 */
 	private void createWorkingSet() {
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		IWorkingSetDialog dlg = registry.getDefaultWorkingSetDialog();
+		WorkingSetNewWizard wizard = new WorkingSetNewWizard();
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+	
+		dialog.create();		
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_NEW_WIZARD);
+		if (dialog.open() == Window.OK) {
+			IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+			IWorkingSet workingSet = wizard.getSelection();
 
-		if (dlg != null) {
-			dlg.init(getShell());
-			if (dlg.open() == Window.OK) {
-				IWorkingSet workingSet = dlg.getSelection();
-				listViewer.add(workingSet);
-				listViewer.setSelection(new StructuredSelection(workingSet), true);
-				manager.addWorkingSet(workingSet);
-			}
+			listViewer.add(workingSet);
+			listViewer.setSelection(new StructuredSelection(workingSet), true);
+			manager.addWorkingSet(workingSet);
 		}
 	}
 	/**
-	 * Opens a working set dialog for the currently selected working set.
+	 * Opens a working set wizard for editing the currently selected 
+	 * working set.
 	 * 
-	 * @see org.eclipse.ui.IWorkingSetDialog
+	 * @see org.eclipse.ui.IWorkingSetPage
 	 */
 	private void editSelectedWorkingSet() {
+		IWorkingSet workingSet = (IWorkingSet) getSelectedWorkingSets().get(0);		
+		String editPageId = ((WorkingSet) workingSet).getEditPageId();
+		
+		if (editPageId == null) {
+			return;
+		}
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-		IWorkingSet workingSet = (IWorkingSet) getSelectedWorkingSets().get(0);
-		IWorkingSetDialog dlg = registry.getWorkingSetDialog(workingSet);
-
-		if (dlg != null) {
-			dlg.init(getShell());
-			dlg.setSelection(workingSet);
-			if (dlg.open() == Window.OK) {
-				listViewer.update(dlg.getSelection(), null);
+		IWorkingSetPage editPage = registry.getWorkingSetPage(editPageId);
+						
+		if (editPage == null) {
+			editPage = registry.getDefaultWorkingSetPage();
+			if (editPage == null) {
+				return;
 			}
+		}
+		WorkingSetEditWizard wizard = new WorkingSetEditWizard(editPage);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+
+		dialog.create();
+		wizard.setSelection(workingSet);
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
+		if (dialog.open() == Window.OK) {
+			listViewer.update(wizard.getSelection(), null);
 		}
 	}
 	/**

@@ -5,21 +5,17 @@ package org.eclipse.ui.internal.registry;
  */
 
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.dialogs.IWorkingSetDialog;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.dialogs.IWorkingSetPage;
 
 /**
  * Stores working set descriptors for working set extensions.
  */
 public class WorkingSetRegistry {
 	// used in Workbench plugin.xml for default workingSet extension
-	private static final String DEFAULT_DIALOG_ELEMENT_CLASS = "org.eclipse.core.resources.IResource";
+	private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage";
 	
 	private HashMap workingSetDescriptors = new HashMap();
 
@@ -31,55 +27,42 @@ public class WorkingSetRegistry {
 	 */
 	public void addWorkingSetDescriptor(WorkingSetDescriptor descriptor) {
 		Assert.isTrue(!workingSetDescriptors.containsValue(descriptor), "working set descriptor already registered"); //$NON-NLS-1$
-		workingSetDescriptors.put(descriptor.getElementClassName(), descriptor);
+		workingSetDescriptors.put(descriptor.getId(), descriptor);
 	}
 	/**
-	 * Returns the default, resource based, working set dialog
+	 * Returns the default, resource based, working set page
 	 * 
-	 * @return the default working set dialog.
+	 * @return the default working set page.
 	 */
-	public IWorkingSetDialog getDefaultWorkingSetDialog() {
-		WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(DEFAULT_DIALOG_ELEMENT_CLASS);
+	public IWorkingSetPage getDefaultWorkingSetPage() {
+		WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(DEFAULT_PAGE_ID);
 
 		if (descriptor != null) {
-			return descriptor.createWorkingSetDialog();
+			return descriptor.createWorkingSetPage();
 		}
 		return null;
 	}
 	/**
-	 * Returns a working set dialog that works with the elements in 
-	 * the given working set.
+	 * Returns an array of all working set descriptors.
 	 * 
-	 * @param workingSet working set to return a dialog for.
-	 * @return a working set dialog that works with the elements in 
-	 * 	the given working set.
+	 * @return an array of all working set descriptors.
 	 */
-	public IWorkingSetDialog getWorkingSetDialog(IWorkingSet workingSet) {
-		IAdaptable[] elements = workingSet.getElements();
+	public WorkingSetDescriptor[] getWorkingSetDescriptors() {
+		return (WorkingSetDescriptor[]) workingSetDescriptors.values().toArray(new WorkingSetDescriptor[workingSetDescriptors.size()]);
+	}
+	/**
+	 * Returns the working set page with the given id.
+	 * 
+	 * @param pageId working set page id
+	 * @return the working set page with the given id.
+	 */
+	public IWorkingSetPage getWorkingSetPage(String pageId) {
+		WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(pageId);
 		
-		if (elements.length == 0) {
-			return getDefaultWorkingSetDialog();
+		if (descriptor == null) {
+			return null;
 		}
-		Iterator iterator = workingSetDescriptors.keySet().iterator();			
-		WorkingSetDescriptor descriptor = null;
-		while (iterator.hasNext()) {
-			String elementClassName = (String) iterator.next();
-			Class elementClass = null;
-			
-			try {
-				 elementClass = Class.forName(elementClassName);
-			} catch (ClassNotFoundException e) {
-				WorkbenchPlugin.log("Unable to create working set dialog for element type " + elementClassName);	//$NON-NLS-1$
-			}				
-			if (elementClass != null && elementClass.isInstance(elements[0])) {
-				descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(elementClassName);
-				break;
-			}
-		}
-		if (descriptor != null) {
-			return descriptor.createWorkingSetDialog();
-		}
-		return null;
+		return descriptor.createWorkingSetPage();
 	}
 	/**
 	 * Loads the working set registry.

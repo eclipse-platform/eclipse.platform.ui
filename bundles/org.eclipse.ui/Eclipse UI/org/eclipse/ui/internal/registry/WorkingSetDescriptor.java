@@ -4,26 +4,24 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.dialogs.IWorkingSetDialog;
+import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A working set descriptor stores the plugin registry data for 
- * a working set dialog extension.
+ * a working set page extension.
  * 
  * @since 2.0
  */
 public class WorkingSetDescriptor {
 	private String id;
-	private String elementClassName;
-	private String dialogClassName;
+	private String name;
+	private String pageClassName;
 	private IConfigurationElement configElement;
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
-	private static final String ATT_ELEMENT_CLASS = "elementClass"; //$NON-NLS-1$
-	private static final String ATT_DIALOG_CLASS = "dialogClass"; //$NON-NLS-1$	
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$	
 
 	/**
 	 * Create a descriptor from a configuration element.
@@ -34,10 +32,10 @@ public class WorkingSetDescriptor {
 		super();
 		this.configElement = configElement;
 		id = configElement.getAttribute(ATT_ID);
-		elementClassName = configElement.getAttribute(ATT_ELEMENT_CLASS);
-		dialogClassName = configElement.getAttribute(ATT_DIALOG_CLASS);
+		name = configElement.getAttribute(ATT_NAME);
+		pageClassName = configElement.getAttribute(ATT_PAGE_CLASS);
 
-		if (elementClassName == null) {
+		if (name == null) {
 			throw new CoreException(new Status(
 				IStatus.ERROR, 
 				WorkbenchPlugin.PI_WORKBENCH, 
@@ -45,55 +43,55 @@ public class WorkingSetDescriptor {
 				"Invalid extension (missing class name): " + id, 		//$NON-NLS-1$
 				null));
 		}
-		if (dialogClassName == null) {
+		if (pageClassName == null) {
 			throw new CoreException(new Status(
 				IStatus.ERROR,
 				WorkbenchPlugin.PI_WORKBENCH,
 				0,
-				"Invalid extension (missing dialog class name): " + id,	//$NON-NLS-1$
+				"Invalid extension (missing page class name): " + id,	//$NON-NLS-1$
 				null));
 		}
 	}
 	/**
-	 * Creates a working set dialog from this extension descriptor.
+	 * Creates a working set page from this extension descriptor.
 	 * 
-	 * @return a working set dialog created from this extension 
+	 * @return a working set page created from this extension 
 	 * 	descriptor.
 	 */
-	public IWorkingSetDialog createWorkingSetDialog() {
-		Object dialog = null;
+	public IWorkingSetPage createWorkingSetPage() {
+		Object page = null;
 
-		if (dialogClassName != null) {
+		if (pageClassName != null) {
 			try {
-				dialog = WorkbenchPlugin.createExtension(configElement, ATT_DIALOG_CLASS);
+				page = WorkbenchPlugin.createExtension(configElement, ATT_PAGE_CLASS);
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Unable to create working set dialog: " + //$NON-NLS-1$
-				dialogClassName, e.getStatus());
+				WorkbenchPlugin.log("Unable to create working set page: " + //$NON-NLS-1$
+				pageClassName, e.getStatus());
 			}
 		}
-		return (IWorkingSetDialog) dialog;
+		return (IWorkingSetPage) page;
 	}
 	/**
-	 * Returns the working set dialog class name
+	 * Returns the working set page class name
 	 * 
-	 * @return the working set dialog class name
+	 * @return the working set page class name
 	 */
-	public String getDialogClassName() {
-		return dialogClassName;
+	public String getPageClassName() {
+		return pageClassName;
 	}
 	/**
 	 * Returns the name of the working set element type the 
-	 * dialog works with.
+	 * page works with.
 	 * 
 	 * @return the working set element type name
 	 */
-	public String getElementClassName() {
-		return elementClassName;
+	public String getName() {
+		return name;
 	}
 	/**
-	 * Returns the working set dialog id.
+	 * Returns the working set page id.
 	 */
-	public String getDialogId() {
+	public String getId() {
 		return id;
 	}
 }

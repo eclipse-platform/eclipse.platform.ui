@@ -1086,9 +1086,9 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
-            id="org.eclipse.ui.resourceWorkingSetDialog"
-            elementClass="org.eclipse.core.resources.IResource"
-            dialogClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetDialog">
+            id="org.eclipse.ui.resourceWorkingSetPage"
+            name="%WorkingSets.resource"            
+            pageClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage">
       </workingSet>
    </extension>
 
