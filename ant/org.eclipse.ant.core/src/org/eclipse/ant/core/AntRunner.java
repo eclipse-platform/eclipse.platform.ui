@@ -10,32 +10,26 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 
 /**
  * Entry point for running Ant scripts inside Eclipse.
  */
 public class AntRunner implements IPlatformRunnable {
 
-	protected String fBuildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
-	protected List fBuildListeners;
-	protected String[] fTargets;
-	protected Map fUserProperties;
-	protected int fMessageOutputLevel = 2; // Project.MSG_INFO
-	protected String fBuildLoggerClassName;
-	protected String[] fArguments;
+	protected String buildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
+	protected List buildListeners;
+	protected String[] targets;
+	protected Map userProperties;
+	protected int messageOutputLevel = 2; // Project.MSG_INFO
+	protected String buildLoggerClassName;
+	protected String[] arguments;
 
 	/** 
 	 * Constructs an instance of this class.
@@ -50,9 +44,9 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
 		if (buildFileLocation == null) {
-			fBuildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
+			this.buildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
 		} else {
-			fBuildFileLocation = buildFileLocation;
+			this.buildFileLocation = buildFileLocation;
 		}
 	}
 
@@ -71,7 +65,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param level the message output level
 	 */
 	public void setMessageOutputLevel(int level) {
-		fMessageOutputLevel = level;
+		messageOutputLevel = level;
 	}
 
 	/**
@@ -80,7 +74,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param arguments the arguments to be passed to the script
 	 */
 	public void setArguments(String arguments) {
-		fArguments = getArray(arguments);
+		this.arguments = getArray(arguments);
 	}
 
 	/**
@@ -128,7 +122,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @since 2.1
 	 */
 	public void setArguments(String[] arguments) {
-		fArguments = arguments;
+		this.arguments = arguments;
 	}
 
 	/**
@@ -137,7 +131,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param executionTargets which targets should be run and in which order
 	 */
 	public void setExecutionTargets(String[] executionTargets) {
-		fTargets = executionTargets;
+		this.targets = executionTargets;
 	}
 
 	/**
@@ -153,10 +147,10 @@ public class AntRunner implements IPlatformRunnable {
 		if (className == null) {
 			return;
 		}
-		if (fBuildListeners == null) {
-			fBuildListeners = new ArrayList(5);
+		if (buildListeners == null) {
+			buildListeners = new ArrayList(5);
 		}
-		fBuildListeners.add(className);
+		buildListeners.add(className);
 	}
 
 	/**
@@ -169,7 +163,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param className a build logger class name
 	 */
 	public void addBuildLogger(String className) {
-		fBuildLoggerClassName = className;
+		buildLoggerClassName = className;
 	}
 
 	/**
@@ -178,7 +172,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param properties a Map of user-defined properties
 	 */
 	public void addUserProperties(Map properties) {
-		fUserProperties = properties;
+		userProperties = properties;
 	}
 
 	/**
@@ -198,7 +192,7 @@ public class AntRunner implements IPlatformRunnable {
 			runner = classInternalAntRunner.newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
-			setBuildFileLocation.invoke(runner, new Object[] { fBuildFileLocation });
+			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
 			// get the info for each targets
 			Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
 			Object results = getTargets.invoke(runner, null);
@@ -255,16 +249,16 @@ public class AntRunner implements IPlatformRunnable {
 			runner = classInternalAntRunner.newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
-			setBuildFileLocation.invoke(runner, new Object[] { fBuildFileLocation });
+			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
 			// add listeners
-			if (fBuildListeners != null) {
+			if (buildListeners != null) {
 				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$
-				addBuildListeners.invoke(runner, new Object[] { fBuildListeners });
+				addBuildListeners.invoke(runner, new Object[] { buildListeners });
 			}
 			// add build logger
-			if (fBuildLoggerClassName != null) {
+			if (buildLoggerClassName != null) {
 				Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
-				addBuildLogger.invoke(runner, new Object[] { fBuildLoggerClassName });
+				addBuildLogger.invoke(runner, new Object[] { buildLoggerClassName });
 			}
 			// add progress monitor
 			if (monitor != null) {
@@ -273,19 +267,19 @@ public class AntRunner implements IPlatformRunnable {
 			}
 			// add properties
 			Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
-			addUserProperties.invoke(runner, new Object[] { fUserProperties });
+			addUserProperties.invoke(runner, new Object[] { userProperties });
 			// set message output level
 			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
-			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(fMessageOutputLevel)});
+			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel)});
 			// set execution targets
-			if (fTargets != null) {
+			if (targets != null) {
 				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
-				setExecutionTargets.invoke(runner, new Object[] { fTargets });
+				setExecutionTargets.invoke(runner, new Object[] { targets });
 			} 
 			// set extra arguments
-			if (fArguments != null && fArguments.length > 0) {
+			if (arguments != null && arguments.length > 0) {
 				Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] { String[].class }); //$NON-NLS-1$
-				setArguments.invoke(runner, new Object[] { fArguments });
+				setArguments.invoke(runner, new Object[] { arguments });
 			}
 			// run
 			Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
@@ -326,7 +320,7 @@ public class AntRunner implements IPlatformRunnable {
 		}
 		// J9 throws NoClassDefFoundError nested in a InvocationTargetException
 		if (message == null && ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException))) {
-			problemLoadingClass(e);
+			problemLoadingClass(realException);
 			return;
 		}
 		if (message == null) {
