@@ -83,7 +83,7 @@ public class NavigateAction extends Action {
 		if(info.getLocal().getType() != IResource.FILE) {
 			if(! nav.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
+				OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
 			}
 			return;
 		}
@@ -102,14 +102,14 @@ public class NavigateAction extends Action {
 					if(navigator.selectChange(next)) {
 						if(! nav.gotoDifference(next)) {
 							info = getSyncInfoFromSelection();
-							OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
+							OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
 						}
 					}				
 				}
 			} else {
 				// otherwise, select the next change and open a compare editor which will automatically
 				// show the first change.
-				OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
+				OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
 			}
 		}
 	}

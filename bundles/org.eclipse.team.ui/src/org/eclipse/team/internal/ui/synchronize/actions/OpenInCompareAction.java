@@ -11,23 +11,17 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.*;
 
 /**
  * Action to open a compare editor from a SyncInfo object.
@@ -53,36 +47,48 @@ public class OpenInCompareAction extends Action {
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
-					openCompareEditor(site, name, info, false /* don't keep focus */);
+					openCompareEditor(name, info, false /* don't keep focus */, site);
 				}
 			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(ISynchronizePageSite site, String name, SyncInfo info, boolean keepFocus) {		
-		SyncInfoCompareInput input = getCompareInput(name, info);
-		if(input != null) {
-			IWorkbenchSite ws = site.getWorkbenchSite();
-			if (ws == null) return null;
-			IWorkbenchPage wpage = ws.getPage();
-			IEditorPart editor = findReusableCompareEditor(wpage);			
+	public static SyncInfoCompareInput openCompareEditor(String name, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
+		Assert.isNotNull(info);
+		Assert.isNotNull(name);
+			
+		if(info.getLocal().getType() != IResource.FILE) return null;
+		
+		SyncInfoCompareInput input = new SyncInfoCompareInput(name, info);
+	
+		IWorkbenchPage page = null;
+		if(site == null) {
+			IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window != null)
+				page = window.getActivePage();
+		} else {
+			page = site.getWorkbenchSite().getPage();
+		}
+		
+		if(page != null) {
+			
+			IEditorPart editor = findReusableCompareEditor(page);			
 			
 			if(editor != null) {
 				IEditorInput otherInput = editor.getEditorInput();
 				if(otherInput.equals(input)) {
 					// simply provide focus to editor
-					wpage.activate(editor);
+					page.activate(editor);
 				} else {
 					// if editor is currently not open on that input either re-use existing
 					CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
-					wpage.activate(editor);
+					page.activate(editor);
 				}
 			} else {
 				CompareUI.openCompareEditor(input);
-				editor = wpage.getActiveEditor();
 			}
 			
-			if(keepFocus) {
+			if(site != null && keepFocus) {
 				site.setFocus();
 			}
 			return input;
@@ -90,16 +96,6 @@ public class OpenInCompareAction extends Action {
 		return null;
 	}
 	
-	/**
-	 * Returns a SyncInfoCompareInput instance for the current selection.
-	 */
-	private static SyncInfoCompareInput getCompareInput(String name, SyncInfo info) {
-		if (info != null && info.getLocal() instanceof IFile) {
-			return new SyncInfoCompareInput(name, info);
-		}
-		return null;
-	}				
-
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.

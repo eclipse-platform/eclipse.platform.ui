@@ -85,6 +85,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		Assert.isNotNull(description);
 		this.description = description;
 		this.resource = sync.getLocal();
+		timestamp = resource.getLocalTimeStamp();
 		this.node = new MyDiffNode(null, sync);
 		initializeContentChangeListeners();
 	}
@@ -229,7 +230,10 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if (other == this)
 			return true;
 		if (other instanceof SyncInfoCompareInput) {
-			return getSyncInfo().equals(((SyncInfoCompareInput) other).getSyncInfo());
+			SyncInfo otherSyncInfo = ((SyncInfoCompareInput) other).getSyncInfo();
+			SyncInfo thisSyncInfo = getSyncInfo();
+			IResource otherResource = otherSyncInfo.getLocal();
+			return thisSyncInfo.equals(otherSyncInfo) && timestamp == otherResource.getLocalTimeStamp();
 		}
 		return false;
 	}

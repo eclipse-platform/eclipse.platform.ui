@@ -1,14 +1,15 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -67,8 +68,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 					IResource file = resources[0];
 					SyncInfo info = participant.getSubscriberSyncInfoCollector().getSyncInfoSet().getSyncInfo(file);
 					if(info != null) {
-						SyncInfoCompareInput input = new SyncInfoCompareInput(participant.getName(), info);
-						CompareUI.openCompareEditor(input);
+						OpenInCompareAction.openCompareEditor(participant.getName(), info, false, null);
 						prompt = false;
 					}
 				}
