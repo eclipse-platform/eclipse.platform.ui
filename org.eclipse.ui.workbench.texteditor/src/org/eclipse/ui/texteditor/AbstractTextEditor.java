@@ -4556,6 +4556,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// take 'a' as a medium sized character
 		Point charSize= gc.stringExtent("a"); //$NON-NLS-1$
 		caret.setSize(charSize.x, caret.getSize().y);
+		gc.dispose();
 			
 		return caret;
 	}
@@ -4577,16 +4578,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Image bracketImage= new Image(display, imageData);
 		GC gc = new GC (bracketImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.setLineWidth(width);
-		gc.drawLine(0, widthOffset, imageData.width, widthOffset);
-		gc.drawLine(widthOffset, 0, widthOffset, imageData.height - 1);
-		gc.drawLine(0, imageData.height - 1, imageData.width - 1, imageData.height - 1);
+		gc.setLineWidth(1);
+		int height= imageData.height / 3;
+		// gap between two bars of one third of the height
+		// draw boxes using lines as drawing a line of a certain width produces
+		// rounded corners.
+		for (int i= 0; i < width ; i++) {
+			gc.drawLine(i, 0, i, height - 1);
+			gc.drawLine(i, imageData.height - height, i, imageData.height - 1);
+		}
+		
 		gc.dispose();
 			
 		return bracketImage;
 	}
 	
 	private Caret createRawInsertModeCaret(StyledText styledText) {
+		// don't draw special raw caret if no smart mode is enabled
+		if (!getLegalInsertModes().contains(SMART_INSERT))
+			return createInsertCaret(styledText);
+		
 		Caret caret= new Caret(styledText, SWT.NULL);
 		int width= getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET) ? WIDE_CARET_WIDTH : SINGLE_CARET_WIDTH;
 		Image image= createRawInsertModeCaretImage(styledText);
