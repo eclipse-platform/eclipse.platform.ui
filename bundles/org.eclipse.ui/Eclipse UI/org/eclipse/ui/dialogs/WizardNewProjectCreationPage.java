@@ -221,8 +221,7 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
-	if (initialLocationFieldValue != null)
-		locationPathField.setText(initialLocationFieldValue.toOSString());
+	locationPathField.setText(initialLocationFieldValue.toOSString());
 	locationPathField.addListener(SWT.Modify, locationModifyListener);
 }
 /**
@@ -232,8 +231,7 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
  * in a project description used to create a project
  * should not be set.
  *
- * @return the project location path, its anticipated initial value, or <code>null</code>
- *   if no project location path is known
+ * @return the project location path or its anticipated initial value.
  */
 public IPath getLocationPath() {
 	if (useDefaults)
@@ -393,6 +391,14 @@ public void setVisible(boolean visible) {
 	super.setVisible(visible);
 	if(visible)
 		projectNameField.setFocus();
+}
+
+/**
+ * Returns the useDefaults.
+ * @return boolean
+ */
+public boolean useDefaults() {
+	return useDefaults;
 }
 
 }
