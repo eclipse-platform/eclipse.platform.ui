@@ -7,20 +7,24 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 	ICVSRemoteFolder remote;
-	public ProjectElement(ICVSRemoteFolder remote) {
+	Shell shell;
+	
+	public ProjectElement(ICVSRemoteFolder remote, Shell shell) {
 		this.remote = remote;
+		this.shell = shell;
 	}
 	public Object[] getChildren(Object o) {
 		return new Object[] {
 			new BranchesElement(remote),
 			new TagElement(CVSTag.DEFAULT),
-			new VersionsElement(remote)
+			new VersionsElement(remote, shell)
 		};
 	}
 	public Object getAdapter(Class adapter) {

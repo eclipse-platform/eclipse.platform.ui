@@ -401,7 +401,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					// Set a default title
 					setTitle(Policy.bind("HistoryView.title"));
 				}
-				return null;
+				return new Object[0];
 				
 			}
 			public void dispose() {

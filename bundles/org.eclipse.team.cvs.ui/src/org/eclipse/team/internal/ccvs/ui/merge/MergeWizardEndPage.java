@@ -85,7 +85,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 			}
 		});
 		setControl(composite);
-		tree.setInput(new ProjectElement(remote));
+		tree.setInput(new ProjectElement(remote, getShell()));
 		setPageComplete(false);
 	}
 	protected TreeViewer createTree(Composite parent) {

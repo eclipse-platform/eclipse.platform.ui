@@ -7,9 +7,11 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.TeamException;
@@ -20,8 +22,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class VersionsElement implements IWorkbenchAdapter, IAdaptable {
 	ICVSRemoteFolder remote;
-	public VersionsElement(ICVSRemoteFolder remote) {
+	Shell shell;
+	
+	public VersionsElement(ICVSRemoteFolder remote, Shell shell) {
 		this.remote = remote;
+		this.shell = shell;
 	}
 	public Object[] getChildren(Object o) {
 		final Object[][] result = new Object[1][];
@@ -37,9 +42,11 @@ public class VersionsElement implements IWorkbenchAdapter, IAdaptable {
 					result[0] = elements;
 				} catch (TeamException e) {
 					// To do
+					ErrorDialog.openError(shell, null, null, e.getStatus());
 				}
 			}
 		});
+		if (result[0] == null) return new Object[0];
 		return result[0];
 	}
 	public Object getAdapter(Class adapter) {

@@ -208,7 +208,7 @@ public class TagSelectionDialog extends Dialog {
 		// initialize the table contents
 		try {
 			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)provider.getRemoteResource(resource)));
+			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)provider.getRemoteResource(resource), getShell()));
 		} catch (TeamException e) {
 			// To do: error dialog
 		}

@@ -114,9 +114,9 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		if (!(provider instanceof CVSTeamProvider)) return;
 		try {
 			ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)((CVSTeamProvider)provider).getRemoteResource(project);
-			table.setInput(new VersionsElement(remoteResource));
+			table.setInput(new VersionsElement(remoteResource, getShell()));
 		} catch (TeamException e) {
-			// To do
+			// To do. This could only happen if the resource was not a child of the provider.
 		}
 	}
 	public void setProject(IProject project) {
