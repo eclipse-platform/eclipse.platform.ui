@@ -211,7 +211,6 @@ public class JobView extends ViewPart {
 			addListener(SWT.MouseUp, this);
 			addListener(SWT.FocusIn, this);
 			addListener(SWT.FocusOut, this);
-			setCursor(fHandCursor);
 		}
 		public void handleEvent(Event e) {
 			switch (e.type) {
@@ -257,6 +256,8 @@ public class JobView extends ViewPart {
 			fAction= action;
 			fUnderlined= action != null;
 			setForeground(fUnderlined ? fLinkColor : fTaskColor);
+			if (fUnderlined)
+				setCursor(fHandCursor);
 			redraw();
 		}
 		public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -303,7 +304,6 @@ public class JobView extends ViewPart {
 	 */
 	static class JobModel {
 		private JobTreeElement fInfo;
-		int fLastWorkDone;
 		boolean fKeep;
 		boolean fTerminated;
 
@@ -408,14 +408,8 @@ public class JobView extends ViewPart {
 		int getPercentDone() {
 			if (fInfo instanceof JobInfo) {
 				TaskInfo ti= ((JobInfo)fInfo).getTaskInfo();
-				if (ti != null) {
-					int pd= ti.getPercentDone();
-					if (pd >= 0) {
-						int delta= pd-fLastWorkDone;
-						fLastWorkDone= pd;				
-						return delta;
-					}	
-				}
+				if (ti != null)
+					return ti.getPercentDone();
 			}
 			return -1;
 		}
@@ -455,7 +449,9 @@ public class JobView extends ViewPart {
 		boolean fFinished;
 		boolean fInitialized;
 		boolean fProgressIsShown;
+		boolean fTaskIsShown;
 
+		int fLastWorkDone;
 		int fCachedWidth= -1;
 		int fCachedHeight= -1;
 		Label fIcon;
@@ -541,6 +537,7 @@ public class JobView extends ViewPart {
  			}
 			fTask.setFont(fSmallFont);
 			fTask.setText(fModel.getTaskName());
+			fTaskIsShown= true;
 			//fTask.addMouseListener(ml);
 			
 			addMouseListener(ml);
@@ -575,7 +572,7 @@ public class JobView extends ViewPart {
 				fProgressBar.setBounds(MARGIN+indent, y, iw-indent, e3.y);
 				y+= e3.y;
 			}
-			if (fTask != null && fTask.isVisible()) {
+			if (fTaskIsShown /* fTask.isVisible() */) {
 				y+= VGAP;
 				fTask.setBounds(MARGIN+indent, y, iw-indent, e4.y);
 				y+= e4.y;
@@ -600,7 +597,7 @@ public class JobView extends ViewPart {
 				fCachedHeight= MARGIN + Math.max(e1.y, e2.y);
 				if (fProgressIsShown /* fProgressBar.isVisible() */)
 					fCachedHeight+= VGAP + e3.y;
-				if (fTask != null && fTask.isVisible())
+				if (fTaskIsShown /* fTask.isVisible() */)
 					fCachedHeight+= VGAP + e4.y;
 				fCachedHeight+= MARGIN;
 			}
@@ -631,17 +628,20 @@ public class JobView extends ViewPart {
 		/*
 		 * Sets the progress.
 		 */
-		void worked(int delta) {
+		void worked(int percentDone) {
 			if (!fProgressBar.isDisposed()) {
 				if (! fInitialized) {
-					if (delta < 0)
+					if (percentDone < 0)
 						fProgressBar.beginAnimatedTask();
 					else
 						fProgressBar.beginTask(100);
 					fInitialized= true;
 				}
-				if (delta > 0)
+				if (percentDone >= 0 && percentDone < 100) {
+					int delta= percentDone-fLastWorkDone;
+					fLastWorkDone= percentDone;
 					fProgressBar.worked(delta);
+				}
 			}
 		}
 		
@@ -658,8 +658,11 @@ public class JobView extends ViewPart {
 		 */
 		void setTerminatedStatus(String message) {
 			fFinished= true;
-			if (fTask != null && !fTask.isDisposed()) {
-				fTask.setText(message);
+			if (!fTask.isDisposed()) {
+				if (message != null && message.trim().length() > 0)
+					fTask.setText(message);
+				else
+					fTaskIsShown= false;
 			}
 			if (!fProgressBar.isDisposed()) {
 				fProgressIsShown= false;
@@ -727,6 +730,28 @@ public class JobView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		
+//		ProgressViewUpdater pvu= ProgressViewUpdater.getSingleton();
+//		pvu.addCollector(new IProgressUpdateCollector() {
+//			public void refresh() {
+//				System.out.println("refreshAll");
+//			}
+//			public void refresh(Object[] elements) {
+//				System.out.println("refresh2");
+//				for (int i= 0; i < elements.length; i++)
+//					System.out.println("  " + elements[i]);
+//			}
+//			public void add(Object[] elements) {
+//				System.out.println("add");
+//				for (int i= 0; i < elements.length; i++)
+//					System.out.println("  " + elements[i]);
+//			}
+//			public void remove(Object[] elements) {
+//				System.out.println("remove");
+//				for (int i= 0; i < elements.length; i++)
+//					System.out.println("  " + elements[i]);
+//			}
+//		});
 		
 		Display display= parent.getDisplay();
 		fHandCursor= new Cursor(display, SWT.CURSOR_HAND);
