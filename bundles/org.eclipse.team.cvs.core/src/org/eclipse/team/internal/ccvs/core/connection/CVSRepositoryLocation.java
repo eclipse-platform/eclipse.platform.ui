@@ -741,7 +741,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			while (true) {
 				try {
 					// The following will throw an exception if authentication fails
-					String password = retrievePassword();
+					String password = this.password;
+					if (password == null) {
+						// If the instance has no password, obtain it from the cache
+						password = retrievePassword();
+					}
 					if (user == null) {
 						// This is possible if the cache was cleared somehow for a location with a mutable username
 						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
