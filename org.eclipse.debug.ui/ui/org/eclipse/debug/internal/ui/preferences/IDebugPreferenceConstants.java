@@ -161,7 +161,7 @@ public interface IDebugPreferenceConstants {
 	 * Default EBCDIC code page if EBCDIC code page preference is not set.
 	 * @since 3.1
 	 */
-	public static final String DEFAULT_EBCDIC_CP = "CP1047"; //$NON-NLS-1$
+	public static final String DEFAULT_EBCDIC_CP = "CP037"; //$NON-NLS-1$
 }
 
 

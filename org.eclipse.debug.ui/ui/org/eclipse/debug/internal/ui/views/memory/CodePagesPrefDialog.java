@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
-import java.nio.charset.Charset;
-import java.util.Set;
-import java.util.SortedMap;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -23,7 +21,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,7 +32,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 
 
@@ -47,24 +43,6 @@ public class CodePagesPrefDialog extends Dialog {
 
 	private Text fAsciiCodePage;
 	private Text fEbcdicCodePage;
-	
-	private static CharSetInfo[] fCodePages;
-	
-	private class CharSetInfo
-	{
-		String fCharSetName;
-		String fDisplayName;
-		
-		public CharSetInfo(String charSetName, String displayName) {
-
-			fCharSetName = charSetName;
-			fDisplayName = displayName;
-		}
-		
-		public String toString() {
-			return fDisplayName;
-		}
-	}
 	
 	/**
 	 * @param parentShell
@@ -99,7 +77,7 @@ public class CodePagesPrefDialog extends Dialog {
 		textLayout.horizontalSpan = 2;
 		textLabel.setLayoutData(textLayout);
 		
-		fAsciiCodePage = new Text(canvas, SWT.READ_ONLY | SWT.BORDER);
+		fAsciiCodePage = new Text(canvas, SWT.BORDER);
 		GridData asciispec= new GridData();
 		asciispec.grabExcessVerticalSpace= false;
 		asciispec.grabExcessHorizontalSpace= true;
@@ -110,18 +88,9 @@ public class CodePagesPrefDialog extends Dialog {
 		
 		String codepage = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE);
 		if (codepage == null || codepage.length() == 0)
-			codepage = "CP1252"; //$NON-NLS-1$
+			codepage = IDebugPreferenceConstants.DEFAULT_ASCII_CP; //$NON-NLS-1$
 		fAsciiCodePage.setText(codepage);
 		
-		Button asciiButton = new Button(canvas, SWT.PUSH);
-		asciiButton.setText(DebugUIMessages.getString("CodePagesPrefDialog.3")); //$NON-NLS-1$
-		asciiButton.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = DebugUIPlugin.getShell();
-				if (shell != null)
-					openCodePageSelectionDialog(shell, fAsciiCodePage.getText(), fAsciiCodePage);
-			}});		
 		Label ebcdicLabel = new Label(canvas, SWT.WRAP);
 		ebcdicLabel.setText(DebugUIMessages.getString("CodePagesPrefDialog.4")); //$NON-NLS-1$
 		GridData ebcdicLayout = new GridData();
@@ -129,7 +98,7 @@ public class CodePagesPrefDialog extends Dialog {
 		ebcdicLayout.horizontalSpan = 2;
 		ebcdicLabel.setLayoutData(ebcdicLayout);
 		
-		fEbcdicCodePage = new Text(canvas, SWT.READ_ONLY | SWT.BORDER);
+		fEbcdicCodePage = new Text(canvas, SWT.BORDER);
 		GridData ebcdicspec= new GridData();
 		ebcdicspec.grabExcessVerticalSpace= false;
 		ebcdicspec.grabExcessHorizontalSpace= true;
@@ -143,18 +112,7 @@ public class CodePagesPrefDialog extends Dialog {
 		fEbcdicCodePage.setText(codepage);
 		
 		if (codepage == null || codepage.length() == 0)
-			codepage = "CP1047"; //$NON-NLS-1$
-		
-		Button ebcdicButon = new Button(canvas, SWT.PUSH);
-		ebcdicButon.setText(DebugUIMessages.getString("CodePagesPrefDialog.5")); //$NON-NLS-1$
-		
-		ebcdicButon.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				Shell shell = DebugUIPlugin.getShell();
-				if (shell != null)
-					openCodePageSelectionDialog(shell, fEbcdicCodePage.getText(), fEbcdicCodePage);
-			}});	
+			codepage = IDebugPreferenceConstants.DEFAULT_EBCDIC_CP; //$NON-NLS-1$	
 		
 		return canvas;
 	}
@@ -162,25 +120,29 @@ public class CodePagesPrefDialog extends Dialog {
 
 		// check that the codepages are supported
 		String asciiCodePage = fAsciiCodePage.getText();
-		if (!Charset.isSupported(asciiCodePage))
-		{
+		asciiCodePage = asciiCodePage.trim();
+		try {
+			new String(new byte[]{1}, asciiCodePage);
+		} catch (UnsupportedEncodingException e) {
 			Shell shell = DebugUIPlugin.getShell();
 			if (shell != null)
 			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("CodePagesPrefDialog.0"), null); //$NON-NLS-1$
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("CodePagesPrefDialog.0"), e); //$NON-NLS-1$
 				ErrorDialog.openError(shell, DebugUIMessages.getString("CodePagesPrefDialog.6"),  DebugUIMessages.getString("CodePagesPrefDialog.7"), status);		 //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return;
 		}
 		
 		String ebcdicCodePage = fEbcdicCodePage.getText();
-		if (!Charset.isSupported(ebcdicCodePage))
-		{
+		ebcdicCodePage = ebcdicCodePage.trim();
+		try {
+			new String(new byte[]{1}, ebcdicCodePage);
+		} catch (UnsupportedEncodingException e) {
 			Shell shell = DebugUIPlugin.getShell();
 			if (shell != null)
 			{
-				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("CodePagesPrefDialog.0"), null); //$NON-NLS-1$
-				ErrorDialog.openError(shell, DebugUIMessages.getString("CodePagesPrefDialog.8"), DebugUIMessages.getString("CodePagesPrefDialog.9"), status); //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("CodePagesPrefDialog.0"), e); //$NON-NLS-1$
+				ErrorDialog.openError(shell, DebugUIMessages.getString("CodePagesPrefDialog.8"),  DebugUIMessages.getString("CodePagesPrefDialog.9"), status);		 //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return;
 		}
@@ -195,46 +157,6 @@ public class CodePagesPrefDialog extends Dialog {
 	/**
 	 * @param shell
 	 */
-	private void openCodePageSelectionDialog(Shell shell, String initialSelection, Text text) {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider(){});	
-		dialog.setTitle(DebugUIMessages.getString("CodePagesPrefDialog.10")); //$NON-NLS-1$
-		dialog.setMessage(DebugUIMessages.getString("CodePagesPrefDialog.11")); //$NON-NLS-1$
-		dialog.setMultipleSelection(false);
-
-		WorkbenchHelpSystem.getInstance().setHelp(shell, DebugUIPlugin.getUniqueIdentifier() + ".SelectCodepageDialog_context"); //$NON-NLS-1$
-		
-		if (fCodePages == null)
-		{
-			SortedMap map = Charset.availableCharsets();
-			Set keys = map.keySet();
-			Object[] charSetKeys = keys.toArray();
-			
-			fCodePages = new CharSetInfo[charSetKeys.length];
-			
-			for (int i=0; i<fCodePages.length; i++)
-			{
-				fCodePages[i] = new CharSetInfo((String)charSetKeys[i], Charset.forName((String)charSetKeys[i]).displayName());
-			}
-		}
-		dialog.setElements(fCodePages);
-		
-		// find initial selection
-		CharSetInfo selected = null;
-		for (int i=0; i<fCodePages.length; i++){
-			if (fCodePages[i].fCharSetName.equals(initialSelection))
-			{
-				selected = fCodePages[i];
-				break;
-			}
-		}
-		if (selected != null)
-			dialog.setFilter(selected.fCharSetName);
-		
-		dialog.open();
-		Object selection = dialog.getFirstResult();
-		if (selection instanceof CharSetInfo)
-			text.setText(((CharSetInfo)selection).fCharSetName);
-	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		Button defaultButton = createButton(parent, 3, DebugUIMessages.getString("CodePagesPrefDialog.13"), false); //$NON-NLS-1$
