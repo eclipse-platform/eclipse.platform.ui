@@ -1595,7 +1595,7 @@
             colorPreferenceValue="0,0,255"
             annotationType="org.eclipse.debug.core.breakpoint"
             colorPreferenceKey="breakpointIndicationColor"
-            overviewRulerPreferenceValue="true"
+            overviewRulerPreferenceValue="false"
             presentationLayer="3"
             label="%BreakpointMarkerPreference.label"
             textPreferenceValue="false"
