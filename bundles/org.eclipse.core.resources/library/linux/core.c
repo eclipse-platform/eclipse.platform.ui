@@ -10,21 +10,32 @@
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
- * Signature: (Ljava/lang/String;)J
+ * Signature: ([B)J
  */
 JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
-   (JNIEnv *env, jclass clazz, jstring target) {
+   (JNIEnv *env, jclass clazz, jbyteArray target) {
 
 	struct stat info;
 	jlong result;
+	jint code;
+	jbyte *fileName, *name;
+	jsize n;
+
 	// get stat
-	const char *fileName = (*env)->GetStringUTFChars(env, target, 0);
-	jint code = stat(fileName, &info);
-	(*env)->ReleaseStringUTFChars(env, target, fileName);
+	fileName = (*env)->GetByteArrayElements(env, target, 0);
+	
+	n = (*env)->GetArrayLength(env, target);
+	name = malloc((n+1) * sizeof(jbyte));
+	memcpy(name, fileName, n);
+	name[n] = '\0';
+
+	code = stat(name, &info);
+	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
+	free(name);
 
 	// test if an error occurred
 	if (code == -1)
-		return 0;
+	  return 0;
 
 	// filter interesting bits
 	// lastModified
@@ -44,15 +55,25 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
- * Signature: (Ljava/lang/String;Z)V
+ * Signature: ([BZ)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
-   (JNIEnv *env, jclass clazz, jstring target, jboolean readOnly) {
+   (JNIEnv *env, jclass clazz, jbyteArray target, jboolean readOnly) {
 
 	int mask;
 	struct stat info;
-	const char *fileName = (*env)->GetStringUTFChars(env, target, 0);
-	jint code = stat(fileName, &info);
+	jbyte *fileName, *name;
+	jsize n;
+	jint code;
+
+        fileName = (*env)->GetByteArrayElements(env, target, 0);
+
+	n = (*env)->GetArrayLength(env, target);
+	name = malloc((n+1) * sizeof(jbyte));
+	memcpy(name, fileName, n);
+	name[n] = '\0';
+
+	code = stat(name, &info);
 	mask = S_IRUSR |
 	       S_IWUSR |
 	       S_IXUSR |
@@ -70,7 +91,53 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 	else
 		mask |= (S_IRUSR | S_IWUSR);
 
-	code = chmod(fileName, mask);
-	(*env)->ReleaseStringUTFChars(env, target, fileName);
+	code = chmod(name, mask);
+	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
+	free(name);
 	return code != -1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

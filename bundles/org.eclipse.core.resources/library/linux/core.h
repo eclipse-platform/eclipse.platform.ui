@@ -20,18 +20,18 @@ extern "C" {
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
- * Signature: (Ljava/lang/String;)J
+ * Signature: ([B)J
  */
 JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
-  (JNIEnv *, jclass, jstring);
+  (JNIEnv *, jclass, jbyteArray);
 
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
- * Signature: (Ljava/lang/String;Z)V
+ * Signature: ([BZ)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
-   (JNIEnv *, jclass, jstring, jboolean);
+   (JNIEnv *, jclass, jbyteArray, jboolean);
 
 #ifdef __cplusplus
 }
