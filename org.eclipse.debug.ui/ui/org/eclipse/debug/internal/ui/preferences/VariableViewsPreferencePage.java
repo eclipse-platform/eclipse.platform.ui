@@ -43,7 +43,7 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
-			parent,
+			getControl(),
 			IDebugHelpContextIds.VARIABLE_VIEWS_PREFERENCE_PAGE);
 	}
 	

@@ -532,7 +532,7 @@
             id="org.eclipse.debug.ui.variableView.toolbar">
          <action
                label="%DetailPaneWordWrapAction.label"
-               helpContextId="java_variables_detail_pane_word_wrap_action_context"
+               helpContextId="detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
@@ -573,7 +573,7 @@
          </action>
          <action
                label="%DetailPaneWordWrapAction.label"
-               helpContextId="java_variables_detail_pane_word_wrap_action_context"
+               helpContextId="detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"

@@ -84,7 +84,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
-			parent,
+			getControl(),
 			IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE );
 	}
 	
