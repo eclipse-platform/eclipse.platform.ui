@@ -1166,10 +1166,8 @@ public class InternalAntRunner {
 			String base= getCurrentProject().getUserProperty("basedir"); //$NON-NLS-1$
 			if (base != null) {
 				File baseDir= new File(base);
-				if (baseDir != null) {
-					//relative to the base dir
-					path= new Path(baseDir.getAbsolutePath());
-				} 
+				//relative to the base dir
+				path= new Path(baseDir.getAbsolutePath()); 
 			} else {
 				//relative to the build file location
 				path= new Path(getBuildFileLocation());
