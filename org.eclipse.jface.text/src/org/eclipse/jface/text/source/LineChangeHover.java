@@ -56,13 +56,15 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	}
 
 	/**
-	 * Consults the preferences for the number of spaces a tab should be displayed as.
+	 * Returns a replacement for the tab character. The default implementation
+	 * returns a tabulator character, but subclasses may override to specify a
+	 * number of spaces.
 	 * 
-	 * @return a String consisting of spaces that will replace one tab character in the 
-	 * displayed source.
+	 * @return a whitespace String that will be substituted for the tabulator
+	 *         character
 	 */
 	protected String getTabReplacement() {
-		return "    "; //$NON-NLS-1$
+		return "\t"; //$NON-NLS-1$
 	}
 
 	/**
