@@ -146,18 +146,16 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (mode.equals(ILaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
-			IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-			if (!breakpointManager.isEnabled()) {
-				// no need to check breakpoints individually.
-				return true; 
-			}
-			IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
+			IBreakpoint[] breakpoints= getBreakpoints(configuration);
+            if (breakpoints == null) {
+                return true;
+            }
 			for (int i = 0; i < breakpoints.length; i++) {
 				if (breakpoints[i].isEnabled()) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
-						boolean lauchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
-						if (lauchInDebugModeInstead) { 
+						boolean launchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
+						if (launchInDebugModeInstead) { 
 							return false; //kill this launch
 						} 
 					}
@@ -169,6 +167,22 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		// no enabled breakpoints... continue launch
 		return true;
 	}
+
+    /**
+     * Returns the breakpoint collection that is relevant for this launch delegate.
+     * By default this is all the breakpoints registered with the Debug breakpoint manager.
+     * 
+     * @since 3.1
+     * @return the breakpoints that are relevant for this launch delegate
+     */ 
+    protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
+        IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+        if (!breakpointManager.isEnabled()) {
+            // no need to check breakpoints individually.
+            return null;
+        }
+        return breakpointManager.getBreakpoints();
+    }
 	
 	/**
 	 * Returns an array of projects in their suggested build order
