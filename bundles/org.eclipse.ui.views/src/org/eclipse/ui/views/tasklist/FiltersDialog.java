@@ -368,13 +368,27 @@ void createAttributesArea(Composite parent) {
 	priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.priority.label"), priorityType); //$NON-NLS-1$
 	completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.status.label"), completionType); //$NON-NLS-1$
 }
-/* (non-Javadoc)
- * Method declared on Dialog.
- */
-protected void createButtonsForButtonBar(Composite parent) {
-	super.createButtonsForButtonBar(parent);
-	createButton(parent, RESET_ID, TaskListMessages.getString("TaskList.resetText"), false); //$NON-NLS-1$
+void createResetArea(Composite parent) {
+	Composite composite = new Composite(parent, SWT.NONE);
+	composite.setFont(parent.getFont());	
+	composite.setLayout(new GridLayout());
+	composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+	//composite.setBackground(new Color(getShell().getDisplay(), 250, 220, 170));	
+	
+	Button reset = new Button(composite, SWT.PUSH);
+	reset.setText(TaskListMessages.getString("TaskList.resetText")); //$NON-NLS-1$
+	reset.setData(new Integer(RESET_ID));
+	
+	reset.addSelectionListener(new SelectionAdapter() {
+	   public void widgetSelected(SelectionEvent event) {
+		   buttonPressed(((Integer) event.widget.getData()).intValue());
+	   }
+   	});	
+   	
+	reset.setFont(composite.getFont());
+   	setButtonLayoutData(reset);
 }
+
 /**
  * Creates a check box button with the given parent and text.
  *
@@ -419,11 +433,25 @@ protected Control createDialogArea(Composite parent) {
 	createMarkerLimitArea(composite);
 	createTypesArea(composite);
 	createResourceArea(composite);
-	createAttributesArea(composite);	
-	
+	createAttributesArea(composite);
+	createResetArea(composite);
+	createSeparatorLine(composite);	
+
 	updateUIFromFilter(getFilter());
 	
 	return composite;
+}
+/**
+ * Creates a separator line above the OK/Cancel buttons bar
+ * 
+ * @param parent the parent composite
+ */
+void createSeparatorLine(Composite parent) {
+	// Build the separator line
+	Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	gd.horizontalSpan = 1;
+	separator.setLayoutData(gd);
 }
 /**
  * Creates a radio button with the given parent and text.

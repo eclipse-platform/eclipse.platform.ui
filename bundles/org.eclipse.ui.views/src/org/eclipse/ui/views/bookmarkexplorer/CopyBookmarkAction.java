@@ -25,8 +25,6 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 class CopyBookmarkAction extends BookmarkAction {
 
-	private BookmarkNavigator view;
-
 	/**
 	 * Creates the action.
 	 */
@@ -34,7 +32,6 @@ class CopyBookmarkAction extends BookmarkAction {
 		super(bookmarkNavigator, BookmarkMessages.getString("CopyBookmark.text")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
 		setEnabled(false);
-		view = bookmarkNavigator;
 	}
 	
 	/**
@@ -82,7 +79,7 @@ class CopyBookmarkAction extends BookmarkAction {
 				TextTransfer.getInstance()};
 			
 			// set the clipboard contents
-			view.getClipboard().setContents(data, transferTypes);
+			getView().getClipboard().setContents(data, transferTypes);
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;

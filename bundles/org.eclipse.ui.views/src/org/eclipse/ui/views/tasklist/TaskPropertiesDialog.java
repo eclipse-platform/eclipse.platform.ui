@@ -181,7 +181,8 @@ protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite) super.createDialogArea(parent);
 	initializeDialogUnits(composite);
 	createDescriptionArea(composite);
-	createCreationTimeArea(composite);
+	if (marker != null)
+		createCreationTimeArea(composite);
 	if (isTask()) {
 		createPriorityAndStatusArea(composite);
 	}
@@ -317,6 +318,14 @@ private void createSeverityArea(Composite parent) {
  * Creates the area for the Resource field.
  */
 private void createResourceArea(Composite parent) {
+	IResource resource = getResource();
+	if (marker == null) {
+		if (resource == null)
+			return;
+		if ((resource.getType() & (IResource.FILE | IResource.FOLDER | IResource.PROJECT)) == 0)
+			return;
+	}
+	
 	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -359,6 +368,7 @@ private void updateDialogFromMarker() {
 		return;
 	}
 	descriptionText.setText(MarkerUtil.getMessage(marker));
+	descriptionText.selectAll();
 	creationTime.setText(MarkerUtil.getCreationTime(marker));
 	if (isTask()) {
 		priorityCombo.clearSelection();
@@ -405,6 +415,7 @@ private void updateDialogForNewMarker() {
 		}
 	}
 	descriptionText.setText(desc);
+	descriptionText.selectAll();
 	
 	int pri = IMarker.PRIORITY_NORMAL;
 	if (attrs != null) {
@@ -429,7 +440,7 @@ private void updateDialogForNewMarker() {
 	completedCheckbox.setSelection(completed);
 	
 	IResource resource = getResource();
-	if (resource != null) {
+	if (resource != null && resourceText != null) {
 		resourceText.setText(resource.getName());
 		IResource parent = resource.getParent();
 		folderText.setText(parent == null ? "" : parent.getFullPath().toString().substring(1)); //$NON-NLS-1$
@@ -447,7 +458,8 @@ private void updateDialogForNewMarker() {
 			loc = (String) o;
 		}
 	}
-	locationText.setText(MarkerUtil.getLineAndLocation(line, loc));
+	if (locationText != null)
+		locationText.setText(MarkerUtil.getLineAndLocation(line, loc));
 	
 	markDirty();
 	return;
