@@ -81,6 +81,15 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}
 	
 	/**
+	 * Returns the id of this shortcut
+	 * 
+	 * @return the id of this shortcut, or <code>null</code> if not specified
+	 */
+	public String getId() {
+		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Returns the path of the icon for this shortcut, or <code>null</code>
 	 * if none.
 	 * 
