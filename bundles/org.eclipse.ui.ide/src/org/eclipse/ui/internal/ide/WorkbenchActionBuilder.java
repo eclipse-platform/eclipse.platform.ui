@@ -347,7 +347,6 @@ public final class WorkbenchActionBuilder {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		menu.add(new Separator());
 
-		menu.add(openWorkspaceAction);
 		menu.add(closeAction);
 		menu.add(closeAllAction);
 		//		menu.add(closeAllSavedAction);
@@ -361,13 +360,15 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator());
 		menu.add(moveAction);
 		menu.add(renameAction);
-		menu.add(new Separator());
 		menu.add(refreshAction);
 
 		menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 		menu.add(new Separator());
 		menu.add(printAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
+		menu.add(new Separator());
+		menu.add(openWorkspaceAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
 		menu.add(new Separator());
 		menu.add(importResourcesAction);
 		menu.add(exportResourcesAction);
@@ -535,8 +536,6 @@ public final class WorkbenchActionBuilder {
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
 		}
-		menu.add(hideShowEditorAction);
-		menu.add(lockToolBarAction);
 		menu.add(new Separator());
 		menu.add(editActionSetAction);
 		menu.add(savePerspectiveAction);

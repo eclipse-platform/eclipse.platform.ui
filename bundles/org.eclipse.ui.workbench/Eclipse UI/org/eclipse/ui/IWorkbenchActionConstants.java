@@ -644,7 +644,7 @@ public interface IWorkbenchActionConstants {
 	public static final String NAV_END = "navEnd";		// Group. //$NON-NLS-1$
 
 	/**
-	 * Navigate menu: name of group for extra Open actions
+	 * File and Navigate menu: name of group for extra Open actions
 	 * (value <code>"open.ext"</code>).
 	 */
 	public static final String OPEN_EXT = "open.ext";		// Group. //$NON-NLS-1$
