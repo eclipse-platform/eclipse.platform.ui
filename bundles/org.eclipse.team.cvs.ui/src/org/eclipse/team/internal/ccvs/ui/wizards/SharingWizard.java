@@ -26,6 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -165,7 +166,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		try {
 			final boolean[] doSync = new boolean[] { false };
 			final boolean[] projectExists = new boolean[] { false };
-			getContainer().run(false, false, new IRunnableWithProgress() {
+			getContainer().run(true /* fork */, true /* cancel */, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						monitor.beginTask("", 100); //$NON-NLS-1$
@@ -188,19 +189,24 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								// Do the validation
 								try {
 									location.validateConnection(new SubProgressMonitor(monitor, 50));
-								} catch (TeamException e) {
+								} catch (final TeamException e) {
 									// Exception validating. We can continue if the user wishes.
-									boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
-										Policy.bind("SharingWizard.validationFailedTitle"), //$NON-NLS-1$
-										Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
-									if (!keep) {
+									final boolean[] keep = new boolean[] { false };
+									getShell().getDisplay().syncExec(new Runnable() {
+										public void run() {
+											keep[0] = MessageDialog.openQuestion(getContainer().getShell(),
+												Policy.bind("SharingWizard.validationFailedTitle"), //$NON-NLS-1$
+												Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
+										}
+									});
+									if (!keep[0]) {
 										// Remove the root
 										try {
 											if (!isPreviouslyKnown) {
 												CVSProviderPlugin.getPlugin().disposeRepository(location);
 											}
 										} catch (TeamException e1) {
-											CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e1); //$NON-NLS-1$
+											CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e1, CVSUIPlugin.PERFORM_SYNC_EXEC); //$NON-NLS-1$
 										}
 										result[0] = false;
 										return;
@@ -227,16 +233,20 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
 									projectExists[0] = true;
-									boolean sync = true;
+									final boolean[] sync = new boolean[] {true};
 									if (autoconnectPage == null) {
-										sync = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
+										getShell().getDisplay().syncExec(new Runnable() {
+											public void run() {
+												sync[0] = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
+											}
+										});
 									}
-									result[0] = sync;
-									doSync[0] = sync;
+									result[0] = sync[0];
+									doSync[0] = sync[0];
 									return;
 								}
 							} catch (TeamException e) {
-								CVSUIPlugin.openError(getShell(), null, null, e);
+								CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
 								if (!isKnown && location != null) location.flushUserInfo();
 								result[0] = false;
 								doSync[0] = false;
