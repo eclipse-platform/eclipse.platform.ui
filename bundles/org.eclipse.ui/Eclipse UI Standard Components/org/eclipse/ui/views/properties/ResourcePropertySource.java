@@ -4,8 +4,9 @@ package org.eclipse.ui.views.properties;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import java.io.File;
 import java.text.DateFormat;
@@ -17,6 +18,7 @@ import java.util.*;
  */
 public class ResourcePropertySource implements IPropertySource {
 	protected static String NOT_LOCAL_TEXT = PropertiesMessages.getString("PropertySource.notLocal"); //$NON-NLS-1$
+	protected static String FILE_NOT_FOUND = PropertiesMessages.getString("PropertySource.notFound"); //$NON-NLS-1$
 	
 	// The element for the property source
 	protected IResource element;
@@ -85,9 +87,13 @@ private String getDateStringValue(IResource resource) {
 	if (!resource.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
 	else {
-		File localFile = resource.getLocation().toFile();
-		DateFormat format = new SimpleDateFormat();
-		return format.format(new Date(localFile.lastModified()));
+		File localFile = getFile(resource);
+		if(localFile == null)
+			return FILE_NOT_FOUND;
+		else{
+			DateFormat format = new SimpleDateFormat();
+			return format.format(new Date(localFile.lastModified()));
+		}
 	}
 }
 /* (non-Javadoc)
@@ -142,4 +148,20 @@ public void resetPropertyValue(Object property) {}
  */
 public void setPropertyValue(Object name, Object value) {
 }
+
+/** 
+ * Get the java.io.File equivalent of the passed
+ * IFile. If the location does not exist then return
+ * null
+ * @param IFile
+ * @return java.io.File or <code>null</code>.
+ */
+protected File getFile(IResource resource) {
+	IPath location = resource.getLocation();
+	if(location == null)
+		return null;
+	else
+		return location.toFile();
+}
+
 }

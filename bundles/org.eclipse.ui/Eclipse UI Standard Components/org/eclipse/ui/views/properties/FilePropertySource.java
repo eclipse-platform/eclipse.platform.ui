@@ -6,6 +6,8 @@ package org.eclipse.ui.views.properties;
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+
 import java.io.File;
 
 /**
@@ -66,10 +68,14 @@ private String getSizeString(IFile file) {
 	if (!file.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
 	else {
-		File localFile = file.getLocation().toFile();
-		return Long.toString(localFile.length());
+		File localFile = getFile(file);
+		if(localFile == null)
+			return FILE_NOT_FOUND;
+		else
+			return Long.toString(localFile.length());
 	}
 }
+
 /**
  * Return the Property Descriptors for the file type.
  */
