@@ -15,6 +15,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.misc.UIStats;
 
 /**
  * Part listener list.
@@ -37,17 +38,36 @@ public class PageListenerList {
     }
 
     /**
+     * Calls a page listener with associated performance event instrumentation
+     * 
+     * @param runnable
+     * @param listener
+     * @param page
+     * @param description
+     */
+    private void fireEvent(SafeRunnable runnable, IPageListener listener, IWorkbenchPage page, String description) {
+    	String label = null;//for debugging
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+    		label = description + page.getLabel();
+    		UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+    	}
+    	Platform.run(runnable);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS))
+    		UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, listener, label);
+	}
+
+    /**
      * Notifies the listener that a part has been activated.
      */
     public void firePageActivated(final IWorkbenchPage page) {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.pageActivated(page);
                 }
-            });
+            }, l, page, "activated::"); //$NON-NLS-1$
         }
     }
 
@@ -58,11 +78,11 @@ public class PageListenerList {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPageListener l = (IPageListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.pageClosed(page);
                 }
-            });
+            }, l, page, "closed::"); //$NON-NLS-1$
         }
     }
 
@@ -73,11 +93,11 @@ public class PageListenerList {
         Object[] listeners = this.listeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IPageListener l = (IPageListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.pageOpened(page);
                 }
-            });
+            }, l, page, "opened::"); //$NON-NLS-1$
         }
     }
 

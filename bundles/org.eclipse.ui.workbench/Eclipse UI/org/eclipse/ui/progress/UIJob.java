@@ -16,9 +16,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
@@ -84,7 +83,6 @@ public abstract class UIJob extends Job {
         }
         asyncDisplay.asyncExec(new Runnable() {
             public void run() {
-                long startTime = System.currentTimeMillis();
                 IStatus result = null;
                 try {
                     //As we are in the UI Thread we can
@@ -92,19 +90,13 @@ public abstract class UIJob extends Job {
                     setThread(Thread.currentThread());
                     if (monitor.isCanceled())
                         result = Status.CANCEL_STATUS;
-                    else
+                    else {
+                       	UIStats.start(UIStats.UI_JOB, getName());
                         result = runInUIThread(monitor);
-
-                    //Debug testing for instrumenting UI jobs
-                    if (Policy.DEBUG_LONG_UI_WARNING) {
-                        long elapsed = System.currentTimeMillis() - startTime;
-                        if (elapsed > 100) {
-                            WorkbenchPlugin.log(ProgressMessages.format(
-                                    "UIJob.longJobMessage", new Object[] { //$NON-NLS-1$
-                                    getName(), String.valueOf(elapsed) }));
-                        }
                     }
+
                 } finally {
+               		UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
                     if (result == null)
                         result = new Status(IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID, IStatus.ERROR,

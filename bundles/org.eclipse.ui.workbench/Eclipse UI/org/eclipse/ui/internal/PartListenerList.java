@@ -15,6 +15,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.misc.UIStats;
 
 /**
  * Part listener list.
@@ -41,32 +42,51 @@ public class PartListenerList {
     }
 
     /**
+     * Calls a part listener with associated performance event instrumentation
+     * 
+     * @param runnable
+     * @param listener
+     * @param part
+     * @param description
+     */
+    private void fireEvent(SafeRunnable runnable, IPartListener listener, IWorkbenchPart part, String description) {
+    	String label = null;//for debugging
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+    		label = description + part.getTitle();
+    		UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
+    	}
+    	Platform.run(runnable);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS))
+    		UIStats.end(UIStats.NOTIFY_PART_LISTENERS, listener, label);
+	}
+
+    /**
      * Notifies the listener that a part has been activated.
      */
     public void firePartActivated(final IWorkbenchPart part) {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.partActivated(part);
                 }
-            });
+            }, l, part, "activated::"); //$NON-NLS-1$
         }
     }
 
-    /**
+	/**
      * Notifies the listener that a part has been brought to top.
      */
     public void firePartBroughtToTop(final IWorkbenchPart part) {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.partBroughtToTop(part);
                 }
-            });
+            }, l, part, "broughtToTop::"); //$NON-NLS-1$
         }
     }
 
@@ -77,11 +97,11 @@ public class PartListenerList {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.partClosed(part);
                 }
-            });
+            }, l, part, "closed::"); //$NON-NLS-1$
         }
     }
 
@@ -92,11 +112,11 @@ public class PartListenerList {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.partDeactivated(part);
                 }
-            });
+            }, l, part, "deactivated::"); //$NON-NLS-1$
         }
     }
 
@@ -107,11 +127,11 @@ public class PartListenerList {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPartListener l = (IPartListener) array[i];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.partOpened(part);
                 }
-            });
+            }, l, part, "opened::"); //$NON-NLS-1$
         }
     }
 

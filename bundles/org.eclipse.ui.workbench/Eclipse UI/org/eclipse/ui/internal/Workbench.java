@@ -20,7 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
@@ -866,8 +865,8 @@ public final class Workbench implements IWorkbench {
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(this,
 				bindingManager, commandManager, contextManager);
-		workbenchContextSupport.initialize(); // deferred key binding support
-		initializeCommandResolver();
+        workbenchContextSupport.initialize(); // deferred key binding support
+        initializeCommandResolver();
 
         addWindowListener(windowListener);
 
@@ -920,7 +919,7 @@ public final class Workbench implements IWorkbench {
             }
 
         } finally {
-            UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+            UIStats.end(UIStats.RESTORE_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
         }
 
         forceOpenPerspective();
@@ -1037,16 +1036,16 @@ public final class Workbench implements IWorkbench {
     /**
 	 * Establishes the relationship between JFace actions and the command
 	 * manager.
-	 */
-	private void initializeCommandResolver() {
-		ExternalActionManager.getInstance().setCallback(
+     */
+    private void initializeCommandResolver() {
+        ExternalActionManager.getInstance().setCallback(
 				new CommandCallback(bindingManager, commandManager,
 						new IActiveChecker() {
 							public final boolean isActive(final String commandId) {
 								return workbenchActivitySupport
 										.getActivityManager().getIdentifier(
 												commandId).isEnabled();
-							}
+    }
 						}));
 	}
 
@@ -1421,7 +1420,7 @@ public final class Workbench implements IWorkbench {
                 result.add(getEditorHistory().restoreState(mruMemento));
             }
         } finally {
-            UIStats.end(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
+            UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
         }
         // Get the child windows.
         IMemento[] children = memento
@@ -1568,7 +1567,7 @@ public final class Workbench implements IWorkbench {
 
                 display.asyncExec(new Runnable() {
                     public void run() {
-                        UIStats.end(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
+                        UIStats.end(UIStats.START_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
                     }
                 });
 
@@ -1746,20 +1745,20 @@ public final class Workbench implements IWorkbench {
                 return newWindow.getActivePage();
             }
             
-			IPerspectiveDescriptor desc = getPerspectiveRegistry()
-					.findPerspectiveWithId(perspectiveId);
-			if (desc == null)
-				throw new WorkbenchException(
-						WorkbenchMessages
-								.format(
-										"WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
-			win.getShell().open();
-			if (page == null)
-				page = win.openPage(perspectiveId, input);
-			else
-				page.setPerspective(desc);
-			return page;
-        }
+                IPerspectiveDescriptor desc = getPerspectiveRegistry()
+                        .findPerspectiveWithId(perspectiveId);
+                if (desc == null)
+                    throw new WorkbenchException(
+                            WorkbenchMessages
+                                    .format(
+                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
+                win.getShell().open();
+                if (page == null)
+                    page = win.openPage(perspectiveId, input);
+                else
+                    page.setPerspective(desc);
+                return page;
+            }
 
         // Just throw an exception....
         throw new WorkbenchException(
@@ -2043,7 +2042,7 @@ public final class Workbench implements IWorkbench {
     private WorkbenchCommandSupport workbenchCommandSupport;
 
     private WorkbenchContextSupport workbenchContextSupport;
-    
+
     /**
      * The single instance of the binding manager used by the workbench. This is
      * initialized in <code>Workbench.init(Display)</code> and then never
@@ -2157,11 +2156,11 @@ public final class Workbench implements IWorkbench {
     /**
 	 * This method exists as a test hook. This method should <strong>NEVER</strong>
 	 * be called by clients.
-	 * 
+     * 
 	 * @param descriptor
 	 *            The intro descriptor to use.
-	 * @since 3.0
-	 */
+     * @since 3.0
+     */
     public void setIntroDescriptor(IntroDescriptor descriptor) {
         if (getIntroManager().getIntro() != null) {
         	getIntroManager().closeIntro(getIntroManager().getIntro());
@@ -2212,12 +2211,12 @@ public final class Workbench implements IWorkbench {
     }
 
     /**
-	 * Returns <code>true</code> if the workbench is running,
-	 * <code>false</code> if it has been terminated.
+     * Returns <code>true</code> if the workbench is running,
+     * <code>false</code> if it has been terminated. 
 	 * 
 	 * @return <code>true</code> if the workbench is running,
 	 *         <code>false</code> if it has been terminated.
-	 */
+     */
     public boolean isRunning() {
         return runEventLoop;
     }
@@ -2304,7 +2303,6 @@ public final class Workbench implements IWorkbench {
 		return tracker ;
 	}
 	
-
     /**
      * Adds the listener that handles startup plugins
 	 * @since 3.1
@@ -2320,7 +2318,7 @@ public final class Workbench implements IWorkbench {
 	public IWorkbenchHelpSystem getHelpSystem() {
 		return WorkbenchHelpSystem.getInstance();
 	}
-	
+
 
 	private IService[] services = new IService[5];
 	

@@ -159,7 +159,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
                         control.layout(true);
                     }
                 } finally {
-                    UIStats.end(UIStats.CREATE_PART_CONTROL, id);
+                    UIStats.end(UIStats.CREATE_PART_CONTROL, part[0], id);
                 }
             }
 

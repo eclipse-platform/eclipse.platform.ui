@@ -335,7 +335,7 @@ import org.eclipse.ui.views.IViewRegistry;
 									element.getDeclaringExtension(), view,
 									IExtensionTracker.REF_WEAK);
                     } finally {
-                        UIStats.end(UIStats.CREATE_PART, label);
+                        UIStats.end(UIStats.CREATE_PART, view, label);
                     }
                     ((ViewReference) ref).setPart(view);
                 } catch (CoreException e) {
@@ -370,7 +370,7 @@ import org.eclipse.ui.views.IViewRegistry;
                         UIStats.start(UIStats.INIT_PART, label);
                         view.init(site, stateMem);
                     } finally {
-                        UIStats.end(UIStats.INIT_PART, label);
+                        UIStats.end(UIStats.INIT_PART, view, label);
                     }
                 } catch (PartInitException e) {
                     releaseView(ref);

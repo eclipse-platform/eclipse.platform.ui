@@ -19,6 +19,7 @@ import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IPerspectiveListener3;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.misc.UIStats;
 
 /**
  * Perspective listener list.
@@ -41,6 +42,25 @@ public class PerspectiveListenerList {
     }
 
     /**
+     * Calls a perspective listener with associated performance event instrumentation
+     * 
+     * @param runnable
+     * @param listener
+     * @param perspective
+     * @param description
+     */
+    private void fireEvent(SafeRunnable runnable, IPerspectiveListener listener, IPerspectiveDescriptor perspective, String description) {
+    	String label = null;//for debugging
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+    		label = description + perspective.getId();
+    		UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+    	}
+    	Platform.run(runnable);
+    	if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS))
+    		UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, listener, label);
+	}
+
+    /**
      * Notifies the listener that a perspective has been activated.
      */
     public void firePerspectiveActivated(final IWorkbenchPage page,
@@ -48,11 +68,11 @@ public class PerspectiveListenerList {
         Object[] array = listeners.getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.perspectiveActivated(page, perspective);
                 }
-            });
+            }, l, perspective, "activated::"); //$NON-NLS-1$
         }
     }
 
@@ -67,11 +87,11 @@ public class PerspectiveListenerList {
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
-                Platform.run(new SafeRunnable() {
+                fireEvent(new SafeRunnable() {
                     public void run() {
                         l3.perspectiveDeactivated(page, perspective);
                     }
-                });
+                }, l3, perspective, "deactivated::"); //$NON-NLS-1$
             }
         }
     }
@@ -84,11 +104,11 @@ public class PerspectiveListenerList {
         Object[] array = listeners.getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPerspectiveListener l = (IPerspectiveListener) array[nX];
-            Platform.run(new SafeRunnable() {
+            fireEvent(new SafeRunnable() {
                 public void run() {
                     l.perspectiveChanged(page, perspective, changeId);
                 }
-            });
+            }, l, perspective, "changed::"); //$NON-NLS-1$
         }
     }
 
@@ -105,12 +125,12 @@ public class PerspectiveListenerList {
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener2) {
                 final IPerspectiveListener2 l2 = (IPerspectiveListener2) array[nX];
-                Platform.run(new SafeRunnable() {
+                fireEvent(new SafeRunnable() {
                     public void run() {
                         l2.perspectiveChanged(page, perspective, partRef,
                                 changeId);
                     }
-                });
+                }, l2, perspective, "changed::"); //$NON-NLS-1$
             }
         }
     }
@@ -126,11 +146,11 @@ public class PerspectiveListenerList {
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
-                Platform.run(new SafeRunnable() {
+                fireEvent(new SafeRunnable() {
                     public void run() {
                         l3.perspectiveClosed(page, perspective);
                     }
-                });
+                }, l3, perspective, "closed::"); //$NON-NLS-1$
             }
         }
     }
@@ -146,11 +166,11 @@ public class PerspectiveListenerList {
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
-                Platform.run(new SafeRunnable() {
+                fireEvent(new SafeRunnable() {
                     public void run() {
                         l3.perspectiveOpened(page, perspective);
                     }
-                });
+                }, l3, perspective, "opened::"); //$NON-NLS-1$
             }
         }
     }
@@ -167,11 +187,11 @@ public class PerspectiveListenerList {
         for (int nX = 0; nX < array.length; nX++) {
             if (array[nX] instanceof IPerspectiveListener3) {
                 final IPerspectiveListener3 l3 = (IPerspectiveListener3) array[nX];
-                Platform.run(new SafeRunnable() {
+                fireEvent(new SafeRunnable() {
                     public void run() {
                         l3.perspectiveSavedAs(page, oldPerspective, newPerspective);
                     }
-                });
+                }, l3, newPerspective, "saveAs::"); //$NON-NLS-1$
             }
         }
     }

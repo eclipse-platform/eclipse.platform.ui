@@ -23,22 +23,6 @@ public class Policy {
 
     public static boolean DEBUG_SWT_DEBUG = DEFAULT;
 
-    public static boolean DEBUG_PART_CREATE = DEFAULT;
-
-    public static boolean DEBUG_PART_ACTIVATE = DEFAULT;
-
-    public static boolean DEBUG_PART_LISTENERS = DEFAULT;
-
-    public static boolean DEBUG_PAGE_LISTENERS = DEFAULT;
-    
-    public static boolean DEBUG_PERSPECTIVE_LISTENERS = DEFAULT;
-    
-    public static boolean DEBUG_PERSPECTIVE = DEFAULT;
-
-    public static boolean DEBUG_RESTORE_WORKBENCH = DEFAULT;
-
-    public static boolean DEBUG_START_WORKBENCH = DEFAULT;
-
     public static boolean DEBUG_DRAG_DROP = DEFAULT;
 
     /**
@@ -46,8 +30,6 @@ public class Policy {
      */
     public static boolean DEBUG_STALE_JOBS = DEFAULT;
 
-    public static boolean DEBUG_INCLUDE_TIMINGS = DEFAULT;
-    
     /**
      * Whether to print information about key bindings that are successfully
      * recognized within the system (as the keys are pressed).
@@ -90,12 +72,6 @@ public class Policy {
     public static boolean DEBUG_HANDLERS_VERBOSE = DEFAULT;
 
     /**
-     * Whether to print out a warning about UI jobs that take
-     * longer than 100ms.
-     */
-    public static boolean DEBUG_LONG_UI_WARNING = DEFAULT;
-    
-    /**
      * Whether or not to show system jobs at all times.
      */
     public static boolean DEBUG_SHOW_SYSTEM_JOBS = DEFAULT;
@@ -119,14 +95,6 @@ public class Policy {
             DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
-            DEBUG_PART_CREATE = getDebugOption("/trace/part.create"); //$NON-NLS-1$
-            DEBUG_PERSPECTIVE = getDebugOption("/trace/perspective"); //$NON-NLS-1$
-            DEBUG_RESTORE_WORKBENCH = getDebugOption("/trace/workbench.restore"); //$NON-NLS-1$
-            DEBUG_START_WORKBENCH = getDebugOption("/trace/workbench.start"); //$NON-NLS-1$
-            DEBUG_PART_ACTIVATE = getDebugOption("/trace/part.activate"); //$NON-NLS-1$
-            DEBUG_PART_LISTENERS = getDebugOption("/trace/part.listeners"); //$NON-NLS-1$
-            DEBUG_PAGE_LISTENERS = getDebugOption("/trace/page.listeners"); //$NON-NLS-1$
-            DEBUG_PERSPECTIVE_LISTENERS = getDebugOption("/trace/perspective.listeners"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS_VERBOSE = getDebugOption("/trace/keyBindings.verbose"); //$NON-NLS-1$
@@ -135,13 +103,11 @@ public class Policy {
             DEBUG_CONTEXTS_VERBOSE = getDebugOption("/trace/contexts.verbose"); //$NON-NLS-1$
             DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
-            DEBUG_LONG_UI_WARNING = getDebugOption("/debug/uijob.longwarning"); //$NON-NLS-1$
             DEBUG_SHOW_SYSTEM_JOBS = getDebugOption("/debug/showSystemJobs"); //$NON-NLS-1$
             DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform
                     .getDebugOption(PlatformUI.PLUGIN_ID
                             + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
-            DEBUG_INCLUDE_TIMINGS = getDebugOption("/debug/include.timings"); //$NON-NLS-1$
             DEBUG_DECLARED_IMAGES = getDebugOption("/debug/declaredImages"); //$NON-NLS-1$
         }
     }

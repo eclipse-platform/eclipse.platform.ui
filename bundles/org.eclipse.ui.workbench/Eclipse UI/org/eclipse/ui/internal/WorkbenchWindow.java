@@ -961,7 +961,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	        pageListeners.firePageActivated(page);
 	        partService.pageActivated(page);
         } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
         }
     }
 
@@ -978,7 +978,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	        pageListeners.firePageClosed(page);
 	        partService.pageClosed(page);
         } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
         }
 
     }
@@ -996,7 +996,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
             pageListeners.firePageOpened(page);
             partService.pageOpened(page);
         } finally {
-            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, page.getLabel(), label);
         }
     }
 
@@ -1005,16 +1005,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            label = "activated page = " + page.getLabel() + ", perspective = " + getPerspectiveId(perspective); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {	        
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-	        perspectiveListeners.firePerspectiveActivated(page, perspective);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
+        perspectiveListeners.firePerspectiveActivated(page, perspective);
     }
 
     /**
@@ -1024,16 +1015,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveDeactivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            label = "deactivated page = " + page.getLabel() + ", perspective = " + getPerspectiveId(perspective); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {           
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-            perspectiveListeners.firePerspectiveDeactivated(page, perspective);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
+    	perspectiveListeners.firePerspectiveDeactivated(page, perspective);
     }
     
     /**
@@ -1041,19 +1023,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            // Avoid the extra string concatenation operations if we're not using these debug strings.
-	        label = "changed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
-	    		+ ", changeId = " + changeId; //$NON-NLS-1$
-        }
-        try {	        
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-	        perspectiveListeners.firePerspectiveChanged(page, perspective,
+        perspectiveListeners.firePerspectiveChanged(page, perspective,
                     changeId);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
     }
 
     /**
@@ -1062,19 +1033,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective,
             IWorkbenchPartReference partRef, String changeId) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-	        label = "changed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
-	        	+ ", changeId = " + changeId + ", partRef = " + partRef.getId(); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {	        
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-            perspectiveListeners.firePerspectiveChanged(page, perspective,
+    	perspectiveListeners.firePerspectiveChanged(page, perspective,
                     partRef, changeId);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
-
     }
 
     /**
@@ -1082,16 +1042,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveClosed(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            label = "closed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {           
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-            perspectiveListeners.firePerspectiveClosed(page, perspective);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
+    	perspectiveListeners.firePerspectiveClosed(page, perspective);
     }
 
     /**
@@ -1099,16 +1050,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveOpened(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            label = "opened perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {           
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-            perspectiveListeners.firePerspectiveOpened(page, perspective);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
+    	perspectiveListeners.firePerspectiveOpened(page, perspective);
     }
 
     /**
@@ -1118,26 +1060,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveSavedAs(IWorkbenchPage page,
             IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
-            label = "saved perspective = " + getPerspectiveId(oldPerspective) + ", as = " + getPerspectiveId(newPerspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-        try {           
-            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-            perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective, newPerspective);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-        }
+    	perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective, newPerspective);
     }
 
-    private String getPerspectiveId(IPerspectiveDescriptor perspective) {
-        if (perspective == null) {
-            return "null"; //$NON-NLS-1$
-        }
-        
-        return perspective.getId();
-    }
-    
     /**
      * Returns the action bars for this window.
      */
@@ -1700,7 +1625,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                         continue;
                     }
                 } finally {
-                    UIStats.end(UIStats.RESTORE_WORKBENCH,
+                    UIStats.end(UIStats.RESTORE_WORKBENCH, factoryID,
                             "WorkbenchPageFactory"); //$NON-NLS-1$
                 }
             }

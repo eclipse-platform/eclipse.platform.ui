@@ -165,7 +165,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 WorkbenchPartReference ref = (WorkbenchPartReference) ((PartPane) event
                         .getSource()).getPartReference();
                 //Make sure the new visible part is restored.
-                ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
+                IWorkbenchPart part = ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
                 if (ref == null)
                     return;
                 if (Boolean.TRUE.equals(event.getNewValue())) {
@@ -177,7 +177,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
                         partListeners2.firePartVisible(ref);
                     } finally {
-                        UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
+                        UIStats.end(UIStats.NOTIFY_PART_LISTENERS, part, label);
                     }
                 } else {
                     String label = null; // debugging only
@@ -188,7 +188,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
                         partListeners2.firePartHidden(ref);
                     } finally {
-                        UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
+                        UIStats.end(UIStats.NOTIFY_PART_LISTENERS, part, label);
                     }
                 }
             }
@@ -713,7 +713,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 firePartBroughtToTop(part);
             }
         } finally {
-            UIStats.end(UIStats.BRING_PART_TO_TOP, label);
+            UIStats.end(UIStats.BRING_PART_TO_TOP, part, label);
         }
     }
 
@@ -831,10 +831,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private void busySetPerspective(IPerspectiveDescriptor desc) {
         // Create new layout.
         String label = desc.getId(); // debugging only
+        Perspective newPersp = null;
         try {
             UIStats.start(UIStats.SWITCH_PERSPECTIVE, label);
             PerspectiveDescriptor realDesc = (PerspectiveDescriptor) desc;
-            Perspective newPersp = findPerspective(realDesc);
+            newPersp = findPerspective(realDesc);
             if (newPersp == null) {
                 newPersp = createPerspective(realDesc);
                 if (newPersp == null)
@@ -844,7 +845,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // Change layout.
             setPerspective(newPersp);
         } finally {
-            UIStats.end(UIStats.SWITCH_PERSPECTIVE, label);
+            UIStats.end(UIStats.SWITCH_PERSPECTIVE, desc.getId(), label);
         }
     }
 
@@ -1073,7 +1074,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Save part.
         if (save && editor.isSaveOnCloseNeeded()) {
             if (!getEditorManager().saveEditor(editor, true)) {
-                return false;
+            return false;
             }
         }
 
@@ -1255,7 +1256,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             return null;
         } finally {
-            UIStats.end(UIStats.CREATE_PERSPECTIVE, label);
+            UIStats.end(UIStats.CREATE_PERSPECTIVE, desc.getId(), label);
         }
     }
 
@@ -1491,110 +1492,56 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part activation out.
      */
     private void firePartActivated(IWorkbenchPart part) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "activate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
-        } 
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            partListeners.firePartActivated(part);
-            partListeners2.firePartActivated(getReference(part));
-            selectionService.partActivated(part);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners.firePartActivated(part);
+        partListeners2.firePartActivated(getReference(part));
+        selectionService.partActivated(part);
     }
 
     /**
      * Fire part brought to top out.
      */
     private void firePartBroughtToTop(IWorkbenchPart part) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "bringToTop::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            partListeners.firePartBroughtToTop(part);
-            partListeners2.firePartBroughtToTop(getReference(part));
-            selectionService.partBroughtToTop(part);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners.firePartBroughtToTop(part);
+        partListeners2.firePartBroughtToTop(getReference(part));
+        selectionService.partBroughtToTop(part);
     }
 
     /**
      * Fire part close out.
      */
     private void firePartClosed(IWorkbenchPartReference ref) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "close::" + ref.getTitle(); //$NON-NLS-1$
+        IWorkbenchPart part= ref.getPart(false);
+        if (part != null) {
+            partListeners.firePartClosed(part);
+            selectionService.partClosed(part);
         }
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            IWorkbenchPart part = ref.getPart(false);
-            if (part != null) {
-                partListeners.firePartClosed(part);
-                selectionService.partClosed(part);
-            }
-            partListeners2.firePartClosed(ref);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners2.firePartClosed(ref);
     }
 
     /**
      * Fire part deactivation out.
      */
     private void firePartDeactivated(IWorkbenchPart part) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "deactivate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            partListeners.firePartDeactivated(part);
-            partListeners2.firePartDeactivated(getReference(part));
-            selectionService.partDeactivated(part);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners.firePartDeactivated(part);
+        partListeners2.firePartDeactivated(getReference(part));
+        selectionService.partDeactivated(part);
     }
 
     /**
      * Fire part open out.
      */
     public void firePartOpened(IWorkbenchPart part) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "opened::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            partListeners.firePartOpened(part);
-            partListeners2.firePartOpened(getReference(part));
-            selectionService.partOpened(part);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners.firePartOpened(part);
+        partListeners2.firePartOpened(getReference(part));
+        selectionService.partOpened(part);
     }
 
     /**
      * Fire part input changed out.
      */
     private void firePartInputChanged(IWorkbenchPart part) {
-        String label = null; // debugging only
-        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
-            label = "inputChanged::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {
-            UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
-            partListeners2.firePartInputChanged(getReference(part));
-            selectionService.partInputChanged(part);
-        } finally {
-            UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
-        }
+        partListeners2.firePartInputChanged(getReference(part));
+        selectionService.partInputChanged(part);
     }
 
     /**
@@ -2507,7 +2454,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * old perspective.
      */
     public IStatus restoreState(IMemento memento,
-            IPerspectiveDescriptor activeDescritor) {
+            IPerspectiveDescriptor activeDescriptor) {
         // Restore working set
         String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
         
@@ -2569,7 +2516,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     Perspective persp = new Perspective(null, this);
                     result.merge(persp.restoreState(perspMems[i]));
                     IPerspectiveDescriptor desc = persp.getDesc();
-                    if (desc.equals(activeDescritor))
+                    if (desc.equals(activeDescriptor))
                         activePerspective = persp;
                     else if ((activePerspective == null)
                             && desc.getId().equals(activePerspectiveID))
@@ -2580,14 +2527,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             }
             boolean restoreActivePerspective = false;
-            if (activeDescritor == null)
+            if (activeDescriptor == null)
                 restoreActivePerspective = true;
             else if (activePerspective != null
-                    && activePerspective.getDesc().equals(activeDescritor)) {
+                    && activePerspective.getDesc().equals(activeDescriptor)) {
                 restoreActivePerspective = true;
             } else {
                 restoreActivePerspective = false;
-                activePerspective = createPerspective((PerspectiveDescriptor) activeDescritor);
+                activePerspective = createPerspective((PerspectiveDescriptor) activeDescriptor);
                 if (activePerspective == null) {
                     result
                             .merge(new Status(
@@ -2596,7 +2543,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                                     0,
                                     WorkbenchMessages
                                             .format(
-                                                    "Workbench.showPerspectiveError", new String[] { activeDescritor.getId() }), //$NON-NLS-1$
+                                                    "Workbench.showPerspectiveError", new String[] { activeDescriptor.getId() }), //$NON-NLS-1$
                                     null));
                 }
             }
@@ -2638,7 +2585,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 navigationHistory.markEditor(getActiveEditor());
             return result;
         } finally {
-            UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPage" + label); //$NON-NLS-1$
+        	String blame = activeDescriptor == null ? pageName : activeDescriptor.getId();
+            UIStats.end(UIStats.RESTORE_WORKBENCH, blame, "WorkbenchPage" + label); //$NON-NLS-1$
         }
     }
 
@@ -2820,7 +2768,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (newPart != null)
                 firePartActivated(newPart);
         } finally {
-            UIStats.end(UIStats.ACTIVATE_PART, label);
+        	Object blame = newPart == null ? (Object)this : newPart;
+            UIStats.end(UIStats.ACTIVATE_PART, blame, label);
         }
     }
 

@@ -821,7 +821,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 				UIStats.start(UIStats.INIT_PART, label);
 				part.init(site, input);
 			} finally {
-				UIStats.end(UIStats.INIT_PART, label);
+				UIStats.end(UIStats.INIT_PART, part, label);
 			}
 			if (part.getSite() != site)
 				throw new PartInitException(
@@ -890,12 +890,12 @@ public class EditorManager implements IExtensionRemovalHandler {
         if (label == null) {
             label = desc.getLabel();
         }
-        IEditorPart editor;
+        IEditorPart editor = null;
         try {
             UIStats.start(UIStats.CREATE_PART, label);
             editor = createPart(desc);
         } finally {
-            UIStats.end(UIStats.CREATE_PART, label);
+            UIStats.end(UIStats.CREATE_PART, editor, label);
         }
         // Open the instance.
         createSite(ref, editor, desc, input);
@@ -1584,7 +1584,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                         .log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
                 return null;
             }
-            IAdaptable input;
+            IAdaptable input = null;
             String label = null; // debugging only
             if (UIStats.isDebugging(UIStats.CREATE_PART_INPUT)) {
                 label = getName() != null ? getName() : factoryID;
@@ -1607,7 +1607,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                     return null;
                 }
             } finally {
-                UIStats.end(UIStats.CREATE_PART_INPUT, label);
+                UIStats.end(UIStats.CREATE_PART_INPUT, input, label);
             }
             if (!(input instanceof IEditorInput)) {
                 WorkbenchPlugin
