@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.List;
 
+import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
@@ -35,7 +36,6 @@ import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
-import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -80,13 +80,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 	private boolean fFilterInternalTargets;
-    private InternalTargetFilter fInternalTargetFilter= null;
-    private boolean fFilterImportedElements;
-    private ImportedElementsFilter fImportedElementsFilter= null;   
+    private boolean fFilterImportedElements;   
 	private boolean fFilterProperties;
-	private PropertiesFilter fPropertiesFilter= null;
 	private boolean fFilterTopLevel;
-	private TopLevelFilter fTopLevelFilter= null;
 	private boolean fSort;
 
 	private ViewerSorter fSorter;
@@ -96,65 +92,35 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private TogglePresentationAction fTogglePresentation;
 	
 	/**
-	 * A viewer filter that removes imported elements except an imported default target
+	 * A viewer filter for the Ant Content Outline
 	 */
-	private class ImportedElementsFilter extends ViewerFilter {
+	private class AntOutlineFilter extends ViewerFilter {
 		
-		/**
-		 * Returns whether the given {@link AntElementNode} is imported from
-		 * another file.
-		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof AntElementNode) {
-			    AntElementNode node = (AntElementNode) element; 			    
-				if (node.getImportNode() !=  null || node.isExternal()) {
+            if (element instanceof AntElementNode) {
+                AntElementNode node = (AntElementNode) element;
+                if (fFilterTopLevel && (node instanceof AntTaskNode && parentElement instanceof AntProjectNode)) {
+					return false;
+				}
+			    if (fFilterImportedElements && (node.getImportNode() !=  null || node.isExternal())) {
 					if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget()) {
 						return true;
 					}
 					return false;
 				}
-			} 
-			return true;
-		}
-	}
-	
-	/**
-	 * A viewer filter that removes properties
-	 */
-	private class PropertiesFilter extends ViewerFilter {
-		
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof AntPropertyNode) {
-				return false;
-			} 
-			return true;
-		}
-	}
-	
-	/**
-	 * A viewer filter that removes top level tasks and types
-	 */
-	private class TopLevelFilter extends ViewerFilter {
-		
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof AntTaskNode) {
-				if (parentElement instanceof AntProjectNode) {
+			    if (fFilterInternalTargets && node instanceof AntTargetNode) {
+					Target target= ((AntTargetNode)node).getTarget();
+					if (target.getDescription() == null && !((AntTargetNode)node).isDefaultTarget()) {
+					    return false;
+					}
+					return true;
+				} 
+			    if (fFilterProperties && node instanceof AntPropertyNode) {
 					return false;
-				}
-			} 
-			return true;
-		}
-	}
-	
-	private class NonStructuralElementsFilter extends ViewerFilter {
-		
-		/**
-		 * Returns whether the given {@link AntElementNode} is a structural node
-		 */
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof AntElementNode) {
-			    AntElementNode node = (AntElementNode) element; 			    
-				return node.isStructuralNode();
+				} 
+			    if (!node.isStructuralNode()) {
+			        return false;
+				} 
 			} 
 			return true;
 		}
@@ -181,7 +147,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
-		setFilter(filter, getInternalTargetsFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);   
+		setFilter(filter, IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);   
 	}
 	
 	/**
@@ -191,18 +157,14 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
     protected void setFilterImportedElements(boolean filter) {
 		fFilterImportedElements= filter;
-		setFilter(filter, getImportedElementsFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS);        
+		setFilter(filter, IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS);        
     }
 
-	private void setFilter(boolean filter, ViewerFilter viewerFilter, String name) {
-		if (filter) {
-			getTreeViewer().addFilter(viewerFilter);
-		} else {
-			getTreeViewer().removeFilter(viewerFilter);
-		}
+	private void setFilter(boolean filter, String name) {
 		if (name != null) {
 			AntUIPlugin.getDefault().getPreferenceStore().setValue(name, filter);
 		}
+		//filter has been changed
 		getTreeViewer().refresh();
 	}
 
@@ -213,7 +175,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterProperties(boolean filter) {
 		fFilterProperties= filter;
-		setFilter(filter, getPropertiesFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);     
+		setFilter(filter, IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);     
 	}
 	
 	/**
@@ -223,37 +185,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterTopLevel(boolean filter) {
 		fFilterTopLevel= filter;
-		setFilter(filter, getTopLevelFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);     
+		setFilter(filter, IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);     
 	}
 	
-	private ViewerFilter getInternalTargetsFilter() {
-		if (fInternalTargetFilter == null) {
-			fInternalTargetFilter= new InternalTargetFilter();
-		}
-		return fInternalTargetFilter;
-	}
-	
-    private ViewerFilter getImportedElementsFilter() {
-		if (fImportedElementsFilter == null) {
-		    fImportedElementsFilter= new ImportedElementsFilter();
-		}
-		return fImportedElementsFilter;
-    }
-	
-	private ViewerFilter getPropertiesFilter() {
-		if (fPropertiesFilter == null) {
-			fPropertiesFilter= new PropertiesFilter();
-		}
-		return fPropertiesFilter;
-	}
-	
-	private ViewerFilter getTopLevelFilter() {
-		if (fTopLevelFilter == null) {
-			fTopLevelFilter= new TopLevelFilter();
-		}
-		return fTopLevelFilter;
-	}
-
 	/**
 	 * Returns whether internal targets are currently being filtered out of
 	 * the outline.
@@ -365,17 +299,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
     
 		TreeViewer viewer = getTreeViewer();
         
-		/*
-		 * We might want to implement our own content provider.
-		 * This content provider should be able to work on a dom like tree
-		 * structure that resembles the file contents.
-		 */
 		viewer.setContentProvider(new AntModelContentProvider());
 		setSort(fSort);
 
-		/*
-		 * We probably also need our own label provider.
-		 */ 
 		viewer.setLabelProvider(new AntModelLabelProvider());
 		if (fModel != null) {
 			setViewerInput(fModel);
@@ -412,13 +338,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 		});
 		
-		setFilterInternalTargets(fFilterInternalTargets);
-		setFilterImportedElements(fFilterImportedElements);
-		setFilterProperties(fFilterProperties);
-		setFilterTopLevel(fFilterTopLevel);
-		
-		setFilter(true, new NonStructuralElementsFilter(), null);
-		
+		viewer.addFilter(new AntOutlineFilter());
 		site.getActionBars().setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
 	
