@@ -13,11 +13,14 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
@@ -45,7 +48,18 @@ public class TagAction extends TeamAction {
 					s.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							// Prompt for the tag
-							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, null);
+							IInputValidator validator = new IInputValidator() {
+								public String isValid(String tagName) {
+									IStatus status = CVSTag.validateTagName(tagName);
+									if(status.isOK()) {
+										return null;
+									} else {
+										return status.getMessage();
+									}
+								}
+							};
+							
+							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator);
 							if (dialog.open() != InputDialog.OK) return;
 							result[0] = dialog.getValue();
 						}
