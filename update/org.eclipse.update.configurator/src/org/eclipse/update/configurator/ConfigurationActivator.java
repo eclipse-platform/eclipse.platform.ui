@@ -22,14 +22,11 @@ import org.osgi.service.startlevel.*;
 import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator {
-	private final static String DEFAULT_CONVERTER = "org.eclipse.update.configurator.migration.PluginConverter"; //$NON-NLS-1$
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
-	public static String OPTION_DEBUG_CONVERTER = PI_CONFIGURATOR + "/converter/debug";
 	// debug values
 	public static boolean DEBUG = false;
-	public static boolean DEBUG_CONVERTER = false;
 
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
@@ -256,7 +253,7 @@ public class ConfigurationActivator implements BundleActivator {
 		Runnable postReconciler = new Runnable() {
 			public void run() {
 				try {
-					Bundle apprunner = context.getBundle("org.eclipse.core.applicationrunner");
+					Bundle apprunner = context.getBundles("org.eclipse.core.applicationrunner")[0];
 					apprunner.stop();
 					context.removeBundleListener(reconcilerListener);
 					try {
@@ -274,33 +271,7 @@ public class ConfigurationActivator implements BundleActivator {
 		};
 		new Thread(postReconciler, "Post reconciler").start();
 	}
-	/**
-	 * @param location
-	 */
-	private void checkOrGenerateManifest(String pluginManifestLocationURL) {
-		if (converter == null)
-			return;
-		String pluginManifestLocation = null;
-		try {
-			pluginManifestLocation = new URL(pluginManifestLocationURL).getPath();
-		} catch (MalformedURLException e) {
-			return;
-		}
-		File pluginDir = new File(pluginManifestLocation).getParentFile();
-		if (shouldIgnore(pluginDir.getName()))
-			return;
-		File manifest = new File(pluginDir, "META-INF/MANIFEST.MF");
-		if (manifest.exists())
-			return;
-		// bail if the install location is not writable and we don't know where else to write to
-		if (cacheLocation == null)
-			return;
-		File generationLocation = new File(cacheLocation, computeFileName(pluginDir.getPath()) + ".MF");
-		if (generationLocation.exists())
-			return;
-		if (!converter.convertManifest(pluginDir, generationLocation))
-			System.out.println(pluginDir + " manifest generation failed");	//TODO Need to log an error
-	}
+
 	/*
 	 * Derives a file name corresponding to a path:
 	 * c:\autoexec.bat -> c__autoexec.bat
@@ -395,9 +366,6 @@ public class ConfigurationActivator implements BundleActivator {
 			return;
 		try {
 			DEBUG = service.getBooleanOption(OPTION_DEBUG, false);
-			if (!DEBUG)
-				return;
-			DEBUG_CONVERTER = service.getBooleanOption(OPTION_DEBUG_CONVERTER, false);
 		} finally {
 			// we have what we want - release the service
 			context.ungetService(reference);
