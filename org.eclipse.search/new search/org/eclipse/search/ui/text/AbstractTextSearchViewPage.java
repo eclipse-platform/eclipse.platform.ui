@@ -236,10 +236,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void initLayout() {
-		if (supportsFlatLayout())
-			fCurrentLayout = FLAG_LAYOUT_FLAT;
-		else
+		if (supportsTreeLayout())
 			fCurrentLayout = FLAG_LAYOUT_TREE;
+		else
+			fCurrentLayout = FLAG_LAYOUT_FLAT;
 	}
 
 	/**
@@ -270,8 +270,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return bitCount;
 	}
 
-	private boolean supportsFlatLayout() {
-		return isLayoutSupported(FLAG_LAYOUT_FLAT);
+	private boolean supportsTreeLayout() {
+		return isLayoutSupported(FLAG_LAYOUT_TREE);
 	}
 
 	/**
