@@ -206,12 +206,12 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns all search pages contributed to the workbench.
 	 */
-	public List getEnabledSearchPageDescriptors() {
+	public List getEnabledSearchPageDescriptors(String pageId) {
 		Iterator iter= getSearchPageDescriptors().iterator();
 		List enabledDescriptors= new ArrayList(5);
 		while (iter.hasNext()) {
 			SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
-			if (desc.isEnabled())
+			if (desc.isEnabled() || desc.getId().equals(pageId))
 				enabledDescriptors.add(desc);
 		}
 		return enabledDescriptors;

@@ -6,6 +6,9 @@ package org.eclipse.search.ui;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.ui.IWorkbenchWindow;
+
+import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
@@ -67,6 +70,18 @@ public final class SearchUI {
 	 */
 	public static boolean activateSearchResultView() {
 		return SearchPlugin.activateSearchResultView();	
+	}		
+
+	/**
+	 * Opens the search dialog.
+	 * If <code>pageId</code> is specified and a corresponding page
+	 * is found then it is brought to top.
+	 *
+	 * @param pageId	the page to select or <code>null</code>
+	 * 					if the best fitting page should be selected
+	 */
+	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
+		new OpenSearchDialogAction(window, pageId).run();
 	}		
 
 	/**

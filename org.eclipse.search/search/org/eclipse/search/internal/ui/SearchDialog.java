@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
@@ -90,6 +91,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private IWorkspace fWorkspace;
 	private ISearchPage fCurrentPage;
+	private String fInitialPageId;
 	private int fCurrentIndex;
 	private ISelection fSelection;
 	private IEditorPart fEditorPart;
@@ -97,14 +99,15 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
 
-	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor) {
+	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor, String pageId) {
 		super(shell);
 		Assert.isNotNull(workspace);
 		fWorkspace= workspace;
 		setPerformActionLabel(SearchMessages.getString("SearchDialog.performAction")); //$NON-NLS-1$
 		fSelection= selection;
 		fEditorPart= editor;
-		fDescriptors= SearchPlugin.getDefault().getEnabledSearchPageDescriptors();
+		fDescriptors= SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId);
+		fInitialPageId= pageId;
 	}
 
 	/* (non-Javadoc)
@@ -162,7 +165,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		 */
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message);
 		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
-		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors().toArray());
+		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
 		if (dialog.open() == dialog.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
 			close();
@@ -262,7 +265,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		
-		return super.createButtonBar(composite);
+		Control result= super.createButtonBar(composite);
+		getButton(IDialogConstants.FINISH_ID).setEnabled(fDescriptors.size() > 0);
+		return result;
 	}
 
 	protected boolean performAction() {
@@ -344,6 +349,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		int size= fDescriptors.size();
 		for (int i= 0; i < size; i++) {
 			SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
+			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId()))
+				return i;
+			
 			int newLevel= descriptor.computeScore(element);
 			if ( newLevel > level) {
 				level= newLevel;

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -16,12 +16,20 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * Opens the Search Dialog.
  */
 public class OpenSearchDialogAction extends Action implements IWorkbenchWindowActionDelegate {
+
 	private IWorkbenchWindow fWindow;
+	private String fPageId;
 
 	public OpenSearchDialogAction() {
 		super(SearchMessages.getString("OpenSearchDialogAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
 		setToolTipText(SearchMessages.getString("OpenSearchDialogAction.tooltip")); //$NON-NLS-1$
+	}
+
+	public OpenSearchDialogAction(IWorkbenchWindow window, String pageId) {
+		this();
+		fPageId= pageId;
+		fWindow= window;
 	}
 
 	public void init(IWorkbenchWindow window) {
@@ -41,7 +49,8 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 			getWindow().getShell(),
 			SearchPlugin.getWorkspace(),
 			getSelection(),
-			getEditorPart());
+			getEditorPart(),
+			fPageId);
 		dialog.open();
 	}
 
