@@ -11,15 +11,13 @@
 package org.eclipse.ui.texteditor.templates;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -615,8 +613,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			File file= new File(path);
 			if (file.exists()) {
-				InputStream stream= new FileInputStream(file);
-				TemplatePersistenceData[] datas= reader.readFromStream(stream);
+				Reader input= new FileReader(file);
+				TemplatePersistenceData[] datas= reader.read(input);
 				for (int i= 0; i < datas.length; i++) {
 					TemplatePersistenceData data= datas[i];
 					fTemplateStore.add(data);
@@ -675,10 +673,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		if (!file.exists() || confirmOverwrite(file)) {
 			try {
-				OutputStream stream= new FileOutputStream(file);
+				Writer output= new FileWriter(file);
 				TemplateReaderWriter writer= new TemplateReaderWriter();
-				writer.saveToStream(templates, stream);
-			} catch (FileNotFoundException e) {
+				writer.save(templates, output);
+			} catch (Exception e) {
 				openWriteErrorDialog(e);
 			}		
 		}

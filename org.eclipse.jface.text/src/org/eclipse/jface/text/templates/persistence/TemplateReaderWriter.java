@@ -11,8 +11,8 @@
 package org.eclipse.jface.text.templates.persistence;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,29 +58,29 @@ public class TemplateReaderWriter {
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
-
+	
 	/**
-	 * Reads templates from an XML stream and adds them to the templates.
+	 * Reads templates from an XML reader and adds them to the templates.
 	 * 
-	 * @param stream the XML stream to read templates from
+	 * @param reader the XML reader to read templates from
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
 	 * @throws SAXException if the XML is not valid
 	 * @throws IOException if reading from the stream fails 
 	 */	
-	public TemplatePersistenceData[] readFromStream(InputStream stream) throws SAXException, IOException {
-		return readFromStream(stream, null);
+	public TemplatePersistenceData[] read(Reader reader) throws SAXException, IOException {
+		return read(reader, null);
 	}
 	
 	/**
 	 * Reads templates from an XML stream and adds them to the templates.
 	 * 
-	 * @param stream the XML stream to read templates from
+	 * @param reader the XML reader to read templates from
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
 	 * @throws SAXException if the XML is not valid
 	 * @throws IOException if reading from the stream fails 
 	 */	
-	public TemplatePersistenceData[] readFromStream(InputStream stream, ResourceBundle bundle) throws SAXException, IOException {
+	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws SAXException, IOException {
 		
 		try {
 			Collection templates= new ArrayList();
@@ -88,7 +88,7 @@ public class TemplateReaderWriter {
 			
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser= factory.newDocumentBuilder();		
-			Document document= parser.parse(new InputSource(stream));
+			Document document= parser.parse(new InputSource(reader));
 			
 			NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
 			
@@ -148,9 +148,9 @@ public class TemplateReaderWriter {
 	 * Saves the templates as XML.
 	 * 
 	 * @param templates the templates to save
-	 * @param stream the stream to write the templates to in XML
+	 * @param writer the writer to write the templates to in XML
 	 */
-	public void saveToStream(TemplatePersistenceData[] templates, OutputStream stream) {
+	public void save(TemplatePersistenceData[] templates, Writer writer) {
 		try {
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder= factory.newDocumentBuilder();		
@@ -212,7 +212,7 @@ public class TemplateReaderWriter {
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(document);
-			StreamResult result = new StreamResult(stream);
+			StreamResult result = new StreamResult(writer);
 
 			transformer.transform(source, result);
 

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates.persistence;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,11 +25,13 @@ import java.util.List;
 import org.xml.sax.SAXException;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.Template;
 
 /**
@@ -59,18 +60,24 @@ public final class TemplateStore {
 	/** The stored templates. */
 	private final List fTemplates= new ArrayList();
 	
-	private IPath fCustomSaveLocation= new Path(""); //$NON-NLS-1$
+	private IPreferenceStore fPreferenceStore;
+	private String fKey;
 
-	
 	/**
-	 * Sets the save location for custom templates. May be removed by a preferences mechanism.
-	 * XXX to be changed
-	 * @param customSaveLocation
+	 * Creates a new template store.
+	 * 
+	 * @param store the preference store in which to store custom templates
+	 *        under <code>key</code>
+	 * @param key the key into <code>store</code> where to store custom
+	 *        templates
 	 */
-	public void setCustomSaveLocation(IPath customSaveLocation) {
-		fCustomSaveLocation= customSaveLocation;
+	public TemplateStore(IPreferenceStore store, String key) {
+		Assert.isNotNull(store);
+		Assert.isNotNull(key);
+		fPreferenceStore= store;
+		fKey= key;
 	}
-
+	
 	/**
 	 * Loads the templates from contributions and preferences.
 	 */
@@ -84,21 +91,18 @@ public final class TemplateStore {
 	 * Saves the templates to the preferences.
 	 */
 	public void save() {
-		try {
-			ArrayList custom= new ArrayList();
-			for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-				TemplatePersistenceData data= (TemplatePersistenceData) it.next();
-				if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user
-					custom.add(data);
-			}
-			
-			OutputStream stream= new FileOutputStream(fCustomSaveLocation.toFile());
-			TemplateReaderWriter writer= new TemplateReaderWriter();
-			writer.saveToStream((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), stream);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		ArrayList custom= new ArrayList();
+		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
+				custom.add(data);
 		}
+		
+		StringWriter output= new StringWriter();
+		TemplateReaderWriter writer= new TemplateReaderWriter();
+		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
+		
+		fPreferenceStore.setValue(fKey, output.toString());
 	}
 	
 	/**
@@ -198,19 +202,16 @@ public final class TemplateStore {
 	
 	private void loadCustomTemplates() {
 		try {
-			File file= fCustomSaveLocation.toFile();
-			if (file.exists()) {
-				InputStream stream= new FileInputStream(file);
+			String pref= fPreferenceStore.getString(fKey);
+			if (pref != null) {
+				Reader input= new StringReader(pref);
 				TemplateReaderWriter reader= new TemplateReaderWriter();
-				TemplatePersistenceData[] datas= reader.readFromStream(stream);
+				TemplatePersistenceData[] datas= reader.read(input);
 				for (int i= 0; i < datas.length; i++) {
 					TemplatePersistenceData data= datas[i];
 					add(data);
 				}
 			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -246,8 +247,9 @@ public final class TemplateStore {
 			if (url != null) {
 				try {
 					InputStream stream= url.openStream();
+					Reader input= new InputStreamReader(stream);
 					TemplateReaderWriter reader= new TemplateReaderWriter();
-					TemplatePersistenceData[] datas= reader.readFromStream(stream);
+					TemplatePersistenceData[] datas= reader.read(input);
 					for (int i= 0; i < datas.length; i++) {
 						TemplatePersistenceData data= datas[i];
 						if (!data.isCustom())
