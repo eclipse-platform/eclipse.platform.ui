@@ -434,8 +434,9 @@ public class EditorManager {
 		} else if (desc.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
 			result = openSystemInPlaceEditor(ref, desc, input);
 		} else if (desc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
-			if (input instanceof IPathEditorInput) {
-				result = openSystemExternalEditor(((IPathEditorInput) input).getPath());
+			IPathEditorInput pathInput = getPathEditorInput(input);
+			if (pathInput != null) {
+				result = openSystemExternalEditor(pathInput.getPath());
 			} else {
 				throw new PartInitException(WorkbenchMessages.getString("EditorManager.systemEditorError")); //$NON-NLS-1$
 			}
@@ -456,9 +457,8 @@ public class EditorManager {
 	private IEditorReference openExternalEditor(final EditorDescriptor desc, IEditorInput input) throws PartInitException {
 		final CoreException ex[] = new CoreException[1];
 
-		if (input instanceof IPathEditorInput) {
-			final IPathEditorInput pathInput = (IPathEditorInput) input;
-			
+		final IPathEditorInput pathInput = getPathEditorInput(input);
+		if (pathInput != null) {
 			BusyIndicator.showWhile(getDisplay(), new Runnable() {
 				public void run() {
 					try {
@@ -1146,8 +1146,9 @@ public class EditorManager {
 						if (editorPane == editorPane.getWorkbook().getVisibleEditor())
 							editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 							
-						if (input instanceof IPathEditorInput) {
-							IPath path = ((IPathEditorInput)input).getPath();
+						IPathEditorInput pathInput = getPathEditorInput(input);
+						if (pathInput != null) {
+							IPath path = pathInput.getPath();
 							editorMem.putString(IWorkbenchConstants.TAG_PATH, path.toString());
 						}
 				
@@ -1176,6 +1177,15 @@ public class EditorManager {
 	public boolean setVisibleEditor(IEditorReference newEd, boolean setFocus) {
 		return editorPresentation.setVisibleEditor(newEd, setFocus);
 	}
+	
+	private IPathEditorInput getPathEditorInput(IEditorInput input) {
+		if (input instanceof IPathEditorInput) {
+			return (IPathEditorInput) input;
+		}
+		
+		return (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
+	}
+	
 	
 	private class Editor extends WorkbenchPartReference implements IEditorReference {
 
