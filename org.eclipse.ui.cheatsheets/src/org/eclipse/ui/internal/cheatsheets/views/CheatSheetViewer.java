@@ -941,6 +941,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String)
 	 */
 	public void setInput(String id) {
+		if (id == null) {
+			throw new IllegalArgumentException();
+		}
 		CheatSheetElement element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
 		setContent(element);
 
@@ -952,17 +955,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String, java.lang.String, java.net.URL)
 	 */
 	public void setInput(String id, String name, URL url) {
-		if (url == null) {
+		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
-
-		if (name == null) {
-			name = ""; //$NON-NLS-1$
-		}
 		CheatSheetElement element = new CheatSheetElement(name);
-		if (id == null) {
-			id = ""; //$NON-NLS-1$
-		}
 		element.setID(id);
 		element.setContentFile(url.toString());
 

@@ -13,7 +13,7 @@ package org.eclipse.ui.cheatsheets;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetViewer;
 
 /**
- * A factory for creating a cheat sheat viewer.
+ * A factory for creating a cheat sheet viewer.
  * <p>
  * This class provides all its functionality via static members.
  * It is not intended to be instantiated.
@@ -31,7 +31,8 @@ public final class CheatSheetViewerFactory {
 	}
 	
 	/**
-	 * Creates a new cheat sheet viewer.
+	 * Creates a new cheat sheet viewer. The viewer does not
+	 * show any cheat sheet initially.
 	 * 
 	 * @return a new cheat sheet viewer
 	 */

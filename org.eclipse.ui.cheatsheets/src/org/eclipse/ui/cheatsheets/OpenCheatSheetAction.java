@@ -58,25 +58,16 @@ public final class OpenCheatSheetAction extends Action {
 	 * Creates an action that opens the cheat sheet with the 
 	 * given cheat sheet content file.
 	 * 
-	 * @param id the id to give this cheat sheet;
-	 * <code>null</code> is equivalent to the empty string
-	 * @param name the name to give this cheat sheet; 
-	 * <code>null</code> is equivalent to the empty string
+	 * @param id the id to give this cheat sheet
+	 * @param name the name to give this cheat sheet
 	 * @param url URL of the cheat sheet content file
-	 * @exception IllegalArgumentException if <code>url</code>
-	 * is <code>null</code>
+	 * @exception IllegalArgumentException if the parameters
+	 * are <code>null</code>
 	 */
 	public OpenCheatSheetAction(String id, String name, URL url) {
-		if (url == null) {
+		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
-		if (name == null) {
-			name = ""; //$NON-NLS-1$
-		}
-		if (id == null) {
-			id = ""; //$NON-NLS-1$
-		}
-
 		this.id = id;
 		this.name = name;
 		this.url = url;
