@@ -12,6 +12,7 @@ Contributors:
 ************************************************************************/
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -34,10 +35,23 @@ public class SaveAction extends BaseSaveAction {
 	}
 	
 	/**
-	 * Performs the <code>Save As</code> action by calling the
+	 * Performs the <code>Save</code> action by calling the
 	 * <code>IEditorPart.doSave</code> method on the active editor.
 	 */
 	public void run() {
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus
+		 * in order to support save actions from a view. Remove this
+		 * experimental code if the decision is to not allow views to 
+		 * participate in save actions (see bug 10234) 
+		 */
+		ISaveablePart saveView = getSaveableView();
+		if (saveView != null) {
+			((WorkbenchPage)getActivePart().getSite().getPage()).savePart(saveView, getActivePart(), false);
+			return;
+		}
+		/* **********************************************************************************/
+
 		IEditorPart part = getActiveEditor();
 		IWorkbenchPage page = part.getSite().getPage();
 		page.saveEditor(part, false);
@@ -47,6 +61,19 @@ public class SaveAction extends BaseSaveAction {
 	 * Method declared on ActiveEditorAction.
 	 */
 	protected void updateState() {
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus
+		 * in order to support save actions from a view. Remove this
+		 * experimental code if the decision is to not allow views to 
+		 * participate in save actions (see bug 10234) 
+		 */
+		ISaveablePart saveView = getSaveableView();
+		if (saveView != null) {
+			setEnabled(saveView.isDirty());
+			return;
+		}
+		/* **********************************************************************************/
+			
 		IEditorPart editor = getActiveEditor();
 		setEnabled(editor != null && editor.isDirty());
 	}

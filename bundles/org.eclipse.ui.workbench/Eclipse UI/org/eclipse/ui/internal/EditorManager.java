@@ -1045,14 +1045,12 @@ public class EditorManager {
 		// Do the save.
 		return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp,window); //$NON-NLS-1$
 	}
-	/**
-	 * Save and close an editor.
-	 * Return true if successful.  Return false if the
-	 * user has cancelled the command.
+	/*
+	 * Saves the workbench part.
 	 */
-	public boolean saveEditor(final IEditorPart part, boolean confirm) {
+	public boolean savePart(final ISaveablePart saveable, IWorkbenchPart part, boolean confirm) {
 		// Short circuit.
-		if (!part.isDirty())
+		if (!saveable.isDirty())
 			return true;
 
 		// If confirmation is required ..
@@ -1082,12 +1080,20 @@ public class EditorManager {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				part.doSave(monitorWrap);
+				saveable.doSave(monitorWrap);
 			}
 		};
 
 		// Do the save.
 		return runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp,window); //$NON-NLS-1$
+	}
+	/**
+	 * Save and close an editor.
+	 * Return true if successful.  Return false if the
+	 * user has cancelled the command.
+	 */
+	public boolean saveEditor(IEditorPart part, boolean confirm) {
+		return savePart(part, part, confirm);
 	}
 	/**
 	 * @see IPersistablePart

@@ -61,6 +61,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -2313,6 +2314,17 @@ public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescri
 public boolean saveAllEditors(boolean confirm) {
 	return getEditorManager().saveAll(confirm, false);
 }
+/*
+ * Saves the workbench part.
+ */
+protected boolean savePart(ISaveablePart saveable, IWorkbenchPart part, boolean confirm) {
+	// Sanity check.
+	if (!certifyPart(part))
+		return false;
+
+	// Real work.
+	return getEditorManager().savePart(saveable, part, confirm);
+}
 /**
  * Saves an editors in the workbench.  
  * If <code>confirm</code> is <code>true</code> the user is prompted to
@@ -2322,13 +2334,8 @@ public boolean saveAllEditors(boolean confirm) {
  * @return <code>true</code> if the command succeeded, or 
  *   <code>false</code> if the user cancels the command
  */
-public boolean saveEditor(org.eclipse.ui.IEditorPart editor, boolean confirm) {
-	// Sanity check.
-	if (!certifyPart(editor))
-		return false;
-
-	// Real work.
-	return getEditorManager().saveEditor(editor, confirm);
+public boolean saveEditor(IEditorPart editor, boolean confirm) {
+	return savePart(editor, editor, confirm);
 }
 /**
  * Saves the current perspective.

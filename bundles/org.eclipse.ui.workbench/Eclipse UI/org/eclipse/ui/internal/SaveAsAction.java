@@ -12,6 +12,7 @@ Contributors:
 ************************************************************************/
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -37,6 +38,19 @@ public class SaveAsAction extends BaseSaveAction {
 	 * <code>IEditorPart.doSaveAs</code> method on the active editor.
 	 */
 	public void run() {
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus
+		 * in order to support save actions from a view. Remove this
+		 * experimental code if the decision is to not allow views to 
+		 * participate in save actions (see bug 10234) 
+		 */
+		ISaveablePart saveView = getSaveableView();
+		if (saveView != null) {
+			saveView.doSaveAs();
+			return;
+		}
+		/* **********************************************************************************/
+
 		getActiveEditor().doSaveAs();
 	}
 	
@@ -44,6 +58,19 @@ public class SaveAsAction extends BaseSaveAction {
 	 * Method declared on ActiveEditorAction.
 	 */
 	protected void updateState() {
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus
+		 * in order to support save actions from a view. Remove this
+		 * experimental code if the decision is to not allow views to 
+		 * participate in save actions (see bug 10234) 
+		 */
+		ISaveablePart saveView = getSaveableView();
+		if (saveView != null) {
+			setEnabled(saveView.isSaveAsAllowed());
+			return;
+		}
+		/* **********************************************************************************/
+
 		IEditorPart editor = getActiveEditor();
 		setEnabled(editor != null && editor.isSaveAsAllowed());
 	}
