@@ -11,6 +11,7 @@ import java.util.jar.JarEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
+import org.eclipse.update.core.model.InstallAbortedException;
 
 /**
  * Default Implementation of InstallHandler
@@ -127,10 +128,11 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		int result = listener.prompt(verificationResult);
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
-			throw Utilities
+			CoreException exp= Utilities
 				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
 			//$NON-NLS-1$
 			verificationResult.getVerificationException());
+			throw new InstallAbortedException(exp);
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities

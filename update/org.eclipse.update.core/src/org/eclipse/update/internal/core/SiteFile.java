@@ -67,8 +67,14 @@ public class SiteFile extends Site {
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 
-		IFeatureReference localFeatureReference =
-			sourceFeature.install(localFeature, verificationListener, monitor);
+		IFeatureReference localFeatureReference = null;
+		try{
+			localFeatureReference = sourceFeature.install(localFeature, verificationListener, monitor);
+		} catch (InstallAbortedException e){
+			// warn user
+			UpdateManagerPlugin.warn("Install aborted:");
+		}
+			
 		return localFeatureReference;
 	}
 
@@ -103,9 +109,10 @@ public class SiteFile extends Site {
 		IVerifier vr = sourceFeature.getFeatureContentProvider().getVerifier();
 		if (vr != null)
 			vr.setParent(parentVerifier);
-
-		IFeatureReference localFeatureReference =
-			sourceFeature.install(localFeature, verificationListener, monitor);
+			
+		IFeatureReference localFeatureReference = null;
+		localFeatureReference =	sourceFeature.install(localFeature, verificationListener, monitor);
+			
 		return localFeatureReference;
 	}
 

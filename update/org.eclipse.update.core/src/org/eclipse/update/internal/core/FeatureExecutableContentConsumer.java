@@ -147,7 +147,6 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			contentConsumer.abort();
 		
 		aborted = true;
-		throw Utilities.newCoreException("",null);
 	}
 
 	/*

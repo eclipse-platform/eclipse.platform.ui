@@ -42,15 +42,6 @@ public class Feature extends FeatureModel implements IFeature {
 	private List /*of IFeatureReference*/
 	includedFeatureReferences;
 
-	/*
-	 * 
-	 */
-	 private class InstallAbortedException extends CoreException{
-	 	public InstallAbortedException(CoreException exp) {
-			super(exp.getStatus());
-		}
-	 }
-
 	/**
 	 * Feature default constructor
 	 * 
@@ -239,6 +230,7 @@ public class Feature extends FeatureModel implements IFeature {
 				monitor);
 		boolean success = false;
 		Throwable originalException = null;
+		InstallAbortedException abortedException = null;
 
 		// Get source feature provider and verifier.
 		// Initialize target variables.
@@ -406,9 +398,8 @@ public class Feature extends FeatureModel implements IFeature {
 			success = true;
 
 		} catch (InstallAbortedException e){
-			// warn user
-			UpdateManagerPlugin.warn("Install aborted:");
-		} catch (CoreException e) {
+			abortedException = e;
+		}catch (CoreException e) {
 			originalException = e;
 		} finally {
 			Exception newException = null;
@@ -429,14 +420,23 @@ public class Feature extends FeatureModel implements IFeature {
 				newException = e;
 			}
 			
-			if (originalException != null) // original exception wins
+			// original exception wins unless it is InstallAbortedException
+			// and an error occured during abort
+			if (originalException != null){ 
 				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", this.getLabel()),
 					originalException);
+			}
+			
 			if (newException != null)
 				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", this.getLabel()),
 					newException);
+					
+			if (abortedException != null){ 
+				throw abortedException;
+			}
+			
 		}
 		return result;
 	}
@@ -840,11 +840,12 @@ public class Feature extends FeatureModel implements IFeature {
 				int result = verificationListener.prompt(vr);
 
 				if (result == IVerificationListener.CHOICE_ABORT) {
-					throw Utilities
+					CoreException exp = Utilities
 						.newCoreException(
 							Policy.bind("JarVerificationService.CancelInstall"),
 					//$NON-NLS-1$
 					vr.getVerificationException());
+					throw new InstallAbortedException(exp);
 				}
 				if (result == IVerificationListener.CHOICE_ERROR) {
 					throw Utilities
