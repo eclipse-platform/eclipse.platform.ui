@@ -14,10 +14,10 @@ package org.eclipse.update.tests.standalone;
 
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.standalone.*;
+
 
 public class TestFeatureInstall extends StandaloneManagerTestCase {
 	private static boolean isInstalled;
