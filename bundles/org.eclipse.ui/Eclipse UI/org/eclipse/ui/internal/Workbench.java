@@ -410,12 +410,10 @@ private boolean init(String[] commandLineArgs) {
 private void intializeFonts() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	FontRegistry registry = JFaceResources.getFontRegistry();
-	initializeFont(JFaceResources.DEFAULT_FONT,registry,store);
 	initializeFont(JFaceResources.DIALOG_FONT,registry,store);
 	initializeFont(JFaceResources.BANNER_FONT,registry,store);
-	initializeFont(JFaceResources.VIEWER_FONT,registry,store);
 	initializeFont(JFaceResources.TEXT_FONT,registry,store);
-	initializeFont(JFaceResources.WINDOW_FONT,registry,store);
+	initializeFont(JFaceResources.TERMINAL_FONT,registry,store);
 }
 /**
  * Initialize the specified font with the stored value.
