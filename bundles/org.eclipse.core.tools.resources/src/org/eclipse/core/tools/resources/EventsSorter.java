@@ -101,7 +101,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 				switch (columnNumber) {
 					case EventsView.STAT_ID_COLUMN : {
 						String name1 = s1.getName() == null ? "" : s1.getName(); //$NON-NLS-1$
-						String name2 = s2.getName() == null ? "" : s1.getName(); //$NON-NLS-1$
+						String name2 = s2.getName() == null ? "" : s2.getName(); //$NON-NLS-1$
 						return c.compare(name1, name2);
 					}
 					case EventsView.PROJECT_COLUMN : {
