@@ -835,10 +835,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		if (toSelect == current) {
 			return;
 		}
-		
-		if (current != null) {
-			current.setVisible(false);
-		}
+		IPresentablePart oldPart = current;
 		
 		current = toSelect;
 		
@@ -846,7 +843,7 @@ public class DefaultPartPresentation extends StackPresentation {
 			CTabItem item = getTab(toSelect);
 			if (item != null)
 				// If the item is not currently visible, move it
-				// to the begining
+				// to the beginning
 				if (!item.isShowing() && tabFolder.getItemCount() > 1)
 				{
 					removePart(toSelect);
@@ -856,6 +853,9 @@ public class DefaultPartPresentation extends StackPresentation {
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			setControlSize();		
+		}
+		if (oldPart != null) {
+			oldPart.setVisible(false);
 		}
 	}
 	
