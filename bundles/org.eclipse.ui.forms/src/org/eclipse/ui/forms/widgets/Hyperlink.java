@@ -67,7 +67,7 @@ public class Hyperlink extends AbstractHyperlink {
 				e.detail = 0;
 			}
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_LABEL;
+				e.detail = ACC.ROLE_LINK;
 			}
 			public void getState(AccessibleControlEvent e) {
 				int state = ACC.STATE_NORMAL;
