@@ -1147,6 +1147,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         Control tree = getControl();
         for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
             Item parentItem = (Item) e.nextElement();
+            if(parentItem.isDisposed())
+            	continue;
             if (!getExpanded(parentItem) && getItemCount(parentItem) == 0) {
                 // append a dummy if necessary
                 if (isExpandable(parentItem.getData())) {
