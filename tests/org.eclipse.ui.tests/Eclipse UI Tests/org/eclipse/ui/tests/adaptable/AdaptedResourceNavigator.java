@@ -124,7 +124,7 @@ public class AdaptedResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new TestAdaptableContentProvider());
 		viewer.setLabelProvider(
-			new CombinedDecoratingLabelProvider(
+			new DecoratingLabelProvider(
 				new TestAdaptableWorkbenchAdapter(), 
 				getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager()));
 

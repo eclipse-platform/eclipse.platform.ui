@@ -55,9 +55,8 @@ public class AdaptableDecoratorTestCase
 		DecoratorDefinition[] definitions =
 			WorkbenchPlugin.getDefault().getDecoratorManager().getDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getDecorator().equals(TestDecoratorContributor.contributor))
+			if (definitions[i].getId().equals("org.eclipse.ui.tests.adaptable.decorator"))
 				definition = definitions[i];
-
 		}
 	}
 

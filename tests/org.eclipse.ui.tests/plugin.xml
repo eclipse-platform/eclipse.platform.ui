@@ -511,6 +511,7 @@
         state="true"
         tooltip="No tip" 
         class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
+        description="The test decorator"
         objectClass="org.eclipse.core.resources.IResource">
     </decorator> 
     <decorator 
@@ -519,6 +520,7 @@
         state="true"
         tooltip="No tip" 
         adaptable="true"
+        description="A null test decorator"
         class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
         objectClass="org.eclipse.core.resources.IResource">
     </decorator> 

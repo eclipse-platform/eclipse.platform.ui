@@ -30,15 +30,14 @@ public class DecoratorTestCase
 	protected void setUp() throws Exception {
 		createTestFile();
 		showNav();
-
+		
 		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
 
 		DecoratorDefinition[] definitions =
 			WorkbenchPlugin.getDefault().getDecoratorManager().getDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getDecorator().equals(TestDecoratorContributor.contributor))
+			if (definitions[i].getId().equals("org.eclipse.ui.tests.adaptable.decorator"))
 				definition = definitions[i];
-
 		}
 	}
 
@@ -87,7 +86,7 @@ public class DecoratorTestCase
 		updated = false;
 		definition.setEnabled(true);
 		getDecoratorManager().reset();
-		TestDecoratorContributor.contributor.refreshListeners(testFile);
+
 		assertTrue("Got an update", updated);
 		updated = false;
 
