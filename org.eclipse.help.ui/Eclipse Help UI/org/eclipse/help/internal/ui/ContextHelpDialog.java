@@ -298,7 +298,7 @@ public class ContextHelpDialog implements Runnable {
 	protected Control createLinksArea(Composite parent) {
 		// get links from first context with links
 		relatedTopics = cmgr.getRelatedTopics(contexts);
-		relatedTopics = filterDuplicateLinks(relatedTopics, null);
+		relatedTopics = removeDuplicates(relatedTopics);
 
 		if (relatedTopics == null)
 			// none of the contexts have Topics
@@ -422,7 +422,12 @@ public class ContextHelpDialog implements Runnable {
 	 */
 	public void run() {
 		farRelatedTopics = cmgr.getMoreRelatedTopics(contexts);
-		farRelatedTopics = filterDuplicateLinks(farRelatedTopics, relatedTopics);
+		IHelpTopic[] temp=new IHelpTopic[relatedTopics.length+ farRelatedTopics.length];
+		System.arraycopy(relatedTopics, 0, temp, 0, relatedTopics.length);
+		System.arraycopy(farRelatedTopics, 0, temp, relatedTopics.length, farRelatedTopics.length);
+		temp=removeDuplicates(temp);
+		farRelatedTopics=new IHelpTopic[temp.length-relatedTopics.length];
+		System.arraycopy(temp, relatedTopics.length, farRelatedTopics, 0, temp.length-relatedTopics.length);
 	}
 	protected void showMoreLinks() {
 		Menu menu = new Menu(shell);
@@ -445,40 +450,46 @@ public class ContextHelpDialog implements Runnable {
 		menu.setVisible(true);
 	}
 	/**
-	 * Filters out the topics from first argument
-	 * that are duplicated in first argument
-	 * or in the second argument if provided
-	 * @param varlinks array of IHelpTopics that
-	 *  will be filtered
-	 * @param constlinks null or array of IHelpTopics
-	 *  that should not appear in in the filtered varlinks
+	 * Filters out the duplicate topics from an array
 	 */
-	protected IHelpTopic[] filterDuplicateLinks(IHelpTopic varlinks[], IHelpTopic constlinks[]){
-		if (varlinks==null || varlinks.length <=0 )
-			return varlinks;
+	private IHelpTopic[] removeDuplicates(IHelpTopic links[]){
+		if (links==null || links.length <=0 )
+			return links;
 		ArrayList filtered = new ArrayList();
-		for(int i=0; i<varlinks.length;i++){
+		for(int i=0; i<links.length;i++){
+			IHelpTopic topic1=links[i];
+			if(!isValidTopic(topic1))
+				continue;
 			boolean dup=false;
-			// check if it is a duplicate of already added topic
 			for(int j=0; j<filtered.size(); j++){
-				if( varlinks[i].getHref().equals( ((IHelpTopic)filtered.get(j)).getHref() )
-					&& varlinks[i].getLabel().equals( ((IHelpTopic)filtered.get(j)).getLabel() ) ){
-						dup=true;
-						break;
+				IHelpTopic topic2=(IHelpTopic)filtered.get(j);
+				if(!isValidTopic(topic2))
+					continue;
+				if(equal(topic1, topic2)){
+					dup=true;
+					break;
 				}
 			}
-			// check if it exists in constlinks
-			if(constlinks !=null)
-				for(int j=0; j<constlinks.length; j++){
-					if( varlinks[i].getHref().equals( constlinks[j].getHref() )
-						&& varlinks[i].getLabel().equals( constlinks[j].getLabel() ) ){
-							dup=true;
-							break;
-					}
-				}
 			if(!dup)
-				filtered.add(varlinks[i]);
+				filtered.add(links[i]);
 		}
-		return (IHelpTopic[])filtered.toArray(new IHelpTopic[filtered.size()]);			
+		return (IHelpTopic[])filtered.toArray(new IHelpTopic[filtered.size()]);		
+	}
+	/**
+	 * Check if two context topic are the same.
+	 * They are considered the same if both labels and href are equal
+	 */
+	private boolean equal(IHelpTopic topic1, IHelpTopic topic2){
+		return topic1.getHref().equals( topic2.getHref() ) && topic1.getLabel().equals( topic2.getLabel() );
+	}
+	/**
+	 * Checks if topic labels and href are not null and not empty strings
+	 */
+	private boolean isValidTopic(IHelpTopic topic){
+		return topic!=null
+			&& topic.getHref() !=null
+			&& !"".equals(topic.getHref())
+			&& topic.getLabel() != null
+			&& !"".equals(topic.getLabel());
 	}
 }
