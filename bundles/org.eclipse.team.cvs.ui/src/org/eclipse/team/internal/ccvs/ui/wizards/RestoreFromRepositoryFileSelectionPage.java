@@ -24,7 +24,6 @@ import org.eclipse.compare.IModificationDate;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.Splitter;
-import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -171,7 +170,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		// Bottom: File content viewer
 		fileContentPane = new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUIPlugin.findContentViewer(oldViewer, input, this, null);	
+				return CompareUI.findContentViewer(oldViewer, input, this, null);	
 			}
 		};
 						
