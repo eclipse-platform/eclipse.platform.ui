@@ -182,7 +182,8 @@ public class OrderedLock implements ILock {
 	 * @see ILock#release
 	 */
 	public synchronized void release() {
-		if (currentOperationThread != Thread.currentThread() || depth == 0)
+		Assert.isTrue(currentOperationThread == Thread.currentThread(), "Attempt to release lock not owned by this thread"); //$NON-NLS-1$
+		if (depth == 0)
 			return;
 		//only release the lock when the depth reaches zero
 		Assert.isTrue(depth >= 0, "Lock released too many times"); //$NON-NLS-1$
