@@ -215,6 +215,7 @@ public class ReopenEditorMenu extends ContributionItem {
 			try {
 				// Fix for 1GF6HQ1: ITPUI:WIN2000 - NullPointerException: opening a .ppt file
 				// Descriptor is null if opened on OLE editor.
+				String itemName = item.getName();
 				if (!item.isRestored()) {
 					item.restoreState();
 				}
@@ -222,10 +223,10 @@ public class ReopenEditorMenu extends ContributionItem {
 				IEditorDescriptor desc = item.getDescriptor();
 				if (input == null) {
 					String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
-					MessageDialog.openWarning(fWindow.getShell(), title, ""); //$NON-NLS-1$
+					String msg = WorkbenchMessages.format("OpenRecent.unableToOpen",new String[]{itemName}); //$NON-NLS-1$
+					MessageDialog.openWarning(fWindow.getShell(), title, msg);
 					history.remove(item);
-				}
-				else {
+				} else {
 					if (desc == null) {
 						// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
 						// doesn't allow null id.
