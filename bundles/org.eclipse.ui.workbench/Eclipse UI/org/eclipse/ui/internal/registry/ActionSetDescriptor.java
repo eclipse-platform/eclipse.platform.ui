@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -19,12 +20,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * ActionSetDescriptor
  */
 public class ActionSetDescriptor
-	implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter
+	implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter, IPluginContribution
 {
 	private static final Object[] NO_CHILDREN = new Object[0];
 	private static final String INITIALLY_VISIBLE_PREF_ID_PREFIX = "actionSet.initiallyVisible."; //$NON-NLS-1$
 	
 	private String id;
+	private String pluginId;
 	private String label;
 	private String category;
 	private boolean visible;
@@ -43,6 +45,7 @@ public ActionSetDescriptor(IConfigurationElement configElement)
 	super();
 	this.configElement = configElement;
 	id = configElement.getAttribute(ATT_ID);
+	pluginId = configElement.getDeclaringExtension().getNamespace();
 	label = configElement.getAttribute(ATT_LABEL);
 	description = configElement.getAttribute(ATT_DESC);
 	String str = configElement.getAttribute(ATT_VISIBLE);
@@ -191,5 +194,17 @@ public ImageDescriptor getImageDescriptor(Object object) {
  */
 public Object getParent(Object o) {
 	return null;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.IPluginContribution#getLocalId()
+ */
+public String getLocalId() {
+    return id;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.IPluginContribution#getPluginId()
+ */
+public String getPluginId() {
+    return pluginId;
 }
 }

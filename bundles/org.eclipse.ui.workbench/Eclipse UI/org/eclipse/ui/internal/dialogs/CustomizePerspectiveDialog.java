@@ -76,6 +76,7 @@ import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AbstractActionBarConfigurer;
@@ -1266,6 +1267,8 @@ private void initializeActionSetInput() {
 	IActionSetDescriptor [] sets = reg.getActionSets();
 	for (int i = 0; i < sets.length; i ++) {
 		ActionSetDescriptor actionSetDesc = (ActionSetDescriptor)sets[i];
+		if (WorkbenchActivityHelper.filterItem(actionSetDesc))
+		    continue;
 		actionSets.add(actionSetDesc);
 	}
 	String iconPath = "icons/full/obj16/menu.gif";//$NON-NLS-1$
@@ -1309,6 +1312,8 @@ private void initializeShortcutMenuInput() {
 		activeIds = perspective.getNewWizardActionIds();
 		for (int i = 0; i < wizardCategories.length; i ++) {
 			WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
+			if (WorkbenchActivityHelper.filterItem(element))
+			    continue;
 			initializeShortCutMenu(wizardMenu, element, activeIds);
 		}
 	}
@@ -1318,6 +1323,8 @@ private void initializeShortcutMenuInput() {
 		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 		IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
 		for (int i = 0; i < persps.length; i ++) {
+		    if (WorkbenchActivityHelper.filterItem(persps[i]))
+		        continue;
 			perspMenu.addItem(persps[i]);
 		}
 		activeIds = perspective.getPerspectiveActionIds();
@@ -1335,18 +1342,21 @@ private void initializeShortcutMenuInput() {
 		activeIds = perspective.getShowViewActionIds();
 		for (int i=0; i<categories.length; i++) {
 			Category category = categories[i];
+			if (WorkbenchActivityHelper.filterItem(category)) 
+			    continue;
 			ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
 			ArrayList views = category.getElements();
 			if (views != null) {
 				for (int j=0; j<views.size(); j++) {
 					IViewDescriptor view = (IViewDescriptor)views.get(j);
+					if (WorkbenchActivityHelper.filterItem(view))
+					    continue;
 					viewCategory.addItem(view);
 					if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
 				}
 			}
 		}
-	}
-	
+	}	
 }
 protected void okPressed() {
 	if (showShortcutTab()) {
@@ -1474,10 +1484,8 @@ String removeShortcut(String label) {
 	return label;
 }
 private void setInitialSelections() {
-	Object item = null;
-	if (lastSelectedActionSetId == null) {
-		item = actionSetsViewer.getElementAt(0);
-	} else {
+	Object item = actionSetsViewer.getElementAt(0);
+	if (lastSelectedActionSetId != null) {
 		for (int i=0; i<actionSets.size(); i++) {
 			ActionSetDescriptor actionSet = (ActionSetDescriptor)actionSets.get(i);
 			if (actionSet.getId().equals(lastSelectedActionSetId)) {
