@@ -98,6 +98,7 @@ public class MultipleInputDialog extends Dialog {
 		}
 		
 		fieldList = null; // allow it to be gc'd
+		Dialog.applyDialogFont(container);
 		return container;
 	}
 	
