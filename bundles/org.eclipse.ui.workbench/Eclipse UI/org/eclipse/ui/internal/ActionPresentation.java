@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -53,7 +54,10 @@ public ActionPresentation(WorkbenchWindow window) {
  * Remove all action sets.
  */
 public void clearActionSets() {
-	List oldList = copyActionSets();
+	// Get all of the action sets -- both visible and invisible.
+	List oldList = copyActionSets(mapDescToRec);
+	oldList.addAll(copyActionSets(invisibleBars));
+	
 	Iterator iter = oldList.iterator();
 	while (iter.hasNext()) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
@@ -63,8 +67,8 @@ public void clearActionSets() {
 /**
  * Returns a copy of the visible action set.
  */
-private List copyActionSets() {
-	Set keys = mapDescToRec.keySet();
+private List copyActionSets(Map map) {
+	Set keys = map.keySet();
 	ArrayList list = new ArrayList(keys.size());
 	Iterator iter = keys.iterator();
 	while (iter.hasNext()) {
@@ -77,6 +81,9 @@ private List copyActionSets() {
  */
 public void removeActionSet(IActionSetDescriptor desc) {
 	SetRec rec = (SetRec)mapDescToRec.get(desc);
+	if (rec == null) {
+		rec = (SetRec) invisibleBars.get(desc);
+	}
 	if (rec != null) {
 		mapDescToRec.remove(desc);
 		// Remove from the map that stores invisible bars
@@ -97,7 +104,7 @@ public void removeActionSet(IActionSetDescriptor desc) {
 public void setActionSets(IActionSetDescriptor [] newArray) {
 	// Convert array to list.
 	List newList = Arrays.asList(newArray);
-	List oldList = copyActionSets();
+	List oldList = copyActionSets(mapDescToRec);
 
 	// Remove obsolete actions.
 	Iterator iter = oldList.iterator();
