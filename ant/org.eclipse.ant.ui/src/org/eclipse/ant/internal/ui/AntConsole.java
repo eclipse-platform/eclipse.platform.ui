@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;import java.net.*;import org.eclipse.core.internal.runtime.Assert;import org.eclipse.jface.action.*;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.text.*;import org.eclipse.swt.SWT;import org.eclipse.swt.layout.*;import org.eclipse.swt.widgets.*;import org.eclipse.ui.part.ViewPart;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */ import java.net.*;import org.eclipse.core.internal.runtime.Assert;import org.eclipse.jface.action.*;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.text.*;import org.eclipse.swt.SWT;import org.eclipse.swt.layout.*;import org.eclipse.swt.widgets.*;import org.eclipse.ui.part.ViewPart;
 public class AntConsole extends ViewPart {	public final static String CONSOLE_ID = "org.eclipse.ant.ui.antconsole";		private TextViewer viewer;	private Action copyAction;	private Action selectAllAction;
 
 	/**
