@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.IIgnoreInfo;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -22,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * Represents handles to CVS resource on the local file system. Synchronization

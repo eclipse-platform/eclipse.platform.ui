@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.TeamPlugin;
 
 public class DefaultFileModificationValidator implements IFileModificationValidator {
 	private static final Status OK = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("FileModificationValidator.ok"), null); //$NON-NLS-1$

@@ -23,6 +23,7 @@ import org.eclipse.team.core.*;
 import org.eclipse.team.core.target.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 public abstract class SynchronizedTargetProvider extends TargetProvider {
 

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamPlugin;
 
 public class FileModificationValidatorManager implements IFileModificationValidator {
 	private static final IFileModificationValidator DEFAULT_VALIDATOR =

@@ -3,8 +3,8 @@ package org.eclipse.team.internal.core.target;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 public interface ITeamStatusConstants {
 

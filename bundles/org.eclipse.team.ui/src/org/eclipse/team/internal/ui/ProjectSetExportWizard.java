@@ -36,7 +36,7 @@ import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 

@@ -17,12 +17,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public class ShowHistoryAction extends TeamAction {

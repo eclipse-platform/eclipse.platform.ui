@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.StringMatcher;
 import org.omg.CORBA.UNKNOWN;
@@ -498,10 +499,12 @@ public final class Team {
 		}
 	}
 
-	/*
-	 * Initialize the registry, restoring its state
+	/**
+	 * Initialize the registry, restoring its state.
+	 * 
+	 * This method is called by the plug-in upon startup, clients should not call this method
 	 */
-	static void startup() throws CoreException {
+	public static void startup() throws CoreException {
 		try {
 			table = new Hashtable(11);
 			loadTextState();
@@ -512,10 +515,12 @@ public final class Team {
 		}
 	}
 	
-	/*
-	 * Shut down the registry, persisting its state
+	/**
+	 * Shut down the registry, persisting its state.
+	 * 
+	 * This method is called by the plug-in upon shutdown, clients should not call this method
 	 */	
-	static void shutdown() {
+	public static void shutdown() {
 		saveTextState();
 		try {
 			// make sure that we update our state on disk

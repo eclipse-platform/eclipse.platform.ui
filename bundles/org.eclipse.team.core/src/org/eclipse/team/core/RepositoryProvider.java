@@ -24,6 +24,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 

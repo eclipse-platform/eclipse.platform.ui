@@ -5,7 +5,7 @@
    name="%pluginName"
    version="1.9.0"
    provider-name="Object Technology International, Inc."
-   class="org.eclipse.team.core.TeamPlugin">
+   class="org.eclipse.team.internal.core.TeamPlugin">
 <requires>
    <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.core.runtime"/>
