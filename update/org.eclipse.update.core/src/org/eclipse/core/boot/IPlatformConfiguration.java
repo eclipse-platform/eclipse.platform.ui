@@ -16,6 +16,25 @@ import java.net.URL;
 public interface IPlatformConfiguration {
 	
 	/**
+	 * Configuration change status constants.
+	 */
+	
+	/**
+	 * No changes 
+	 */
+	public static final int NO_CHANGES = 0;
+	
+	/**
+	 * Plug-in changes only
+	 */
+	public static final int PLUGIN_CHANGES = 1;
+	
+	/**
+	 * Feature changes
+	 */
+	public static final int FEATURE_CHANGES = 2;
+	
+	/**
 	 * Configuration entry representing an install site. 
 	 */
 	public interface ISiteEntry {
@@ -27,17 +46,17 @@ public interface IPlatformConfiguration {
 		/** 
 		 * Auto-detect changes to plug-in and feature configuration on startup
 		 */
-		public static final int AUTO_DISCOVER_CHANGES = 1;
+		public static final int USER_CONFIGURED_PLUS_CHANGES = 1;
 	
 		/**
 		 * Only use plug-ins explicitly configured by user
 		 */
-		public static final int USER_CONFIGURED_PLUGINS = 2;
+		public static final int USER_CONFIGURED = 2;
 	
 		/**
 		 * Only use plug-in explicitly configured via site file (eg. by administrator)
 		 */
-		public static final int SITE_CONFIGURED_PLUGINS = 3;
+		public static final int SITE_CONFIGURED = 3;
 		
 		/**
 		 * Returns the URL for this site
@@ -134,18 +153,18 @@ public interface IPlatformConfiguration {
 	 * Configures the specified site entry. Note, that policy change may cause explicitly configured
 	 * plug-in entries to be discarded, as follows:
 	 * <ul>
-	 * <li>AUTO_DISCOVER_CHANGES to USER_CONFIGURED_PLUGINS: configured plug-in
+	 * <li>USER_CONFIGURED_PLUS_CHANGES to USER_CONFIGURED: configured plug-in
 	 * entries are reused, but the site no longer detects changes
-	 * <li>AUTO_DISCOVER_CHANGES to SITE_CONFIGURED_PLUGINS: configured plug-in
+	 * <li>USER_CONFIGURED_PLUS_CHANGES to SITE_CONFIGURED: configured plug-in
 	 * entries are discarded. Site-specified configuration is used
-	 * <li>USER_CONFIGURED_PLUGINS to AUTO_DISCOVER_CHANGES: configured plug-in
+	 * <li>USER_CONFIGURED to USER_CONFIGURED_PLUS_CHANGES: configured plug-in
 	 * entries are reused, and changes are detected on startup
-	 * <li>USER_CONFIGURED_PLUGINS to SITE_CONFIGURED_PLUGINS: configured plug-in
+	 * <li>USER_CONFIGURED to SITE_CONFIGURED: configured plug-in
 	 * entries are discarded. Site-specified configuration is used
-	 * <li>SITE_CONFIGURED_PLUGINS to AUTO_DISCOVER_CHANGES: the site is initialized
+	 * <li>SITE_CONFIGURED to USER_CONFIGURED_PLUS_CHANGES: the site is initialized
 	 * with no plugins configured (the site-specified setting are not saved).
 	 * Changes are detected on startup.
-	 * <li>SITE_CONFIGURED_PLUGINS to USER_CONFIGURED_PLUGINS: the site is initialized
+	 * <li>SITE_CONFIGURED to USER_CONFIGURED: the site is initialized
 	 * with no plugins configured (the site-specified setting are not saved).
 	 * Changes are not detected on startup.
 	 * </ul>
@@ -187,6 +206,20 @@ public interface IPlatformConfiguration {
 	 * configuration location could not be determined.
 	 */
 	public URL getConfigurationLocation();
+	
+	/**
+	 * Returns a status code indicating if the referenced site
+	 * content has changes since the last time the configuration
+	 * was saved. The status is computed at the time the 
+	 * IPlatformConfiguration object is constructed. It takes into
+	 * account the policy settings specified for each of its sites.
+	 * Only sites that specify USER_CONFIGURED_PLUS_CHANGES policy
+	 * are considered when computing the change status.
+	 * 
+	 * @return change status code. Valid values are NO_CHANGES,
+	 * PLUGIN_CHANGES, FEATURE_CHANGES
+	 */
+	public int getChangeStatus();
 		
 	/**
 	 * Called to save the configuration information
