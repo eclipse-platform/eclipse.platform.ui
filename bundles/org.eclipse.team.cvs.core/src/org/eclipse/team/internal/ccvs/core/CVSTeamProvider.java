@@ -521,7 +521,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
 			public void run(final IProgressMonitor monitor) throws CVSException {
 				final Map /* from KSubstOption to List of String */ filesToAdmin = new HashMap();
-				final List /* of ICVSResource */ filesToCommit = new ArrayList();
 				final Collection /* of ICVSFile */ filesToCommitAsText = new HashSet(); // need fast lookup
 				final boolean useCRLF = IS_CRLF_PLATFORM && (CVSProviderPlugin.getPlugin().isUsePlatformLineend());
 		
@@ -557,9 +556,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 						// remember to commit the cleaned resource as text before admin
 						filesToCommitAsText.add(mFile);
 					}
-					// force a commit to bump the revision number
-					makeDirty(file);
-					filesToCommit.add(mFile);
 					// remember to admin the resource
 					List list = (List) filesToAdmin.get(toKSubst);
 					if (list == null) {
@@ -571,7 +567,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			
 				/*** commit then admin the resources ***/
 				// compute the total work to be performed
-				int totalWork = filesToCommit.size() + 1;
+				int totalWork = filesToCommitAsText.size() + 1;
 				for (Iterator it = filesToAdmin.values().iterator(); it.hasNext();) {
 					List list = (List) it.next();
 					totalWork += list.size();
@@ -583,7 +579,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						// commit files that changed from binary to text
 						// NOTE: The files are committed as text with conversions even if the
 						//       resource sync info still says "binary".
-						if (filesToCommit.size() != 0) {
+						if (filesToCommitAsText.size() != 0) {
 							Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
 							session.open(Policy.subMonitorFor(monitor, 1), true /* open for modification */);
 							try {
@@ -595,10 +591,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 									Command.NO_GLOBAL_OPTIONS,
 									new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,
 										Commit.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
-									(ICVSResource[]) filesToCommit.toArray(new ICVSResource[filesToCommit.size()]),
+									(ICVSResource[]) filesToCommitAsText.toArray(new ICVSResource[filesToCommitAsText.size()]),
 									filesToCommitAsText,
 									null, 
-									Policy.subMonitorFor(monitor, filesToCommit.size()));
+									Policy.subMonitorFor(monitor, filesToCommitAsText.size()));
 							} finally {
 								session.close();
 							}
