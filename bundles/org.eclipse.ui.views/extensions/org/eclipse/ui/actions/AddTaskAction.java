@@ -1,16 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2002 International Business Machines Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+/************************************************************************
+Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,30 +51,32 @@ public class AddTaskAction extends SelectionListenerAction {
 		setToolTipText(WorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
 		WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_TASK_ACTION);
 	}
-	private IFile getElement(IStructuredSelection selection) {
+	private IResource getElement(IStructuredSelection selection) {
 		if (selection.size() != 1)
 			return null;
 
 		Object element = selection.getFirstElement();
-		if (element instanceof IFile) {
-			return (IFile) element;
-		}
-		if (element instanceof IAdaptable) {
-			Object resource = ((IAdaptable) element).getAdapter(IResource.class);
-			if (resource instanceof IFile) {
-				return (IFile) resource;
-			}
+		IResource resource = null;
+		if (element instanceof IResource)
+			resource = (IResource) element;
+		if (element instanceof IAdaptable)
+			resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+
+		if (resource != null && resource instanceof IProject) {
+			IProject project = (IProject) resource;
+			if (project.isOpen() == false)
+				resource = null;
 		}			
-		return null;
+		return resource;		
 	}	
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		IFile file = getElement(getStructuredSelection());
-		if (file != null) {
+		IResource resource = getElement(getStructuredSelection());
+		if (resource != null) {
 			TaskPropertiesDialog dialog= new TaskPropertiesDialog(shell);
-			dialog.setResource(file);
+			dialog.setResource(resource);
 			dialog.open();
 		}
 	}
@@ -82,7 +84,8 @@ public class AddTaskAction extends SelectionListenerAction {
 	/**
 	 * The <code>AddTaskAction</code> implementation of this
 	 * <code>SelectionListenerAction</code> method enables the action only
-	 * if the selection contains a single file resource.
+	 * if the selection contains a single resource and the resource is
+	 * not a closed project.
 	 * 
 	 * @param selection the selection to update the enabled state for
 	 */
