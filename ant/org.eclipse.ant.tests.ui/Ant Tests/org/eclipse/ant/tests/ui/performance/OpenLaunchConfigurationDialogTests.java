@@ -21,15 +21,12 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
 
     public static String fgIdentifier= IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP;
-    
-    private PerformanceMeter fMeter;
     
     public void testOpenAntLCD1() {
         // cold run
