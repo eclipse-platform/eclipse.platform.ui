@@ -12,6 +12,7 @@ package org.eclipse.core.internal.content;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -91,6 +92,8 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	protected void registerContentType(IConfigurationElement contentTypeCE) {
 		//TODO: need to ensure the config. element is valid
 		ContentType contentType = createContentType(contentTypeCE);
+		if (!isComplete(contentType))
+			return;
 		catalog.addContentType(contentType);
 		// ensure orphan associations are added		
 		Set orphans = (Set) orphanAssociations.remove(contentType.getId());
@@ -98,6 +101,19 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 			return;
 		for (Iterator iter = orphans.iterator(); iter.hasNext();)
 			addFileAssociation((IConfigurationElement) iter.next(), contentType);
+	}
+	/* Checks whether the content type has all required pieces. */
+	private boolean isComplete(ContentType contentType) {
+		String message = null;
+		if (contentType.getSimpleId() == null)
+			message = Policy.bind("content.missingIdentifier", contentType.getId()); //$NON-NLS-1$
+		else if (contentType.getName() == null)
+			message = Policy.bind("content.missingName", contentType.getId()); //$NON-NLS-1$
+		if (message == null)
+			return true;
+		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null);
+		InternalPlatform.getDefault().log(status);
+		return false;
 	}
 
 	/* Adds extra file associations to existing content types. If the content 

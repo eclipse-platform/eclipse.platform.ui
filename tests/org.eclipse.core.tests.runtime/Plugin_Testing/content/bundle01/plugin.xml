@@ -6,6 +6,6 @@
   version="1.0"
   provider-name="Eclipse.org">
 	<extension point="org.eclipse.core.runtime.contentTypes">
-		<content-type id="missing"/>
+		<content-type id="missing" name="Missing"/>
 	</extension>	
 </plugin>

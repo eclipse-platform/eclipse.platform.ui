@@ -279,6 +279,10 @@ public class ContentType implements IContentType {
 		return priority;
 	}
 
+	String getSimpleId() {
+		return simpleId;
+	}
+
 	/*
 	 * Returns the alias target, if one is found, or this object otherwise.
 	 */

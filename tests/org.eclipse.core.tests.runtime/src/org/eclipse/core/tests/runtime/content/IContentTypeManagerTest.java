@@ -294,6 +294,13 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
 	}
+	
+	public void testInvalidMarkup() {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
+		assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
+		assertNull("3.0", contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.'+ "invalid-missing-name"));			
+	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
