@@ -107,4 +107,21 @@ public interface IPreferenceConstants {
 
 	// Show the toolbar in workbench windows
 	public static final String SHOW_TOOL_BAR = "SHOW_TOOL_BAR"; //$NON-NLS-1$
+	
+	/**
+	 * <p>
+	 * The key for the preference indicating whether multi-stroke key sequences
+	 * should allow a rocker effect.  This means that the first stroke in the
+	 * multi-stroke sequence is "sticky" and will not be forgotten until all of
+	 * the modifiers keys are released.  This is used to allow the user to match
+	 * multiple key bindings from the same "group" without pressing as many 
+	 * keys.  For example "Ctrl+K Ctrl+F" and "Ctrl+K Ctrl+O" could simply be
+	 * entered as "Ctrl+K+F+O".
+	 * </p>
+	 * <p>
+	 * This preference is a <code>boolean</code> value.  The default value is 
+	 * <code>false</code>.
+	 * </p>
+	 */
+	public static final String MULTI_KEY_ROCKER = "MULTI_KEY_ROCKER"; //$NON-NLS-1$
 	}
