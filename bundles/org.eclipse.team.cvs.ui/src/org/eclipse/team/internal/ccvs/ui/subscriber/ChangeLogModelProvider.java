@@ -28,8 +28,6 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -384,11 +382,6 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	}
 	
-	/**
-	 * @param info
-	 * @param remoteResource
-	 * @param logEntry
-	 */
 	private void addNewElementFor(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
 		ISynchronizeModelElement element;	
 		// If the element has a comment then group with common comment
@@ -402,6 +395,11 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			}
 			if(info instanceof CVSSyncInfo) {
 				info = new CVSUpdatableSyncInfo(info.getKind(), info.getLocal(), info.getBase(), (RemoteResource)logEntry.getRemoteFile(), ((CVSSyncInfo)info).getSubscriber());
+				try {
+					info.init();
+				} catch (TeamException e) {
+					// this shouldn't happen, we've provided our own calculate kind
+				}
 			}
 			element = new FullPathSyncInfoElement(changeRoot, info);
 		} else {
