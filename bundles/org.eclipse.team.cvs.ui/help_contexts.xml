@@ -336,49 +336,40 @@
  	<!-- Sync Actions					    -->
  	<!-- ********************************** -->
  	
-   	<context  id="sync_commit_action_context" >
-      <description>Commit outgoing changes to the respository
-      </description>
+   	<context id="sync_commit_action_context" >
+      <description>Commits the selected outgoing changes to the CVS repository. Conflicting changes are not committed; to commit them you must use the "Override and Commit" action.</description>
    	</context>
    	
-   	<context  id="sync_forced_commit_action_context">
-      <description>Override repository with local file
-      </description>
+   	<context id="sync_forced_commit_action_context">
+      <description>Commits the selected conflicting and incoming changes to the CVS repository. Non-conflicting outgoing changes are not committed; to commit them you must use the "Commit" action.</description>
    	</context>
 	
-	<context  id="sync_update_action_context">
-      <description>Update local with remote
-      </description>
+	<context id="sync_update_action_context">
+      <description>Gets the selected incoming changes from the CVS repository. Conflicting changes are not updated; to update them you must use the "Override and Update" action.</description>
    	</context>
 	
-	<context  id="sync_forced_update_action_context">
-      <description>Override local file with remote
-      </description>
+	<context id="sync_forced_update_action_context">
+      <description>Gets the selected conflicting and outgoing changes from the CVS repository. Non-conflicting incoming changes are not updated; to update them you must use the "Update" action. If some of the selected resources are auto-mergeable (i.e. they have no line-based conflicts) then you have the option of either performing an auto-merge or replacing with the remote content.</description>
    	</context>
 	
-	<context  id="sync_add_action_context">
-      <description>Add file to repository
-      </description>
+	<context id="sync_add_action_context">
+      <description>Adds the selected resources to CVS control.</description>
    	</context>
 	
-	<context  id="sync_ignore_action_context">
-      <description>Ignore this file
-      </description>
+	<context id="sync_ignore_action_context">
+      <description>Adds the selected resources to the appropriate .cvsignore file. These resources will no longer be considered for repository operations.</description>
    	</context>
 	
-	<context  id="merge_update_action_context">
-      <description>Merge and update
-      </description>
+	<context id="merge_update_action_context">
+      <description>Gets the selected incoming changes from the CVS repository. Conflicting changes are not updated; to update them you must use the "Override and Update" action.</description>
    	</context>
 	
-	<context  id="merge_forced_update_action_context">
-      <description>Perform a forced merge
-      </description>
+	<context id="merge_forced_update_action_context">
+      <description>Gets the selected conflicting changes from the CVS repository. Non-conflicting incoming changes are not updated; to update them you must use the "Update" action. If some of the selected resources are auto-mergeable (i.e. they have no line-based conflicts) then you have the option of either performing an auto-merge or replacing with the remote content.</description>
    	</context>
 	
-	<context  id="merge_update_with_joinaction_context">
-      <description>Perform a forced merge performing an auto-merge.
-      </description>
+	<context id="merge_update_with_joinaction_context">
+      <description>Gets the selected conflicting changes from the CVS repository. Non-conflicting incoming changes are not updated; to update them you must use the "Update" action. When performing a merge, it is difficult to detect if conflicts are auto-mergeable (i.e. they have no line-based conflicts). If you believe the file is auto-mergeable, you may use this action. You will then have the option of either performing an auto-merge or replacing with the remote content.</description>
    	</context>
 	
 </contexts>
