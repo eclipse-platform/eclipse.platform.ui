@@ -247,7 +247,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		editorComposite.setLayoutData(gd);		
 
 		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd= new GridData(GridData.FILL_BOTH);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fAppearanceColorList.setLayoutData(gd);
 						
