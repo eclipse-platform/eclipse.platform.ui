@@ -177,7 +177,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			String selection= fCombo.getText();
 			return saveLauncherProperty(project, selection);
 		}
-		return false;
+		return true;
 	}
 
 	/**

@@ -264,6 +264,9 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		
 		Runnable runnable= new Runnable() {
 			public void run() {
+				if (getControl().isDisposed()) {
+					return;
+				}
 				Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				if (children.length == 1) {
 					fElementsList.setSelection(new StructuredSelection(children[0]), true);

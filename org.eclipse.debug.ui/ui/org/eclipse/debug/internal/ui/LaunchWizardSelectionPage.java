@@ -182,7 +182,9 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	protected void initializeSettings() {
 		Runnable runnable= new Runnable() {
 			public void run() {
-
+				if (getControl().isDisposed()) {
+					return;
+				}
 				if (fLaunchers.length == 0) {
 					setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_LAUNCHER));
 				} else
