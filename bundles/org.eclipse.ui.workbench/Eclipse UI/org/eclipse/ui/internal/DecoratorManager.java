@@ -27,6 +27,8 @@ public class DecoratorManager
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
+	
+	private OverlayCache overlayCache = new OverlayCache();
 
 	//The cachedDecorators are a 1-many mapping of type to full decorator.
 	private HashMap cachedFullDecorators = new HashMap();
@@ -193,7 +195,7 @@ public class DecoratorManager
 			}
 		}
 
-		return result;
+		return decorateWithOverlays(result,element,adapted);
 	}
 
 	/**
@@ -518,6 +520,7 @@ public class DecoratorManager
 			if (lightweightDefinitions[i].isEnabled())
 				lightweightDefinitions[i].setEnabledWithErrorHandling(false);
 		}
+		overlayCache.disposeAll();
 	}
 	/**
 	 * @see IDecoratorManager#getEnabled(String)
@@ -695,4 +698,19 @@ public class DecoratorManager
 		return decorators;
 
 	}
+	
+	/**
+	 * Decorate the Image supplied with the overlays for any 
+	 * Lightweight 	 */
+	private Image decorateWithOverlays(Image image, Object element, Object adapted){
+		
+		LightweightDecoratorDefinition [] decorators = getLightweightDecoratorsFor(element);
+		LightweightDecoratorDefinition [] adaptedDecorators;
+		if(adapted == null)
+			return overlayCache.getImageFor(image,element,decorators);
+		else{
+			adaptedDecorators = getLightweightDecoratorsFor(adapted);
+			return overlayCache.getImageFor(image,element,decorators,adapted,adaptedDecorators);
+		}
+		}		
 }

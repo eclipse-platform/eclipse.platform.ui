@@ -36,6 +36,18 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String P_TRUE = "true"; //$NON-NLS-1$
 	private static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 	public static String ATT_DECORATOR_CLASS = "decoratorClass"; //$NON-NLS-1$
+	
+	//Constants for quadrants
+	public static final int TOP_LEFT = 0;
+	public static final int TOP_RIGHT = 1;
+	public static final int BOTTOM_LEFT = 2;
+	public static final int BOTTOM_RIGHT = 3;
+	
+	//Constants for quadrants
+	private static final String TOP_LEFT_STRING = "TOP_LEFT";
+	private static final String TOP_RIGHT_STRING = "TOP_RIGHT";
+	private static final String BOTTOM_LEFT_STRING = "BOTTOM_LEFT";
+	private static final String BOTTOM_RIGHT_STRING = "BOTTOM_RIGHT";
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -84,7 +96,7 @@ class DecoratorRegistryReader extends RegistryReader {
 		//Lightweight or Full?
 		if(element.getAttribute(WizardsRegistryReader.ATT_CLASS) == null){
 			String iconPath = element.getAttribute(ATT_ICON);
-			String quadrant = element.getAttribute(ATT_QUADRANT);
+			int quadrant = getQuadrantConstant(element.getAttribute(ATT_QUADRANT));
 			values.add(
 				new LightweightDecoratorDefinition(
 					id, name, description,enablementExpression,adaptable,enabled,quadrant,iconPath,element));
@@ -108,5 +120,21 @@ class DecoratorRegistryReader extends RegistryReader {
 		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
 		return values;
 	}
+	
+	/**
+	 * Get the constant value based on the quadrant supplied.
+	 * Default to bottom right.
+	 */
+	private int getQuadrantConstant(String quadrantDefinition){
+		if(TOP_RIGHT_STRING.equals(quadrantDefinition))
+			return TOP_RIGHT;
+		if(TOP_LEFT_STRING.equals(quadrantDefinition))
+			return TOP_LEFT;
+		if(BOTTOM_LEFT_STRING.equals(quadrantDefinition))
+			return BOTTOM_LEFT;
+		return BOTTOM_RIGHT;		
+			
+	}
+
 
 }

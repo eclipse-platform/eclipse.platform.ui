@@ -1,5 +1,6 @@
 package org.eclipse.jface.viewers;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -18,7 +19,7 @@ public interface ILightweightLabelDecorator extends IBaseLabelProvider {
 	*
 	* @see org.eclipse.jface.resource.CompositeImageDescriptor
 	*/
-	public Image getOverlay(Object element);
+	public ImageDescriptor getOverlay(Object element);
 
 	/**
 	 * Returns the prefix to be used for decorating the prefix of
