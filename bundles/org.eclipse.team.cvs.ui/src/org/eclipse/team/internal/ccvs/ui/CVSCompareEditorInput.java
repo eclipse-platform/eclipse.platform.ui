@@ -69,7 +69,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	private String getLabel(ITypedElement element) {
 		if (element instanceof ResourceNode) {
-			return Policy.bind("VCMCompareEditorInput.workspace", new Object[] {element.getName()} );
+			return Policy.bind("CVSCompareEditorInput.workspace", element.getName());
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
@@ -88,12 +88,12 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	private String getVersionLabel(ITypedElement element) {
 		if (element instanceof ResourceNode) {
-			return Policy.bind("VCMCompareEditorInput.workspaceLabel");
+			return Policy.bind("CVSCompareEditorInput.workspaceLabel");
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			/*if (edition.isTeamStreamResource()) {
-				return Policy.bind("VCMCompareEditorInput.streamLabel", new Object[] {edition.getTeamStream().getName()} );
+				return Policy.bind("CVSCompareEditorInput.streamLabel", new Object[] {edition.getTeamStream().getName()} );
 			} else {
 				return edition.getVersionName();
 			}*/
@@ -158,7 +158,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		if (ancestor != null) {
 			cc.setAncestorLabel(getLabel(ancestor));
 			cc.setAncestorImage(ancestor.getImage());
-			title = Policy.bind("VCMCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} );
+			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} );
 		} else {
 			String leftName = null;
 			if (left != null) leftName = left.getName();
@@ -166,9 +166,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			if (right != null) rightName = right.getName();
 			boolean differentNames = false;
 			if (leftName != null && !leftName.equals(rightName)) {
-				title = Policy.bind("VCMCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} ); 
+				title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} ); 
 			} else {
-				title = Policy.bind("VCMCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} );
+				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} );
 			}
 		}
 		setTitle(title);
@@ -187,7 +187,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		boolean threeWay = ancestor != null;
 		if (right == null || left == null) {
-			setMessage(Policy.bind("VCMCompareEditorInput.different"));
+			setMessage(Policy.bind("CVSCompareEditorInput.different"));
 			return null;
 		}
 		
@@ -220,12 +220,12 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		};
 		
 		try {
-			monitor.beginTask(Policy.bind("VCMCompareEditorInput.comparing"), 30);
+			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30);
 			
 			// do the diff	
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 10);
 			try {
-				sub.beginTask(Policy.bind("VCMCompareEditorInput.comparing"), 100);
+				sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100);
 				return d.findDifferences(threeWay, sub, null, ancestor, left, right);
 			} finally {
 				sub.done();
