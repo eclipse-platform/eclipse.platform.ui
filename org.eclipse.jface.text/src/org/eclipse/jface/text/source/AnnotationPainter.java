@@ -237,6 +237,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	private void handleDrawRequest(GC gc) {
+		
+		if (fTextWidget == null) {
+			// is already disposed
+			return;
+		}
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147

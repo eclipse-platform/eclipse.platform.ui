@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -483,25 +482,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return;
 			case FORMAT: {
 				Point s= getSelectedRange();
-				IDocument document= getDocument();
-				
-				Position p= new Position(s.x, s.y);
 				IRegion r= (s.y == 0) ? getModelCoverage() : new Region(s.x, s.y);
-
 				try {
 					setRedraw(false); 
-					document.addPosition(p);
-					fContentFormatter.format(document, r);
-
-					setSelectedRange(p.getOffset(), p.getLength());
-						
-				} catch (BadLocationException e) {
-					// should not happen
+					fContentFormatter.format(getDocument(), r);						
 				} finally {
 					setRedraw(true);
-					document.removePosition(p);					
 				}
-
 				return;
 			}
 			default:

@@ -945,7 +945,32 @@ public class TextViewer extends Viewer implements
 		private void setStateMask(int stateMask) {
 			fStateMask= stateMask;
 		}
-	}
+	};
+	
+	static class SelectionPosition extends Position {
+		
+		private boolean reverse;
+		
+		public SelectionPosition(Point point) {
+			super();
+			reverse= point.y < 0;
+			if (reverse) {
+				offset= point.x + point.y;
+				length= -point.y;
+			} else {
+				offset= point.x;
+				length= point.y;
+			}
+		}
+		
+		public Point getNormalizedSelection() {
+			return new Point(offset, length);
+		}
+		
+		public Point getSelection() {
+			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
+		}
+	};
 		
 	/** ID for originators of view port changes */
 	protected static final int SCROLLER=		1;
@@ -1025,7 +1050,7 @@ public class TextViewer extends Viewer implements
 	 * The selection when working in non-redraw state
 	 * @since 2.0
 	 */
-	private Point fDocumentSelection;
+	private SelectionPosition fDocumentSelection;
 	/** 
 	 * The viewer's rewrite target
 	 * @since 2.0
@@ -1565,11 +1590,8 @@ public class TextViewer extends Viewer implements
 	 */
 	public Point getSelectedRange() {
 		
-		if (!redraws()) {
-			if (fDocumentSelection.y < 0)
-				return new Point(fDocumentSelection.x + fDocumentSelection.y, -fDocumentSelection.y);
-			return new Point(fDocumentSelection.x, fDocumentSelection.y);
-		}
+		if (!redraws())
+			return fDocumentSelection.getNormalizedSelection();
 		
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
@@ -1585,8 +1607,10 @@ public class TextViewer extends Viewer implements
 	public void setSelectedRange(int selectionOffset, int selectionLength) {
 		
 		if (!redraws()) {
-			fDocumentSelection.x= selectionOffset;
-			fDocumentSelection.y= selectionLength;
+			if (fDocumentSelection != null) {
+				fDocumentSelection.offset= selectionOffset;
+				fDocumentSelection.length= selectionLength;
+			}
 			return;
 		}
 		
@@ -2175,8 +2199,14 @@ public class TextViewer extends Viewer implements
 		IRegion modelRange= new Region(start, length);
 		IRegion widgetRange= modelRange2WidgetRange(modelRange);
 		if (widgetRange != null) {
-			internalRevealRange(widgetRange.getOffset(), widgetRange.getOffset() + widgetRange.getLength());				
+			
+			int[] range= new int[] { widgetRange.getOffset(), widgetRange.getLength() };
+			validateSelectionRange(range);
+			if (range[0] >= 0)
+				internalRevealRange(range[0], range[0] + range[1]);
+				
 		} else {
+			
 			IRegion coverage= getModelCoverage();
 			int cursor= start < coverage.getOffset() ? 0 : getVisibleDocument().getLength();
 			internalRevealRange(cursor, cursor);
@@ -3492,9 +3522,7 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	public int getMark() {
-		return fMarkPosition == null || fMarkPosition.isDeleted()
-			? -1
-			: fMarkPosition.getOffset();
+		return fMarkPosition == null || fMarkPosition.isDeleted() ? -1 : fMarkPosition.getOffset();
 	}
 
 	/*
@@ -3599,6 +3627,19 @@ public class TextViewer extends Viewer implements
 		updateTextListeners(fWidgetCommand);
 	}
 	
+	private Point forgetDocumentSelection() {
+		if (fDocumentSelection == null)
+			return null;
+			
+		Point selection= fDocumentSelection.isDeleted() ? null : fDocumentSelection.getSelection();
+		IDocument document= getDocument();
+		if (document != null)
+			document.removePosition(fDocumentSelection);
+		fDocumentSelection= null;
+		
+		return selection;
+	}
+	
 	/**
 	 * Enables the redrawing of this text viewer. Subclasses may extend.
 	 * @since 2.0
@@ -3620,13 +3661,31 @@ public class TextViewer extends Viewer implements
 			}
 		}
 		
-		setSelectedRange(fDocumentSelection.x, fDocumentSelection.y);
-		revealRange(fDocumentSelection.x, fDocumentSelection.y);
+		Point selection= forgetDocumentSelection();
+		if (selection != null) {
+			setSelectedRange(selection.x, selection.y);
+			revealRange(selection.x, selection.y);
+		}
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed())
 			fTextWidget.setRedraw(true);
 			
 		fireRedrawChanged();
+	}
+	
+	private void rememberDocumentSelection() {
+		Point selection= getSelectedRange();
+		if (selection != null) {
+			SelectionPosition p= new SelectionPosition(selection);
+			IDocument document= getDocument();
+			if (document != null) {
+				try {
+					document.addPosition(p);
+					fDocumentSelection= p;
+				} catch (BadLocationException x) {
+				}
+			}
+		}
 	}
 	
 	/**
@@ -3635,7 +3694,7 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void disableRedrawing() {
 		
-		fDocumentSelection= getSelectedRange();
+		rememberDocumentSelection();
 		
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
 			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
