@@ -13,9 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseFile;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -35,32 +32,20 @@ class DiffStructureVisitor extends FileStructureVisitor {
 	 */
 	protected void sendFile(ICVSFile mFile) throws CVSException {
 		byte[] info = mFile.getSyncBytes();
-		boolean addedFile = (info==null);
-
+		if (info==null)  {
+			return;
+		}
+		
 		// Send the parent folder if it hasn't been sent already
 		sendFolder(mFile.getParent());
-
 		Policy.checkCanceled(monitor);
-
-		if (addedFile) {
-			KSubstOption ksubst;
-			if (mFile instanceof EclipseFile) {
-				EclipseFile file = (EclipseFile)mFile;
-				ksubst = KSubstOption.fromFile(file.getIFile());
-			} else {
-				ksubst = Command.KSUBST_BINARY;
-			}
-			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), null);	
-			newInfo.setKeywordMode(ksubst);
-			info = newInfo.getBytes();
-		}
 		session.sendEntry(info, null);
 		
 		if (!mFile.exists()) {
 			return;
 		}
 
-		if (mFile.isModified(null) || addedFile) {
+		if (mFile.isModified(null)) {
 			session.sendModified(mFile, ResourceSyncInfo.isBinary(info), monitor);
 		} else {
 			session.sendUnchanged(mFile);

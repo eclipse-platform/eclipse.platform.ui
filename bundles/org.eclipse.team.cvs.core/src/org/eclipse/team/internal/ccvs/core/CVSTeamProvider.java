@@ -11,10 +11,12 @@
 package org.eclipse.team.internal.ccvs.core;
  
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +55,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
+import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -114,6 +117,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 	
 	public static final IStatus OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 
+	private static final int UNIFIED_FORMAT = 0;
+	private static final int CONTEXT_FORMAT = 1;
+	private static final int STANDARD_FORMAT = 2;
+	
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;
 	private String comment = "";  //$NON-NLS-1$
@@ -461,6 +468,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public void diff(IResource resource, LocalOption[] options, PrintStream stream,
 		IProgressMonitor progress) throws TeamException {
 		
+		boolean includeNewFiles = false;
+		boolean doNotRecurse = false;
+		int format = STANDARD_FORMAT;
+		
 		// Determine the command root and arguments arguments list
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		ICVSFolder commandRoot;
@@ -487,8 +498,132 @@ public class CVSTeamProvider extends RepositoryProvider {
 			s.close();
 			progress.done();
 		}
+		
+		// Append our diff output to the server diff output.
+		// Our diff output includes new files and new files in new directories.
+			
+		for (int i = 0; i < options.length; i++)  {
+			LocalOption option = options[i];
+			if (option.equals(Diff.INCLUDE_NEWFILES))  {
+				includeNewFiles = true;
+			} else if (option.equals(Diff.DO_NOT_RECURSE))  {
+				doNotRecurse = true;
+			} else if (option.equals(Diff.UNIFIED_FORMAT))  {
+				format = UNIFIED_FORMAT;
+			} else if (option.equals(Diff.CONTEXT_FORMAT))  {
+				format = CONTEXT_FORMAT;
+			}
+		}
+		
+		if (includeNewFiles)  {
+			newFileDiff(commandRoot, stream, doNotRecurse, format);
+		}
 	}
 	
+	/**
+	 * This diff adds new files and directories to the stream.
+	 * @param resource
+	 * @param stream
+	 * @param doNotRecurse
+	 * @param format
+	 * @throws CVSException
+	 */
+	
+	private void newFileDiff(final ICVSResource resource, final PrintStream stream, final boolean doNotRecurse, final int format) throws CVSException {
+	
+		resource.accept(new ICVSResourceVisitor() {
+			public void visitFile(ICVSFile file) throws CVSException {
+				if (!(file.isIgnored() || file.isManaged()))  {
+					addFileToDiff(file, stream, format);
+				}
+			}
+			public void visitFolder(ICVSFolder folder) throws CVSException {
+				// Even if we are not supposed to recurse we still need to go into
+				// the root directory.
+				if (folder.isIgnored() || (doNotRecurse && !folder.equals(resource)))  {
+					return;
+				} else  {
+					folder.acceptChildren(this);
+				}
+			}
+		});
+	}
+
+	private void addFileToDiff(ICVSFile file, PrintStream stream, int format) throws CVSException {
+		
+		String nullFilePrefix = "";
+		String newFilePrefix = "";
+		String positionInfo = "";
+		String linePrefix = "";
+		
+		String pathString = file.getIResource().getProjectRelativePath().toString();
+
+		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
+		int lines = 0;
+		try {
+			while (fileReader.readLine() != null)  {
+				lines++;
+			}
+			fileReader.close();
+			
+			switch (format) {
+				case UNIFIED_FORMAT :
+					nullFilePrefix = "--- ";	//$NON-NLS-1$
+					newFilePrefix = "+++ "; 	//$NON-NLS-1$
+					positionInfo = "@@ -0,0 +1," + lines + " @@" ;	//$NON-NLS-1$
+					linePrefix = "+"; //$NON-NLS-1$
+					break;
+
+				case CONTEXT_FORMAT :
+					nullFilePrefix = "*** ";	//$NON-NLS-1$
+					newFilePrefix = "--- ";		//$NON-NLS-1$
+					positionInfo = "--- 1," + lines + " ----";	//$NON-NLS-1$
+					linePrefix = "+ ";	//$NON-NLS-1$
+					break;
+				
+				default :
+					positionInfo = "0a1," + lines;	//$NON-NLS-1$
+					linePrefix = "> ";	//$NON-NLS-1$
+					break;
+			}
+			
+			fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
+				
+			stream.println("Index: " + pathString);		//$NON-NLS-1$
+			stream.println("===================================================================");	//$NON-NLS-1$
+			stream.println("RCS file: " + pathString);	//$NON-NLS-1$
+			stream.println("diff -N " + pathString);	//$NON-NLS-1$
+			
+			if (lines > 0)  {
+				
+				if (format != STANDARD_FORMAT)  {
+					stream.println(nullFilePrefix + "/dev/null	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
+					// Technically this date should be the local file date but nobody really cares.
+					stream.println(newFilePrefix + pathString + "	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
+				}
+				
+				if (format == CONTEXT_FORMAT)  {
+					stream.println("***************");	//$NON-NLS-1$
+					stream.println("*** 0 ****");		//$NON-NLS-1$
+				}
+				
+				stream.println(positionInfo);
+				
+				for (int i = 0; i < lines; i++)  {
+					stream.print(linePrefix);
+					stream.println(fileReader.readLine());
+				}
+			}
+		} catch (IOException e) {
+			throw new CVSException(Policy.bind("java.io.IOException", pathString));
+		} finally  {
+			try {
+				fileReader.close();
+			} catch (IOException e1) {
+			}
+		}
+	}
+
 	/**
 	 * Replace the local version of the provided resources with the remote using "cvs update -C ..."
 	 * 
