@@ -93,6 +93,7 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     }
 
     /**
+     * Return the category name for the node.
      * @return java.lang.String
      */
     public String getCategory() {

@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,6 +34,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistryReader;
@@ -119,7 +118,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
 
     // Other data.
-    private PreferenceManager preferenceManager;
+    private WorkbenchPreferenceManager preferenceManager;
 
     private ViewRegistry viewRegistry;
 
@@ -461,7 +460,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public PreferenceManager getPreferenceManager() {
         if (preferenceManager == null) {
-            preferenceManager = new PreferenceManager(
+            preferenceManager = new WorkbenchPreferenceManager(
                     PREFERENCE_PAGE_CATEGORY_SEPARATOR);
 
             //Get the pages from the registry
@@ -470,11 +469,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             List pageContributions = registryReader
                     .getPreferenceContributions(Platform.getExtensionRegistry());
 
-            //Add the contributions to the manager
-            Iterator iterator = pageContributions.iterator();
-            while (iterator.hasNext()) {
-                preferenceManager.addToRoot((IPreferenceNode) iterator.next());
-            }
+           preferenceManager.addContributions(pageContributions);
         }
         return preferenceManager;
     }

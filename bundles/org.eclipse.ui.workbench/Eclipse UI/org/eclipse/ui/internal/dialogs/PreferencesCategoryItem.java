@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.GenericListItem;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,14 +30,17 @@ public class PreferencesCategoryItem extends GenericListItem {
 	private Composite control;
 	private Label imageLabel;
 	private Label textLabel;
+	private ILabelProvider labelProvider;
 
 	/**
 	 * Create a new instance of the receiver for displaying
 	 * wrapped element.
 	 * @param wrappedElement
+	 * @param provider
 	 */
-	public PreferencesCategoryItem(Object wrappedElement) {
+	public PreferencesCategoryItem(Object wrappedElement, ILabelProvider provider) {
 		super(wrappedElement);
+		labelProvider = provider;
 	}
 
 	/* (non-Javadoc)
@@ -57,8 +56,6 @@ public class PreferencesCategoryItem extends GenericListItem {
 	 */
 	public void createControl(Composite parent, Color color) {
 
-		IPreferenceNode node = (IPreferenceNode) getElement();
-
 		control = new Composite(parent, SWT.CENTER);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 1;
@@ -66,20 +63,14 @@ public class PreferencesCategoryItem extends GenericListItem {
 		control.setLayout(layout);
 		control.setBackground(color);
 
-		Image image;
-		ImageDescriptor desc = ((WorkbenchPreferenceNode) node).getDescriptor();
-		if (desc == null)
-			image = JFaceResources.getImage(Dialog.DLG_IMG_INFO);
-		else
-			image = desc.createImage();
-
+		
 		imageLabel = new Label(control, SWT.CENTER);
 		imageLabel.setBackground(color);
-		imageLabel.setImage(image);
+		imageLabel.setImage(labelProvider.getImage(getElement()));
 		imageLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		textLabel = new Label(control, SWT.CENTER);
-		textLabel.setText(node.getLabelText());
+		textLabel.setText(labelProvider.getText(getElement()));
 		textLabel.setBackground(color);
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 

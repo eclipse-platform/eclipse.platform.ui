@@ -89,6 +89,10 @@ public abstract class GenericListViewer extends ContentViewer {
 	public abstract GenericListItem createListItem(Object element, Color color,
 			GenericListViewer viewer);
 
+	/**
+	 * Create the contents for the receiver.
+	 *
+	 */
 	public void createContents(){
 
 		if (getContentProvider() == null)
@@ -116,29 +120,25 @@ public abstract class GenericListViewer extends ContentViewer {
 	/**
 	 * Create items from the supplied elements.
 	 * @param elements
+	 * @param parent
+	 * @param indent
 	 */
 	private void createItems(Object[] elements, GenericListItem parent, int indent) {
 		for (int i = 0; i < elements.length; i++) {
 			Color color = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 			final GenericListItem newItem = createListItem(elements[i], color, this);
-			final Object element = elements[i];
-			
+					
 			GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 			layoutData.horizontalIndent = indent * 20;
 			newItem.getControl().setLayoutData(layoutData);
 			if(parent != null)
 				newItem.getControl().moveBelow(parent.getControl());
-			final int newIndent = indent + 1;
 			newItem.addMouseListener(new MouseAdapter() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
 				 */
 				public void mouseDown(MouseEvent e) {
 					itemSelected(newItem);
-//					Object[] children = ((ITreeContentProvider) getContentProvider())
-//					.getChildren(element);
-//					createItems(children,newItem,newIndent);
-//					control.pack();
 				}
 			});
 			
