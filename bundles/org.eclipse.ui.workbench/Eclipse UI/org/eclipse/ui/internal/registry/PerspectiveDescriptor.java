@@ -315,13 +315,13 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
             singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
 
             //Find a descriptor in the registry.
-            PerspectiveDescriptor descriptor = (PerspectiveDescriptor) WorkbenchPlugin
-                    .getDefault().getPerspectiveRegistry()
-                    .findPerspectiveWithId(getOriginalId());
+            IPerspectiveDescriptor descriptor = WorkbenchPlugin.getDefault()
+					.getPerspectiveRegistry().findPerspectiveWithId(
+							getOriginalId());
 
             if (descriptor != null)
                 //Copy the state from the registred descriptor.	
-                image = descriptor.image;
+                image = descriptor.getImageDescriptor();
         }
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
