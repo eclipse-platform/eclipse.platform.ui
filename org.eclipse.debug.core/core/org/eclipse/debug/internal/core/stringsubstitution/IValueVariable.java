@@ -26,4 +26,11 @@ public interface IValueVariable extends IStringVariable {
 	 * @param value variable value, possibly <code>null</code>
 	 */
 	public void setValue(String value);
+	
+	/**
+	 * Returns the value of this variable, or <code>null</code> if none.
+	 * 
+	 * @return the value of this variable, or <code>null</code> if none
+	 */
+	public String getValue();
 }
