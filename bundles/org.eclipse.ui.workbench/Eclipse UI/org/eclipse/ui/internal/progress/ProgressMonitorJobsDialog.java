@@ -135,7 +135,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             GridData viewerData = new GridData(GridData.FILL_BOTH);
             viewer.getControl().setLayoutData(viewerData);
             GridData viewerCompositeData = (GridData) viewerComposite.getLayoutData();
-            viewerCompositeData.heightHint = convertHeightInCharsToPixels(10);;
+            viewerCompositeData.heightHint = convertHeightInCharsToPixels(10);
             viewerComposite.layout(true);
             viewer.getControl().setVisible(true);
             viewerHeight = viewerComposite.computeTrim(0, 0, 0, viewerCompositeData.heightHint).height;

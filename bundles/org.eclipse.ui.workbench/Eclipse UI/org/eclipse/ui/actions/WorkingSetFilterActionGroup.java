@@ -132,7 +132,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
             }
         };
         menuManager.addMenuListener(menuListener);
-    };
+    }
 
     /**
      * Returns the working set which is currently selected.

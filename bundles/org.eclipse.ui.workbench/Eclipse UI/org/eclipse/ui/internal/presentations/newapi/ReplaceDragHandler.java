@@ -28,7 +28,7 @@ public class ReplaceDragHandler extends TabDragHandler {
         public DragCookie(int pos) {
             insertPosition = pos;
         }
-    };
+    }
 
     private AbstractTabFolder tabFolder;
 

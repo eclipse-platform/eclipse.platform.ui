@@ -148,7 +148,7 @@ public class CellEditorActionHandler {
                 return;
             }
         }
-    };
+    }
 
     private class CellChangeListener implements IPropertyChangeListener {
         public void propertyChange(PropertyChangeEvent event) {
@@ -188,7 +188,7 @@ public class CellEditorActionHandler {
                 return;
             }
         }
-    };
+    }
 
     private class CutActionHandler extends Action {
         protected CutActionHandler() {

@@ -105,7 +105,7 @@ public abstract class AbstractTabFolder {
      */
     public Point getPaneMenuLocation() {
         return getControl().toDisplay(new Point(0,0));
-    };
+    }
 
     /**
      * Returns the location where the part list should be opened when activated
@@ -127,7 +127,7 @@ public abstract class AbstractTabFolder {
      */
     public Point getSystemMenuLocation() {
         return getControl().toDisplay(new Point(0,0));
-    };
+    }
     
     /**
      * Returns the parent composite that should be used for creating the toolbar.

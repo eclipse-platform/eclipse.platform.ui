@@ -184,4 +184,4 @@ public class NavigationHistoryEntry {
         }
         return false;
     }
-};
+}

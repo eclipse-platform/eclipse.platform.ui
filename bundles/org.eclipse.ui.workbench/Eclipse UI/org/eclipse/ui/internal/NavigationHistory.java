@@ -315,7 +315,6 @@ public class NavigationHistory implements INavigationHistory {
                 System.out.println(append
                         + "Index: " + i + " " + history.get(i)); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            ;
         }
     }
 

@@ -108,7 +108,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
             for (int i = 0; i < cache.size(); i++) {
                 ((EditorContribution) cache.get(i)).dispose();
             }
-        };
+        }
 
         public ActionDescriptor[] getExtendedActions() {
             ArrayList results = new ArrayList();

@@ -180,7 +180,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             }
             return dropResult.getSnapRectangle();
         }
-    };
+    }
 
     private static final PartStackDropResult dropResult = new PartStackDropResult();
 

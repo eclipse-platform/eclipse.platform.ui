@@ -19,8 +19,8 @@ public abstract class AbstractTabItem {
     public abstract Rectangle getBounds();
     public abstract void setInfo(PartInfo info);
     public abstract void dispose();
-    public void setBusy(boolean busy) {};
-    public void setBold(boolean bold) {};
+    public void setBusy(boolean busy) {}
+    public void setBold(boolean bold) {}
     
     public abstract Object getData();
     public abstract void setData(Object data);

@@ -66,7 +66,7 @@ public final class SelectionEnabler {
 
     public static final int MULTIPLE = -5;
 
-    private List classes = new ArrayList();;
+    private List classes = new ArrayList();
 
     private ActionExpression enablementExpression;
 

@@ -41,7 +41,7 @@ public class LayoutTreeNode extends LayoutTree {
 			right = r;
 			resizable = resize;
 		}
-	};
+	}
 	
     /* The node children witch may be another node or a leaf */
     private LayoutTree children[] = new LayoutTree[2];

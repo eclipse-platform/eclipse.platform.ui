@@ -1044,7 +1044,7 @@ public abstract class PartSashContainer extends LayoutPart implements
                 if (root == null || getVisibleChildrenCount(this) <= 1) {
                     pointlessDrop = true;
                 }
-            };
+            }
 
             int cursor = Geometry.getOppositeSide(side);
 

@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 public class DecoratorRegistryReader extends RegistryReader {
 
     //The registry values are the ones read from the registry
-    private Collection values = new ArrayList();;
+    private Collection values = new ArrayList();
 
     private Collection ids = new HashSet();
 

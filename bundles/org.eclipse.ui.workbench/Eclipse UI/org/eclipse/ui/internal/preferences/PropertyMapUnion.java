@@ -31,7 +31,7 @@ public class PropertyMapUnion implements IPropertyMap {
             this.value = value;
             this.commonAttribute = commonAttribute;
         }
-    };
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.preferences.IPropertyMap#keySet()
@@ -130,7 +130,7 @@ public class PropertyMapUnion implements IPropertyMap {
                 
                 localInfo = new PropertyInfo(value, isCommon);
                 values.put(element, localInfo);
-            };            
+            }        
         }        
     }
     

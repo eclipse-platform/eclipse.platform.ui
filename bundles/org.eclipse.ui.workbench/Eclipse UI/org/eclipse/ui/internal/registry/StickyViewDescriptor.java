@@ -60,7 +60,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
     public StickyViewDescriptor(IConfigurationElement element)
             throws CoreException {
     	this.configurationElement = element;
-    	id = configurationElement.getAttribute(ATT_ID);;
+    	id = configurationElement.getAttribute(ATT_ID);
         if (id == null)
             throw new CoreException(new Status(IStatus.ERROR, element
                     .getDeclaringExtension().getNamespace(), 0,
