@@ -20,6 +20,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -80,7 +83,19 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * Holds onto the cool item ids added by the application.
 	 */
 	private ArrayList coolItemIds = new ArrayList(4);
-		
+
+	/**
+	 * Holds the list drag and drop <code>Transfer</code> for the
+	 * editor area
+	 */
+	private ArrayList transferTypes = new ArrayList(3);
+
+	/**
+	 * The <code>DropTargetListener</code> implementation for handling a
+	 * drop into the editor area.
+	 */
+	private DropTargetListener dropTargetListener = null;
+	 
 	/**
 	 * Creates a new workbench configurer.
 	 * <p>
@@ -299,8 +314,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorToolbarGroup()
 	 */
 	public void addEditorToolbarGroup() {
-		// TODO Auto-generated method stub
-		
+		// @issue need to provide implementation for this
 	}
 
 	/* (non-Javadoc)
@@ -340,5 +354,54 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/* package */ ArrayList getCoolItemIds() {
 		return coolItemIds;
 	}
-}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer(org.eclipse.swt.dnd.Transfer)
+	 */
+	public void addEditorAreaTransfer(Transfer tranfer) {
+		if (tranfer != null && !transferTypes.contains(tranfer)) {
+			transferTypes.add(tranfer);
+			Transfer[] transfers = new Transfer[transferTypes.size()];
+			transferTypes.toArray(transfers);
+			WorkbenchPage[] pages = (WorkbenchPage[]) window.getPages();
+			for (int i = 0; i < pages.length; i++) {
+				DropTarget dropTarget = ((EditorArea) pages[i].getEditorPresentation().getLayoutPart()).getDropTarget();
+				if (dropTarget != null) {
+					dropTarget.setTransfer(transfers);
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#configureEditorAreaTransfer(org.eclipse.swt.dnd.DropTargetListener)
+	 */
+	public void configureEditorAreaTransfer(DropTargetListener dropTargetListener) {
+		if (dropTargetListener != null) {
+			this.dropTargetListener = dropTargetListener;
+			WorkbenchPage[] pages = (WorkbenchPage[]) window.getPages();
+			for (int i = 0; i < pages.length; i++) {
+				DropTarget dropTarget = ((EditorArea) pages[i].getEditorPresentation().getLayoutPart()).getDropTarget();
+				if (dropTarget != null) {
+					dropTarget.addDropListener(this.dropTargetListener);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns the array of <code>Transfer</code> added by the application
+	 */
+	/* package */ Transfer[] getTransfers() {
+		Transfer[] transfers = new Transfer[transferTypes.size()];
+		transferTypes.toArray(transfers);
+		return transfers;
+	}
+
+	/**
+	 * Return the drop listener provided by the application.
+	 */	
+	/* package */ DropTargetListener getDropTargetListener() {
+		return dropTargetListener;
+	}
+}

@@ -11,18 +11,20 @@
 package org.eclipse.ui.internal;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.EditorInputTransfer;
-import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Represents the area set aside for editor workbooks.
@@ -38,13 +40,13 @@ public class EditorArea extends PartSashContainer {
 	private ArrayList editorWorkbooks = new ArrayList(3);
 	private EditorWorkbook activeEditorWorkbook;
 	private DropTarget dropTarget;
-	private DropTargetAdapter dropTargetAdapter;
+	private WorkbenchPage page;
 	
 public EditorArea(String editorId, IPartDropListener listener, WorkbenchPage page) {
 	super(editorId,page);
 
 	this.partDropListener = listener;
-	this.dropTargetAdapter = new EditorAreaDropAdapter(page);
+	this.page = page;
 	createDefaultWorkbook();
 }
 /**
@@ -332,16 +334,17 @@ public void updateTabList() {
 	}
 	private void addDropSupport() {
 		if (dropTarget == null) {
-			// @issue support for d&d of IDE specific transfers (resources, markers)
-			Transfer[] types = new Transfer[] {
-					EditorInputTransfer.getInstance(), 
-					ResourceTransfer.getInstance(),
-					MarkerTransfer.getInstance() };
+			WorkbenchWindowConfigurer winConfigurer = page.getUnprotectedWindow().getWindowConfigurer();
 		
 			dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT | DND.DROP_COPY);
-			dropTarget.setTransfer(types);
-			dropTarget.addDropListener(dropTargetAdapter);
+			dropTarget.setTransfer(winConfigurer.getTransfers());
+			if (winConfigurer.getDropTargetListener() != null) {
+				dropTarget.addDropListener(winConfigurer.getDropTargetListener());
+			}
 		}
 	}
 
+	/* package */ DropTarget getDropTarget() {
+		return dropTarget;
+	}
 }
