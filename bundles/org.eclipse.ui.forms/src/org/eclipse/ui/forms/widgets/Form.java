@@ -362,7 +362,7 @@ public class Form extends Composite {
 					gc.drawImage(backgroundImage, 0, 0);
 					break;
 				case SWT.RIGHT:
-					Rectangle clientArea = getClientArea();
+					//Rectangle clientArea = getClientArea();
 					gc.drawImage(backgroundImage, width-ibounds.width, 0);
 					break;
 			}

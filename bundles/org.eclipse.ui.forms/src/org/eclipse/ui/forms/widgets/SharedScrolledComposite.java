@@ -156,7 +156,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 				.getWidthHint(clientArea.width, c), FormUtil.getHeightHint(
 						clientArea.height, c));
 		
-		Point currentSize = c.getSize();
+		//Point currentSize = c.getSize();
 
 		if (!(expandHorizontal && expandVertical)) {
 		    c.setSize(newSize);		    

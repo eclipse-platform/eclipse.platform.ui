@@ -703,14 +703,14 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 	}
 	void calculateMinimumColumnWidths(Composite parent, boolean changed) {
-		Control[] children = parent.getChildren();
+		//Control[] children = parent.getChildren();
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
-				Control child = children[td.childIndex];
+				//Control child = children[td.childIndex];
 				
 				SizeCache childCache = cache.getCache(td.childIndex);
 				int minWidth = childCache.computeMinimumWidth();
@@ -766,7 +766,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		return (control.getStyle() & SWT.WRAP) != 0;
 	}
 	void calculateMaximumColumnWidths(Composite parent, boolean changed) {
-		Control[] children = parent.getChildren();
+		//Control[] children = parent.getChildren();
 		for (int i = 0; i < numColumns; i++) {
 			maxColumnWidths[i] = 0;
 		}
@@ -776,7 +776,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
-				Control child = children[td.childIndex];
+				//Control child = children[td.childIndex];
 				
 				SizeCache sc = cache.getCache(td.childIndex);
 				int maxWidth = sc.computeMaximumWidth(); 

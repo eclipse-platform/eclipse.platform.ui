@@ -27,7 +27,7 @@ public class ScrolledPropertiesPage extends FormPage {
 	}
 	protected void createFormContent(final IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
+		//FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with scrolled sections");
 		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(
 				ExamplesPlugin.IMG_FORM_BG));

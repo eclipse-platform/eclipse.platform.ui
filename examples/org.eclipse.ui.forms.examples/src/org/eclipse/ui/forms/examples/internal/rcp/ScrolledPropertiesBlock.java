@@ -66,7 +66,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 	}
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
-		final ScrolledForm form = managedForm.getForm();
+		//final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.setText("Model Objects");

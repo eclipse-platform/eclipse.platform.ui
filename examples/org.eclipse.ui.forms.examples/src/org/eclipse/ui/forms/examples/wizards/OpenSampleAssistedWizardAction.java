@@ -11,7 +11,6 @@
 package org.eclipse.ui.forms.examples.wizards;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.ui.*;
 /**
  * @see IWorkbenchWindowActionDelegate

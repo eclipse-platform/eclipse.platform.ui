@@ -32,7 +32,7 @@ public class ThirdPage extends FormPage {
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
+		//FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with wrapped controls");
 		ColumnLayout layout = new ColumnLayout();
 		layout.topMargin = 0;

@@ -180,8 +180,8 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 		int childrenPerColumn = children.length / ncolumns;
 		if (children.length % ncolumns != 0)
 			childrenPerColumn++;
-		int colWidth = 0;
-		int colHeight = 0;
+		//int colWidth = 0;
+		//int colHeight = 0;
 		int ncol = 0;
 		int x = leftMargin, y = topMargin;
 		int ccolCount = 0;

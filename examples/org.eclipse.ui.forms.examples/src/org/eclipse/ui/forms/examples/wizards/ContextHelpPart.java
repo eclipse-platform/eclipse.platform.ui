@@ -36,7 +36,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class ContextHelpPart {
 	private ScrolledForm form;
 
-	private Label title;
+	//private Label title;
 
 	private Text phraseText;
 

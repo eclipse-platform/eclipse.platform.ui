@@ -318,11 +318,11 @@ public class ExpandableComposite extends Composite {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			int thmargin = 0;
-			int tvmargin = 0;
+			//int tvmargin = 0;
 			
 			if ((expansionStyle & TITLE_BAR)!=0) {
 				thmargin = GAP;
-				tvmargin = GAP;
+				//tvmargin = GAP;
 			}			
 			if (size!=null)
 				width = size.x;
@@ -360,11 +360,11 @@ public class ExpandableComposite extends Composite {
 				textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point tcsize=null;
 			int thmargin = 0;
-			int tvmargin = 0;
+			//int tvmargin = 0;
 			
 			if ((expansionStyle & TITLE_BAR)!=0) {
 				thmargin = GAP;
-				tvmargin = GAP;
+				//tvmargin = GAP;
 			}			
 			if (textClient!=null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);

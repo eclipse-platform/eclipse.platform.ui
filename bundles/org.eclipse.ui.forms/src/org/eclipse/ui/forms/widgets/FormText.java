@@ -16,7 +16,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -835,12 +834,14 @@ public final class FormText extends Canvas {
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
 	}
+/*
 	private void copyShortcut(HyperlinkSegment link) {
 		String text = link.getText();
 		Clipboard clipboard = new Clipboard(getDisplay());
 		clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
 				.getInstance()});
 	}
+*/
 	private void ensureVisible(HyperlinkSegment segment) {
 		if (segment == null)
 			return;

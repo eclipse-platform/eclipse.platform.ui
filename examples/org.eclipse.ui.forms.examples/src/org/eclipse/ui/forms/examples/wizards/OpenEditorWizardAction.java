@@ -11,7 +11,6 @@
 package org.eclipse.ui.forms.examples.wizards;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.examples.internal.OpenFormEditorAction;
 import org.eclipse.ui.internal.forms.WizardEditorInput;
 /**
@@ -25,7 +24,7 @@ public class OpenEditorWizardAction
 	}
 	
 	public void run(IAction action) {
-		FormColors colors = new FormColors(getWindow().getShell().getDisplay());
+		//FormColors colors = new FormColors(getWindow().getShell().getDisplay());
 		SampleEditorFormWizard wizard = new SampleEditorFormWizard();
 		WizardEditorInput input = new WizardEditorInput(wizard, true);
 		openEditor(input, EDITOR_ID);

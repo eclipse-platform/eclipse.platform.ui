@@ -17,7 +17,7 @@ import org.eclipse.ui.*;
  * @see IWorkbenchWindowActionDelegate
  */
 public class OpenAssistedWizardAction implements IWorkbenchWindowActionDelegate {
-	private static final String EDITOR_ID = "org.eclipse.ui.forms.examples.wizard-editor";
+	//private static final String EDITOR_ID = "org.eclipse.ui.forms.examples.wizard-editor";
 	private IWorkbenchWindow window;
 
 	public OpenAssistedWizardAction() {

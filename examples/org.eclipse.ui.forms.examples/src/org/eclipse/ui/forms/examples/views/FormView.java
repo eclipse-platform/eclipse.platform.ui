@@ -50,7 +50,7 @@ public class FormView extends ViewPart {
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
 		link.setLayoutData(td);
-		Label label = toolkit.createLabel(form.getBody(), "Text field label:");
+		toolkit.createLabel(form.getBody(), "Text field label:");
 		Text text = toolkit.createText(form.getBody(), "");
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		text.setLayoutData(td);

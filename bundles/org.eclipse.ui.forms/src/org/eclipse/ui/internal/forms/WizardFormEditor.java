@@ -103,7 +103,7 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2, I
 
 	private static final String FOCUS_CONTROL = "focusControl"; //$NON-NLS-1$
 
-	private boolean lockedUI = false;
+	//private boolean lockedUI = false;
 
 	private int returnCode = OK;
 
@@ -629,10 +629,10 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2, I
             state = aboutToStart(fork && cancelable);
         activeRunningOperations++;
         try {
-            if (!fork)//If we are not forking do not open other dialogs
-                lockedUI = true;
+            //if (!fork)//If we are not forking do not open other dialogs
+                //lockedUI = true;
     		getSite().getWorkbenchWindow().run(fork, cancelable, runnable);
-            lockedUI = false;
+            //lockedUI = false;
 	    } finally {
 	        activeRunningOperations--;
 	        //Stop if this is the last one

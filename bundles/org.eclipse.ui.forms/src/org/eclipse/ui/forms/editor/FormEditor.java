@@ -40,7 +40,6 @@ import org.eclipse.ui.part.*;
 public abstract class FormEditor extends MultiPageEditorPart {
 	private FormToolkit toolkit;
 	protected Vector pages;
-	private IEditorPart sourcePage;
 	private int currentPage = -1;
 	private static class FormEditorSelectionProvider
 			extends

@@ -15,7 +15,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;

@@ -53,7 +53,7 @@ public class FormToolkit {
 	public static final String TEXT_BORDER = "textBorder";
 	private int borderStyle = SWT.NULL;
 	private FormColors colors;
-	private KeyListener deleteListener;
+	//private KeyListener deleteListener;
 	private BorderPainter borderPainter;
 	private HyperlinkGroup hyperlinkGroup;
 	/* default */
@@ -548,15 +548,15 @@ public class FormToolkit {
 		return formContent;
 	}
 	/**
-	 * Creates a rich text as a part of the form.
+	 * Creates a scrolled page book widget as a part of the form.
 	 * 
 	 * @param parent
-	 *            the rich text parent
+	 *            the page book parent
 	 * @param trackFocus
 	 *            if <code>true</code>, the toolkit will monitor focus
 	 *            transfers to ensure that the hyperlink in focus is visible in
 	 *            the form.
-	 * @return the rich text widget
+	 * @return the scrolled page book widget
 	 */
 	public ScrolledPageBook createPageBook(Composite parent, int style) {
 		ScrolledPageBook book = new ScrolledPageBook(parent, style);

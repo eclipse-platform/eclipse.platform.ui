@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.forms.*;
-import org.eclipse.ui.internal.forms.WizardFormEditor;
 
 public class SampleEditorFormPage extends WizardPage {
 	private Label dirLabel;
@@ -113,7 +112,7 @@ public class SampleEditorFormPage extends WizardPage {
 		
 		glayout = new GridLayout();
 		client.setLayout(glayout);
-		Button mb = toolkit.createButton(client, "Create an OSGi bundle manifest for the plug-in", SWT.CHECK);
+		toolkit.createButton(client, "Create an OSGi bundle manifest for the plug-in", SWT.CHECK);
 		l = toolkit.createLabel(client, "Note: this format is not supported by older Eclipse platforms (prior to 3.0)");
 		gd = new GridData();
 		gd.horizontalIndent = 10;
