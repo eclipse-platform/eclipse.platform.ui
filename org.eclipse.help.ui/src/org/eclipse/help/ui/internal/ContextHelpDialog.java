@@ -176,6 +176,7 @@ public class ContextHelpDialog {
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
+		text.setFont(parent.getFont());
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
@@ -198,6 +199,7 @@ public class ContextHelpDialog {
 		link.setText(topic.getLabel());
 		link.setBackground(backgroundColour);
 		link.setForeground(linkColour);
+		link.setFont(parent.getFont());
 		linkManager.registerHyperlink(link, new LinkListener(topic));
 		return link;
 	}
@@ -217,6 +219,7 @@ public class ContextHelpDialog {
 		layout.horizontalSpacing = 2;
 		layout.numColumns = 2;
 		composite.setLayout(layout);
+		composite.setFont(parent.getFont());
 		GridData data =
 			new GridData(
 				GridData.FILL_BOTH
