@@ -119,8 +119,10 @@ public class AntTargetsGroup extends ExternalToolGroup {
 		createDescriptionField(lowerComposite);
 		createShowSubTargetsButton(lowerComposite);
 		
-		if (tool != null) 
+		if (tool != null) {
+			setFileLocation(tool.getLocation());
 			restoreValues(tool);
+		}
 		allowSelectTargets(!runDefaultTargetButton.getSelection());
 		
 		return mainComposite;
@@ -185,10 +187,11 @@ public class AntTargetsGroup extends ExternalToolGroup {
 		availableTargetsList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = availableTargetsList.getSelectionIndex();
-				if (index >= 0)
+				if (index >= 0) {
 					targetsSelected(availableTargetsList.getItem(index), availableTargetsList);
-				else
+				} else {
 					deselectAll();
+				}
 			}
 		});	
 	}
@@ -217,10 +220,11 @@ public class AntTargetsGroup extends ExternalToolGroup {
 		activeTargetsList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = activeTargetsList.getSelectionIndex();
-				if (index >= 0)
+				if (index >= 0) {
 					targetsSelected(activeTargetsList.getItem(index), activeTargetsList);
-				else
+				} else {
 					deselectAll();
+				}
 			}
 		});		
 	}
@@ -332,8 +336,9 @@ public class AntTargetsGroup extends ExternalToolGroup {
 		Button button = new Button(parent, SWT.PUSH);		
 		button.setText(label);
 		GridData data = getPage().setButtonGridData(button);
-		if (!minWidth)
+		if (!minWidth) {
 			data.widthHint = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		}
 		button.addSelectionListener(adapter);
 		
 		return button;
@@ -361,8 +366,10 @@ public class AntTargetsGroup extends ExternalToolGroup {
 
 			if (activeTargetsList.getItemCount() == 0) {
 				runDefaultTargetButton.setSelection(true);
-				runDefaultTargetSelected();
+			} else {
+				runDefaultTargetButton.setSelection(false);
 			}
+			runDefaultTargetSelected();
 		}
 	}
 
@@ -370,13 +377,13 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	 * Method declared on IExternalToolGroup.
 	 */
 	public void updateTool(ExternalTool tool) {
-		if (runDefaultTargetButton == null)
+		if (runDefaultTargetButton == null) {
 			return;
+		}
 		if (runDefaultTargetButton.getSelection()) {
 			tool.setExtraAttribute(AntUtil.RUN_TARGETS_ATTRIBUTE, null);
-		} else {
-			if (activeTargetsList != null)
-				tool.setExtraAttribute(AntUtil.RUN_TARGETS_ATTRIBUTE, toString(activeTargetsList.getItems()));
+		} else if (activeTargetsList != null) {
+			tool.setExtraAttribute(AntUtil.RUN_TARGETS_ATTRIBUTE, toString(activeTargetsList.getItems()));
 		}
 	}
 
@@ -391,14 +398,9 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	 * file location.
 	 */
 	public void setFileLocation(String newLocation) {
-		if (newLocation == null) {
-			if (fileLocation != null) {
-				fileLocation = newLocation;
-				updateAvailableTargets();
-			}
-		} else if (!newLocation.equals(fileLocation)) {
-			fileLocation = newLocation;
-			updateAvailableTargets();
+		if (((newLocation == null) && (fileLocation != null)) || !newLocation.equals(fileLocation)) {
+			fileLocation= newLocation;
+			resetAvailableTargets();
 		}
 	}
 
@@ -488,8 +490,9 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	 */
 	private void moveTargetDown() {
 		int index = activeTargetsList.getSelectionIndex();
-		if (index < 0)
+		if (index < 0) {
 			return;
+		}
 		// Action only works if selected element is not last element.
 		if (index < activeTargetsList.getItemCount() - 1) {
 			String target = activeTargetsList.getItem(index);
@@ -502,18 +505,19 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	}
 	
 	/*
-	 * Updates the available targets list based on the tool location
+	 * Resets the available targets list based on the tool location
 	 * for this tool.
 	 */
-	private void updateAvailableTargets() {
+	private void resetAvailableTargets() {
 		// Clear the map of target names to target infos.
 		mapTargetNamesToTargetInfos.clear();
 		subTargets.clear();
 		availableTargetsList.removeAll();
 		activeTargetsList.removeAll();
 		
-		if (fileLocation == null)
+		if (fileLocation == null) {
 			return;
+		}
 			
 		try {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
@@ -538,8 +542,9 @@ public class AntTargetsGroup extends ExternalToolGroup {
 						}
 					}
 				}
-				if (showSubTargetsButton.getSelection())
+				if (showSubTargetsButton.getSelection()) {
 					targetNameList.addAll(subTargets);
+				}
 					
 				String[] targetNames = (String[]) targetNameList.toArray(new String[targetNameList.size()]);
 				availableTargetsList.setItems(targetNames);
@@ -568,8 +573,9 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	private void targetsSelected(String targetName, List list) {
 		updateButtonEnablement();
 
-		if (targetName == null)	
-			return;		
+		if (targetName == null)	{
+			return;
+		}
 		if (list == availableTargetsList) {
 			activeTargetsList.deselectAll();
 		} else {
@@ -604,15 +610,17 @@ public class AntTargetsGroup extends ExternalToolGroup {
 		}
 			
 		int index = activeTargetsList.getSelectionIndex();
-		if (index > 0)
+		if (index > 0) {
 			upButton.setEnabled(true);
-		else
+		} else {
 			upButton.setEnabled(false);
+		}
 	
-		if (index >= 0 && index < activeTargetsList.getItemCount() - 1)
-			downButton.setEnabled(true);		
-		else
+		if (index >= 0 && index < activeTargetsList.getItemCount() - 1) {
+			downButton.setEnabled(true);
+		} else {
 			downButton.setEnabled(false);		
+		}
 	}
 	
 	/*
@@ -697,11 +705,13 @@ public class AntTargetsGroup extends ExternalToolGroup {
 	 */
 	private void showDescription(String targetName) {
 		clearDescriptionField();
-		if (targetName == null)
+		if (targetName == null) {
 			return;
+		}
 		TargetInfo targetInfo = (TargetInfo) mapTargetNamesToTargetInfos.get(targetName);
-		if (targetInfo != null && targetInfo.getDescription() != null)
+		if (targetInfo != null && targetInfo.getDescription() != null) {
 			descriptionField.setText(targetInfo.getDescription());
+		}
 	}
 	
 	/*
