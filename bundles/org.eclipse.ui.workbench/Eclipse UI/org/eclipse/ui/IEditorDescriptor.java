@@ -24,33 +24,59 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </ul>
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  *
  * @see IEditorRegistry
  */
 public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
-/**
- * Returns the editor id.
- * <p>
- * For internal editors, this is the extension id as defined in the workbench
- * registry; for external editors, it is path and file name of the external 
- * program.
- * </p>
- *
- * @return the id of the editor
- */
-public String getId();
-/**
- * Returns the descriptor of the image for this editor.
- *
- * @return the descriptor of the image to display next to this editor
- */
-public ImageDescriptor getImageDescriptor();
-/**
- * Returns the label to show for this editor.
- *
- * @return the editor label
- */
-public String getLabel();
+	/**
+	 * Returns the editor id.
+	 * <p>
+	 * For internal editors, this is the extension id as defined in the workbench
+	 * registry; for external editors, it is path and file name of the external 
+	 * program.
+	 * </p>
+	 *
+	 * @return the id of the editor
+	 */
+	public String getId();
+	
+	/**
+	 * Returns the descriptor of the image for this editor.
+	 *
+	 * @return the descriptor of the image to display next to this editor
+	 */
+	public ImageDescriptor getImageDescriptor();
+	
+	/**
+	 * Returns the label to show for this editor.
+	 *
+	 * @return the editor label
+	 */
+	public String getLabel();
+	
+	/**
+	 * Returns whether this editor descriptor will open an editor
+	 * part inside the editor area.
+	 * 
+	 * @return <code>true</code> if editor is inside editor area, <code>false</code> otherwise
+	 */
+	public boolean isOpenInternal();
+	
+	/**
+	 * Returns whether this editor descriptor will open an editor
+	 * in-place inside the editor area.
+	 * 
+	 * @return <code>true</code> if editor is in-place, <code>false</code> otherwise
+	 */
+	public boolean isOpenInPlace();
+
+	/**
+	 * Returns whether this editor descriptor will open an editor
+	 * in a new window outside the workbench.
+	 * 
+	 * @return <code>true</code> if editor is external, <code>false</code> otherwise
+	 */
+	public boolean isOpenExternal();
 }
