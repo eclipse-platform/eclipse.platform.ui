@@ -78,6 +78,7 @@ public interface IWorkingSetManager {
      * Change event id when a working set updater got installed.
      * NewValue of the PropertyChangeEvent will be the installed updater.
      * OldValue will be <code>null</code>
+     * @since 3.1
      */
     public static final String CHANGE_WORKING_SET_UPDATER_INSTALLED = "workingSetUpdaterInstalled"; //$NON-NLS-1$
 
