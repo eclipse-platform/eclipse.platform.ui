@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
+import org.osgi.framework.*;
 /**
  * Welp web application plug-in.
  */
@@ -21,6 +22,7 @@ public class HelpWebappPlugin extends Plugin {
 	public static boolean DEBUG_WORKINGSETS = false;
 
 	protected static HelpWebappPlugin plugin;
+	private static BundleContext bundleContext;
 	/** 
 	 * Logs an Error message with an exception. Note that the message should already 
 	 * be localized to proper locale.
@@ -54,24 +56,31 @@ public class HelpWebappPlugin extends Plugin {
 	}
 
 	/**
-	 * Plug-in constructor.  It is called as part of plugin
-	 * activation.
-	 */
-	public HelpWebappPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
-	/**
 	 * @return the singleton instance of the help webapp plugin
 	 */
 	public static HelpWebappPlugin getDefault() {
 		return plugin;
 	}
-	public void startup() throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		bundleContext = context;
+		// Setup debugging options
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
 			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		bundleContext = null;
+		super.stop(context);
 	}
 }
