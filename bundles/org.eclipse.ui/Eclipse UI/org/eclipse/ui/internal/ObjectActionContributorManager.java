@@ -182,8 +182,12 @@ private Class getCommonResourceClass(List objects) {
 	
 	for (int i = 0; i < objects.size(); i++) {
 		Object object = objects.get(i);
-		//Leave the resources out of this
+		
 		if(object instanceof IAdaptable){
+			//Leave the resources out of this
+			if(object instanceof IResource)
+				break;
+				
 			IAdaptable adaptable = (IAdaptable) object;
 			Object resourceAdapter =
 				adaptable.getAdapter(IContributorResourceAdapter.class);
