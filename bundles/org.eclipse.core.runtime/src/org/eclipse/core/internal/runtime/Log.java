@@ -47,6 +47,8 @@ public Plugin getPlugin() {
  * @see Plugin#getLogMask
  */
 public void log(final IStatus status) {
+	// Log to the platform log first in case a listener throws an error.
+	InternalPlatform.log(status);
 	// create array to avoid concurrent access
 	ILogListener[] listeners;
 	synchronized (logListeners) {
@@ -63,7 +65,6 @@ public void log(final IStatus status) {
 		};
 		InternalPlatform.run(code);
 	}
-	InternalPlatform.log(status);
 }
 /**
  * Removes the given log listener to this log.  Subsequently the log listener will

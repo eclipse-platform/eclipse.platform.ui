@@ -35,7 +35,7 @@ public final class InternalPlatform {
 	// will be cached
 	private static Map regIndex = null;
 	
-	private static Set logListeners = new HashSet(5);
+	private static ArrayList logListeners = new ArrayList(5);
 	private static Map logs = new HashMap(5);
 	private static PlatformLogWriter platformLog = null;
 	private static PlatformMetaArea metaArea;
@@ -142,6 +142,9 @@ public static void addAuthorizationInfo(URL serverUrl, String realm, String auth
 public static void addLogListener(ILogListener listener) {
 	assertInitialized();
 	synchronized (logListeners) {
+		// replace if already exists (Set behaviour but we use an array
+		// since we want to retain order)
+		logListeners.remove(listener);
 		logListeners.add(listener);
 	}
 }
@@ -695,10 +698,15 @@ public static void log(final IStatus status) {
 		listeners = (ILogListener[]) logListeners.toArray(new ILogListener[logListeners.size()]);
 	}
 	for (int i = 0; i < listeners.length; i++) {
-		try {
-			listeners[i].logging(status, Platform.PI_RUNTIME);
-		} catch (Exception e) {
-		} // no chance of exceptions for log listeners
+		final ILogListener listener = listeners[i];
+		ISafeRunnable code = new ISafeRunnable() {
+			public void run() throws Exception {
+				listener.logging(status, Platform.PI_RUNTIME);
+			}
+			public void handleException(Throwable e) {
+			}
+		};
+		run(code);
 	}
 }
 /**
