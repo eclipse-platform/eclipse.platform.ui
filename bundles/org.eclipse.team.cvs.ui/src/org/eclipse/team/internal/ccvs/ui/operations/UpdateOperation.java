@@ -138,9 +138,9 @@ public class UpdateOperation extends SingleCommandOperation {
 	}
 	
 	/*
-	 * Update the workspace subscriber by flushin any cahced remote bytes
+	 * Update the workspace subscriber by flushing any cached remote bytes
 	 */
-	private void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) {
+	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) {
 		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		try {
 			s.updateRemote(provider, monitor);
