@@ -702,7 +702,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		if (widgetTopLine > 0)
 			-- widgetTopLine;
 
-		int topLine= extension.widgetlLine2ModelLine(widgetTopLine);
+		int topLine= extension.widgetLine2ModelLine(widgetTopLine);
 		int bottomLine= fCachedTextViewer.getBottomIndex();
 		if (bottomLine >= 0)
 			++ bottomLine;

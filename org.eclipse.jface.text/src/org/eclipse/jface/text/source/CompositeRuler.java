@@ -736,7 +736,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
-			return extension.widgetlLine2ModelLine(widgetLine);
+			return extension.widgetLine2ModelLine(widgetLine);
 		}
 
 		try {
