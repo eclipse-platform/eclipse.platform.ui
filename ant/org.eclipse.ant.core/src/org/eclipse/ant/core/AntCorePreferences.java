@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.*;
  * Represents the Ant Core plug-in's preferences providing utilities for
  * extracting, changing and updating the underlying preferences.
  */
-public class AntCorePreferences {
+public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener {
 
 	protected List defaultTasks;
 	protected List defaultTypes;
@@ -59,47 +59,96 @@ public class AntCorePreferences {
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
 		restoreCustomObjects();
 	}
+	
+	/**
+	 * When a preference changes, update the in-memory cache of the preference.
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(Preferences.PropertyChangeEvent event) {
+		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
+		String property= event.getProperty();
+		if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
+			restoreTasks(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_TYPES) || property.startsWith(IAntCoreConstants.PREFIX_TYPE)) {
+			restoreTypes(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_URLS)) {
+			restoreAntURLs(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_URLS)) {
+			restoreCustomURLs(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME)) {
+			restoreAntHome(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTIES) || property.startsWith(IAntCoreConstants.PREFIX_PROPERTY)) {
+			restoreCustomProperties(prefs);
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTY_FILES)) {
+			restoreCustomPropertyFiles(prefs);
+		}
+	}
 
+	/**
+	 * Restores the in-memory model of the preferences from the preference store
+	 */
 	private void restoreCustomObjects() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
-		// tasks
-		String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
-		if (tasks.equals("")) { //$NON-NLS-1$
-			customTasks = new Task[0];
-		} else {
-			customTasks = extractTasks(prefs, getArrayFromString(tasks));
-		}
-		// types
+		restoreTasks(prefs);
+		restoreTypes(prefs);
+		restoreAntURLs(prefs);
+		restoreCustomURLs(prefs);
+		restoreAntHome(prefs);
+		restoreCustomProperties(prefs);
+		restoreCustomPropertyFiles(prefs);
+		prefs.addPropertyChangeListener(this);
+	}
+	
+	private void restoreTasks(Preferences prefs) {
+		 String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
+		 if (tasks.equals("")) { //$NON-NLS-1$
+			 customTasks = new Task[0];
+		 } else {
+			 customTasks = extractTasks(prefs, getArrayFromString(tasks));
+		 }
+	}
+	
+	private void restoreTypes(Preferences prefs) {
 		String types = prefs.getString(IAntCoreConstants.PREFERENCE_TYPES);
 		if (types.equals("")) {//$NON-NLS-1$
 			customTypes = new Type[0];
 		} else {
 			customTypes = extractTypes(prefs, getArrayFromString(types));
 		}
-		// urls
+	}
+	
+	private void restoreAntURLs(Preferences prefs) {
 		String urls = prefs.getString(IAntCoreConstants.PREFERENCE_ANT_URLS);
 		if (urls.equals("")) {//$NON-NLS-1$
 			antURLs = getDefaultAntURLs();
 		} else {
 			antURLs = extractURLs(getArrayFromString(urls));
 		}
-		urls = prefs.getString(IAntCoreConstants.PREFERENCE_URLS);
+	}
+	
+	private void restoreCustomURLs(Preferences prefs) {
+		String urls = prefs.getString(IAntCoreConstants.PREFERENCE_URLS);
 		if (urls.equals("")) {//$NON-NLS-1$
 			customURLs = new URL[0];
 		} else {
 			customURLs = extractURLs(getArrayFromString(urls));
 		}
-		
+	}
+	
+	private void restoreAntHome(Preferences prefs) {
 		antHome= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME);
-		
-		// properties
+	}
+	
+	private void restoreCustomProperties(Preferences prefs) {
 		String properties = prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTIES);
 		if (properties.equals("")) {//$NON-NLS-1$
 			customProperties = new Property[0];
 		} else {
 			customProperties = extractProperties(prefs, getArrayFromString(properties));
 		}
-		
+	}
+	
+	private void restoreCustomPropertyFiles(Preferences prefs) {
 		String propertyFiles= prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTY_FILES);
 		if (propertyFiles.equals("")) { //$NON-NLS-1$
 			customPropertyFiles= new String[0];
@@ -114,6 +163,9 @@ public class AntCorePreferences {
 			try {
 				String taskName = tasks[i];
 				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
+				if (values.length < 2) {
+					continue;
+				}
 				Task task = new Task();
 				task.setTaskName(taskName);
 				task.setClassName(values[0]);
@@ -134,6 +186,9 @@ public class AntCorePreferences {
 			try {
 				String typeName = types[i];
 				String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
+				if (values.length < 2) {
+					continue;
+				}
 				Type type = new Type();
 				type.setTypeName(typeName);
 				type.setClassName(values[0]);
@@ -153,6 +208,9 @@ public class AntCorePreferences {
 		for (int i = 0; i < properties.length; i++) {
 			String propertyName = properties[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_PROPERTY + propertyName));
+			if (values.length < 1) {
+				continue;
+			}
 			Property property = new Property();
 			property.setName(propertyName);
 			property.setValue(values[0]);
@@ -772,6 +830,7 @@ public class AntCorePreferences {
 	 */
 	public void updatePluginPreferences() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
+		prefs.removePropertyChangeListener(this);
 		updateTasks(prefs);
 		updateTypes(prefs);
 		updateAntURLs(prefs);
@@ -779,6 +838,7 @@ public class AntCorePreferences {
 		updateProperties(prefs);
 		updatePropertyFiles(prefs);
 		AntCorePlugin.getPlugin().savePluginPreferences();
+		prefs.addPropertyChangeListener(this);
 	}
 
 	protected void updateTasks(Preferences prefs) {
