@@ -45,10 +45,12 @@ import org.eclipse.compare.internal.Utilities;
 	private Button fPatchFileBrowseButton;
 	private Button fUsePatchFileButton;
 	private Composite fPatchFileGroup;
+	private PatchWizard fPatchWizard;
 
 
-	InputPatchPage() {
+	InputPatchPage(PatchWizard pw) {
 		super("Select Patch Input", "Select Patch Input", null);
+		fPatchWizard= pw;
 	}
 	
 	/**

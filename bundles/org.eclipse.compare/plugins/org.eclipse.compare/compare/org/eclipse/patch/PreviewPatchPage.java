@@ -4,16 +4,20 @@
  */
 package org.eclipse.patch;
 
-import java.io.*;
+import java.util.*;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.*;
+
+import org.eclipse.core.resources.IFile;
+
+import org.eclipse.compare.structuremergeviewer.Differencer;
+
 
 /**
  * Shows the parsed patch file and any mismatches
@@ -24,9 +28,11 @@ import org.eclipse.jface.wizard.IWizard;
 	
 	private Tree fTree;
 	private StyledText fText;
+	private PatchWizard fPatchWizard;
 	
-	/* package */ PreviewPatchPage() {
+	/* package */ PreviewPatchPage(PatchWizard pw) {
 		super("Preview Patch", "Preview Patch", null);
+		fPatchWizard= pw;
 	}
 	
 	/* (non-Javadoc)
@@ -47,18 +53,23 @@ import org.eclipse.jface.wizard.IWizard;
 			fTree.removeAll();
 			fText.setText("");
 			
-			Diff[] diffs= null;
-			IWizard w= getWizard();
-			if (w instanceof PatchWizard) {
-				PatchWizard pw= (PatchWizard) w;
-				diffs= pw.getDiffs();
-			}
-			
+			Diff[] diffs= fPatchWizard.getDiffs();			
 			if (diffs != null) {
 				for (int i= 0; i < diffs.length; i++) {
 					Diff diff= diffs[i];
 					TreeItem d= new TreeItem(fTree, SWT.NULL);
 					d.setText(diff.getDescription());
+					
+					boolean isOk= false;
+					IFile file= null;
+					if (diff.getType() == Differencer.ADDITION) {
+						file= fPatchWizard.existsInSelection(diff.fNewName);
+						isOk= file == null;
+					} else {
+						file= fPatchWizard.existsInSelection(diff.fOldName);
+						isOk= file != null;
+					}
+						
 					java.util.List hunks= diff.fHunks;
 					java.util.Iterator iter= hunks.iterator();
 					while (iter.hasNext()) {
@@ -66,7 +77,13 @@ import org.eclipse.jface.wizard.IWizard;
 						TreeItem h= new TreeItem(d, SWT.NULL);
 						h.setData(hunk);
 						h.setText(hunk.getDescription());
+						
+						h.setChecked(true);
+						//if (error)
+						//	isOk= false;
 					}
+					
+					d.setChecked(isOk);
 				}
 			}
 		}

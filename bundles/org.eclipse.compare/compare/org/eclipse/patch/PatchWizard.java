@@ -8,6 +8,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
 
@@ -43,6 +46,26 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 	
+	/*package */ IFile existsInSelection(String path) {
+		if (fSelection == null || fSelection.isEmpty())
+			return null;
+		
+		IPath p= new Path(path);
+		IPath p2= p.removeFirstSegments(1);
+		
+		IResource[] selection= Utilities.getResources(fSelection);
+		for (int i= 0; i < selection.length; i++) {
+			IResource r= selection[i];
+			if (r instanceof IContainer) {
+				IContainer c= (IContainer) r;
+				if (c.exists(p2)) {
+					return c.getFile(p2);
+				}
+			}
+		}
+		return null;
+	}
+	
 	/* package */ Diff[] getDiffs() {
 		return fDiffs;
 	}
@@ -57,8 +80,8 @@ import org.eclipse.compare.internal.*;
 	public void addPages() {
 		super.addPages();
 		
-		addPage(fPatchWizardPage= new InputPatchPage());
-		addPage(fPreviewPatchPage= new PreviewPatchPage());
+		addPage(fPatchWizardPage= new InputPatchPage(this));
+		addPage(fPreviewPatchPage= new PreviewPatchPage(this));
 	}
 	
 	/* (non-Javadoc)

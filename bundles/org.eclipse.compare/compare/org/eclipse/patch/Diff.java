@@ -18,8 +18,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	long fOldDate, fNewDate;	// if 0: no file
 	List fHunks= new ArrayList();
 	
-	
-	/* package */ Diff(String oldName, long oldDate, String newName, long newDate) {
+ 	/* package */ Diff(String oldName, long oldDate, String newName, long newDate) {
 		
 		int pos= oldName.lastIndexOf(':');
 		if (pos >= 0) {
@@ -64,9 +63,9 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	
 	/* package */ int getType() {
 		if (fOldDate == 0)
-			return Differencer.DELETION;	// why is this swapped?
-		if (fNewDate == 0)
 			return Differencer.ADDITION;
+		if (fNewDate == 0)
+			return Differencer.DELETION;
 		return Differencer.CHANGE;
 	}
 	
