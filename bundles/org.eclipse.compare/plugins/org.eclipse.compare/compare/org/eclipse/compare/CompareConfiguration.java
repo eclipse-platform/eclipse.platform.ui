@@ -58,7 +58,7 @@ public class CompareConfiguration {
 		fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");
 		fgImages[INCOMING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/inadd_ov.gif");
 		fgImages[OUTGOING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/outadd_ov.gif");
-		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confladd_ov.gif");
+		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confadd_ov.gif");
 
 		fgImages[Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif");
 		fgImages[INCOMING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/indel_ov.gif");

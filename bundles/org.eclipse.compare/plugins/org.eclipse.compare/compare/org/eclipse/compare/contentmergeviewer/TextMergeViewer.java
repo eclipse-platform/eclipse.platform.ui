@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.io.InputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -33,6 +34,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -146,6 +148,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** if DEAD_STEP is true navigation with the next/previous buttons needs an extra step 
 	when wrapping around the beginning or end */
 	private static final boolean DEAD_STEP= false;
+	/** Maximum time to wait for the document compare (in milliseconds) */
+	private static final int TIMEOUT= 20000;
 	
 	private static final boolean IS_MOTIF= false;
 	
@@ -1035,60 +1039,92 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		}
 		
-		RangeDifference[] e= RangeDifferencer.findRanges(sancestor, sleft, sright);
+		// perform the compare within TIMEOUT milli seconds
+		RangeDifference[] e= null;
 		
-		for (int i= 0; i < e.length; i++) {
-			String a= null, s= null, d= null;
-			RangeDifference es= e[i];
-			
-			int kind= es.kind();
-			
-			int ancestorStart= 0;
-			int ancestorEnd= 0;
-			if (sancestor != null) {
-				ancestorStart= sancestor.getTokenStart(es.ancestorStart());
-				ancestorEnd= sancestor.getTokenEnd(es.ancestorStart(), es.ancestorLength());
+		final Object[] result= new Object[1];
+		final DocLineComparator sa= sancestor, sl= sleft, sr= sright;
+		Thread t= new Thread() {
+			public void run() {
+				result[0]= RangeDifferencer.findRanges(sa, sl, sr);
 			}
-			
-			int leftStart= sleft.getTokenStart(es.leftStart());
-			int leftEnd= sleft.getTokenEnd(es.leftStart(), es.leftLength());
-			
-			int rightStart= sright.getTokenStart(es.rightStart());
-			int rightEnd= sright.getTokenEnd(es.rightStart(), es.rightLength());
-			
-			Diff diff= new Diff(null, kind,
-				aDoc, ancestorStart, ancestorEnd,
-				lDoc, leftStart, leftEnd,
-				rDoc, rightStart, rightEnd);	
-			
-			fAllDiffs.add(diff);	// remember all range diffs for scrolling
+		};
+		t.start();
+		try {
+			t.join(TIMEOUT);
+			e= (RangeDifference[]) result[0];
+		} catch(InterruptedException ex) {
+		}
+		t.stop();
+					
+		if (e == null) {
+			ResourceBundle bundle= getResourceBundle();
+			String title= Utilities.getString(bundle, "tooComplexError.title");
+			String format= Utilities.getString(bundle, "tooComplexError.format");
+			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
+			MessageDialog.openError(fComposite.getShell(), title, msg);
 
-			if (ignoreWhiteSpace) {
-				if (sancestor != null)
-					a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
-				s= sleft.extract(es.leftStart(), es.leftLength());
-				d= sright.extract(es.rightStart(), es.rightLength());
-			
-				if ((a == null || a.trim().length() == 0) && s.trim().length() == 0 && d.trim().length() == 0)
-					continue;
-			}
-
-			if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
-				fChangeDiffs.add(diff);	// here we remember only the real diffs
-				updateDiffBackground(diff);
-
-				if (s == null)
+			// timeout: we create a NOCHANGE range for the whole document
+			Diff diff= new Diff(null, RangeDifference.NOCHANGE,
+				aDoc, 0, aDoc != null ? aDoc.getLength() : 0,
+				lDoc, 0, lDoc.getLength(),
+				rDoc, 0, rDoc.getLength());	
+				
+			fAllDiffs.add(diff);
+		} else {
+			for (int i= 0; i < e.length; i++) {
+				String a= null, s= null, d= null;
+				RangeDifference es= e[i];
+				
+				int kind= es.kind();
+				
+				int ancestorStart= 0;
+				int ancestorEnd= 0;
+				if (sancestor != null) {
+					ancestorStart= sancestor.getTokenStart(es.ancestorStart());
+					ancestorEnd= sancestor.getTokenEnd(es.ancestorStart(), es.ancestorLength());
+				}
+				
+				int leftStart= sleft.getTokenStart(es.leftStart());
+				int leftEnd= sleft.getTokenEnd(es.leftStart(), es.leftLength());
+				
+				int rightStart= sright.getTokenStart(es.rightStart());
+				int rightEnd= sright.getTokenEnd(es.rightStart(), es.rightLength());
+				
+				Diff diff= new Diff(null, kind,
+					aDoc, ancestorStart, ancestorEnd,
+					lDoc, leftStart, leftEnd,
+					rDoc, rightStart, rightEnd);	
+				
+				fAllDiffs.add(diff);	// remember all range diffs for scrolling
+	
+				if (ignoreWhiteSpace) {
+					if (sancestor != null)
+						a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
 					s= sleft.extract(es.leftStart(), es.leftLength());
-				if (d == null)
 					d= sright.extract(es.rightStart(), es.rightLength());
 				
-				if (s.length() > 0 && d.length() > 0) {
-					if (a == null && sancestor != null)
-						a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
-					if (USE_MERGING_TOKEN_DIFF)
-						mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
-					else
-						simpleTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+					if ((a == null || a.trim().length() == 0) && s.trim().length() == 0 && d.trim().length() == 0)
+						continue;
+				}
+	
+				if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
+					fChangeDiffs.add(diff);	// here we remember only the real diffs
+					updateDiffBackground(diff);
+	
+					if (s == null)
+						s= sleft.extract(es.leftStart(), es.leftLength());
+					if (d == null)
+						d= sright.extract(es.rightStart(), es.rightLength());
+					
+					if (s.length() > 0 && d.length() > 0) {
+						if (a == null && sancestor != null)
+							a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
+						if (USE_MERGING_TOKEN_DIFF)
+							mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+						else
+							simpleTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+					}
 				}
 			}
 		}

@@ -75,14 +75,14 @@ public class DocLineComparator implements IRangeComparator {
 	 */
 	public String extract(int start, int length) {
 		if (fLength > 0) {
-			if (fLength == 1)
+			if (fLineCount == 1)
 				return extract(start);
 			int startPos= getTokenStart(start);
 			int endPos= getTokenStart(start + length);
 			try {
 				return fDocument.get(startPos, endPos - startPos);
 			} catch (BadLocationException e) {
-				System.out.println("extract("+fDocument.getLength()+"): " + startPos + " " + endPos);
+				//System.out.println("extract("+fDocument.getLength()+"): " + startPos + " " + endPos);
 			}
 		}
 		return "";
@@ -96,7 +96,7 @@ public class DocLineComparator implements IRangeComparator {
 	 */
 	public String extract(int line) {
 		line += fLineOffset;
-		if (line < fLength) {
+		if (line < fLineCount) {
 			try {
 				IRegion r= fDocument.getLineInformation(line);
 				return fDocument.get(r.getOffset(), r.getLength());
