@@ -1,1 +1,2 @@
 org.eclipse.update.core/debug=true
+org.eclipse.update.core/debug/warnings=true

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.eclipse.update.core.tests" name="New Feature" version="0.0.1">
+  <plugins>
+    <plugin id="org.eclipse.core.runtime"/>
+    <plugin id="org.eclipse.core.resources"/>
+    <plugin id="org.eclipse.update.core"/>
+    <plugin id="org.junit"/>
+  </plugins>
+  <content>
+    <file id="org.eclipse.core.runtime_1.0.0.jar"/>
+    <file id="org.eclipse.core.resources_2.2.2.jar"/>
+    <file id="blah.dll"/>
+    <file id="readme.txt"/>
+  </content>
+  <map>
+    <plugin pluginid="plugin1">
+      <file id="org.eclipse.file1"/>
+      <file id="org.eclise2"/>
+    </plugin>
+  </map>
+</feature>

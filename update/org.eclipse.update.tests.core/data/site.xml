@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site id="org.eclipse.update.core.tests" name="Tests" version="0.0.1">
+  <handler/>
+  <feature id="org.eclipse.feature1" version="1.0.0" name="feature1"/>
+  <feature id="org.eclipse.feature2" version="1.2.2" name="feature2"/>
+  <feature id="org.eclipse.feature3" version="5.4.0" name="feature3"/>
+</site>

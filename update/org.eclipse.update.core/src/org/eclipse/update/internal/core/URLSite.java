@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.AbstractFeature;
@@ -16,7 +18,12 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISiteChangedListener;
 
 public class URLSite extends AbstractSite {
-
+
+
+	/**
+	 * plugin entries
+	 */
+	private List pluginEntries = new ArrayList(0);
 	/**
 	 * Constructor for HTTPSite
 	 */
@@ -57,7 +64,13 @@ public class URLSite extends AbstractSite {
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		return null;
+		// FIXME: I do not like this pattern... either go all teh way Array
+		// or find better pattern
+		IPluginEntry[] result = null;
+		if (!pluginEntries.isEmpty()){
+			result = (IPluginEntry[])pluginEntries.toArray(new IPluginEntry[0]);
+		}
+		return result;
 	}
 
 	/**
@@ -85,6 +98,7 @@ public class URLSite extends AbstractSite {
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
+		pluginEntries.add(pluginEntry);
 	}
 
 	/**

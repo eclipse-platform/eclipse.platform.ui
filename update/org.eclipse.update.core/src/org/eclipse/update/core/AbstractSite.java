@@ -11,9 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.internal.core.DefaultSiteParser;
+
 
 public abstract class AbstractSite implements ISite {
 
+	private static final String SITE_XML= "site.xml";
+	private boolean isManageable = false;
+	private DefaultSiteParser parser;
 	
 	/**
 	 * teh tool will create the directories on the file 
@@ -35,15 +40,24 @@ public abstract class AbstractSite implements ISite {
 	}
 	
 	/**
-	 * Initializes teh site by reading the site.xml file
+	 * Initializes the site by reading the site.xml file
 	 */
 	private void init(){
 		InputStream inStream = null;
 		try {
-		  inStream = (new URL(siteURL,"site.xml")).openStream();
+			URL siteXml = new URL(siteURL,"site.xml");
+			parser = new DefaultSiteParser(siteXml.openStream(),this);
+			isManageable = true;		 	
+		} catch (org.xml.sax.SAXException e){
+			//FIXME: who should handle XML exception  the parser ? 
+			// ok but what should it do ? just put null in result ?
+			// send and transform teh exception ?
+			e.printStackTrace();
 		} catch (FileNotFoundException e){
 			// log not manageable site
-			System.out.println(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
+			if (UpdateManagerPlugin.getDefault().DEBUG && UpdateManagerPlugin.getDefault().DEBUG_SHOW_WARNINGS){
+				System.out.println(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
+			}
 		} catch (MalformedURLException e){
 			// FIXME:
 			e.printStackTrace();
@@ -142,16 +156,22 @@ public abstract class AbstractSite implements ISite {
 	 * @return Returns a IFeature[]
 	 */
 	public IFeature[] getFeatures() {
-		if (features==null) initializeFeatures();
-		return (IFeature[])features.toArray();
+		IFeature[] result = null;
+		if (isManageable){
+			if (features==null) initializeFeatures();
+			//FIXME: I do not like this pattern.. List or Array ???
+			if (!features.isEmpty()){
+				result = (IFeature[])features.toArray(new IFeature[features.size()]);
+			}
+		}
+		return result;
 	}
 	
 	/**
 	 * Read the Features from the XML file
 	 */
 	private void initializeFeatures(){
-		features = new ArrayList(0);
-		// read teh XML file
+		features = parser.getFeatures();
 	}
 	
 	/**
