@@ -57,6 +57,8 @@ import org.eclipse.ui.PlatformUI;
 public class AddMarkerAction extends TextEditorAction {
 
 	
+	/** The maximum length of an proposed label. */
+	private static final int MAX_LABEL_LENGTH= 10;
 	/** The type for newly created markers */
 	private String fMarkerType;
 	/** Should the user be asked for a label? */
@@ -233,7 +235,7 @@ public class AddMarkerAction extends TextEditorAction {
 			
 			
 			if (length > 0)
-				return document.get(offset, length);
+				return document.get(offset, Math.min(length, MAX_LABEL_LENGTH));
 				
 			
 			char ch;
@@ -263,6 +265,8 @@ public class AddMarkerAction extends TextEditorAction {
 
 			if (left > limit)
 				return null;
+			
+			limit= Math.min(limit, left + MAX_LABEL_LENGTH);
 
 			// Get the next white char.
 			int right= (offset + length > limit ? limit : offset + length);
