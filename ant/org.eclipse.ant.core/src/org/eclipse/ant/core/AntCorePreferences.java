@@ -170,20 +170,23 @@ public class AntCorePreferences {
 	/**
 	 * Returns the array of URLs that is the default set of URLs defining
 	 * the Ant classpath.
+	 * Xerces JARs are not added here.
+	 * There are included as the plugin class loader for org.eclipse.ant.core
+	 * is set as on of the plugin classloaders of the AntClassLoader.
+	 * @see initializePluginClassLoaders()
 	 * 
 	 * Ant running through the command line tries to find tools.jar to help the
 	 * user. Try emulating the same behaviour here.
 	 *	 * @return the default set of URLs defining the Ant classpath	 */
 	public URL[] getDefaultAntURLs() {
 		if (defaultAntURLs == null) {
-			List result = new ArrayList(5);
+			List result = new ArrayList(3);
 			Plugin antPlugin= Platform.getPlugin("org.apache.ant"); //$NON-NLS-1$
 			if (antPlugin != null) {
 				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
 				addLibraries(descriptor, result);
 			}
-			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
-			addLibraries(descriptor, result);
+			
 			URL toolsURL= getToolsJarURL();
 			if (toolsURL != null) {
 				result.add(toolsURL);
@@ -427,7 +430,7 @@ public class AntCorePreferences {
 
 	protected void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList(10);
-		// ant.core should always be present
+		// ant.core should always be present (provides access to Xerces as well)
 		pluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
 	}
 
