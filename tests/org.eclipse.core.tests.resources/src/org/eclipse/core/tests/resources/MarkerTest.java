@@ -15,6 +15,7 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import sun.security.action.GetPropertyAction;
 
 public class MarkerTest extends EclipseWorkspaceTest {
 
@@ -417,9 +418,9 @@ public void setUp() throws Exception {
 public static Test suite() {
 	return new TestSuite(MarkerTest.class);
 
-	//TestSuite suite = new TestSuite();
-	//suite.addTest(new MarkerTest("testMarkerSerialization"));
-	//return suite;
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new MarkerTest("testMarkerDeltasMove"));
+//	return suite;
 }
 public void tearDown() throws Exception {
 	super.tearDown();
@@ -586,6 +587,12 @@ public void testFindMarkers() {
 	} catch (CoreException e) {
 		fail("1.1", e);
 	}
+	try {
+		IMarker[] found = getWorkspace().getRoot().findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		assertEquals("1.2", markers, found);
+	} catch (CoreException e) {
+		fail("1.3", e);
+	}
 
 	// test finding some markers which don't exist
 	try {
@@ -618,6 +625,31 @@ public void testFindMarkers() {
 		assertEquals("3.2", (IMarker[]) allMarkers.toArray(new IMarker[allMarkers.size()]), found);
 	} catch (CoreException e) {
 		fail("3.3", e);
+	}
+	try {
+		IMarker[] found = getWorkspace().getRoot().findMarkers(IMarker.MARKER, true, IResource.DEPTH_INFINITE);
+		assertEquals("3.4", (IMarker[]) allMarkers.toArray(new IMarker[allMarkers.size()]), found);
+	} catch (CoreException e) {
+		fail("3.5", e);
+	}
+}
+public void test_10989() {
+	log("test_10989");
+
+	try {
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		project.create(null);
+		project.open(null);
+		IFile file = project.getFile("foo.txt");
+		file.create(getRandomContents(), true, null);
+		IMarker marker = file.createMarker(IMarker.PROBLEM);
+		IMarker[] found = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+		assertEquals("1.0", 1, found.length);
+		found = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		assertEquals("1.1", 1, found.length);
+		project.delete(true, true, null);
+	} catch (CoreException e) {
+		fail("1.99", e);
 	}
 }
 /**
