@@ -61,8 +61,6 @@ public final class ProjectScope implements IScopeContext {
 	public IEclipsePreferences getNode(String qualifier) {
 		if (qualifier == null)
 			throw new IllegalArgumentException();
-		if (context == null)
-			return null;
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(context.getName()).node(qualifier);
 	}
 
@@ -70,8 +68,6 @@ public final class ProjectScope implements IScopeContext {
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getLocation()
 	 */
 	public IPath getLocation() {
-		if (context == null)
-			return null;
 		IProject project = ((IResource) context).getProject();
 		IPath location = project.getLocation();
 		return location == null ? null : location.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME);
@@ -82,5 +78,26 @@ public final class ProjectScope implements IScopeContext {
 	 */
 	public String getName() {
 		return SCOPE;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof ProjectScope))
+			return false;
+		ProjectScope other = (ProjectScope) obj;
+		return context.equals(other.context);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return super.hashCode() + context.getFullPath().hashCode();
 	}
 }
