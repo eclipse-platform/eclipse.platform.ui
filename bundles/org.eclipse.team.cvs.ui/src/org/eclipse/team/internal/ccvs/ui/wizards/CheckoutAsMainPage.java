@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -91,7 +92,11 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * For the single folder case, return the name of the folder
 	 */
 	private String getFolderName() {
-		return folders[0].getName();
+		String name = folders[0].getName();
+		if (name .equals(".")) { //$NON-NLS-1$
+			name = new Path(folders[0].getRepository().getRootDirectory()).lastSegment();
+		}
+		return name;
 	}
 	
 	/*

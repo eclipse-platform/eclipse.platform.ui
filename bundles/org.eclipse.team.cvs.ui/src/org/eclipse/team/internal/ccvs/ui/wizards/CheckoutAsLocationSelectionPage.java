@@ -86,7 +86,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @param string
 	 */
 	public void setProjectName(String string) {
-		if (string == null) return;
+		if (string == null || string.equals(".")) return; //$NON-NLS-1$
 		if (singleProject != null && singleProject.getName().equals(string)) return;
 		setProject(ResourcesPlugin.getWorkspace().getRoot().getProject(string));
 	}
@@ -231,25 +231,33 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		if (useDefaults) {
 			IPath defaultPath = null;
 			if (isSingleFolder()) {
-				try {
-					defaultPath = getSingleProject().getDescription().getLocation();
-				} catch (CoreException e) {
-					// ignore
-				}
-				if (defaultPath == null) {
-					defaultPath = Platform.getLocation().append(getSingleProject().getName());
+				IProject singleProject = getSingleProject();
+				if (singleProject != null) {
+					try {
+						defaultPath = singleProject.getDescription().getLocation();
+					} catch (CoreException e) {
+						// ignore
+					}
+					if (defaultPath == null) {
+						defaultPath = Platform.getLocation().append(singleProject.getName());
+					}
 				}
 			} else {
 				defaultPath = Platform.getLocation();
 			}
-			locationPathField.setText(defaultPath.toOSString());
+			if (defaultPath != null) {
+				locationPathField.setText(defaultPath.toOSString());
+			}
 			targetLocation = null;
 		} else if (changed) {
 			IPath location = null;
-			try {
-				location = ResourcesPlugin.getWorkspace().getRoot().getProject(remoteFolders[0].getName()).getDescription().getLocation();
-			} catch (CoreException e) {
-				// ignore the exception
+			IProject project = getSingleProject();
+			if (project != null) {
+				try {
+					location = project.getDescription().getLocation();
+				} catch (CoreException e) {
+					// ignore the exception
+				}
 			}
 			if (location == null) {
 				targetLocation = null;
