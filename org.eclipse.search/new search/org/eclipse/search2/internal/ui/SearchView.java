@@ -255,9 +255,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		updateLabel();
 		updateCancelAction();
 	}
-
-	private void doUpdateTitle() {
-	}
 	
 	public void updateLabel() {
 		ISearchResultPage page= getActivePage();
