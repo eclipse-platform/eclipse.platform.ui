@@ -396,6 +396,8 @@ public class EditorManager {
 				if(file != null) {
 					// Update the default editor for this file.
 					IEditorDescriptor defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor(file);
+					if (defaultDesc == null)
+						defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
 					String editorID = desc.getId();
 					if(defaultDesc.getId().equals(editorId)) {
 						getEditorRegistry().setDefaultEditor(file, null);
