@@ -375,6 +375,8 @@ public class EmbeddedBrowserAdapter implements IBrowser, Runnable {
 	private String getProductImageURL() {
 		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
 		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
+		if (primaryFeatureId == null)
+			return null; // no primary feature installed
 		IPluginDescriptor pfd =
 			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
 		if (pfd == null)
