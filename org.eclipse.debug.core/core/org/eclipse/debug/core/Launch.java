@@ -97,10 +97,26 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		setSourceLocator(locator);
 		setLaunchMode(mode);
 		fSuppressChange = false;
+	}
+	
+	/**
+	 * Registers listeners for launches, launch configurations
+	 * and debug events.
+	 */
+	private void addListeners() {
 		getLaunchManager().addLaunchListener(this);
 		getLaunchManager().addLaunchConfigurationListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-	}	
+	}
+	
+	/**
+	 * Remvoes the registered listeners.
+	 */
+	private void removeListeners() {
+		getLaunchManager().removeLaunchListener(this);
+		getLaunchManager().removeLaunchConfigurationListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+	}
 	
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
@@ -330,6 +346,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void addDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (!getDebugTargets0().contains(target)) {
+				addListeners();
 				getDebugTargets0().add(target);
 				fireChanged();
 			}
@@ -353,6 +370,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void addProcess(IProcess process) {
 		if (process != null) {
 			if (!getProcesses0().contains(process)) {
+				addListeners();
 				getProcesses0().add(process);
 				fireChanged();
 			}
@@ -406,6 +424,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			((LaunchManager)getLaunchManager()).fireUpdate(this, LaunchManager.TERMINATE);
 			((LaunchManager)getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.TERMINATE);
 		}
+		removeListeners();
 	}
 	
 	/**
@@ -495,11 +514,11 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
-			getLaunchManager().removeLaunchListener(this);
-			getLaunchManager().removeLaunchConfigurationListener(this);
-			DebugPlugin.getDefault().removeDebugEventListener(this);
+			removeListeners();
 		}
 	}
+
+
 
 	/**
 	 * Returns the launch manager.
