@@ -13,9 +13,11 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.roles.IRoleManager;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -337,4 +339,30 @@ public IObjectActivityManager getObjectActivityManager(String id, boolean create
  */
 public IProgressManager getProgressManager();
 
+/**
+ * Returns the activity manager for the workbench. 
+ * 
+ * @return the activity manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public IActivityManager getActivityManager();
+
+/**
+ * Returns the command manager for the workbench. 
+ * 
+ * @return the command manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public ICommandManager getCommandManager();
+
+/**
+ * Returns the role manager for the workbench. 
+ * 
+ * @return the role manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public IRoleManager getRoleManager();
 }
