@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,7 +24,6 @@ import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,7 +31,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -42,7 +39,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public abstract class ExecutionAction extends Action {
 	/**
-	 * @see Action#run
+	 * @see Action#run()
 	 */
 	public void run() {
 		
@@ -74,12 +71,7 @@ public abstract class ExecutionAction extends Action {
 				if (launchers.length == 1 && selection != null) {
 					ILauncher launcher= (ILauncher)launchers[0];
 					Object[] elements= selection.toArray();
-					boolean ok= launcher.launch(elements, getMode());
-					if (!ok) {
-						String string= DebugUIMessages.getString("The_launcher,_{0},_failed_to_launch_1"); //$NON-NLS-1$
-						String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("Launch_Failed_2"), message);	 //$NON-NLS-1$
-					}					
+					launcher.launch(elements, getMode());
 				} else {
 					// must choose a launcher
 					IProject selectedProject = null;
@@ -310,5 +302,4 @@ public abstract class ExecutionAction extends Action {
 			display.beep();
 		}
 	}
-	
 }

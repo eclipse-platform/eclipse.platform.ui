@@ -5,8 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
@@ -19,7 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 public class RelaunchActionDelegate extends ControlActionDelegate {
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) {
 		if (object instanceof IDebugElement) {
@@ -35,12 +33,7 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * Re-launches the launch of the given object in the specified mode.
 	 */
 	public static void relaunch(ILauncher launcher, String mode, Object element) {
-		boolean ok= launcher.launch(new Object[]{element}, mode);
-		if (!ok) {
-			String string= DebugUIMessages.getString("RelaunchActionDelegate.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
-			String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-			MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"), message);	 //$NON-NLS-1$
-		}				
+		launcher.launch(new Object[]{element}, mode);		
 	}
 	
 	public static void relaunch(LaunchHistoryElement history) {
@@ -106,7 +99,7 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
@@ -137,41 +130,42 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	}
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
 	protected void setActionImages(IAction action) {
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RELAUNCH));
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH));
-	}		
-	/*
+	}
+			
+	/**
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
 		return null;
 	}
-	/*
+	/**
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
 		return DebugUIMessages.getString("RelaunchActionDelegate.Relaunch_3"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
