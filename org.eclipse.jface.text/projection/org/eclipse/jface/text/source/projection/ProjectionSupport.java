@@ -67,6 +67,16 @@ public class ProjectionSupport {
 			}
 			return null;
 		}
+		
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter#skip(org.eclipse.jface.text.source.Annotation)
+		 */
+		protected boolean skip(Annotation annotation) {
+			if (annotation instanceof ProjectionAnnotation)
+				return !((ProjectionAnnotation) annotation).isCollapsed();
+			
+			return super.skip(annotation);
+		}
 	}
 	
 	private static class ProjectionDrawingStrategy implements AnnotationPainter.IDrawingStrategy {

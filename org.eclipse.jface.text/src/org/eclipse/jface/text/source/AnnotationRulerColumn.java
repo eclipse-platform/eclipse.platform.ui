@@ -12,8 +12,10 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -42,7 +44,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextViewer;
 
@@ -83,6 +84,40 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		}
 	}
 	
+	/**
+	 * Implementation of <code>IRegion</code> that can be reused
+	 * by setting the offset and the length. 
+	 */
+	private static class ReusableRegion implements IRegion {
+		
+		private int fOffset;
+		private int fLength;
+
+		/*
+		 * @see org.eclipse.jface.text.IRegion#getLength()
+		 */
+		public int getLength() {
+			return fLength;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IRegion#getOffset()
+		 */
+		public int getOffset() {
+			return fOffset;
+		}
+		
+		/**
+		 * Updates this region.
+		 * 
+		 * @param offset the new offset
+		 * @param length the new length
+		 */
+		public void update(int offset, int length) {
+			fOffset= offset;
+			fLength= length;
+		}
+	}
 	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
@@ -111,9 +146,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private Set fConfiguredAnnotationTypes= new HashSet();
 	/**
 	 * The list of allowed annotation types to be shown in this ruler.
+	 * An allowed annotation type maps to <code>true</code>, a disallowed
+	 * to <code>false</code>.
 	 * @since 3.0
 	 */
-	private Set fAllowedAnnotationTypes= new HashSet();
+	private Map fAllowedAnnotationTypes= new HashMap();
 	/**
 	 * The annotation access.
 	 * @since 3.0
@@ -481,6 +518,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int maxLayer= 1;	// loop at least once through layers.
+		ReusableRegion range= new ReusableRegion();
 
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
@@ -501,7 +539,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				if (position == null)
 					continue;
 
-				IRegion widgetRegion= extension.modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+				range.update(position.getOffset(), position.getLength());
+				IRegion widgetRegion= extension.modelRange2WidgetRange(range);
 				if (widgetRegion == null)
 					continue;
 
@@ -647,12 +686,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private boolean skip(Annotation annotation) {
 		Object annotationType= annotation.getType();
-		if (fAllowedAnnotationTypes.contains(annotationType))
-			return false;
+		Boolean allowed= (Boolean) fAllowedAnnotationTypes.get(annotationType);
+		if (allowed != null)
+			return allowed.booleanValue();
 		
 		boolean skip= skip(annotationType);
-		if (!skip)
-			fAllowedAnnotationTypes.add(annotationType);
+		fAllowedAnnotationTypes.put(annotationType, skip ? Boolean.TRUE : Boolean.FALSE);
 		return skip;
 	}
 	

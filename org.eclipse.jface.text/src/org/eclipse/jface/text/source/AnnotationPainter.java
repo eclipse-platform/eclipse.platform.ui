@@ -1111,6 +1111,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					continue;
 				
 				Decoration pp = (Decoration)entry.getValue();
+				if (pp.fPainter == fgNullDrawer)
+					continue;
+				
+				if (skip(a))
+					continue;
 	
 				maxLayer= Math.max(maxLayer, pp.fLayer + 1);	// dynamically update layer maximum
 				if (pp.fLayer != layer)	// wrong layer: skip annotation
@@ -1147,6 +1152,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Should the given annotation be skipped when handling draw requests?
+	 * 
+	 * @param annotation the annotation
+	 * @return <code>true</code> iff the given annotation should be
+	 *         skipped when handling draw requests
+	 * @since 3.0
+	 */
+	protected boolean skip(Annotation annotation) {
+		return false;
+	}
+
 	/**
 	 * Returns the widget region that corresponds to the given region in the
 	 * viewer's document.
