@@ -15,7 +15,6 @@ import javax.servlet.http.*;
  * application lifecyle events and get rid of this servlet.
  */
 public class InitServlet extends HttpServlet {
-	private WebappResources resBundle;
 	private boolean initialized = false;
 	/**
 	 * Initializes eclipse
@@ -27,17 +26,11 @@ public class InitServlet extends HttpServlet {
 
 		ServletContext context = getServletContext();
 		try {
-			// initializes string resources
-			resBundle = new WebappResources(context);
-
 			// initialize help preferences
 			WebappPreferences prefs = new WebappPreferences(context);
 			context.setAttribute("WebappPreferences", prefs);
 
 		} catch (Throwable e) {
-			if (resBundle != null)
-				log(resBundle.getString("problemInit", null), e);
-			else
 				log("Problem occured initializing Eclipse", e);
 			throw new ServletException(e);
 		} finally {

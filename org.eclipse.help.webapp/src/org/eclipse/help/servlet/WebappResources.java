@@ -6,7 +6,6 @@ package org.eclipse.help.servlet;
 
 import java.util.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -20,7 +19,7 @@ public class WebappResources {
 	/**
 	 * Resources constructor.
 	 */
-	protected WebappResources(ServletContext context) {
+	protected WebappResources() {
 		super();
 	}
 
@@ -46,11 +45,11 @@ public class WebappResources {
 				return name;
 			}
 		}
-
-		String value = bundle.getString(name);
-		if (value != null)
-			return value;
-		else
+		// get value
+		try {
+			return bundle.getString(name);
+		} catch (MissingResourceException mre) {
 			return name;
+		}
 	}
 }
