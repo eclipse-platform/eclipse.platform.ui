@@ -22,9 +22,9 @@ import org.eclipse.core.internal.boot.*;
 public class PluginStats {
 	public String pluginId;
 	public int activationOrder;
-	private long timestamp;				//timeStamp at which this plugin has been activated
-	private boolean duringStartup;		// indicate if the plugin has been activated during startup
-	private long startupTime;		// the time took by the plugin to startup
+	private long timestamp;	//timeStamp at which this plugin has been activated
+	private boolean duringStartup;	// indicate if the plugin has been activated during startup
+	private long startupTime;	// the time took by the plugin to startup
 	private long startupMethodTime;	// the time took to run the startup method
 	
 	// Indicate the position of the activation trace in the file
@@ -32,14 +32,14 @@ public class PluginStats {
 	private long traceEnd =-1;
 
 	//To keep plugins parentage
-	private ArrayList pluginsActivated = new ArrayList(3);		// TODO create lazily
+	private ArrayList pluginsActivated = new ArrayList(3);	// TODO create lazily
 	private PluginStats activatedBy=null;
 
 	// This connect plugins and their info, and so allows to access the info without running through
 	// the plugin registry. This map only contains activated plugins. The key is the plugin Id
 	private static Map plugins = new HashMap(20);
-	private static Stack activationStack = new Stack(); 		// a stack of the plugins being activated
-	private static boolean booting = true; 						// the state of the platform. This value is changed by the InternalPlatform itself.
+	private static Stack activationStack = new Stack();	// a stack of the plugins being activated
+	private static boolean booting = true;	// the state of the platform. This value is changed by the InternalPlatform itself.
 
 	static {
 		// activate the boot plugin manually since we do not control the classloader
@@ -77,15 +77,15 @@ public class PluginStats {
 			PrintWriter output = new PrintWriter(new FileOutputStream(ClassloaderStats.traceFile.getAbsolutePath(), true));
 			try {
 				long startPosition = ClassloaderStats.traceFile.length();
-				output.println("Activating plugin: " + id);
-				output.println("Plugin activation stack:");
+				output.println(Policy.bind("pluginstats.activatingPlugin", id)); //$NON-NLS-1$
+				output.println(Policy.bind("pluginstats.pluginActivationStack")); //$NON-NLS-1$
 				for (int i = activationStack.size() - 1; i >= 0 ; i--)
-					output.println("\t" + ((PluginStats)activationStack.get(i)).getPluginId());
-				output.println("Class loading stack:");
+					output.println("\t" + ((PluginStats)activationStack.get(i)).getPluginId()); //$NON-NLS-1$
+				output.println(Policy.bind("pluginstats.classloadingstack")); //$NON-NLS-1$
 				Stack classStack = ClassloaderStats.getClassStack();
 				for (int i = classStack.size() - 1; i >= 0 ; i--)
-					output.println("\t" + ((ClassStats) classStack.get(i)).getClassName());
-				output.println("Stack trace:");
+					output.println("\t" + ((ClassStats) classStack.get(i)).getClassName()); //$NON-NLS-1$
+				output.println(Policy.bind("pluginstats.stacktrace")); //$NON-NLS-1$
 				new Throwable().printStackTrace(output);
 				plugin.setTraceStart(startPosition);
 			} finally {
