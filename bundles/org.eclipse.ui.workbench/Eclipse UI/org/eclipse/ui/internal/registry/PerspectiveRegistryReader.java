@@ -50,7 +50,7 @@ protected boolean readElement(IConfigurationElement element) {
 /**
  * Read the view extensions within a registry.
  */
-public void readPerspectives(IPluginRegistry in, PerspectiveRegistry out)
+public void readPerspectives(IExtensionRegistry in, PerspectiveRegistry out)
 {
 	registry = out;
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVES);

@@ -73,7 +73,7 @@ protected void readView(IConfigurationElement element) {
 /**
  * Read the view extensions within a registry.
  */
-public void readViews(IPluginRegistry in, ViewRegistry out)
+public void readViews(IExtensionRegistry in, ViewRegistry out)
 	throws CoreException {
 	// this does not seem to really ever be throwing an the exception
 	viewRegistry = out;

@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -496,9 +495,9 @@ public class WorkbenchHelp {
 	private static void initializePluggableHelpUI() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				// get the help UI extension from the system plugin registry	
-				IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-				IExtensionPoint point = pluginRegistry.getExtensionPoint(HELP_SYSTEM_EXTENSION_ID);
+				// get the help UI extension from the registry
+				IExtensionPoint point = Platform.getExtensionRegistry()
+						.getExtensionPoint(HELP_SYSTEM_EXTENSION_ID);
 				if (point == null) {
 					// our extension point is missing (!) - act like there was no help UI
 					return;

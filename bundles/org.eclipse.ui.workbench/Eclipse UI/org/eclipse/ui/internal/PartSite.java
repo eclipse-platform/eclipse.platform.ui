@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -228,8 +227,7 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionID = configElement.getAttribute("id"); //$NON-NLS-1$
 
 		// Get plugin ID.
-		IPluginDescriptor pd = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-		pluginID = pd.getUniqueIdentifier();
+		pluginID = configElement.getDeclaringExtension().getNamespace();
 
 		// Get extension name.
 		String name = configElement.getAttribute("name"); //$NON-NLS-1$

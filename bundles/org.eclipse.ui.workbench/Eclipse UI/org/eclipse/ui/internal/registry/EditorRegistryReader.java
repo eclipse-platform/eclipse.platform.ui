@@ -48,9 +48,9 @@ public class EditorRegistryReader extends RegistryReader {
  * safely setup with the plugin.
  */
 protected void addEditors(boolean readAll, EditorRegistry registry) {
-	IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+	IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 	this.editorRegistry = registry;
-	readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+	readRegistry(extensionRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
 }
 /**
  * Implementation of the abstract method that
@@ -69,7 +69,7 @@ protected boolean readElement(IConfigurationElement element) {
 	}
 	editor.setID(id);
 	IExtension extension = element.getDeclaringExtension();
-	editor.setPluginIdentifier(extension.getDeclaringPluginDescriptor().getUniqueIdentifier());
+	editor.setPluginIdentifier(extension.getNamespace());
 
 	List extensionsVector = new ArrayList();
 	List filenamesVector = new ArrayList();
@@ -92,10 +92,8 @@ protected boolean readElement(IConfigurationElement element) {
 		}
 	}
 	if (icon != null) {
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
-		editor.setImageDescriptor(
-			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
+		String extendingPluginId = extension.getNamespace();
+		editor.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
 		editor.setImageFilename(icon);
 	}
 	

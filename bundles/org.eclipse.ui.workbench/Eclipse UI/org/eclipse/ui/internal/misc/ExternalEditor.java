@@ -19,6 +19,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.osgi.framework.Bundle;
 
 public class ExternalEditor {
 	private IPath filePath;
@@ -69,16 +70,18 @@ public void openWithUserDefinedProgram() throws CoreException {
 	// Check if we have a config element (if we don't it is an
 	// external editor created on the resource associations page).
 	if (configurationElement != null) {
-		// Get editor's plugin directory.
-		URL installURL = configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
 		try {
+			Bundle bundle = Platform.getBundle(configurationElement.getDeclaringExtension().getNamespace());
 			// See if the program file is in the plugin directory
-			URL commandURL = new URL(installURL, descriptor.getFileName());
-			URL localName = Platform.asLocalURL(commandURL); // this will bring the file local if the plugin is on a server
-			File file = new File(localName.getFile());
-			//Check that it exists before we assert it is valid
-			if(file.exists())
-				programFileName = file.getAbsolutePath();
+			URL entry = bundle.getEntry(descriptor.getFileName());
+			if (entry != null) {
+				// this will bring the file local if the plugin is on a server
+				URL localName = Platform.asLocalURL(entry);
+				File file = new File(localName.getFile());
+				//Check that it exists before we assert it is valid
+				if(file.exists())
+					programFileName = file.getAbsolutePath();
+			}
 		} catch (IOException e) {
 			// Program file is not in the plugin directory
 		}

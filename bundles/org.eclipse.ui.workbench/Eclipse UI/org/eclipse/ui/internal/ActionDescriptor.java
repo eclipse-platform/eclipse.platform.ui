@@ -140,8 +140,10 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	if (helpContextId != null) {
 		String fullID = helpContextId;
 		if (helpContextId.indexOf(".") == -1) //$NON-NLS-1$
-			// For backward compatibility we auto qualify the id if it is not qualified)
-			fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;//$NON-NLS-1$
+			// For backward compatibility we auto qualify the id if it is not
+			// qualified)
+			fullID = actionElement.getDeclaringExtension().getNamespace()
+						+ "." + helpContextId;//$NON-NLS-1$
 		WorkbenchHelp.setHelp(action, fullID);
 	}
 	if (description != null)
@@ -164,9 +166,8 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 		}
 	}
 	
-	IExtension extension = actionElement.getDeclaringExtension();
-	String extendingPluginId =
-		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+	String extendingPluginId = actionElement.getDeclaringExtension()
+				.getNamespace();
 	
 	if (icon != null) {
 		action.setImageDescriptor(

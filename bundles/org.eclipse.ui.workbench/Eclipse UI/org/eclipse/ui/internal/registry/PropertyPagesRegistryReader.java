@@ -64,7 +64,7 @@ private void processChildElement(IConfigurationElement element) {
  * Reads static property page specification.
  */
 private void processPageElement(IConfigurationElement element) {
-    String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+    String pluginId = element.getDeclaringExtension().getNamespace();
 	String pageId = element.getAttribute(ATT_ID);
 	String pageName = element.getAttribute(ATT_NAME);
 	String iconName = element.getAttribute(ATT_ICON);
@@ -93,7 +93,7 @@ private void processPageElement(IConfigurationElement element) {
 
 	IPropertyPageContributor contributor = 
 		new RegistryPageContributor(
-            pluginId,
+			pluginId,
 			pageId, 
 			pageName, 
 			iconName, 
@@ -130,7 +130,7 @@ private void registerContributor(String objectClassName, IPropertyPageContributo
 /**
  *	Reads all occurances of propertyPages extension in the registry.
  */
-public void registerPropertyPages(IPluginRegistry registry) {
+public void registerPropertyPages(IExtensionRegistry registry) {
 	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PROPERTY_PAGES);
 }
 }

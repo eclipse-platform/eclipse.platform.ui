@@ -444,8 +444,7 @@ protected boolean initializeWizard(WorkbenchWizardElement element,
 	String descImage = config.getAttribute(ATT_DESCRIPTION_IMAGE);
 	if (descImage != null) {
 		IExtension extension = config.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extendingPluginId = extension.getNamespace();
 		ImageDescriptor image =
 			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, descImage);
 		element.setDescriptionImage(image);

@@ -77,7 +77,7 @@ protected TransferData getCurrentTransfer() {
  */
 protected static IDropActionDelegate getPluginAdapter(PluginTransferData data) throws CoreException {
 
-	IPluginRegistry registry = Platform.getPluginRegistry();
+	IExtensionRegistry registry = Platform.getExtensionRegistry();
 	String adapterName = data.getExtensionId();
 	IExtensionPoint xpt =
 		registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_DROP_ACTIONS);

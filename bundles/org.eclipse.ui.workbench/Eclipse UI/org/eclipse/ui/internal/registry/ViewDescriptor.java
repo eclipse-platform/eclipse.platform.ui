@@ -113,8 +113,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		if (iconName == null)
 			return null;
 		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extendingPluginId = extension.getNamespace();
 		imageDescriptor =
 			AbstractUIPlugin.imageDescriptorFromPlugin(
 				extendingPluginId,
@@ -148,11 +147,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	 */
 	private void loadFromExtension() throws CoreException {
 		id = configElement.getAttribute(ATT_ID);
-		pluginId =
-			configElement
-				.getDeclaringExtension()
-				.getDeclaringPluginDescriptor()
-				.getUniqueIdentifier();
+		pluginId = configElement.getDeclaringExtension().getNamespace();
 		label = configElement.getAttribute(ATT_NAME);
 		accelerator = configElement.getAttribute(ATT_ACCELERATOR);
 		className = configElement.getAttribute(ATT_CLASS);
@@ -162,7 +157,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		
 		// Sanity check.
 		if ((label == null) || (className == null)) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getNamespace(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
 			null));
 		}
 		if (category != null) {

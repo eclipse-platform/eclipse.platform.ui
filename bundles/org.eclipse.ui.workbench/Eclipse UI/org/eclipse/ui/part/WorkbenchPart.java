@@ -214,27 +214,25 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
-	if (strIcon != null) {
-		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
-		imageDescriptor = 
-			AbstractUIPlugin.imageDescriptorFromPlugin(
-				extendingPluginId, strIcon);					
-		
-		/* remember the image in a separatly from titleImage,
-		 * since it must be disposed even if the titleImage is changed
-		 * to something else*/
-	 	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-		Image image = (Image)imageCache.get(imageDescriptor);
-		if(image != null) {
-			imageCache.addRef(imageDescriptor);
-		} else {
-			image = imageDescriptor.createImage();
-			imageCache.put(imageDescriptor,image);
-		}
-		titleImage = image;
+	if (strIcon == null)
+		return;
+
+	imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+				configElement.getDeclaringExtension().getNamespace(),
+				strIcon);
+
+	/* remember the image in a separatly from titleImage,
+	 * since it must be disposed even if the titleImage is changed
+	 * to something else*/
+ 	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
+	Image image = (Image)imageCache.get(imageDescriptor);
+	if(image != null) {
+		imageCache.addRef(imageDescriptor);
+	} else {
+		image = imageDescriptor.createImage();
+		imageCache.put(imageDescriptor,image);
 	}
+	titleImage = image;
 }
 /**
  * Sets the part site.

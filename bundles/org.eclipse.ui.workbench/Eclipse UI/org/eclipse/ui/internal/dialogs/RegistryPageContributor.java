@@ -119,12 +119,11 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
  * Returns page icon as defined in the registry.
  */
 public ImageDescriptor getPageIcon() {
-	if (iconName==null) return null;
+	if (iconName == null)
+		return null;
 	IExtension extension = pageElement.getDeclaringExtension();
-	String extendingPluginId =
-		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
-	return AbstractUIPlugin.imageDescriptorFromPlugin(
-		extendingPluginId, iconName);
+	return AbstractUIPlugin.imageDescriptorFromPlugin(extension
+			.getNamespace(), iconName);
 }
 /**
  * Returns page ID as defined in the registry.

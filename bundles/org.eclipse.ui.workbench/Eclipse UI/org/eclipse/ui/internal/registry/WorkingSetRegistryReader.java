@@ -59,7 +59,7 @@ public boolean readElement(IConfigurationElement element) {
  * @param in the plugin registry to read from
  * @param out the working set registry to store read entries in.
  */
-public void readWorkingSets(IPluginRegistry in, WorkingSetRegistry out) {
+public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
 	registry = out;
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_WORKINGSETS);
 }

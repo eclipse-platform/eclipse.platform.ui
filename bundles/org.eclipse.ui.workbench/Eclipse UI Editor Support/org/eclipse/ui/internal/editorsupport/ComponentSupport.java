@@ -13,11 +13,11 @@ package org.eclipse.ui.internal.editorsupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.internal.util.BundleUtility;
+import org.osgi.framework.Bundle;
 
 /**
  * This class provides an OS independent interface to the
@@ -69,19 +69,14 @@ public final class ComponentSupport {
 		// hence: IContributorResourceAdapter.class won't compile
 		// and Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor") won't find it
 		// need to be trickier...
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
-		if (desc == null) {
-			// IDE plug-in is not around
-			return null;
-		}
-		// IDE plug-in is around
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
+
 		// it's not our job to activate the plug-in
-		if (!desc.isPluginActivated()) {
+		if (!BundleUtility.isActivated(bundle)) 
 			return null;
-		}
-		ClassLoader rcl = desc.getPluginClassLoader();
+
 		try {
-			Class c = rcl.loadClass("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
+			Class c = bundle.loadClass("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
 			return (IEditorPart) c.newInstance();
 		} catch (ClassNotFoundException exception) {
 			return null;

@@ -97,8 +97,7 @@ public class WorkingSetDescriptor {
 			return null;
 
 		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extendingPluginId = extension.getNamespace();
 		return AbstractUIPlugin.imageDescriptorFromPlugin(
 			extendingPluginId, icon);
 	}

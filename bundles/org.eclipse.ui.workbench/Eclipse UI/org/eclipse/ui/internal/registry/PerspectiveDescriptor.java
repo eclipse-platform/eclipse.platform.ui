@@ -81,7 +81,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	super();
 	this.configElement = configElement;
 	id = configElement.getAttribute(ATT_ID);
-    pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+    pluginId = configElement.getDeclaringExtension().getNamespace();
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
@@ -104,8 +104,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	String icon = configElement.getAttribute(ATT_ICON);
 	if (icon != null) {
 		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extendingPluginId = extension.getNamespace();
 		image = AbstractUIPlugin.imageDescriptorFromPlugin(
 			extendingPluginId, icon);
 	}

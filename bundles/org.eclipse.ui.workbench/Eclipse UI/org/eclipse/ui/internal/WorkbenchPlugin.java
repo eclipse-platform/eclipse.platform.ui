@@ -62,6 +62,7 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -178,8 +179,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		try {
 			// If plugin has been loaded create extension.
 			// Otherwise, show busy cursor then create extension.
-			IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-			if (plugin.isPluginActivated()) {
+			if(BundleUtility.isActivated(element.getDeclaringExtension().getNamespace())) {
 				return element.createExecutableExtension(classAttribute);
 			} else {
 				final Object[] ret = new Object[1];
@@ -264,7 +264,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		// Get the extension point registry.
 		IExtensionPoint extensionPoint;
-		extensionPoint = Platform.getPluginRegistry().getExtensionPoint(PI_WORKBENCH, IWorkbenchConstants.PL_ELEMENT_FACTORY);
+		extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PI_WORKBENCH, IWorkbenchConstants.PL_ELEMENT_FACTORY);
 
 		if (extensionPoint == null) {
 			WorkbenchPlugin.log("Unable to find element factory. Extension point: " + IWorkbenchConstants.PL_ELEMENT_FACTORY + " not found"); //$NON-NLS-2$ //$NON-NLS-1$
@@ -345,7 +345,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (introRegistry == null) {
 			introRegistry = new IntroRegistry();
 			IntroRegistryReader reader = new IntroRegistryReader();
-			reader.readIntros(Platform.getPluginRegistry(), introRegistry);
+			reader.readIntros(Platform.getExtensionRegistry(), introRegistry);
 		}
 		return introRegistry;
 	}
@@ -359,7 +359,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 			//Get the pages from the registry
 			PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(getWorkbench());
-			List pageContributions = registryReader.getPreferenceContributions(Platform.getPluginRegistry());
+			List pageContributions = registryReader.getPreferenceContributions(Platform.getExtensionRegistry());
 
 			//Add the contributions to the manager
 			Iterator enum = pageContributions.iterator();
@@ -391,7 +391,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			try {
 				themeRegistry = new ThemeRegistry();
 				ThemeRegistryReader reader = new ThemeRegistryReader();
-				reader.readThemes(Platform.getPluginRegistry(), themeRegistry);
+				reader.readThemes(Platform.getExtensionRegistry(), themeRegistry);
 			} catch (CoreException e) {
 				// cannot safely show a dialog so log it
 				WorkbenchPlugin.log("Unable to read theme registry.", e.getStatus()); //$NON-NLS-1$
@@ -408,7 +408,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			viewRegistry = new ViewRegistry();
 			try {
 				ViewRegistryReader reader = new ViewRegistryReader();
-				reader.readViews(Platform.getPluginRegistry(), viewRegistry);
+				reader.readViews(Platform.getExtensionRegistry(), viewRegistry);
 			} catch (CoreException e) {
 				// cannot safely show a dialog so log it
 				WorkbenchPlugin.log("Unable to read view registry.", e.getStatus()); //$NON-NLS-1$
@@ -619,6 +619,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	private void initializeProductInfo() {
+		// TODO finish removing compatibility dependency by changing
+		//      this to use new IProduct, etc. constants, something like:
+		// 	    - get the registry
+		// 	    - get the IProduct extension pt
+		// 	    - find the extension with a given productName (id)
+		// 	    - derive the data structure from the infos
+		// NE: Can't we just use Platform.getProduct() rather than
+		//  groveling over the product providers ourselves?
+
 		// extract app name and window image from primary feature
 		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
 		String featureId = conf.getPrimaryFeatureIdentifier();

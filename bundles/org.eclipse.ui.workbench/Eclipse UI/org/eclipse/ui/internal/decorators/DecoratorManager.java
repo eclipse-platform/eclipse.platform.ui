@@ -63,7 +63,7 @@ public class DecoratorManager
 	 */
 	public DecoratorManager() {
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
-		Collection values = reader.readRegistry(Platform.getPluginRegistry());
+		Collection values = reader.readRegistry(Platform.getExtensionRegistry());
 
 		ArrayList full = new ArrayList();
 		ArrayList lightweight = new ArrayList();

@@ -253,10 +253,7 @@ public class WorkbenchWizardElement
 	 */
 	public String getPluginId() {
 		return fromPlugin()
-			? configurationElement
-				.getDeclaringExtension()
-				.getDeclaringPluginDescriptor()
-				.getUniqueIdentifier()
+		    ? configurationElement.getDeclaringExtension().getNamespace()
 			: null;
 	}
     

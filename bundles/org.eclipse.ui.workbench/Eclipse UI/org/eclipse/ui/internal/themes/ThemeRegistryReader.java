@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -136,10 +137,7 @@ public class ThemeRegistryReader extends RegistryReader {
 				name,
 				id,
 				description,
-				element
-					.getDeclaringExtension()
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier(),
+				element.getDeclaringExtension().getNamespace(),
 				element);
 	}
 	
@@ -191,10 +189,7 @@ public class ThemeRegistryReader extends RegistryReader {
 				categoryId,
 				isEditable,
 				description,
-				element
-					.getDeclaringExtension()
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier());
+				element.getDeclaringExtension().getNamespace());
     }
 	
 	/* (non-Javadoc)
@@ -374,7 +369,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	 * @param in the registry to read
 	 * @param out the registry to write to
 	 */
-	public void readThemes(IPluginRegistry in, ThemeRegistry out)
+	public void readThemes(IExtensionRegistry in, ThemeRegistry out)
 		throws CoreException {
 		// this does not seem to really ever be throwing an the exception
 		setRegistry(out);

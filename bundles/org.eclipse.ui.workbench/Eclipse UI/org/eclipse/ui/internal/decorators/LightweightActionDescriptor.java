@@ -44,10 +44,8 @@ public LightweightActionDescriptor(IConfigurationElement actionElement) {
 	String iconName = actionElement.getAttribute(ActionDescriptor.ATT_ICON);
 	if (iconName != null) {
 		IExtension extension = actionElement.getDeclaringExtension();
-		String extendingPluginId = 
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
 		this.image = AbstractUIPlugin.imageDescriptorFromPlugin(
-			extendingPluginId, iconName);
+				extension.getNamespace(), iconName);
 	}
 }
 /**

@@ -100,9 +100,6 @@ public class WorkbenchPreferenceNode
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return configurationElement
-			.getDeclaringExtension()
-			.getDeclaringPluginDescriptor()
-			.getUniqueIdentifier();
+		return configurationElement.getDeclaringExtension().getNamespace();
 	}
 }

@@ -16,12 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -29,7 +24,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IActionDelegateWithEvent;
@@ -40,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -85,7 +82,7 @@ public abstract class PluginAction extends Action
 				
 		this.configElement = actionElement;
 		this.runAttribute = runAttribute;
-		pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		pluginId = configElement.getDeclaringExtension().getNamespace();
 		
 		// Read enablement declaration.
 		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null) {
@@ -169,9 +166,8 @@ public abstract class PluginAction extends Action
 	 */
 	protected boolean isOkToCreateDelegate() {
 		// test if the plugin has loaded
-		IPluginDescriptor plugin =
-			configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-		return plugin.isPluginActivated();
+		String bundleId = configElement.getDeclaringExtension().getNamespace();
+		return BundleUtility.isActivated(bundleId);
 	}
 	
 	/**

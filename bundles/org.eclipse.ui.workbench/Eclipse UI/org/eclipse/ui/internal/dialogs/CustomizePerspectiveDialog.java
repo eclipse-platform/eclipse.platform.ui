@@ -57,9 +57,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
@@ -1227,36 +1229,18 @@ private void initializeActionSetInput() {
 		actionSets.add(actionSetDesc);
 	}
 	String iconPath = "icons/full/obj16/menu.gif";//$NON-NLS-1$
-	try {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		URL installURL = plugin.getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath);
-		menuImageDescriptor = ImageDescriptor.createFromURL(url);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen
-	}
+	URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+	menuImageDescriptor = ImageDescriptor.createFromURL(url);
+
 	iconPath = "icons/full/obj16/submenu.gif";//$NON-NLS-1$
-	try {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		URL installURL = plugin.getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath);
-		submenuImageDescriptor = ImageDescriptor.createFromURL(url);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen
-	}
+	url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+	submenuImageDescriptor = ImageDescriptor.createFromURL(url);
+
 	iconPath = "icons/full/obj16/toolbar.gif";//$NON-NLS-1$
-	try {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		URL installURL = plugin.getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath);
-		toolbarImageDescriptor = ImageDescriptor.createFromURL(url);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen
-	}
+	url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+	toolbarImageDescriptor = ImageDescriptor.createFromURL(url);
 }
+
 private void initializeShortCutMenu(ShortcutMenu menu, WizardCollectionElement element, ArrayList activeIds) {
 	ShortcutMenu category = new ShortcutMenu(menu, element.getId(), element.getLabel(element));
 	Object[] wizards = element.getWizards();

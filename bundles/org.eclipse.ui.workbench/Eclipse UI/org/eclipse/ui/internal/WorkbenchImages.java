@@ -23,6 +23,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * This class provides convenience access to many of the resources required
@@ -70,9 +71,6 @@ public /*final*/ class WorkbenchImages {
 
 	/* Declare Common paths */
 
-	// Subdirectory (under the package containing this class) where 16 color images are
-	private static final URL URL_BASIC = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-
 	public final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	
 	private final static String PATH_CTOOL = ICONS_PATH+"ctool16/"; //Colored toolbar icons - hover.//$NON-NLS-1$
@@ -119,12 +117,7 @@ public static ReferenceCounter getImageCache() {
  * <code>false</code> if this is not a shared image
  */
 private final static void declareImage(String key, String path, boolean shared) {
-	URL url = null;
-	try {
-		url = new URL(URL_BASIC, path);
-	} catch (MalformedURLException e) {
-	    //no-op
-	}
+	URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
 	ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 	declareImage(key, desc, shared);
 }

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPluginRegistry;
 
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -169,7 +170,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 * is incorrect, page will appear at the root level. workbench
 	 * log entry will be created for incorrect category information.
 	 */
-	public List getPreferenceContributions(IPluginRegistry registry) {
+	public List getPreferenceContributions(IExtensionRegistry registry) {
 		loadNodesFromRegistry(registry); //all nodes keyed on category
 		List contributions = new ArrayList();
 		//root nodes (which contain subnodes)
@@ -235,7 +236,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	/**
 	 * Get the preference nodes that are defined in the registry
 	 */
-	protected void loadNodesFromRegistry(IPluginRegistry registry) {
+	protected void loadNodesFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
 		readRegistry(
 			registry,
@@ -276,11 +277,8 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		}
 		ImageDescriptor image = null;
 		if (imageName != null) {
-			String contributingPluginId =
-				element
-				.getDeclaringExtension()
-				.getDeclaringPluginDescriptor()
-				.getUniqueIdentifier();
+			String contributingPluginId = element.getDeclaringExtension()
+					.getNamespace();
 			image =
 				AbstractUIPlugin.imageDescriptorFromPlugin(
 						contributingPluginId,

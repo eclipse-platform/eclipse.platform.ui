@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +26,7 @@ import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.osgi.framework.Bundle;
 
 /**
  * Determines the enablement status given a selection. This calculation
@@ -110,28 +110,29 @@ public final class SelectionEnabler {
 			// tried before and failed
 			return null;
 		}
-		
+
 		// JFace text plug-in is not on prereq chain of generic wb plug-in
 		// hence: ITextSelection.class won't compile
-		// and Class.forName("org.eclipse.jface.text.ITextSelection") won't find it
-		// need to be trickier...
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(JFACE_TEXT_PLUG_IN); 
-		if (desc == null) {
-			// JFace text plug-in is not around
-			// assume that it will never be around
+		// and Class.forName("org.eclipse.jface.text.ITextSelection") won't find
+		// it need to be trickier...
+		Bundle bundle = Platform.getBundle(JFACE_TEXT_PLUG_IN);
+		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED) {
+			// JFace text plug-in is not around, or has already
+			// been removed, assume that it will never be around
 			textSelectionPossible = false;
 			return null;
 		}
+
 		// plug-in is around
 		// it's not our job to activate the plug-in
-		if (!desc.isPluginActivated()) {
+		if (bundle.getState() == Bundle.INSTALLED) {
 			// assume it might come alive later
 			textSelectionPossible = true;
 			return null;
 		}
-		ClassLoader rcl = desc.getPluginClassLoader();
+
 		try {
-			Class c = rcl.loadClass(TEXT_SELECTION_CLASS); //$NON-NLS-1$
+			Class c = bundle.loadClass(TEXT_SELECTION_CLASS); //$NON-NLS-1$
 			// remember for next time
 			iTextSelectionClass = c;
 			return iTextSelectionClass;

@@ -53,7 +53,7 @@ public boolean readElement(IConfigurationElement element) {
 /**
  * Read the view extensions within a registry.
  */
-public void readRegistry(IPluginRegistry in, ActionSetRegistry out)
+public void readRegistry(IExtensionRegistry in, ActionSetRegistry out)
 {
 	registry = out;
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);

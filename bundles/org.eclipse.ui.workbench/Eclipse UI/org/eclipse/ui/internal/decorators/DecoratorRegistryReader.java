@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -154,7 +154,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 	 * Read the decorator extensions within a registry and set 
 	 * up the registry values.
 	 */
-	Collection readRegistry(IPluginRegistry in) {
+	Collection readRegistry(IExtensionRegistry in) {
 		values.clear();
 		ids.clear();
 		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_DECORATORS);

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.util.BundleUtility;
+import org.osgi.framework.Bundle;
 
 /**
  * Provides access to resource-specific classes, needed to provide
@@ -79,8 +80,8 @@ public final class LegacyResourceSupport {
 		// hence: IResource.class won't compile
 		// and Class.forName("org.eclipse.core.resources.IResource") won't find it
 		// need to be trickier...
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (desc == null) {
+		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+		if (bundle == null) {
 			// resources plug-in is not around
 			// assume that it will never be around
 			resourcesPossible = false;
@@ -88,14 +89,13 @@ public final class LegacyResourceSupport {
 		}
 		// resources plug-in is around
 		// it's not our job to activate the plug-in
-		if (!desc.isPluginActivated()) {
+		if (!BundleUtility.isActivated(bundle)) {
 			// assume it might come alive later
 			resourcesPossible = true;
 			return null;
 		}
-		ClassLoader rcl = desc.getPluginClassLoader();
 		try {
-			Class c = rcl.loadClass("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
+			Class c = bundle.loadClass("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
 			// remember for next time
 			iresourceClass = c;
 			return iresourceClass;
@@ -133,8 +133,8 @@ public final class LegacyResourceSupport {
 		// hence: IContributorResourceAdapter.class won't compile
 		// and Class.forName("org.eclipse.ui.IContributorResourceAdapter") won't find it
 		// need to be trickier...
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
-		if (desc == null) {
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
+		if (bundle== null) {
 			// IDE plug-in is not around
 			// assume that it will never be around
 			resourceAdapterPossible = false;
@@ -142,14 +142,13 @@ public final class LegacyResourceSupport {
 		}
 		// IDE plug-in is around
 		// it's not our job to activate the plug-in
-		if (!desc.isPluginActivated()) {
+		if (!BundleUtility.isActivated(bundle)) {
 			// assume it might come alive later
 			resourceAdapterPossible = true;
 			return null;
 		}
-		ClassLoader rcl = desc.getPluginClassLoader();
 		try {
-			Class c = rcl.loadClass("org.eclipse.ui.IContributorResourceAdapter"); //$NON-NLS-1$
+			Class c = bundle.loadClass("org.eclipse.ui.IContributorResourceAdapter"); //$NON-NLS-1$
 			// remember for next time
 			icontributorResourceAdapterClass = c;
 			return icontributorResourceAdapterClass;
@@ -187,8 +186,8 @@ public final class LegacyResourceSupport {
 		// hence: DefaultContributorResourceAdapter.class won't compile
 		// and Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter") won't find it
 		// need to be trickier...
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
-		if (desc == null) {
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
+		if (bundle== null) {
 			// IDE plug-in is not around
 			// assume that it will never be around
 			resourceAdapterPossible = false;
@@ -196,14 +195,13 @@ public final class LegacyResourceSupport {
 		}
 		// IDE plug-in is around
 		// it's not our job to activate the plug-in
-		if (!desc.isPluginActivated()) {
+		if (!BundleUtility.isActivated(bundle)) {
 			// assume it might come alive later
 			resourceAdapterPossible = true;
 			return null;
 		}
-		ClassLoader rcl = desc.getPluginClassLoader();
 		try {
-			Class c = rcl.loadClass("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter"); //$NON-NLS-1$
+			Class c = bundle.loadClass("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter"); //$NON-NLS-1$
 			// remember for next time
 			defaultContributorResourceAdapterClass = c;
 			return defaultContributorResourceAdapterClass;

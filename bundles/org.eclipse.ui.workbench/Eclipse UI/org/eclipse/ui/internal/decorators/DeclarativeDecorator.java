@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.util.BundleUtility;
 /**
  * The DeclarativeDecorator is a decorator that is made entirely from an XML
  * specification.
@@ -56,14 +57,10 @@ public class DeclarativeDecorator implements ILightweightLabelDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 		if (descriptor == null) {
-			URL source = configElement.getDeclaringExtension()
-					.getDeclaringPluginDescriptor().getInstallURL();
-			try {
-				descriptor = ImageDescriptor.createFromURL(new URL(source,
-						iconLocation));
-			} catch (MalformedURLException exception) {
+			URL url = BundleUtility.find(configElement.getDeclaringExtension().getNamespace(), iconLocation);
+			if(url == null)
 				return;
-			}
+			descriptor = ImageDescriptor.createFromURL(url);
 		}
 		decoration.addOverlay(descriptor);
 	}

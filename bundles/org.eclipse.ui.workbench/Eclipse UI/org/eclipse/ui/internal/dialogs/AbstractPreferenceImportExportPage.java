@@ -11,22 +11,18 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 
 /**
@@ -58,18 +54,14 @@ abstract class AbstractPreferenceImportExportPage extends WizardPage {
 	 * image" descriptor.
 	 */
 	protected static ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// should not happen
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
+		String path = "icons/full/" + relativePath; //$NON-NLS-1$
+		URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
+
+		return url != null
+				? ImageDescriptor.createFromURL(url)
+				: ImageDescriptor.getMissingImageDescriptor();
 	}
-	
+
 	/**
 	 * Whether this page was opened in export or import mode.  Since there is a
 	 * significant amount of overlap, the import and export pages are not 

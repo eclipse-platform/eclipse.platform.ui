@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPluginRegistry;
 
 import org.eclipse.ui.PlatformUI;
@@ -71,7 +72,7 @@ public class IntroRegistryReader extends RegistryReader {
 	 * @param in the registry to read.
 	 * @param out the registry to populate.
 	 */
-	public void readIntros(IPluginRegistry in, IntroRegistry out) {
+	public void readIntros(IExtensionRegistry in, IntroRegistry out) {
 		introRegistry = out;
 		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_INTRO);		
 	}

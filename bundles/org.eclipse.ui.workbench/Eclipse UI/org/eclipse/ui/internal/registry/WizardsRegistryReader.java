@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -122,8 +122,7 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 	String iconName = config.getAttribute(ATT_ICON);
 	if (iconName != null) {
 		IExtension extension = config.getDeclaringExtension();
-		String extendingPluginId =
-			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String extendingPluginId = extension.getNamespace();
 		ImageDescriptor image =
 			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, iconName);
 		element.setImageDescriptor(image);
@@ -152,8 +151,8 @@ public boolean readElement(IConfigurationElement element) {
 protected void readWizards() {
 	if (!areWizardsRead()) {
 		createEmptyWizardCollection();
-		IPluginRegistry pregistry = Platform.getPluginRegistry();
-		readRegistry(pregistry, WorkbenchPlugin.PI_WORKBENCH, pluginPoint);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		readRegistry(registry, WorkbenchPlugin.PI_WORKBENCH, pluginPoint);
 	}
 }
 /**

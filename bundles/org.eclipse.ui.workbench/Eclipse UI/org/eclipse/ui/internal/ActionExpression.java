@@ -16,10 +16,11 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.internal.util.BundleUtility;
+import org.osgi.framework.Bundle;
 
 /**
  * An ActionExpression is used to evaluate the enablement / visibility
@@ -470,13 +471,13 @@ public class ActionExpression {
 		 * Method declared on AbstractExpression.
 		 */
 		public boolean isEnabledFor(Object object) {
-			IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(id);
-			if (desc == null)
+			Bundle bundle = Platform.getBundle(id);
+			if (!BundleUtility.isReady(bundle))
 				return false;
 			if (value.equals(PLUGIN_INSTALLED))
 				return true;
 			if (value.equals(PLUGIN_ACTIVATED))
-				return desc.isPluginActivated();
+				return BundleUtility.isActivated(bundle);
 			return false;
 		}
 	}

@@ -64,15 +64,13 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
 		productId = configElement.getAttribute(ATT_PRODUCTID);
-		pluginId =
-			configElement
-			.getDeclaringExtension()
-			.getDeclaringPluginDescriptor()
-			.getUniqueIdentifier();
+		pluginId = configElement.getDeclaringExtension().getNamespace();
 		String className = configElement.getAttribute(ATT_CLASS);
 		// Sanity check.
 		if (name == null || className == null) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, configElement
+					.getDeclaringExtension().getNamespace(), 0,
+					"Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
 					null));
 		}
 		

@@ -57,7 +57,7 @@ protected boolean readElement(IConfigurationElement element) {
  */
 public void readPopupContributors(ObjectActionContributorManager mng) {
 	setManager(mng);
-	IPluginRegistry registry = Platform.getPluginRegistry();
+	IExtensionRegistry registry = Platform.getExtensionRegistry();
 	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_POPUP_MENU);
 }
 

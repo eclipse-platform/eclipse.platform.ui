@@ -70,7 +70,7 @@ public void extendLayout(String id, PageLayout out)
 {
 	targetID = id;
 	pageLayout = out;
-	readRegistry(Platform.getPluginRegistry(), 
+	readRegistry(Platform.getExtensionRegistry(), 
 		PlatformUI.PLUGIN_ID, 
 		IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
 }

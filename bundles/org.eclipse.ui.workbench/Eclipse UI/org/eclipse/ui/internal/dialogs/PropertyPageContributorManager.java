@@ -116,6 +116,6 @@ public boolean hasContributorsFor(Object object) {
  */
 private void loadContributors() {
 	PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
-	reader.registerPropertyPages(Platform.getPluginRegistry());
+	reader.registerPropertyPages(Platform.getExtensionRegistry());
 }	
 }

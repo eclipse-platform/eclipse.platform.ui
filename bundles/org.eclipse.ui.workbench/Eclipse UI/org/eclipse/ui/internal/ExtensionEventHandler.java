@@ -305,7 +305,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			MessageFormat.format(
 				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
 				new Object[] {
-					ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+					ext.getNamespace(),  
 					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards")})); //$NON-NLS-1$ 
 	}
 	
@@ -804,7 +804,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 				MessageFormat.format(
 					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
 					new Object[] {
-						ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+						ext.getNamespace(),  
 						ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension")})); //$NON-NLS-1$ 				
 				break;
 			}
@@ -842,7 +842,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			MessageFormat.format(
 				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
 				new Object[] {
-					ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+					ext.getNamespace(),  
 					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set")})); //$NON-NLS-1$ 
 			
 /*

@@ -17,9 +17,7 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -64,9 +62,8 @@ protected String getDescription(IConfigurationElement config) {
  */
 protected static void logError(IConfigurationElement element, String text) {
 	IExtension extension = element.getDeclaringExtension();
-	IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
 	StringBuffer buf = new StringBuffer();
-	buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+	buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
 	buf.append("\n"+text);//$NON-NLS-1$
 	WorkbenchPlugin.log(buf.toString());
 }
@@ -104,8 +101,8 @@ protected IExtension[] orderExtensions(IExtension[] extensions) {
 	System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
 	Comparator comparer = new Comparator() {
 		public int compare(Object arg0, Object arg1) {
-			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			String s1 = ((IExtension)arg0).getNamespace();
+			String s2 = ((IExtension)arg1).getNamespace();
 			return s1.compareToIgnoreCase(s2);
 		}
 	}; 
@@ -153,7 +150,7 @@ protected void readExtension(IExtension extension) {
  *	Start the registry reading process using the
  * supplied plugin ID and extension point.
  */
-public void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
+public void readRegistry(IExtensionRegistry registry, String pluginId, String extensionPoint) {
 	IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
 	if (point == null) return;
 	IExtension[] extensions = point.getExtensions();

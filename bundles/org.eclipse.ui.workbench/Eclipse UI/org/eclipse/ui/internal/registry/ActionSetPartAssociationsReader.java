@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -75,7 +75,7 @@ public boolean readElement(IConfigurationElement element) {
 /**
  * Read the association extensions within a registry.
  */
-public void readRegistry(IPluginRegistry in, ActionSetRegistry out)
+public void readRegistry(IExtensionRegistry in, ActionSetRegistry out)
 {
 	registry = out;
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS);

@@ -432,7 +432,7 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	 */
 	private void loadPredefined() {
 		PerspectiveRegistryReader reader = new PerspectiveRegistryReader();
-		reader.readPerspectives(Platform.getPluginRegistry(), this);
+		reader.readPerspectives(Platform.getExtensionRegistry(), this);
 	}
 	/**
 	 * Sets the default perspective for the workbench to the given perspective id.

@@ -151,10 +151,10 @@ public void mapActionSetsToCategories() {
  */
 public void readFromRegistry() {
 	ActionSetRegistryReader reader = new ActionSetRegistryReader();
-	reader.readRegistry(Platform.getPluginRegistry(), this);
+	reader.readRegistry(Platform.getExtensionRegistry(), this);
 	
 	ActionSetPartAssociationsReader assocReader = new ActionSetPartAssociationsReader();
-	assocReader.readRegistry(Platform.getPluginRegistry(), this);
+	assocReader.readRegistry(Platform.getExtensionRegistry(), this);
 }
 //for dynamic UI
 public void addCache(String actionSetId, Object cache) {
