@@ -12,6 +12,7 @@ package org.eclipse.ui.ide;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -70,14 +71,14 @@ public class IDEEncoding {
 	 * @return List of String
 	 */
 	public static List getIDEEncodings() {
-		List encodings =  getIDEEncodingsPreference();	
+		List encodings = getIDEEncodingsPreference();
 		encodings.addAll(WorkbenchEncoding.getDefinedEncodings());
-		
+
 		String enc = getResourceEncoding();
 
-		if (!(enc == null || encodings.contains(enc))) 
+		if (!(enc == null || encodings.contains(enc)))
 			encodings.add(enc);
-		
+
 		Collections.sort(encodings);
 		return encodings;
 	}
@@ -89,8 +90,8 @@ public class IDEEncoding {
 	 * @return String
 	 */
 	public static String getResourceEncoding() {
-		String preference = ResourcesPlugin.getPlugin().getPluginPreferences()
-				.getString(ResourcesPlugin.PREF_ENCODING);
+		String preference = ResourcesPlugin.getPlugin().getPluginPreferences().getString(
+				ResourcesPlugin.PREF_ENCODING);
 		if (preference == null || preference.length() == 0)
 			return null;
 		return preference;
@@ -110,10 +111,10 @@ public class IDEEncoding {
 	public static void setResourceEncoding(String value) {
 
 		if (value != null)
-			addIDEEncoding(value);	
-		
+			addIDEEncoding(value);
+
 		final String finalValue = value;
-		Job charsetJob = new Job(IDEWorkbenchMessages.getString("IDEEncoding.EncodingJob")){ //$NON-NLS-1$
+		Job charsetJob = new Job(IDEWorkbenchMessages.getString("IDEEncoding.EncodingJob")) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -124,9 +125,9 @@ public class IDEEncoding {
 					return exception.getStatus();
 				}
 				return Status.OK_STATUS;
-				
+
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 			 */
@@ -136,7 +137,7 @@ public class IDEEncoding {
 			}
 		};
 		charsetJob.schedule();
-		
+
 	}
 
 	/**
@@ -145,30 +146,41 @@ public class IDEEncoding {
 	 * @param value
 	 */
 	public static void addIDEEncoding(String value) {
-		
-		if(WorkbenchEncoding.getDefinedEncodings().contains(value))
-			return;
-		
-		Iterator currentEncodings = getIDEEncodingsPreference().iterator();
 
-		boolean addValue = true;
+		if (WorkbenchEncoding.getDefinedEncodings().contains(value))
+			return;
+
+		writeEncodingsPreference(value, getIDEEncodingsPreference());
+
+	}
+
+	/**
+	 * Write the encodings preference. If value is not null
+	 * and not already in the list of currentEncodings add
+	 * it to the list.
+	 * @param value String or <code>null</code>
+	 * @param encodings The list of encodings to write
+	 */
+	private static void writeEncodingsPreference(String value, Collection encodings) {
+		boolean addValue = (value != null);
 
 		StringBuffer result = new StringBuffer();
-		
-		while(currentEncodings.hasNext()){
+
+		Iterator currentEncodings = encodings.iterator();
+
+		while (currentEncodings.hasNext()) {
 			String string = (String) currentEncodings.next();
 			result.append(string);
 			result.append(PREFERENCE_SEPARATOR);
-			if (string.equals(value))
+			if (addValue && string.equals(value))//If we still think we are going to add it check first
 				addValue = false;
 		}
 
 		if (addValue)
 			result.append(value);
 
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-				IDE_ENCODINGS_PREFERENCE, result.toString());
-
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDE_ENCODINGS_PREFERENCE,
+				result.toString());
 	}
 
 	/**
@@ -177,34 +189,42 @@ public class IDEEncoding {
 	 * @return List
 	 */
 	private static List getIDEEncodingsPreference() {
-		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.getString(IDE_ENCODINGS_PREFERENCE);
+		
+		boolean updateRequired = false;
+		
+		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
+				IDE_ENCODINGS_PREFERENCE);
 
 		if (encodings == null || encodings.length() == 0)
 			return new ArrayList();
 
-		String [] preferenceEncodings =  encodings.split(PREFERENCE_SEPARATOR);//$NON-NLS-1$
+		String[] preferenceEncodings = encodings.split(PREFERENCE_SEPARATOR);//$NON-NLS-1$
 		ArrayList result = new ArrayList();
-		
+
 		//Drop any encodings that are not valid
 		for (int i = 0; i < preferenceEncodings.length; i++) {
 			String string = preferenceEncodings[i];
 			if (Charset.isSupported(string))
 				result.add(string);
-			else
+			else{
 				WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
-						new String[] { string }));				
+						new String[] { string }));
+				updateRequired = true;
+			}
+				
 		}
-		return result;
 		
+		if(updateRequired)//If we logged a problem then clear the preference
+			writeEncodingsPreference(null, result);
+		return result;
+
 	}
 
 	/**
 	 * Clear the IDE encodings preference.
 	 */
 	public static void clearUserEncodings() {
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setToDefault(
-				IDE_ENCODINGS_PREFERENCE);
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setToDefault(IDE_ENCODINGS_PREFERENCE);
 	}
 
 	/**
@@ -222,11 +242,9 @@ public class IDEEncoding {
 		if (description == null)
 			return null;
 
-		byte[] bom = (byte[]) description
-				.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 		if (bom == null)
-			return (String) description
-					.getProperty(IContentDescription.CHARSET);
+			return (String) description.getProperty(IContentDescription.CHARSET);
 		if (bom == IContentDescription.BOM_UTF_8)
 			return IDEEncoding.BOM_UTF_8;
 		if (bom == IContentDescription.BOM_UTF_16BE)
