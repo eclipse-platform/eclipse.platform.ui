@@ -12,15 +12,16 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.IPluginPrerequisite;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.Version;
+import org.eclipse.osgi.service.resolver.VersionRange;
+import org.osgi.framework.Version;
 
 
 /**
  * @deprecated Marking as deprecated to remove the warnings
  */
 public class PluginPrerequisite implements IPluginPrerequisite {
+	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 	private BundleSpecification prereq = null;
 
 	public PluginPrerequisite(BundleSpecification b) {
@@ -28,7 +29,7 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 	}
 
 	public PluginVersionIdentifier getResolvedVersionIdentifier() {
-		Version actualVersion = prereq.getActualVersion();
+		Version actualVersion = prereq.getSupplier().getVersion();
 		if (actualVersion == null)
 			return null;
 		return new PluginVersionIdentifier(actualVersion.toString());
@@ -76,9 +77,8 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 	private static boolean isMatchedAsGreaterOrEqual(VersionRange versionRange) {
 		if (versionRange == null || versionRange.getMinimum() == null)
 			return false;
-		Version minimum = versionRange.getMinimum();
-		Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
-		if (maximum.equals(Version.maxVersion))
+		Version maximum = versionRange.getMaximum();
+		if (maximum == null || maximum.compareTo(maxVersion) >= 0)
 			return true;
 		return false;
 	}
@@ -87,7 +87,7 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 		if (versionRange == null || versionRange.getMinimum() == null)
 			return false;
 		Version minimum = versionRange.getMinimum();
-		Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+		Version maximum = versionRange.getMaximum() == null ? maxVersion : versionRange.getMaximum();
 		if (minimum.equals(maximum))
 			return true;
 		return false;
@@ -97,14 +97,14 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 		if (versionRange == null || versionRange.getMinimum() == null)
 			return false;
 		Version minimum = versionRange.getMinimum();
-		Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
-		if (!minimum.isInclusive() || maximum.isInclusive())
+		Version maximum = versionRange.getMaximum() == null ? maxVersion : versionRange.getMaximum();
+		if (!versionRange.getIncludeMinimum() || versionRange.getIncludeMaximum())
 			return false;
-		else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+		else if (minimum.getMajor() == maximum.getMajor() - 1)
 			return false;
-		else if (minimum.getMajorComponent() != maximum.getMajorComponent())
+		else if (minimum.getMajor() != maximum.getMajor())
 			return false;
-		else if (minimum.getMinorComponent() == maximum.getMinorComponent() - 1)
+		else if (minimum.getMinor() == maximum.getMinor() - 1)
 			return true;
 		return false;
 	}
@@ -113,10 +113,10 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 		if (versionRange == null || versionRange.getMinimum() == null)
 			return false;
 		Version minimum = versionRange.getMinimum();
-		Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
-		if (!minimum.isInclusive() || maximum.isInclusive())
+		Version maximum = versionRange.getMaximum() == null ? maxVersion : versionRange.getMaximum();
+		if (!versionRange.getIncludeMinimum() || versionRange.getIncludeMaximum())
 			return false;
-		else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+		else if (minimum.getMajor() == maximum.getMajor() - 1)
 			return true;
 		return false;	
 	}
