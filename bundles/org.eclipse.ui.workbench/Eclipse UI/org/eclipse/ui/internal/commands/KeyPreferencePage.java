@@ -152,37 +152,31 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 		public Object[] getChildren(Object parentElement) {
 			List children = new ArrayList();
+			List commands = new ArrayList(KeyPreferencePage.this.commands);
+			Collections.sort(commands, Command.nameComparator());
 
 			if (parentElement instanceof Category) {
-				if (commands != null) {					
-					Category category = (Category) parentElement;
+				Category category = (Category) parentElement;
 
-					for (int i = 0; i < commands.size(); i++) {
-						Command command = (Command) commands.get(i);
+				for (int i = 0; i < commands.size(); i++) {
+					Command command = (Command) commands.get(i);
 							
-						if (category.getId().equals(command.getCategory()))
-							children.add(command);											
-					}
+					if (category.getId().equals(command.getCategory()))
+						children.add(command);											
 				}
 			} else if (parentElement == null) {
-				if (categories != null && commands != null) {
-					List categories = new ArrayList(KeyPreferencePage.this.categories);
-					Collections.sort(categories, Category.nameComparator());
-					children.addAll(categories);
-					List commands = new ArrayList();
+				List categories = new ArrayList(KeyPreferencePage.this.categories);
+				Collections.sort(categories, Category.nameComparator());
+				children.addAll(categories);
 	
-					for (int i = 0; i < KeyPreferencePage.this.commands.size(); i++) {
-						Command command = (Command) KeyPreferencePage.this.commands.get(i);
+				for (int i = 0; i < commands.size(); i++) {
+					Command command = (Command) commands.get(i);
 							
-						if (command.getCategory() == null)
-							commands.add(command);										
-					}
-	
-					Collections.sort(commands, Command.nameComparator());
-					children.addAll(commands);
+					if (command.getCategory() == null)
+						children.add(command);										
 				}									
 			}
-				
+
 			return children.toArray();
 		}
 
