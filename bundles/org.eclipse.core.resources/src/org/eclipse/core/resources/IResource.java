@@ -1805,15 +1805,15 @@ public void setSessionProperty(QualifiedName key, Object value) throws CoreExcep
  * </p>
  * <p>
  * Newly-created resources are not team private members by default; rather, the
- * team provider must mark a resource explicitly using 
- * <code>setTeamPrivateMember(true)</code>. Team private member marks are maintained
- * in the in-memory resource tree, and are discarded when the resources is deleted.
- * Team private member marks are saved to disk when a project is closed, or when the
- * workspace is saved.
+ * team provider must mark a resource explicitly using
+ * <code>setTeamPrivateMember(true)</code>. Team private member marks are
+ * maintained in the in-memory resource tree, and are discarded when the
+ * resources are deleted. Team private member marks are saved to disk when a
+ * project is closed, or when the workspace is saved.
  * </p>
  * <p>
- * Projects and the workspace root are never considered team private members; attempts to
- * mark them as derived are ignored.
+ * Projects and the workspace root are never considered team private members;
+ * attempts to mark them as team private are ignored.
  * </p>
  * <p>
  * This operation does <b>not</b> result in a resource change event, and does not
