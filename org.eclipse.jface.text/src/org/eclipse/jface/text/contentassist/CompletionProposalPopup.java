@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -88,6 +90,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private int fFilterOffset;
 	/** The default line delimiter of the viewer's widget */
 	private String fLineDelimiter;
+	/** The most recently selected proposal. */
+	private ICompletionProposal fLastProposal;
 
 	
 	/**
@@ -124,7 +128,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						int index= fProposalTable.getSelectionIndex();
 						if (index >= 0)
 							selectProposal(index, true);
-					}									
+					}
 				}
 
 				public void keyReleased(KeyEvent e) {
@@ -205,7 +209,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void createProposalSelector() {
 		if (Helper.okToUse(fProposalShell))
 			return;
-			
+		
 		Control control= fViewer.getTextWidget();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -261,6 +265,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		});
 
 		fPopupCloser.install(fContentAssistant, fProposalTable);
+		
+		fProposalShell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				unregister(); // but don't dispose the shell, since we're being called from its disposal event!  
+			}
+		});
 		
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
@@ -374,6 +384,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public void hide() {
 
+		unregister();
+
+		if (Helper.okToUse(fProposalShell)) {
+			
+			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
+			
+			fPopupCloser.uninstall();
+			fProposalShell.setVisible(false);
+			fProposalShell.dispose();
+			fProposalShell= null;
+		}
+	}
+	
+	private void unregister() {
 		if (fDocumentListener != null) {
 			IDocument document= fViewer.getDocument();
 			if (document != null)
@@ -386,29 +410,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
 			styledText.removeKeyListener(fKeyListener);
 
-		if (Helper.okToUse(fProposalTable)) {
-			ICompletionProposal proposal= getSelectedProposal();
-			if (proposal instanceof ICompletionProposalExtension2) {
-				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) proposal;
+		if (fLastProposal != null) {
+			if (fLastProposal instanceof ICompletionProposalExtension2) {
+				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) fLastProposal;
 				extension.unselected(fViewer);
 			}
+			fLastProposal= null;
 		}
 
-		if (Helper.okToUse(fProposalShell)) {
-			
-			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
-			
-			fPopupCloser.uninstall();
-			fProposalShell.setVisible(false);
-			fProposalShell.dispose();
-			fProposalShell= null;
+		if (fAdditionalInfoController != null) {
+			fAdditionalInfoController.dispose();
 		}
 		
 		fFilteredProposals= null;
 		
 		fContentAssistant.possibleCompletionsClosed();
 	}
-	
+
 	/**
 	 *Returns whether this popup is active. It is active if the propsal selector is visible.
 	 *
@@ -624,7 +642,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
-	
+		
+		fLastProposal= proposal;
 		
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
