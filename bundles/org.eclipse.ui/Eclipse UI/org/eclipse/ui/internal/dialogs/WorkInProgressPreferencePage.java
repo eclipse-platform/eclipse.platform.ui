@@ -83,14 +83,14 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 				"ENABLE_WORKING_SETS",
 				true);
 			
-		// Temporary option to enable the new menu organization
+/*		// Temporary option to enable the new menu organization
 		newMenusButton = 
 			createTempOption(
 				composite,
 				"Enable new menu organization",
 				"ENABLE_NEW_MENUS",
 				true);
-
+*/
 		createSpace(composite);
 		createSingleClickGroup(composite);
 

@@ -102,8 +102,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction printAction;
 	
 // menu reorg
-	private boolean usingMenuReorg = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("ENABLE_NEW_MENUS");
+	private boolean usingMenuReorg = true;
+//		WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("ENABLE_NEW_MENUS");
 	
 	private RetargetAction revertAction;
 	private RetargetAction refreshAction;
