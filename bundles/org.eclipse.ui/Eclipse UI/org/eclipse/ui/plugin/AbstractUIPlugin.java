@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 
 import org.eclipse.ui.IWorkbench;
@@ -236,16 +237,21 @@ public abstract class AbstractUIPlugin extends Plugin
 			if (listeners.isEmpty()) {
 				// no one interested
 				return;
-			}
+			}	
 	
 			// important: create intermediate array to protect against listeners 
 			// being added/removed during the notification
-			Object[] list = listeners.getListeners();
-			PropertyChangeEvent event =
+			final Object[] list = listeners.getListeners();
+			final PropertyChangeEvent event =
 				new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < list.length; i++) {
-				((IPropertyChangeListener) list[i]).propertyChange(event);
-			}
+			Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
+				public void run() {
+					for (int i = 0; i < list.length; i++) {
+						((IPropertyChangeListener) list[i]).propertyChange(event);
+					}
+				}
+			});
+			
 		}
 	
 		/* (non-javadoc)
