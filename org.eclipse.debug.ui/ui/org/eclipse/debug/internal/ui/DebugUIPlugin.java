@@ -185,6 +185,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		 * @see IResourceDeltaVisitor
 		 */
 		public boolean visit(IResourceDelta delta) {
+			if (delta == null) {
+				return false;
+			}
 			if (delta.getKind() != IResourceDelta.REMOVED) {
 				return true;
 			}

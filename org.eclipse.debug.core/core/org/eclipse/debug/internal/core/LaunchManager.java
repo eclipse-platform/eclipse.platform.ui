@@ -761,6 +761,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
+			if (delta == null) {
+				return false;
+			}
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				if (delta.getResource() instanceof IProject) {
 					IProject project = (IProject)delta.getResource();

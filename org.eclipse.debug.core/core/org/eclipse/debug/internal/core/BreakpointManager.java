@@ -335,6 +335,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
+			if (delta == null) {
+				return false;
+			}
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				handleProjectResourceOpenStateChange(delta.getResource());
 				return false;
