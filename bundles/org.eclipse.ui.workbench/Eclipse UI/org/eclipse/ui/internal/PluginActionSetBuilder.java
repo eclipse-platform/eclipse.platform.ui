@@ -261,7 +261,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
         private WorkbenchWindow window;
 
-        private ArrayList adjunctActions = new ArrayList(0);
+        protected ArrayList adjunctActions = new ArrayList(0);
 
         public ActionSetContribution(String id, IWorkbenchWindow window) {
             super();
@@ -465,7 +465,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
             // Find the index that this item should be inserted in
             for (int i = insertIndex + 1; i < items.length; i++) {
-                IContributionItem item = (IContributionItem) items[i];
+                IContributionItem item = items[i];
                 if (item.isGroupMarker())
                     break;
 
@@ -509,7 +509,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         }
 
         //for dynamic UI
-        private void revokeContribution(WorkbenchWindow window,
+        protected void revokeContribution(WorkbenchWindow window,
                 IActionBars bars, String id) {
             revokeActionSetFromMenu(window.getMenuManager(), id);
             //			IMenuManager menuMgr = bars.getMenuManager();
@@ -526,9 +526,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         protected void revokeAdjunctCoolbarAction(ActionDescriptor ad,
                 ActionSetActionBars bars) {
             String toolBarId = ad.getToolbarId();
-            String toolGroupId = ad.getToolbarGroupId();
-
-            String contributingId = bars.getActionSetId();
+//            String toolGroupId = ad.getToolbarGroupId();
+//
+//            String contributingId = bars.getActionSetId();
             ICoolBarManager coolBarMgr = bars.getCoolBarManager();
             //				((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
             PluginAction action = ad.getAction();

@@ -129,9 +129,9 @@ public class ActionSetRegistry extends RegistryManager implements
      * @see IActionSetDescriptor#getId
      */
     public IActionSetDescriptor findActionSet(String id) {
-        Iterator enum = children.iterator();
-        while (enum.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
+        Iterator i = children.iterator();
+        while (i.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) i.next();
             if (desc.getId().equals(id))
                 return desc;
         }
@@ -142,9 +142,9 @@ public class ActionSetRegistry extends RegistryManager implements
      * Find a category with a given id.
      */
     public ActionSetCategory findCategory(String id) {
-        Iterator enum = categories.iterator();
-        while (enum.hasNext()) {
-            ActionSetCategory cat = (ActionSetCategory) enum.next();
+        Iterator i = categories.iterator();
+        while (i.hasNext()) {
+            ActionSetCategory cat = (ActionSetCategory) i.next();
             if (id.equals(cat.getId()))
                 return cat;
         }
@@ -204,9 +204,9 @@ public class ActionSetRegistry extends RegistryManager implements
         categories.add(cat);
 
         // Add everything to it.
-        Iterator enum = children.iterator();
-        while (enum.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
+        Iterator i = children.iterator();
+        while (i.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) i.next();
             cat.addActionSet(desc);
         }
     }
