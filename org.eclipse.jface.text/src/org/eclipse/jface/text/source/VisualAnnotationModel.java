@@ -126,14 +126,13 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	 */
 	public void modelChanged(IAnnotationModel model) {
 		if (model == fModel) {
-			int size= fAnnotationModelListeners.size();
-			for (int i= 0; i < size; i++) {
-				IAnnotationModelListener l= (IAnnotationModelListener) fAnnotationModelListeners.get(i);
+			Iterator iter= new ArrayList(fAnnotationModelListeners).iterator();
+			while (iter.hasNext()) {
+				IAnnotationModelListener l= (IAnnotationModelListener)iter.next();
 				l.modelChanged(this);
 			}
 		}
 	}
-	
 	
 	/**
 	 * Modifies associated position of the given annotation to the given position.
