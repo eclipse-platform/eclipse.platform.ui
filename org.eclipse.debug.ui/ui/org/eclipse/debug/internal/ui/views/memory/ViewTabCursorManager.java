@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;

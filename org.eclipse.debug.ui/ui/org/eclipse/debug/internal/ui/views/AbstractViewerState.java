@@ -25,7 +25,9 @@ import org.eclipse.swt.widgets.TreeItem;
 public abstract class AbstractViewerState {
 
 	// paths to expanded elements
-	private List fExpandedElements = null;
+	private List fSavedExpansion = null;
+	// paths currently expanded
+	private List fCurrentExpansion = new ArrayList();
 	// paths to selected elements
 	private IPath[] fSelection = null;
 	
@@ -43,18 +45,19 @@ public abstract class AbstractViewerState {
 	 * @param viewer viewer of which to save the state
 	 */
 	public void saveState(TreeViewer viewer) {
+		fCurrentExpansion.clear();
 		List expanded = new ArrayList();
-		fExpandedElements = null;
+		fSavedExpansion = null;
 		TreeItem[] items = viewer.getTree().getItems();
 		try {
 			for (int i = 0; i < items.length; i++) {
-				collectExandedItems(items[i], expanded);
+				collectExpandedItems(items[i], expanded);
 			}
 			if (expanded.size() > 0) {
-				fExpandedElements = expanded;
+				fSavedExpansion = expanded;
 			}
 		} catch (DebugException e) {
-			fExpandedElements = null;
+			fSavedExpansion = null;
 		}
 		TreeItem[] selection = viewer.getTree().getSelection();
 		fSelection = new IPath[selection.length];
@@ -67,13 +70,13 @@ public abstract class AbstractViewerState {
 		}
 	}
 
-	protected void collectExandedItems(TreeItem item, List expanded)
+	protected void collectExpandedItems(TreeItem item, List expanded)
 			throws DebugException {
 		if (item.getExpanded()) {
 			expanded.add(encodeElement(item));
 			TreeItem[] items = item.getItems();
 			for (int i = 0; i < items.length; i++) {
-				collectExandedItems(items[i], expanded);
+				collectExpandedItems(items[i], expanded);
 			}
 		}
 	}
@@ -96,38 +99,50 @@ public abstract class AbstractViewerState {
 	 * @param viewer viewer to which state is restored
 	 */
 	public void restoreState(TreeViewer viewer) {
-		if (fExpandedElements != null) {
-			List expansion = new ArrayList(fExpandedElements.size());
-			for (int i = 0; i < fExpandedElements.size(); i++) {
-				IPath path = (IPath) fExpandedElements.get(i);
-				if (path != null) {
-					Object obj;
-					try {
-						obj = decodePath(path, viewer);
-						if (obj != null) {
-							expansion.add(obj);
-						}
-					} catch (DebugException e) {
-					}
-				}
-			}
-			viewer.setExpandedElements(expansion.toArray());
-		}
-		if (fSelection != null) {
-			List selection = new ArrayList(fSelection.length);
-			for (int i = 0; i < fSelection.length; i++) {
-				IPath path = fSelection[i];
-				Object obj;
-				try {
-					obj = decodePath(path, viewer);
-					if (obj != null) {
-						selection.add(obj);
-					}
-				} catch (DebugException e) {
-				}
-			}
-			viewer.setSelection(new StructuredSelection(selection));
-		}
+	    boolean expansionComplete = true;
+	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {		
+	        for (int i = 0; i < fSavedExpansion.size(); i++) {
+	            IPath path = (IPath) fSavedExpansion.get(i);
+	            if (path != null) {
+	                Object obj;
+	                try {
+	                    obj = decodePath(path, viewer);
+	                    if (obj != null) {
+	                        fCurrentExpansion.add(obj);
+	                    } else {
+	                        expansionComplete = false;                  
+	                    }
+	                } catch (DebugException e) {
+	                }
+	            }
+	        }
+	        viewer.setExpandedElements(fCurrentExpansion.toArray());
+	        if (expansionComplete) {
+	            fSavedExpansion = null;
+	        }
+	    }
+	    
+	    boolean selectionComplete = true;
+	    if (fSelection != null) {
+	        List selection = new ArrayList(fSelection.length);
+	        for (int i = 0; i < fSelection.length; i++) {
+	            IPath path = fSelection[i];
+	            Object obj;
+	            try {
+	                obj = decodePath(path, viewer);
+	                if (obj != null) {
+	                    selection.add(obj);
+	                } else {
+	                    selectionComplete = false;               
+	                }
+	            } catch (DebugException e) {
+	            }
+	        }
+	        viewer.setSelection(new StructuredSelection(selection));
+	        if (selectionComplete) {
+	            fSelection = null;
+	        }
+	    }
 	}
 	
 	/**

@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.expression;
 
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 
-public class ExpressionPopupContentProvider extends ExpressionViewContentProvider {
+public class ExpressionPopupContentProvider extends RemoteExpressionsContentProvider {
 	
 	private Object input = null;
 	
-	public ExpressionPopupContentProvider() {
-		super(null);
+	public ExpressionPopupContentProvider(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
+		super(viewer, site, view);
 	}
 	
 	

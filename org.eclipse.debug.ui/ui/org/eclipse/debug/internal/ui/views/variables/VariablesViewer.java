@@ -11,11 +11,15 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
  
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
+import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -27,9 +31,11 @@ import org.eclipse.swt.widgets.Widget;
  * Variables viewer. As the user steps through code, this
  * we ensure that newly added varibles are visible.
  */
-public class VariablesViewer extends TreeViewer {
+public class VariablesViewer extends RemoteTreeViewer {
 
 	private Item fNewItem;
+    
+    private ArrayList fUpdateListeners = new ArrayList();
 	
 	/**
 	 * Constructor for VariablesViewer.
@@ -148,4 +154,23 @@ public class VariablesViewer extends TreeViewer {
 		}
 	}
 
+    
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.RemoteTreeViewer#restoreExpansionState()
+     */
+    protected synchronized void restoreExpansionState() {
+        cancelJobs();
+        for (Iterator i = fUpdateListeners.iterator(); i.hasNext();) {
+            IRemoteTreeViewerUpdateListener listener = (IRemoteTreeViewerUpdateListener) i.next();
+            listener.treeUpdated();
+        }
+    }
+    
+    public void addUpdateListener(IRemoteTreeViewerUpdateListener listener) {
+        fUpdateListeners.add(listener);
+    }
+    public void removeUpdateListener(IRemoteTreeViewerUpdateListener listener) {
+        fUpdateListeners.remove(listener);
+    }
 }

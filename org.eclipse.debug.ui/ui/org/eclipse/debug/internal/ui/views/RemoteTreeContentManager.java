@@ -1,4 +1,5 @@
-/******************************************************************************* * Copyright (c) 2000, 2004 IBM Corporation and others.
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +10,29 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views;
 
-import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Status;import org.eclipse.core.runtime.jobs.Job;import org.eclipse.jface.viewers.ITreeContentProvider;import org.eclipse.ui.IWorkbenchPartSite;import org.eclipse.ui.internal.progress.PendingUpdateAdapter;import org.eclipse.ui.progress.DeferredTreeContentManager;import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;import org.eclipse.ui.progress.IElementCollector;import org.eclipse.ui.progress.WorkbenchJob;/**
- * A remote content manager that merges content into a tree rather then replacing * its children with a "pending" node, and then the real children when they are available. * This avoids collapsing the viewer when a refresh is performed. This implementation is * currently tied to the <code>RemoteTreeViewer</code>. *  * @since 3.1
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
+import org.eclipse.ui.progress.WorkbenchJob;
+/**
+ * A remote content manager that merges content into a tree rather then replacing
+ * its children with a "pending" node, and then the real children when they are available.
+ * This avoids collapsing the viewer when a refresh is performed. This implementation is
+ * currently tied to the <code>RemoteTreeViewer</code>.
+ * 
+ * @since 3.1
  */
 public class RemoteTreeContentManager extends DeferredTreeContentManager {
 
-    private RemoteTreeViewer fViewer;    
+    private RemoteTreeViewer fViewer;
+    
     /**
      * Contructs a new content manager.
      * 
@@ -122,15 +140,18 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
                 return Status.OK_STATUS;
             }
         };
-        updateJob.setSystem(true);        updateJob.setPriority(Job.INTERACTIVE);
+        updateJob.setSystem(true);
+        updateJob.setPriority(Job.INTERACTIVE);
         updateJob.schedule();
     } 
     
     /**
-     * Create a UIJob to prune the children of the parent in the tree viewer, starting     * at the given offset.
+     * Create a UIJob to prune the children of the parent in the tree viewer, starting
+     * at the given offset.
      * 
      * @param parent the parent for which children should be pruned
-     * @param offset the offset at which children should be pruned. All children at and after     *  this index will be removed from the tree. 
+     * @param offset the offset at which children should be pruned. All children at and after
+     *  this index will be removed from the tree. 
      * @param monitor
      */
     protected void prune(final Object parent, final int offset) {
@@ -151,6 +172,18 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
                 return Status.OK_STATUS;
             }
         };
-        updateJob.setSystem(true);        updateJob.setPriority(Job.INTERACTIVE);
+        updateJob.setSystem(true);
+        updateJob.setPriority(Job.INTERACTIVE);
         updateJob.schedule();
-    }         	/* (non-Javadoc)	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#runClearPlaceholderJob(org.eclipse.ui.internal.progress.PendingUpdateAdapter)	 */	protected void runClearPlaceholderJob(PendingUpdateAdapter placeholder) {	    // the placeholder is not used when there were already children in the tree (null)		if (placeholder != null) {			super.runClearPlaceholderJob(placeholder);		}	}}
+    }     
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#runClearPlaceholderJob(org.eclipse.ui.internal.progress.PendingUpdateAdapter)
+	 */
+	protected void runClearPlaceholderJob(PendingUpdateAdapter placeholder) {
+	    // the placeholder is not used when there were already children in the tree (null)
+		if (placeholder != null) {
+			super.runClearPlaceholderJob(placeholder);
+		}
+	}
+}

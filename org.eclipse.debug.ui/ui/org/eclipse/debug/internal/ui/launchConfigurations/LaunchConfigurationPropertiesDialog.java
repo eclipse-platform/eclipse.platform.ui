@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;

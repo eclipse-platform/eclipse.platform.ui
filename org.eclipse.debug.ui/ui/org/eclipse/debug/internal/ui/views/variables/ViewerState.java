@@ -62,6 +62,9 @@ public class ViewerState extends AbstractViewerState {
 			Object[] children = contentProvider.getChildren(parent);
 			String name = names[i];
 			for (int j = 0; j < children.length; j++) {
+                if (!(children[j] instanceof IVariable)) {
+                    continue;
+                }
 				IVariable var = (IVariable)children[j];
 				if (var.getName().equals(name)) {
 					variable = var;

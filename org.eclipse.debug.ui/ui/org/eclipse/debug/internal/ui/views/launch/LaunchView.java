@@ -781,7 +781,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		LaunchViewer launchViewer = (LaunchViewer)getViewer();
         launchViewer.deferExpansion(element);
 		if (selectNeeded) {
-			launchViewer.setDeferredSelection(element);
+			launchViewer.deferSelection(new StructuredSelection(element));
 		}
 	}
 	

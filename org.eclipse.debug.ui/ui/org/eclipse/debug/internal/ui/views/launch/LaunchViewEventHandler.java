@@ -29,6 +29,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -233,7 +234,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			getLaunchViewer().update(new Object[] {thread, frame}, null);
 			if (!evaluationEvent) {
 			    getLaunchViewer().deferExpansion(thread);
-				getLaunchViewer().setDeferredSelection(frame);
+				getLaunchViewer().deferSelection(new StructuredSelection(frame));
 			} else if (wasTimedOut) {
 				getLaunchView().showEditorForCurrentSelection();
 			}

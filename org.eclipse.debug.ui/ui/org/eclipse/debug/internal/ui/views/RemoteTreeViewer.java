@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -40,6 +40,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
     private ExpansionJob fExpansionJob = null;
     private SelectionJob fSelectionJob = null;
+    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.getString("RemoteTreeViewer.0")); //$NON-NLS-1$
 
     class ExpansionJob extends UIJob {
         
@@ -54,6 +55,7 @@ public class RemoteTreeViewer extends TreeViewer {
          */
         public ExpansionJob(Object target, Object lock) {
             super(DebugUIViewsMessages.getString("LaunchViewer.1")); //$NON-NLS-1$
+            setPriority(Job.INTERACTIVE);
             element = target;
             parents = new ArrayList();
             this.lock = lock;
@@ -105,7 +107,8 @@ public class RemoteTreeViewer extends TreeViewer {
 
     class SelectionJob extends UIJob {
         
-        private Object element;
+        private IStructuredSelection selection;
+        private Object first;
         private List parents; // top down
         private Object lock;
         
@@ -114,12 +117,14 @@ public class RemoteTreeViewer extends TreeViewer {
          * 
          * @param target the element to select
          */
-        public SelectionJob(Object target, Object lock) {
+        public SelectionJob(IStructuredSelection sel, Object lock) {
             super(DebugUIViewsMessages.getString("LaunchViewer.0")); //$NON-NLS-1$
-            element = target;
+            setPriority(Job.INTERACTIVE);
+            selection = sel;
+            first = selection.getFirstElement();
             parents = new ArrayList();
             this.lock = lock;
-            addAllParents(parents, element);
+            addAllParents(parents, first);
         }
 
         /* (non-Javadoc)
@@ -143,8 +148,8 @@ public class RemoteTreeViewer extends TreeViewer {
                     }
                 }
                 if (allParentsExpanded) {
-                    if (findItem(element) != null) {
-                        setSelection(new StructuredSelection(element), true);
+                    if (findItem(first) != null) {
+                        setSelection(selection, true);
                         fSelectionJob = null;
                         return Status.OK_STATUS;
                     }
@@ -154,13 +159,27 @@ public class RemoteTreeViewer extends TreeViewer {
         }
         
         public void validate(Object object) {
-            if (element.equals(object) || parents.contains(object)) {
+            if (first.equals(object) || parents.contains(object)) {
                 cancel();
                 fSelectionJob = null;
             }
         }
     }
     
+    private class StateRestorationJob extends UIJob {
+        public StateRestorationJob(String name) {
+            super(name);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            restoreExpansionState();
+            return Status.OK_STATUS;
+        }
+        
+    }
     /**
      * Constructs a remote tree viewer parented by the given composite.
      *   
@@ -168,34 +187,6 @@ public class RemoteTreeViewer extends TreeViewer {
      */
     public RemoteTreeViewer(Composite parent) {
         super(parent);
-    }
-    
-    
-
-    protected void runDeferredUpdates() {
-        if (fExpansionJob != null) {
-            fExpansionJob.schedule();
-        }
-    	if (fSelectionJob != null) {
-    	    fSelectionJob.schedule();
-    	}
-    }
-    
-    /**
-     * The given element is being removed from the tree. Cancel
-     * any deferred updates for the element.
-     * 
-     * @param element
-     */
-    protected void validateDeferredUpdates(Object element) {
-        if (element != null) {
-	        if (fExpansionJob != null) {
-	            fExpansionJob.validate(element);
-	        }
-	        if (fSelectionJob != null) {
-	            fSelectionJob.validate(element);
-	        }
-        }
     }
 
     /**
@@ -216,6 +207,33 @@ public class RemoteTreeViewer extends TreeViewer {
      */
     public RemoteTreeViewer(Tree tree) {
         super(tree);
+    }
+    
+    protected void runDeferredUpdates() {
+        if (fExpansionJob != null) {
+            fExpansionJob.schedule();
+        }
+        if (fSelectionJob != null) {
+            fSelectionJob.schedule();
+        }
+        fStateRestorationJob.schedule();
+    }
+    
+    /**
+     * The given element is being removed from the tree. Cancel
+     * any deferred updates for the element.
+     * 
+     * @param element
+     */
+    protected void validateDeferredUpdates(Object element) {
+        if (element != null) {
+	        if (fExpansionJob != null) {
+	            fExpansionJob.validate(element);
+	        }
+	        if (fSelectionJob != null) {
+	            fSelectionJob.validate(element);
+	        }
+        }
     }
     
     /* (non-Javadoc)
@@ -274,18 +292,19 @@ public class RemoteTreeViewer extends TreeViewer {
             }
         }
     }
-
-    public synchronized void setDeferredSelection(Object element) {
-        if (findItem(element) == null) {
+    
+    public synchronized void deferSelection(IStructuredSelection selection) {
+        Object element = selection.getFirstElement();
+        if (!selection.isEmpty() && findItem(element) == null) {
             if (fSelectionJob != null) {
                 fSelectionJob.cancel();
             }
-            fSelectionJob = new SelectionJob(element, this);
+            fSelectionJob = new SelectionJob(selection, this);
             fSelectionJob.schedule();
         } else {
-            setSelection(new StructuredSelection(element), true);
+            setSelection(selection, true);
         }
-    }
+    }    
 
     private void cancel(Job job) {
         if (job != null) {
@@ -308,47 +327,42 @@ public class RemoteTreeViewer extends TreeViewer {
         }
     }
 
-
-
     public Object[] filter(Object[] elements) {
         return super.filter(elements);
     }
-
-
-
+    
     public Object[] getCurrentChildren(Object parent) {
         Widget widget = findItem(parent);
         if (widget != null) {
             Item[] items = getChildren(widget);
             Object[] children = new Object[items.length];
             for (int i = 0; i < children.length; i++) {
-    			Object data = items[i].getData();
-    			if (data == null) {
-    				data = new Object();
-    			}
-    			children[i] = data;
+                Object data = items[i].getData();
+                if (data == null) {
+                    return null;
+                }
+                children[i] = data;
     		}
             return children;
         }
         return null;
     }
 
-
-
     public synchronized void prune(final Object parent, final int offset) {
-        preservingSelection(new Runnable() {
-            public void run() {
-                Widget widget = findItem(parent);
-                if (widget != null) {
-            	    Item[] currentChildren = getChildren(widget);
-            	    for (int i = offset; i < currentChildren.length; i++) {
-            	        disassociate(currentChildren[i]);
-            	        currentChildren[i].dispose();
-            	    }
-                }
+        Widget widget = findItem(parent);
+        if (widget != null) {
+            final Item[] currentChildren = getChildren(widget);
+            if (offset < currentChildren.length) {
+		        preservingSelection(new Runnable() {
+		            public void run() {
+		        	    for (int i = offset; i < currentChildren.length; i++) {
+		        	        disassociate(currentChildren[i]);
+		        	        currentChildren[i].dispose();
+		        	    }
+		            }
+		        });
             }
-        });
-
+        }
     }
 
     public synchronized void replace(final Object parent, final Object[] children, final int offset) {
@@ -399,6 +413,9 @@ public class RemoteTreeViewer extends TreeViewer {
         });
     }
 
+    protected synchronized void restoreExpansionState() {
+    }
+    
 }
 
 

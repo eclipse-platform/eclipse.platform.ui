@@ -22,8 +22,8 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
-import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,11 +34,14 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
  
@@ -61,7 +64,7 @@ public class ExpressionView extends VariablesView {
 			if (element instanceof IErrorReportingExpression) {
 				expression= (IErrorReportingExpression) element;
 			} else if (element instanceof String) {
-				Object parent= ((VariablesViewContentProvider) getVariablesViewer().getContentProvider()).getParent(element);
+				Object parent= ((ITreeContentProvider)getVariablesViewer().getContentProvider()).getParent(element);
 				if (parent instanceof IErrorReportingExpression) {
 					expression= (IErrorReportingExpression) parent;
 				}
@@ -91,8 +94,8 @@ public class ExpressionView extends VariablesView {
 	 * 
 	 * @return a content provider
 	 */
-	protected IContentProvider createContentProvider() {
-		return new ExpressionViewContentProvider(this);
+	protected IContentProvider createContentProvider(Viewer viewer) {
+		return new RemoteExpressionsContentProvider((RemoteTreeViewer)viewer, getSite(), this);
 	}
 	
 	/**
@@ -230,4 +233,14 @@ public class ExpressionView extends VariablesView {
 		setInitialContent();
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#restoreState()
+     */
+    protected void restoreState() {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+     */
+    public void saveState(IMemento memento) {
+    }
 }

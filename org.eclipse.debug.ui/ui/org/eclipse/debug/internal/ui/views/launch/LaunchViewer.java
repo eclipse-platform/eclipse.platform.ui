@@ -98,6 +98,7 @@ public class LaunchViewer extends RemoteTreeViewer {
 			treeItem.setForeground(cp.getForeground(element));
 			treeItem.setBackground(cp.getBackground(element));
 		}
+        
 	}
 	
 	/* (non-Javadoc)
@@ -109,5 +110,5 @@ public class LaunchViewer extends RemoteTreeViewer {
 		super.refresh(element);
 		getControl().setRedraw(true);
 	}
-	
+ 
 }

@@ -23,7 +23,6 @@ import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
-import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -100,7 +100,7 @@ public class ExpressionInformationControl extends PopupInformationControl {
 					viewer.addFilter(filters[i]);
 				}
 			}
-			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
+			((RemoteExpressionsContentProvider)viewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
 			Map map = view.getPresentationAttributes(exp.getModelIdentifier());
 			Iterator iterator = map.keySet().iterator();
 			while (iterator.hasNext()) {
@@ -180,9 +180,18 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		sashForm = new SashForm(composite, parent.getStyle());
 		sashForm.setOrientation(SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+        
+        page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+        VariablesView view = getViewToEmulate();
+        IWorkbenchPartSite site = null;
+        if (view != null) {
+            site = view.getSite();
+        } else {
+            site = page.getActivePart().getSite();
+        }
+               
 		viewer = new VariablesViewer(sashForm, SWT.NO_TRIM);
-		viewer.setContentProvider(new ExpressionPopupContentProvider());
+        viewer.setContentProvider(new ExpressionPopupContentProvider(viewer, site, view));
 		modelPresentation = new VariablesViewModelPresentation();
 		viewer.setLabelProvider(modelPresentation);
 		

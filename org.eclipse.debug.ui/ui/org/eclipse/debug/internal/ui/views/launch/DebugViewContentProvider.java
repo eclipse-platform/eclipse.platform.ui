@@ -54,6 +54,9 @@ public class DebugViewContentProvider extends BaseWorkbenchContentProvider imple
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
      */
     public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof IStackFrame) {
+            return null;
+        }
         Object[] children = null;
         if (fUseDeferredContent) {
         	children = fManager.getChildren(parentElement);

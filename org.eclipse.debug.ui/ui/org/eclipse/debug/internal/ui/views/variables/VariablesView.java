@@ -47,6 +47,8 @@ import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -337,6 +339,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
 	/** The arguments for the position label pattern. */
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
+	/** Whether logical structuers are showing */
+    private boolean fShowLogical;
+
+    private IRemoteTreeViewerUpdateListener fUpdateListener;
 
 	/**
 	 * Remove myself as a selection listener
@@ -352,6 +358,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
+            ((VariablesViewer)viewer).removeUpdateListener(fUpdateListener);
 		}
 		super.dispose();
 	}
@@ -388,19 +395,22 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		showViewer();
 		getViewer().setInput(frame);
-		
-		// restore state
-		if (frame != null) {
-			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get(frame);
-			if (state == null) {
-				// attempt to restore selection/expansion based on last frame
-				state = fLastState;
-			} 
-			if (state != null) {
-				state.restoreState(getVariablesViewer());
-			}
-		}
 	}
+    
+    protected void restoreState() {
+        VariablesViewer viewer = getVariablesViewer();
+        IStackFrame frame = (IStackFrame) viewer.getInput();
+        if (frame != null) {
+            AbstractViewerState state = (AbstractViewerState)fSelectionStates.get(frame);
+            if (state == null) {
+                // attempt to restore selection/expansion based on last frame
+                state = fLastState;
+            } 
+            if (state != null) {
+                state.restoreState(viewer);
+            }
+        }
+    }
 	
 	/**
 	 * Returns the variables viewer for this view
@@ -530,6 +540,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		setDetailPaneOrientation(orientation);
 		
+        fUpdateListener = new IRemoteTreeViewerUpdateListener() {
+            public void treeUpdated() {
+                restoreState();
+            }
+        };
+        ((VariablesViewer)variablesViewer).addUpdateListener(fUpdateListener);
 		return variablesViewer;
 	}
 	
@@ -589,7 +605,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		variablesViewer.setContentProvider(createContentProvider());
+		variablesViewer.setContentProvider(createContentProvider(variablesViewer));
 		variablesViewer.setLabelProvider(createLabelProvider(variablesViewer));
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
@@ -665,10 +681,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * 
 	 * @return a content provider
 	 */
-	protected IContentProvider createContentProvider() {
-		VariablesViewContentProvider cp = new VariablesViewContentProvider(this);
-		cp.setExceptionHandler(this);
-		return cp;
+	protected IContentProvider createContentProvider(Viewer viewer) {
+		return new RemoteVariablesContentProvider((RemoteTreeViewer) viewer, getSite(), this);
+		// TODO: exception handler
+		//cp.setExceptionHandler(this);
 	}
 	
 	/**
@@ -1345,14 +1361,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Sets whether logical structures are being displayed
 	 */
 	public void setShowLogicalStructure(boolean flag) {
-		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setShowLogicalStructure(flag);
+	    fShowLogical = flag;
 	}	
 	
 	/** 
 	 * Returns whether logical structures are being displayed 
 	 */
 	public boolean isShowLogicalStructure() {
-		return ((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).isShowLogicalStructure();
+	    return fShowLogical;
 	}		
 
 	/**

@@ -18,6 +18,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Displays registers and their values with a detail area.
@@ -27,7 +28,7 @@ public class RegistersView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createContentProvider()
 	 */
-	protected IContentProvider createContentProvider() {
+	protected IContentProvider createContentProvider(Viewer viewer) {
 		RegistersViewContentProvider cp = new RegistersViewContentProvider(this);
 		cp.setExceptionHandler(this);
 		return cp;

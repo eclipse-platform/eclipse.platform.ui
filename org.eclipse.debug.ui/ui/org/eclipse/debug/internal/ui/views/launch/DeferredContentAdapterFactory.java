@@ -12,7 +12,13 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.variables.DeferredExpression;
+import org.eclipse.debug.internal.ui.views.variables.DeferredStackFrame;
+import org.eclipse.debug.internal.ui.views.variables.DeferredVariable;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
@@ -31,6 +37,15 @@ public class DeferredContentAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof IThread) {
                 return new DeferredThread();
+            }
+            if (adaptableObject instanceof IStackFrame) {
+                return new DeferredStackFrame();
+            }
+            if (adaptableObject instanceof IVariable) {
+                return new DeferredVariable();
+            }
+            if (adaptableObject instanceof IExpression) {
+                return new DeferredExpression();
             }
         }
         return null;
