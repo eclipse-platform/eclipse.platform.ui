@@ -37,10 +37,6 @@ import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
  * menu.add(closeProjectAction);
  * </pre>
  * </p>
- * <p>
- * Clients may declare further subclasses that provide additional
- * application-specific action factories.
- * </p>
  * 
  * @since 3.0
  */
