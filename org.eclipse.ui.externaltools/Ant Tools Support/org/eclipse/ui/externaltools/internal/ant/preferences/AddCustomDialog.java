@@ -18,6 +18,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -89,6 +91,8 @@ public class AddCustomDialog extends StatusDialog {
 	private String name=""; //$NON-NLS-1$
 	private URL library= null;
 	private String className=""; //$NON-NLS-1$
+	
+	private boolean editing= false;
 
 	/**
 	 * Creates a new dialog with the given shell and title.
@@ -273,7 +277,7 @@ public class AddCustomDialog extends StatusDialog {
 		String name= nameField.getText().trim();
 		if (name.length() == 0) {
 			status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.name"), new String[]{customLabel})); //$NON-NLS-1$
-		} else {
+		} else if (!editing){
 			Iterator names= existingNames.iterator();
 			while (names.hasNext()) {
 				String aName = (String) names.next();
@@ -573,7 +577,7 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	protected void okPressed() {
 		clearProviderCache();
-		name=nameField.getText().trim();
+		name= nameField.getText().trim();
 		library= (URL)libraryUrls.get(sourceNameField.getSelectionIndex());
 		IStructuredSelection selection= this.selectionGroup.getListTableSelection();
 		MinimizedFileSystemElement element= (MinimizedFileSystemElement)selection.getFirstElement();
@@ -582,6 +586,13 @@ public class AddCustomDialog extends StatusDialog {
 			className= ((ZipEntry)file).getName();
 		} else {
 			className= ((File)file).getAbsolutePath();
+			IPath classPath= new Path(className);
+			IPath libraryPath= new Path(library.getPath());
+			int matching= classPath.matchingFirstSegments(libraryPath);
+			classPath= classPath.removeFirstSegments(matching - 1);
+			classPath= classPath.setDevice(null);
+			className= classPath.toString();
+			
 		}
 		int index= className.lastIndexOf('.');
 		className= className.substring(0, index);
@@ -599,6 +610,7 @@ public class AddCustomDialog extends StatusDialog {
 	
 	protected void setLibrary(URL library) {
 		this.library= library;
+		editing= true;
 	}
 	
 	protected URL getLibrary() {
