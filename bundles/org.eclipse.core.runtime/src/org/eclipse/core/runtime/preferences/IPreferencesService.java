@@ -275,16 +275,19 @@ public interface IPreferencesService {
 	 * Exports all preferences for the given preference node and all its children to the specified
 	 * output stream. It is the responsibility of the client to close the given output stream.
 	 * <p>
-	 * If the given node is the root node, then do nothing.
-	 * </p><p>
+	 * TODO: explain the excludes list
+	 * </p>
+	 * <p>
 	 * The values stored in the resulting stream are suitable for later being read by the
-	 * by <code>importPreferences</code> method.
+	 * by <code>#importPreferences</code> or <code>#readPreferences</code> methods.
 	 * </p>
 	 * @param node the node to treat as the root of the export
 	 * @param output the stream to write to
+	 * @param excludesList a list of path prefixes to exclude from the export
 	 * @return a status object describing success or detailing failure reasons
 	 * @exception CoreException if there was a problem exporting the preferences
 	 * @see #importPreferences(java.io.OutputStream)
+	 * @see #readPreferences(InputStream)
 	 */
 	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException;
 
@@ -296,15 +299,46 @@ public interface IPreferencesService {
 	 * This file must have been written by the <code>exportPreferences</code> 
 	 * method.
 	 * </p>
+	 * <p>
+	 * This method is equivalent to calling <code>applyPreferences(readPreferences(input));</code>.
+	 * </p>
 	 * @param input the stream to load the preferences from
 	 * @return a status object describing success or detailing failure reasons
 	 * @exception CoreException if there are problems importing the preferences
-	 * @see exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream)
+	 * @see exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream, java.lang.String[])
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException;
 
+	/**
+	 * Take the given preference tree and apply it to the Eclipse
+	 * global preference hierarchy. If a node is an export root, then 
+	 * remove it from the global tree before adding any preferences
+	 * contained in it or its children. The given preferences object
+	 * must not be <code>null</code>.
+	 * 
+	 * @param preferences the preferences to apply globally
+	 * @return status object indicating sucess or failure
+	 * @throws IllegalArgumentException if the preferences are <code>null</code>
+	 * @throws CoreException if there are problems applying the preferences
+	 */
 	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException;
 
+	/**
+	 * Read from the given input stream and create a node hierarchy
+	 * representing the preferences and their values. The given input stream
+	 * must not be <code>null</code>. The result of this function is suitable
+	 * for passing as an argument to <code>#applyPreferences</code>.
+	 * <p>
+	 * It is assumed the contents of the input stream have been written by
+	 * <code>#exportPreferences</code>.
+	 * </p>
+	 * @param input the input stream to read from
+	 * @return the node hierarchy representing the stream contents
+	 * @throws IllegalArgumentException if the given stream is null
+	 * @throws CoreException if there are problems reading the preferences
+	 * @see #exportPreferences(IEclipsePreferences, OutputStream, String[])
+	 * @see #applyPreferences(IExportedPreferences)
+	 */
 	public IExportedPreferences readPreferences(InputStream input) throws CoreException;
 
 	/**

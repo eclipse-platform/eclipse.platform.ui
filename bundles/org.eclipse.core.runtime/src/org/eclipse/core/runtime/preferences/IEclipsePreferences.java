@@ -246,4 +246,15 @@ public interface IEclipsePreferences extends Preferences {
 	 * @see org.osgi.service.prefs.Preferences#node(String)
 	 */
 	public Preferences node(String name);
+
+	/**
+	 * Accepts the given visitor. The visitor's <code>visit</code> method 
+	 * is called with this node. If the visitor returns <code>true</code>, 
+	 * this method visits this node's children.
+	 *
+	 * @param visitor the visitor
+	 * @see IPreferenceNodeVisitor#visit
+	 * @throws BackingStoreException
+	 */
+	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException;
 }

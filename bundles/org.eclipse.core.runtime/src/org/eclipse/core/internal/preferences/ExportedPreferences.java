@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.0
@@ -43,5 +47,20 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
 		return new ExportedPreferences(nodeParent, nodeName);
+	}
+
+	/*
+	 * @see org.osgi.service.prefs.Preferences#remove(java.lang.String)
+	 */
+	public void remove(String key) {
+		super.remove(key);
+		if (properties == null)
+			try {
+				removeNode();
+			} catch (BackingStoreException e) {
+				String message = "Exception trying to remove node from exported prefs: " + absolutePath();
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+				log(status);
+			}
 	}
 }

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -51,17 +52,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		super();
 		this.parent = parent;
 		this.name = name;
-	}
-
-	public interface INodeVisitor {
-		public boolean visit(EclipsePreferences node);
-	}
-
-	public void accept(INodeVisitor visitor) {
-		if (!visitor.visit(this))
-			return;
-		for (Iterator i = children.values().iterator(); i.hasNext();)
-			((EclipsePreferences) i.next()).accept(visitor);
 	}
 
 	/*
@@ -833,6 +823,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return isLoading || ((EclipsePreferences) parent).isLoading();
 		else
 			return isLoading;
+	}
+
+	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException {
+		if (!visitor.visit(this) || children == null)
+			return;
+		for (Iterator i = children.values().iterator(); i.hasNext();)
+			((IEclipsePreferences) i.next()).accept(visitor);
 	}
 
 }

@@ -14,6 +14,8 @@ package org.eclipse.core.runtime.preferences;
  * Represents a node in the preference hierarchy which is used in
  * the import/export mechanism.
  * 
+ * This interface is not intended to be implemented by clients.
+ * 
  * @since 3.0
  */
 public interface IExportedPreferences extends IEclipsePreferences {

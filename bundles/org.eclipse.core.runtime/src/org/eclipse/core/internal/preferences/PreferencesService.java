@@ -277,6 +277,8 @@ public class PreferencesService implements IPreferencesService {
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#readPreferences(java.io.InputStream)
 	 */
 	public IExportedPreferences readPreferences(InputStream input) throws CoreException {
+		if (input == null)
+			throw new IllegalArgumentException();
 
 		// read the file into a properties object
 		Properties properties = new Properties();
@@ -294,22 +296,25 @@ public class PreferencesService implements IPreferencesService {
 		}
 
 		// manipulate the file if it from a legacy preference export
-		if (isLegacy(properties)) {
+		if (isLegacy(properties))
 			properties = convertFromLegacy(properties);
-		} else {
+		else
 			properties.remove(VERSION_KEY);
-		}
 
 		// convert the Properties object into an object to return
 		return convertFromProperties(properties);
 	}
 
+	/*
+	 * Convert the given properties file into a node hierarchy suitable for
+	 * importing.
+	 */
 	private IExportedPreferences convertFromProperties(Properties properties) {
 		IExportedPreferences result = new ExportedPreferences(null, ""); //$NON-NLS-1$
 		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
 			String pathString = (String) i.next();
 			if (pathString.charAt(0) == EXPORT_ROOT_PREFIX) {
-				pathString = pathString.substring(1, pathString.length() - 1);
+				pathString = pathString.substring(1, pathString.length());
 				ExportedPreferences current = (ExportedPreferences) result.node(pathString);
 				current.setExportRoot();
 			} else {
@@ -333,46 +338,54 @@ public class PreferencesService implements IPreferencesService {
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#applyPreferences(org.eclipse.core.runtime.preferences.IExportedPreferences)
 	 */
-	public IStatus applyPreferences(IExportedPreferences node) throws CoreException {
-		MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "Problems applying preference changes.", null);
-		IEclipsePreferences current = (IEclipsePreferences) root.node(node.absolutePath());
-		if (node.isExportRoot()) {
-			try {
-				current.removeNode();
-			} catch (BackingStoreException e) {
-				String message = "Problem clearing node before import: " + current.absolutePath();
-				result.add(createStatusWarning(message, e));
+	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException {
+		if (preferences == null)
+			throw new IllegalArgumentException();
+		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "Problems applying preference changes.", null);
+
+		// create a visitor to apply the given set of preferences
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+				IEclipsePreferences globalNode = (IEclipsePreferences) root.node(node.absolutePath());
+				ExportedPreferences epNode = (ExportedPreferences) node;
+
+				// if this node is an export root then we need to remove 
+				// it from the gloabl preferences before continuing.
+				boolean removed = false;
+				if (epNode.isExportRoot() && epNode.properties != null && !epNode.properties.isEmpty()) {
+					globalNode.removeNode();
+					removed = true;
+				}
+
+				// iterate over the preferences in this node and set them
+				// in the global space.
+				if (epNode.properties != null && !epNode.properties.isEmpty()) {
+					// if this node was removed then we need to create a new one
+					if (removed)
+						globalNode = (IEclipsePreferences) root.node(node.absolutePath());
+					for (Iterator i = epNode.properties.keySet().iterator(); i.hasNext();) {
+						String key = (String) i.next();
+						// intern strings we import because some people
+						// in their property change listeners use identity
+						// instead of equals. See bug 20193 and 20534.
+						key = key.intern();
+						String value = node.get(key, null);
+						if (value != null)
+							globalNode.put(key, value);
+					}
+				}
+
+				// keep visiting children
+				return true;
 			}
-		}
+		};
 
 		try {
-			String[] keys = node.keys();
-			for (int i = 0; i < keys.length; i++) {
-				String key = keys[i];
-				// intern strings we import because some people
-				// in their property change listeners use identity
-				// instead of equals. See bug 20193 and 20534.
-				key = key.intern();
-				String value = node.get(key, null);
-				if (value != null)
-					current.put(key, value);
-			}
+			// start by visiting the root
+			preferences.accept(visitor);
 		} catch (BackingStoreException e) {
-			String message = "Problem getting node keys: " + node.absolutePath();
-			result.add(createStatusWarning(message, e));
-		}
-
-		// recurse over children
-		try {
-			String[] children = node.childrenNames();
-			for (int i = 0; i < children.length; i++) {
-				String childName = children[i];
-				IExportedPreferences child = (IExportedPreferences) node.node(childName);
-				applyPreferences(child);
-			}
-		} catch (BackingStoreException e) {
-			String message = "Problem accessing children: " + node.absolutePath();
-			result.add(createStatusWarning(message, e));
+			String message = "Problems applying preferences.";
+			throw new CoreException(createStatusError(message, e));
 		}
 		return result;
 	}
@@ -382,6 +395,8 @@ public class PreferencesService implements IPreferencesService {
 	 */
 	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException {
 		Properties properties = null;
+		if (excludesList == null)
+			excludesList = new String[0];
 		try {
 			properties = convertToProperties(node, excludesList);
 			properties.put(VERSION_KEY, Float.toString(EXPORT_VERSION));
@@ -412,44 +427,55 @@ public class PreferencesService implements IPreferencesService {
 		return statusOK;
 	}
 
-	/* 
-	 * Helper method to do the recursion
+	/*
+	 * excludesList is guarenteed not to be null
 	 */
-	private static void recursiveAdd(Properties properties, Preferences settings, IPath prefix, String[] excludesList) throws BackingStoreException {
-		// don't store defaults
-		if (prefix.segmentCount() > 0 && DefaultScope.SCOPE.equals(prefix.segment(0)))
-			return;
-		//		if (excludesList != null) {
-		//			if (prefix.isPrefixOf(path))
-		//				return;
-		//		}
-		// add the key/value pairs from this node
-		String[] keys = settings.keys();
-		for (int i = 0; i < keys.length; i++) {
-			String value = settings.get(keys[i], null);
-			if (value != null)
-				properties.put(prefix.append(keys[i]).toString(), value);
-		}
+	private Properties convertToProperties(IEclipsePreferences preferences, final String[] excludesList) throws BackingStoreException {
+		final Properties result = new Properties();
 
-		// recursively add the child information
-		String[] children = settings.childrenNames();
-		for (int i = 0; i < children.length; i++) {
-			IPath key = prefix.append(children[i]);
-			Preferences child = settings.node(children[i]);
-			recursiveAdd(properties, child, key, excludesList);
-		}
-	}
+		// create a visitor to do the export
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+				// don't store defaults
+				String pathString = node.absolutePath();
+				IPath path = new Path(pathString);
+				if (path.segmentCount() > 0 && DefaultScope.SCOPE.equals(path.segment(0)))
+					return false;
+				// check the excludes list to see if this node should be considered
+				for (int i = 0; i < excludesList.length; i++) {
+					if (pathString.startsWith(excludesList[i]))
+						return false;
+				}
+				// check the excludes list for each preference
+				String[] keys = node.keys();
+				for (int i = 0; i < keys.length; i++) {
+					String key = keys[i];
+					String fullKeyPath = path.append(key).toString();
+					boolean ignore = false;
+					for (int j = 0; !ignore && j < excludesList.length; j++)
+						if (fullKeyPath.startsWith(excludesList[j]))
+							ignore = true;
+					if (!ignore) {
+						String value = node.get(key, null);
+						if (value != null)
+							result.put(fullKeyPath, value);
+					}
+				}
+				return true;
+			}
+		};
 
-	private Properties convertToProperties(Preferences node, String[] excludesList) throws BackingStoreException {
-		Properties result = new Properties();
-		recursiveAdd(result, node, new Path(node.absolutePath()), excludesList);
+		// start by visiting the root that we were passed in
+		preferences.accept(visitor);
+
+		// return the properties object
 		return result;
 	}
 
-	/**
+	/*
 	 * Returns a boolean value indicating whether or not the given Properties
 	 * object is the result of a preference export previous to Eclipse 3.0.
-	 * <p>
+	 * 
 	 * Check the contents of the file. In Eclipse 3.0 we printed out a file
 	 * version key.
 	 */
@@ -457,6 +483,12 @@ public class PreferencesService implements IPreferencesService {
 		return properties.getProperty(VERSION_KEY) == null;
 	}
 
+	/*
+	 * Convert the given properties file from legacy format to 
+	 * one which is Eclipse 3.0 compliant. 
+	 * 
+	 * Convert the plug-in version indicator entries to export roots.
+	 */
 	private Properties convertFromLegacy(Properties properties) {
 		Properties result = new Properties();
 		IPath prefix = new Path(Plugin.PLUGIN_PREFERENCE_SCOPE).makeAbsolute();
@@ -468,7 +500,7 @@ public class PreferencesService implements IPreferencesService {
 				if (path.segmentCount() == 1)
 					result.put(EXPORT_ROOT_PREFIX + prefix.append(key).toString(), ""); //$NON-NLS-1$
 				else
-					result.put(key, value);
+					result.put(prefix.append(path).toString(), value);
 			}
 		}
 		return result;
