@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Control;
 import java.util.*;
 
 /**
- * For determining the help context for controls in a wizard page.
+ * For determining the help context for controls in a dialog page.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
