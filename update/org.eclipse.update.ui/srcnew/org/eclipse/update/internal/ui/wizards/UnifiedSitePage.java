@@ -232,6 +232,14 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				handleSelectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
+		
+		treeViewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof SiteBookmark)
+					return !((SiteBookmark)element).isWebBookmark();
+				return true;
+			}
+		});
 	}
 
 	private void initializeItems() {

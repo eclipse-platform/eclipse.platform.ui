@@ -42,18 +42,7 @@
             <separator
                   name="group1">
             </separator>
-            <separator
-                  name="group2">
-            </separator>
          </menu>
-         <action
-               label="%actionSets.newUpdates.label"
-               icon="icons/full/obj16/usearch_obj.gif"
-               helpContextId="org.eclipse.update.ui.newUpdates"
-               class="org.eclipse.update.internal.ui.NewUpdatesAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.newUpdates">
-         </action>
          <action
                label="%actionSets.unifiedUpdates.label"
                icon="icons/full/obj16/usearch_obj.gif"
@@ -63,21 +52,6 @@
                id="org.eclipse.update.ui.newUpdates">
          </action>
          <action
-               label="%actionSets.pendingChanges.label"
-               helpContextId="org.eclipse.update.ui.pendingChanges"
-               class="org.eclipse.update.internal.ui.DeltaWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.pendingChanges">
-         </action>
-         <action
-               label="%actionSets.updateManager.label"
-               icon="icons/full/cview16/update_pers.gif"
-               helpContextId="org.eclipse.update.ui.updateManager"
-               class="org.eclipse.update.internal.ui.UpdateManagerAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.updateManager">
-         </action>
-         <action
                label="%actionSets.configManager.label"
                icon="icons/full/eview16/configs.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
@@ -85,91 +59,18 @@
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.configManager">
          </action>
+         <action
+               label="%actionSets.webSites.label"
+               style="pulldown"
+               icon="icons/full/obj16/web_bkmrk_obj.gif"
+               class="org.eclipse.update.internal.ui.UpdateWebSitesAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               id="org.eclipse.update.ui.updateWebSites">
+         </action>
       </actionSet>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="%views.category.label"
-            id="org.eclipse.update.ui">
-      </category>
-      <view
-            name="%views.updates.label"
-            icon="icons/full/cview16/updates.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.UpdatesView"
-            id="org.eclipse.update.ui.UpdatesView">
-      </view>
-      <view
-            name="%views.configuration.label"
-            icon="icons/full/cview16/configs.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.ConfigurationView"
-            id="org.eclipse.update.ui.ConfigurationView">
-      </view>
-      <view
-            name="%views.preview.label"
-            icon="icons/full/cview16/preview.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.DetailsView"
-            id="org.eclipse.update.ui.DetailsView">
-      </view>
-      <view
-            name="%views.searchResults.label"
-            icon="icons/full/cview16/featuresrc_result.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.SearchResultView"
-            id="org.eclipse.update.ui.SearchResultsView">
-      </view>
-      <view
-            name="%views.updateItems.label"
-            icon="icons/full/cview16/selected_updates.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.SelectedUpdatesView"
-            id="org.eclipse.update.ui.ItemsView">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="%perspective.label"
-            icon="icons/full/cview16/update_pers.gif"
-            class="org.eclipse.update.internal.ui.UpdatePerspective"
-            id="org.eclipse.update.ui.UpdatePerspective">
-      </perspective>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.update.internal.ui.model.SiteBookmark"
-            name="%properties.site.label"
-            class="org.eclipse.update.internal.ui.properties.SiteBookmarkPropertyPage"
-            id="org.eclipse.update.ui.sitePropertyPage">
-      </page>
-      <page
-            objectClass="org.eclipse.update.configuration.IInstallConfiguration"
-            name="%properties.configuration.label"
-            class="org.eclipse.update.internal.ui.properties.ConfigurationPropertyPage"
-            id="org.eclipse.update.ui.configPropertyPage">
-      </page>
-      <page
-            objectClass="org.eclipse.update.internal.ui.model.PreservedConfiguration"
-            name="%properties.preserved.label"
-            class="org.eclipse.update.internal.ui.properties.ConfigurationPropertyPage"
-            id="org.eclipse.update.ui.configPropertyPage">
-      </page>
-      <page
-            objectClass="org.eclipse.update.internal.ui.model.BookmarkFolder"
-            name="%properties.folder.label"
-            class="org.eclipse.update.internal.ui.properties.NamedObjectPropertyPage"
-            id="org.eclipse.update.ui.folderPropertyPage">
-      </page>
-      <page
-            objectClass="org.eclipse.update.internal.ui.search.SearchObject"
-            name="%properties.search.label"
-            class="org.eclipse.update.internal.ui.properties.SearchObjectPropertyPage"
-            id="org.eclipse.update.ui.searchPropertyPage">
-      </page>
       <page
             objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
             name="%properties.general-info.label"
@@ -238,45 +139,12 @@
             class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
-      <page
-            name="%appServerPreference.name"
-            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
-            class="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage"
-            id="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage">
-      </page>
-      <page
-            name="%updateSettingsPreference.name"
-            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
-            class="org.eclipse.update.internal.ui.preferences.UpdateSettingsPreferencePage"
-            id="org.eclipse.update.internal.ui.preferences.UpdateSettingsPreferencePage">
-      </page>
    </extension>
    <extension
          point="org.eclipse.update.core.deltaHandler">
       <display
             class="org.eclipse.update.internal.ui.wizards.InstallDeltaWizard">
       </display>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.update.ui.UpdatePerspective">
-         <viewShortcut
-               id="org.eclipse.update.ui.UpdatesView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.update.ui.ConfigurationView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.update.ui.DetailsView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.update.ui.SearchResultsView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.update.ui.ItemsView">
-         </viewShortcut>
-      </perspectiveExtension>
    </extension>
 
 </plugin>
