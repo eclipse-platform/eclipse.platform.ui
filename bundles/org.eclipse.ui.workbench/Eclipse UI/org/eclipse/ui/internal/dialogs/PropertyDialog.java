@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -69,5 +70,12 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	protected WorkbenchPreferenceGroup[] getGroups() {
 		//There is no grouping in properties
 		return new WorkbenchPreferenceGroup[0]; 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#getCurrentPage()
+	 */
+	public IPreferencePage getCurrentPage() {
+		return super.getCurrentPage();
 	}
 }

@@ -130,6 +130,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
     // The id of the last page that was selected
     private static String lastGroupId = null;
+    
+    private Object pageData;
 
     /**
      * Creates a workbench preference dialog to a particular preference page.
@@ -952,7 +954,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
      * 
      * @param filteredIds
      */
-    protected void setSearchResults(String[] filteredIds) {
+    public void setSearchResults(String[] filteredIds) {
 
         WorkbenchPreferenceGroup[] groups = getGroups();
         for (int i = 0; i < groups.length; i++) {
@@ -1017,4 +1019,25 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
         else
             super.createPageControl(page, parent);
     }
+
+	/**
+	 * Set the data to be applied to a page after it is created.
+	 * @param pageData Object
+	 */
+	public void setPageData(Object pageData) {
+		this.pageData = pageData;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPage(org.eclipse.jface.preference.IPreferenceNode)
+	 */
+	protected void createPage(IPreferenceNode node) {
+		super.createPage(node);
+		if(this.pageData == null)
+			return;
+		//Apply the data if it has been set.
+		IPreferencePage page = node.getPage();
+		if(page instanceof PreferencePage)
+			((PreferencePage) page).applyData(this.pageData);
+	}
 }
