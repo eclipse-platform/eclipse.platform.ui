@@ -55,6 +55,17 @@ public class ResourceMapperTests extends EclipseTest {
         update(new ResourceMapping[] { mapper }, options);
         assertUpdate(mapper, incomingSet);
     }
+   
+    /**
+     * Replace the resources contained in the given mappers and ensure that the
+     * update was performed properly by comparing the result with the reference projects.
+     * @throws Exception 
+     */
+    protected void replace(ResourceMapping mapper) throws Exception {
+        SyncInfoTree incomingSet = getIncoming(mapper.getProjects());
+        replace(new ResourceMapping[] { mapper });
+        assertUpdate(mapper, incomingSet);
+    } 
 
     /**
      * Commit and check that all resources in containing project that should have been committed were and
@@ -425,6 +436,36 @@ public class ResourceMapperTests extends EclipseTest {
         
         // Update the remaining resources
         update(asResourceMapping(new IResource[] { project.getFolder("folder2") }, IResource.DEPTH_INFINITE), null);
+        assertEquals(project, copy);
+    }
+    
+    public void testReplace() throws Exception {
+        // Create a test project, import it into cvs and check it out
+        IProject project = createProject("testReplace", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt" });
+
+        // Check the project out under a different name
+        IProject copy = checkoutCopy(project, "-copy");
+        
+        // Perform some operations on the copy and commit them all
+        addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
+        setContentsAndEnsureModified(copy.getFile("changed.txt"));
+        deleteResources(new IResource[] {copy.getFile("deleted.txt")});
+        setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
+        setContentsAndEnsureModified(copy.getFile("folder1/subfolder1/c.txt"));
+        commit(asResourceMapping(new IResource[] { copy }, IResource.DEPTH_INFINITE), "A commit message");
+        
+        // Update the project using depth one and ensure we got only what was asked for
+        replace(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE));
+        
+        // Update a subfolder using depth one and ensure we got only what was asked for
+        deleteResources(new IResource[] {project.getFile("folder1/b.txt")});
+        replace(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE));
+        
+        // Update the specific file
+        replace(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO));
+        
+        // Update the remaining resources
+        replace(asResourceMapping(new IResource[] { project.getFolder("folder2") }, IResource.DEPTH_INFINITE));
         assertEquals(project, copy);
     }
 

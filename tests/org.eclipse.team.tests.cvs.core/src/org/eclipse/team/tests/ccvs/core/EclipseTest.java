@@ -249,6 +249,10 @@ public class EclipseTest extends ResourceTest {
 		executeHeadless(op);
 	}
 	
+    protected void replace(ResourceMapping[] mappers) throws CVSException {
+        executeHeadless(new ReplaceOperation(null, mappers, null));
+    }
+    
 	public void updateProject(IProject project, CVSTag tag, boolean ignoreLocalChanges) throws TeamException {
 		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 		if(ignoreLocalChanges) {
