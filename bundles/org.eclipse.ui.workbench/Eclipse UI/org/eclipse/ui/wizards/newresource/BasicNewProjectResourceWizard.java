@@ -492,10 +492,20 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 		0,		// yes is the default
 		null,	// use the default message for the toggle
 		false); // toggle is initially unchecked
-	boolean result = dialog.open() == 0;
-	if (dialog.getToggleState()) {
-		store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_ALWAYS);
+	int result = dialog.open();
+	if (result >= 0 && dialog.getToggleState()) {
+		if (result == 0) {
+			store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_ALWAYS);
+		}
+		else {
+			store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_NEVER);
+			AbstractUIPlugin uiPlugin =
+				(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+			uiPlugin.getPreferenceStore().setValue(
+				IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
+				IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE);
+		}
 	}
-	return result;
+	return result == 0;
 }
 }
