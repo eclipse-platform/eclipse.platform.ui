@@ -131,7 +131,7 @@ public class HelpBasePlugin extends Plugin {
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.base/debug/search")); //$NON-NLS-1$
+			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$
 		}
 
 		BaseHelpSystem.startup();
