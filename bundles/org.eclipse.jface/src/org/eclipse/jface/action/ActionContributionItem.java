@@ -684,10 +684,12 @@ public class ActionContributionItem extends ContributionItem {
 						ti.setText(text);
 					}
 					else {
+						//TODO: this causes very large tool items with XP 
+						//using a manifest
 						// In addition to being required to update the text if it
 						// gets nulled out in the action, this is also a workaround 
 						// for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space
-						ti.setText(""); //$NON-NLS-1$
+						//ti.setText(""); //$NON-NLS-1$
 				}
 				}
 
