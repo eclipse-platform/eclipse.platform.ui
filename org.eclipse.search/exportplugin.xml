@@ -2,7 +2,7 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../../plugin-export" />
-		<property name="plugin"  value="org.eclipse.compare" />
+		<property name="plugin"  value="org.eclipse.search" />
 		<property name="dest"  value="${destdir}/${plugin}" />
 	</target>
 
