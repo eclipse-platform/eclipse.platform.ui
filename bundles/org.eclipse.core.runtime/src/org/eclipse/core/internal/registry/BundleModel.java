@@ -276,8 +276,8 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		return "BundleModel: " + getName();
 	}
 
-	public BundleModel[] getFragments() {
-		return fragments;
+	public BundleModel[] getFragments() {		
+		return fragments == null ? new BundleModel[0] : fragments;
 	}
 
 	public void setFragments(BundleModel[] value) {
