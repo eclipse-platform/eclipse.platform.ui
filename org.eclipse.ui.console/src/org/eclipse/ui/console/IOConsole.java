@@ -131,8 +131,8 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
     private MatchJob matchJob = new MatchJob();
 
-    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
-        super(title, imageDescriptor);
+    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+        super(title, imageDescriptor, autoLifecycle);
         type = consoleType;
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream, this);
@@ -141,6 +141,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         partitioner.connect(document);
         document.addDocumentListener(this);
     }
+    
+    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
+        this(title, consoleType, imageDescriptor, true);
+    }    
     
     public IOConsole(String title, ImageDescriptor imageDescriptor) {
         this(title, null, imageDescriptor);

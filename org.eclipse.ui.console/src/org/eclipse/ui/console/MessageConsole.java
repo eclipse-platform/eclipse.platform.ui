@@ -27,8 +27,21 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class MessageConsole extends IOConsole {
 
 	public MessageConsole(String name, ImageDescriptor imageDescriptor) {
-		super(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor);
+		this(name, imageDescriptor, true);
 	}
+	
+	/**
+	 * Constructs a message console.
+	 * 
+	 * @param name console name
+	 * @param imageDescriptor console image descriptor
+	 * @param autoLifecycle whether lifecycle methods should be called automatically
+	 *  when added and removed from the console manager
+	 * @since 3.1
+	 */
+	public MessageConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+		super(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor, autoLifecycle);
+	}	
 		
 	/**
 	 * Returns a new message stream connected to this console.

@@ -56,7 +56,7 @@ public abstract class AbstractConsole implements IConsole {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
 				if (console == AbstractConsole.this) {
-					init();
+					initialize();
 				}
 			}
 
@@ -70,7 +70,7 @@ public abstract class AbstractConsole implements IConsole {
 				IConsole console = consoles[i];
 				if (console == AbstractConsole.this) {
 					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
-					dispose();
+					destroy();
 				}
 			}
 		}
@@ -116,18 +116,37 @@ public abstract class AbstractConsole implements IConsole {
 			}	
 			fListener = null;			
 		}
-	}		
+	}	
 	
 	/**
 	 * Constructs a new console with the given name and image.
 	 * 
 	 * @param name console name, cannot be <code>null</code>
 	 * @param imageDescriptor image descriptor, or <code>null</code> if none
+	 * @param autoLifecycle whether this console's lifecycle methods should be called
+	 *  automatically when it is added (<code>initialize()</code>) and removed
+	 *  (<code>destroy()</code>) from the console manager. When <code>false</code>,
+	 *  clients are responsible for calling the lifecycle methdods.
+	 * @since 3.1
 	 */
-	public AbstractConsole(String name, ImageDescriptor imageDescriptor) {
+	public AbstractConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 		setName(name);
 		setImageDescriptor(imageDescriptor);
-		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());
+		if (autoLifecycle) {
+		    ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());
+		}
+	}	
+	
+	/**
+	 * Constructs a new console with the given name and image. The console's lifecycle
+	 * methods <code>init()</code> and <code>dispose()</code> will be called when the
+	 * console is added and removed from the console manager.
+	 * 
+	 * @param name console name, cannot be <code>null</code>
+	 * @param imageDescriptor image descriptor, or <code>null</code> if none
+	 */
+	public AbstractConsole(String name, ImageDescriptor imageDescriptor) {
+		this(name, imageDescriptor, true);
 	}
 
 	/* (non-Javadoc)
@@ -204,15 +223,44 @@ public abstract class AbstractConsole implements IConsole {
 	}
 	
 	/**
+	 * Initializes this console. This methods should only be called by clients managing a
+	 * console's lifecycle. The method should be called once to initialize this console.
+	 * 
+	 * @since 3.1
+	 */
+	public final void initialize() {
+	    init();
+	}
+	
+	/**
 	 * Called when this console is added to the console manager. Default
 	 * implementation does nothing. Subclasses may override.
+	 * <p>
+	 * Since 3.1, this method is only called automatically if this console was
+	 *  created with an automatic lifecycle.
+	 * </p>
 	 */
 	protected void init() {
 	}
 	
 	/**
+	 * Disposes this console. This methods should only be called by clients managing a
+	 * console's lifecycle. The method should be called once to dispose this console,
+	 * afterwhich this console will no longer be used. 
+	 * 
+	 * @since 3.1
+	 */
+	public final void destroy() {
+	    dispose();
+	}
+	
+	/**
 	 * Called when this console is removed from the console manager. Default
 	 * implementation does nothing. Subclasses may override.
+	 * <p>
+	 * Since 3.1, this methods is only called automatically if this console was
+	 * created with an automatic lifecycle.
+	 * </p>
 	 */
 	protected void dispose() {
 	}
