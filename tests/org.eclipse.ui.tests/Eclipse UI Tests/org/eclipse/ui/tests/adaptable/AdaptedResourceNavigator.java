@@ -129,7 +129,7 @@ public class AdaptedResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new TestAdaptableContentProvider());
 		viewer.setLabelProvider(
-			new DecoratingLabelProvider(
+			new CombinedDecoratingLabelProvider(
 				new TestAdaptableWorkbenchAdapter(), 
 				getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager()));
 
