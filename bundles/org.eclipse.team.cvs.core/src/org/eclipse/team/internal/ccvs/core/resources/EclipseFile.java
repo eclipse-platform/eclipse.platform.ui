@@ -521,11 +521,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			}
 			return true;
 		} 
-		if(!EclipseSynchronizer.getInstance().contentsChangedByUpdate(getIFile(), true /* clear update state */)) {
-			// set the modification state to what it really is and return true if the modification state changed
-			setModified(computeModified(getSyncInfo()));
-			return true;
-		}
+		// set the modification state to what it really is and return true if the modification state changed
+		setModified(computeModified(getSyncInfo()));
 		return false;
 	}
 	
