@@ -38,16 +38,29 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	public void bundleChanged(BundleEvent event) {
+		/* Only should listen for RESOLVED and UNRESOLVED events.  
+		 * 
+		 * When a bundle is updated the Framework will publish an UNRESOLVED and 
+		 * then a RESOLVED event which should cause the bundle to be removed 
+		 * and then added back into the registry.  
+		 * 
+		 * When a bundle is uninstalled the Framework should publish an UNRESOLVED 
+		 * event and then an UNINSTALLED event so the bundle will have been removed 
+		 * by the UNRESOLVED event before the UNINSTALLED event is published.
+		 * 
+		 * When a bundle is refreshed from PackageAdmin an UNRESOLVED event will be
+		 * published which will remove the bundle from the registry.  If the bundle
+		 * can be RESOLVED after a refresh then a RESOLVED event will be published 
+		 * which will add the bundle back.  This is required because the classloader
+		 * will have been refreshed for the bundle so all extensions and extension
+		 * points for the bundle must be refreshed.
+		 */ 
 		Bundle bundle = event.getBundle();
 		switch (event.getType()) {
 			case BundleEvent.RESOLVED :
 				addBundle(bundle);
 				break;
-			case BundleEvent.UPDATED :
-				updateBundle(bundle);
-				break;
-			case BundleEvent.UNINSTALLED :
-				// TODO Is there an unresolved?
+			case BundleEvent.UNRESOLVED :
 				removeBundle(bundle);
 				break;
 		}
@@ -132,7 +145,4 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		}
 	}
 
-	private void updateBundle(Bundle bundle) {
-		// TODO implement this method
-	}
 }
