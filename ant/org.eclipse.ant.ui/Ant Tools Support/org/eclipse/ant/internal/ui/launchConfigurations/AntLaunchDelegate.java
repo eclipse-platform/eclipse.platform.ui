@@ -44,8 +44,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
@@ -433,15 +431,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
 		StringBuffer vmArgs= generateVMArguments(copy);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
-		
-		launch.setSourceLocator(new ISourceLocator() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
-			 */
-			public Object getSourceElement(IStackFrame stackFrame) {
-				return null;
-			}
-		});
+
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
 		AntJavaLaunchDelegate delegate= new AntJavaLaunchDelegate();
