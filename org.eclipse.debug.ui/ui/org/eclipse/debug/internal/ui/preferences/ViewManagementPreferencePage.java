@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,8 +49,21 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private CheckboxTableViewer fPerspectiveViewer;
 	private Button fTrackViewsButton;
 	private Button fResetViewsButton;
+    // This flag indicates whether or not the user has pressed the reset button
 	private boolean fResetPressed= false;
 	private PerspectiveLabelProvider fLabelProvider= null;
+    private SelectionListener fSelectionListener= new SelectionAdapter() {
+    
+        public void widgetSelected(SelectionEvent e) {
+            Object source = e.getSource();
+            if (source == fResetViewsButton) {
+                handleResetPressed();
+            } else if (source == fTrackViewsButton) {
+                handleTrackViewsToggled();
+            }
+        }
+    
+    };
 	
 	public ViewManagementPreferencePage() {
 		super();
@@ -57,8 +71,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		setDescription(DebugPreferencesMessages.getString("ViewManagementPreferencePage.0")); //$NON-NLS-1$
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
-	
-	/* (non-Javadoc)
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
@@ -84,6 +98,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTrackViewsButton.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.3")); //$NON-NLS-1$
 		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
+        fTrackViewsButton.addSelectionListener(fSelectionListener);
 		
 		Label label= new Label(composite, SWT.WRAP);
 		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.4")); //$NON-NLS-1$
@@ -91,14 +106,24 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		
 		fResetViewsButton= SWTUtil.createPushButton(composite, DebugPreferencesMessages.getString("ViewManagementPreferencePage.5"), null); //$NON-NLS-1$
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
-		fResetViewsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fResetPressed= true;
-				fResetViewsButton.setEnabled(false);
-			}
-		});
+		fResetViewsButton.addSelectionListener(fSelectionListener);
 		updateResetButton();
 	}
+    
+    private void handleResetPressed() {
+        fResetPressed= true;
+        fResetViewsButton.setEnabled(false);
+    }
+    
+    protected void handleTrackViewsToggled() {
+        if (fTrackViewsButton.getSelection()) {
+            // When toggled on, possibly re-enable the reset button
+            updateResetButton();
+        } else {
+            // When toggled off, disable the reset button
+            fResetViewsButton.setEnabled(false);
+        }
+    }
 
 	/**
 	 * @param parent
@@ -145,8 +170,10 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		}
 		
 		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
-		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, fTrackViewsButton.getSelection());
-		if (fResetPressed) {
+		boolean trackViews = fTrackViewsButton.getSelection();
+        getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
+		if (fResetPressed || !trackViews) {
+            // Reset if the user has pressed reset or chosen to no longer track views
 			getPreferenceStore().setValue(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, ""); //$NON-NLS-1$
 			getPreferenceStore().setValue(LaunchViewContextListener.PREF_OPENED_VIEWS, ""); //$NON-NLS-1$
 		}
@@ -173,11 +200,14 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Updates enablement of the reset button.
 	 * Enable if either persisted view collection is not empty.
+     * Always disable if "track views" is turned off.
 	 */
 	private void updateResetButton() {
 		boolean enableReset= !"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN)) || //$NON-NLS-1$
 			!"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_OPENED_VIEWS)); //$NON-NLS-1$
-		fResetViewsButton.setEnabled(enableReset);
+        // Only enable the button if there are views to clear, the user hasn't pressed the reset
+        // button, and the option to "track views" is turned on.
+		fResetViewsButton.setEnabled(enableReset && !fResetPressed && fTrackViewsButton.getSelection());
 	}
 
 	private static class PerspectiveProvider implements IStructuredContentProvider {
