@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations;
+package org.eclipse.ui.presentations;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
