@@ -64,7 +64,7 @@ public final class PluginContextRegistry extends AbstractContextRegistry {
 		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 		boolean contextRegistryChanged = false;
 			
-		if (!contextDefinitions.equals(this.contextDefinitions)) {
+		if (!contextDefinitions.equals(super.contextDefinitions)) {
 			super.contextDefinitions = Collections.unmodifiableList(contextDefinitions);		
 			contextRegistryChanged = true;
 		}				

@@ -123,7 +123,7 @@ final class KeyBindingMachine {
 	}
 	
 	boolean setActiveContextIds(String[] activeContextIds) {
-		if (activeContextIds == null || activeContextIds.length == 0)
+		if (activeContextIds == null)
 			throw new NullPointerException();
 
 		activeContextIds = (String[]) activeContextIds.clone();
@@ -142,7 +142,7 @@ final class KeyBindingMachine {
 	}
 
 	boolean setActiveKeyConfigurationIds(String[] activeKeyConfigurationIds) {
-		if (activeKeyConfigurationIds == null || activeKeyConfigurationIds.length == 0)
+		if (activeKeyConfigurationIds == null)
 			throw new NullPointerException();
 
 		activeKeyConfigurationIds = (String[]) activeKeyConfigurationIds.clone();
@@ -161,7 +161,7 @@ final class KeyBindingMachine {
 	}
 	
 	boolean setActiveLocales(String[] activeLocales) {
-		if (activeLocales == null || activeLocales.length == 0)
+		if (activeLocales == null)
 			throw new NullPointerException();
 
 		activeLocales = (String[]) activeLocales.clone();
@@ -180,7 +180,7 @@ final class KeyBindingMachine {
 	}	
 
 	boolean setActivePlatforms(String[] activePlatforms) {
-		if (activePlatforms == null || activePlatforms.length == 0)
+		if (activePlatforms == null)
 			throw new NullPointerException();
 
 		activePlatforms = (String[]) activePlatforms.clone();

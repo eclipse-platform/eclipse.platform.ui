@@ -16,12 +16,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
@@ -46,6 +50,8 @@ import org.eclipse.ui.internal.commands.registry.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {
+
+	private final static String SEPARATOR = "_"; //$NON-NLS-1$
 
 	private static CommandManager instance;
 
@@ -72,21 +78,26 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet definedCategoryIds = new TreeSet();
 	private SortedSet definedCommandIds = new TreeSet();
 	private SortedSet definedKeyConfigurationIds = new TreeSet();	
-	private SortedMap imageBindingsByCommandId = new TreeMap();
-	private SortedMap keyBindingsByCommandId = new TreeMap();
+	private Map imageBindingsByCommandId = new TreeMap();
+	private Map keyBindingsByCommandId = new TreeMap();
 	private KeyBindingMachine keyBindingMachine = new KeyBindingMachine();
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private PluginCommandRegistry pluginCommandRegistry;
-	private List pluginContextBindingDefinitions = Collections.EMPTY_LIST;
-	private List pluginImageBindingDefinitions = Collections.EMPTY_LIST;
-	private List pluginKeyBindingDefinitions = Collections.EMPTY_LIST;
+	private SortedSet pluginContextBindingDefinitions = Util.EMPTY_SORTED_SET;
+	private SortedSet pluginImageBindingDefinitions = Util.EMPTY_SORTED_SET;
+	private SortedSet pluginKeyBindingDefinitions = Util.EMPTY_SORTED_SET;
 	private PreferenceCommandRegistry preferenceCommandRegistry;
-	private List preferenceContextBindingDefinitions = Collections.EMPTY_LIST;
-	private List preferenceImageBindingDefinitions = Collections.EMPTY_LIST;
-	private List preferenceKeyBindingDefinitions = Collections.EMPTY_LIST;	
+	private SortedSet preferenceContextBindingDefinitions = Util.EMPTY_SORTED_SET;
+	private SortedSet preferenceImageBindingDefinitions = Util.EMPTY_SORTED_SET;
+	private SortedSet preferenceKeyBindingDefinitions = Util.EMPTY_SORTED_SET;	
 
 	private CommandManager() {
+		String systemLocale = Locale.getDefault().toString();
+		activeLocale = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
+		String systemPlatform = SWT.getPlatform();
+		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;		
+		
 		if (pluginCommandRegistry == null)
 			pluginCommandRegistry = new PluginCommandRegistry(Platform.getPluginRegistry());
 			
@@ -309,90 +320,25 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	private void calculateKeyBindings() {
+		String[] activeKeyConfigurationIds = getKeyConfigurationIds(activeKeyConfigurationId, keyConfigurationDefinitionsById);
+		String[] activeLocales = getPath(activeLocale, SEPARATOR);
+		String[] activePlatforms = getPath(activePlatform, SEPARATOR);
+		keyBindingMachine.setActiveContextIds((String[]) activeContextIds.toArray(new String[activeContextIds.size()]));
+		keyBindingMachine.setActiveKeyConfigurationIds(activeKeyConfigurationIds != null ? activeKeyConfigurationIds : new String[0]);
+		keyBindingMachine.setActiveLocales(activeLocales);
+		keyBindingMachine.setActivePlatforms(activePlatforms);
+		
 		/*
-		private final static String SEPARATOR = "_"; //$NON-NLS-1$
-
-		private static Path getPathForKeyConfigurationDefinition(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionMap) {
-			Path path = null;
-
-			if (keyConfigurationDefinitionId != null) {
-				List strings = new ArrayList();
-
-				while (keyConfigurationDefinitionId != null) {	
-					if (strings.contains(keyConfigurationDefinitionId))
-						return null;
-					
-					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionMap.get(keyConfigurationDefinitionId);
-				
-					if (keyConfigurationDefinition == null)
-						return null;
-							
-					strings.add(0, keyConfigurationDefinitionId);
-					keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
-				}
-		
-				path = new Path(strings);
-			}
-		
-			return path;			
-		}
-
-		private static Path getPathForContextDefinition(String contextDefinitionId, Map contextDefinitionMap) {
-			Path path = null;
-
-			if (contextDefinitionId != null) {
-				List strings = new ArrayList();
-
-				while (contextDefinitionId != null) {	
-					if (strings.contains(contextDefinitionId))
-						return null;
-							
-					IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionMap.get(contextDefinitionId);
-				
-					if (contextDefinition == null)
-						return null;
-							
-					strings.add(0, contextDefinitionId);
-					contextDefinitionId = contextDefinition.getParentId();
-				}
-		
-				path = new Path(strings);
-			}
-		
-			return path;			
-		}	
-
-		private static Path getPath(String locale, String separator) {
-			Path path = null;
-
-			if (locale != null && separator != null) {
-				List strings = new ArrayList();				
-				locale = locale.trim();
-			
-				if (locale.length() > 0) {
-					StringTokenizer st = new StringTokenizer(locale, separator);
-						
-					while (st.hasMoreElements()) {
-						String string = ((String) st.nextElement()).trim();
-					
-						if (string != null)
-							strings.add(string);
-					}
-				}
-
-				path = new Path(strings);
-			}
-			
-			return path;		
-		}
+		System.out.println("activeContextIds: " + activeContextIds);
+		System.out.println("activeKeyConfigurationId: " + activeKeyConfigurationId);
+		System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
+		System.out.println("activeLocales: " + Arrays.asList(activeLocales));
+		System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
 		*/
-
-		/*
-		String systemLocale = Locale.getDefault().toString();
-		activeLocales = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
-		String systemPlatform = SWT.getPlatform();
-		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;
-		*/
+		
+		keyBindingMachine.setKeyBindings0(preferenceKeyBindingDefinitions);
+		keyBindingMachine.setKeyBindings1(pluginKeyBindingDefinitions);		
+		keyBindingsByCommandId = keyBindingMachine.getKeyBindingsByCommandId();		
 	}
 
 	private void fireCommandManagerChanged() {
@@ -404,6 +350,51 @@ public final class CommandManager implements ICommandManager {
 				((ICommandManagerListener) commandManagerListeners.get(i)).commandManagerChanged(commandManagerEvent);
 			}				
 		}		
+	}
+	
+	private static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+		List strings = new ArrayList();
+
+		while (keyConfigurationDefinitionId != null) {	
+			if (strings.contains(keyConfigurationDefinitionId))
+				return new String[0];
+				
+			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(keyConfigurationDefinitionId);
+			
+			if (keyConfigurationDefinition == null)
+				return new String[0];
+						
+			strings.add(0, keyConfigurationDefinitionId);
+			keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
+		}
+	
+		strings.add(Util.ZERO_LENGTH_STRING);
+		return (String[]) strings.toArray(new String[strings.size()]);
+	}
+
+	private static String[] getPath(String string, String separator) {
+		if (string == null || separator == null)
+			return new String[0];
+
+		List strings = new ArrayList();
+		StringBuffer stringBuffer = new StringBuffer();
+		string = string.trim();
+			
+		if (string.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(string, separator);
+						
+			while (stringTokenizer.hasMoreElements()) {
+				if (stringBuffer.length() > 0)
+					stringBuffer.append(separator);
+						
+				stringBuffer.append(((String) stringTokenizer.nextElement()).trim());
+				strings.add(stringBuffer.toString());
+			}
+		}
+		
+		Collections.reverse(strings);		
+		strings.add(Util.ZERO_LENGTH_STRING);
+		return (String[]) strings.toArray(new String[strings.size()]);	
 	}
 
 	private ICommandRegistry getPluginCommandRegistry() {
@@ -498,17 +489,17 @@ public final class CommandManager implements ICommandManager {
 		categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());		
 		SortedMap categoryDefinitionsById = CategoryDefinition.sortedMapById(categoryDefinitions);
 		SortedSet definedCategoryIds = new TreeSet(categoryDefinitionsById.keySet());	
-		pluginContextBindingDefinitions = pluginCommandRegistry.getContextBindingDefinitions();
-		preferenceContextBindingDefinitions = preferenceCommandRegistry.getContextBindingDefinitions();
+		pluginContextBindingDefinitions = new TreeSet(pluginCommandRegistry.getContextBindingDefinitions());
+		preferenceContextBindingDefinitions = new TreeSet(preferenceCommandRegistry.getContextBindingDefinitions());
 		List commandDefinitions = new ArrayList();
 		commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
-		commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
+		commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());		
 		SortedMap commandDefinitionsById = CommandDefinition.sortedMapById(commandDefinitions);
 		SortedSet definedCommandIds = new TreeSet(commandDefinitionsById.keySet());		
-		pluginImageBindingDefinitions = pluginCommandRegistry.getImageBindingDefinitions();
-		preferenceImageBindingDefinitions = preferenceCommandRegistry.getImageBindingDefinitions();
-		pluginKeyBindingDefinitions = pluginCommandRegistry.getKeyBindingDefinitions();
-		preferenceKeyBindingDefinitions = preferenceCommandRegistry.getKeyBindingDefinitions();
+		pluginImageBindingDefinitions = new TreeSet(pluginCommandRegistry.getImageBindingDefinitions());
+		preferenceImageBindingDefinitions = new TreeSet(preferenceCommandRegistry.getImageBindingDefinitions());
+		pluginKeyBindingDefinitions = new TreeSet(pluginCommandRegistry.getKeyBindingDefinitions());
+		preferenceKeyBindingDefinitions = new TreeSet(preferenceCommandRegistry.getKeyBindingDefinitions());
 		List keyConfigurationDefinitions = new ArrayList();
 		keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
 		keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());
@@ -593,10 +584,10 @@ public final class CommandManager implements ICommandManager {
 		updated |= command.setDefined(commandDefinition != null);
 		updated |= command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);
 		updated |= command.setHelpId(commandDefinition != null ? commandDefinition.getHelpId() : null);
-		List imageBindings = (List) imageBindingsByCommandId.get(command.getId());
-		updated |= command.setImageBindings(imageBindings != null ? imageBindings : Collections.EMPTY_LIST);
-		List keyBindings = (List) keyBindingsByCommandId.get(command.getId());
-		updated |= command.setKeyBindings(keyBindings != null ? keyBindings : Collections.EMPTY_LIST);
+		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
+		updated |= command.setImageBindings(imageBindings != null ? new ArrayList(imageBindings) : Collections.EMPTY_LIST);
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(command.getId());
+		updated |= command.setKeyBindings(keyBindings != null ? new ArrayList(keyBindings) : Collections.EMPTY_LIST);
 		updated |= command.setName(commandDefinition != null ? commandDefinition.getName() : Util.ZERO_LENGTH_STRING);
 		return updated;
 	}

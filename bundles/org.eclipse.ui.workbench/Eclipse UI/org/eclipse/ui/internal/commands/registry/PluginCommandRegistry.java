@@ -118,37 +118,37 @@ public final class PluginCommandRegistry extends AbstractCommandRegistry {
 		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);		
 		boolean commandRegistryChanged = false;
 			
-		if (!activeKeyConfigurationDefinitions.equals(this.activeKeyConfigurationDefinitions)) {
+		if (!activeKeyConfigurationDefinitions.equals(super.activeKeyConfigurationDefinitions)) {
 			super.activeKeyConfigurationDefinitions = Collections.unmodifiableList(activeKeyConfigurationDefinitions);			
 			commandRegistryChanged = true;
 		}	
 
-		if (!categoryDefinitions.equals(this.categoryDefinitions)) {
+		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
 			super.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);			
 			commandRegistryChanged = true;
 		}	
 				
-		if (!commandDefinitions.equals(this.commandDefinitions)) {
+		if (!commandDefinitions.equals(super.commandDefinitions)) {
 			super.commandDefinitions = Collections.unmodifiableList(commandDefinitions);			
 			commandRegistryChanged = true;
 		}	
 				
-		if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
+		if (!contextBindingDefinitions.equals(super.contextBindingDefinitions)) {
 			super.contextBindingDefinitions = Collections.unmodifiableList(contextBindingDefinitions);			
 			commandRegistryChanged = true;
 		}	
 			
-		if (!imageBindingDefinitions.equals(this.imageBindingDefinitions)) {
+		if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
 			super.imageBindingDefinitions = Collections.unmodifiableList(imageBindingDefinitions);			
 			commandRegistryChanged = true;
 		}	
 				
-		if (!keyBindingDefinitions.equals(this.keyBindingDefinitions)) {
+		if (!keyBindingDefinitions.equals(super.keyBindingDefinitions)) {
 			super.keyBindingDefinitions = Collections.unmodifiableList(keyBindingDefinitions);			
 			commandRegistryChanged = true;
 		}	
 				
-		if (!keyConfigurationDefinitions.equals(this.keyConfigurationDefinitions)) {
+		if (!keyConfigurationDefinitions.equals(super.keyConfigurationDefinitions)) {
 			super.keyConfigurationDefinitions = Collections.unmodifiableList(keyConfigurationDefinitions);			
 			commandRegistryChanged = true;
 		}	
