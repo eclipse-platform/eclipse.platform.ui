@@ -105,9 +105,6 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 			} else {
 				message = e.getMessage();
 			}
-			if (message == null) {
-				message= "An exception occurred while running the selected targets";
-			}
 			reportError(message, e.getTargetException());
 		} catch (InterruptedException e) {
 		}
@@ -119,6 +116,9 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 			status = ((CoreException)throwable).getStatus();
 		} else {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IStatus.ERROR, message, throwable);
+		}
+		if (message == null) {
+			message= "An exception occurred while running the selected targets";
 		}
 		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), "Error Running Targets", message, status);
 	}
