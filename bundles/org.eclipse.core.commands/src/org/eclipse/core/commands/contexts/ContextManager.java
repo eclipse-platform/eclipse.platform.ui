@@ -42,6 +42,13 @@ import org.eclipse.core.internal.commands.util.Util;
 public final class ContextManager implements IContextListener {
 
 	/**
+	 * This flag can be set to <code>true</code> if the context manager should
+	 * print information to <code>System.out</code> when certain boundary
+	 * conditions occur.
+	 */
+	public static boolean DEBUG = false;
+
+	/**
 	 * The set of active context identifiers. This value may be empty, but it is
 	 * never <code>null</code>.
 	 */
@@ -220,6 +227,11 @@ public final class ContextManager implements IContextListener {
 		} else {
 			this.activeContextIds = null;
 		}
+		
+		if (DEBUG) {
+            System.out.println("CONTEXTS >>> " + activeContextIds); //$NON-NLS-1$
+		}
+		
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
 				true, previouslyActiveContextIds));
 	}

@@ -717,7 +717,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             if ((DEBUG)
                     && (!mutableContextManager.getEnabledContextIds().equals(
                             enabledContextIds))) {
-                System.out.println("CONTEXTS >>> " + enabledContextIds); //$NON-NLS-1$
                 if (DEBUG_VERBOSE) {
                     final Exception exception = new Exception();
                     exception.fillInStackTrace();

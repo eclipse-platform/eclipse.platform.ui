@@ -849,6 +849,7 @@ public final class Workbench implements IWorkbench {
 		commandManager = new CommandManager();
 		services[IWorkbenchServices.COMMAND] = new CommandService(
 				commandManager);
+		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
 		services[IWorkbenchServices.CONTEXT] = new ContextService(
 				contextManager);
