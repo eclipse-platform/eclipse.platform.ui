@@ -264,21 +264,11 @@ public class EmbeddedBrowserHost implements Runnable {
 			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 			 */
 			public void open(WindowEvent event) {
-				int dw = 300;
-				int dh = 300;
-				int dx = x + (w - dw) / 2;
-				int dy = y + (h - dh) / 2;
-				if (dy > 50)
-					dy -= 50;
 				EmbeddedBrowserDialog workingSetManagerDialog =
 					new EmbeddedBrowserDialog(
 						shell,
 						productName,
-						createImage(),
-						dx,
-						dy,
-						dw,
-						dh);
+						createImage());
 				event.browser = workingSetManagerDialog.getBrowser();
 
 			}

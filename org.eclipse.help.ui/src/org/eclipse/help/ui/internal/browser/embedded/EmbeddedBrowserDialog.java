@@ -25,24 +25,15 @@ public class EmbeddedBrowserDialog {
 	private Image shellImg;
 	Shell shell;
 	Browser webBrowser;
-	int x, y, w, h;
 	/**
 	 * Constructor used for launching in process embeded IE (for debugging)
 	 */
 	public EmbeddedBrowserDialog(
 		Shell parent,
 		String windowTitle,
-		Image shellImage,
-		int xPosition,
-		int yPosition,
-		int width,
-		int height) {
+		Image shellImage) {
 		this.windowTitle = windowTitle;
 		this.shellImg = shellImage;
-		this.x = xPosition;
-		this.y = yPosition;
-		this.w = width;
-		this.h = height;
 		createShell(parent);
 	}
 	/**
@@ -61,20 +52,29 @@ public class EmbeddedBrowserDialog {
 		shell.setLayout(layout);
 
 		webBrowser = new Browser(shell, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		final GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
-		data.widthHint = w;
-		data.heightHint = h;
+		data.widthHint = parent.getSize().x;
+		data.heightHint = parent.getSize().y;
 		webBrowser.setLayoutData(data);
 		shell.pack();
-		shell.setLocation(x, y);
+		shell.setLocation(parent.getLocation());
 		webBrowser.addVisibilityWindowListener(new VisibilityWindowListener() {
 			public void hide(WindowEvent event) {
 				shell.setVisible(false);
 			}
 			public void show(WindowEvent event) {
+				if(event.location!=null){
+					shell.setLocation(event.location);
+				}
+				if(event.size!=null){
+					data.widthHint = event.size.x;
+					data.heightHint = event.size.y;
+					shell.pack();
+				}
 				shell.open();
+
 			}
 		});
 		webBrowser.addOpenWindowListener(new OpenWindowListener() {
@@ -84,22 +84,11 @@ public class EmbeddedBrowserDialog {
 			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 			 */
 			public void open(WindowEvent event) {
-				int dw = 300;
-				int dh = 500;
-				int dx = x + (w - dw) / 2;
-				int dy = y + (h - dh) / 2;
-				dx += 10;
-				if (dy > 30)
-					dy -= 30;
 				EmbeddedBrowserDialog workingSetDialog =
 					new EmbeddedBrowserDialog(
 						shell,
 						windowTitle,
-						shellImg,
-						dx,
-						dy,
-						dw,
-						dh);
+						shellImg);
 				event.browser = workingSetDialog.getBrowser();
 			}
 
