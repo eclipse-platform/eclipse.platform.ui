@@ -224,9 +224,8 @@ private void resetOperationId() {
 	identifiers.remove(currentOperationThread);
 }
 /**
- * This method can only be safelly called from inside a workspace
- * operation. Should NOT be called from outside a 
- * prepareOperation/endOperation block.
+ * This method can only be safely called from inside a workspace operation.
+ * Should NOT be called from outside a prepareOperation/endOperation block.
  */
 public void setBuild(boolean build) {
 	Identifier identifier = getIdentifier(currentOperationThread);
@@ -240,9 +239,8 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 	workspaceLock = lock;
 }
 /**
- * This method can only be safelly called from inside a workspace
- * operation. Should NOT be called from outside a 
- * prepareOperation/endOperation block.
+ * This method can only be safely called from inside a workspace operation.
+ * Should NOT be called from outside a prepareOperation/endOperation block.
  */
 public boolean shouldBuild() {
 	Identifier identifier = getIdentifier(currentOperationThread);
