@@ -34,6 +34,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		WorkbenchHelp.setHelp(
 			this,
 			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
+		setEnabled(false);
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	}
 	
 	/**
-	 * @see SelectionProviderAction
+	 * @see SelectionProviderAction#selectionChanged(ISelection)
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
