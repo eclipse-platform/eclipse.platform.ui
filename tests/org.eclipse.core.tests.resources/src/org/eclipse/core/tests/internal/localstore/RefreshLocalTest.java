@@ -252,7 +252,6 @@ public void testDiscoverFileWithInvalidName() {
 
 	/* test root deletion */
 	IFile file = project.getFile("file.txt");
-	File target = file.getLocation().toFile();
 	ensureExistsInFileSystem(file);
 		
 	File fileWithInvalidName = new File(project.getLocation().toFile(), "a\\b");
