@@ -25,15 +25,15 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Build command parameters.
 	 */
-	public static String BUILD_ID = "BuildID";
-	public static String INTERESTING_PROJECT = "InterestingProject";
+	public static final String BUILD_ID = "BuildID";
+	public static final String INTERESTING_PROJECT = "InterestingProject";
 
 	/**
 	 * Lifecycle event identifiers
 	 */
-	public static String STARTUP_ON_INITIALIZE = "StartupOnInitialize";
-	public static String SET_INITIALIZATION_DATA = "SetInitializationData";
-	public static String DEFAULT_BUILD_ID = "Build0";
+	public static final String STARTUP_ON_INITIALIZE = "StartupOnInitialize";
+	public static final String SET_INITIALIZATION_DATA = "SetInitializationData";
+	public static final String DEFAULT_BUILD_ID = "Build0";
 
 	/**
 	 * The arguments for one run of the builder.

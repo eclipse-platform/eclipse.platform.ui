@@ -20,7 +20,7 @@ public class SimpleBuilder extends IncrementalProjectBuilder {
 	protected static SimpleBuilder instance;
 
 	/** contants */
-	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.simple";
+	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.simplebuilder";
 public SimpleBuilder() {
 	super();
 	instance = this;

@@ -91,6 +91,8 @@ public void testBasic() {
 	//the snow builder gets run
 	IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("P1");
 	ensureExistsInWorkspace(project, true);
+	SnowBuilder builder= SnowBuilder.getInstance();
+	builder.reset();
 	try {
 		setAutoBuilding(true);
 		IProjectDescription desc = project.getDescription();
@@ -99,7 +101,6 @@ public void testBasic() {
 	} catch (CoreException e) {
 		fail("0.99", e);
 	}
-	SnowBuilder builder= SnowBuilder.getInstance();
 	builder.addExpectedLifecycleEvent(SnowBuilder.SET_INITIALIZATION_DATA);
 	builder.addExpectedLifecycleEvent(SnowBuilder.STARTUP_ON_INITIALIZE);
 	builder.addExpectedLifecycleEvent(SnowBuilder.SNOW_BUILD_EVENT);
