@@ -171,7 +171,7 @@ protected void setUp() throws Exception {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new IResourceChangeListenerTest("testMoveProject2"));
+//	suite.addTest(new IResourceChangeListenerTest("testDeleteMoveFile"));
 //	return suite;
 
 	return new TestSuite(IResourceChangeListenerTest.class);
@@ -453,6 +453,34 @@ public void testDeleteInPostBuildListener() {
 	} finally {
 		// cleanup: ensure that the listener is removed
 		getWorkspace().removeResourceChangeListener(listener);
+	}
+}
+/**
+ * Tests deleting a file, then moving another file to that deleted location.
+ * See bug 27527.
+ */
+public void testDeleteMoveFile() {
+	try {
+		file2.create(getRandomContents(), IResource.NONE, getMonitor());
+		verifier.reset();
+		int flags = IResourceDelta.REPLACED | IResourceDelta.MOVED_FROM | IResourceDelta.CONTENT;
+		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, flags, file2.getFullPath(), null);
+		verifier.addExpectedChange(file2, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file1.getFullPath());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("deleting and moving", 100);
+				try {
+					file1.delete(IResource.NONE,  new SubProgressMonitor(m, 50));
+					file2.move(file1.getFullPath(), IResource.NONE, new SubProgressMonitor(m, 50));
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
 	}
 }
 public void testDeleteProject() throws CoreException {
@@ -746,9 +774,10 @@ public void testSwapFolders() {
     	folder3 = project1.getFolder("Folder3");
         file1.delete(false, null);
         folder2.create(false, true, null);
-        
-		verifier.addExpectedChange(folder1, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, folder2.getFullPath(), folder2.getFullPath());
-		verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, folder1.getFullPath(), folder1.getFullPath());
+
+		final int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
+		verifier.addExpectedChange(folder1, IResourceDelta.CHANGED, flags, folder2.getFullPath(), folder2.getFullPath());
+		verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, flags, folder1.getFullPath(), folder1.getFullPath());
 
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor m) throws CoreException {
@@ -777,7 +806,8 @@ public void testReplaceFolderWithFolder() {
         folder2.create(false, true, null);
         
 		verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, folder2.getFullPath());
-		verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, folder1.getFullPath(), folder3.getFullPath());
+		int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
+		verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, flags, folder1.getFullPath(), folder3.getFullPath());
 		verifier.addExpectedChange(folder3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder2.getFullPath(), null);
 
 		getWorkspace().run(new IWorkspaceRunnable() {
@@ -806,9 +836,9 @@ public void testSwapFiles() {
         
         file1.create(new ByteArrayInputStream(new byte[] {65}), false, null);
         file2.create(new ByteArrayInputStream(new byte[] {67}), false, null);
-        
-		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, file2.getFullPath(), file2.getFullPath());
-		verifier.addExpectedChange(file2, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, file1.getFullPath(), file1.getFullPath());
+        final int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
+		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, flags, file2.getFullPath(), file2.getFullPath());
+		verifier.addExpectedChange(file2, IResourceDelta.CHANGED, flags, file1.getFullPath(), file1.getFullPath());
 
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor m) throws CoreException {
