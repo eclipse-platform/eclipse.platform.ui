@@ -308,10 +308,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		assertState("3.3", job, Job.SLEEPING);
 		assertTrue("3.4", job.cancel()); //should be possible to cancel a sleeping job
 	}
-	/**
-	 * Test failing for unknown reason
-	 */
-	public void _testSleepOnWait() {
+	public void testSleepOnWait() {
 		//keep scheduling infinitely long jobs until we have a job waiting
 		ArrayList longJobs = new ArrayList();
 		TestJob job = null;
@@ -1053,95 +1050,110 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 	
 	/**
-	 * Tests the API method IJobManager.wakeUp(family). Test failing for unknown
-	 * reason needs further investigation
+	 * Tests the API method IJobManager.wakeUp(family)
 	 */
-	public void _testJobFamilyWakeUp() {
-		//test the wake-up of a family of jobs
-		final int NUM_JOBS = 20;
-		Job [] jobs = new Job[NUM_JOBS];
+	public void testJobFamilyWakeUp() {
+		final int JOBS_PER_FAMILY = 10;
 		//create two different families of jobs
+		Job [] family1 = new Job[JOBS_PER_FAMILY];
+		Job [] family2 = new Job[JOBS_PER_FAMILY];
 		TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
 		//need one common scheduling rule so that the jobs would be executed one by one
 		ISchedulingRule rule = new IdentityRule();
-		for(int i = 0; i < NUM_JOBS; i++) {
-			//assign half the jobs to the first family, the other half to the second family
-			if(i%2 == 0)
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
-			else /*if(i%2 == 1)*/
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
-				
-			jobs[i].setRule(rule);
-			jobs[i].schedule();
-		}
-				
-		waitForStart(jobs[0]);
-		assertState("1.0", jobs[0], Job.RUNNING);
+		//create and schedule a seed job that will cause all others to be blocked
+		Job seedJob = new CustomTestJob("SeedJob", 1000000, 10, TestJobFamily.TYPE_THREE);
+		seedJob.setRule(rule);
+		seedJob.schedule();
+		waitForStart(seedJob);
+		assertState("1.0", seedJob, Job.RUNNING);
 		
-		//first job is running, the rest are waiting so put them to sleep
-		for(int i = 1; i < NUM_JOBS; i++) {
-			assertState("2.1." + i, jobs[i], Job.WAITING);
-			assertTrue("2.2." + i, jobs[i].sleep());
-			assertState("2.3." + i, jobs[i], Job.SLEEPING);
+		//create jobs in first family and put them to sleep
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
+			family1[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+			family1[i].setRule(rule);
+			family1[i].schedule();
+			assertState("1.1." + i, family1[i], Job.WAITING);
+			assertTrue("1.2." + i, family1[i].sleep());
+			assertState("1.3." + i, family1[i], Job.SLEEPING);
+		}
+		//create jobs in second family and put them to sleep
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
+			family2[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+			family2[i].setRule(rule);
+			family2[i].schedule();
+			assertState("2.1." + i, family2[i], Job.WAITING);
+			assertTrue("2.2." + i, family2[i].sleep());
+			assertState("2.3." + i, family2[i], Job.SLEEPING);
 		}
 		
-		//cancel the first job
-		jobs[0].cancel();
-		waitForCancel(jobs[0]);
-		assertState("3.0", jobs[0], Job.NONE);
+		//cancel the seed job
+		seedJob.cancel();
+		waitForCancel(seedJob);
+		assertState("3.0", seedJob, Job.NONE);
 		
-		//all jobs should be sleeping now
-		for(int i = 1; i < NUM_JOBS; i++) {
-			assertState("3." + i, jobs[i], Job.SLEEPING);
-		}
+		//all family jobs should still be sleeping
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("3.1." + i, family1[i], Job.SLEEPING);
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("3.2." + i, family2[i], Job.SLEEPING);
 		
 		//wake-up the second family of jobs
 		manager.wakeUp(second);
 		
-		//ensure all jobs in second family are either running or waiting
 		//jobs in the first family should still be in the sleep state
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("4.1." + i, family1[i], Job.SLEEPING);
+		//ensure all jobs in second family are either running or waiting
 		int runningCount = 0;
-		for(int i = 2; i < NUM_JOBS; i++) {
-			int state = jobs[i].getState();
-			if(jobs[i].belongsTo(first))
-				assertState("4." + i, jobs[i], Job.SLEEPING);
-			else
-				assertTrue("4." + i, state == Job.WAITING || state == Job.RUNNING);
-			if (state == Job.RUNNING)
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
+			if (family2[i].getState() == Job.RUNNING)
 				runningCount++;
+			else
+				assertState("4.2." + i, family2[i], Job.WAITING);
 		}
 		//ensure only one job is running (it is possible that none have started yet)
 		assertTrue("4.running", runningCount <= 1);
 		
 		//cycle through the jobs in the second family and cancel them
-		for(int i = 1; i < NUM_JOBS; i+=2) {
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
 			//the running job may not respond immediately
-			if (jobs[i].cancel());
-				assertState("5." + i, jobs[i], Job.NONE);
+			if (!family2[i].cancel());
+				waitForCancel(family2[i]);
+			assertState("5." + i, family2[i], Job.NONE);
 		}
 			
 		//all jobs in the first family should still be sleeping
-		for(int i = 2; i < NUM_JOBS; i+=2) {
-			assertState("6." + i, jobs[i], Job.SLEEPING);
-		}
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("6.1." + i, family1[i], Job.SLEEPING);
 		
 		//wake up the first family
 		manager.wakeUp(first);
 		
-		//cycle through the jobs in the first family
-		//canceling one of them should start the next one
-		for(int i = 2; i < NUM_JOBS; i+=2) {
-			int state = jobs[i].getState();
-			assertTrue("7.1." + i, state == Job.WAITING || state == Job.RUNNING);
-			if (jobs[i].cancel())
-				assertState("7.2." + i, jobs[i], Job.NONE);
+		//ensure all jobs in first family are either running or waiting
+		runningCount = 0;
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
+			if (family1[i].getState() == Job.RUNNING)
+				runningCount++;
+			else
+				assertState("7.1." + i, family1[i], Job.WAITING);
+		}
+		//ensure only one job is running (it is possible that none have started yet)
+		assertTrue("7.running", runningCount <= 1);
+
+		//cycle through the jobs in the first family and cancel them
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) {
+			//the running job may not respond immediately
+			if (!family1[i].cancel())
+				waitForCancel(family1[i]);
+			assertState("8." + i, family1[i], Job.NONE);
 		}
 		
 		//all jobs should now be in the NONE state		
-		for(int i = 0; i < NUM_JOBS; i++) {
-			assertState("7." + i, jobs[i], Job.NONE);
-		}
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("9.1." + i, family1[i], Job.NONE);
+		for(int i = 0; i < JOBS_PER_FAMILY; i++) 
+			assertState("9.2." + i, family2[i], Job.NONE);
 	}
 	
 	public void testJobFamilySleep() {
