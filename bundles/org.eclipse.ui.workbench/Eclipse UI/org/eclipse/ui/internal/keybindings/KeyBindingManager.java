@@ -60,25 +60,25 @@ public final class KeyBindingManager {
 		return buildConfigurationMap(acceleratorRegistry.getAcceleratorConfigurations());	
 	}
 	
-	private static SortedMap buildConfigurationMap(Map acceleratorConfigurations) {
-		SortedMap configurations = new TreeMap();
-		Iterator iterator = acceleratorConfigurations.keySet().iterator();
+	private static SortedMap buildConfigurationMap(Map acceleratorConfigurationMap) {
+		SortedMap configurationMap = new TreeMap();
+		Iterator iterator = acceleratorConfigurationMap.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
 			
 			if (id != null) {			
-				Path path = pathForConfigurationId(id, acceleratorConfigurations);
+				Path path = pathForConfigurationId(id, acceleratorConfigurationMap);
 			
 				if (path != null)
-					configurations.put(id, path);
+					configurationMap.put(id, path);
 			}			
 		}
 
-		return configurations;		
+		return configurationMap;		
 	}
 
-	private static Path pathForConfigurationId(String id, Map acceleratorConfigurations) {
+	private static Path pathForConfigurationId(String id, Map acceleratorConfigurationsMap) {
 		Path path = null;
 
 		if (id != null) {
@@ -88,7 +88,7 @@ public final class KeyBindingManager {
 				if (pathItems.contains(id))
 					return null;
 							
-				AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) acceleratorConfigurations.get(id);
+				AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) acceleratorConfigurationsMap.get(id);
 				
 				if (acceleratorConfiguration == null)
 					return null;
@@ -108,25 +108,25 @@ public final class KeyBindingManager {
 		return buildScopeMap(acceleratorRegistry.getAcceleratorScopes());	
 	}
 	
-	private static SortedMap buildScopeMap(Map acceleratorScopes) {
-		SortedMap scopes = new TreeMap();
-		Iterator iterator = acceleratorScopes.keySet().iterator();
+	private static SortedMap buildScopeMap(Map acceleratorScopeMap) {
+		SortedMap scopeMap = new TreeMap();
+		Iterator iterator = acceleratorScopeMap.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
 			
 			if (id != null) {
-				Path path = pathForScopeId(id, acceleratorScopes);
+				Path path = pathForScopeId(id, acceleratorScopeMap);
 			
 				if (path != null)
-					scopes.put(id, path);
+					scopeMap.put(id, path);
 			}
 		}
 
-		return scopes;		
+		return scopeMap;		
 	}
 
-	private static Path pathForScopeId(String id, Map acceleratorScopes) {
+	private static Path pathForScopeId(String id, Map acceleratorScopeMap) {
 		Path path = null;
 		
 		if (id != null) {
@@ -136,7 +136,7 @@ public final class KeyBindingManager {
 				if (pathItems.contains(id))
 					return null;
 							
-				AcceleratorScope acceleratorScope = (AcceleratorScope) acceleratorScopes.get(id);
+				AcceleratorScope acceleratorScope = (AcceleratorScope) acceleratorScopeMap.get(id);
 				
 				if (acceleratorScope == null)
 					return null;
@@ -326,68 +326,68 @@ public final class KeyBindingManager {
 			((KeyBinding) iterator.next()).write(memento.createChild(KeyBinding.ELEMENT)); 
 	}
 
-	private static void filterAction(List keyBindings, Set actions, boolean exclusive) {
+	private static void filterAction(List keyBindings, Set actionSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !actions.contains(keyBinding.getAction()))
+			if (exclusive ^ !actionSet.contains(keyBinding.getAction()))
 				iterator.remove();
 		}
 	}
 
-	private static void filterConfiguration(List keyBindings, Set configurations, boolean exclusive) {
+	private static void filterConfiguration(List keyBindings, Set configurationSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !configurations.contains(keyBinding.getConfiguration()))
+			if (exclusive ^ !configurationSet.contains(keyBinding.getConfiguration()))
 				iterator.remove();
 		}
 	}
 
-	private static void filterLocale(List keyBindings, Set locales, boolean exclusive) {
+	private static void filterLocale(List keyBindings, Set localeSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !locales.contains(keyBinding.getLocale()))
+			if (exclusive ^ !localeSet.contains(keyBinding.getLocale()))
 				iterator.remove();
 		}
 	}
 
-	private static void filterPlatform(List keyBindings, Set platforms, boolean exclusive) {
+	private static void filterPlatform(List keyBindings, Set platformSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !platforms.contains(keyBinding.getPlatform()))
+			if (exclusive ^ !platformSet.contains(keyBinding.getPlatform()))
 				iterator.remove();
 		}
 	}
 
-	private static void filterPlugin(List keyBindings, Set plugins, boolean exclusive) {
+	private static void filterPlugin(List keyBindings, Set pluginSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !plugins.contains(keyBinding.getPlugin()))
+			if (exclusive ^ !pluginSet.contains(keyBinding.getPlugin()))
 				iterator.remove();
 		}
 	}
 
-	private static void filterScope(List keyBindings, Set scopes, boolean exclusive) {
+	private static void filterScope(List keyBindings, Set scopeSet, boolean exclusive) {
 		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
 			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !scopes.contains(keyBinding.getScope()))
+			if (exclusive ^ !scopeSet.contains(keyBinding.getScope()))
 				iterator.remove();
 		}
 	}
@@ -404,48 +404,48 @@ public final class KeyBindingManager {
 
 	private SortedMap configurationMap;
 	private SortedMap scopeMap;		
-	private List initialKeyBindings;
-	//private List customKeyBindings;	
+	private List keyBindings1;	
+	private List keyBindings2;
+	private Path configuration;
+	private Path locale;
+	private Path platform;
+	private Path[] scopes;
+	private KeySequence mode;
 	private SortedMap tree;
-		
-	private Path configuration = Path.create();
-	private Path locale = systemLocale();
-	private Path platform = systemPlatform();
-	private Path[] scopes = new Path[] { Path.create() };
-	
-	private KeySequence mode = KeySequence.create();
-	private SortedMap actionKeySequenceSetMap;
-	private SortedMap keySequenceActionMap;
-	private SortedMap actionKeySequenceSetMapForMode;
-	private SortedMap keySequenceActionMapForMode;
+	private boolean solved;
+	private SortedMap keySequenceMap;
+	private SortedMap keySequenceMapForMode;
 	private SortedSet keyStrokeSetForMode;
+	private SortedMap actionMap;
+	private SortedMap actionMapForMode;
 
 	private KeyBindingManager() {
 		super();
 		configurationMap = Collections.unmodifiableSortedMap(loadConfigurationMap());
 		scopeMap = Collections.unmodifiableSortedMap(loadScopeMap());
-		initialKeyBindings = Collections.unmodifiableList(loadKeyBindings());
+		keyBindings1 = Collections.EMPTY_LIST;
+		keyBindings2 = Collections.EMPTY_LIST;
+		configuration = Path.create();
+		locale = systemLocale();
+		platform = systemPlatform();
+		scopes = new Path[] { Path.create() };
+		mode = KeySequence.create();	
 		
-		tree = buildTree(initialKeyBindings, configurationMap, scopeMap);	
-		solve();
-				
+		// TBD: should this move?
+		List keyBindings = loadKeyBindings();
+		setKeyBindings1(keyBindings);
+
 		try {
 			IPath path = WorkbenchPlugin.getDefault().getStateLocation();
-
-			IPath path0 = path.append("initialKeyBindings (from list).xml");
-			FileWriter fileWriter0 = new FileWriter(path0.toFile());
-			writeKeyBindingsToWriter(fileWriter0, "initialkeybindings", initialKeyBindings);
-			fileWriter0.close();
-
-			IPath path1 = path.append("initialKeyBindings (from tree).xml");
-			FileWriter fileWriter1 = new FileWriter(path1.toFile());
-			writeKeyBindingsToWriter(fileWriter1, "initialkeybindings", Node.toBindings(tree));
-			fileWriter1.close();			
+			path = path.append("keybindings.xml");
+			FileWriter fileWriter = new FileWriter(path.toFile());
+			writeKeyBindingsToWriter(fileWriter, "keybindings", keyBindings);
+			fileWriter.close();
 		} catch (IOException eIO) {
 			eIO.printStackTrace();
 		}
 	}
-	
+
 	public Path getConfigurationForId(String id) {
 		return (Path) configurationMap.get(id);	
 	}
@@ -453,7 +453,51 @@ public final class KeyBindingManager {
 	public Path getScopeForId(String id) {
 		return (Path) scopeMap.get(id);	
 	}
+
+	public List getKeyBindings1() {
+		return keyBindings1;	
+	}
+
+	public void setKeyBindings1(List keyBindings1)
+		throws IllegalArgumentException {
+		if (keyBindings1 == null)
+			throw new IllegalArgumentException();
+		
+		keyBindings1 = Collections.unmodifiableList(new ArrayList(keyBindings1));
+		Iterator iterator = keyBindings1.iterator();
+		
+		while (iterator.hasNext())
+			if (!(iterator.next() instanceof KeyBinding))
+				throw new IllegalArgumentException();
+
+		if (!this.keyBindings1.equals(keyBindings1)) {
+			this.keyBindings1 = keyBindings1;
+			invalidateTree();
+		}
+	}
 	
+	public List getKeyBindings2() {
+		return keyBindings2;	
+	}
+
+	public void setKeyBindings2(List keyBindings2)
+		throws IllegalArgumentException {
+		if (keyBindings2 == null)
+			throw new IllegalArgumentException();
+		
+		keyBindings2 = Collections.unmodifiableList(new ArrayList(keyBindings2));
+		Iterator iterator = keyBindings2.iterator();
+		
+		while (iterator.hasNext())
+			if (!(iterator.next() instanceof KeyBinding))
+				throw new IllegalArgumentException();
+				
+		if (!this.keyBindings2.equals(keyBindings2)) {
+			this.keyBindings2 = keyBindings2;
+			invalidateTree();
+		}
+	}
+
 	public Path getConfiguration() {
 		return configuration;	
 	}
@@ -465,14 +509,12 @@ public final class KeyBindingManager {
 			
 		if (!this.configuration.equals(configuration)) {
 			this.configuration = configuration;
-			solve();
+			invalidateSolution();
 		}
 	}
-
+	
 	public Path[] getScopes() {
-		Path[] scopes = new Path[this.scopes.length];
-		System.arraycopy(this.scopes, 0, scopes, 0, this.scopes.length);		
-		return scopes;
+		return (Path[]) scopes.clone();
 	}	
 	
 	public void setScopes(Path[] scopes)
@@ -480,14 +522,13 @@ public final class KeyBindingManager {
 		if (scopes == null || scopes.length < 1)
 			throw new IllegalArgumentException();
 
-		Path[] scopesCopy = new Path[scopes.length];
-		System.arraycopy(scopes, 0, scopesCopy, 0, scopes.length);
+		scopes = (Path[]) scopes.clone();
 		
-		if (!Arrays.equals(this.scopes, scopesCopy)) {
-			this.scopes = scopesCopy;
-			solve();
+		if (!Arrays.equals(this.scopes, scopes)) {
+			this.scopes = scopes;
+			invalidateSolution();
 		}		
-	}
+	}	
 
 	public KeySequence getMode() {
 		return mode;	
@@ -498,96 +539,40 @@ public final class KeyBindingManager {
 		if (mode == null)
 			throw new IllegalArgumentException();
 			
-		this.mode = mode;
-		invalidateForMode();
-	}
-
-	public SortedMap getActionKeySequenceSetMap() {
-		if (actionKeySequenceSetMap == null) {				
-			actionKeySequenceSetMap = new TreeMap();
-			SortedMap keySequenceActionMap = getKeySequenceActionMap();
-			Iterator iterator = keySequenceActionMap.entrySet().iterator();
-	
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				KeySequence keySequence = (KeySequence) entry.getKey();
-				Identifier action = (Identifier) entry.getValue();		
-				SortedSet keySequenceSet = 
-					(SortedSet) actionKeySequenceSetMap.get(action);
-				
-				if (keySequenceSet == null) {
-					keySequenceSet = new TreeSet();
-					actionKeySequenceSetMap.put(action, keySequenceSet);
-				}
-				
-				keySequenceSet.add(keySequence);
-			}
+		if (!this.mode.equals(mode)) {
+			this.mode = mode;
+			invalidateModalMaps();
 		}
-				
-		return actionKeySequenceSetMap;		
 	}
 
-	public SortedMap getKeySequenceActionMap() {
-		if (keySequenceActionMap == null) {
+	public SortedMap getKeySequenceMap() {
+		if (keySequenceMap == null) {
+			solve();
+			keySequenceMap = Collections.unmodifiableSortedMap(Node.toKeySequenceMap(tree));
+		}
+		
+		return keySequenceMap;
+	}
+
+	public SortedMap getKeySequenceMapForMode() {
+		if (keySequenceMapForMode == null) {
+			solve();
+			SortedMap tree = Node.find(this.tree, mode);
+			
 			if (tree != null)
-				keySequenceActionMap = Collections.unmodifiableSortedMap(
-					Node.toKeySequenceActionMap(tree));
-		
-			//if (keySequenceActionMapForMode == null)
-			//	keySequenceActionMapForMode = new TreeMap();
+				keySequenceMapForMode = Collections.unmodifiableSortedMap(Node.toKeySequenceMap(tree));
+			else
+				keySequenceMapForMode = Collections.unmodifiableSortedMap(new TreeMap());			
 		}
 		
-		return keySequenceActionMap;
-	}
-	
-	public SortedMap getActionKeySequenceSetMapForMode() {
-		if (actionKeySequenceSetMapForMode == null) {
-			actionKeySequenceSetMapForMode = new TreeMap();
-			SortedMap keySequenceActionMap = getKeySequenceActionMapForMode();
-			Iterator iterator = keySequenceActionMap.entrySet().iterator();
-	
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				KeySequence keySequence = (KeySequence) entry.getKey();
-				Identifier action = (Identifier) entry.getValue();		
-				SortedSet keySequenceSet = 
-					(SortedSet) actionKeySequenceSetMapForMode.get(action);
-				
-				if (keySequenceSet == null) {
-					keySequenceSet = new TreeSet();
-					actionKeySequenceSetMapForMode.put(action, keySequenceSet);
-				}
-				
-				keySequenceSet.add(keySequence);
-			}
-		}
-					
-		return actionKeySequenceSetMapForMode;			
-	}		
-	
-	public SortedMap getKeySequenceActionMapForMode() {
-		if (keySequenceActionMapForMode == null) {
-			if (tree != null) {
-				SortedMap tree = Node.find(this.tree, mode);
-			
-				if (tree != null)	
-					keySequenceActionMapForMode = Collections.unmodifiableSortedMap(
-						Node.toKeySequenceActionMap(tree));
-			}
-			
-			//if (keySequenceActionMapForMode == null)
-			//	keySequenceActionMapForMode = new TreeMap();
-		}
-		
-		return keySequenceActionMapForMode;
+		return keySequenceMapForMode;
 	}
 
-	public SortedSet getStrokeSetForMode() {
+	public SortedSet getKeyStrokeSetForMode() {
 		if (keyStrokeSetForMode == null) {
 			keyStrokeSetForMode = new TreeSet();
-			SortedMap keySequenceActionMapForMode = 
-				getKeySequenceActionMapForMode();
-			Iterator iterator = keySequenceActionMapForMode.keySet().iterator();
+			SortedMap keySequenceMapForMode = getKeySequenceMapForMode();
+			Iterator iterator = keySequenceMapForMode.keySet().iterator();
 			
 			while (iterator.hasNext()) {
 				KeySequence keySequence = (KeySequence) iterator.next();			
@@ -601,72 +586,154 @@ public final class KeyBindingManager {
 		return keyStrokeSetForMode;			
 	}
 
-	public String getAcceleratorTextForAction(String action)
+	public SortedMap getActionMap() {
+		if (actionMap == null) {
+			actionMap = new TreeMap();
+			SortedMap keySequenceMap = getKeySequenceMap();
+			Iterator iterator = keySequenceMap.entrySet().iterator();
+	
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				KeySequence keySequence = (KeySequence) entry.getKey();
+				MatchAction matchAction = (MatchAction) entry.getValue();		
+				Match match = matchAction.getMatch();
+				String action = matchAction.getAction();				
+				SortedSet keySequenceSet = (SortedSet) actionMap.get(action);
+				
+				if (keySequenceSet == null) {
+					keySequenceSet = new TreeSet();
+					actionMap.put(action, keySequenceSet);
+				}
+				
+				keySequenceSet.add(MatchKeySequence.create(match, keySequence));
+			}
+		}
+				
+		return actionMap;		
+	}
+	
+	public SortedMap getActionMapForMode() {
+		if (actionMapForMode == null) {
+			actionMapForMode = new TreeMap();
+			SortedMap keySequenceMapForMode = getKeySequenceMapForMode();
+			Iterator iterator = keySequenceMapForMode.entrySet().iterator();
+	
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				KeySequence keySequence = (KeySequence) entry.getKey();
+				MatchAction matchAction = (MatchAction) entry.getValue();		
+				Match match = matchAction.getMatch();
+				String action = matchAction.getAction();				
+				SortedSet keySequenceSet = (SortedSet) actionMapForMode.get(action);				
+
+				if (keySequenceSet == null) {
+					keySequenceSet = new TreeSet();
+					actionMapForMode.put(action, keySequenceSet);
+				}
+				
+				keySequenceSet.add(MatchKeySequence.create(match, keySequence));
+			}
+		}
+					
+		return actionMapForMode;			
+	}		
+	
+	public String getTextForAction(String action)
 		throws IllegalArgumentException {
 		if (action == null)
 			throw new IllegalArgumentException();					
 
-		SortedMap actionSequenceMap = getActionKeySequenceSetMap();		
-		SortedSet keySequenceSet = 
-			(SortedSet) actionSequenceMap.get(Identifier.create(action));
+		String text = null;
+		SortedMap actionMap = getActionMap();		
+		SortedSet keySequenceSet = (SortedSet) actionMap.get(action);
 		
-		if (keySequenceSet == null)
-			return null;
-		else {
+		if (keySequenceSet != null) {
 			Iterator iterator = keySequenceSet.iterator();
 	    	StringBuffer stringBuffer = new StringBuffer();
+			int value = -1;
 			int i = 0;
 			
 			while (iterator.hasNext()) {
 				if (i != 0)
 					stringBuffer.append(KEY_SEQUENCE_SEPARATOR);
 
-				KeySequence keySequence = (KeySequence) iterator.next();	
-				Iterator iterator2 = keySequence.getKeyStrokes().iterator();
-				int j = 0;
+				MatchKeySequence matchKeySequence = (MatchKeySequence) iterator.next();	
+				Match match = matchKeySequence.getMatch();
+
+				if (value == -1)
+					value = match.getValue();
 				
-				while (iterator2.hasNext()) {					
-					if (j != 0)
-						stringBuffer.append(KEY_STROKE_SEPARATOR);
-
-					KeyStroke keyStroke = (KeyStroke) iterator2.next();
-					int accelerator = keyStroke.getAccelerator();
-					stringBuffer.append(Action.convertAccelerator(accelerator));					
-					j++;
+				if (value == match.getValue()) {
+					KeySequence keySequence = matchKeySequence.getKeySequence();					
+					Iterator iterator2 = keySequence.getKeyStrokes().iterator();
+					int j = 0;
+					
+					while (iterator2.hasNext()) {					
+						if (j != 0)
+							stringBuffer.append(KEY_STROKE_SEPARATOR);
+	
+						KeyStroke keyStroke = (KeyStroke) iterator2.next();
+						int accelerator = keyStroke.getAccelerator();
+						stringBuffer.append(Action.convertAccelerator(accelerator));					
+						j++;
+					}
+	
+					i++;
 				}
-
-				i++;
 			}
 	
-			return stringBuffer.toString();
+			text = stringBuffer.toString();
 		}
+		
+		return text;
 	}
 	
-	private void invalidate() {
-		actionKeySequenceSetMap = null;
-		keySequenceActionMap = null;
-		invalidateForMode();
+	private void invalidateTree() {
+		tree = null;
+		invalidateSolution();
 	}
 	
-	private void invalidateForMode() {
-		actionKeySequenceSetMapForMode = null;
-		keySequenceActionMapForMode = null;
+	private void invalidateSolution() {
+		solved = false;
+		invalidateMaps();
+	}
+	
+	private void invalidateMaps() {			
+		keySequenceMap = null;
+		actionMap = null;
+		invalidateModalMaps();
+	}
+	
+	private void invalidateModalMaps() {
+		keySequenceMapForMode = null;
 		keyStrokeSetForMode = null;		
+		actionMapForMode = null;
+	}
+	
+	private void build() {
+		if (tree == null) {
+			ArrayList keyBindings = new ArrayList(keyBindings1);
+			keyBindings.addAll(keyBindings2);				
+			tree = buildTree(keyBindings, configurationMap, scopeMap);					
+		}
 	}
 	
 	private void solve() {
-		State[] states = new State[scopes.length];
+		if (!solved) {
+			build();
+			State[] states = new State[scopes.length];
+				
+			for (int i = 0; i < scopes.length; i++) {
+				List paths = new ArrayList();
+				paths.add(scopes[i]);			
+				paths.add(configuration);
+				paths.add(platform);
+				paths.add(locale);							
+				states[i] = State.create(paths);
+			}
 			
-		for (int i = 0; i < scopes.length; i++) {
-			List paths = new ArrayList();
-			paths.add(scopes[i]);			
-			paths.add(configuration);
-			paths.add(platform);
-			paths.add(locale);							
-			states[i] = State.create(paths);
+			Node.solveTree(tree, states);
+			solved = true;
 		}
-		
-		Node.solveTree(tree, states);
-		invalidate();
 	}
 }

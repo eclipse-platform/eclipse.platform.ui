@@ -13,6 +13,8 @@ import org.eclipse.ui.IMemento;
 final class KeyBinding implements Comparable {
 
 	final static String ELEMENT = "keybinding"; //$NON-NLS-1$
+	private final static int HASH_INITIAL = 17;
+	private final static int HASH_FACTOR = 27;
 	private final static String ATTRIBUTE_ACTION = "action"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$		
 	private final static String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$	
@@ -155,16 +157,14 @@ final class KeyBinding implements Comparable {
 	}
 
 	public int hashCode() {
-		final int i0 = 42;
-		final int i1 = 17;
-		int result = i0;
-		result = result * i1 + keySequence.hashCode();		
-		result = result * i1 + Util.hashCode(action);		
-		result = result * i1 + configuration.hashCode();		
-		result = result * i1 + locale.hashCode();		
-		result = result * i1 + platform.hashCode();		
-		result = result * i1 + Util.hashCode(plugin);		
-		result = result * i1 + scope.hashCode();		
+		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + keySequence.hashCode();		
+		result = result * HASH_FACTOR + Util.hashCode(action);		
+		result = result * HASH_FACTOR + configuration.hashCode();		
+		result = result * HASH_FACTOR + locale.hashCode();		
+		result = result * HASH_FACTOR + platform.hashCode();		
+		result = result * HASH_FACTOR + Util.hashCode(plugin);		
+		result = result * HASH_FACTOR + scope.hashCode();		
 		return result;
 	}
 

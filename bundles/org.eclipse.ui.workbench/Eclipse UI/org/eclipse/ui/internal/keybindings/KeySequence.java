@@ -19,6 +19,8 @@ import org.eclipse.ui.IMemento;
 public final class KeySequence implements Comparable {
 
 	public final static String ELEMENT = "keysequence"; //$NON-NLS-1$
+	private final static int HASH_INITIAL = 27;
+	private final static int HASH_FACTOR = 37;
 
 	public static KeySequence create() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -90,13 +92,11 @@ public final class KeySequence implements Comparable {
 	}
 
 	public int hashCode() {
-		final int i0 = 52;
-		final int i1 = 27;
-		int result = i0;		
+		int result = HASH_INITIAL;
 		Iterator iterator = keyStrokes.iterator();
 		
 		while (iterator.hasNext())
-			result = result * i1 + ((KeyStroke) iterator.next()).hashCode();
+			result = result * HASH_FACTOR + ((KeyStroke) iterator.next()).hashCode();
 
 		return result;
 	}

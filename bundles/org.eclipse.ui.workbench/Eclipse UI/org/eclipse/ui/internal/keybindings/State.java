@@ -13,9 +13,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-final class State implements Comparable {
+public final class State implements Comparable {
 
-	final static int MAXIMUM_PATHS = 8;
+	public final static int MAXIMUM_PATHS = 8;
+	private final static int HASH_INITIAL = 77;
+	private final static int HASH_FACTOR = 87;
 
 	static State create(List paths)
 		throws IllegalArgumentException {
@@ -43,11 +45,11 @@ final class State implements Comparable {
 				throw new IllegalArgumentException();
 	}
 
-	List getPaths() {
+	public List getPaths() {
 		return paths;	
 	}
 
-	int match(State state) {
+	public int match(State state) {
 		if (paths.size() != state.paths.size())
 			return -1;
 		
@@ -78,15 +80,13 @@ final class State implements Comparable {
 		
 		return paths.equals(((State) object).paths); 
 	}
-	
+
 	public int hashCode() {
-		final int i0 = 72;
-		final int i1 = 47;
-		int result = i0;		
+		int result = HASH_INITIAL;
 		Iterator iterator = paths.iterator();
 		
 		while (iterator.hasNext())
-			result = result * i1 + ((Path) iterator.next()).hashCode();
+			result = result * HASH_FACTOR + ((Path) iterator.next()).hashCode();
 
 		return result;
 	}

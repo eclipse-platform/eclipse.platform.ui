@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
@@ -29,10 +28,10 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.keybindings.Identifier;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
+import org.eclipse.ui.internal.keybindings.MatchAction;
 import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.keybindings.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
@@ -98,27 +97,25 @@ public class WWinKeyBindingService {
 		updateAccelerators();
 	}
 	
-	public void pressed(KeyStroke stroke, Event event) { 
+	public void pressed(KeyStroke keyStroke, Event event) { 
 		//System.out.println("pressed(" + stroke.getAccelerator() + ")");
-		KeySequence mode = KeyBindingManager.getInstance().getMode();
-		SortedMap sequenceActionMapForMode = 
-			KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-		KeySequence sequence = KeySequence.create(stroke);
-	
-		if (sequenceActionMapForMode.containsKey(sequence)) {
-			clear();			
-			invoke(((Identifier) sequenceActionMapForMode.get(sequence)).getValue(), event);	
+		KeySequence keySequence = KeySequence.create(keyStroke);
+		KeyBindingManager keyBindingManager = KeyBindingManager.getInstance();			
+		SortedMap keySequenceMapForMode = keyBindingManager.getKeySequenceMapForMode();
+		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
+		
+		if (matchAction != null) {
+			clear();				
+			invoke(matchAction.getAction(), event);					
 		} else {
-			List strokes = new ArrayList(mode.getKeyStrokes());
-			strokes.add(stroke);
-			mode = KeySequence.create(strokes);
-			KeyBindingManager keyBindingManager = 
-				KeyBindingManager.getInstance();
-			
+			KeySequence mode = keyBindingManager.getMode();
+			List keyStrokes = new ArrayList(mode.getKeyStrokes());
+			keyStrokes.add(keyStroke);
+			mode = KeySequence.create(keyStrokes);
 			keyBindingManager.setMode(mode);
 			setStatusLineMessage(mode);
 			
-			if (keyBindingManager.getKeySequenceActionMapForMode() == null)				
+			if (keySequenceMapForMode.isEmpty())
 				clear();	
 			else
 				updateAccelerators();
@@ -278,26 +275,24 @@ public class WWinKeyBindingService {
     		return null;
         
     	KeyStroke[] keyStrokes = KeyStroke.create(accelerators);   
-    	KeySequence keySequence = KeySequence.create(keyStrokes);    
-		Map sequenceActionMapForMode =
-			KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-			
-		Object object = sequenceActionMapForMode.get(keySequence);
+    	KeySequence keySequence = KeySequence.create(keyStrokes);    		
+		KeyBindingManager keyBindingManager = KeyBindingManager.getInstance();			
+		SortedMap keySequenceMapForMode = keyBindingManager.getKeySequenceMapForMode();
+		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 		
-		if (object == null)
+		if (matchAction == null)
 			return null;
 			
-     	return ((Identifier) object).getValue();
+		return matchAction.getAction();
     }
 
 	/**
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
 	public void updateAccelerators() {
-	   	SortedSet sortedSet = 
-	   		(SortedSet) KeyBindingManager.getInstance().getStrokeSetForMode();
-	   	Iterator iterator = sortedSet.iterator();
-	   	int[] accelerators = new int[sortedSet.size()];
+	   	SortedSet keyStrokeSetForMode = (SortedSet) KeyBindingManager.getInstance().getKeyStrokeSetForMode();
+	   	Iterator iterator = keyStrokeSetForMode.iterator();
+	   	int[] accelerators = new int[keyStrokeSetForMode.size()];
 		int i = 0;
 			   	
 	   	while (iterator.hasNext()) {
@@ -343,6 +338,5 @@ public class WWinKeyBindingService {
 			accMenu.removeVerifyListener(verifyListener);
 		else
 			accMenu.addVerifyListener(verifyListener);
-	}
-    
+	}    
 }

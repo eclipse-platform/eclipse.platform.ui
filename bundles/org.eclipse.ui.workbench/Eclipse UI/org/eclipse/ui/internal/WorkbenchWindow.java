@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -73,10 +73,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keybindings.Identifier;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
+import org.eclipse.ui.internal.keybindings.MatchAction;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -565,12 +565,11 @@ protected MenuManager createMenuManager() {
 				int accelerator = aci.getAction().getAccelerator();
 				
 				if (accelerator != 0) {				
-					KeySequence keySequence = KeySequence.create(
-						KeyStroke.create(accelerator));						
-					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-					Identifier action = (Identifier) sequenceActionMap.get(keySequence);
-					
-					if (action == null || action.getValue() == null)
+					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					SortedMap keySequenceMapForMode = KeyBindingManager.getInstance().getKeySequenceMapForMode();
+					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
+
+					if (matchAction == null)
 						return null;
 				}
 
@@ -594,19 +593,18 @@ protected MenuManager createMenuManager() {
 				int accelerator = aci.getAction().getAccelerator();
 				
 				if (accelerator != 0) {				
-					KeySequence keySequence = KeySequence.create(
-						KeyStroke.create(accelerator));						
-					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-					Identifier action = (Identifier) sequenceActionMap.get(keySequence);
+					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					SortedMap keySequenceMapForMode = KeyBindingManager.getInstance().getKeySequenceMapForMode();
+					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 					
-					if (action == null || action.getValue() == null)
+					if (matchAction == null)
 						return null;
 				}
 
 				return "";
 			} 
 
-			String acceleratorText = KeyBindingManager.getInstance().getAcceleratorTextForAction(defId);			
+			String acceleratorText = KeyBindingManager.getInstance().getTextForAction(defId);			
 			return (acceleratorText != null ? acceleratorText : "");			
 		}
 		
