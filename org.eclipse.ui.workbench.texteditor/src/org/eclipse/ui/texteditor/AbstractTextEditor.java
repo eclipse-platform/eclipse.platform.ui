@@ -4323,6 +4323,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	private Image createOverwriteModeCaretImage(StyledText styledText) {
+
+		if ("carbon".equals(SWT.getPlatform()))
+			return null;
+
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
 		ImageData imageData = new ImageData(100, styledText.getLineHeight(), 1, caretPalette);
 		Display display = styledText.getDisplay();
@@ -4339,11 +4343,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private Caret createOverwriteCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
-		caret.setImage(createOverwriteModeCaretImage(styledText));
+		Image image= createOverwriteModeCaretImage(styledText);
+		if (image != null)
+			caret.setImage(image);
 		return caret;
 	}
 	
 	private Image createSmartInsertModeCaretImage(StyledText styledText) {
+		
+		if ("carbon".equals(SWT.getPlatform()))
+			return null;
+		
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
 		ImageData imageData = new ImageData(4, styledText.getLineHeight(), 1, caretPalette);
 		Display display = styledText.getDisplay();
@@ -4360,7 +4370,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private Caret createSmartInsertModeCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
-		caret.setImage(createSmartInsertModeCaretImage(styledText));
+		Image image= createSmartInsertModeCaretImage(styledText);
+		if (image != null)
+			caret.setImage(image);
 		return caret;
 	}
 
@@ -4397,7 +4409,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (image != null) {
 				Image oldImage= caret.getImage();
 				caret.setImage(image);
-				oldImage.dispose();
+				if (oldImage != null)
+					oldImage.dispose();
 			}
 			styledText.setCaret(caret);
 		}
