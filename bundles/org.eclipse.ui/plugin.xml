@@ -158,6 +158,12 @@
       <actionDefinition
             id="org.eclipse.ui.navigate.up">
       </actionDefinition>     
+      <actionDefinition
+            id="org.eclipse.ui.navigate.next">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.navigate.previous">
+      </actionDefinition>
       
       <actionDefinition
             id="org.eclipse.ui.project.openProject">
@@ -195,6 +201,12 @@
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.previousView">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.window.nextPerspective">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.window.previousPerspective">
       </actionDefinition>
       
       <actionDefinition
@@ -499,7 +511,16 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.up">
+         </accelerator>         
+         <accelerator
+               key="Ctrl+.||Ctrl+&gt;"
+               id="org.eclipse.ui.navigate.next">
          </accelerator>
+         <accelerator
+               key="Ctrl+,||Ctrl+&lt;"
+               id="org.eclipse.ui.navigate.previous">
+         </accelerator>
+                           
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
@@ -549,7 +570,15 @@
                key="Ctrl+Shift+F7"
                id="org.eclipse.ui.window.previousView">
          </accelerator>
-         
+         <accelerator
+               key="Ctrl+F8"
+               id="org.eclipse.ui.window.nextPerspective">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F8"
+               id="org.eclipse.ui.window.previousPerspective">
+         </accelerator>
+                  
          <accelerator
                key=""
                id="org.eclipse.ui.edit.findNext">
@@ -861,7 +890,16 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.up">
+         </accelerator> 
+         <accelerator
+               key="Ctrl+.||Ctrl+&gt;"
+               id="org.eclipse.ui.navigate.next">
          </accelerator>
+         <accelerator
+               key="Ctrl+,||Ctrl+&lt;"
+               id="org.eclipse.ui.navigate.previous">
+         </accelerator>
+                                    
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
@@ -910,7 +948,15 @@
                key="Ctrl+Shift+F7"
                id="org.eclipse.ui.window.previousView">
          </accelerator>
-         
+         <accelerator
+               key="Ctrl+F8"
+               id="org.eclipse.ui.window.nextPerspective">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F8"
+               id="org.eclipse.ui.window.previousPerspective">
+         </accelerator>
+                  
          <accelerator
                key="Ctrl+K"
                id="org.eclipse.ui.edit.findNext">
