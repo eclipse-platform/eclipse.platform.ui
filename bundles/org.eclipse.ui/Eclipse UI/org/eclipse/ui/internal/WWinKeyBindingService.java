@@ -75,16 +75,18 @@ public class WWinKeyBindingService {
 		});
 		propertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				IWorkbenchPage page = window.getActivePage();
-				if(page != null) {
-					IWorkbenchPart part = page.getActivePart();
-					if(part != null) {
-						update(part);
-						return;
+				if (event.getProperty() == IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID) {
+					IWorkbenchPage page = window.getActivePage();
+					if(page != null) {
+						IWorkbenchPart part = page.getActivePart();
+						if(part != null) {
+							update(part);
+							return;
+						}
 					}
+					MenuManager menuManager = window.getMenuManager();
+					menuManager.updateAll(true);
 				}
-				MenuManager menuManager = window.getMenuManager();
-				menuManager.updateAll(true);
 			}
 		};
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
