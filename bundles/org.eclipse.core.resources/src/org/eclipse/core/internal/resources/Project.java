@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -31,7 +36,7 @@ protected Project(IPath path, Workspace container) {
  * some description fields to change value after project creation. (e.g. project location)
  */
 protected MultiStatus basicSetDescription(ProjectDescription description) {
-	String message = Policy.bind("resources.projectDesc");
+	String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
 	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 	ProjectDescription current = (ProjectDescription) internalGetDescription();
 	current.setComment(description.getComment());
@@ -97,7 +102,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 public void checkAccessible(int flags) throws CoreException {
 	super.checkAccessible(flags);
 	if (!isOpen(flags)) {
-		String message = Policy.bind("resources.mustBeOpen", getFullPath().toString());
+		String message = Policy.bind("resources.mustBeOpen", getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), message, null);
 	}
 }
@@ -108,7 +113,7 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
 	IPath location = desc.getLocation();
 	if (location == null)
 		return;
-	String message = Policy.bind("resources.invalidProjDesc");
+	String message = Policy.bind("resources.invalidProjDesc"); //$NON-NLS-1$
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 	status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
 	if (moving) {
@@ -132,7 +137,7 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
 public void close(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("resources.closing.1", getFullPath().toString());
+		String msg = Policy.bind("resources.closing.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -215,7 +220,7 @@ protected void copyMetaArea(IProject source, IProject destination, IProgressMoni
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
 		checkValidPath(path, PROJECT);
 		try {
 			workspace.prepareOperation();
@@ -387,7 +392,7 @@ public boolean hasNature(String natureID) throws CoreException {
 protected void internalCopy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.copying", getFullPath().toString());
+		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -434,7 +439,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			monitor.worked(Policy.opWork * 10 / 100);
 
 			// refresh local
-			monitor.subTask(Policy.bind("resources.updating"));
+			monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -584,7 +589,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
 public void open(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("resources.opening.1", getFullPath().toString());
+		String msg = Policy.bind("resources.opening.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
 		monitor.subTask(msg);
 		try {
@@ -630,7 +635,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 	//    FORCE means overwrite any existing .project file 
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork); //$NON-NLS-1$
 		try {
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);
@@ -641,7 +646,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			if (((updateFlags & IResource.FORCE) == 0)) {
 				hadSavedDescription = getLocalManager().hasSavedProject(this);
 				if (hadSavedDescription && !getLocalManager().isDescriptionSynchronized(this)) {
-					String message = Policy.bind("resources.projectDescSync", getName());
+					String message = Policy.bind("resources.projectDescSync", getName()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
 				}
 			}
@@ -653,7 +658,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			info.incrementContentId();
 			workspace.updateModificationStamp(info);
 			if (!hadSavedDescription) {
-				String msg = Policy.bind("resources.missingProjectMetaRepaired", getName());
+				String msg = Policy.bind("resources.missingProjectMetaRepaired", getName()); //$NON-NLS-1$
 				status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
 			}
 			if (!status.isOK())
@@ -689,7 +694,7 @@ protected void startup() throws CoreException {
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resource.touch", getFullPath().toString());
+		String message = Policy.bind("resource.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();

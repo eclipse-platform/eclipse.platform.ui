@@ -134,11 +134,11 @@ protected void configureNature(final Project project, final String natureID, fin
 			if (exception instanceof CoreException)
 				errors.add(((CoreException) exception).getStatus());
 			else
-				errors.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, project.getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
+				errors.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, project.getFullPath(), Policy.bind("resources.errorNature", natureID), exception)); //$NON-NLS-1$
 		}
 	};
 	if (Policy.DEBUG_NATURES) {
-		System.out.println("Configuring nature: " + natureID + " on project: " + project.getName());
+		System.out.println("Configuring nature: " + natureID + " on project: " + project.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	Platform.run(code);
 }
@@ -191,25 +191,25 @@ public void configureNatures(Project project, ProjectDescription oldDescription,
 protected IProjectNature createNature(Project project, String natureID) throws CoreException {
 	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES, natureID);
 	if (extension == null) {
-		String message = Policy.bind("resources.natureExtension", natureID);
+		String message = Policy.bind("resources.natureExtension", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
 	}
 	IConfigurationElement[] configs = extension.getConfigurationElements();
 	if (configs.length < 1) {
-		String message = Policy.bind("resources.natureClass", natureID);
+		String message = Policy.bind("resources.natureClass", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
 	}
 	IConfigurationElement config = configs[0];
-	if (!"runtime".equals(config.getName())) {
-		String message = Policy.bind("resources.natureFormat", natureID);
+	if (!"runtime".equals(config.getName())) { //$NON-NLS-1$
+		String message = Policy.bind("resources.natureFormat", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
 	}
 	try {
-		IProjectNature nature = (IProjectNature) config.createExecutableExtension("run");
+		IProjectNature nature = (IProjectNature) config.createExecutableExtension("run"); //$NON-NLS-1$
 		nature.setProject(project);
 		return nature;
 	} catch (ClassCastException e) {
-		String message = Policy.bind("resources.natureImplement", natureID);
+		String message = Policy.bind("resources.natureImplement", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, e);
 	}
 }
@@ -240,11 +240,11 @@ protected void deconfigureNature(final Project project, final String natureID, f
 			if (exception instanceof CoreException)
 				status.add(((CoreException) exception).getStatus());
 			else
-				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, project.getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
+				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, project.getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception)); //$NON-NLS-1$
 		}
 	};
 	if (Policy.DEBUG_NATURES) {
-		System.out.println("Deconfiguring nature: " + natureID + " on project: " + project.getName());
+		System.out.println("Deconfiguring nature: " + natureID + " on project: " + project.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	Platform.run(code);
 }
@@ -464,17 +464,17 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions) {
 		// check for adding a nature that is not available. 
 		IProjectNatureDescriptor desc = getNatureDescriptor(id);
 		if (desc == null) {
-			return failure(Policy.bind("natures.missingNature", id));
+			return failure(Policy.bind("natures.missingNature", id)); //$NON-NLS-1$
 		}
 		// check for adding a nature that creates a circular dependency 
 		if (((ProjectNatureDescriptor)desc).hasCycle) {
-			return failure(Policy.bind("natures.hasCycle", id));
+			return failure(Policy.bind("natures.hasCycle", id)); //$NON-NLS-1$
 		}
 		// check for adding a nature that has a missing prerequisite. 
 		String[] required = desc.getRequiredNatureIds();
 		for (int i = 0; i < required.length; i++) {
 			if (!newNatures.contains(required[i])) {
-				return failure(Policy.bind("natures.missingPrerequisite", id, required[i]));
+				return failure(Policy.bind("natures.missingPrerequisite", id, required[i])); //$NON-NLS-1$
 			}
 		}
 		// check for adding a nature that creates a duplicated set member.
@@ -483,7 +483,7 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions) {
 			if (!current.equals(id)) {
 				String overlap = hasSetOverlap(desc, getNatureDescriptor(current));
 				if (overlap != null) {
-					return failure(Policy.bind("natures.multipleSetMembers", overlap));
+					return failure(Policy.bind("natures.multipleSetMembers", overlap)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -508,7 +508,7 @@ protected IStatus validateRemovals(HashSet newNatures, HashSet deletions) {
 			String[] required = desc.getRequiredNatureIds();
 			for (int i = 0; i < required.length; i++) {
 				if (deletions.contains(required[i])) {
-					return failure(Policy.bind("natures.invalidRemoval", required[i], currentID));
+					return failure(Policy.bind("natures.invalidRemoval", required[i], currentID)); //$NON-NLS-1$
 				}
 			}
 		}		
@@ -522,7 +522,7 @@ public IStatus validateNatureSet(String[] natureIds) {
 	int count = natureIds.length;
 	if (count == 0)
 		return ResourceStatus.OK_STATUS;
-	String msg = Policy.bind("natures.invalidSet");
+	String msg = Policy.bind("natures.invalidSet"); //$NON-NLS-1$
 	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 		
 	//set of the nature ids being validated (String (id))
@@ -533,18 +533,18 @@ public IStatus validateNatureSet(String[] natureIds) {
 		String id = natureIds[i];
 		ProjectNatureDescriptor desc = (ProjectNatureDescriptor)getNatureDescriptor(id);
 		if (desc == null) {
-			result.add(failure(Policy.bind("natures.missingNature", id)));
+			result.add(failure(Policy.bind("natures.missingNature", id))); //$NON-NLS-1$
 			continue;
 		}
 		if (desc.hasCycle) 
-			result.add(failure(Policy.bind("natures.hasCycle", id)));
+			result.add(failure(Policy.bind("natures.hasCycle", id))); //$NON-NLS-1$
 		if (!natures.add(id))
-			result.add(failure(Policy.bind("natures.duplicateNature", id)));
+			result.add(failure(Policy.bind("natures.duplicateNature", id))); //$NON-NLS-1$
 		//validate nature set one-of constraint
 		String[] setIds = desc.getNatureSetIds();
 		for (int j = 0; j < setIds.length; j++) {
 			if (!sets.add(setIds[j]))
-				result.add(failure(Policy.bind("natures.multipleSetMembers", setIds[j])));
+				result.add(failure(Policy.bind("natures.multipleSetMembers", setIds[j]))); //$NON-NLS-1$
 		}
 	}
 	//now walk over the set and ensure all pre-requisite natures are present
@@ -555,7 +555,7 @@ public IStatus validateNatureSet(String[] natureIds) {
 		String[] required = desc.getRequiredNatureIds();
 		for (int j = 0; j < required.length; j++)
 			if (!natures.contains(required[j]))
-				result.add(failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j])));
+				result.add(failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j]))); //$NON-NLS-1$
 	}
 	//multistatus will be OK if no child statuses have been added
 	return result;

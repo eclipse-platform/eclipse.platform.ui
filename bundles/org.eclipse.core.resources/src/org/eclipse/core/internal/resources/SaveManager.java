@@ -42,9 +42,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected static final int SAVING = 2;
 	protected static final int DONE_SAVING = 3;
 	protected static final int ROLLBACK = 4;
-	protected static final String SAVE_NUMBER_PREFIX = "saveNumber_";
-	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_";
-	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_";
+	protected static final String SAVE_NUMBER_PREFIX = "saveNumber_"; //$NON-NLS-1$
+	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
+	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
 	
 public SaveManager(Workspace workspace) {
 	this.workspace = workspace;
@@ -97,7 +97,7 @@ protected void broadcastLifecycle(final int lifecycle, Map contexts, final Multi
 					executeLifecycle(lifecycle, participant, context);
 				}
 				public void handleException(Throwable e) {
-					String message = Policy.bind("resources.saveProblem");
+					String message = Policy.bind("resources.saveProblem"); //$NON-NLS-1$
 					IStatus status = new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
 					warnings.add(status);
 
@@ -142,7 +142,7 @@ protected void cleanMasterTable() {
 protected void clearSavedDelta() {
 	for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
 		String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
-		masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true");
+		masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
 	}
 }
 /**
@@ -260,7 +260,7 @@ protected void executeLifecycle(int lifecycle, ISaveParticipant participant, Sav
 			participant.rollback(context);
 			break;
 		default :
-			Assert.isTrue(false, "Invalid save lifecycle code");
+			Assert.isTrue(false, "Invalid save lifecycle code"); //$NON-NLS-1$
 	}
 }
 public void forgetSavedTree(String pluginId) {
@@ -304,13 +304,13 @@ protected void initSnap(IProgressMonitor monitor) throws CoreException {
 	if (file.exists())
 		file.delete();
 	if (file.exists()) {
-		String message = Policy.bind("resources.snapInit");
+		String message = Policy.bind("resources.snapInit"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
 	}
 }
 protected boolean isDeltaCleared(String pluginId) {
 	String clearDelta = masterTable.getProperty(CLEAR_DELTA_PREFIX + pluginId);
-	return clearDelta != null && clearDelta.equals("true");
+	return clearDelta != null && clearDelta.equals("true"); //$NON-NLS-1$
 }
 protected boolean isOldPluginTree(String pluginId) {
 	// first, check if this plug-ins was marked not to receive a delta
@@ -333,7 +333,7 @@ protected void removeClearDeltaMarks() {
 	}
 }
 protected void removeClearDeltaMarks(String pluginId) {
-	masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "false");
+	masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "false"); //$NON-NLS-1$
 }
 protected void removeFiles(java.io.File root, String[] candidates, List exclude) {
 	for (int i = 0; i < candidates.length; i++) {
@@ -445,7 +445,7 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
 		// inside an operation, be sure to close it afterwards
 		workspace.newWorkingTree();
 		try {
-			String msg = Policy.bind("resources.startupProblems");
+			String msg = Policy.bind("resources.startupProblems"); //$NON-NLS-1$
 			MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, null);
 			
 			restoreMasterTable();
@@ -517,7 +517,7 @@ protected void restoreMasterTable() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("resources.exMasterTable");
+		String message = Policy.bind("resources.exMasterTable"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -613,7 +613,7 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			message = Policy.bind("resources.snapRead");
+			message = Policy.bind("resources.snapRead"); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
 		}
 	} finally {
@@ -671,7 +671,7 @@ protected void restoreTree(Project project, IProgressMonitor monitor) throws Cor
 			input.close();
 		}
 	} catch (IOException e) {
-		message = Policy.bind("resources.readMeta", project.getFullPath().toString());
+		message = Policy.bind("resources.readMeta", project.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), message, e);
 	} finally {
 		monitor.done();
@@ -706,7 +706,7 @@ protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws
 			input.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.readMeta", treeLocation.toOSString());
+		String msg = Policy.bind("resources.readMeta", treeLocation.toOSString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
 	}
 }
@@ -719,13 +719,13 @@ protected void saveMasterTable(IPath location) throws CoreException {
 	try {
 		SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
 		try {
-			masterTable.store(output, "master table");
+			masterTable.store(output, "master table"); //$NON-NLS-1$
 			output.succeed();
 		} finally {
 			output.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("resources.exSaveMaster");
+		String message = Policy.bind("resources.exSaveMaster"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -740,7 +740,7 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 	//if there is nothing on disk, write the description
 	if (!workspace.getFileSystemManager().hasSavedProject(project)) {
 		workspace.getFileSystemManager().writeSilently(project);
-		String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName());
+		String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName()); //$NON-NLS-1$
 		//FIXME: Should just return an INFO status here.
 		return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 	}
@@ -776,7 +776,7 @@ protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreExcep
 			output.close();
 		}
 	} catch (Exception e) {
-		String msg = Policy.bind("resources.writeWorkspaceMeta", treeLocation.toString());
+		String msg = Policy.bind("resources.writeWorkspaceMeta", treeLocation.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 	}
 }
@@ -820,7 +820,7 @@ public void snapshotIfNeeded() throws CoreException {
 			save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 			if (ResourcesPlugin.getPlugin().isDebugging()) {
 				long end = System.currentTimeMillis();
-				System.out.println("Snapshot took: " + (end - begin) + " milliseconds.");
+				System.out.println("Snapshot took: " + (end - begin) + " milliseconds."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} finally {
 			operationCount = 0;
@@ -832,10 +832,10 @@ public void snapshotIfNeeded() throws CoreException {
 		long interval = workspace.internalGetDescription().getSnapshotInterval();
 		if (snapshotRunnable == null && interval > 0) {
 			if (ResourcesPlugin.getPlugin().isDebugging()) {
-				System.out.println("Starting snapshot delay thread");
+				System.out.println("Starting snapshot delay thread"); //$NON-NLS-1$
 			}
 			snapshotRunnable = new DelayedSnapshotRunnable(this, interval);
-			Thread t = new Thread(snapshotRunnable, "Snapshot");
+			Thread t = new Thread(snapshotRunnable, "Snapshot"); //$NON-NLS-1$
 			t.start();
 		}
 	}
@@ -868,7 +868,7 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 				out.close();
 			}
 		} catch (IOException e) {
-			message = Policy.bind("resources.writeWorkspaceMeta", localFile.getAbsolutePath());
+			message = Policy.bind("resources.writeWorkspaceMeta", localFile.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, message, e);
 		}
 		lastSnap = tree;
@@ -924,7 +924,7 @@ protected ElementTree[] sortTrees(ElementTree[] trees) {
 				parent = parent.getParent();
 			}
 			if (parent == null) {
-				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "null parent found while collapsing trees", null);
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "null parent found while collapsing trees", null); //$NON-NLS-1$
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return null;
 			}
@@ -1010,7 +1010,7 @@ protected void writeTree(Project project, int depth) throws CoreException {
 			safe.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString());
+		String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
 	}
 }
@@ -1112,7 +1112,7 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 	if (file.exists())
 		file.delete();
 	if (file.exists()) {
-		message = Policy.bind("resources.resetMarkers");
+		message = Policy.bind("resources.resetMarkers"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 	}
 
@@ -1121,7 +1121,7 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 	if (file.exists())
 		file.delete();
 	if (file.exists()) {
-		message = Policy.bind("resources.resetSync");
+		message = Policy.bind("resources.resetSync"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 	}
 		
@@ -1136,9 +1136,9 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.saving.0");
+		String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
 		monitor.beginTask(message, 6);
-		message = Policy.bind("resources.saveWarnings");
+		message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
 		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.WARNING, message, null);
 		try {
 			workspace.prepareOperation();
@@ -1255,7 +1255,7 @@ public void visitAndSave(IResource root) throws CoreException {
 				o1.close();
 			} catch (IOException e2) {
 			}
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	}
 
@@ -1273,7 +1273,7 @@ public void visitAndSave(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
 			} catch (IOException e) {
-				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
 			return true;
@@ -1290,10 +1290,10 @@ public void visitAndSave(IResource root) throws CoreException {
 		if (syncInfoOutput != null)
 			removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
 	} catch (IOException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} catch (CoreException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {
 		if (markersOutput != null)
@@ -1355,7 +1355,7 @@ public void visitAndSnap(IResource root) throws CoreException {
 				o1.close();
 			} catch (IOException e2) {
 			}
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	}
 
@@ -1375,7 +1375,7 @@ public void visitAndSnap(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.snapSyncInfo(resource, syncInfoOutput);
 			} catch (IOException e) {
-				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
 			return true;
@@ -1391,10 +1391,10 @@ public void visitAndSnap(IResource root) throws CoreException {
 		if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
 			safeSyncInfoStream.succeed();
 	} catch (IOException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} catch (CoreException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {
 		if (markersOutput != null)
@@ -1436,7 +1436,7 @@ protected void writeBuilderPersistentInfo(DataOutputStream output, List builders
 				//this shouldn't happen but save must be robust
 				ResourcesPlugin.getPlugin().getLog().log(new Status(
 					IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, 
-					"Internal Error: builder had null tree", //NON-NLS this is an internal error
+					"Internal Error: builder had null tree", //$NON-NLS-1$ (this is an internal error)
 					new RuntimeException()));
 				last = workspace.getElementTree();
 			}

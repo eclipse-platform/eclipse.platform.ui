@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001, 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
@@ -103,15 +108,15 @@ public void checkAccessible(int flags) throws CoreException {
  * @see IResource#copy
  */
 public IStatus checkCopyRequirements(IPath destination, int destinationType) throws CoreException {
-	String message = Policy.bind("resources.copyNotMet");
+	String message = Policy.bind("resources.copyNotMet"); //$NON-NLS-1$
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 	if (destination == null) {
-		message = Policy.bind("resources.destNotNull");
+		message = Policy.bind("resources.destNotNull"); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
 	}
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination)) {
-		message = Policy.bind("resources.destNotSub");
+		message = Policy.bind("resources.destNotSub"); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 	checkValidPath(destination, destinationType);
@@ -126,7 +131,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 
 	// ensure we aren't trying to copy a file to a project
 	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
-		message = Policy.bind("resources.fileToProj");
+		message = Policy.bind("resources.fileToProj"); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 
@@ -143,7 +148,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 		}
 	}
 
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.copyMet")) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.copyMet")) : (IStatus) status; //$NON-NLS-1$
 }
 /**
  * Checks that this resource does not exist.  
@@ -159,7 +164,7 @@ public void checkDoesNotExist(int flags, boolean checkType) throws CoreException
 	// If there is nothing there of this resource's type, then return.
 	if ((checkType && !exists(flags, checkType)))
 		return;
-	String message = Policy.bind("resources.mustNotExist", getFullPath().toString());
+	String message = Policy.bind("resources.mustNotExist", getFullPath().toString()); //$NON-NLS-1$
 	throw new ResourceException(checkType ? IResourceStatus.RESOURCE_EXISTS : IResourceStatus.PATH_OCCUPIED, getFullPath(), message, null);
 }
 /**
@@ -170,7 +175,7 @@ public void checkDoesNotExist(int flags, boolean checkType) throws CoreException
  */
 public void checkExists(int flags, boolean checkType) throws CoreException {
 	if (!exists(flags, checkType)) {
-		String message = Policy.bind("resources.mustExist", getFullPath().toString());
+		String message = Policy.bind("resources.mustExist", getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, getFullPath(), message, null);
 	}
 }
@@ -181,7 +186,7 @@ public void checkExists(int flags, boolean checkType) throws CoreException {
  */
 public void checkLocal(int flags, int depth) throws CoreException {
 	if (!isLocal(flags, depth)) {
-		String message = Policy.bind("resources.mustBeLocal", getFullPath().toString());
+		String message = Policy.bind("resources.mustBeLocal", getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, getFullPath(), message, null);
 	}
 }
@@ -200,15 +205,15 @@ public void checkLocal(int flags, int depth) throws CoreException {
  * @see IResource#move
  */
 protected IStatus checkMoveRequirements(IPath destination, int destinationType) throws CoreException {
-	String message = Policy.bind("resources.moveNotMet");
+	String message = Policy.bind("resources.moveNotMet"); //$NON-NLS-1$
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 	if (destination == null) {
-		message = Policy.bind("resources.destNotNull");
+		message = Policy.bind("resources.destNotNull"); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
 	}
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination)) {
-		message = Policy.bind("resources.destNotSub");
+		message = Policy.bind("resources.destNotSub"); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 	checkValidPath(destination, destinationType);
@@ -227,7 +232,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 
 	// ensure we aren't trying to move a file to a project
 	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
-		message = Policy.bind("resources.fileToProj");
+		message = Policy.bind("resources.fileToProj"); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 
@@ -243,7 +248,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.moveMet")) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.moveMet")) : (IStatus) status; //$NON-NLS-1$
 }
 /**
  * Checks that the supplied path is valid according to Workspace.validatePath().
@@ -284,7 +289,7 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
 	Assert.isNotNull(destDesc);
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.copying", getFullPath().toString());
+		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -336,7 +341,7 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	try {
 		monitor = Policy.monitorFor(monitor);
-		String message = Policy.bind("resources.copying", getFullPath().toString());
+		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -408,7 +413,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.deleting", getFullPath().toString());
+		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork*1000);
 		try {
 			workspace.prepareOperation();
@@ -418,7 +423,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 				return;
 
 			workspace.beginOperation(true);
-			message = Policy.bind("resources.deleteProblem");
+			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
@@ -575,7 +580,7 @@ public String getFileExtension() {
 	if (index == -1)
 		return null;
 	if (index == (name.length() - 1))
-		return "";
+		return ""; //$NON-NLS-1$
 	return name.substring(index + 1);
 }
 public int getFlags(ResourceInfo info) {
@@ -608,7 +613,7 @@ public URL getLocationURL() {
 	if (project != null && !project.exists())
 		return null;
 	try {
-		return new URL("platform:/resource" + getFullPath());
+		return new URL("platform:/resource" + getFullPath()); //$NON-NLS-1$
 	} catch (MalformedURLException e) {
 		return null;
 	}
@@ -697,15 +702,15 @@ public abstract int getType();
 public String getTypeString() {
 	switch (getType()) {
 		case FILE :
-			return "L";
+			return "L"; //$NON-NLS-1$
 		case FOLDER :
-			return "F";
+			return "F"; //$NON-NLS-1$
 		case PROJECT :
-			return "P";
+			return "P"; //$NON-NLS-1$
 		case ROOT:
-			return "R";
+			return "R"; //$NON-NLS-1$
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 /**
  * @see IResource#getWorkspace
@@ -809,7 +814,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 	Assert.isNotNull(description);
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString());
+		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -820,7 +825,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 				assertMoveRequirements(path, IResource.PROJECT);
 			}
 			workspace.beginOperation(true);
-			message = Policy.bind("resources.moveProblem");
+			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
@@ -869,7 +874,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString());
+		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -878,7 +883,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			assertMoveRequirements(path, getType());
 			path = makePathAbsolute(path);
 			workspace.beginOperation(true);
-			message = Policy.bind("resources.moveProblem");
+			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
@@ -909,7 +914,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 						tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
 				case IResource.ROOT:
-					message = Policy.bind("resources.moveRoot");
+					message = Policy.bind("resources.moveRoot"); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 			}
 			// Invalidate the tree for further use by clients.
@@ -930,9 +935,9 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 protected void moveInFileSystem(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString());
+		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, 100);
-		message = Policy.bind("resources.moveProblem");
+		message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 		CollectSyncStatusVisitor visitor = new CollectSyncStatusVisitor(message, monitor);
 		UnifiedTree tree = new UnifiedTree(this);
 		tree.accept(visitor, DEPTH_INFINITE);
@@ -951,7 +956,7 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.refreshing", getFullPath().toString());
+		String message = Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
 		try {
@@ -976,7 +981,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.setLocal");
+		String message = Policy.bind("resources.setLocal"); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -1035,7 +1040,7 @@ public String toString() {
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.touch", getFullPath().toString());
+		String message = Policy.bind("resources.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -1075,7 +1080,7 @@ protected void checkDoesNotExist() throws CoreException {
 	IResource variant = findExistingResourceVariant(getFullPath());
 	if (variant == null)
 		return;
-	String msg = Policy.bind("resources.existsDifferentCase", variant.getFullPath().toString());
+	String msg = Policy.bind("resources.existsDifferentCase", variant.getFullPath().toString()); //$NON-NLS-1$
 	throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
 }
 /**

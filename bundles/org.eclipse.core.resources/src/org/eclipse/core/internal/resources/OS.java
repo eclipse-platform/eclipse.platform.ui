@@ -1,4 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
+
 import java.util.Arrays;
 import org.eclipse.core.boot.BootLoader;
 
@@ -23,9 +34,9 @@ static {
 			chars = new char[]{'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 			
 			//list taken from http://support.microsoft.com/support/kb/articles/Q216/6/54.ASP
-			names = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", 
-				"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", 
-				"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"};
+			names = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+				"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	} else {
 			//only front slash and null char are invalid on UNIXes
 			//taken from http://www.faqs.org/faqs/unix-faq/faq/part2/section-2.html

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -111,7 +116,7 @@ protected void write(ProjectDescription description, XMLWriter writer) throws IO
 	if (description != null) {
 		writer.printSimpleTag(NAME, description.getName());
 		String comment = description.getComment();
-		writer.printSimpleTag(COMMENT, comment == null ? "" : comment);
+		writer.printSimpleTag(COMMENT, comment == null ? "" : comment); //$NON-NLS-1$
 		write(PROJECTS, PROJECT, getReferencedProjects(description), writer);
 		write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 		write(NATURES, NATURE, description.getNatureIds(false), writer);
@@ -122,8 +127,8 @@ protected void write(WorkspaceDescription description, XMLWriter writer) throws 
 	writer.startTag(WORKSPACE_DESCRIPTION, null);
 	if (description != null) {
 		writer.printSimpleTag(NAME, description.getName());
-		writer.printSimpleTag(AUTOBUILD, description.isAutoBuilding() ? "1" : "0");
-		writer.printSimpleTag(SNAPSHOTS_ENABLED, description.isSnapshotEnabled() ? "1" : "0");
+		writer.printSimpleTag(AUTOBUILD, description.isAutoBuilding() ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.printSimpleTag(SNAPSHOTS_ENABLED, description.isSnapshotEnabled() ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.printSimpleTag(OPERATIONS_PER_SNAPSHOT, new Integer(description.getOperationsPerSnapshot()));
 		writer.printSimpleTag(SNAPSHOT_INTERVAL, new Long(description.getSnapshotInterval()));
 		writer.printSimpleTag(DELTA_EXPIRATION_TIMESTAMP, new Long(description.getDeltaExpiration()));

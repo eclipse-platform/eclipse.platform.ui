@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -56,7 +61,7 @@ public void restore() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("resources.exSafeRead");
+		String message = Policy.bind("resources.exSafeRead"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -65,12 +70,12 @@ public void save() throws CoreException {
 	try {
 		FileOutputStream output = new FileOutputStream(target);
 		try {
-			table.store(output, "safe table");
+			table.store(output, "safe table"); //$NON-NLS-1$
 		} finally {
 			output.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("resources.exSafeSave");
+		String message = Policy.bind("resources.exSafeSave"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }

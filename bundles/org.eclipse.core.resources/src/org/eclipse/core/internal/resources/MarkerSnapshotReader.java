@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IResourceStatus;
@@ -25,7 +30,7 @@ protected MarkerSnapshotReader getReader(int formatVersion) throws IOException {
 		case 1 :
 			return new MarkerSnapshotReader_1(workspace);
 		default :
-			throw new IOException(Policy.bind("resources.format"));
+			throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
 	}
 }
 public void read(DataInputStream input) throws IOException, CoreException {

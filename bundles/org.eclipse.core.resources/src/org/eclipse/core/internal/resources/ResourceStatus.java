@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
@@ -18,7 +23,7 @@ public class ResourceStatus extends Status implements IResourceStatus {
 	IPath path;
 	
 	/** Singleton status indicating success */
-	public static final ResourceStatus OK_STATUS = new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
+	public static final ResourceStatus OK_STATUS = new ResourceStatus(IResourceStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	
 public ResourceStatus(int type, int code, IPath path, String message, Throwable exception) {
 	super(type, ResourcesPlugin.PI_RESOURCES, code, message, exception);
@@ -46,13 +51,13 @@ protected static int getSeverity(int code) {
 private String getTypeName() {
 	switch (getSeverity()) {
 		case IStatus.OK :
-			return "OK";
+			return "OK"; //$NON-NLS-1$
 		case IStatus.ERROR :
-			return "ERROR";
+			return "ERROR"; //$NON-NLS-1$
 		case IStatus.INFO :
-			return "INFO";
+			return "INFO"; //$NON-NLS-1$
 		case IStatus.WARNING :
-			return "WARNING";
+			return "WARNING"; //$NON-NLS-1$
 		default:
 			return String.valueOf(getSeverity());
 	}
@@ -60,17 +65,17 @@ private String getTypeName() {
 // for debug only
 public String toString() {
 	StringBuffer sb = new StringBuffer();
-	sb.append("[type: ");
+	sb.append("[type: "); //$NON-NLS-1$
 	sb.append(getTypeName());
-	sb.append("], [path: ");
+	sb.append("], [path: "); //$NON-NLS-1$
 	sb.append(getPath());
-	sb.append("], [message: ");
+	sb.append("], [message: "); //$NON-NLS-1$
 	sb.append(getMessage());
-	sb.append("], [plugin: ");
+	sb.append("], [plugin: "); //$NON-NLS-1$
 	sb.append(getPlugin());
-	sb.append("], [exception: ");
+	sb.append("], [exception: "); //$NON-NLS-1$
 	sb.append(getException());
-	sb.append("]\n");
+	sb.append("]\n"); //$NON-NLS-1$
 	return sb.toString();
 }
 }

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -41,7 +46,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.creating", getFullPath().toString());
+		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER);
 		try {
@@ -63,7 +68,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 						} else {
 							// The file system is not case sensitive and there is already a file
 							// under this location.
-							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}
@@ -74,11 +79,11 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 					if (!CoreFileSystemLibrary.isCaseSensitive()) {
 						String name = getLocalManager().getLocalName(localFile);
 						if (name != null && !localFile.getName().equals(name)) {
-							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}
-					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath());
+					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 				}
 			}
@@ -114,7 +119,7 @@ public void ensureExists(IProgressMonitor monitor) throws CoreException {
 	if (exists(flags, true))
 		return;
 	if (exists(flags, false)) {
-		String message = Policy.bind("resources.folderOverFile", getFullPath().toString());
+		String message = Policy.bind("resources.folderOverFile", getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.RESOURCE_WRONG_TYPE, getFullPath(), message, null);
 	}
 	Container parent = (Container) getParent();
@@ -134,7 +139,7 @@ public int getType() {
 public void internalCreate(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.creating", getFullPath().toString());
+		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		workspace.createResource(this, false);
 		if (local) {

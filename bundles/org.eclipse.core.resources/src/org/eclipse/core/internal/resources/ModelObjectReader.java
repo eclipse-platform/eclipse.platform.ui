@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -150,7 +155,7 @@ protected Hashtable readHashtable(Node target) {
 				String name = getString(node, KEY);
 				String value = getString(node, VALUE);
 				if (name != null)
-					result.put(name, value == null ? "" : value);
+					result.put(name, value == null ? "" : value); //$NON-NLS-1$
 			}
 	}
 	return result;
@@ -194,11 +199,11 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	// build instance
 	WorkspaceDescription description = new WorkspaceDescription(name);
 	if (autobuild != null)
-		description.setAutoBuilding(autobuild.equals("1"));
+		description.setAutoBuilding(autobuild.equals("1")); //$NON-NLS-1$
 	if (operations != null)
 		description.setOperationsPerSnapshot(new Integer(operations).intValue());
 	if (snapshots != null)
-		description.setSnapshotEnabled(snapshots.equals("1"));
+		description.setSnapshotEnabled(snapshots.equals("1")); //$NON-NLS-1$
 	if (deltaExpiration != null)
 		description.setDeltaExpiration(new Long(deltaExpiration).longValue());
 	if (fileStateLongevity != null)

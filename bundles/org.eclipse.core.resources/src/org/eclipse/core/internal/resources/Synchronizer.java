@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -142,7 +147,7 @@ protected void restoreFromSave(IResource resource) throws CoreException {
 	} catch (FileNotFoundException e) {
 		// ignore if no sync info saved
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 	}
 }
@@ -163,7 +168,7 @@ protected void restoreFromSnap(IResource resource) {
 		// ignore if no sync info saved.
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
-		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }
@@ -222,7 +227,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 		flags = target.getFlags(resourceInfo);
 		if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("resources.deleteProblem"), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("resources.deleteProblem"), null); //$NON-NLS-1$
 			((Resource) resource).deleteResource(false, status);
 			if (!status.isOK())
 				throw new ResourceException(status);

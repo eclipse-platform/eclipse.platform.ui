@@ -39,7 +39,7 @@ protected ProjectNatureDescriptor(IExtension natureExtension) throws CoreExcepti
 	readExtension(natureExtension);
 }
 protected void fail() throws CoreException {
-	fail(Policy.bind("natures.invalidDefinition", id));
+	fail(Policy.bind("natures.invalidDefinition", id)); //$NON-NLS-1$
 }
 protected void fail(String reason) throws CoreException {
 	throw new ResourceException(
@@ -83,7 +83,7 @@ protected void readExtension(IExtension natureExtension) throws CoreException {
 	//read the extension
 	id = natureExtension.getUniqueIdentifier();
 	if (id == null) {
-		fail(Policy.bind("natures.missingIdentifier"));
+		fail(Policy.bind("natures.missingIdentifier")); //$NON-NLS-1$
 	}
 	label = natureExtension.getLabel();
 	IConfigurationElement[] elements = natureExtension.getConfigurationElements();
@@ -94,18 +94,18 @@ protected void readExtension(IExtension natureExtension) throws CoreException {
 	for (int i = 0; i < count; i++) {
 		IConfigurationElement element = elements[i];
 		String name = element.getName();
-		if (name.equalsIgnoreCase("requires-nature")) {
-			String attribute = element.getAttribute("id");
+		if (name.equalsIgnoreCase("requires-nature")) { //$NON-NLS-1$
+			String attribute = element.getAttribute("id"); //$NON-NLS-1$
 			if (attribute == null)
 				fail();
 			requiredList.add(attribute);
-		} else if (name.equalsIgnoreCase("one-of-nature")) {
-			String attribute = element.getAttribute("id");
+		} else if (name.equalsIgnoreCase("one-of-nature")) { //$NON-NLS-1$
+			String attribute = element.getAttribute("id"); //$NON-NLS-1$
 			if (attribute == null)
 				fail();
 			setList.add(attribute);
-		} else if (name.equalsIgnoreCase("builder")) {
-			String attribute = element.getAttribute("id");
+		} else if (name.equalsIgnoreCase("builder")) { //$NON-NLS-1$
+			String attribute = element.getAttribute("id"); //$NON-NLS-1$
 			if (attribute == null)
 				fail();
 			builderList.add(attribute);
@@ -119,6 +119,6 @@ protected void readExtension(IExtension natureExtension) throws CoreException {
  * Prints out a string representation for debugging purposes only.
  */
 public String toString() {
-	return "ProjectNatureDescriptor(" + id + ")";
+	return "ProjectNatureDescriptor(" + id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 }

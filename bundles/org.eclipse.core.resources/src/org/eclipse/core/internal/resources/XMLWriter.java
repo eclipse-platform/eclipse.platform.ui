@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.util.*;
@@ -14,10 +19,10 @@ public class XMLWriter extends PrintWriter {
 	protected int tab;
 
 	/* constants */
-	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
 public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
-	super(new OutputStreamWriter(output, "UTF8"));
+	super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
 	tab = 0;
 	println(XML_VERSION);
 }
@@ -41,18 +46,18 @@ public void printTag(String name, HashMap parameters) {
 }
 public void printTag(String name, HashMap parameters, boolean tab, boolean newLine) {
 	StringBuffer sb = new StringBuffer();
-	sb.append("<");
+	sb.append("<"); //$NON-NLS-1$
 	sb.append(name);
 	if (parameters != null)
 		for (Enumeration enum = Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
-			sb.append(" ");
+			sb.append(" "); //$NON-NLS-1$
 			String key = (String) enum.nextElement();
 			sb.append(key);
-			sb.append("=\"");
+			sb.append("=\""); //$NON-NLS-1$
 			sb.append(getEscaped(String.valueOf(parameters.get(key))));
-			sb.append("\"");
+			sb.append("\""); //$NON-NLS-1$
 		}
-	sb.append(">");
+	sb.append(">"); //$NON-NLS-1$
 	if (tab)
 		printTabulation();
 	if (newLine)
@@ -88,15 +93,15 @@ private static String getReplacement(char c) {
 	// These five are defined by default for all XML documents.
 	switch (c) {
 		case '<' :
-			return "lt";
+			return "lt"; //$NON-NLS-1$
 		case '>' :
-			return "gt";
+			return "gt"; //$NON-NLS-1$
 		case '"' :
-			return "quot";
+			return "quot"; //$NON-NLS-1$
 		case '\'' :
-			return "apos";
+			return "apos"; //$NON-NLS-1$
 		case '&' :
-			return "amp";
+			return "amp"; //$NON-NLS-1$
 	}
 	return null;
 }

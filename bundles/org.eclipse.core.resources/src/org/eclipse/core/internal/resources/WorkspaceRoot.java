@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.HashMap;
 
@@ -70,7 +75,7 @@ public IPath getLocation() {
  * @see IResource#getName
  */
 public String getName() {
-	return "";
+	return ""; //$NON-NLS-1$
 }
 /**
  * @see IResource#getParent
@@ -92,7 +97,7 @@ public IProject getProject(String name) {
 	Project result = (Project)projectTable.get(name);
 	if (result == null) {
 		IPath path = Path.ROOT.append(name);
-		String message = "Path for project must have only one segment.";
+		String message = "Path for project must have only one segment."; //$NON-NLS-1$
 		Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 		result = new Project(path, workspace);
 		projectTable.put(name, result);

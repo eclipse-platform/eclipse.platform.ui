@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 
@@ -28,9 +33,9 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.settingContents", getFullPath().toString());
+		String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
-		Assert.isNotNull(content, "Content cannot be null.");
+		Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 		try {
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);
@@ -90,7 +95,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.creating", getFullPath().toString());
+		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE);
 		try {
@@ -112,7 +117,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 						} else {
 							// The file system is not case sensitive and there is already a file
 							// under this location.
-							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}
@@ -123,11 +128,11 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 					if (!CoreFileSystemLibrary.isCaseSensitive()) {
 						String name = getLocalManager().getLocalName(localFile);
 						if (name != null && !localFile.getName().equals(name)) {
-							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}
-					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath());
+					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 				}
 			}
@@ -232,7 +237,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.settingContents", getFullPath().toString());
+		String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();

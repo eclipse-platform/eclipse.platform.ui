@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.watson.*;
@@ -24,7 +29,7 @@ public void readTree(DataInputStream input, IProgressMonitor monitor) throws Cor
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.reading");
+		message = Policy.bind("resources.reading"); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
@@ -41,7 +46,7 @@ public void readTree(DataInputStream input, IProgressMonitor monitor) throws Cor
 		linkBuildersToTrees(buildersToBeLinked, trees, pluginsToBeLinked.size(), Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 	} catch (IOException e) {
-		message = Policy.bind("resources.readWorkspaceTree");
+		message = Policy.bind("resources.readWorkspaceTree"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
@@ -96,7 +101,7 @@ protected void readBuildersPersistentInfo(DataInputStream input, List builders, 
 protected ElementTree[] readTrees(IPath root, DataInputStream input, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.reading");
+		String message = Policy.bind("resources.reading"); //$NON-NLS-1$
 		monitor.beginTask(message, 4);
 		ElementTreeReader treeReader = new ElementTreeReader(workspace.getSaveManager());
 		ElementTree[] trees = treeReader.readDeltaChain(input);
@@ -161,7 +166,7 @@ public ElementTree readSnapshotTree(DataInputStream input, ElementTree complete,
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.readingSnap");
+		message = Policy.bind("resources.readingSnap"); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		ElementTreeReader reader = new ElementTreeReader(workspace.getSaveManager());
 		while (input.available() > 0) {
@@ -178,7 +183,7 @@ public ElementTree readSnapshotTree(DataInputStream input, ElementTree complete,
 		}
 		return complete;
 	} catch (IOException e) {
-		message = Policy.bind("resources.readWorkspaceSnap");
+		message = Policy.bind("resources.readWorkspaceSnap"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();
@@ -203,7 +208,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.reading");
+		message = Policy.bind("resources.reading"); //$NON-NLS-1$
 		monitor.beginTask(message, 10);
 		/* read the number of builders */
 		int numBuilders = input.readInt();
@@ -234,7 +239,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 		monitor.worked(1);
 
 	} catch (IOException e) {
-		message = Policy.bind("readProjectTree");
+		message = Policy.bind("readProjectTree"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -48,7 +53,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
-		message = Policy.bind("resources.reading");
+		message = Policy.bind("resources.reading"); //$NON-NLS-1$
 		monitor.beginTask(message, 10);
 
 		/* read in the list of builder names */
@@ -68,7 +73,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 		linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
 
 	} catch (IOException e) {
-		message = Policy.bind("resources.readProjectTree");
+		message = Policy.bind("resources.readProjectTree"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 	} finally {
 		monitor.done();

@@ -22,20 +22,20 @@ import org.eclipse.core.runtime.*;
 public class LocalMetaArea implements ICoreConstants {
 	protected IPath metaAreaLocation;
 
-	/* package */ static final String F_BACKUP_FILE_EXTENSION = ".bak";
-	/* package */ static final String F_DESCRIPTION = ".workspace";
-	/* package */ static final String F_HISTORY_STORE = ".history";
-	/* package */ static final String F_MARKERS = ".markers";
-	/* package */ static final String F_OLD_PROJECT = ".prj";
-	/* package */ static final String F_PROJECT_LOCATION = ".location";
-	/* package */ static final String F_PROJECTS = ".projects";
-	/* package */ static final String F_PROPERTIES = ".properties";
-	/* package */ static final String F_ROOT = ".root";
-	/* package */ static final String F_SAFE_TABLE = ".safetable";
-	/* package */ static final String F_SNAP = ".snap";
-	/* package */ static final String F_SNAP_EXTENSION = "snap";
-	/* package */ static final String F_SYNCINFO = ".syncinfo";
-	/* package */ static final String F_TREE = ".tree";
+	/* package */ static final String F_BACKUP_FILE_EXTENSION = ".bak"; //$NON-NLS-1$
+	/* package */ static final String F_DESCRIPTION = ".workspace"; //$NON-NLS-1$
+	/* package */ static final String F_HISTORY_STORE = ".history"; //$NON-NLS-1$
+	/* package */ static final String F_MARKERS = ".markers"; //$NON-NLS-1$
+	/* package */ static final String F_OLD_PROJECT = ".prj"; //$NON-NLS-1$
+	/* package */ static final String F_PROJECT_LOCATION = ".location"; //$NON-NLS-1$
+	/* package */ static final String F_PROJECTS = ".projects"; //$NON-NLS-1$
+	/* package */ static final String F_PROPERTIES = ".properties"; //$NON-NLS-1$
+	/* package */ static final String F_ROOT = ".root"; //$NON-NLS-1$
+	/* package */ static final String F_SAFE_TABLE = ".safetable"; //$NON-NLS-1$
+	/* package */ static final String F_SNAP = ".snap"; //$NON-NLS-1$
+	/* package */ static final String F_SNAP_EXTENSION = "snap"; //$NON-NLS-1$
+	/* package */ static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
+	/* package */ static final String F_TREE = ".tree"; //$NON-NLS-1$
 public LocalMetaArea() {
 }
 /**
@@ -57,7 +57,7 @@ public void create(IProject target) {
 public void delete(IProject target) throws CoreException {
 	IPath path = locationFor(target);
 	if (!Workspace.clear(path.toFile()) && path.toFile().exists()) {
-		String message = Policy.bind("resources.deleteMeta", target.getFullPath().toString());
+		String message = Policy.bind("resources.deleteMeta", target.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, target.getFullPath(), message, null);
 	}
 }
@@ -115,7 +115,7 @@ public IPath getSafeTableLocationFor(String pluginId) {
 	if (pluginId.equals(ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier()))
 		return prefix.append(pluginId); // master table
 	int saveNumber = getWorkspace().getSaveManager().getSaveNumber(pluginId);
-	return prefix.append(pluginId + "." + saveNumber);
+	return prefix.append(pluginId + "." + saveNumber); //$NON-NLS-1$
 }
 public IPath getSnapshotLocationFor(IResource resource) {
 	return getLocation().append(F_SNAP);
@@ -145,7 +145,7 @@ public IPath getTreeLocationFor(IResource target, boolean updateSequenceNumber) 
 	IPath key = target.getFullPath().append(F_TREE);
 	String sequenceNumber = getWorkspace().getSaveManager().getMasterTable().getProperty(key.toString());
 	if (sequenceNumber == null)
-		sequenceNumber = "0";
+		sequenceNumber = "0"; //$NON-NLS-1$
 	if (updateSequenceNumber) {
 		int n = new Integer(sequenceNumber).intValue() + 1;
 		n = n < 0 ? 1 : n;
@@ -205,7 +205,7 @@ public IPath readLocation(IProject target) {
 			dataIn.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.exReadProjectLocation", target.getName());
+		String msg = Policy.bind("resources.exReadProjectLocation", target.getName()); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(
 			IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 		return null;
@@ -225,11 +225,11 @@ public ProjectDescription readOldDescription(IProject project) throws CoreExcept
 	try {
 		description = (ProjectDescription)new ModelObjectReader().read(path, tempPath);
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.readMeta", project.getName());
+		String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
 	}
 	if (description == null) {
-		String msg = Policy.bind("resources.readMeta", project.getName());
+		String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, null);
 	}
 	return description;
@@ -269,7 +269,7 @@ public void writeLocation(IProject target) throws CoreException {
 			dataOut.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("resources.exSaveProjectLocation", target.getName());
+		String message = Policy.bind("resources.exSaveProjectLocation", target.getName()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -284,7 +284,7 @@ public synchronized void write(WorkspaceDescription description) throws CoreExce
 	try {
 		new ModelObjectWriter().write(description, path, tempPath);
 	} catch (IOException e) {
-		String message = Policy.bind("resources.writeWorkspaceMeta", path.toString());
+		String message = Policy.bind("resources.writeWorkspaceMeta", path.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 	}
 	description.clean();

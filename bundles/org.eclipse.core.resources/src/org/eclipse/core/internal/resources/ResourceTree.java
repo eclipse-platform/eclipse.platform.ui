@@ -67,7 +67,7 @@ public void movedFile(IFile source, IFile destination) {
 		return;
 	// If the destination already exists then we have a problem.
 	if (destination.exists()) {
-		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
+		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 		// log the status but don't return until we try and move the rest of the resource information.
 		failed(status);
@@ -79,7 +79,7 @@ public void movedFile(IFile source, IFile destination) {
 		propertyManager.copy(source, destination, IResource.DEPTH_ZERO);
 		propertyManager.deleteProperties(source, IResource.DEPTH_ZERO);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString());
+		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		// log the status but don't return until we try and move the rest of the resource information.
 		failed(status);
@@ -90,7 +90,7 @@ public void movedFile(IFile source, IFile destination) {
 	try {
 		workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, false);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString());
+		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		// log the status but don't return until we try and move the rest of the resource information.
 		failed(status);
@@ -100,7 +100,7 @@ public void movedFile(IFile source, IFile destination) {
 	try {
 		workspace.getMarkerManager().moved(source, destination, IResource.DEPTH_ZERO);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString());
+		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		failed(status);
 	}
@@ -116,7 +116,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 		return;
 	// If the destination already exists then we have an error.
 	if (destination.exists()) {
-		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
+		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 		failed(status);
 		return;
@@ -129,7 +129,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 		propertyManager.copy(source, destination, depth);
 		propertyManager.deleteProperties(source, depth);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString());
+		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		// log the status but don't return until we try and move the rest of the resource info
 		failed(status);
@@ -140,7 +140,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 	try {
 		workspace.move((Resource) source, destination.getFullPath(), depth, false);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString());
+		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		// log the status but don't return until we try and move the rest of the resource info
 		failed(status);
@@ -150,7 +150,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 	try {
 		workspace.getMarkerManager().moved(source, destination, depth);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString());
+		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		failed(status);
 	}
@@ -175,7 +175,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	// rename the meta area and make changes in the tree.
 	if (isNameChange(source, destDescription)) {
 		if (destination.exists()) {
-			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
+			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 			failed(status);
 			return false;
@@ -187,7 +187,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		try {
 			source.getPropertyManager().closePropertyStore(source);
 		} catch (CoreException e) {
-			String message = Policy.bind("properties.couldNotClose", source.getFullPath().toString());
+			String message = Policy.bind("properties.couldNotClose", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
@@ -197,7 +197,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		try{
 			source.getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, new NullProgressMonitor());
 		} catch (CoreException e) {
-			String message = Policy.bind("resources.moveMeta", oldMetaArea.toString(), newMetaArea.toString());
+			String message = Policy.bind("resources.moveMeta", oldMetaArea.toString(), newMetaArea.toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, destination.getFullPath(), message, e);
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
@@ -207,7 +207,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		try {
 			workspace.move(source, destination.getFullPath(), depth, false);
 		} catch (CoreException e) {
-			String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString());
+			String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
@@ -222,7 +222,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		try {
 			workspace.getMarkerManager().moved(source, destination, depth);
 		} catch (CoreException e) {
-			String message = Policy.bind("resources.errorMarkersMove", source.getFullPath().toString(), destination.getFullPath().toString());
+			String message = Policy.bind("resources.errorMarkersMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
@@ -234,7 +234,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		destination.internalSetDescription(destDescription, false);
 		destination.writeDescription(IResource.FORCE);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.projectDesc");
+		String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
 		failed(status);
 	}
@@ -263,7 +263,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	try {
 		destination.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString());
+		String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IResourceStatus.ERROR, destination.getFullPath(), message, e);
 		failed(status);
 		return false;
@@ -300,7 +300,7 @@ public void deletedFile(IFile file) {
 		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 		((Resource) file).deleteResource(true, null);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", file.getFullPath().toString());
+		String message = Policy.bind("resources.errorDeleting", file.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, file.getFullPath(), message, e);
 		failed(status);
 	}
@@ -317,7 +317,7 @@ public void deletedFolder(IFolder folder) {
 		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 		((Resource) folder).deleteResource(true, null);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", folder.getFullPath().toString());
+		String message = Policy.bind("resources.errorDeleting", folder.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
 		failed(status);
 	}
@@ -337,7 +337,7 @@ public void deletedProject(IProject target) {
 	try {
 		project.deleteResource(false, null);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", project.getFullPath().toString());
+		String message = Policy.bind("resources.errorDeleting", project.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
 		// log the status but don't return until we try and delete the rest of the project info
 		failed(status);
@@ -347,7 +347,7 @@ public void deletedProject(IProject target) {
 	try {
 		workspace.getMetaArea().delete(project);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.deleteMeta", project.getFullPath().toString());
+		String message = Policy.bind("resources.deleteMeta", project.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_METADATA, project.getFullPath(), message, e);
 		// log the status but don't return until we try and delete the rest of the project info
 		failed(status);
@@ -357,7 +357,7 @@ public void deletedProject(IProject target) {
 	try {
 		project.clearHistory(null);
 	} catch (CoreException e) {
-		String message = Policy.bind("history.problemsRemoving", project.getFullPath().toString());
+		String message = Policy.bind("history.problemsRemoving", project.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message, e);
 		failed(status);
 	}
@@ -397,7 +397,7 @@ private boolean isCaseChange(IProject project, IProjectDescription description) 
 public boolean isSynchronized(IResource resource, int depth) {
 	Assert.isLegal(isValid);
 	UnifiedTree tree = new UnifiedTree(resource);
-	String message = Policy.bind("resources.errorRefresh", resource.getFullPath().toString());
+	String message = Policy.bind("resources.errorRefresh", resource.getFullPath().toString()); //$NON-NLS-1$
 	// FIXME: this visitor does too much work because it collects statuses for all
 	// children who are out of sync. We could optimize by returning early when discovering
 	// the first out of sync child.
@@ -438,7 +438,7 @@ public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor mon
  */
 private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor) {
 	try {
-		String message = Policy.bind("resources.deleting", file.getFullPath().toString());
+		String message = Policy.bind("resources.deleting", file.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
 		// Do nothing if the file doesn't exist in the workspace.
@@ -469,7 +469,7 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 			boolean inSync = isSynchronized(file, IResource.DEPTH_ZERO);
 			// only want to fail if the file still exists.
 			if (!inSync && file.getLocation().toFile().exists()) {
-				message = Policy.bind("localstore.resourceIsOutOfSync", file.getFullPath().toString());
+				message = Policy.bind("localstore.resourceIsOutOfSync", file.getFullPath().toString()); //$NON-NLS-1$
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, file.getFullPath(), message);
 				failed(status);
 				// Indicate that the delete was unsuccessful.
@@ -490,7 +490,7 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 			// Indicate that the delete was successful.
 			return true;
 		} else {
-			message = Policy.bind("resources.couldnotDelete", file.getLocation().toOSString());
+			message = Policy.bind("resources.couldnotDelete", file.getLocation().toOSString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 			failed(status);
 			// Indicate that the delete was unsuccessful.
@@ -506,7 +506,7 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
-		String message = Policy.bind("resources.deleting", folder.getFullPath().toString());
+		String message = Policy.bind("resources.deleting", folder.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
 		// Do nothing if the folder doesn't exist in the workspace.
@@ -531,7 +531,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 			if (deletedChildren) {
 				deletedFolder(folder);
 			} else {
-				message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString());
+				message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 				failed(status);
 			}
@@ -550,7 +550,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		if (success) {
 			deletedFolder(folder);
 		} else {
-			message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString());
+			message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 			failed(status);
 		}
@@ -589,7 +589,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 	try {
 		members = folder.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMembers", folder.getFullPath().toString());
+		String message = Policy.bind("resources.errorMembers", folder.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -630,7 +630,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 		// Indicate that the delete was successful.
 		return true;
 	} else {
-		String message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString());
+		String message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -643,7 +643,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 public void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
-		String message = Policy.bind("resources.deleting", project.getFullPath().toString());
+		String message = Policy.bind("resources.deleting", project.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		// Do nothing if the project doesn't exist in the workspace tree.
 		if (!project.exists())
@@ -668,7 +668,7 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 				if (success) {
 					deletedProject(project);
 				} else {
-					message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString());
+					message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString()); //$NON-NLS-1$
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 					failed(status);
 				}
@@ -699,7 +699,7 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 		if (success) {
 			deletedProject(project);
 		} else {
-			message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString());
+			message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 			failed(status);
 		}
@@ -739,7 +739,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
-		String message = Policy.bind("resources.moving", source.getFullPath().toString());
+		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
 		// These pre-conditions should all be ok but just in case...
@@ -752,14 +752,14 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		// If the file is not in sync with the local file system and force is false,
 		// then signal that we have an error.
 		if (force && !source.getLocation().toFile().exists()) {
-			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
+			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 			failed(status);
 			return;
 		} else {
 			boolean inSync = isSynchronized(source, IResource.DEPTH_ZERO);
 			if (!inSync) {
-				message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
+				message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 				failed(status);
 				return;
@@ -779,7 +779,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		try {
 			moveInFileSystem(sourceFile, destFile, updateFlags);
 		} catch (CoreException e) {
-			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString());
+			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
 			return;
@@ -799,7 +799,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 public void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
-		String message = Policy.bind("resources.moving", source.getFullPath().toString());
+		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 			
 		// These pre-conditions should all be ok but just in case...
@@ -811,7 +811,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		// try and move all resources, doing it in a best-effort manner.
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
-			message = "localstore.resourceIsOutOfSync";
+			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
 			failed(status);
 			return;
@@ -827,7 +827,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		try {
 			moveInFileSystem(source.getLocation().toFile(), destination.getLocation().toFile(), updateFlags);
 		} catch (CoreException e) {
-			message = Policy.bind("resources.errorMove");
+			message = Policy.bind("resources.errorMove"); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, e);
 			failed(status);
 			return;
@@ -838,7 +838,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			movedFolderSubtree(source, destination);
 			updateTimestamps(destination);
 		} else {
-			message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString());
+			message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
 			failed(status);
 		}
@@ -879,7 +879,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 	try {
 		members = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMembers", project.getFullPath().toString());
+		String message = Policy.bind("resources.errorMembers", project.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -913,7 +913,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 			if (file.getType() != IResource.FILE) {
 				// We should never get here since the only reason we skipped it above was because
 				// it was a file named .project.
-				String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString());
+				String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString()); //$NON-NLS-1$
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 				failed(status);
 				// Indicate that the delete was unsuccessful.
@@ -921,7 +921,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 			} else {
 				boolean deletedProjectFile = internalDeleteFile((IFile) file, updateFlags, Policy.monitorFor(null));
 				if (!deletedProjectFile) {
-					String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString());
+					String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString()); //$NON-NLS-1$
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 					failed(status);
 					// Indicate that the delete was unsuccessful.
@@ -957,7 +957,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		// Indicate that the delete was successful.
 		return true;
 	} else {
-		String message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString());
+		String message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -971,7 +971,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
-		String message = Policy.bind("resources.moving", source.getFullPath().toString());
+		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
 		// Double-check this pre-condition.
@@ -989,7 +989,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
 			// FIXME: make this a best effort move?
-			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
+			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 			failed(status);
 			return;
@@ -999,7 +999,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		try {
 			moveProjectContent(source, description, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4));
 		} catch (CoreException e) {
-			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString());
+			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
 			return;

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -75,7 +80,7 @@ private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo[] newMar
 		MarkerInfo newMarker = newMarkers[i];
 		// should always be a new marker.
 		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
-			String message = Policy.bind("resources.changeInAdd");
+			String message = Policy.bind("resources.changeInAdd"); //$NON-NLS-1$
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
 		}
 		newMarker.setId(workspace.nextMarkerId());
@@ -437,7 +442,7 @@ protected void restoreFromSave(IResource resource, boolean generateDeltas) throw
 	} catch (FileNotFoundException e) {
 		// Ignore if no markers saved.
 	} catch (IOException e) {
-		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 	}
 }
@@ -458,7 +463,7 @@ protected void restoreFromSnap(IResource resource) {
 		// ignore if no markers saved
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
-		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }
