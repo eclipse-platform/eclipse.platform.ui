@@ -40,25 +40,27 @@ import org.eclipse.ui.internal.*;
  */
 public class WizardNewProjectCreationPage extends WizardPage {
 
-	private boolean useDefaults = true;
+	boolean useDefaults = true;
 
 	// initial value stores
 	private String initialProjectFieldValue;
 	private String initialLocationFieldValue;
 
 	// the value the user has entered
-	private String customLocationFieldValue;
+	String customLocationFieldValue;
 
 	// widgets
-	private Text projectNameField;
-	private Text locationPathField;
-	private Label locationLabel;
-	private Button browseButton;
+	Text projectNameField;
+	Text locationPathField;
+	Label locationLabel;
+	Button browseButton;
 
 	private Listener nameModifyListener = new Listener() {
 		public void handleEvent(Event e) {
-			setLocationForSelection();
-			setPageComplete(validatePage());
+			boolean valid = validatePage();
+			setPageComplete(valid);
+			if(valid)
+				setLocationForSelection();
 		}
 	};
 
@@ -295,7 +297,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	/**
 	 *	Open an appropriate directory browser
 	 */
-	private void handleLocationBrowseButtonPressed() {
+	void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog =
 			new DirectoryDialog(locationPathField.getShell());
 		dialog.setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
@@ -333,7 +335,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	/**
 	 * Set the location to the default location if we are set to useDefaults.
 	 */
-	private void setLocationForSelection() {
+	void setLocationForSelection() {
 		if (useDefaults)
 			locationPathField.setText(
 				getDefaultLocationForName(getProjectNameFieldValue()));
