@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Implementation of the UI plugin's preference extension's customization
@@ -94,6 +97,13 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		final String uiName = UIPlugin.getDefault().getBundle()
 				.getSymbolicName();
+		try {
+			if (rootNode.nodeExists(uiName))
+				((IEclipsePreferences) rootNode.node(uiName)).addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault().getBundle().getSymbolicName(),IStatus.ERROR,e.getLocalizedMessage(),e);
+			UIPlugin.getDefault().getLog().log(status);
+		}
 
 		rootNode
 				.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
