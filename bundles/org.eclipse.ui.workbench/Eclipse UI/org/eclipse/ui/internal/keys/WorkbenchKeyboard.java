@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -200,27 +201,23 @@ public class WorkbenchKeyboard {
 	/**
 	 * The listener that runs key events past the global key bindings.
 	 */
-	final Listener keyDownFilter = new Listener() {
+	private final Listener keyDownFilter = new Listener() {
 		public void handleEvent(Event event) {
 			filterKeySequenceBindings(event);
 		}
 	};
 	/**
+	 * The shells managed by the global key binding architecture. The keys are
+	 * the shells themselves, and the values are a Boolean indicating whether
+	 * the shell should only get dialog key bindings. As the shells are
+	 * destroyed, they should be automagically cleared from this map.
+	 */
+	private final WeakHashMap managedShells = new WeakHashMap();
+	/**
 	 * The <code>Shell</code> displayed to the user to assist them in
 	 * completing a multi-stroke keyboard shortcut.
 	 */
 	private Shell multiKeyAssistShell = null;
-	/**
-	 * The listener that allows out-of-order key processing to hook back into
-	 * the global key bindings.
-	 */
-	final OutOfOrderListener outOfOrderListener = new OutOfOrderListener(this);
-	/**
-	 * The listener that allows out-of-order key processing on <code>StyledText</code>
-	 * widgets to detect useful work in a verify key listener.
-	 */
-	final OutOfOrderVerifyListener outOfOrderVerifyListener =
-		new OutOfOrderVerifyListener(outOfOrderListener);
 	/**
 	 * The time at which the last timer was started. This is used to judge if a
 	 * sufficient amount of time has elapsed. This is simply the output of
@@ -312,6 +309,31 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
+	 * Closes the multi-stroke key binding assistant shell, if it exists and 
+	 * isn't already disposed.
+	 */
+	private void closeMultiKeyAssistShell() {
+		if ((multiKeyAssistShell != null) && (!multiKeyAssistShell.isDisposed())) {
+			deregister(multiKeyAssistShell);
+			multiKeyAssistShell.close();
+			multiKeyAssistShell = null;
+		}
+
+	}
+
+	/**
+	 * Deregisters the given <code>shell</code> from this keyboard shortcut
+	 * manager. This is not stictly necessary, as the internal storage is a
+	 * weak hash map. However, it is good practice.
+	 * 
+	 * @param shell
+	 *            The shell to deregister from key bindings; may be <code>null</code>.
+	 */
+	public void deregister(Shell shell) {
+		managedShells.remove(shell);
+	}
+
+	/**
 	 * Performs the actual execution of the command by looking up the current
 	 * handler from the command manager. If there is a handler and it is
 	 * enabled, then it tries the actual execution. Execution failures are
@@ -332,7 +354,7 @@ public class WorkbenchKeyboard {
 		resetState();
 
 		// Dispatch to the handler.
-		Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
+		Map actionsById = ((CommandManager) commandManager).getActionsById();
 		org.eclipse.ui.commands.IHandler action =
 			(org.eclipse.ui.commands.IHandler) actionsById.get(commandId);
 
@@ -377,11 +399,35 @@ public class WorkbenchKeyboard {
 		if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
 			return;
 
-		// Don't allow dialogs to process key bindings.
+		/*
+		 * There are three classes of shells: fully-managed, partially-managed,
+		 * and unmanaged. An unmanaged shell is a shell with no parent that has
+		 * not registered; it gets no key bindings. A partially-managed shell
+		 * is either a shell with a parent, or it is a shell with no parent
+		 * that has registered for partial service; it gets dialog key
+		 * bindings. A fully0managed shell has no parent and has registered for
+		 * full service; they get all key bindings.
+		 */
+		boolean dialogOnly = false;
 		if (event.widget instanceof Control) {
 			Shell shell = ((Control) event.widget).getShell();
-			if (shell.getParent() != null)
-				return;
+			if ((shell != null) && (shell.getParent() != null)) {
+				// There is a parent shell. Partially-managed.
+				dialogOnly = true;
+
+			} else {
+				Boolean dialog = (Boolean) managedShells.get(shell);
+				if (dialog == null) {
+					// The window is unmanaged.
+					return;
+				} else if (dialog.booleanValue()) {
+					// The window is managed, but request partial management
+					dialogOnly = true;
+				} else {
+					// The window is fully-managed; leave dialogOnly=false.
+				}
+
+			}
 		}
 
 		// Allow special key out-of-order processing.
@@ -396,9 +442,10 @@ public class WorkbenchKeyboard {
 					 * to verify the key as well; otherwise, we can detect that
 					 * useful work has been done.
 					 */
-					 ((StyledText) widget).addVerifyKeyListener(outOfOrderVerifyListener);
+					((StyledText) widget).addVerifyKeyListener(
+						new OutOfOrderVerifyListener(new OutOfOrderListener(this, dialogOnly)));
 				} else {
-					widget.addListener(SWT.KeyDown, outOfOrderListener);
+					widget.addListener(SWT.KeyDown, new OutOfOrderListener(this, dialogOnly));
 				}
 			}
 			/*
@@ -407,7 +454,7 @@ public class WorkbenchKeyboard {
 			 * (stick to keys that are not window traversal keys).
 			 */
 		} else {
-			processKeyEvent(keyStrokes, event);
+			processKeyEvent(keyStrokes, event, dialogOnly);
 		}
 	}
 
@@ -632,14 +679,12 @@ public class WorkbenchKeyboard {
 		// If the shell loses focus, it should be closed.
 		multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				if (multiKeyAssistShell != null) {
-					multiKeyAssistShell.close();
-					multiKeyAssistShell = null;
-				}
+				closeMultiKeyAssistShell();
 			}
 		});
 
 		// Open the shell.
+		register(multiKeyAssistShell, false);
 		multiKeyAssistShell.open();
 	}
 
@@ -653,10 +698,13 @@ public class WorkbenchKeyboard {
 	 *            priority; must not be <code>null</code>.
 	 * @param event
 	 *            The event to pass to the action; may be <code>null</code>.
+	 * @param dialogOnly
+	 *            Whether the key sequence should only be allowed to match on
+	 *            dialog commands.
 	 * @return <code>true</code> if a command is executed; <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean press(List potentialKeyStrokes, Event event) {
+	public boolean press(List potentialKeyStrokes, Event event, boolean dialogOnly) {
 		// TODO remove event parameter once key-modified actions are removed
 
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
@@ -705,10 +753,13 @@ public class WorkbenchKeyboard {
 	 *            <code>null</code>.
 	 * @param event
 	 *            The event to process; must not be <code>null</code>.
+	 * @param dialogOnly
+	 *            Whether the key bindings should only be allowed to match on
+	 *            dialog commands
 	 */
-	void processKeyEvent(List keyStrokes, Event event) {
+	void processKeyEvent(List keyStrokes, Event event, boolean dialogOnly) {
 		// Dispatch the keyboard shortcut, if any.
-		if ((!keyStrokes.isEmpty()) && (press(keyStrokes, event))) {
+		if ((!keyStrokes.isEmpty()) && (press(keyStrokes, event, dialogOnly))) {
 			switch (event.type) {
 				case SWT.KeyDown :
 					event.doit = false;
@@ -725,16 +776,28 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
+	 * Registers the given <code>shell</code> with this keyboard shortcut
+	 * manager -- indicating whether it should receive dialog key bindings or
+	 * the full set of key bindings. Deregistration is handled automatically by
+	 * the use of a weak hash map.
+	 * 
+	 * @param shell
+	 *            The shell to register for key bindings; may be <code>null</code>.
+	 * @param dialogOnly
+	 *            Whether the shell should only receive key bindings particular
+	 *            to a dialog.
+	 */
+	public void register(Shell shell, boolean dialogOnly) {
+		managedShells.put(shell, dialogOnly ? Boolean.TRUE : Boolean.FALSE);
+	}
+
+	/**
 	 * Resets the state, and cancels any running timers. If there is a <code>Shell</code>
 	 * currently open, then it closes it.
 	 */
 	private void resetState() {
 		startTime = Long.MAX_VALUE;
 		state.reset();
-		if ((multiKeyAssistShell != null) && (!multiKeyAssistShell.isDisposed())) {
-			multiKeyAssistShell.close();
-			multiKeyAssistShell.dispose();
-			multiKeyAssistShell = null;
-		}
+		closeMultiKeyAssistShell();
 	}
 }

@@ -94,7 +94,7 @@ public class Bug40023Test extends UITestCase {
 		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance(keySequenceText));
 		Event event = new Event();
-		workbench.getKeyboard().press(keyStrokes, event);
+		workbench.getKeyboard().press(keyStrokes, event, false);
 
 		// Check that the "Lock Toolbars" menu item is now checked.
 		Shell shell = window.getShell();
