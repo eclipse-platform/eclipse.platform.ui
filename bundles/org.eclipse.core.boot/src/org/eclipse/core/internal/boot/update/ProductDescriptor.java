@@ -402,6 +402,7 @@ public boolean isRemovable() {
 	IComponentDescriptor comp;
 	while(list.hasMoreElements()) {
 		comp = ((IComponentEntryDescriptor) list.nextElement()).getComponentDescriptor();
+		if (comp == null) continue;
 		if (!comp.isDanglingComponent() && !comp.isRemovable(this))
 			return false;
 	}

@@ -103,13 +103,38 @@ public void addComponentDescriptorToLocal(IComponentDescriptor comp, boolean dan
 
 public void addProductDescriptorToLocal(IProductDescriptor prod) {
 
-	ProductDescriptorModel existing = fCurrentRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());
-	if (existing == null) 
-		fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
-	existing = fLocalRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());		
-	if (existing == null)
-		fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+	ProductDescriptorModel existing1 = fCurrentRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());
+	if (existing1 == null) 
+		existing1 = fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
 	
+	ProductDescriptorModel existing2 = fLocalRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());		
+	if (existing2 == null)
+		existing2 = fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+
+
+	// Sync up any installed components that also belong to this prod
+	// This is needed if components are installed as loose before and
+	// are therefore are not installed again at the same time as when 
+	// this product is added
+
+	if (existing1 != null) {
+		
+		Enumeration list = existing1._getAllComponentEntries().elements();
+		while ( list.hasMoreElements()) {
+			ComponentEntryDescriptorModel compEntry = (ComponentEntryDescriptorModel) list.nextElement();
+			ComponentDescriptorModel comp = fCurrentRegistry._lookupComponentDescriptor(compEntry._getId(), compEntry._getVersion());
+			if (comp != null) {
+				compEntry._isInstalled(true);
+				comp._addToContainingProductsRel(existing1);
+			}
+			// repeat for local reg
+			comp = fLocalRegistry._lookupComponentDescriptor(compEntry._getId(), compEntry._getVersion());
+			if (comp != null) {
+				compEntry._isInstalled(true);
+				comp._addToContainingProductsRel(existing1);
+			}
+		}
+	}
 }
 private UMRegistry createNewRegistry() {
 	UMRegistry registry = (UMRegistry) fFactory.createUMRegistry();
@@ -226,8 +251,8 @@ public IProductDescriptor[] getProductDownloadList() {
 
 public IUMRegistry getRegistryAt(URL url) {
 	UMRegistry reg = createNewRegistry();
-	reg._loadManifests(url, fFactory);
 	reg._setType(UpdateManagerConstants.REMOTE_REGISTRY);
+	reg._loadManifests(url, fFactory);
 	fDiscoveryRegistry = reg;
 	return (IUMRegistry) fDiscoveryRegistry;
 	

@@ -304,16 +304,18 @@ public void _loadManifests(URL url, IUMFactory factory, boolean filtered) {
 /* load product manifest in the directory prodDir/dirName
  * which is of the form ...../install/configurations/prod_dirname
  */
-public void _loadProductManifest(String prodDir, String dirName, IUMFactory factory) {
 
+public ProductDescriptorModel _loadProductManifest(String prodDir, String dirName, IUMFactory factory) {
+
+	ProductDescriptorModel pd = null;
 	try {	
-		ProductDescriptorModel pd = (ProductDescriptorModel) factory.createProductDescriptor();
+		pd = (ProductDescriptorModel) factory.createProductDescriptor();
 		pd._setDirName(dirName);
 		pd._setInstallURL(prodDir + dirName);
 		pd._loadManifest(new URL(pd._getInstallManifestURL()), this, factory);
 	} catch (java.net.MalformedURLException e) {
 	}
-
+	return pd;
 }
 public ComponentDescriptorModel _lookupComponentDescriptor(String compId, String version) {
 

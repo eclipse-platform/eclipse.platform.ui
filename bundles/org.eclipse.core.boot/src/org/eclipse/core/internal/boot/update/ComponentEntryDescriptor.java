@@ -144,16 +144,24 @@ public int isInstallable(IComponentDescriptor compInstalled) {
 	if (compInstalled.isUpdateable() == false)
 		return UpdateManagerConstants.NOT_UPDATABLE;
 
-	// Check version compatibility
-	//----------------------------
-	VersionIdentifier newVer = getVersionIdentifier();
-
-	if (!newVer.isCompatibleWith(compInstalled.getVersionIdentifier())) // same major, newer minor or service
-		return UpdateManagerConstants.NOT_COMPATIBLE;
-	
-	if (compare(compInstalled)== 0)
+	// Check version against installed component
+	//------------------------------------------
+	if (compInstalled.isDanglingComponent()) {
+		if (this.compare(compInstalled) > 0)	// newer
+			return UpdateManagerConstants.OK_TO_INSTALL;
 		return UpdateManagerConstants.NOT_NEWER;
-		
+	} else {
+		// Check version compatibility
+		//----------------------------
+		VersionIdentifier newVer = getVersionIdentifier();
+
+		if (!newVer.isCompatibleWith(compInstalled.getVersionIdentifier())) // same major, newer minor or service
+			return UpdateManagerConstants.NOT_COMPATIBLE;
+
+		if (compare(compInstalled)== 0)
+			return UpdateManagerConstants.NOT_NEWER;
+	}
+	
 	return UpdateManagerConstants.OK_TO_INSTALL;
 }
 public boolean isInstalled() {
