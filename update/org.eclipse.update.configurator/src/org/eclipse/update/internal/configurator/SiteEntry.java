@@ -259,10 +259,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 * and validates existing plugins (they might have been removed)
 	 */
 	private void detectPlugins() {
-
-		if (pluginEntries != null)
+		boolean compareTimeStamps = false;
+		if (pluginEntries != null) {
 			validatePluginEntries();
-		else
+			compareTimeStamps = true; // only pick up newer plugins
+		} else
 			pluginEntries = new ArrayList();
 
 		if (!PlatformConfiguration.supportsDetection(resolvedURL))
@@ -275,9 +276,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			File[] files = pluginsDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isDirectory()){
-					detectUnpackedPlugin(files[i]);
+					detectUnpackedPlugin(files[i], compareTimeStamps);
 				}else if(files[i].getName().endsWith(".jar")){
-					detectPackedPlugin(files[i]);
+					detectPackedPlugin(files[i], compareTimeStamps);
 				}else{
 					// not bundle file
 				}
@@ -288,13 +289,12 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 
 	/**
-	 * @param file
-	 *            a plugin jar
+	 * @param file a plugin jar
+	 * @param compareTimeStamps set to true when looking for plugins changed since last time they were detected
 	 */
-	private void detectPackedPlugin(File file) {
+	private void detectPackedPlugin(File file, boolean compareTimeStamps) {
 		// plugin to run directly from jar
-		long jarTimestamp = file.lastModified();
-		if (jarTimestamp <= pluginsChangeStamp) {
+		if (compareTimeStamps && file.lastModified() <= pluginsChangeStamp) {
 			return;
 		}
 		String entryName = META_MANIFEST_MF;
@@ -355,10 +355,10 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		}
 	}
 	/**
-	 * @param file
-	 *            a plugin directory
+	 * @param file a plugin directory
+	 * @param compareTimeStamps set to true when looking for plugins changed since last time they were detected
 	 */
-	private void detectUnpackedPlugin(File file) {
+	private void detectUnpackedPlugin(File file, boolean compareTimeStamps) {
 		// unpacked plugin
 		long dirTimestamp = file.lastModified();
 		File pluginFile = new File(file, META_MANIFEST_MF);
@@ -366,7 +366,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			// First, check if has valid bundle manifest
 			BundleManifest bundleManifest = new BundleManifest(pluginFile);
 			if (bundleManifest.exists()) {
-				if (dirTimestamp <= pluginsChangeStamp
+				if (compareTimeStamps
+						&& dirTimestamp <= pluginsChangeStamp
 						&& pluginFile.lastModified() <= pluginsChangeStamp)
 					return;
 				PluginEntry entry = bundleManifest.getPluginEntry();
@@ -385,7 +386,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 					// the apparently modifed plugin may actually be configured
 					// already.
 					// We will need to double check for this. END to do.
-					if (dirTimestamp <= pluginsChangeStamp
+					if (compareTimeStamps 
+							&& dirTimestamp <= pluginsChangeStamp
 							&& pluginFile.lastModified() <= pluginsChangeStamp)
 						return;
 					PluginEntry entry = pluginParser.parse(pluginFile);
