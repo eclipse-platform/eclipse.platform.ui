@@ -20,6 +20,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -177,15 +180,23 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	protected void writeNewFile() throws CoreException {
 		String xml = null;
+		Exception e= null;
 		try {
 			xml = getInfo().getAsXML();
-		} catch (IOException e) {
+		} catch (IOException ioe) {
+			e= ioe;			
+		} catch (ParserConfigurationException pce) {
+			e= pce;
+		} catch (TransformerException te) {
+			e= te;		
+		}
+		if (e != null) {
 			throw new DebugException(
 				new Status(
-				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
-				)
-			);					
+					IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
+					)
+				);		
 		}
 		
 		if (isLocal()) {
@@ -207,11 +218,11 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				} else {
 					getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
 				}
-			} catch (IOException e) {
+			} catch (IOException ie) {
 				throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{ie.toString()}), null //$NON-NLS-1$
 					)
 				);				
 			}
@@ -230,7 +241,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			ByteArrayInputStream stream = null;
 			try {
 				stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
-			} catch (UnsupportedEncodingException e) {
+			} catch (UnsupportedEncodingException ue) {
 				throw new DebugException(
 					new Status(
 						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),

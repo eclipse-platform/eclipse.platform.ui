@@ -11,7 +11,9 @@
 package org.eclipse.debug.internal.core.stringsubstitution;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +22,13 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -32,7 +39,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -425,23 +431,59 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @return memento representing the value variables currently registered
 	 * @throws IOException if an I/O exception occurs while creating the XML.
 	 */
-	private String getValueVariablesAsXML() throws IOException {
+	private String getValueVariablesAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		IValueVariable[] variables = getValueVariables();
 
-		Document document= new DocumentImpl();
+		Document document= getDocument();
 		Element rootElement= document.createElement(VALUE_VARIABLES_TAG);
 		document.appendChild(rootElement);
 		for (int i = 0; i < variables.length; i++) {
 			ValueVariable variable = (ValueVariable)variables[i];
 			Element element= document.createElement(VALUE_VARIABLE_TAG);
 			element.setAttribute(NAME_TAG, variable.getName());
-			element.setAttribute(VALUE_TAG, variable.getValue());
-			element.setAttribute(DESCRIPTION_TAG, variable.getDescription());
+			String value= variable.getValue();
+			if (value != null) {
+				element.setAttribute(VALUE_TAG, value);
+			}
+			String description= variable.getDescription();
+			if (description != null) {
+				element.setAttribute(DESCRIPTION_TAG, description);
+			}
 			element.setAttribute(INITIALIZED_TAG, variable.isInitialized() ? TRUE_VALUE : FALSE_VALUE);
 			rootElement.appendChild(element);
 		}
-		return LaunchManager.serializeDocument(document);
-	}	
+		return serializeDocument(document);
+	}
+	
+	private Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+
+		dfactory.setNamespaceAware(true);
+		dfactory.setValidating(true);
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc =docBuilder.newDocument();
+		return doc;
+	}
+	
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public String serializeDocument(Document doc) throws TransformerException, UnsupportedEncodingException {
+		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
 	
 	/**
 	 * Saves the value variables currently registered in the
@@ -453,8 +495,14 @@ public class StringVariableManager implements IStringVariableManager {
 		if (!fValueVariables.isEmpty()) {
 			try {
 				variableString= getValueVariablesAsXML();
-			} catch (IOException exception) {
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", exception)); //$NON-NLS-1$
+			} catch (IOException e) {
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", e)); //$NON-NLS-1$
+				return;
+			} catch (ParserConfigurationException e) {
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", e)); //$NON-NLS-1$
+				return;
+			} catch (TransformerException e) {
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", e)); //$NON-NLS-1$
 				return;
 			}
 		}

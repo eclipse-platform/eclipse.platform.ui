@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -286,11 +288,13 @@ public class LaunchConfigurationInfo {
 	 * Returns the content of this info as XML
 	 * 
 	 * @return the content of this info as XML
-	 * @exception IOException if an exception occurs creating the XML
+	 * @throws IOException if an exception occurs creating the XML
+	 * @throws ParserConfigurationException if an exception occurs creating the XML
+	 * @throws TransformerException if an exception occurs creating the XML
 	 */
-	protected String getAsXML() throws IOException {
+	protected String getAsXML() throws IOException, ParserConfigurationException, TransformerException {
 
-		Document doc = new DocumentImpl();
+		Document doc = LaunchManager.getDocument();
 		Element configRootElement = doc.createElement("launchConfiguration"); //$NON-NLS-1$
 		doc.appendChild(configRootElement);
 		

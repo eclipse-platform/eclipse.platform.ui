@@ -229,6 +229,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @return this manager's watch expressions as XML
 	 * @throws IOException if an exception occurs while creating
 	 * 		the XML document.
+	 * @throws ParserConfigurationException if an exception occurs while creating
+	 * 		the XML document.
+	 * @throws TransformerException if an exception occurs while creating
+	 * 		the XML document.
 	 */
 	private String getWatchExpressionsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		Iterator iter= fExpressions.iterator();

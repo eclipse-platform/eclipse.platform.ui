@@ -20,8 +20,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -397,19 +397,28 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			relativePath = getFile().getFullPath();
 		}
-		
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
-		doc.appendChild(node);
-		node.setAttribute("local", (new Boolean(isLocal())).toString()); //$NON-NLS-1$
-		node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
-		
+		Exception e= null;
 		try {
+			Document doc = LaunchManager.getDocument();
+			Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+			doc.appendChild(node);
+			node.setAttribute("local", (new Boolean(isLocal())).toString()); //$NON-NLS-1$
+			node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
 			return LaunchManager.serializeDocument(doc);
-		} catch (IOException e) {
+		} catch (IOException ioe) {
+			e= ioe;
+		} catch (ParserConfigurationException pce) {
+			e= pce;
+		} catch (TransformerException te) {
+			e= te;
+		}
+		if (e != null) {
 			IStatus status = newStatus(DebugCoreMessages.getString("LaunchConfiguration.Exception_occurred_creating_launch_configuration_memento_9"), DebugException.INTERNAL_ERROR,  e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
+		//execution will never reach here
+		return null;
+		
 	}
 
 	/**

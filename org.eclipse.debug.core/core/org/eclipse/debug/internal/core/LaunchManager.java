@@ -20,7 +20,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +34,12 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -199,19 +201,34 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
-	public static String serializeDocument(Document doc) throws IOException {
+	public static String serializeDocument(Document doc) throws TransformerException, IOException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator"));  //$NON-NLS-1$
 		
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return s.toString("UTF8"); //$NON-NLS-1$		
-	}	
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+	
+	/**
+	 * Return a <code>Document</code>
+	 * 
+	 * @return the document
+	 * @since 3.0
+	 */
+	public static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+
+		dfactory.setNamespaceAware(true);
+		dfactory.setValidating(true);
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc =docBuilder.newDocument();
+		return doc;
+	}
 			
 	/**
 	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
