@@ -215,6 +215,9 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
     private void presentationSelectionChanged(IPresentablePart newSelection) {
         setSelection(getLayoutPart(newSelection));
+        
+        if (newSelection != null)
+            newSelection.setFocus();
     }
 
     /**

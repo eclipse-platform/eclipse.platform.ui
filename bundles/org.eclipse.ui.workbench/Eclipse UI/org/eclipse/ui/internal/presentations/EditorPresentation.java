@@ -328,7 +328,7 @@ public class EditorPresentation extends BasicStackPresentation {
     }
 
     void setSelection(CTabItem tabItem) {
-        selectPart(getPartForTab(tabItem));
+        getSite().selectPart(getPartForTab(tabItem));
     }
 
     void close(IPresentablePart presentablePart) {
