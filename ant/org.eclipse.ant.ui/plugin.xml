@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <plugin
-  name = "AntUI"
+  name = "Ant Build Tool UI"
   id="org.eclipse.ant.ui"
   version = "0.9"
   provider-name = "Object Technology International, Inc."
