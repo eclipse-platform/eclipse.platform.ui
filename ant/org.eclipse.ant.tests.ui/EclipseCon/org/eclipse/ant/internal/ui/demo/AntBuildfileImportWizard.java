@@ -39,7 +39,7 @@ public class AntBuildfileImportWizard extends Wizard implements IImportWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle("Import project from exiting Ant buildfile");
-		setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.ANT_VIEW_ID)); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT));
 		
 	}
 	/* (non-Javadoc)

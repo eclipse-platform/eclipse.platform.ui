@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.demo;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,8 +35,6 @@ import org.eclipse.ant.internal.ui.editor.outline.ILocationProvider;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -45,7 +42,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.wizard.WizardPage;
@@ -65,20 +61,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public class ExternalAntBuildfileImportPage extends WizardPage {
-
-	private FileFilter projectFilter = new FileFilter() {
-			//Only accept those files that are .xml
-	public boolean accept(File pathName) {
-			return pathName.getName().endsWith(".xml");
-		}
-	};
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
@@ -86,38 +74,28 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		}	
 	}	
 
-	//Keep track of the directory that we browsed to last time
-	//the wizard was invoked.
-	private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
+	//private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
 
-	// widgets
 	private Text projectNameField;
 	private Text locationPathField;
 	private Button browseButton;
-	private IProjectDescription description;
 	
 	private AntModel fAntModel;
 	private IDocument fCurrentDocument;
 
-	private Listener locationModifyListener = new Listener() {
+	private Listener modifyListener = new Listener() {
 		public void handleEvent(Event e) {
 			setPageComplete(validatePage());
 		}
 	};
 
-	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	
-	/**
-	 * Creates a new project creation wizard page.
-	 *
-	 * @param pageName the name of this page
-	 */
 	public ExternalAntBuildfileImportPage() {
 		super("externalAntBuildfilePage"); //$NON-NLS-1$
 		setPageComplete(false);
 		setTitle("Import a Project from an Ant Buildfile");
-		setDescription("Creates a new project based on the specification in the javac task of the Ant buildfile. This does not copy the source contents to the workspace");
+		setDescription("Creates a new project based on the specification in the javac task of the Ant buildfile. This does not copy the source contents to the workspace.");
 
 	}
 	/* (non-Javadoc)
@@ -194,6 +172,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
 		projectNameField.setFont(dialogFont);
+		
+		projectNameField.addListener(SWT.Modify, modifyListener);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -224,7 +204,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			}
 		});
 
-		locationPathField.addListener(SWT.Modify, locationModifyListener);
+		locationPathField.addListener(SWT.Modify, modifyListener);
 	}
 	/**
 	 * Returns the current project location path as entered by 
@@ -258,6 +238,9 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 */
 	public String getProjectName(AntProjectNode projectNode) {
 		String userSpecifiedName= getProjectNameFieldValue();
+		if (userSpecifiedName.length() > 0) {
+			return userSpecifiedName;
+		}
 		String projectName= projectNode.getLabel();
 		if (projectName == null) {
 			projectName= "Ant Project";
@@ -271,10 +254,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * @return the project name in the field
 	 */
 	private String getProjectNameFieldValue() {
-		if (projectNameField == null)
+		if (projectNameField == null) {
 			return ""; //$NON-NLS-1$
-		else
+		} else {
 			return projectNameField.getText().trim();
+		}
 	}
 	/**
 	 * Returns the value of the project location field
@@ -310,8 +294,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			
 //			previouslyBrowsedDirectory = selectedDirectory;
 			locationPathField.setText(path.toOSString());
-//			setProjectName(projectFile(previouslyBrowsedDirectory));
-			
+			fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
+			setProjectName();
 	}
 
 	/**
@@ -337,30 +321,20 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			return false;
 		}
 
-//		File projectFile = projectFile(locationFieldContents);
-//		if (projectFile == null) {
-//			setErrorMessage(
-//				DataTransferMessages.format(
-//					"WizardExternalProjectImportPage.notAProject", //$NON-NLS-1$
-//					new String[] { locationFieldContents }));
-//			return false;
-//		}
-//		else{
-//			setProjectName(projectFile);
-//		}
-		
-		//if (getProjectHandle().exists()) {
-		//	setErrorMessage("Project with this name already exists");
-		//	return false;
-		//}
+		if (getProjectNameFieldValue().length() == 0) {
+			setErrorMessage("Project name must be specified");
+			return false;
+		} else {
+			IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
+			if (existingProject.exists()) {
+				setErrorMessage("A project with the specified name already exists");
+				return false;
+			}
+		}
 
 		setErrorMessage(null);
 		setMessage(null);
 		return true;
-	}
-	private IWorkspace getWorkspace() {
-		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-		return workspace;
 	}
 
 	/**
@@ -368,30 +342,16 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * parent of the file or the name entry in the xml for 
 	 * the file
 	 */
-	private void setProjectName(File projectFile) {
+	private void setProjectName() {
 
-		//If there is no file or the user has already specified forget it
-		if (projectFile == null)
+		if (fAntModel == null) {
 			return;
-
-		IPath path = new Path(projectFile.getPath());
-
-		IProjectDescription newDescription = null;
-
-		try {
-			newDescription = getWorkspace().loadProjectDescription(path);
-		} catch (CoreException exception) {
-			//no good couldn't get the name
 		}
 
-		if (newDescription == null) {
-			this.description = null;
-			this.projectNameField.setText(""); //$NON-NLS-1$
-		}
-		else{			
-			this.description = newDescription;
-			this.projectNameField.setText(this.description.getName());
-		}
+		AntProjectNode node= getProjectNode();
+		String projectName= getProjectName(node);
+		
+		projectNameField.setText(projectName);
 	}
 
 	/**
@@ -414,20 +374,16 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 *    was not created
 	 */
 	protected IJavaProject createProject() {
-		
-		fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
+
 		AntProjectNode projectNode= getProjectNode();
 		
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
 		final IJavaProject[] result= new IJavaProject[1];
-		final String projectName= getProjectName(projectNode);
+		final String projectName= getProjectNameFieldValue();
 		final File buildFile= getBuildFile(getProjectLocationFieldValue());
 		if (javacNodes.size() > 1) {
-			MessageDialog.openInformation(
-				getShell(),
-				"Ant Demo",
-				"Currently only supports creating a project from a single javac declaration");
+			setErrorMessage("Currently only supports creating a project from a single javac declaration");
 			return null;
 		}
 		

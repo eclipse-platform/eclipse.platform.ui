@@ -50,6 +50,7 @@ public interface IAntUIConstants {
 	public static final String IMG_JAR_FILE = PLUGIN_ID + ".IMG_JAR_FILE"; //$NON-NLS-1$;
 	
 	//	Label images
+	 public static final String IMG_ANT= PLUGIN_ID + ".ant"; //$NON-NLS-1$
 	 public static final String IMG_ANT_PROJECT= PLUGIN_ID + ".antProject"; //$NON-NLS-1$
 	 public static final String IMG_ANT_TARGET= PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
 	 public static final String IMG_ANT_TARGET_INTERNAL = PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
