@@ -17,10 +17,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
 import org.eclipse.jface.text.source.IAnnotationModel;
+
+import org.osgi.framework.Bundle;
 
 /**
  * FileBuffersForLinkedFiles
@@ -104,6 +107,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
 	 */
 	protected Class getAnnotationModelClass() throws Exception {
-		return IAnnotationModel.class;
+		Bundle bundle= Platform.getBundle("org.eclipse.ui.editors");
+		return bundle != null ? IAnnotationModel.class : null;
 	}
 }

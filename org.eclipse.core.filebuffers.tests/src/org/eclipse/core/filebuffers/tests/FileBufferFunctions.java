@@ -1039,7 +1039,7 @@ public abstract class FileBufferFunctions extends TestCase {
 	
 	/*
 	 * Test annotation model existence. 
-	 * ATTENTION: This test only works as is in a workspace that contains the "org.eclipse.ui.editors" plug-in.
+	 * ATTENTION: This test is only effective in a workspace that contains the "org.eclipse.ui.editors" bundle.
 	 */
 	public void test18() throws Exception {
 		fManager.connect(fPath, null);
