@@ -52,7 +52,7 @@ if (data.isMozilla()){
 	margin:0px;
 	padding:0px;
 	cursor:default;
-	background-color:<%=prefs.getViewBackground()%>;
+	filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#CCffffff', endColorstr='#00ffffff', gradientType='0');
 	border-top:1px solid <%=prefs.getViewBackground()%>;
 	border-bottom:1px solid ThreeDShadow;
 }
@@ -239,7 +239,7 @@ function getPreviousLink(currentLink){
    
 <body>
 
-  <table style="filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#aaffffff', endColorstr='#00ffffff', gradientType='0');" cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
    <tr>
 
 <%
