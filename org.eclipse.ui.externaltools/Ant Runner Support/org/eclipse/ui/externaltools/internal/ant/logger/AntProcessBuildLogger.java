@@ -7,7 +7,11 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.PrintStream;
+import java.text.MessageFormat;
+
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -21,14 +25,23 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
+import org.eclipse.ui.externaltools.internal.ant.AntSupportMessages;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntProcess;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamsProxy;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 	
 /**
  */
-public class AntProcessBuildLogger extends NullBuildLogger {
+public class AntProcessBuildLogger implements BuildLogger {
+	
+	protected int fMessageOutputLevel = Project.MSG_INFO;
+	private PrintStream fErr= null;
+	private PrintStream fOut= null;
+	protected boolean fEmacsMode= false;
+	/**
+	 * An exception that has already been logged.
+	 */
+	protected Throwable fHandledException= null;
 	
 	/**
 	 * Size of left-hand column for right-justified task name.
@@ -165,6 +178,40 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		}
 	}
 	
+	protected PrintStream getErrorPrintStream() {
+		return fErr;
+	}
+
+	protected PrintStream getOutputPrintStream() {
+		return fOut;
+	}
+
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
+	 */
+	public void setErrorPrintStream(PrintStream err) {
+		//this build logger logs to "null" unless
+		//the user has explicitly set a logfile to use
+		if (err == System.err) {
+			fErr= null;
+		} else {
+			fErr= err;
+		}
+	}
+
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
+	 */
+	public void setOutputPrintStream(PrintStream output) {
+		//this build logger logs to "null" unless
+		//the user has explicitly set a logfile to use
+		if (output == System.out) {
+			fOut= null;
+		} else {
+			fOut= output;
+		}
+	}
+	
 	/**
 	 * Returns a hyperlink for the given task, or <code>null</code> if unable to
 	 * parse a valid location for the task. The link is set to exist at the specified
@@ -228,7 +275,22 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 */
 	public void buildStarted(BuildEvent event) {
 		findAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
-		super.buildStarted(event);
+	}
+	
+	/**
+	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.
+	 * ant.uildEvent)
+	 */
+	public void buildFinished(BuildEvent event) {
+		handleException(event);
+		fHandledException= null;
+	}
+	
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
+	 */
+	public void setEmacsMode(boolean emacsMode) {
+		fEmacsMode= emacsMode;
 	}
 
 	/**
@@ -246,19 +308,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return;
 		}
 		fHandledException= exception;
-		logMessage(ToolMessages.format(
-					"NullBuildLogger.buildException", //$NON-NLS-1$
-					new String[] { exception.toString()}),
+		logMessage(MessageFormat.format(AntSupportMessages.getString("AntProcessBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
 					event, Project.MSG_ERR);	
 	}
-		
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
-	 */
-	public void setMessageOutputLevel(int level) {
-		fMessageOutputLevel= level;
-	}
 
+	/**
+	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
+	 */
 	public void targetStarted(BuildEvent event) {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;
@@ -268,7 +324,27 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
 	}
+
+	/**
+	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	public void targetFinished(BuildEvent event) {
+		handleException(event);
+	}
 	
+	/**
+	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
+	 */
+	public void taskStarted(BuildEvent event) {
+	}
+
+	/**
+	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	public void taskFinished(BuildEvent event) {
+		handleException(event);
+	}
+
 	/**
 	 * Returns the workspace file associated with the given abosolute path in the local file system,
 	 * or <code>null</code> if none.
@@ -282,5 +358,16 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return file;
 		}
 		return null;
+	}
+	
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
+	 */
+	public void setMessageOutputLevel(int level) {
+		fMessageOutputLevel= level;
+	}
+
+	protected int getMessageOutputLevel() {
+		return fMessageOutputLevel;
 	}
 }

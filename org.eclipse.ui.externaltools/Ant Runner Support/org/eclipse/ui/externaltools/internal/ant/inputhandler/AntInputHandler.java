@@ -13,7 +13,7 @@ import org.apache.tools.ant.input.InputRequest;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
+import org.eclipse.ui.externaltools.internal.ant.AntSupportMessages;
 
 /**
  * The default input handler when using Ant within Eclipse.
@@ -38,7 +38,7 @@ public class AntInputHandler extends DefaultInputHandler {
 		return new Runnable() {
 			public void run() {
 				String prompt = getPrompt(request);
-		       	String title= ToolMessages.getString("AntInputHandler.Ant_Input_Request_1"); //$NON-NLS-1$
+		       	String title= AntSupportMessages.getString("AntInputHandler.Ant_Input_Request_1"); //$NON-NLS-1$
 				IInputValidator validator= new IInputValidator() {
 					int hitCount= -1;
 					public String isValid(String value) {
@@ -46,14 +46,14 @@ public class AntInputHandler extends DefaultInputHandler {
 						if (request.isInputValid()) {
 							return null;
 						} else {
-							return ToolMessages.getString("AntInputHandler.Invalid_input_2"); //$NON-NLS-1$
+							return AntSupportMessages.getString("AntInputHandler.Invalid_input_2"); //$NON-NLS-1$
 						}
 					}
 				};
 		
 				InputDialog dialog= new InputDialog(null, title, prompt, "", validator); //$NON-NLS-1$
 				if (dialog.open() != InputDialog.OK) {
-					problem[0]= new BuildException(ToolMessages.getString("AntInputHandler.Unable_able_to_respond_to_<input>_request_4")); //$NON-NLS-1$
+					problem[0]= new BuildException(AntSupportMessages.getString("AntInputHandler.Unable_to_respond_to_<input>_request_4")); //$NON-NLS-1$
 				}
 			}
 		};
