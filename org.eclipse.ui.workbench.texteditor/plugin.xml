@@ -8,7 +8,8 @@
 
    <runtime>
       <library name="texteditor.jar">
-         <export name="*"/>
+		<export name="*"/>
+		<packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.internal.texteditor"/>
       </library>
    </runtime>
 
