@@ -315,12 +315,12 @@ public class CVSWorkspaceRoot {
 	 * Create a remote module in the CVS repository and link the project directory to this remote module.
 	 * The contents of the project are not imported.
 	 */
-	public static void createModule(ICVSRepositoryLocation location, IProject project, String moduleName, IProgressMonitor monitor) throws TeamException {
+	public static void createModule(final ICVSRepositoryLocation location, final IProject project, String moduleName, IProgressMonitor monitor) throws TeamException {
 		
 		// Determine if the repository is known
 		boolean alreadyExists = CVSProviderPlugin.getPlugin().isKnownRepository(location.getLocation());
 		// Set the folder sync info of the project to point to the remote module
-		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
+		final ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 			
 		try {
 			// Get the import properties
@@ -348,11 +348,28 @@ public class CVSWorkspaceRoot {
 			} finally {
 				s.close();
 			}
-						
-			folder.setFolderSyncInfo(new FolderSyncInfo(moduleName, location.getLocation(), null, false));
-
-			//Register it with Team.  If it already is, no harm done.
-			RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+			
+			// perform the workspace modifications in a runnable
+			try {
+				final TeamException[] exception = new TeamException[] {null};
+				final String modName = moduleName;
+				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						try {
+							// Link the project to the newly created module
+							folder.setFolderSyncInfo(new FolderSyncInfo(modName, location.getLocation(), null, false));
+							//Register it with Team.  If it already is, no harm done.
+							RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+						} catch (TeamException e) {
+							exception[0] = e;
+						}
+					}
+				}, monitor);
+				if (exception[0] != null)
+					throw exception[0];
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
