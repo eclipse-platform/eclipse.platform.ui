@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.Utils;
@@ -38,7 +38,13 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	
 	// An array of the selection actions for the modes (indexed by mode constant)	
 	private List actions = new ArrayList(3);
-	private SyncViewerActions refreshGroup;	
+	private SyncViewerActions refreshGroup;
+	
+	private DirectionFilterAction incomingMode;					
+	private DirectionFilterAction outgoingMode;
+	private DirectionFilterAction bothMode;
+	private DirectionFilterAction conflictsMode;
+		
 	private final static int[] DEFAULT_FILTER = new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING, SyncInfo.CONFLICTING};
 			
 	/**
@@ -46,10 +52,10 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	 */
 	class DirectionFilterAction extends Action {
 		// The sync mode that this action enables
-		private int syncMode;
+		private int[] syncMode;
 		private boolean toggled;
-		public DirectionFilterAction(String prefix,String commandId, int mode) {
-			super("", SWT.TOGGLE); //$NON-NLS-1$
+		public DirectionFilterAction(String prefix,String commandId, int[] mode) {
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			this.syncMode = mode;
 			Utils.initAction(this, prefix);
 			Action a = new Action() {
@@ -64,7 +70,7 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 		public void run() {
 			updateFilter(this);
 		}
-		public int getFilter() {
+		public int[] getFilter() {
 			return syncMode;
 		}
 	}
@@ -80,16 +86,18 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	 */
 	private void createActions() {
 		// Create the actions
-		DirectionFilterAction incomingMode = new DirectionFilterAction("action.directionFilterIncoming.", "org.eclipse.team.ui.syncview.incomingFilter", SyncInfo.INCOMING); //$NON-NLS-1$ //$NON-NLS-2$
+		incomingMode = new DirectionFilterAction("action.directionFilterIncoming.", "org.eclipse.team.ui.syncview.incomingFilter", new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(incomingMode);
 					
-		DirectionFilterAction outgoingMode = new DirectionFilterAction("action.directionFilterOutgoing.", "org.eclipse.team.ui.syncview.outgoingFilter", SyncInfo.OUTGOING); //$NON-NLS-1$ //$NON-NLS-2$
+		outgoingMode = new DirectionFilterAction("action.directionFilterOutgoing.", "org.eclipse.team.ui.syncview.outgoingFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(outgoingMode);
 
-		DirectionFilterAction conflictsMode = new DirectionFilterAction("action.directionFilterConflicts.", "org.eclipse.team.ui.syncview.conflictsFilter", SyncInfo.CONFLICTING); //$NON-NLS-1$ //$NON-NLS-2$
+		bothMode = new DirectionFilterAction("action.directionFilterBoth.", "org.eclipse.team.ui.syncview.bothFilter", new int[] {SyncInfo.OUTGOING, SyncInfo.INCOMING, SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
+		actions.add(bothMode);
+
+		conflictsMode = new DirectionFilterAction("action.directionFilterConflicts.", "org.eclipse.team.ui.syncview.conflictsFilter", new int[] {SyncInfo.CONFLICTING}); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(conflictsMode);
 		
-		updateCheckedState(DEFAULT_FILTER);
 		updateEnablement(null);
 	}
 	
@@ -99,39 +107,27 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 		for (Iterator it = actions.iterator(); it.hasNext();) {
 			DirectionFilterAction action = (DirectionFilterAction)it.next();
 			if(action.isChecked()) {
-				filters[i++] = action.getFilter();
+				return action.getFilter();
 			}
 		}
-		int[] enabledFilters = new int[i];
-		System.arraycopy(filters, 0, enabledFilters, 0, i);
-		return enabledFilters;
+		// should never happen because buttons are radio
+		Assert.isTrue(true);
+		return new int[0];
 	}
 
-	boolean isSet(int[] filters, int afilter) {
+	boolean isSet(int[] filters, int[] afilter) {
 		for (int i = 0; i < filters.length; i++) {
-			if(filters[i] == afilter) return true;
+			for (int j = 0; i < afilter.length; i++) {
+				if(filters[i] == afilter[j]) return true;
+			}
 		}
 		return false;
 	}
 
 	void updateFilter(DirectionFilterAction action) {
-		int[] filters = getDirectionFilter();
-		
-		// don't allow all filters to be unchecked
-		if(filters.length == 0) {
-			action.setChecked(true);
-		} else  {
-			getRefreshGroup().refreshFilters();
-		}		
+		getRefreshGroup().refreshFilters();
 	}
 	
-	public void updateCheckedState(int[] newFilter) {
-		for (Iterator it = actions.iterator(); it.hasNext();) {
-			DirectionFilterAction action = (DirectionFilterAction) it.next();
-			action.setChecked(isSet(newFilter, action.getFilter()));
-		}		
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
@@ -164,25 +160,24 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 
 	/*
 	 * Only enable actions if a context is available. In addition disable the outgoing filter if
-	 * 
+	 * the subscriber doesn't support releasing changes to it.
 	 */
 	private void updateEnablement(SubscriberInput input) {
-		for (Iterator it = actions.iterator(); it.hasNext();) {
-			DirectionFilterAction action = (DirectionFilterAction) it.next();
-			if(input == null) {
-				action.setEnabled(false);	
+		if(input == null) {
+			incomingMode.setEnabled(false);
+			outgoingMode.setEnabled(false);
+			conflictsMode.setEnabled(false);
+		} else {
+			TeamSubscriber s = input.getSubscriber();
+			incomingMode.setEnabled(true);
+			conflictsMode.setEnabled(true);
+			bothMode.setEnabled(true);
+			if( ! s.isReleaseSupported()) {
+				outgoingMode.setEnabled(false);					
 			} else {
-				TeamSubscriber s = input.getSubscriber();
-				if(action.getFilter() == SyncInfo.OUTGOING && ! s.isReleaseSupported()) {
-					action.setChecked(false);
-					action.setEnabled(false);					
-				} else {
-					if(! action.isEnabled()) {
-						action.setChecked(true);
-						action.setEnabled(true);
-					}
-				}
+				outgoingMode.setEnabled(true);	
 			}
+			bothMode.setChecked(true);
 		}
 	}
 	
