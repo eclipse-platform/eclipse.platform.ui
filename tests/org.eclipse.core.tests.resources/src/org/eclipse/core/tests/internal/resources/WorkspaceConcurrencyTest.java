@@ -262,9 +262,15 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			waitForCompletion(jobThree);
 
 			//ensure no jobs failed
-			assertTrue("1.0", jobOne.getResult().isOK());
-			assertTrue("1.1", jobTwo.getResult().isOK());
-			assertTrue("1.2", jobThree.getResult().isOK());
+			IStatus result = jobOne.getResult();
+			if (!result.isOK())
+				fail("1.0", new CoreException(result));
+			result = jobTwo.getResult();
+			if (!result.isOK())
+				fail("1.1", new CoreException(result));
+			result = jobThree.getResult();
+			if (!result.isOK())
+				fail("1.2", new CoreException(result));
 			
 			if (failure[0] != null)
 				fail("1.3", failure[0]);
