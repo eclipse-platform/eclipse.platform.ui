@@ -105,9 +105,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
      * @param menuId
      *            the menu id
      * @return <code>true</code> if the specified menu is an application
-     *         menu, and <code>false</code> if is not @issue this method
-     *         should be deprecated and removed, only the application would
-     *         know something like this.
+     *         menu, and <code>false</code> if it is not
      */
     public boolean isApplicationMenu(String menuId);
 
