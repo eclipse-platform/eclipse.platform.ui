@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 public class AntViewElementsMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.view.elements.AntViewElements"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.view.elements.AntViewElementsMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);

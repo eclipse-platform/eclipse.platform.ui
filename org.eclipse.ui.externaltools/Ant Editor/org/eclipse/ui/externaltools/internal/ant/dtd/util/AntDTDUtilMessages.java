@@ -10,13 +10,13 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class AntDTDUtilSchemaMessages {
+public class AntDTDUtilMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.dtd.util.AntDTDUtilMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private AntDTDUtilSchemaMessages() {
+	private AntDTDUtilMessages() {
 	}
 
 	public static String getString(String key) {

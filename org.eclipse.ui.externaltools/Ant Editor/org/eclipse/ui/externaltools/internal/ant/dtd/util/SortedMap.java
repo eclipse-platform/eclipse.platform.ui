@@ -158,7 +158,7 @@ public class SortedMap implements FactoryObject {
 		public Object next() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
 			if (array == null)
-				throw new IllegalStateException(AntDTDUtilSchemaMessages.getString("SortedMap.next()_called_for_empty_array_1")); //$NON-NLS-1$
+				throw new IllegalStateException(AntDTDUtilMessages.getString("SortedMap.next()_called_for_empty_array_1")); //$NON-NLS-1$
 			return array[++fIndex];
 		}
 
@@ -175,7 +175,7 @@ public class SortedMap implements FactoryObject {
 	public void remove(int i) {
 		Object[] values = fHolder.getValues();
 		if (values == null) {
-			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilSchemaMessages.getString("SortedMap.remove({0})_in_empty_map_2"), new String[]{Integer.toString(i)})); //$NON-NLS-1$
+			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilMessages.getString("SortedMap.remove({0})_in_empty_map_2"), new String[]{Integer.toString(i)})); //$NON-NLS-1$
 		}
 		fSet.remove(i);
 		Object[] tmp = new Object[values.length-1];
