@@ -1545,12 +1545,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			monitor.beginTask(null, Policy.totalWork);
 			int depth = -1;
-			final boolean avoidNotification = (options & IWorkspace.AVOID_UPDATE) != 0;
+			boolean avoidNotification = (options & IWorkspace.AVOID_UPDATE) != 0;
 			try {
 				prepareOperation(rule, monitor);
 				beginOperation(true);
 				if (avoidNotification)
-					notificationManager.beginAvoidNotify();
+					avoidNotification = notificationManager.beginAvoidNotify();
 				depth = getWorkManager().beginUnprotected();
 				action.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			} catch (OperationCanceledException e) {

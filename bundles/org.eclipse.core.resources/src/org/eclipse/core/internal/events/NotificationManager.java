@@ -111,8 +111,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		}
 		EventStats.listenerAdded(listener);
 	}
-	public void beginAvoidNotify() {
-		avoidNotify.add(Thread.currentThread());
+	/**
+	 * Returns true if notification avoidance really started, and false for nested
+	 * operations.
+	 */
+	public boolean beginAvoidNotify() {
+		return avoidNotify.add(Thread.currentThread());
 	}
 	/**
 	 * Indicates that a notification phase is beginning. */
