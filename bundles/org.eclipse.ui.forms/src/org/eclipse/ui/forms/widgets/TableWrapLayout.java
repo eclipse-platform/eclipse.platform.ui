@@ -257,7 +257,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 					if (k < j + span - 1)
 						cwidth += horizontalSpacing;
 				}
-				Point size = computeSize(child, cwidth, changed);
+				Point size = computeSize(child, cwidth, td.indent, changed);
 				td.compWidth = cwidth;
 				if (td.heightHint != SWT.DEFAULT) {
 					size = new Point(size.x, td.heightHint);
@@ -329,11 +329,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		return widths;
 	}
-	Point computeSize(Control child, int width, boolean changed) {
-		int widthArg = width;
+	Point computeSize(Control child, int width, int indent, boolean changed) {
+		int widthArg = width - indent;
 		if (!isWrap(child))
 			widthArg = SWT.DEFAULT;
 		Point size = child.computeSize(widthArg, SWT.DEFAULT, changed);
+		size.x += indent;
 		return size;
 	}
 	void placeControl(Control control, TableWrapData td, int x, int y,
@@ -341,7 +342,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		int xloc = x + td.indent;
 		int yloc = y;
 		int height = td.compSize.y;
-		int colWidth = td.compWidth;
+		int colWidth = td.compWidth-td.indent;
 		int width = Math.min(td.compSize.x, colWidth);
 		int slotHeight = rowHeights[row];
 		RowSpan rowspan = (RowSpan) rowspans.get(control);
@@ -583,7 +584,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 				int cy = td.heightHint;
 				if (cy == SWT.DEFAULT) {
-					Point size = computeSize(child, cwidth, changed);
+					Point size = computeSize(child, cwidth, td.indent, changed);
 					cy = size.y;
 				}
 				RowSpan rowspan = (RowSpan) rowspans.get(child);
