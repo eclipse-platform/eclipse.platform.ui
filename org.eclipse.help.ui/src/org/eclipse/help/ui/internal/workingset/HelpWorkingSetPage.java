@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.ui.internal.util.WorkbenchResources;
 import org.eclipse.jface.util.Assert;
@@ -29,9 +28,12 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  */
 public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	public final static String PAGE_ID = "org.eclipse.help.ui.HelpWorkingSetPage";
-	public final static String PAGE_TITLE = WorkbenchResources.getString("WorkingSetPageTitle");
-	public final static String PAGE_DESCRIPTION = WorkbenchResources.getString("WorkingSetPageDescription");
+	public final static String PAGE_ID =
+		"org.eclipse.help.ui.HelpWorkingSetPage";
+	public final static String PAGE_TITLE =
+		WorkbenchResources.getString("WorkingSetPageTitle");
+	public final static String PAGE_DESCRIPTION =
+		WorkbenchResources.getString("WorkingSetPageDescription");
 
 	private Text workingSetName;
 	private CheckboxTreeViewer tree;
@@ -40,7 +42,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
 	private boolean firstCheck;
 	private IWorkingSet workingSet;
-		
+
 	/**
 	 * Default constructor.
 	 */
@@ -49,7 +51,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		setDescription(PAGE_DESCRIPTION);
 		firstCheck = true;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -154,12 +156,12 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		ArrayList elements = new ArrayList(10);
 		findCheckedElements(elements, tree.getInput());
 		if (workingSet == null) {
-			WorkingSet ws = HelpSystem.getWorkingSetManager().createWorkingSet(
-				//workingSetManager.createWorkingSet(
+			HelpWorkingSet ws =
+				new HelpWorkingSet(
 					workingSetName,
 					(AdaptableHelpResource[]) elements.toArray(
 						new AdaptableHelpResource[elements.size()]));
-			workingSet = new HelpWorkingSet(ws);
+			workingSet = ws.getIWorkingSet();
 		} else {
 			workingSet.setName(workingSetName);
 			workingSet.setElements(

@@ -49,8 +49,6 @@ public class WorkingSet {
 		if (newName == null)
 			return;
 		name = newName;
-		
-		HelpSystem.getWorkingSetManager().workingSetChanged(this);
 	}
 	
 	public AdaptableHelpResource[] getElements() {
@@ -63,8 +61,6 @@ public class WorkingSet {
 		this.elements = new ArrayList(elements.length);
 		for (int i=0; i<elements.length; i++)
 			this.elements.add(elements[i]);
-	
-		HelpSystem.getWorkingSetManager().workingSetChanged(this);
 	}
 	
 	public void saveState(Element parent) {

@@ -17,9 +17,10 @@ import org.eclipse.ui.*;
  * cast in the wizard, when getting the page id...
  * TODO: open bug on the ui component to fix the page id..
  */
-public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet {
+public class HelpWorkingSet{
 
 	private WorkingSet workingSet;
+	private IWorkingSet iworkingSet;
 	
 	/**
 	 * Constructor for HelpWorkingSet.
@@ -31,10 +32,37 @@ public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implement
 	}
 
 	public HelpWorkingSet(WorkingSet ws) {
-		super(ws.getName(), ws.getElements());
 		this.workingSet = ws;
-		// we need to also add the working set, as this is created from the Eclipse UI.
-		HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
+		this.iworkingSet = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(ws.getName(), ws.getElements());
+		// TODO: change this when API available
+		if (iworkingSet instanceof org.eclipse.ui.internal.WorkingSet)
+			((org.eclipse.ui.internal.WorkingSet)iworkingSet).setEditPageId(HelpWorkingSetPage.PAGE_ID);
+		
+		//HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
+		//PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(iworkingSet);
+	}
+	
+	public HelpWorkingSet(IWorkingSet iws) {
+		this.iworkingSet = iws;
+		AdaptableHelpResource[] elements = new AdaptableHelpResource[iws.getElements().length];
+		System.arraycopy(iws.getElements(),0,elements,0,elements.length);
+		this.workingSet = HelpSystem.getWorkingSetManager().createWorkingSet(iws.getName(), elements);
+		
+		//HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
+		//PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(iworkingSet);
+	}
+
+	public HelpWorkingSet(WorkingSet ws, IWorkingSet iws) {
+		this.workingSet = ws;
+		this.iworkingSet = iws;
+	}
+
+	public IWorkingSet getIWorkingSet() {
+		return iworkingSet;
+	}
+	
+	public WorkingSet getWorkingSet() {
+		return workingSet;
 	}
 	
 	/**
@@ -48,66 +76,13 @@ public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implement
 		if (this == object) {
 			return true;
 		}
-		if (object instanceof WorkingSet) {
-			WorkingSet ws = (WorkingSet) object;
-			//String objectPageId = ws.getEditPageId();
-			//String pageId = getEditPageId();
-			boolean pageIdEqual =  true; //(objectPageId == null && pageId == null) || (objectPageId != null && objectPageId.equals(pageId));
-			return workingSet.getName().equals(getName()) && ws.getElements().equals(workingSet.getElements()) && pageIdEqual;
-		}
-		return false;
-	}
-	
-	/**
-	 * @see org.eclipse.ui.IWorkingSet#getName()
-	 */
-	public String getName() {
-		return workingSet.getName();
+		if (object instanceof HelpWorkingSet) {
+			HelpWorkingSet ws = (HelpWorkingSet)object;
+			return this.workingSet == ws.workingSet;
+		} else
+			return false;
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkingSet#getElements()
-	 */
-	public IAdaptable[] getElements() {
-		return workingSet.getElements();
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWorkingSet#setElements(org.eclipse.core.runtime.IAdaptable)
-	 */
-	public void setElements(IAdaptable[] elements) {
-		AdaptableHelpResource[] res = new AdaptableHelpResource[elements.length];
-		System.arraycopy(elements, 0,res,0, elements.length);
-		workingSet.setElements(res);
-
-		HelpSystem.getWorkingSetManager().workingSetChanged(workingSet);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWorkingSet#setName(java.lang.String)
-	 */
-	public void setName(String name) {
-		workingSet.setName(name);
-		
-		HelpSystem.getWorkingSetManager().workingSetChanged(workingSet);
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkingSet.class || adapter == IPersistableElement.class) 
-			return this;
-		else
-			return null;
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-	 */
-	public String getFactoryId() {
-		return "org.eclipse.help.ui.internal.workingset.HelpResourceFactory";
-	}
 
 	/**
 	 * @see org.eclipse.ui.IPersistableElement#saveState(org.eclipse.ui.IMemento)
@@ -141,16 +116,4 @@ public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implement
 		}
 	}
 
-	/**
-	 * NOTE: OVERRIDES THE SUPER METHOD. 
-	 * TO DO: THIS METHOD SHOULD BE CLEANed-UP.  
-	 * Sets the id of the working set
-	 * page that was used to create the receiver.
-	 *
-	 * @param pageId the id of the working set page.
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
-	 */
-	public String getEditPageId() {
-		return HelpWorkingSetPage.PAGE_ID;
-	}
 }
