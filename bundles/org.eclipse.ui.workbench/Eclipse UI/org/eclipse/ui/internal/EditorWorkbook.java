@@ -192,6 +192,14 @@ public void createControl(Composite parent) {
 	// listen for mouse down on tab area to set focus.
 	tabFolder.addMouseListener(new MouseAdapter() {
 		public void mouseDoubleClick(MouseEvent event) {
+			Rectangle clientArea = tabFolder.getClientArea();
+			if((tabFolder.getStyle() & SWT.TOP) != 0) {
+				if(event.y > clientArea.y)
+					return;
+			} else {
+				if(event.y < clientArea.y + clientArea.height)
+					return;
+			}			
 			doZoom();
 		}
 
