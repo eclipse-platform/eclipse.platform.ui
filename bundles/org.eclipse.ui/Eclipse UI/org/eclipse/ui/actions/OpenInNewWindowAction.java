@@ -7,7 +7,6 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
@@ -15,7 +14,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.views.navigator.IResourceNavigatorPart;
 
 /**
  * Opens a new window. The initial perspective
@@ -59,37 +57,7 @@ public class OpenInNewWindowAction extends Action {
 	public void setPageInput(IAdaptable input) {
 		pageInput = input;
 	}
-	/**
-	 * Propagate the working set from the resource navigator in oldPage
-	 * to the one in newPage.
-	 * 
-	 * @param oldPage page that may contain a resource navigator to take 
-	 * 	the working set from.
-	 * @param newPage page that may contain a resource navigator to set 
-	 * 	working set in.
-	 */
-	private void setWorkingSet(IWorkbenchPage oldPage, IWorkbenchPage newPage) {
-		IViewPart[] views = oldPage.getViews();
-		IWorkingSet workingSet = null;
-		
-		for (int i = 0; i < views.length; i++) {
-			IViewPart view = views[i];
-			if (view instanceof IResourceNavigatorPart) {
-				workingSet = ((IResourceNavigatorPart) view).getWorkingSet();
-				break;
-			}
-		}		
-		if (workingSet != null) {
-			views = newPage.getViews();
-			for (int i = 0; i < views.length; i++) {
-				IViewPart view = views[i];
-				if (view instanceof IResourceNavigatorPart) {
-					((IResourceNavigatorPart) view).setWorkingSet(workingSet);
-					break;
-				}
-			}		
-		}
-	}	
+	
 	/**
 	 * The implementation of this <code>IAction</code> method
 	 * opens a new window. The initial perspective
@@ -107,10 +75,7 @@ public class OpenInNewWindowAction extends Action {
 			else
 				perspId = workbenchWindow.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
 
-			IWorkbenchWindow newWindow = workbenchWindow.getWorkbench().openWorkbenchWindow(perspId, pageInput);
-			if (newWindow != null) {
-				setWorkingSet(page, newWindow.getActivePage());
-			}
+			workbenchWindow.getWorkbench().openWorkbenchWindow(perspId, pageInput);
 		} catch (WorkbenchException e) {
 			MessageDialog.openError(
 				workbenchWindow.getShell(),
