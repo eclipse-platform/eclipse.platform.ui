@@ -164,12 +164,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	}
 	
 	/*package*/ void flush(IProject project) throws CVSException {
-		try {
-			getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, project, IResource.DEPTH_INFINITE);
-			getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, project, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		}
+		purgeCache(project, true);
 	}
 	
 	/**
@@ -177,16 +172,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * @param folder
 	 */
 	/*package*/ void flush(IFolder folder) throws CVSException {
-		try {
-			if (folder.exists() || folder.isPhantom()) {
-				getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, folder, IResource.DEPTH_ZERO);
-			}
-			if (folder.exists() || folder.isPhantom()) {
-				getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, folder, IResource.DEPTH_ZERO);
-			}
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		}
+		purgeCache(folder, false);
 	}
 	
 	/**
@@ -358,6 +344,25 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	protected void ensureWorkspaceModifiable(IResource resource) throws CVSException {
 		if (!EclipseSynchronizer.getInstance().isWorkspaceModifiable()) {
 			throw new CVSException(Policy.bind("EclipseSynchronizer.workspaceClosedForResource", resource.getFullPath().toString()));
+		}
+		
+	}
+	
+	/**
+	 * @param root
+	 * @param deep
+	 */
+	public void purgeCache(IContainer root, boolean deep) throws CVSException {
+		int depth = deep ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO;
+		try {
+			if (root.exists() || root.isPhantom()) {
+				getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, root, depth);
+			}
+			if (root.exists() || root.isPhantom()) {
+				getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, root, depth);
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
 		}
 		
 	}

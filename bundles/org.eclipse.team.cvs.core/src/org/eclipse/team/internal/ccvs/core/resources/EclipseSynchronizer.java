@@ -458,7 +458,10 @@ public class EclipseSynchronizer {
 			IStatus status = commitCache(Policy.subMonitorFor(monitor, 7));
 			
 			// purge from memory too if we were asked to
-			if (purgeCache) sessionPropertyCache.purgeCache(root, deep);
+			if (purgeCache) {
+				sessionPropertyCache.purgeCache(root, deep);
+				synchronizerCache.purgeCache(root, deep);
+			} 
 	
 			// prepare for the operation again if we cut the last one short
 			prepareCache(Policy.subMonitorFor(monitor, 1));
