@@ -96,7 +96,6 @@ public class ConsoleLineNotifier {
 				listener.lineAppended(lineRegion);
 			}
 		}
-		// TODO: what about the last line?
 	}
 	
 	/**
