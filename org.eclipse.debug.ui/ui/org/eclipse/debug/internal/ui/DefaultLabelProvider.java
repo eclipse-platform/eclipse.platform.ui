@@ -180,7 +180,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * Used to render launch history items in the re-launch drop downs
 	 */
 	protected String getLaunchText(ILaunch launch) {
-		if (launch.getLaunchConfiguration() == null) {
+		if (launch.getLaunchConfiguration() == null || !launch.getLaunchConfiguration().exists()) {
 			return DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1"); //$NON-NLS-1$
 		} else {
 			// new launch configuration
