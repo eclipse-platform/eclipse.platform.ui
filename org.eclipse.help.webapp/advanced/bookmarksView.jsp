@@ -68,8 +68,8 @@ function removeBookmark()
 function removeAllBookmarks() 
 {
 	hidePopupMenu();
-	//if(!confirm("<%=ServletResources.getString("confirmDeleteAllBookmarks",request)%>"))
-	//	return true;
+	if(!confirm("<%=ServletResources.getString("confirmDeleteAllBookmarks",request)%>"))
+		return true;
 	window.location.replace("bookmarksView.jsp?operation=removeAll");
 	return true;
 }
