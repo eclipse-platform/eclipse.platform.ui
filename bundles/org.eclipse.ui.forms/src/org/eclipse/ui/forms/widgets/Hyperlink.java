@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.internal.widgets.*;
 /**
  * Hyperlink is a concrete implementation of the abstract base class that draws
  * text in the client area. Text can be wrapped and underlined. Hyperlink is

@@ -44,12 +44,32 @@ public class Section extends ExpandableComposite {
 		reflow();
 	}
 	protected void reflow() {
-		setRedraw(false);
-		getParent().setRedraw(false);
-		layout(true);
-		getParent().layout(true);
-		setRedraw(true);
-		getParent().setRedraw(true);
+		Composite c = this;
+		
+		while (c!=null) {
+			c.setRedraw(false);
+			c = c.getParent();
+			if (c instanceof ScrolledForm) {
+				break;
+			}
+		}
+		c=this;
+		while (c!=null) {
+			c.layout(true);
+			c = c.getParent();
+			if (c instanceof ScrolledForm) {
+				((ScrolledForm)c).reflow(true);
+				break;
+			}
+		}
+		c=this;
+		while (c!=null) {
+			c.setRedraw(true);
+			c = c.getParent();
+			if (c instanceof ScrolledForm) {
+				break;
+			}
+		}
 	}
 	/**
 	 * Sets the description text. Has no effect of DESCRIPTION style was not

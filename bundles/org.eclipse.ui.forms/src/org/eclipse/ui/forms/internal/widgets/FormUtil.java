@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.widgets;
+package org.eclipse.ui.forms.internal.widgets;
 
 import java.text.BreakIterator;
 
@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * TODO This class is under construction and will probably move to internal
@@ -84,7 +85,7 @@ public class FormUtil {
 		return text;
 	}
 	
-	static int computeMinimumWidth(GC gc, String text) {
+	public static int computeMinimumWidth(GC gc, String text) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		int last = 0;
@@ -102,7 +103,7 @@ public class FormUtil {
 		return width;
 	}
 
-	static Point computeWrapSize(GC gc, String text, int wHint) {
+	public static Point computeWrapSize(GC gc, String text, int wHint) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		FontMetrics fm = gc.getFontMetrics();
@@ -128,13 +129,13 @@ public class FormUtil {
 		}
 		return new Point(maxWidth, height);
 	}
-	static void paintWrapText(
+	public static void paintWrapText(
 		GC gc,
 		String text,
 		Rectangle bounds) {
 		paintWrapText(gc, text, bounds, false);
 	}
-	static void paintWrapText(
+	public static void paintWrapText(
 		GC gc,
 		String text,
 		Rectangle bounds,
@@ -180,7 +181,7 @@ public class FormUtil {
 			gc.drawLine(bounds.x, lineY, bounds.x + lastExtent.x, lineY);
 		}
 	}
-	static ScrolledComposite getScrolledComposite(Control c) {
+	public static ScrolledComposite getScrolledComposite(Control c) {
 		Composite parent = c.getParent();
 
 		while (parent != null) {
@@ -192,19 +193,19 @@ public class FormUtil {
 		return null;
 	}
 	
-	static void ensureVisible(Control c) {
+	public static void ensureVisible(Control c) {
 		ScrolledComposite scomp = getScrolledComposite(c);
 		if (scomp != null) {
 			FormUtil.ensureVisible(scomp, c);
 		}
 	}
-	static void ensureVisible(ScrolledComposite scomp, Control control) {
+	public static void ensureVisible(ScrolledComposite scomp, Control control) {
 		Point controlSize = control.getSize();
 		Point controlOrigin = getControlLocation(scomp, control);
 		ensureVisible(scomp, controlOrigin, controlSize);
 	}
 
-	static void ensureVisible(
+	public static void ensureVisible(
 		ScrolledComposite scomp,
 		Point controlOrigin,
 		Point controlSize) {
@@ -233,7 +234,7 @@ public class FormUtil {
 			scomp.setOrigin(x, y);
 	}
 
-	static Point getControlLocation(ScrolledComposite scomp, Control control) {
+	public static Point getControlLocation(ScrolledComposite scomp, Control control) {
 		int x = 0;
 		int y = 0;
 		Control currentControl = control;
@@ -260,7 +261,7 @@ public class FormUtil {
 		int increment = up ? -clientArea.height : clientArea.height;
 		scroll(scomp, 0, increment);
 	}
-	private static void scroll(
+	static void scroll(
 		ScrolledComposite scomp,
 		int xoffset,
 		int yoffset) {
@@ -275,7 +276,7 @@ public class FormUtil {
 		scomp.setOrigin(xorigin, yorigin);
 	}
 
-	static void updatePageIncrement(ScrolledComposite scomp) {
+	public static void updatePageIncrement(ScrolledComposite scomp) {
 		ScrollBar vbar = scomp.getVerticalBar();
 		if (vbar != null) {
 			Rectangle clientArea = scomp.getClientArea();
@@ -283,7 +284,7 @@ public class FormUtil {
 			vbar.setPageIncrement(increment);
 		}
 	}
-	static void processKey(int keyCode, Control c) {
+	public static void processKey(int keyCode, Control c) {
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(c);
 		if (scomp != null) {
 			switch (keyCode) {
@@ -318,12 +319,12 @@ public class FormUtil {
 		}
 	}
 	
-	static int getWidthHint(int wHint, Control c) {
+	public static int getWidthHint(int wHint, Control c) {
 		boolean wrap=isWrapControl(c);
 		return wrap ? wHint : SWT.DEFAULT;
 	}
 	
-	static int getHeightHint(int hHint, Control c) {
+	public static int getHeightHint(int hHint, Control c) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite)c).getLayout();
 			if (layout instanceof ColumnLayout)
@@ -332,7 +333,7 @@ public class FormUtil {
 		return SWT.DEFAULT;
 	}
 	
-	static int computeMinimumWidth(Control c, boolean changed) {
+	public static int computeMinimumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite)c).getLayout();
 			if (layout instanceof ILayoutExtension)
@@ -340,7 +341,7 @@ public class FormUtil {
 		}
 		return c.computeSize(FormUtil.getWidthHint(5, c), SWT.DEFAULT, changed).x;
 	}
-	static int computeMaximumWidth(Control c, boolean changed) {
+	public static int computeMaximumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite)c).getLayout();
 			if (layout instanceof ILayoutExtension)

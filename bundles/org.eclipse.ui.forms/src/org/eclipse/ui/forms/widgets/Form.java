@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.internal.widgets.*;
 import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
  * Form is a custom control that renders a title and

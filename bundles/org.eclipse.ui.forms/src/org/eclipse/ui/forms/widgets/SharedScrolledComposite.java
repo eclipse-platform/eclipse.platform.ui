@@ -13,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.internal.widgets.*;
 /**
  * This class is used to provide common scrolling services to a number
  * of control in the toolkit.

@@ -16,6 +16,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.internal.widgets.*;
 /**
  * The toolkit is responsible for creating SWT controls adapted to work in
  * Eclipse forms. In addition to changing their presentation properties (fonts,

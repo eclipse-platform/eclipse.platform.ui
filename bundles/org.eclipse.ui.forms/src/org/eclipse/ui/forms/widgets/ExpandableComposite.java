@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.internal.widgets.*;
 import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
  * This composite is capable of expanding or collapsing a single client that is
@@ -174,7 +175,7 @@ public class ExpandableComposite extends Composite {
 				if (expanded && client != null)
 					height += VSPACE;
 			}
-			if ((expanded || (expansionStyle & COMPACT) != 0) && client != null) {
+			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					cwHint = innerwHint;
@@ -215,7 +216,7 @@ public class ExpandableComposite extends Composite {
 			int width = 0;
 			Point size = textLabel.computeSize(5, SWT.DEFAULT, changed);
 			width = size.x;
-			if ((expanded || (expansionStyle & COMPACT) != 0) && client != null) {
+			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
 					dsize = getDescriptionControl().computeSize(5, SWT.DEFAULT,
@@ -243,7 +244,7 @@ public class ExpandableComposite extends Composite {
 			Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 					changed);
 			width = size.x;
-			if ((expanded || (expansionStyle & COMPACT) != 0) && client != null) {
+			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
 					dsize = getDescriptionControl().computeSize(SWT.DEFAULT,
