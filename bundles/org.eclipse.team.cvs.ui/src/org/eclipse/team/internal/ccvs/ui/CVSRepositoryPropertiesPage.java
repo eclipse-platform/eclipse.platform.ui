@@ -210,6 +210,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			info.setPassword(passwordText.getText());
 		}
 		final String type = methodType.getText();
+		final String password = passwordText.getText();
 		final boolean[] result = new boolean[] { false };
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
@@ -218,7 +219,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 						// Check if the password was the only thing to change.
 						if (passwordChanged && !connectionInfoChanged) {
 							CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
-							oldLocation.setPassword(passwordText.getText());
+							oldLocation.setPassword(password);
 							oldLocation.updateCache();
 							result[0] = true;
 							return;
