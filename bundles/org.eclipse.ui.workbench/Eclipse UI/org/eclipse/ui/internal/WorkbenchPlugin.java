@@ -507,6 +507,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
 		//Temporary option to turn off the dialog font
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
+		//Temporary preference to use new progress view
+		store.setDefault( "USE_NEW_PROGRESS",false);//$NON-NLS-1$
 		
 		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
 		FontRegistry registry = JFaceResources.getFontRegistry();

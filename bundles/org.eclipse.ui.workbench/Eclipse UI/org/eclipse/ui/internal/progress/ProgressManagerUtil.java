@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 class ProgressManagerUtil {
 	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+	private static String NEW_PROGRESS_ID = "org.eclipse.ui.views.NewProgressView";//$NON-NLS-1$
 	/**
 	 * Return a status for the exception.
 	 * 
@@ -79,7 +80,11 @@ class ProgressManagerUtil {
 		if (page == null)
 			return;
 		try {
-			page.showView(PROGRESS_VIEW_ID);
+			if(WorkbenchPlugin.getDefault()
+					.getPreferenceStore().getBoolean("USE_NEW_PROGRESS"))
+				page.showView(NEW_PROGRESS_ID);
+			else
+				page.showView(PROGRESS_VIEW_ID);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
