@@ -673,7 +673,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                 replaceString.append(openElementName);
                 replaceString.append('>');
-                proposal= new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, openElementName, AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
+                StringBuffer displayString= new StringBuffer("</"); //$NON-NLS-1$
+                displayString.append(openElementName);
+                displayString.append('>');
+                proposal= new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, displayString.toString(), AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
             }
         }
        
