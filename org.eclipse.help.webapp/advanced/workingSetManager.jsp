@@ -47,6 +47,9 @@ TD, TR {
 INPUT {
 	font:<%=prefs.getViewFont()%>;
 }
+BUTTON {
+	font:<%=prefs.getViewFont()%>;
+}
 
 #workingSetContainer {
 	background:Window;
@@ -148,6 +151,7 @@ function selectWorkingSet() {
 		search);
 
  	window.close();
+	return false;
 }
 
 function removeWorkingSet() {
@@ -215,14 +219,14 @@ function closeWorkingSetDialog()
 </head>
 
 <body onload="onloadHandler()" onunload="closeWorkingSetDialog()">
-<form onsubmit="selectWorkingSet()">
+<form onsubmit="selectWorkingSet();return false;">
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
 		<tr><td>
-			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs"><%=ServletResources.getString("selectAll", request)%></label>
+			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs" accesskey="<%=ServletResources.getAccessKey("selectAll", request)%>"><%=ServletResources.getLabel("selectAll", request)%></label>
 		</td></tr>
 		<tr><td>
-			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws"><%=ServletResources.getString("selectWorkingSet", request)%>:</label>	
+			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws" accesskey="<%=ServletResources.getAccessKey("selectWorkingSet", request)%>"><%=ServletResources.getLabel("selectWorkingSet", request)%>:</label>	
 		</td></tr>
 		<tr><td>
 			<div id="workingSetContainer" style="overflow:auto; height:150px; background:<%=prefs.getViewBackground()%>;">
@@ -259,13 +263,13 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
+						<button type="button" onclick="newWorkingSet()" id="new" accesskey="<%=ServletResources.getAccessKey("NewWorkingSetButton", request)%>"><%=ServletResources.getLabel("NewWorkingSetButton", request)%>...</button>
 					</td>
 					<td>
-					  	<input type="button" onclick="editWorkingSet()" value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
+					  	<button type="button"  onclick="editWorkingSet()" id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' accesskey="<%=ServletResources.getAccessKey("EditWorkingSetButton", request)%>"><%=ServletResources.getLabel("EditWorkingSetButton", request)%>...</button>
 					</td>
 					<td>
-					  	<input type="button" onclick="removeWorkingSet()" value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
+					  	<button type="button"  onclick="removeWorkingSet()" id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' accesskey="<%=ServletResources.getAccessKey("RemoveWorkingSetButton", request)%>"><%=ServletResources.getLabel("RemoveWorkingSetButton", request)%></button>
 					</td>
 				</tr>
   			</table>
@@ -278,7 +282,7 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="submit" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input type="submit" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td>
 					  	<input type="reset" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>

@@ -326,9 +326,9 @@ function enableOK() {
 </head>
 
 <body onload="onloadHandler()">
-<form onsubmit="doSubmit()">
+<form onsubmit="doSubmit();return false;">
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet"><%=ServletResources.getString("WorkingSetName", request)%>:</label>
+		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%>:</label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
@@ -391,7 +391,7 @@ for (int i=0; i<data.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="submit" onclick="doSubmit()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input type="submit" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td>
 					  	<input type="reset" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
