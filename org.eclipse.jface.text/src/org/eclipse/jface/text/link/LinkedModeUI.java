@@ -1046,6 +1046,9 @@ public class LinkedModeUI {
 	}
 
 	private void disconnect() {
+		if (!fIsActive)
+			return;
+		
 		Assert.isNotNull(fCurrentTarget);
 		ITextViewer viewer= fCurrentTarget.getViewer();
 		Assert.isNotNull(viewer);
