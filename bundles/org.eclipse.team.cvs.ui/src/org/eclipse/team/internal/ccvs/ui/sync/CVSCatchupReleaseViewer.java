@@ -86,10 +86,15 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		}
 		public void run() {
 			if (selection.isEmpty()) return;
-			ITeamNode node = (ITeamNode)selection.getFirstElement();
-			ICVSRemoteFile remoteFile = (ICVSRemoteFile)((TeamFile)node).getMergeResource().getSyncElement().getRemote();
 			HistoryView view = HistoryView.openInActivePerspective();
-			if (view != null) {
+			if (view == null) return;
+			ITeamNode node = (ITeamNode)selection.getFirstElement();
+			IRemoteSyncElement remoteSyncElement = ((TeamFile)node).getMergeResource().getSyncElement();
+			IResource resource = remoteSyncElement.getLocal();
+			if (resource.exists()) {
+				view.showHistory(resource);
+			} else {
+				ICVSRemoteFile remoteFile = (ICVSRemoteFile)remoteSyncElement.getRemote();
 				view.showHistory(remoteFile);
 			}
 		}
