@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -77,10 +76,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		//Set the workspace selection dialog to open by default
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG, true);
 
-		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService()
-				.getRootNode().node(InstanceScope.SCOPE);
-
-		((IEclipsePreferences) rootNode.node(UIPlugin.getDefault().getBundle().getSymbolicName()))
+		new InstanceScope().getNode(UIPlugin.getDefault().getBundle().getSymbolicName())
 				.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 	}
 

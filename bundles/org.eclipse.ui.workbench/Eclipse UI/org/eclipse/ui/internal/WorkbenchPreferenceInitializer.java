@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -91,11 +90,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		//Set the default theme.
 		node.put(IPreferenceConstants.CURRENT_THEME_ID, IThemeManager.DEFAULT_THEME);
 
-		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService()
-				.getRootNode().node(InstanceScope.SCOPE);
-
 		JFacePreferences.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		((IEclipsePreferences) rootNode.node( WorkbenchPlugin.getDefault().getBundle().getSymbolicName()))
+		new InstanceScope().getNode(WorkbenchPlugin.getDefault().getBundle().getSymbolicName())
 				.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 
 	}

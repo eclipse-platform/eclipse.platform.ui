@@ -185,8 +185,7 @@ public class ChooseWorkspaceData {
 	 */
 	public void writePersistedData() {
 		// 1. get config pref node
-		Preferences node = Platform.getPreferencesService().getRootNode().node(
-				ConfigurationScope.SCOPE).node(PlatformUI.PLUGIN_ID);
+		Preferences node = new ConfigurationScope().getNode(PlatformUI.PLUGIN_ID);
 
 		// 2. get value for showDialog
 		node.putBoolean(
