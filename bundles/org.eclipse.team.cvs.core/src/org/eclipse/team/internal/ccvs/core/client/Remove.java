@@ -19,13 +19,14 @@ public class Remove extends Command {
 		return "remove"; //$NON-NLS-1$
 	}
 
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
 		// Send all modified files to the server
 		// XXX Does the command line client send all modified files?
 		new ModifiedFileSender(session, monitor).visit(session, resources);
+		return resources;
 	}
 }
 

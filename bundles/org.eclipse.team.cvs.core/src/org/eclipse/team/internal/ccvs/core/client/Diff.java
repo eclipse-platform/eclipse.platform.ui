@@ -43,13 +43,14 @@ public class Diff extends Command {
 		}
 	}
 
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
 		checkResourcesManaged(resources);
 		DiffStructureVisitor visitor = new DiffStructureVisitor(session, monitor);
 		visitor.visit(session, resources);
+		return resources;
 	}
 	
 	protected String getServerErrorMessage() {

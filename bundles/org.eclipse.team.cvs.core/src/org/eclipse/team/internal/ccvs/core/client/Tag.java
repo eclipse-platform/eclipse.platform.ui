@@ -88,7 +88,7 @@ public class Tag extends Command {
 		return DEFAULT_OUTPUT_LISTENER;
 	}
 		
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
@@ -98,5 +98,6 @@ public class Tag extends Command {
 		} else {
 			new FileStructureVisitor(session, false, false, monitor).visit(session, resources);
 		}
+		return resources;
 	}
 }

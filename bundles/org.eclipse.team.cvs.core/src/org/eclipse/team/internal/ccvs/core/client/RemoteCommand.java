@@ -28,10 +28,11 @@ public abstract class RemoteCommand extends Command {
 		return new ICVSResource[0];
 	}
 
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {
 		// do nothing
+		return resources;
 	}
 	
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {

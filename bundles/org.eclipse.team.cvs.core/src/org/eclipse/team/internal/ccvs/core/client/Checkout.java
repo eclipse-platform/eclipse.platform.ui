@@ -79,7 +79,7 @@ public class Checkout extends Command {
 	 *    (This has to change to we give it the name of the modul and the
 	 *    Checkout creates everything for us)
 	 */
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
@@ -98,6 +98,7 @@ public class Checkout extends Command {
 			resources = (ICVSResource[]) resourcesToSend.toArray(new ICVSResource[resourcesToSend.size()]);
 			new FileStructureVisitor(session, true, true, monitor).visit(session, resources);
 		}
+		return resources;
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {

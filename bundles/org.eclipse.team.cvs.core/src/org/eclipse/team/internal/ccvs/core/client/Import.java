@@ -47,13 +47,14 @@ public class Import extends Command {
 		return super.doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
 	}
 	
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {
 	
 		ICVSResourceVisitor visitor = new ImportStructureVisitor(session,
 			collectOptionArguments(localOptions, "-W"), monitor);		 //$NON-NLS-1$
 		session.getLocalRoot().accept(visitor);
+		return resources;
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {

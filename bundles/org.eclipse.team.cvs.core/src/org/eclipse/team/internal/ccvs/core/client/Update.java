@@ -65,13 +65,14 @@ public class Update extends Command {
 		return DEFAULT_OUTPUT_LISTENER;
 	}
 	
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
 		// Send all folders that are already managed to the server
 		// even folders that are empty
 		sendFileStructure(session, resources, true, monitor);
+		return resources;
 	}
 	
 	/**

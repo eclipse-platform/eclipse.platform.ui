@@ -33,7 +33,7 @@ public class Commit extends Command {
 	 * Send all files under the workingFolder as changed files to 
 	 * the server.
 	 */		
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
@@ -49,6 +49,7 @@ public class Commit extends Command {
 		for (int i = 0; i < changedFiles.length; i++) {
 			session.sendArgument(changedFiles[i].getRelativePath(session.getLocalRoot()));
 		}
+		return changedFiles;
 	}
 	
 	/**

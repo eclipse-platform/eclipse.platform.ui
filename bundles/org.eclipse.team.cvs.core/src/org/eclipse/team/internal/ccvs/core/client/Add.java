@@ -24,7 +24,7 @@ public class Add extends Command {
 		return "add";  //$NON-NLS-1$
 	}
 	
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
@@ -39,6 +39,7 @@ public class Add extends Command {
 		// work on
 		AddStructureVisitor visitor = new AddStructureVisitor(session, monitor);
 		visitor.visit(session, resources);
+		return resources;
 	}
 	
 	/**

@@ -19,7 +19,7 @@ public class NOOPCommand extends Command {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.client.Command#sendLocalResourceState(Session, GlobalOption[], LocalOption[], ICVSResource[], IProgressMonitor)
 	 */
-	protected void sendLocalResourceState(
+	protected ICVSResource[] sendLocalResourceState(
 		Session session,
 		GlobalOption[] globalOptions,
 		LocalOption[] localOptions,
@@ -29,6 +29,7 @@ public class NOOPCommand extends Command {
 		
 		// The noop visitor will send any pending notifications
 		new NOOPVisitor(session, monitor).visit(session, resources);
+		return resources;
 	}
 
 	/**

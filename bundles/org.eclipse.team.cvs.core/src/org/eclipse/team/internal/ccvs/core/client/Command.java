@@ -151,14 +151,21 @@ public abstract class Command extends Request {
 	 * local resources using the Entries, Modified, Unchanged, and Questionable
 	 * requests as needed.
 	 * </p>
+	 * <p>
+	 * This method should return the resources that are of interest to the
+	 * <code>Command#commandFinished()</code> method. In most cases, it
+	 * is the same resources that are provided but in some cases (e.g. Commit)
+	 * the resources to be passed to the above method are different.
+	 * </p>
 	 * 
 	 * @param session the CVS session
 	 * @param globalOptions the global options for the command
 	 * @param localOptions the local options for the command
 	 * @param resources the resource arguments for the command
 	 * @param monitor the progress monitor
+	 * @return ICVSResource[]
 	 */
-	protected abstract void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected abstract ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException;
 
@@ -375,7 +382,7 @@ public abstract class Command extends Request {
 			resources = computeWorkResources(session, localOptions, arguments);			
 			Policy.checkCanceled(monitor);
 			// send local working directory state contributes 25% of work
-			sendLocalResourceState(session, globalOptions, localOptions,
+			resources = sendLocalResourceState(session, globalOptions, localOptions,
 				resources, Policy.subMonitorFor(monitor, 25));
 			Policy.checkCanceled(monitor);
 			// send arguments

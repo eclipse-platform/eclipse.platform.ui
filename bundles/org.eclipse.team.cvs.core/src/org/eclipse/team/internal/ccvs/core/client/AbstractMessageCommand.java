@@ -19,12 +19,13 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
  */
 abstract class AbstractMessageCommand extends Command {
 
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
 		// Send all folders that are already managed to the server
 		new FileStructureVisitor(session, false, false, monitor).visit(session, resources);
+		return resources;
 	}
 
 }
