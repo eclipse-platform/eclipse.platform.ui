@@ -65,7 +65,7 @@ public class PluginActivator implements BundleActivator {
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
 		// TODO look at other ways of doing this to make it faster (getService is not as fast 
 		// as we might like but it is not horrible.  Also, we never close the tracker.
-		StartLevel startLevel = getStartLevel(context);
+		StartLevel startLevel = getStartLevel(InternalPlatform.getDefault().getBundleContext());
 		if (startLevel == null)
 			return;
 		if (startLevel.getStartLevel() <= startLevel.getBundleStartLevel(context.getBundle())) {
