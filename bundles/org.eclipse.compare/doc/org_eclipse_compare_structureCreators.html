@@ -1,0 +1,55 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Compare Extension Points: structureCreators</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+StructureCreators</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.compare.structureCreators
+<p><b><i>Description: </i></b>This extension point allows to plug in an
+object that produces a tree structure of <tt>IStructureComparator</tt>
+for a given content.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT structureCreator EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST structureCreator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - a unique identifier that can be used to reference the structure
+creator</li>
+
+<li>
+<b>class</b> - name of a class that implements the strcuture creator and
+implements <tt>org.eclipse.compare.structuremergeviewer.IStructureComparator</tt></li>
+
+<li>
+<b>extensions </b>- a comma separated list of file extensions e.g . "java,
+properties"</li>
+</ul>
+<b><i>Examples:</i></b>
+<br>The following is an example of a structure creator for java files (extension
+"java"):
+<p>&lt;extension point = "org.eclipse.compare.structureCreators">
+<br>&nbsp;&nbsp;&nbsp;&nbsp; &lt;structureCreator
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.compare.JavaStructureCreator"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.compare.JavaStructureCreator"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions="java"
+<br>&nbsp;&nbsp;&nbsp; />
+<br>&lt;/extension>
+<p><b><i>Supplied Implementation:</i></b>
+<br>The Compare UI plugin defines a structure creator for zip archives.
+<p><br>
+<p>&nbsp;<a href="hglegal2002.htm"><img src="ngibmcpy2002.gif" alt="Copyright IBM Corporation 2000, 2002. All Rights Reserved." border="0" width="324" height="14"></a>
+</p>
+</body>
+</html>

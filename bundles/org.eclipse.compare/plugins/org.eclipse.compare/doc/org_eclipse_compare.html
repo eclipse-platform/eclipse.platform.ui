@@ -1,0 +1,47 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Compare Infrastructure Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+IBM Eclipse Platform Compare</h1></center>
+This document lists all of the extension points that the compare plug-in
+makes available to tool developers.
+<p>All XML sub-elements defined in the individual extension point documents
+may appear more than once inside an extension element. For example, an
+<tt>org.eclipse.compare.contentMergeViewers</tt> extension may contain
+several instances of <tt>viewer</tt> elements. Although making one extension
+per sub-element is not technically incorrect, we recommend grouping for
+consistent style. It can also improve platform startup time because there
+will be fewer extensions to process.
+<br>
+<hr WIDTH="100%">
+<h1>
+Extension Points</h1>
+The following extension points can be used to extend the capabilities of
+the compare infrastructure:
+<ul>
+<li>
+<a href="org_eclipse_compare_contentMergeViewers.html">org.eclipse.compare.contentMergeViewers</a></li>
+
+<li>
+<a href="org_eclipse_compare_contentViewers.html">org.eclipse.compare.contentViewers</a></li>
+
+<li>
+<a href="org_eclipse_compare_structureMergeViewers.html">org.eclipse.compare.structureMergeViewers</a></li>
+
+<li>
+<a href="org_eclipse_compare_structureCreators.html">org.eclipse.compare.structureCreators</a></li>
+</ul>
+<p><br>
+<p>&nbsp;<a href="hglegal2002.htm"><img src="ngibmcpy2002.gif" alt="Copyright IBM Corporation 2000, 2002. All Rights Reserved." border="0" width="324" height="14"></a>
+</p>
+</body>
+</html>
+
+
