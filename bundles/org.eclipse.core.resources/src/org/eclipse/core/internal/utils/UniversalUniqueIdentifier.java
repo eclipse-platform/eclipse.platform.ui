@@ -101,8 +101,8 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	 */
 	public UniversalUniqueIdentifier(byte[] byteValue) {
 		fBits = new byte[BYTES_SIZE];
-		if (byteValue.length == BYTES_SIZE)
-			System.arraycopy(byteValue, 0, fBits, 0, byteValue.length);
+		if (byteValue.length >= BYTES_SIZE)
+			System.arraycopy(byteValue, 0, fBits, 0, BYTES_SIZE);
 	}
 
 	/**
@@ -116,7 +116,9 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	 */
 	public UniversalUniqueIdentifier(String string) {
 		// Check to ensure it is a String of the right length.
-		Assert.isTrue(string.length() == PrintStringSize, Policy.bind("utils.wrongLength", string)); //$NON-NLS-1$
+		// do not use Assert to avoid having to call Policy.bind ahead of time
+		if (string.length() != PrintStringSize)
+			Assert.isTrue(false, Policy.bind("utils.wrongLength", string)); //$NON-NLS-1$
 
 		char[] newChars = string.toCharArray();
 
@@ -165,6 +167,22 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 			return null;
 		}
 	}
+
+	/**
+	 * Compares the time component of two UUIDs.
+	 * 
+	 * @see Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTime(UniversalUniqueIdentifier other) {
+		return compareTime(this.fBits, other.fBits);
+	}
+	
+	public static int compareTime(byte[] fBits1, byte[] fBits2) {
+		for (int i = TIME_FIELD_STOP; i >= 0; i--) 
+			if (fBits1[i] != fBits2[i])
+				return (0xFF & fBits1[i]) - (0xFF & fBits2[i]);		
+		return 0;
+	}		
 
 	/**
 	 * Answers the node address attempting to mask the IP

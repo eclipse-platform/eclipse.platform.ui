@@ -27,7 +27,7 @@ public class HistoryStore implements IHistoryStore {
 	IndexedStoreWrapper store;
 	Set blobsToRemove = new HashSet();
 
-	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
+	/* package */ final static String INDEX_FILE = ".index"; //$NON-NLS-1$
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;

@@ -115,6 +115,8 @@ public class FileState extends PlatformObject implements IFileState {
 		s.append(uuid.toString());
 		s.append(", lastModified: "); //$NON-NLS-1$
 		s.append(lastModified);
+		s.append(", blob: "); //$NON-NLS-1$
+		s.append(store.getFileFor(this));
 		s.append(')');
 		return s.toString();
 	}
