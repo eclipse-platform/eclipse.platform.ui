@@ -29,12 +29,11 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * Scanner that scans the document and partitions the document into the three 
+ * Scanner that scans the document and partitions the document into the two 
  * supported content types:
  * <ul>
  * <li>XML_COMMENT</li>
  * <li>XML_TAG</li>
- * <li>XML_DEFAULT</li>
  * </ul>
  */
 public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
@@ -55,7 +54,6 @@ public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
 		}
 	}
 
-	public final static String XML_DEFAULT = "__xml_default"; //$NON-NLS-1$
 	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
 	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 
