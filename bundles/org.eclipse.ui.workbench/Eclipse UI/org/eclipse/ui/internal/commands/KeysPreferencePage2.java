@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution, 
+ * terms of the Common Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
@@ -71,7 +71,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -961,23 +960,28 @@ public class KeysPreferencePage2 extends
     private void modifiedTextCommandsFilter() {
         treeViewerCommands.refresh();
         treeViewerCommands.expandAll();
-        
-//        if (treeViewerCommands.getSelection().isEmpty()) {
-//            TreeViewerCommandsContentProvider treeViewerCommandsContentProvider = (TreeViewerCommandsContentProvider) treeViewerCommands.getContentProvider();            
-//            Object[] children = treeViewerCommandsContentProvider.getChildren(null);
-//            
-//            if (children.length >= 1) {
-//                ViewerSorter viewerSorter = treeViewerCommands.getSorter();            
-//                viewerSorter.sort(treeViewerCommands, children);                
-//                children = treeViewerCommandsContentProvider.getChildren(children[0]);
-//                
-//                if (children.length >= 1) {
-//                    viewerSorter.sort(treeViewerCommands, children);                
-//                    treeViewerCommands.setSelection(new StructuredSelection(children[0]));
-//                }
-//            }
-//        }
-        
+
+        //        if (treeViewerCommands.getSelection().isEmpty()) {
+        //            TreeViewerCommandsContentProvider treeViewerCommandsContentProvider =
+        // (TreeViewerCommandsContentProvider)
+        // treeViewerCommands.getContentProvider();
+        //            Object[] children =
+        // treeViewerCommandsContentProvider.getChildren(null);
+        //            
+        //            if (children.length >= 1) {
+        //                ViewerSorter viewerSorter = treeViewerCommands.getSorter();
+        //                viewerSorter.sort(treeViewerCommands, children);
+        //                children =
+        // treeViewerCommandsContentProvider.getChildren(children[0]);
+        //                
+        //                if (children.length >= 1) {
+        //                    viewerSorter.sort(treeViewerCommands, children);
+        //                    treeViewerCommands.setSelection(new
+        // StructuredSelection(children[0]));
+        //                }
+        //            }
+        //        }
+
         update();
     }
 
@@ -1572,7 +1576,7 @@ public class KeysPreferencePage2 extends
             Collections.sort(keyConfigurationNames, Collator.getInstance());
             comboKeyConfiguration.setItems((String[]) keyConfigurationNames
                     .toArray(new String[keyConfigurationNames.size()]));
-            setKeyConfigurationId(activeKeyConfigurationId);           
+            setKeyConfigurationId(activeKeyConfigurationId);
             treeViewerCommands.setInput(new Object());
             update();
         }
@@ -1618,7 +1622,7 @@ public class KeysPreferencePage2 extends
             }
             groupKeySequence.setText(MessageFormat.format(Util.translateString(
                     RESOURCE_BUNDLE, "groupKeySequence.command"), //$NON-NLS-1$
-                    new Object[] { '\'' + uniqueName  + '\'' }));
+                    new Object[] { '\'' + uniqueName + '\'' }));
         }
         String contextId = getContextId();
         selectAssignmentForCommand(contextId);
