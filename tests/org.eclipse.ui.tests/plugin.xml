@@ -9,6 +9,7 @@
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.ui.test.harness"/>
    <import plugin="org.eclipse.ui"/>
    <import plugin="org.junit"/>
 </requires>
@@ -92,8 +93,7 @@
 
 <extension point = "org.eclipse.ui.actionSets"> 
 	<actionSet id="org.eclipse.ui.tests.api.MockActionSet"
-		label="Mock ActionSet"
- 		visible="true">
+		label="Mock ActionSet">
 		<menu id="org.eclipse.ui.tests.api.MockActionSetMenu" 
 			label="Mock ActionSet Menu" 
 			path="additions"> 
