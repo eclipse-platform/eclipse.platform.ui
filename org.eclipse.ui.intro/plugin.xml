@@ -41,6 +41,9 @@
             class="org.eclipse.ui.internal.intro.impl.parts.EmptyStandbyContentPart"
             id="org.eclipse.ui.intro.config.emptyStandby">
       </standbyContentPart> 
-   </extension>       
+   </extension>     
+   
+ 
+     
 
 </plugin>
