@@ -15,8 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -45,16 +48,19 @@ public final class ContextManager implements IContextManager {
 		return instance;
 	}
 
-	public static void validateContextDefinitions(Collection contextDefinitions) {			
-		Iterator iterator = contextDefinitions.iterator();
-		
-		while (iterator.hasNext()) {
-			IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-			
-			if (contextDefinition.getId() == null)
-				iterator.remove();
+	public static boolean isContextDefinitionChildOf(String ancestor, String id, Map contextDefinitionsById) {
+		Set visited = new HashSet();
+
+		while (id != null && !visited.contains(id)) {
+			IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionsById.get(id);				
+			visited.add(id);
+
+			if (contextDefinition != null && Util.equals(id = contextDefinition.getParentId(), ancestor))
+				return true;
 		}
-	}
+
+		return false;
+	}	
 
 	private List activeContextIds = new ArrayList();
 	private IContextManagerEvent contextManagerEvent;
@@ -204,8 +210,20 @@ public final class ContextManager implements IContextManager {
 		List contextDefinitions = new ArrayList();
 		contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
 		contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
-		validateContextDefinitions(contextDefinitions);
 		SortedMap contextDefinitionsById = new TreeMap(ContextDefinition.contextDefinitionsById(contextDefinitions, false));
+
+		for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator.hasNext();) {
+			IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
+			String name = contextDefinition.getName();
+				
+			if (name == null || name.length() == 0)
+				iterator.remove();
+		}
+
+		for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator.hasNext();)
+			if (!isContextDefinitionChildOf(null, (String) iterator.next(), contextDefinitionsById))
+				iterator.remove();
+
 		SortedSet definedContextIds = new TreeSet(contextDefinitionsById.keySet());		
 		boolean contextManagerChanged = false;
 

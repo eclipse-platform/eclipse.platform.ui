@@ -320,7 +320,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 
 			for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator.hasNext();)
-				if (!CommandManager.isContextDefinitionChildOf(null, (String) iterator.next(), contextDefinitionsById))
+				if (!ContextManager.isContextDefinitionChildOf(null, (String) iterator.next(), contextDefinitionsById))
 					iterator.remove();
 
 			List contextBindingDefinitions = new ArrayList();
