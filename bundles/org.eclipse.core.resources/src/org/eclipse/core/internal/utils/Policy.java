@@ -47,6 +47,9 @@ public class Policy {
 	public static boolean DEBUG_NATURES = false;
 	public static boolean DEBUG_HISTORY = false;
 
+	public static boolean MONITOR_BUILDERS = false;
+	public static boolean MONITOR_LISTENERS = false;
+
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
 		
@@ -58,6 +61,9 @@ public class Policy {
 			DEBUG_BUILD_DELTA = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_NATURES = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_HISTORY = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ //$NON-NLS-2$
+
+			MONITOR_BUILDERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/builders")); //$NON-NLS-1$ //$NON-NLS-2$
+			MONITOR_LISTENERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/listeners")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

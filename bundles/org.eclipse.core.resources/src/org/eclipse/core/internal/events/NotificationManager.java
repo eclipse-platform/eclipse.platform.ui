@@ -12,7 +12,7 @@ package org.eclipse.core.internal.events;
 
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.ResourceStats;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -39,7 +39,7 @@ public void addListener(IResourceChangeListener listener, int eventMask) {
 	synchronized (listeners) {
 		listeners.add(listener, eventMask);
 	}
-	ResourceStats.listenerAdded(listener);
+	EventStats.listenerAdded(listener);
 }
 
 /**
@@ -122,7 +122,8 @@ private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners
 	for (int i = 0; i < resourceListeners.length; i++) {
 		if ((type & resourceListeners[i].eventMask) != 0) {
 			final IResourceChangeListener listener = resourceListeners[i].listener;
-			ResourceStats.startNotify(listener.toString());
+			if (Policy.MONITOR_LISTENERS)
+				EventStats.startNotify(listener);
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.resourceChanged(event);
@@ -148,7 +149,8 @@ private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners
 					if (immutable)
 						workspace.getElementTree().immutable();
 			}
-			ResourceStats.endNotify();
+			if (Policy.MONITOR_LISTENERS)
+				EventStats.endNotify();
 		}
 	}
 }
@@ -158,7 +160,7 @@ public void removeListener(IResourceChangeListener listener) {
 	synchronized (listeners) {
 		listeners.remove(listener);
 	}
-	ResourceStats.listenerRemoved(listener);
+	EventStats.listenerRemoved(listener);
 }
 public void shutdown(IProgressMonitor monitor) {
 }

@@ -13,8 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.internal.events.BuilderPersistentInfo;
-import org.eclipse.core.internal.events.ResourceComparator;
+import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -821,7 +820,7 @@ public void snapshotIfNeeded() throws CoreException {
 			snapshotRunnable = null;
 		}
 		try {
-			ResourceStats.startSnapshot();
+			EventStats.startSnapshot();
 			long begin = System.currentTimeMillis();
 			save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 			if (ResourcesPlugin.getPlugin().isDebugging()) {
@@ -831,7 +830,7 @@ public void snapshotIfNeeded() throws CoreException {
 		} finally {
 			operationCount = 0;
 			snapshotRequested = false;
-			ResourceStats.endSnapshot();
+			EventStats.endSnapshot();
 		}
 	} else {
 		operationCount++;

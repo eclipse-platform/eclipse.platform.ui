@@ -819,7 +819,7 @@ protected void deleting(IProject project) throws CoreException {
  * For debugging purposes only.  Dumps plugin stats to console
  */
 public void dumpStats() {
-	ResourceStats.dumpStats();
+	EventStats.dumpStats();
 }
 /**
  * End an operation (group of resource changes).

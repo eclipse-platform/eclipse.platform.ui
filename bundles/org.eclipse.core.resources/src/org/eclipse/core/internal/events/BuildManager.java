@@ -115,11 +115,11 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			else
 				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 			monitor.subTask(message);
-			if (Policy.DEBUG_BUILD_INVOKING) hookStartBuild(builder);
+			hookStartBuild(builder);
 			//do the build
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
-			if (Policy.DEBUG_BUILD_INVOKING) hookEndBuild(builder);
+			hookEndBuild(builder);
 			// Be sure to clean up after ourselves.
 			ElementTree lastTree = workspace.getElementTree();
 			lastTree.immutable();
@@ -416,17 +416,21 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
  * Hook for adding trace options and debug information at the start of a build.
  */
 private void hookStartBuild(IncrementalProjectBuilder builder) {
-	ResourceStats.startBuild(builder.getClass().getName());
-	timeStamp = System.currentTimeMillis();
-	System.out.println("Invoking builder: " + toString(builder)); //$NON-NLS-1$
+	if (Policy.MONITOR_BUILDERS)
+		EventStats.startBuild(builder);
+	if (Policy.DEBUG_BUILD_INVOKING) {
+		timeStamp = System.currentTimeMillis();
+		System.out.println("Invoking builder: " + toString(builder)); //$NON-NLS-1$
+	}
 }
 /**
  * Hook for adding trace options and debug information at the end of a build.
  */
 private void hookEndBuild(IncrementalProjectBuilder builder) {
-	if (timeStamp == -1)
-		return;		//builder wasn't called
-	ResourceStats.endBuild();
+	if (Policy.MONITOR_BUILDERS)
+		EventStats.endBuild();
+	if (!Policy.DEBUG_BUILD_INVOKING || timeStamp == -1)
+		return;		//builder wasn't called or we are not debugging
 	System.out.println("Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	timeStamp = -1;
 }
