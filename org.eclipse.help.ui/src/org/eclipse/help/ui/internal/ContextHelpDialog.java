@@ -12,17 +12,17 @@
 package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.context.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * ContextHelpDialog
@@ -100,7 +100,7 @@ public class ContextHelpDialog {
 					.println("ContextHelpDialog.ContextHelpDialog(): Shell is:" //$NON-NLS-1$
 							+ shell.toString());
 		}
-		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpUIConstants.F1_SHELL);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {

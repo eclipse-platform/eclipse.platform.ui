@@ -9,16 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.appserver.*;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.appserver.AppserverPlugin;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
 
 /**
  * Preference page for Tomcat network interface and port.
@@ -37,7 +36,7 @@ public class AppserverPreferencePage extends PreferencePage
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 
-		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_APPSERVER);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpUIConstants.PREF_PAGE_APPSERVER);
 
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));

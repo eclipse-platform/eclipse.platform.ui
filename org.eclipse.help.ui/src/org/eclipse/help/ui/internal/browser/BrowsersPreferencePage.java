@@ -9,20 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
 /**
  * Preference page for selecting default web browser.
  */
@@ -42,7 +41,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	 *            the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
@@ -128,7 +127,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		// vertical space
 		new Label(mainComposite, SWT.NULL);
 		Composite bPathComposite = new Composite(mainComposite, SWT.NULL);
-		WorkbenchHelp.setHelp(bPathComposite,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(bPathComposite,
 				IHelpUIConstants.PREF_PAGE_CUSTOM_BROWSER_PATH);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
