@@ -112,11 +112,6 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws IllegalStateException if a REPLACE or REPLACE_FIND operation is not preceded by a successful FIND operation
 	 * @throws PatternSyntaxException if a regular expression has invalid syntax
-	 * 
-	 * @see FindReplaceOperationCode#FIND_FIRST
-	 * @see FindReplaceOperationCode#FIND_NEXT
-	 * @see FindReplaceOperationCode#REPLACE
-	 * @see FindReplaceOperationCode#REPLACE_FIND_NEXT
 	 */
 	private IRegion findReplace(FindReplaceOperationCode operationCode, int startOffset, String findString, String replaceText, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
 
