@@ -5,26 +5,61 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Common superclass for CVS wizard pages. Provides convenience methods
@@ -250,5 +285,54 @@ public abstract class CVSWizardPage extends WizardPage {
 		data.heightHint = heightHint;
 		listViewer.getList().setLayoutData(data);
 		return listViewer;
+	}
+
+	protected TreeViewer createResourceSelectionTree(Composite composite, int types, int span) {
+		TreeViewer tree = new TreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		tree.setUseHashlookup(true);
+		tree.setContentProvider(getResourceProvider(types));
+		tree.setLabelProvider(
+			new DecoratingLabelProvider(
+				new WorkbenchLabelProvider(), 
+				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
+		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+		data.heightHint = LIST_HEIGHT_HINT;
+		data.horizontalSpan = span;
+		tree.getControl().setLayoutData(data);
+		return tree;
+	}
+
+	/**
+	 * Returns a content provider for <code>IResource</code>s that returns 
+	 * only children of the given resource type.
+	 */
+	protected ITreeContentProvider getResourceProvider(final int resourceType) {
+		return new WorkbenchContentProvider() {
+			public Object[] getChildren(Object o) {
+				if (o instanceof IContainer) {
+					IResource[] members = null;
+					try {
+						members = ((IContainer)o).members();
+					} catch (CoreException e) {
+						//just return an empty set of children
+						return new Object[0];
+					}
+	
+					//filter out the desired resource types
+					ArrayList results = new ArrayList();
+					for (int i = 0; i < members.length; i++) {
+						//And the test bits with the resource types to see if they are what we want
+						if ((members[i].getType() & resourceType) > 0) {
+							results.add(members[i]);
+						}
+					}
+					return results.toArray();
+				} else {
+					return super.getChildren(o);
+				}
+			}
+		};
 	}
 }

@@ -110,20 +110,7 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 		
 		createWrappingLabel(composite, Policy.bind("CheckoutIntoProjectSelectionPage.treeLabel"), 0, 2); //$NON-NLS-1$
 		
-		tree = new TreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		tree.setUseHashlookup(true);
-		tree.setContentProvider(getResourceProvider(IResource.PROJECT | IResource.FOLDER));
-		tree.setLabelProvider(
-			new DecoratingLabelProvider(
-				new WorkbenchLabelProvider(), 
-				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
-		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
-
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-		data.heightHint = LIST_HEIGHT_HINT;
-		data.horizontalSpan = 2;
-		tree.getControl().setLayoutData(data);
-
+		tree = createResourceSelectionTree(composite, IResource.PROJECT | IResource.FOLDER, 2 /* horizontal span */);
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleResourceSelection(event);
@@ -131,7 +118,7 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 		});
 
 		Composite filterComposite = createComposite(composite, 2);
-		data = new GridData();
+		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -159,6 +146,7 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 		updateWidgetEnablements();
 		tree.getControl().setFocus();
 	}
+
 	/**
 	 * Method initializeValues.
 	 */
@@ -173,38 +161,6 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 		filterList.add(Policy.bind("CheckoutIntoProjectSelectionPage.showUnshared")); //$NON-NLS-1$
 		filterList.add(Policy.bind("CheckoutIntoProjectSelectionPage.showSameRepo")); //$NON-NLS-1$
 		filterList.select(filter);
-	}
-
-	/**
-	 * Returns a content provider for <code>IResource</code>s that returns 
-	 * only children of the given resource type.
-	 */
-	private ITreeContentProvider getResourceProvider(final int resourceType) {
-		return new WorkbenchContentProvider() {
-			public Object[] getChildren(Object o) {
-				if (o instanceof IContainer) {
-					IResource[] members = null;
-					try {
-						members = ((IContainer)o).members();
-					} catch (CoreException e) {
-						//just return an empty set of children
-						return new Object[0];
-					}
-	
-					//filter out the desired resource types
-					ArrayList results = new ArrayList();
-					for (int i = 0; i < members.length; i++) {
-						//And the test bits with the resource types to see if they are what we want
-						if ((members[i].getType() & resourceType) > 0) {
-							results.add(members[i]);
-						}
-					}
-					return results.toArray();
-				} else {
-					return super.getChildren(o);
-				}
-			}
-		};
 	}
 
 	private void handleResourceSelection(SelectionChangedEvent event) {

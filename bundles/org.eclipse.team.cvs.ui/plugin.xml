@@ -270,6 +270,23 @@
          </action>
       </objectContribution>
       <objectContribution
+            objectClass="org.eclipse.core.resources.IContainer"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IContainerContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%RestoreFromRepositoryAction.label"
+               tooltip="%RestoreFromRepositoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.RestoreFromRepositoryAction"
+               menubarPath="team.main/group4"
+               helpContextId="org.eclipse.team.cvs.ui.team_restore_from_repository_action_context"
+               id="org.eclipse.team.ccvs.ui.restoreFromRepository">
+         </action>
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.core.resources.IFolder"
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.IFolderContributions">

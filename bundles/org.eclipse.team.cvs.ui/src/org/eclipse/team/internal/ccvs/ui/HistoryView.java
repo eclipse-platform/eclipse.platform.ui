@@ -97,6 +97,8 @@ public class HistoryView extends ViewPart {
 	private ILogEntry[] entries;
 	private CVSTeamProvider provider;
 	
+	private HistoryTableProvider historyTableProvider;
+	
 	private TableViewer tableViewer;
 	private TextViewer textViewer;
 	private TableViewer tagViewer;
@@ -113,64 +115,11 @@ public class HistoryView extends ViewPart {
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
-	
-	//column constants
-	private static final int COL_REVISION = 0;
-	private static final int COL_TAGS = 1;
-	private static final int COL_DATE = 2;
-	private static final int COL_AUTHOR = 3;
-	private static final int COL_COMMENT = 4;
 
 	private Image branchImage;
 	private Image versionImage;
 	
 	private ILogEntry currentSelection;
-	private String currentRevision;
-	
-	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-		public String getColumnText(Object element, int columnIndex) {
-			ILogEntry entry = (ILogEntry)element;
-			switch (columnIndex) {
-				case COL_REVISION:
-					String revision = entry.getRevision();
-					if (currentRevision != null && currentRevision.equals(revision)) {
-						revision = Policy.bind("currentRevision", revision); //$NON-NLS-1$
-					}
-					return revision;
-				case COL_TAGS:
-					CVSTag[] tags = entry.getTags();
-					StringBuffer result = new StringBuffer();
-					for (int i = 0; i < tags.length; i++) {
-						result.append(tags[i].getName());
-						if (i < tags.length - 1) {
-							result.append(", "); //$NON-NLS-1$
-						}
-					}
-					return result.toString();
-				case COL_DATE:
-					Date date = entry.getDate();
-					if (date == null) return Policy.bind("notAvailable"); //$NON-NLS-1$
-					return DateFormat.getInstance().format(date);
-				case COL_AUTHOR:
-					return entry.getAuthor();
-				case COL_COMMENT:
-					String comment = entry.getComment();
-					int index = comment.indexOf("\n"); //$NON-NLS-1$
-					switch (index) {
-						case -1:
-							return comment;
-						case 0:
-							return Policy.bind("HistoryView.[...]_4"); //$NON-NLS-1$
-						default:
-							return Policy.bind("CVSCompareRevisionsInput.truncate", comment.substring(0, index)); //$NON-NLS-1$
-					}
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
 	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
@@ -227,7 +176,7 @@ public class HistoryView extends ViewPart {
 						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file}, revisionTag)) {							
 							provider.update(new IResource[] {file}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
 													   revisionTag, true /*create backups*/, monitor);
-							currentRevision = revisionTag.getName();
+							historyTableProvider.setFile(remoteFile);
 							tableViewer.refresh();
 						}
 					}
@@ -360,46 +309,6 @@ public class HistoryView extends ViewPart {
 			sashForm.setMaximizedControl(tableViewer.getControl());
 		}
 	}
-	/**
-	 * Creates the columns for the history table.
-	 */
-	private void createColumns(Table table, TableLayout layout) {
-		SelectionListener headerListener = getColumnListener();
-		// revision
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// tags
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.tags")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// creation date
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.date")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// author
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.author")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		//comment
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.comment")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(50, true));
-	}
 	/*
 	 * Method declared on IWorkbenchPart
 	 */
@@ -432,18 +341,10 @@ public class HistoryView extends ViewPart {
 	 * @return the group control
 	 */
 	protected TableViewer createTable(Composite parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
-	
-		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
 		
-		createColumns(table, layout);
-	
-		TableViewer viewer = new TableViewer(table);
+		historyTableProvider = new HistoryTableProvider();
+		TableViewer viewer = historyTableProvider.createTable(parent);
+		
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				// Short-circuit to optimize
@@ -477,7 +378,6 @@ public class HistoryView extends ViewPart {
 				entries = null;
 			}
 		});
-		viewer.setLabelProvider(new HistoryLabelProvider());
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -499,13 +399,9 @@ public class HistoryView extends ViewPart {
 			}
 		});
 		
-		// By default, reverse sort by revision.
-		HistorySorter sorter = new HistorySorter(COL_REVISION);
-		sorter.setReversed(true);
-		viewer.setSorter(sorter);
-		
 		return viewer;
 	}
+
 	private TableViewer createTagTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		TableViewer result = new TableViewer(table);
@@ -570,40 +466,6 @@ public class HistoryView extends ViewPart {
 			versionImage = null;
 		}
 	}	
-	/**
-	 * Adds the listener that sets the sorter.
-	 */
-	private SelectionListener getColumnListener() {
-		/**
-	 	 * This class handles selections of the column headers.
-		 * Selection of the column header will cause resorting
-		 * of the shown tasks using that column's sorter.
-		 * Repeated selection of the header will toggle
-		 * sorting order (ascending versus descending).
-		 */
-		return new SelectionAdapter() {
-			/**
-			 * Handles the case of user selecting the
-			 * header area.
-			 * <p>If the column has not been selected previously,
-			 * it will set the sorter of that column to be
-			 * the current tasklist sorter. Repeated
-			 * presses on the same column header will
-			 * toggle sorting order (ascending/descending).
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				// column selected - need to sort
-				int column = tableViewer.getTable().indexOf((TableColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter)tableViewer.getSorter();
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					tableViewer.refresh();
-				} else {
-					tableViewer.setSorter(new HistorySorter(column));
-				}
-			}
-		};
-	}
 	/**
 	 * Returns the table viewer contained in this view.
 	 */
@@ -681,7 +543,7 @@ public class HistoryView extends ViewPart {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
-					currentRevision = remoteFile.getRevision();
+					historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);
 					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 				} catch (TeamException e) {
@@ -698,16 +560,20 @@ public class HistoryView extends ViewPart {
 	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
-	public void showHistory(ICVSRemoteFile file, String currentRevision) {
-		if (file == null) {
-			tableViewer.setInput(null);
-			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
-			return;
+	public void showHistory(ICVSRemoteFile remoteFile, String currentRevision) {
+		try {
+			if (remoteFile == null) {
+				tableViewer.setInput(null);
+				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				return;
+			}
+			this.file = null;
+			historyTableProvider.setFile(remoteFile);
+			tableViewer.setInput(remoteFile);
+			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+		} catch (CVSException e) {
+			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 		}
-		this.currentRevision = currentRevision;
-		this.file = null;
-		tableViewer.setInput(file);
-		setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName())); //$NON-NLS-1$
 	}
 	
 	private Action getContextMenuAction(String title, final IWorkspaceRunnable action) {

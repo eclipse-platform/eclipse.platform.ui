@@ -8,8 +8,6 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.util.Date;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -22,9 +20,8 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -32,31 +29,21 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -68,12 +55,13 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
 	IFile resource;
-	ICVSRemoteFile currentEdition;
 	ILogEntry[] editions;
 	TableViewer viewer;
 	Action getContentsAction;
 	Action getRevisionAction;
 	Shell shell;
+	
+	private HistoryTableProvider historyTableProvider;
 	
 	class TypedBufferedContent extends ResourceNode {
 		public TypedBufferedContent(IFile resource) {
@@ -151,13 +139,20 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	/**
 	 * A compare node that gets its label from the right element
 	 */
-	class VersionCompareDiffNode extends DiffNode {
+	class VersionCompareDiffNode extends DiffNode implements IAdaptable {
 		public VersionCompareDiffNode(ITypedElement left, ITypedElement right) {
 			super(left, right);
 		}
 		public String getName() {
 			return getRight().getName();
 		}
+		public Object getAdapter(Class adapter) {
+			if (adapter == ILogEntry.class) {
+				return ((ResourceRevisionNode)getRight()).getLogEntry();
+			}
+			return null;
+		}
+
 	};
 	/**
 	 * A content provider which knows how to get the children of the diff container
@@ -174,77 +169,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			return null;
 		}
 	};
-	/**
-	 * A sorter which gets the remote resources from the diff nodes
-	 */
-	class VersionSorter extends HistorySorter {
-		public VersionSorter(int columnNumber) {
-			super(columnNumber);
-		}
-		public int compare(Viewer viewer, Object o1, Object o2) {
-			VersionCompareDiffNode d1 = (VersionCompareDiffNode)o1;
-			VersionCompareDiffNode d2 = (VersionCompareDiffNode)o2;
-			return super.compare(viewer, ((ResourceRevisionNode)d1.getRight()).getLogEntry(), ((ResourceRevisionNode)d2.getRight()).getLogEntry());
-		}
-		
-	};
-	
-	//column constants
-	private static final int COL_REVISION = 0;
-	private static final int COL_TAGS = 1;
-	private static final int COL_DATE = 2;
-	private static final int COL_AUTHOR = 3;
-	private static final int COL_COMMENT = 4;
-
-	/**
-	 * A history label provider, largely copied from HistoryView.
-	 */
-	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-		public String getColumnText(Object element, int columnIndex) {
-			if (!(element instanceof DiffNode)) return ""; //$NON-NLS-1$
-			ITypedElement right = ((DiffNode)element).getRight();
-			if (!(right instanceof ResourceRevisionNode)) return ""; //$NON-NLS-1$
-			ILogEntry entry = ((ResourceRevisionNode)right).getLogEntry();
-			switch (columnIndex) {
-				case COL_REVISION:
-					try {
-						if (currentEdition != null && currentEdition.getRevision().equals(entry.getRevision())) {
-							return Policy.bind("currentRevision", entry.getRevision()); //$NON-NLS-1$
-						} else {
-							return entry.getRevision();
-						}
-					} catch (TeamException e) {
-						handle(e);
-					}
-					return entry.getRevision();
-				case COL_TAGS:
-					CVSTag[] tags = entry.getTags();
-					StringBuffer result = new StringBuffer();
-					for (int i = 0; i < tags.length; i++) {
-						result.append(tags[i].getName());
-						if (i < tags.length - 1) {
-							result.append(", "); //$NON-NLS-1$
-						}
-					}
-					return result.toString();
-				case COL_DATE:
-					Date date = entry.getDate();
-					if (date == null) return Policy.bind("notAvailable"); //$NON-NLS-1$
-					return DateFormat.getInstance().format(date);
-				case COL_AUTHOR:
-					return entry.getAuthor();
-				case COL_COMMENT:
-					String comment = entry.getComment();
-					int index = comment.indexOf("\n"); //$NON-NLS-1$
-					if (index == -1) return comment;
-					return Policy.bind("CVSCompareRevisionsInput.truncate", comment.substring(0, index)); //$NON-NLS-1$
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
 	
 	public CVSCompareRevisionsInput(IFile resource, ILogEntry[] editions) {
 		super(new CompareConfiguration());
@@ -253,64 +177,14 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		updateCurrentEdition();
 		initializeActions();
 	}
-	/**
-	 * Creates the columns for the history table.
-	 * Copied from HistoryView.
-	 */
-	private void createColumns(Table table, TableLayout layout) {
-		SelectionListener headerListener = getColumnListener();
-		// revision
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// tags
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.tags")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// creation date
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.date")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		// author
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.author")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
-	
-		//comment
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.comment")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(50, true));
-	}
+
 	public Viewer createDiffViewer(Composite parent) {
 		this.shell = parent.getShell();
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
+		viewer = getHistoryTableProvider().createTable(parent);
+		Table table = viewer.getTable();
 		table.setData(CompareUI.COMPARE_VIEWER_TITLE, Policy.bind("CVSCompareRevisionsInput.structureCompare")); //$NON-NLS-1$
 	
-		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
-		
-		createColumns(table, layout);
-	
-		viewer = new TableViewer(table);
 		viewer.setContentProvider(new VersionCompareContentProvider());
-		viewer.setLabelProvider(new HistoryLabelProvider());
 
 		MenuManager mm = new MenuManager();
 		mm.setRemoveAllWhenShown(true);
@@ -344,40 +218,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		
 		return viewer;
 	}
-	/**
-	 * Adds the listener that sets the sorter.
-	 */
-	private SelectionListener getColumnListener() {
-		/**
-	 	 * This class handles selections of the column headers.
-		 * Selection of the column header will cause resorting
-		 * of the shown tasks using that column's sorter.
-		 * Repeated selection of the header will toggle
-		 * sorting order (ascending versus descending).
-		 */
-		return new SelectionAdapter() {
-			/**
-			 * Handles the case of user selecting the
-			 * header area.
-			 * <p>If the column has not been selected previously,
-			 * it will set the sorter of that column to be
-			 * the current tasklist sorter. Repeated
-			 * presses on the same column header will
-			 * toggle sorting order (ascending/descending).
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				// column selected - need to sort
-				int column = viewer.getTable().indexOf((TableColumn) e.widget);
-				VersionSorter oldSorter = (VersionSorter)viewer.getSorter();
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					viewer.refresh();
-				} else {
-					viewer.setSorter(new VersionSorter(column));
-				}
-			}
-		};
-	}
+
 	private void initLabels() {
 		CompareConfiguration cc = (CompareConfiguration)getCompareConfiguration();
 		String resourceName = resource.getName();	
@@ -451,7 +292,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 								if(CVSAction.checkForMixingTags(shell, new IResource[] {resource}, revisionTag)) {							
 									provider.update(new IResource[] {resource}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
 								 				    revisionTag, true /*create backups*/, monitor);
-									currentEdition = (ICVSRemoteFile)edition;
+									getHistoryTableProvider().setFile((ICVSFile)edition);
 								}
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
@@ -484,7 +325,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	}
 	private void updateCurrentEdition() {
 		try {
-			this.currentEdition = ((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(resource));
+			getHistoryTableProvider().setFile((ICVSFile) CVSWorkspaceRoot.getRemoteResourceFor(resource));
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -492,4 +333,15 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	private void handle(Exception e) {
 		setMessage(CVSUIPlugin.openError(shell, null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS).getMessage());
 	}
+	/**
+	 * Returns the historyTableProvider.
+	 * @return HistoryTableProvider
+	 */
+	public HistoryTableProvider getHistoryTableProvider() {
+		if (historyTableProvider == null) {
+			historyTableProvider = new HistoryTableProvider();
+		}
+		return historyTableProvider;
+	}
+
 }
