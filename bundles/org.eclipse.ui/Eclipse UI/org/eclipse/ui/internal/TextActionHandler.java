@@ -89,7 +89,6 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("TextCellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'x');
 		}
 		public void run() {
 			if (activeTextControl != null) {
@@ -118,7 +117,6 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("TextCellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'c');
 		}
 		public void run() {
 			if (activeTextControl != null) {
@@ -147,7 +145,6 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("TextCellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL | 'v');
 		}
 		public void run() {
 			if (activeTextControl != null) {

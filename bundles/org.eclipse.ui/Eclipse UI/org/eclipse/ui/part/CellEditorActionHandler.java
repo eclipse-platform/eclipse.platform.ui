@@ -146,7 +146,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("CellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'x');
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -176,7 +175,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("CellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'c');
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -206,7 +204,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("CellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'v');
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -236,7 +233,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
 			setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.DEL);
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -295,7 +291,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
 			setId("CellEditorFindActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'f');
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -325,7 +320,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
 			setId("CellEditorUndoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL | 'z');
 		}
 		public void run() {
 			if (activeEditor != null) {
@@ -355,7 +349,6 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
 			setId("CellEditorRedoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'y');
 		}
 		public void run() {
 			if (activeEditor != null) {
