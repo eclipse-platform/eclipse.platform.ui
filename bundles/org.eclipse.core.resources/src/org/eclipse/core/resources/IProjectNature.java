@@ -28,21 +28,29 @@ import org.eclipse.core.runtime.CoreException;
 public interface IProjectNature {
 /** 
  * Configures this nature for its project. This is called by the workspace 
+ * when natures are added to the project using <code>IProject.setDescription</code>
  * and should not be called directly by clients.  The nature extension 
- * id is added to the list of natures on the project by 
- * <code>IProject.create()</code> or <code>IProject.setDescription()</code>
+ * id is added to the list of natures before this method is called,
  * and need not be added here.
+ * 
+ * Exceptions thrown by this method will be propagated back to the caller
+ * of <code>IProject.setDescription</code>, but the nature will remain in
+ * the project description.
  *
  * @exception CoreException if this method fails.
  */
 public void configure() throws CoreException;
 /** 
- * Removes this nature from its project, performing any required deconfiguration.
- * This is called by <code>IProject.setDescription</code> and should not
- * be called directly by clients.  The nature id is removed from the 
- * list of natures on the project, if needed, by <code>IProject.setDescription</code>, 
- * and need not be removed here.
- *
+ * Deconfigures this nature for its project.  This is called by the workspace 
+ * when natures are removed from the project using 
+ * <code>IProject.setDescription</code> and should not be called directly by 
+ * clients.  The nature extension id is removed from the list of natures before 
+ * this method is called, and need not be removed here.
+ * 
+ * Exceptions thrown by this method will be propagated back to the caller
+ * of <code>IProject.setDescription</code>, but the nature will still be 
+ * removed from the project description.
+ * *
  * @exception CoreException if this method fails. 
  */
 public void deconfigure() throws CoreException;
