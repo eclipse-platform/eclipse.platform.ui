@@ -8,7 +8,7 @@ package org.eclipse.ant.internal.ui;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.tools.ant.*;
-import org.eclipse.ant.core.AntRunner;import org.eclipse.core.resources.*;
+import org.eclipse.ant.core.AntRunner;import org.eclipse.ant.core.AntRunnerListener;import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 // TBD
@@ -17,29 +17,28 @@ import org.eclipse.core.runtime.*;
 //   ant tasks.
 // * incremental task shows minimal feedback
 
-public class UIBuildListener implements BuildListener {
+public class UIBuildListener implements AntRunnerListener {
 	
-	AntRunner runner;
-	IProgressMonitor fMonitor;
-	Target fTarget;
-	Task fTask;
-	IFile fBuildFile;
-	StringBuffer outputBuffer;
-	int msgOutputLevel;
+	private AntRunner runner;
+	private IProgressMonitor fMonitor;
+	private Target fTarget;
+	private Task fTask;
+	private IFile fBuildFile;
+	private int msgOutputLevel;
+	private AntConsole console;
 	
-	public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
+	public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, AntConsole console) {
+		super();
+		this.console = console;
 		this.runner = runner;
-		fMonitor= monitor;
-		fBuildFile= file;
-		outputBuffer = new StringBuffer();
+		fMonitor = monitor;
+		fBuildFile = file;
 	}
 	public void buildFinished(BuildEvent be){
 		fMonitor.done();
 		if (be.getException() != null) {
 			handleBuildException(be.getException());
 		}
-		// Should give it to the console
-		System.out.println(new String(outputBuffer));
 	}
 	public void buildStarted(BuildEvent be) {
 		fMonitor.subTask(Policy.bind("monitor.buildStarted"));
@@ -89,13 +88,15 @@ public class UIBuildListener implements BuildListener {
 	}
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();
-        if (event.getPriority() <= msgOutputLevel) {
-			//System.out.println("> "+event.getMessage());
-			outputBuffer.append("> "+event.getMessage()+"\n");
-        }
+        if (console != null && event.getPriority() <= msgOutputLevel)
+			console.append(event.getMessage() + "\n");
 	}
 
-
+	public void messageLogged(String message,int priority) {
+		checkCanceled();
+        if (console != null)// && priority <= msgOutputLevel)
+			console.append(message + "\n");
+	}
 	private void removeMarkers() {
 		try {
 			fBuildFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
@@ -107,7 +108,7 @@ public class UIBuildListener implements BuildListener {
 		checkCanceled();
 		if (be.getException() != null)
 			handleBuildException(be.getException());
-		
+		 
 		//	one task is done: say it to the monitor
 		fMonitor.worked(1);
 	}
@@ -125,16 +126,5 @@ public class UIBuildListener implements BuildListener {
 		fMonitor.subTask(Policy.bind("monitor.targetColumn")+"\""+fTarget.getName()+"\" - "+fTask.getTaskName());
 		if (be.getException() != null)
 			handleBuildException(be.getException());
-	}
-	
-	/**
-	 * Returns the output message as a string.
-	 * 
-	 * @return String the output message
-	 */
-	public String getOutputMessage() {
-		return new String(outputBuffer);
-	}
-
-	
+	}	
 }

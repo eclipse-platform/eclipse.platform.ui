@@ -19,7 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;import org.eclipse.jface.wizard.WizardDialog;
 
 
-public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRunnableWithProgress {
+public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	private IFile selection;
 
@@ -68,32 +68,6 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 	public void init(IWorkbenchWindow window) {
 	}
 	/*
-	 * @see IRunnableWithProgress
-	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		String buildFileName= null;
-		buildFileName= selection.getLocation().toOSString();
-
-		String[] args= {"-buildfile", buildFileName};
-		monitor.beginTask(Policy.bind("monitor.runningAnt"), IProgressMonitor.UNKNOWN);
-
-		try {
-			//TBD: should remove the build listener somehow
-			AntRunner runner = new AntRunner();
-			runner.run(args, new UIBuildListener(runner, monitor, selection));
-		} 
-		catch (BuildCanceledException e) {
-			// build was canceled don't propagate exception
-			return;
-		}
-		catch (Exception e) {
-			throw new InvocationTargetException(e);
-		}
-		finally {
-			monitor.done();
-		}
-	}
-	/*
 	 * @see IActionDelegate
 	 */
 	public void run(IAction action) {
@@ -106,7 +80,6 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 		WizardDialog dialog = new WizardDialog(getShell(),wizard);
 		dialog.create();
 		dialog.open();
-
 	}
 	/*
 	 * @see IWorkbenchActionDelegate

@@ -12,7 +12,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 	private EclipseProject project;
 	private TargetsListLabelProvider labelProvider = new TargetsListLabelProvider();
 	private String initialTargetSelections[];
-	private Button showLogOnSuccess;	private Text argumentsField;
+	private Button showLog;	private Text argumentsField;
 	
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
@@ -60,8 +60,8 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		argumentsField = new Text(composite,SWT.BORDER);
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		// adds a listener to tell the wizard when it can tell its container to refresh the buttons		argumentsField.addModifyListener( new ModifyListener() {			public void modifyText(ModifyEvent e) {				AntLaunchWizardPage.this.getWizard().getContainer().updateButtons();			}		});
 		
-		showLogOnSuccess = new Button(composite, SWT.CHECK);
-		showLogOnSuccess.setText(Policy.bind("wizard.displayLogLabel"));		showLogOnSuccess.setSelection(((AntLaunchWizard) getWizard()).getWantToShowLogOnSuccess());
+		showLog = new Button(composite, SWT.CHECK);
+		showLog.setText(Policy.bind("wizard.displayLogLabel"));		showLog.setSelection(((AntLaunchWizard) getWizard()).getWantToShowLogOnSuccess());
 
 		restorePreviousSelectedTargets();
 		listViewer.addCheckStateListener(this);
@@ -96,6 +96,6 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 
 	public void setInitialTargetSelections(String value[]) {
 		initialTargetSelections = value;
-	}		/**	 * Returns the arguments that the user may have entered to run the ant file.	 * 	 * @return String the arguments	 */	public String getArgumentsFromField() {		return argumentsField.getText();	}		/**	 * 	 */	public boolean wantToShowLogOnSuccess() {		return showLogOnSuccess.getSelection();	}
+	}		/**	 * Returns the arguments that the user may have entered to run the ant file.	 * 	 * @return String the arguments	 */	public String getArgumentsFromField() {		return argumentsField.getText();	}		/**	 * 	 */	public boolean shouldLogMessages() {		return showLog.getSelection();	}
 	
 }
