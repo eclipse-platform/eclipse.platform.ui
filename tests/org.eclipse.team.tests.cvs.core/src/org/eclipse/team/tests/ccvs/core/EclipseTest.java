@@ -541,7 +541,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}
 		getProvider(project).add((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]), IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-
+		// Pause to ensure that future operations happen later than timestamp of committed resources
+		JUnitTestCase.waitMsec(1500);
 	}
 }
 
