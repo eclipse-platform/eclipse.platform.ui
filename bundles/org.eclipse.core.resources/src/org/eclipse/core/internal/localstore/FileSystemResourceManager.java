@@ -350,10 +350,12 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 		String msg = Policy.bind("resources.readProjectMeta", target.getName()); //$NON-NLS-1$
 		error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
 	}
-	if (description != null && !isDefaultLocation)
-		description.setLocation(projectLocation);
-	//don't trust the project name in the description file
-	description.setName(target.getName());
+	if (description != null) {
+		//don't trust the project name in the description file
+		description.setName(target.getName());
+		if (!isDefaultLocation)
+			description.setLocation(projectLocation);
+	}
 	long lastModified = CoreFileSystemLibrary.getLastModified(descriptionPath.toOSString());
 	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	//don't get a mutable copy because we might be in restore which isn't an operation
@@ -415,7 +417,7 @@ protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor
 	monitor = Policy.monitorFor(monitor);
 	IProject[] projects = target.getProjects();
 	int totalWork = projects.length;
-	String title = Policy.bind("localstore.refreshing", target.getFullPath().toString()); //$NON-NLS-1$
+	String title = Policy.bind("localstore.refreshingRoot"); //$NON-NLS-1$
 	try {
 		monitor.beginTask(title, totalWork);
 		// if doing depth zero, there is nothing to do (can't refresh the root).  
