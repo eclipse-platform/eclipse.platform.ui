@@ -34,7 +34,7 @@ public class PartDragDrop extends Object
 	public static final int OFFSCREEN  = 6;
 	
 	// Move this many pixels before dragging starts	
-	private final static int HYSTERESIS= 8;
+	private final static int HYSTERESIS= 10;
 
 	// Define width of part's "hot" border	
 	private final static int MARGIN= 10;
