@@ -123,6 +123,7 @@ public abstract class PreferencePage extends DialogPage implements
 			GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
 					| GridData.VERTICAL_ALIGN_CENTER);
 			messageText.setLayoutData(textData);
+			hideRegion();
 
 		}
 
@@ -171,7 +172,7 @@ public abstract class PreferencePage extends DialogPage implements
 				hideRegion();
 				return;
 			}
-			messageComposite.setVisible(true);
+			showRegion();
 			// Any more updates required
 			if (newMessage.equals(messageText.getText())
 					&& newImage == messageImageLabel.getImage())
@@ -188,6 +189,13 @@ public abstract class PreferencePage extends DialogPage implements
 				setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
 			}
 
+		}
+
+		/**
+		 * Show and enable the widgets in the message region
+		 */
+		private void showRegion() {
+			messageComposite.setVisible(true);
 		}
 
 		/**
