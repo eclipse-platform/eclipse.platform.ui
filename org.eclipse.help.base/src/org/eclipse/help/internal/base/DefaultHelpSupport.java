@@ -152,8 +152,6 @@ public class DefaultHelpSupport {
 	private String getContextID(IContext context) {
 		if (context instanceof Context)
 			return ((Context) context).getID();
-		if (context instanceof ContextProxy)
-			return ((ContextProxy) context).getID();
 		return HelpPlugin.getContextManager().addContext(context);
 	}
 
