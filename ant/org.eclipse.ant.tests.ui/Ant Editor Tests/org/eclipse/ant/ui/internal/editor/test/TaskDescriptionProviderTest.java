@@ -14,23 +14,23 @@
 package org.eclipse.ant.ui.internal.editor.test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.ui.internal.editor.TaskDescriptionProvider;
 
 /**
  * Tests the tasks description provider.
  * 
  */
-public class TaskDescriptionProviderTest extends TestCase {
+public class TaskDescriptionProviderTest extends AbstractAntUITest {
 
     /**
      * Constructor for TaskDescriptionProviderTest.
-     * @param arg0
+     * @param name
      */
-    public TaskDescriptionProviderTest(String arg0) {
-        super(arg0);
+    public TaskDescriptionProviderTest(String name) {
+        super(name);
     }
 
     /** 
@@ -64,11 +64,6 @@ public class TaskDescriptionProviderTest extends TestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("TaskDescriptionProviderTest");
-
-        suite.addTest(new TaskDescriptionProviderTest("testGettingAttribute"));
-        suite.addTest(new TaskDescriptionProviderTest("testGettingRequired"));
-        suite.addTest(new TaskDescriptionProviderTest("testGettingTaskDescription"));
-        return suite;
+		return new TestSuite(TaskDescriptionProviderTest.class);
     }
 }

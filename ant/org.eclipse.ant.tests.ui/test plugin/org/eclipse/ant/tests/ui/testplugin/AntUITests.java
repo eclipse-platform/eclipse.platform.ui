@@ -12,22 +12,27 @@
  * 	   IBM Corporation - additional tests
  *******************************************************************************/
 
-package org.eclipse.ant.ui.internal.editor.test;
+package org.eclipse.ant.tests.ui.testplugin;
+
+import org.eclipse.ant.ui.internal.editor.test.AntEditorContentOutlineTests;
+import org.eclipse.ant.ui.internal.editor.test.CodeCompletionTest;
+import org.eclipse.ant.ui.internal.editor.test.EnclosingTargetSearchingHandlerTest;
+import org.eclipse.ant.ui.internal.editor.test.TaskDescriptionProviderTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test suite for the Ant Editor
+ * Test suite for the Ant UI
  * 
- * @author Alf Schiefelbein
  */
-public class AntEditorTests extends TestSuite {
+public class AntUITests extends TestSuite {
 
     public static Test suite() {
 
-        TestSuite suite= new AntEditorTests();
-        suite.setName("Ant Editor Unit Tests");
+        TestSuite suite= new AntUITests();
+        suite.setName("Ant UI Unit Tests");
+		suite.addTest(new TestSuite(ProjectCreationDecorator.class));
         suite.addTest(new TestSuite(CodeCompletionTest.class));
         suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
         suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));

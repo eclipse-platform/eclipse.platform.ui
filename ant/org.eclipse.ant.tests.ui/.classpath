@@ -13,5 +13,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.eclipse.ant.ui"/>
+    <classpathentry kind="src" path="test plugin"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

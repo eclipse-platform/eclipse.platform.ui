@@ -14,14 +14,11 @@
 
 package org.eclipse.ant.ui.internal.editor.test;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,13 +26,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.ui.internal.editor.AntEditorSaxDefaultHandler;
 import org.eclipse.ant.ui.internal.editor.support.TestTextCompletionProcessor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -44,25 +41,26 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 
 /**
  * Tests everything about code completion and code assistance.
  * 
  */
-public class CodeCompletionTest extends TestCase {
+public class CodeCompletionTest extends AbstractAntUITest {
 
     /**
      * Constructor for CodeCompletionTest.
-     * @param arg0
+     * @param name
      */
-    public CodeCompletionTest(String arg0) {
-        super(arg0);
+    public CodeCompletionTest(String name) {
+        super(name);
     }
-
     
+	public static Test suite() {
+		return new TestSuite(CodeCompletionTest.class);
+	}
+
     /**
      * Tests the code completion for attributes of tasks.
      */
@@ -113,7 +111,6 @@ public class CodeCompletionTest extends TestCase {
 
     }
     
-
     /**
      * Test the code completion for properties.
      */
@@ -161,73 +158,25 @@ public class CodeCompletionTest extends TestCase {
     }        
     
 	/**
-	 * Tests the property proposals in for the case that they are defined in
+	 * Tests the property proposals including properties defined in 
 	 * a seperate property file.
 	 */
-    public void testBuildWithProperties() {
-        Project project = new Project();
-        project.init();
-        URL url = getClass().getResource("buildtest1.xml");
-        assertNotNull(url);
-        File file = new File(url.getFile());
-      //  assertTrue("Required file does not exist: " + url.getFile(), file.exists());
-	  	System.out.println("Expected: " + url.getFile());
-        project.setUserProperty("ant.file", file.getAbsolutePath());
+    public void testProperties() {
+        Project antProject = new Project();
+		antProject.init();
+        
+        File file = getBuildFile("buildtest1.xml");
+      
+		antProject.setUserProperty("ant.file", file.getAbsolutePath());
 
-        ProjectHelper.configureProject(project, file);  // File will be parsed here
-        Map map = project.getProperties();
+        ProjectHelper.configureProject(antProject, file);  // File will be parsed here
+        Map map = antProject.getProperties();
         assertEquals("valD", map.get("propD"));
         assertEquals("val1", map.get("prop1"));
         assertEquals("val2", map.get("prop2"));
         assertEquals("valV", map.get("propV"));
-        // assertEquals("val", tempTable.get("property_in_target"));  // (T) is known and should be fixed
-
-        // test with not valid (complete) build file
-        project = new Project();
-        project.init();
-        url = getClass().getResource("buildtest2.xml");
-        assertNotNull(url);
-        file = new File(url.getFile());
-		//assertTrue("Required file does not exist: " + url.getFile(), file.exists());
-        project.setUserProperty("ant.file", file.getAbsolutePath());
-        try {
-			ProjectHelper.configureProject(project, file);  // File will be parsed here
-        }
-        catch(BuildException e) {
-            // ignore a build exception on purpose 
-        }    
-        map = project.getProperties();
-        assertEquals("valD", map.get("propD"));
-        assertEquals("val1", map.get("prop1"));
-        assertEquals("val2", map.get("prop2"));
-
-        // test with not valid whole document string
-        project = new Project();
-        project.init();
-        url = getClass().getResource("buildtest2.xml");
-        assertNotNull(url);
-        String path = url.getFile();
-        path = path.substring(0, path.lastIndexOf('/')+1) + "someNonExisting.xml";
-        file = new File(path);
-        project.setUserProperty("ant.file", file.getAbsolutePath());
-        StringBuffer buff = new StringBuffer();
-        buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
-        buff.append("<property name=\"propA\" value=\"valA\" />\n");
-		buff.append("<property file=\"buildtest1.properties\" />\n");
-        buff.append("<target name=\"main\" depends=\"properties\">\n");
-        try {
-            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file, buff.toString());  // File will be parsed here
-        }
-        catch (BuildException e) {
-            //ignore a build exception on purpose
-			//as the document does not start and end within the same entity
-        }    
-        map = project.getProperties();
-        assertEquals("valA", map.get("propA"));
-        assertEquals("val2", map.get("prop2"));
+       // assertEquals("val", map.get("property_in_target"));
     }
-
 
 	/**
 	 * Tests the property proposals for the case that they are defined in
@@ -236,10 +185,7 @@ public class CodeCompletionTest extends TestCase {
     public void testPropertyProposalDefinedInDependantTargets() throws FileNotFoundException {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        URL url = getClass().getResource("dependencytest.xml");
-        assertNotNull(url);
-        File file = new File(url.getFile());
-        //assertTrue("Required file does not exist: " + url.getFile(), file.exists());
+        File file= getBuildFile("dependencytest.xml");
         processor.setEditedFile(file);
 		String documentText = getFileContentAsString(file);
 
@@ -255,7 +201,6 @@ public class CodeCompletionTest extends TestCase {
 		assertContains("adit_prop", proposals);
 		assertContains("compile_prop", proposals);
     }
-
     
     /**
      * Tests the code completion for tasks having parent tasks.
@@ -329,7 +274,6 @@ public class CodeCompletionTest extends TestCase {
 
         proposals = processor.getTaskProposals("    \n<project></project>", null, "");
         assertEquals(1, proposals.length);
-
     }
 
     /**
@@ -360,7 +304,6 @@ public class CodeCompletionTest extends TestCase {
         assertNotNull(childElement);
         assertEquals("secondchild", childElement.getTagName());
     }
-    
     
     private Element createTestProjectElement(Document aDocument) throws ParserConfigurationException {
         Element parentElement = aDocument.createElement("project");
@@ -409,26 +352,26 @@ public class CodeCompletionTest extends TestCase {
     }
     
 	/**
-		* Tests how the processor determines the proposal mode.
-		*/
-	   public void testDeterminingPropertyProposalMode() throws IOException {
-		   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+	* Tests how the processor determines the proposal mode.
+	*/
+   public void testDeterminingPropertyProposalMode() throws IOException {
+	   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-		   // Modes:
-		   // 0 None
-		   // 1 Task Proposal
-		   // 2 Attribute Proposal
-		   // 3 Task Closing Proposal
-		   // 4 Attribute Value Proposal
-		   // 5 Property Proposal
-        
-		   int mode =processor.determineProposalMode("<project><target name=\"$\"", 24, "");
-		   assertEquals(5, mode);
-		   mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
-		   assertEquals(5, mode);
-		   mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
-		   assertEquals(5, mode);
-	   }
+	   // Modes:
+	   // 0 None
+	   // 1 Task Proposal
+	   // 2 Attribute Proposal
+	   // 3 Task Closing Proposal
+	   // 4 Attribute Value Proposal
+	   // 5 Property Proposal
+    
+	   int mode =processor.determineProposalMode("<project><target name=\"$\"", 24, "");
+	   assertEquals(5, mode);
+	   mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
+	   assertEquals(5, mode);
+	   mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
+	   assertEquals(5, mode);
+   }
     
 	/**
 	 * Tests how the processor determines the proposal mode.
@@ -473,6 +416,24 @@ public class CodeCompletionTest extends TestCase {
 		mode = processor.determineProposalMode("<project> hjk", 13, "");
 		assertEquals(1, mode);
 	}
+	
+	/**
+	 * Tests how the processor determines the proposal mode.
+	 */
+	public void testDeterminingTaskClosingProposalMode() throws IOException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+	
+		// Modes:
+		// 0 None
+		// 1 Task Proposal
+		// 2 Attribute Proposal
+		// 3 Task Closing Proposal
+		// 4 Attribute Value Proposal
+		// 5 Property Proposal
+	
+		int mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
+		assertEquals(3, mode);
+	}
 
     /**
      * Tests how the prefix will be determined.
@@ -500,17 +461,14 @@ public class CodeCompletionTest extends TestCase {
 		assertEquals("tar", prefix);
     }    
 
-
     /**
      * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
      */
     public void testXMLParsingWithAntEditorDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
         SAXParser parser = getSAXParser();
-
-		URL url= getClass().getResource("test1.xml");
-		File file= new File(url.getFile());
+		File file= getBuildFile("test1.xml");
         AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
-        InputStream stream = getClass().getResourceAsStream("test1.xml");
+        InputStream stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         Element element = handler.getParentElement(true);
         assertNotNull(element);
@@ -518,11 +476,11 @@ public class CodeCompletionTest extends TestCase {
         NodeList childNodes = element.getChildNodes();
         assertEquals(1, childNodes.getLength());
         assertEquals("gurgel", ((Element)childNodes.item(0)).getTagName());
-
-		url= getClass().getResource("test2.xml");
-		file= new File(url.getFile());
+		stream.close();
+		
+		file= getBuildFile("test2.xml");
         handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
-        stream = getClass().getResourceAsStream("test2.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
         assertNotNull(element);
@@ -533,95 +491,27 @@ public class CodeCompletionTest extends TestCase {
         assertEquals("hal", ((Element)childNodes.item(1)).getTagName());
         assertEquals("klack", ((Element)childNodes.item(2)).getTagName());
         assertEquals("humpf", ((Element)childNodes.item(3)).getTagName());
-
-		url= getClass().getResource("test3.xml");
-		file= new File(url.getFile());
+		stream.close();
+		
+		file= getBuildFile("test3.xml");
         handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 3, 1);
-        stream = getClass().getResourceAsStream("test3.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(true);
         assertNotNull(element);
         assertEquals("bla", element.getTagName());
+		stream.close();
 
-		url= getClass().getResource("test4.xml");
-		file= new File(url.getFile());
+		file= getBuildFile("test4.xml");
         handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 0, 46);
-        stream = getClass().getResourceAsStream("test4.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(true);
         assertNotNull(element);
         assertEquals("target", element.getTagName());
+        stream.close();
     }
     
-    
-	/**
-	 * Returns the content of the specified file as <code>String</code>.
-	 */
-	private String getFileContentAsString(File aFile) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(aFile);
-        InputStreamReader reader = new InputStreamReader(stream);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        String result = "";
-        try {
-            String line= bufferedReader.readLine();
-        
-            while(line != null) {
-                result += "\n";
-                result += line;
-                line = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-		return result;
-	}
-
-
-    public static Test suite() {
-		TestSuite suite = new TestSuite("CodeCompletionTest");
-        
-		suite.addTest(new CodeCompletionTest("testAttributeProposals"));
-		suite.addTest(new CodeCompletionTest("testBuildWithProperties"));
-		suite.addTest(new CodeCompletionTest("testParsingOfEmptyBuildFile"));
-		suite.addTest(new CodeCompletionTest("testDeterminingAttributeProposalMode"));
-		suite.addTest(new CodeCompletionTest("testDeterminingNoneProposalMode"));
-		suite.addTest(new CodeCompletionTest("testDeterminingPrefix"));
-		suite.addTest(new CodeCompletionTest("testDeterminingPropertyProposalMode"));
-		suite.addTest(new CodeCompletionTest("testDeterminingTaskProposalMode"));
-		suite.addTest(new CodeCompletionTest("testFindChildElement"));
-		suite.addTest(new CodeCompletionTest("testPropertyProposalDefinedInDependantTargets"));
-		suite.addTest(new CodeCompletionTest("testPropertyProposals"));
-		suite.addTest(new CodeCompletionTest("testTaskProposals"));
-		suite.addTest(new CodeCompletionTest("testXMLParsing WithAntEditorDefaultHandler"));
-		
-		return suite;
-    }
-    
-	private SAXParser getSAXParser() throws SAXException {
-		SAXParser parser = parser = new SAXParser();
-		parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
-		return parser;
-	}
-
-	private void parse(InputStream stream, SAXParser parser, AntEditorSaxDefaultHandler handler, File editedFile) {
-		InputSource inputSource= new InputSource(stream);
-		if (editedFile != null) {
-			//needed for resolving relative external entities
-			inputSource.setSystemId(editedFile.getAbsolutePath());
-		}
-
-		parser.setContentHandler(handler);
-		parser.setDTDHandler(handler);
-		parser.setEntityResolver(handler);
-		parser.setErrorHandler(handler);
-		try {
-			parser.parse(inputSource);
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		}
-	}
     /**
      * Tests how the processor determines the proposal mode.
      */
@@ -640,5 +530,51 @@ public class CodeCompletionTest extends TestCase {
         assertEquals(0, mode);
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
 		assertEquals(0, mode);
+	}
+
+	/**
+	 * Tests the property proposals in for the case that they are defined in
+	 * a seperate property file.
+	 */
+	public void testPropertiesWithIncompleteBuildFile() {
+	    // test with not valid (complete) build file
+		Project antProject = new Project();
+		antProject.init();
+	    File file = getBuildFile("buildtest2.xml");
+		antProject.setUserProperty("ant.file", file.getAbsolutePath());
+	    try {
+			ProjectHelper.configureProject(antProject, file);  // File will be parsed here
+	    }
+	    catch(BuildException e) {
+	        // ignore a build exception on purpose 
+	    }    
+	    Map map = antProject.getProperties();
+	    assertEquals("valD", map.get("propD"));
+	    assertEquals("val1", map.get("prop1"));
+	    assertEquals("val2", map.get("prop2"));
+	}
+	
+	public void testPropertiesWithWholeDocString() {
+		// test with not valid whole document string
+	  	Project antProject = new Project();
+	  	antProject.init();
+	  	File file= getBuildFile("empty.xml");
+		antProject.setUserProperty("ant.file", file.getAbsolutePath());
+		StringBuffer buff = new StringBuffer();
+		buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
+		buff.append("<property name=\"propA\" value=\"valA\" />\n");
+	   buff.append("<property file=\"buildtest1.properties\" />\n");
+	   buff.append("<target name=\"main\" depends=\"properties\">\n");
+	   try {
+		   org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(antProject, file, buff.toString());  // File will be parsed here
+	   }
+	   catch (BuildException e) {
+		   	//ignore a build exception on purpose
+	   		//as the document does not start and end within the same entity
+	   }    
+	   Map map = antProject.getProperties();
+	   assertEquals("valA", map.get("propA"));
+	   assertEquals("val2", map.get("prop2"));
 	}
 }

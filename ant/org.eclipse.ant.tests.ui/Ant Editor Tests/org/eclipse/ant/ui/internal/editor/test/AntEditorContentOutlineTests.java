@@ -15,33 +15,24 @@
 package org.eclipse.ant.ui.internal.editor.test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.ui.internal.editor.outline.AntModel;
-import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
-import org.eclipse.ant.ui.internal.editor.support.TestLocationProvider;
-import org.eclipse.ant.ui.internal.editor.support.TestUtils;
 import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.xml.sax.SAXException;
 
 /**
  * Tests the correct creation of the outline for an xml file.
  * 
- * @author Alf Schiefelbein
  */
-public class AntEditorContentOutlineTests extends TestCase {
-    
-    private IDocument currentDocument;
+public class AntEditorContentOutlineTests extends AbstractAntUITest {
     
     public AntEditorContentOutlineTests(String name) {
         super(name);
@@ -122,22 +113,22 @@ public class AntEditorContentOutlineTests extends TestCase {
         
 		XmlElement[] roots = model.getRootElements();
 		assertNotNull(roots);
-		XmlElement project= roots[0];
+		XmlElement rootProject= roots[0];
        
-        assertNotNull(project);
+        assertNotNull(rootProject);
         
         // Get the content as string
-        String wholeDocumentString = currentDocument.get();
+        String wholeDocumentString = getCurrentDocument().get();
 
         
         // <project>
-        assertEquals(2, project.getStartingRow());
-        assertEquals(1, project.getStartingColumn());
+        assertEquals(2, rootProject.getStartingRow());
+        assertEquals(1, rootProject.getStartingColumn());
         int offset = wholeDocumentString.indexOf("<project");
           
-	    assertEquals(offset, project.getOffset());
+	    assertEquals(offset, rootProject.getOffset());
         
-        List children = project.getChildNodes();
+        List children = rootProject.getChildNodes();
 		
 		// <property name="propD">
 		XmlElement element = (XmlElement)children.get(0);
@@ -184,8 +175,8 @@ public class AntEditorContentOutlineTests extends TestCase {
           
         assertEquals(offset, element.getOffset());
 		
-        assertEquals(9, project.getEndingRow());
-        assertEquals(11, project.getEndingColumn());
+        assertEquals(9, rootProject.getEndingRow());
+        assertEquals(11, rootProject.getEndingColumn());
                 
     }
 
@@ -202,7 +193,7 @@ public class AntEditorContentOutlineTests extends TestCase {
    		assertNotNull(root);
    		
         // Get the content as string
-        String wholeDocumentString = currentDocument.get();
+        String wholeDocumentString = getCurrentDocument().get();
 
         List children = root.getChildNodes();
 
@@ -248,20 +239,20 @@ public class AntEditorContentOutlineTests extends TestCase {
         
         XmlElement[] roots = model.getRootElements();
         assertNotNull(roots);
-        XmlElement project= roots[0];
+        XmlElement rootProject= roots[0];
         // Get the content as string
-        String wholeDocumentString = currentDocument.get();
+        String wholeDocumentString = getCurrentDocument().get();
         
         // <project>
-        assertNotNull(project);
-        assertEquals(2, project.getStartingRow());
-        assertEquals(1, project.getStartingColumn());
+        assertNotNull(rootProject);
+        assertEquals(2, rootProject.getStartingRow());
+        assertEquals(1, rootProject.getStartingColumn());
         int offset = wholeDocumentString.indexOf("<project");
         
-	    assertEquals(offset, project.getOffset());
+	    assertEquals(offset, rootProject.getOffset());
         
 		// <target name="properties">
-        XmlElement element = (XmlElement)project.getChildNodes().get(1);
+        XmlElement element = (XmlElement)rootProject.getChildNodes().get(1);
         assertNotNull(element);
         assertEquals("properties", element.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
         assertEquals(16, element.getStartingRow());
@@ -273,26 +264,6 @@ public class AntEditorContentOutlineTests extends TestCase {
 
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("AntEditorContentOutlineTest");
-        suite.addTest(new AntEditorContentOutlineTests("testOutlinePreparingHandler"));
-        suite.addTest(new AntEditorContentOutlineTests("testCreationOfOutlineTree"));
-        suite.addTest(new AntEditorContentOutlineTests("testParsingOfNonValidFile"));
-        suite.addTest(new AntEditorContentOutlineTests("testAdvancedTaskLocationing"));
-        suite.addTest(new AntEditorContentOutlineTests("testWithEmptyBuildFile"));
-        return suite;
+		return new TestSuite(AntEditorContentOutlineTests.class);
     }
-    
-    private IDocument getDocument(String fileName) {
-		InputStream in = getClass().getResourceAsStream(fileName);
-		String initialContent= TestUtils.getStreamContentAsString(in);
-		return new Document(initialContent);
-    }
-    
-	private AntModel getAntModel(String fileName) {
-		currentDocument= getDocument(fileName);
-		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider(fileName));
-		model.reconcile();
-		return model;
-	}
-
 }

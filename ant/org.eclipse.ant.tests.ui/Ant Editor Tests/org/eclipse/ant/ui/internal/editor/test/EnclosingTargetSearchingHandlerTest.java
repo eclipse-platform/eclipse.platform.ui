@@ -15,27 +15,26 @@
 package org.eclipse.ant.ui.internal.editor.test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.ui.internal.editor.EnclosingTargetSearchingHandler;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
  * Tests the parsing using the EnclosingTargetSearchingHandler.
  * 
  */
-public class EnclosingTargetSearchingHandlerTest extends TestCase {
+public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
 
     /**
      * Constructor for EnclosingTargetSearchingHandlerTest.
@@ -49,12 +48,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
 	 * The test suite.
 	 */
     public static Test suite() {
-        TestSuite suite = new TestSuite("EnclosingTargetSearchingHandlerTest");
-        
-        suite.addTest(new EnclosingTargetSearchingHandlerTest("testParsingOfBuildFileWithTargetElement"));
-        suite.addTest(new EnclosingTargetSearchingHandlerTest("testParsingOfBuildFileWithoutTargetElement"));
-        suite.addTest(new EnclosingTargetSearchingHandlerTest("testParsingOfEmptyBuildFile"));
-        return suite;
+		return new TestSuite(EnclosingTargetSearchingHandlerTest.class);
     }
 	    
     /**
@@ -62,8 +56,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
      */
     public void testParsingOfBuildFileWithoutTargetElement() throws SAXException, IOException, ParserConfigurationException {
         SAXParser parser = getSAXParser();
-		URL url= getClass().getResource("test1.xml");
-		File file= new File(url.getFile());
+		File file= getBuildFile("test1.xml");
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 4, 8);
         InputStream stream = getClass().getResourceAsStream("test1.xml");
 		parse(stream, parser, handler, file);
@@ -74,16 +67,18 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
         assertNull(element);
 
 		handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 2, 0);
-        stream = getClass().getResourceAsStream("test1.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
         assertNull(element);
         element = handler.getParentElement(true);
         assertNull(element);
+        stream.close();
 
         handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
-        stream = getClass().getResourceAsStream("test1.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
+		stream.close();
 		
         element = handler.getParentElement(false);
         assertNull(element);
@@ -96,10 +91,10 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
      */
     public void testParsingOfBuildFileWithTargetElement() throws SAXException, ParserConfigurationException, IOException {
         SAXParser parser = getSAXParser();
-		URL url= getClass().getResource("russianbuild.xml");
-		File file= new File(url.getFile());
+
+		File file= getBuildFile("russianbuild.xml");
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 5, 5);
-        InputStream stream = getClass().getResourceAsStream("russianbuild.xml");
+        InputStream stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         Element element = handler.getParentElement(false);
         assertNotNull(element);
@@ -108,61 +103,39 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
         assertNotNull(element);
 		assertEquals("target", element.getTagName());
 		assertEquals("init", element.getAttribute("name"));
-
+		stream.close();
+		
         handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 7, 0);
-        stream = getClass().getResourceAsStream("russianbuild.xml");
+        stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
         assertNull(element);
         element = handler.getParentElement(true);
         assertNull(element);
+        stream.close();
 
         handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
-        stream = getClass().getResourceAsStream("russianbuild.xml");
+        stream =  new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
         assertNull(element);
         element = handler.getParentElement(true);
         assertNull(element);
+        stream.close();
     }
     
     /**
      * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
     public void testParsingOfEmptyBuildFile() throws SAXException, ParserConfigurationException, IOException {
-		URL url= getClass().getResource("projectOnly.xml");
-		File file= new File(url.getFile());
-		System.out.println("Expected: " + url.getFile());
+		File file= getBuildFile("projectOnly.xml");
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
-        InputStream stream = getClass().getResourceAsStream("projectOnly.xml");
+        InputStream stream= new FileInputStream(file);
         parse(stream, getSAXParser(), handler, file);
         Element element = handler.getParentElement(false);
         assertNull(element);
         element = handler.getParentElement(true);
         assertNull(element);
+        stream.close();
     }
-    
-	private SAXParser getSAXParser() throws SAXException {
-		SAXParser parser = parser = new SAXParser();
-		parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
-		return parser;
-	}
-	
-	private void parse(InputStream stream, SAXParser parser, EnclosingTargetSearchingHandler handler, File editedFile) {
-		InputSource inputSource= new InputSource(stream);
-		if (editedFile != null) {
-			//needed for resolving relative external entities
-			inputSource.setSystemId(editedFile.getAbsolutePath());
-		}
-	
-		parser.setContentHandler(handler);
-		parser.setDTDHandler(handler);
-		parser.setEntityResolver(handler);
-		parser.setErrorHandler(handler);
-		try {
-			parser.parse(inputSource);
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		}
-	}
 }
