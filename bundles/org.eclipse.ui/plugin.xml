@@ -1033,7 +1033,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.findReplace"
             keySequence="F3"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Find Next -->
@@ -1072,7 +1072,7 @@
       <keyBinding
             commandId="org.eclipse.ui.help.tipsAndTricksAction"
             keySequence="Shift+F1"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Paste -->
@@ -1668,7 +1668,7 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.redo"
             keySequence="Ctrl+Y"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Undo -->
@@ -1711,7 +1711,7 @@
       <keyBinding
             commandId="org.eclipse.ui.file.close"
             keySequence="Ctrl+F4"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Copy -->
@@ -1872,7 +1872,7 @@
       <keyBinding
             commandId="org.eclipse.ui.file.closeAll"
             keySequence="Ctrl+Shift+F4"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Context Assist -->
@@ -1910,7 +1910,7 @@
       <keyBinding
             commandId="org.eclipse.file.exit"
             keySequence="Alt+F4"
-            platform="windows"
+            platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Back -->
