@@ -11,4 +11,9 @@
 
 package org.eclipse.ui.internal.commands.keys;
 
-abstract class Key {}
+public abstract class Key {
+
+	Key() {
+		super();
+	}
+}

@@ -11,19 +11,25 @@
 
 package org.eclipse.ui.internal.commands.keys;
 
-public class KeyStroke {
+import java.util.Set;
 
-	private ModifierKey[] modifierKeys;
+public class KeyStroke {
+	
+	public static KeyStroke create(Set modifierKeys, NonModifierKey nonModifierKey) {
+		return new KeyStroke(modifierKeys, nonModifierKey);
+	}
+
+	private Set modifierKeys;
 	private NonModifierKey nonModifierKey;
 	
-	public KeyStroke(ModifierKey[] modifierKeys, NonModifierKey nonModifierKey) {
+	private KeyStroke(Set modifierKeys, NonModifierKey nonModifierKey) {
 		super();
 		this.modifierKeys = modifierKeys;
 		this.nonModifierKey = nonModifierKey;		
 	}
 
-	public ModifierKey[] getModifierKeys() {
-		return (ModifierKey[]) modifierKeys.clone();
+	public Set getModifierKeys() {
+		return modifierKeys;
 	}
 
 	public NonModifierKey getNonModifierKey() {

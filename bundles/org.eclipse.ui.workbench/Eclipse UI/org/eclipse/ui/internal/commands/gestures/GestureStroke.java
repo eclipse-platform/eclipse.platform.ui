@@ -12,15 +12,19 @@
 package org.eclipse.ui.internal.commands.gestures;
 
 public class GestureStroke {
-
-	private Direction direction;
 	
-	public GestureStroke(Direction direction) {
-		super();
-		this.direction = direction;
+	public static GestureStroke create(Gesture gesture) {
+		return new GestureStroke(gesture);
 	}
 
-	public Direction getDirection() {
-		return direction;
+	private Gesture gesture;
+	
+	private GestureStroke(Gesture gesture) {
+		super();
+		this.gesture = gesture;
+	}
+
+	public Gesture getGesture() {
+		return gesture;
 	}
 }

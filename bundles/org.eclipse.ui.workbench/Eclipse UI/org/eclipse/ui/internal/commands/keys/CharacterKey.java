@@ -13,9 +13,25 @@ package org.eclipse.ui.internal.commands.keys;
 
 public class CharacterKey extends NonModifierKey {
 
+	private static CharacterKey[] cache = new CharacterKey[256];
+
+	public static CharacterKey create(char character) {
+		if (character <= 255) {
+			CharacterKey characterKey = cache[character];
+			
+			if (characterKey == null) {
+				characterKey = new CharacterKey(character);
+				cache[character] = characterKey;
+			}
+			
+			return characterKey;	
+		} else
+			return new CharacterKey(character);
+	}
+
 	private char character;
 	
-	CharacterKey(char character) {
+	private CharacterKey(char character) {
 		super();
 		this.character = character;
 	}

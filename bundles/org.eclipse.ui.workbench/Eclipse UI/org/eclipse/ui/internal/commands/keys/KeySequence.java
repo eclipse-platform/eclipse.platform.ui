@@ -11,16 +11,22 @@
 
 package org.eclipse.ui.internal.commands.keys;
 
+import java.util.List;
+
 public class KeySequence {
 
-	private KeyStroke[] keyStrokes;
+	public static KeySequence create(List keyStrokes) {
+		return new KeySequence(keyStrokes);
+	}
+
+	private List keyStrokes;
 	
-	public KeySequence(KeyStroke[] keyStrokes) {
+	private KeySequence(List keyStrokes) {
 		super();
 		this.keyStrokes = keyStrokes;
 	}
 
-	public KeyStroke[] getKeyStrokes() {
-		return (KeyStroke[]) keyStrokes.clone();
+	public List getKeyStrokes() {
+		return keyStrokes;
 	}
 }

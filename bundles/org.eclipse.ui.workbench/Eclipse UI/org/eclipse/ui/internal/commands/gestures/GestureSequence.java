@@ -11,16 +11,22 @@
 
 package org.eclipse.ui.internal.commands.gestures;
 
+import java.util.List;
+
 public class GestureSequence {
 
-	private GestureStroke[] gestureStrokes;
+	public static GestureSequence create(List gestureStrokes) {
+		return new GestureSequence(gestureStrokes);
+	}
+
+	private List gestureStrokes;
 	
-	public GestureSequence(GestureStroke[] gestureStrokes) {
+	private GestureSequence(List gestureStrokes) {
 		super();
 		this.gestureStrokes = gestureStrokes;
 	}
 
-	public GestureStroke[] getGestureStrokes() {
-		return (GestureStroke[]) gestureStrokes.clone();
+	public List getGestureStrokes() {
+		return gestureStrokes;
 	}
 }

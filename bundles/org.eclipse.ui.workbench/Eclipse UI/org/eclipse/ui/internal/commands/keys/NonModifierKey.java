@@ -11,4 +11,9 @@
 
 package org.eclipse.ui.internal.commands.keys;
 
-abstract class NonModifierKey extends Key {}
+public abstract class NonModifierKey extends Key {
+
+	NonModifierKey() {
+		super();
+	}
+}

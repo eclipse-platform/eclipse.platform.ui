@@ -11,21 +11,21 @@
 
 package org.eclipse.ui.internal.commands.gestures;
 
-public class Direction {
+public class Gesture {
 
-	public final static Direction DOWN = new Direction("DOWN"); 
-	public final static Direction LEFT = new Direction("LEFT"); 
-	public final static Direction RIGHT = new Direction("RIGHT"); 
-	public final static Direction UP = new Direction("UP"); 
+	public final static Gesture DOWN = new Gesture("DOWN"); 
+	public final static Gesture LEFT = new Gesture("LEFT"); 
+	public final static Gesture RIGHT = new Gesture("RIGHT"); 
+	public final static Gesture UP = new Gesture("UP"); 
 
-	private String string;
+	private String direction;
 	
-	private Direction(String string) {
+	private Gesture(String direction) {
 		super();
-		this.string = string;
+		this.direction = direction;
 	}
 
 	public String toString() {
-		return string;
+		return direction;
 	}
 }

@@ -16,16 +16,16 @@ public class ModifierKey extends Key {
 	public final static ModifierKey ALT = new ModifierKey("ALT"); 
 	public final static ModifierKey COMMAND = new ModifierKey("COMMAND"); 
 	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
-	public final static ModifierKey SHIFt = new ModifierKey("SHIFT"); 
+	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
 
-	private String string;
+	private String name;
 	
-	private ModifierKey(String string) {
+	private ModifierKey(String name) {
 		super();
-		this.string = string;
+		this.name = name;
 	}
 
 	public String toString() {
-		return string;
+		return name;
 	}
 }
