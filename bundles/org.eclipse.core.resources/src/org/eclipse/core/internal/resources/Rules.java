@@ -160,12 +160,17 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 		if (resources.length == 0)
 			return null;
 		//optimize rule for single file
-		if (resources.length == 1)
+		if (resources.length == 1) {
+			if (resources[0].getType() == IResource.ROOT)
+				return root;
 			return factoryFor(resources[0]).validateEditRule(resources);
+		}
 		//gather rules for each resource from appropriate factory
 		HashSet rules = new HashSet();
 		IResource[] oneResource = new IResource[1];
 		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() == IResource.ROOT)
+				return root;
 			oneResource[0] = resources[i];
 			ISchedulingRule rule = factoryFor(resources[i]).validateEditRule(oneResource);
 			if (rule != null)
