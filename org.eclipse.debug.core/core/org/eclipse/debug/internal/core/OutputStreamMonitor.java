@@ -5,10 +5,12 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IStreamMonitor;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IStreamMonitor;
 
 /**
  * Monitors the output stream of a system process and notifies 
@@ -125,7 +127,7 @@ public class OutputStreamMonitor implements IStreamMonitor {
 					}
 				}
 			} catch (IOException ioe) {
-				DebugCoreUtils.logError(ioe);
+				DebugPlugin.logError(ioe);
 				return;
 			}
 			try {

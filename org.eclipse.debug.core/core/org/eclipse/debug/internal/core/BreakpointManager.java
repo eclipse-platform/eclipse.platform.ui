@@ -391,7 +391,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * An exception has occurred. Make a note of it in the log file.
 	 */
 	private void logError(Exception e) {
-		DebugCoreUtils.logError(e);
+		DebugPlugin.logError(e);
 	}
 
 	/**

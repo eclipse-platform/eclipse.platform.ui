@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import org.eclipse.debug.core.DebugPlugin;
+
 /**
  * Writes to the input stream of a system process, 
  * queueing output if the stream is blocked.
@@ -105,7 +107,7 @@ public class InputStreamMonitor {
 					fStream.flush();
 				}
 			} catch (IOException e) {
-				DebugCoreUtils.logError(e);
+				DebugPlugin.logError(e);
 			}
 		}
 		try {

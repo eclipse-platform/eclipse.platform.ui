@@ -479,7 +479,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			try {
 				launch.terminate();
 			} catch (DebugException e) {
-				DebugCoreUtils.logError(e);
+				DebugPlugin.logError(e);
 			}
 		}
 		// persist project indicies of launch configs
@@ -1167,7 +1167,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				}
 				delta.accept(fgVisitor);
 			} catch (CoreException e) {
-				DebugCoreUtils.logError(e);
+				DebugPlugin.logError(e);
 			}
 		}		
 	}
@@ -1298,7 +1298,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						    LaunchManager.this.projectClosed(project);
 						}
 					} catch (CoreException e) {
-						DebugCoreUtils.logError(e);
+						DebugPlugin.logError(e);
 					}
 				}
 				return false;
