@@ -1255,7 +1255,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// R1.0 compatibility mode ... explicit plugin-path was specified.
 			// Convert the plugins path into a configuration 
 			try {
-				cmdConfiguration = createConfigurationFromPlugins(cmdPlugins, cmdConfiguration);
+				cmdConfiguration = createConfigurationFromPlugins(cmdPlugins, cmdConfiguration, metaPath);
 			} catch (Exception e) {
 				// continue using default ...
 				if (DEBUG)
@@ -2505,7 +2505,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * R1.0 compatibility mode ... -plugins was specified (possibly with -configuration)
 	 */
-	private static String createConfigurationFromPlugins(URL file, String cfigCmd) throws Exception {
+	private static String createConfigurationFromPlugins(URL file, String cfigCmd, String metaPath) throws Exception {
+		// make sure we know the workspace location
+		metaPath = metaPath.replace(File.separatorChar, '/');
+		if (!metaPath.endsWith("/"))
+			metaPath += "/";	
+		
 		// get the actual plugin path
 		URL[] pluginPath = BootLoader.getPluginPath(file);
 		if (pluginPath == null || pluginPath.length == 0)
@@ -2581,74 +2586,65 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 							
 		// check to see if configuration was specified. If specified, will be used to
-		// persist the new configuration. Otherwise a transient configuration will be
-		// created in temp space.
-		URL tmpURL = null;
-		if (cfigCmd != null && !cfigCmd.trim().equals("")) {
-			try {
-				tmpURL = new URL(cfigCmd);
-				PlatformConfiguration oldConfig = null;
-				try {
-					// attemp to load the specified configuration. If found, merge
-					// it with the newly computed one. The merge algorithm includes
-					// sites from the old configuration that are not part of the new
-					// configuration. Note, that this does not provide for a complete
-					// merge, but the assumption is that if -plugins was specified,
-					// the sites included in the specification are explicitly
-					// controlled.
-					oldConfig = new PlatformConfiguration(tmpURL);
-					// check lock ... we'll be rewriting the config
-					oldConfig.getConfigurationLock(tmpURL); 
-					ISiteEntry[] oldSites = oldConfig.getConfiguredSites();
-					for (int i=0; i<oldSites.length; i++) {
-						tempConfig.configureSite(oldSites[i], false /*do not replace*/);
-					}
-				} catch(IOException e) {
-					// continue  without merging ...
-				} finally {
-					if (oldConfig != null) {
-						// clear the lock so it can be re-acquired when the "current"
-						// configuration is actually created
-						oldConfig.clearConfigurationLock(); 
-					}
-				}
-			} catch(MalformedURLException e) {
-				// continue without merging ...
+		// persist the new configuration. Otherwise use the workspace
+		// Note: if we fail with invalid URL we stop right here ...
+		URL targetURL = null;	
+		PlatformConfiguration targetConfig = null;
+		if (cfigCmd != null && !cfigCmd.trim().equals("")) 
+			targetURL = new URL(cfigCmd);
+		else
+			targetURL = new URL("file",null,0,metaPath+CONFIG_FILE);
+			
+		try {
+			// load existing configuration.
+			// merge in plugin-path changes
+			targetConfig = new PlatformConfiguration(targetURL);
+			ISiteEntry[] tempSites = tempConfig.getConfiguredSites();
+			for (int i=0; i<tempSites.length; i++) {
+				targetConfig.configureSite(tempSites[i], true /*replace*/);
 			}
-		}
+		} catch(IOException e) {
+			// no existing configuration ... use the newly computed one
+			targetConfig = tempConfig;
+		}	
+			
+			
+			
+			
+			
+		// tempConfig = already constructed from plugin path
+		// oldConfig = get existing config
+		// if we fail to get oldConfig
+		//    oldConfig = tempConfig;
+		// else 
+		//    oldConfig.configureSite(tempSites[], replace=true)
+		// write oldConfig(tmpURL) with lock
+	
 		
-		if (tmpURL == null) {		
-			// save the configuration in temp location
-			String tmpDirName = System.getProperty("java.io.tmpdir");
-			if (!tmpDirName.endsWith(File.separator))
-				tmpDirName += File.separator;
-			tmpDirName += Long.toString((new Date()).getTime()) + File.separator;
-			File tmpDir = new File(tmpDirName);
-			tmpDir.mkdirs();
-			tmpDir.deleteOnExit();
-			File tmpCfg = File.createTempFile("platform",".cfg",tmpDir);
-			tmpCfg.deleteOnExit();
-			tmpURL = new URL("file:" + tmpCfg.getAbsolutePath().replace(File.separatorChar, '/'));
-			tempConfig.transientConfig = true;
-		}
-		
-		// force writing null stamps
-		ISiteEntry[] se = tempConfig.getConfiguredSites();
+		// make sure we do not recompute stamps on this save
+		ISiteEntry[] se = targetConfig.getConfiguredSites();
 		for (int i=0; i<se.length; i++) {
 			((SiteEntry)se[i]).changeStampIsValid = true;
 			((SiteEntry)se[i]).pluginsChangeStampIsValid = true;
 			((SiteEntry)se[i]).featuresChangeStampIsValid = true;
 		}
-		tempConfig.changeStampIsValid = true;
-		tempConfig.pluginsChangeStampIsValid = true;
-		tempConfig.featuresChangeStampIsValid = true;
-		
-		// write out configuration
-		tempConfig.save(tmpURL); // write the temporary configuration we just created
+		targetConfig.changeStampIsValid = true;
+		targetConfig.pluginsChangeStampIsValid = true;
+		targetConfig.featuresChangeStampIsValid = true;	
 
+		// write out configuration.
+		// make sure noone else is active on this configuration (self-hosting
+		// is the main scenario for this path and anything goes), but
+		// release the lock after we write (is re-acquired later)
+		try {			
+			targetConfig.getConfigurationLock(targetURL); 
+			targetConfig.save(targetURL); // write the configuration we just created
+		} finally {
+			targetConfig.clearConfigurationLock(); 
+		}
 		
 		// return reference to new configuration
-		return tmpURL.toExternalForm();
+		return targetURL.toExternalForm();
 	}
 	
 	private static int findEntrySeparator(String pathEntry, int cnt) {
