@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.keys;
 
-public abstract class NonModifierKey extends Key {
+public abstract class Key {
 
-	NonModifierKey() {
+	Key() {
 		super();
 	}
 }

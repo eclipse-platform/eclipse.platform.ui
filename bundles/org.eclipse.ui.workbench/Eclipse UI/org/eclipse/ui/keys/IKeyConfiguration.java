@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
-
-import java.util.SortedSet;
+package org.eclipse.ui.keys;
 
 import org.eclipse.ui.handles.NotDefinedException;
 
@@ -28,15 +26,15 @@ import org.eclipse.ui.handles.NotDefinedException;
  * 
  * @since 3.0
  */
-public interface ICommand {
+public interface IKeyConfiguration {
 
 	/**
-	 * Registers an ICommandListener instance with this command.
+	 * Registers an IKeyConfigurationListener instance with this keyConfiguration.
 	 *
-	 * @param commandListener the ICommandListener instance to register.
+	 * @param keyConfigurationListener the IKeyConfigurationListener instance to register.
 	 * @throws IllegalArgumentException
 	 */	
-	void addCommandListener(ICommandListener commandListener)
+	void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener)
 		throws IllegalArgumentException;
 
 	/**
@@ -47,37 +45,14 @@ public interface ICommand {
 	 */	
 	String getDescription()
 		throws NotDefinedException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 * @throws NotHandledException
-	 */	
-	ICommandHandler getCommandHandler()
-		throws NotHandledException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	SortedSet getContextBindings();
-	
+		
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	SortedSet getImageBindings();
-
+	
 	/**
 	 * JAVADOC
 	 * 
@@ -110,21 +85,21 @@ public interface ICommand {
 	 * 
 	 * @return
 	 */	
-	boolean isDefined();
+	boolean isActive();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean isHandled();
+	boolean isDefined();
 	
 	/**
-	 * Unregisters an ICommandListener instance with this command.
+	 * Unregisters an IKeyConfigurationListener instance with this keyConfiguration.
 	 *
-	 * @param commandListener the ICommandListener instance to unregister.
+	 * @param keyConfigurationListener the IKeyConfigurationListener instance to unregister.
 	 * @throws IllegalArgumentException
 	 */
-	void removeCommandListener(ICommandListener commandListener)
+	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener)
 		throws IllegalArgumentException;
 }

@@ -9,24 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.gestures;
 
 import java.util.List;
 
-public class KeySequence {
+public class GestureSequence {
 
-	public static KeySequence create(List keyStrokes) {
-		return new KeySequence(keyStrokes);
+	public static GestureSequence create(List gestureStrokes) {
+		return new GestureSequence(gestureStrokes);
 	}
 
-	private List keyStrokes;
+	private List gestureStrokes;
 	
-	private KeySequence(List keyStrokes) {
+	private GestureSequence(List gestureStrokes) {
 		super();
-		this.keyStrokes = keyStrokes;
+		this.gestureStrokes = gestureStrokes;
 	}
 
-	public List getKeyStrokes() {
-		return keyStrokes;
+	public List getGestureStrokes() {
+		return gestureStrokes;
 	}
 }

@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.keys;
 
+import java.util.Collections;
 import java.util.Set;
+
+import org.eclipse.ui.internal.util.Util;
 
 public class KeyStroke {
 	
@@ -24,12 +27,15 @@ public class KeyStroke {
 	
 	private KeyStroke(Set modifierKeys, NonModifierKey nonModifierKey) {
 		super();
-		this.modifierKeys = modifierKeys;
+		if (nonModifierKey == null)
+			throw new IllegalArgumentException();
+
+		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.nonModifierKey = nonModifierKey;		
 	}
 
 	public Set getModifierKeys() {
-		return modifierKeys;
+		return Collections.unmodifiableSet(modifierKeys);
 	}
 
 	public NonModifierKey getNonModifierKey() {

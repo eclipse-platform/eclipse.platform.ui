@@ -22,7 +22,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextHandle;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
@@ -31,9 +31,9 @@ import org.eclipse.ui.internal.util.Util;
 public final class ContextManager implements IContextManager {
 
 	private SortedSet activeContextIds = new TreeSet();
-	private SortedMap contextElementsById = new TreeMap();
 	private IContextManagerEvent contextManagerEvent;
 	private List contextManagerListeners;
+	private SortedMap contextHandlesById = new TreeMap();
 	private SortedMap contextsById = new TreeMap();
 	private SortedSet definedContextIds = new TreeSet();
 	private RegistryReader registryReader;
@@ -59,19 +59,19 @@ public final class ContextManager implements IContextManager {
 		return Collections.unmodifiableSortedSet(activeContextIds);
 	}
 
-	public IContext getContext(String contextId)
+	public IContextHandle getContextHandle(String contextId)
 		throws IllegalArgumentException {
 		if (contextId == null)
 			throw new IllegalArgumentException();
 			
-		IContext context = (IContext) contextsById.get(contextId);
+		IContextHandle contextHandle = (IContextHandle) contextHandlesById.get(contextId);
 		
-		if (context == null) {
-			context = new Context(this, contextId);
-			contextsById.put(contextId, context);
+		if (contextHandle == null) {
+			contextHandle = new ContextHandle(contextId);
+			contextHandlesById.put(contextId, contextHandle);
 		}
 		
-		return context;
+		return contextHandle;
 	}
 
 	public SortedSet getDefinedContextIds() {
@@ -94,38 +94,10 @@ public final class ContextManager implements IContextManager {
 	public void setActiveContextIds(SortedSet activeContextIds)
 		throws IllegalArgumentException {
 		activeContextIds = Util.safeCopy(activeContextIds, String.class);
-		SortedSet activatingContextIds = new TreeSet();
-		SortedSet deactivatingContextIds = new TreeSet();
-		Iterator iterator = activeContextIds.iterator();
-
-		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
 		
-			if (!this.activeContextIds.contains(id))
-				activatingContextIds.add(id);
-		}
-
-		iterator = this.activeContextIds.iterator();
-		
-		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
-		
-			if (!activeContextIds.contains(id))
-				deactivatingContextIds.add(id);					
-		}		
-
-		SortedSet contextChanges = new TreeSet();
-		contextChanges.addAll(activatingContextIds);		
-		contextChanges.addAll(deactivatingContextIds);			
-
-		if (!contextChanges.isEmpty()) {
+		if (activeContextIds.equals(this.activeContextIds)) {
 			this.activeContextIds = activeContextIds;	
 			fireContextManagerChanged();
-
-			iterator = contextChanges.iterator();
-		
-			while (iterator.hasNext())
-				fireContextChanged((String) iterator.next());
 		}
 	}
 
@@ -134,66 +106,73 @@ public final class ContextManager implements IContextManager {
 			registryReader = new RegistryReader(Platform.getPluginRegistry());
 		
 		registryReader.load();
-		SortedMap contextElementsById = ContextElement.sortedMapById(registryReader.getContextElements());		
-		SortedSet contextElementAdditions = new TreeSet();		
-		SortedSet contextElementChanges = new TreeSet();
-		SortedSet contextElementRemovals = new TreeSet();		
-		Iterator iterator = contextElementsById.entrySet().iterator();
+		List contextElements = registryReader.getContextElements();		
+		List contexts = new ArrayList();
+		Iterator iterator = contextElements.iterator();
 		
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String id = (String) entry.getKey();
-			ContextElement contextElement = (ContextElement) entry.getValue();
-			
-			if (!this.contextElementsById.containsKey(id))
-				contextElementAdditions.add(id);
-			else if (!Util.equals(contextElement, this.contextElementsById.get(id)))
-				contextElementChanges.add(id);								
+			ContextElement contextElement = (ContextElement) iterator.next();
+			contexts.add(Context.create(contextElement.getDescription(), contextElement.getId(), contextElement.getName(), contextElement.getParentId(), contextElement.getParentId()));			
 		}
-
-		iterator = this.contextElementsById.entrySet().iterator();
 		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String id = (String) entry.getKey();
-			ContextElement contextElement = (ContextElement) entry.getValue();
-			
-			if (!contextElementsById.containsKey(id))
-				contextElementRemovals.add(id);						
-		}
-
+		SortedMap contextsById = Context.sortedMapById(contexts);			
+		SortedSet contextAdditions = new TreeSet();		
 		SortedSet contextChanges = new TreeSet();
-		contextChanges.addAll(contextElementAdditions);		
-		contextChanges.addAll(contextElementChanges);		
-		contextChanges.addAll(contextElementRemovals);
+		SortedSet contextRemovals = new TreeSet();		
+		iterator = contextsById.entrySet().iterator();
 		
-		if (!contextChanges.isEmpty()) {
-			this.contextElementsById = contextElementsById;		
-			SortedSet definedContextIds = new TreeSet(contextElementsById.keySet());
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String id = (String) entry.getKey();
+			Context context = (Context) entry.getValue();
+			
+			if (!this.contextsById.containsKey(id))
+				contextAdditions.add(id);
+			else if (!Util.equals(context, this.contextsById.get(id)))
+				contextChanges.add(id);								
+		}
+
+		iterator = this.contextsById.entrySet().iterator();
+		
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String id = (String) entry.getKey();
+			Context context = (Context) entry.getValue();
+			
+			if (!contextsById.containsKey(id))
+				contextRemovals.add(id);						
+		}
+
+		SortedSet contextSetChanges = new TreeSet();
+		contextSetChanges.addAll(contextAdditions);		
+		contextSetChanges.addAll(contextChanges);		
+		contextSetChanges.addAll(contextRemovals);
+		
+		if (!contextSetChanges.isEmpty()) {
+			this.contextsById = contextsById;		
+			SortedSet definedContextIds = new TreeSet(contextsById.keySet());
 
 			if (!Util.equals(definedContextIds, this.definedContextIds)) {	
 				this.definedContextIds = definedContextIds;
 				fireContextManagerChanged();
 			}
 
-			iterator = contextChanges.iterator();
+			iterator = contextSetChanges.iterator();
 		
-			while (iterator.hasNext())
-				fireContextChanged((String) iterator.next());
+			while (iterator.hasNext()) {
+				String contextId = (String) iterator.next();					
+				ContextHandle contextHandle = (ContextHandle) contextHandlesById.get(contextId);
+			
+				if (contextHandle != null) {			
+					if (contextsById.containsKey(contextId))
+						contextHandle.define((Context) contextsById.get(contextId));
+					else
+						contextHandle.undefine();
+				}
+			}			
 		}
 	}
-
-	ContextElement getContextElement(String contextId) {
-		return (ContextElement) contextElementsById.get(contextId);
-	}
 	
-	private void fireContextChanged(String contextId) {
-		Context context = (Context) contextsById.get(contextId);
-		
-		if (context != null) 
-			context.fireContextChanged();		
-	}
-
 	private void fireContextManagerChanged() {
 		if (contextManagerListeners != null) {
 			// TODO copying to avoid ConcurrentModificationException

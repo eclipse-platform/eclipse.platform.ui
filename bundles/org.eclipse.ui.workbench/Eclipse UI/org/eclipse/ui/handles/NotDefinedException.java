@@ -9,23 +9,36 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.handles;
 
-public class ModifierKey extends Key {
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public class NotDefinedException extends Exception {
 
-	public final static ModifierKey ALT = new ModifierKey("ALT"); 
-	public final static ModifierKey COMMAND = new ModifierKey("COMMAND"); 
-	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
-	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
-
-	private String name;
-	
-	private ModifierKey(String name) {
+	/**
+	 * JAVADOC
+	 */	
+	public NotDefinedException() {
 		super();
-		this.name = name;
 	}
 
-	public String toString() {
-		return name;
+	/**
+	 * JAVADOC
+	 *
+	 * @param s
+	 */	
+	public NotDefinedException(String s) {
+		super(s);
 	}
 }

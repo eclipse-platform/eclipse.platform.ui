@@ -51,7 +51,7 @@ public interface IContextManager {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */	
-	IContext getContext(String contextId)
+	IContextHandle getContextHandle(String contextId)
 		throws IllegalArgumentException;
 
 	/**

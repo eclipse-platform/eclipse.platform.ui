@@ -9,22 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.keys;
 
-public class GestureStroke {
-	
-	public static GestureStroke create(Gesture gesture) {
-		return new GestureStroke(gesture);
-	}
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IKeyConfigurationEvent {
 
-	private Gesture gesture;
-	
-	private GestureStroke(Gesture gesture) {
-		super();
-		this.gesture = gesture;
-	}
-
-	public Gesture getGesture() {
-		return gesture;
-	}
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	IKeyConfiguration getKeyConfiguration();
 }

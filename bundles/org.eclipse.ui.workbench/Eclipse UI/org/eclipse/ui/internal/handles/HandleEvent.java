@@ -9,19 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.handles;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IGestureStroke {}
+import org.eclipse.ui.handles.IHandle;
+import org.eclipse.ui.handles.IHandleEvent;
+
+final class HandleEvent implements IHandleEvent {
+
+	private IHandle handle;
+
+	HandleEvent(IHandle handle)
+		throws IllegalArgumentException {		
+		super();
+		
+		if (handle == null)
+			throw new IllegalArgumentException();
+		
+		this.handle = handle;
+	}
+
+	public IHandle getHandle() {
+		return handle;
+	}
+}

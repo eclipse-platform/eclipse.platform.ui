@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.handles;
 
 /**
  * <p>
@@ -24,54 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IKeyBinding {
+public interface IHandleEvent {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCommandId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getKeyConfigurationId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	IKeySequence getKeySequence();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getLocale();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
+	IHandle getHandle();
 }

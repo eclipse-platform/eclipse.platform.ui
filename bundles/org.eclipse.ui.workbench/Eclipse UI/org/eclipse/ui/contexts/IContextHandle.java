@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.contexts;
 
+import org.eclipse.ui.handles.IHandle;
+import org.eclipse.ui.handles.NotDefinedException;
 
 /**
  * <p>
@@ -25,40 +27,14 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface IContextHandle extends IHandle {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	IContext getContext()
+		throws NotDefinedException;
 }

@@ -9,11 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.gestures;
 
-public abstract class Key {
+public class Gesture {
 
-	Key() {
+	public final static Gesture DOWN = new Gesture("DOWN"); 
+	public final static Gesture LEFT = new Gesture("LEFT"); 
+	public final static Gesture RIGHT = new Gesture("RIGHT"); 
+	public final static Gesture UP = new Gesture("UP"); 
+
+	private String direction;
+	
+	private Gesture(String direction) {
 		super();
+		this.direction = direction;
+	}
+
+	public String toString() {
+		return direction;
 	}
 }

@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.handles;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This class is not intended to be extended by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,21 +24,12 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public class NotDefinedException extends Exception {
+public interface IHandleListener {
 
 	/**
 	 * JAVADOC
+	 * 
+	 * @param handleEvent
 	 */	
-	public NotDefinedException() {
-		super();
-	}
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param s
-	 */	
-	public NotDefinedException(String s) {
-		super(s);
-	}
+	void handleChanged(IHandleEvent handleEvent);
 }

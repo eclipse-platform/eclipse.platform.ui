@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.gestures;
 
 /**
  * <p>
@@ -24,4 +24,54 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IKeyStroke {}
+public interface IGestureBinding {
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getCommandId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getGestureConfigurationId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	GestureSequence getGestureSequence();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getLocale();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
+}

@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This class is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,21 +24,54 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class NotDefinedException extends Exception {
+public interface IKeyBinding {
 
 	/**
 	 * JAVADOC
+	 * 
+	 * @return
 	 */	
-	public NotDefinedException() {
-		super();
-	}
+	String getCommandId();
 
 	/**
 	 * JAVADOC
-	 *
-	 * @param s
+	 * 
+	 * @return
 	 */	
-	public NotDefinedException(String s) {
-		super(s);
-	}
+	String getKeyConfigurationId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	KeySequence getKeySequence();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getLocale();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
 }

@@ -9,24 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.gestures;
 
-import java.util.List;
-
-public class GestureSequence {
-
-	public static GestureSequence create(List gestureStrokes) {
-		return new GestureSequence(gestureStrokes);
-	}
-
-	private List gestureStrokes;
+public class GestureStroke {
 	
-	private GestureSequence(List gestureStrokes) {
-		super();
-		this.gestureStrokes = gestureStrokes;
+	public static GestureStroke create(Gesture gesture) {
+		return new GestureStroke(gesture);
 	}
 
-	public List getGestureStrokes() {
-		return gestureStrokes;
+	private Gesture gesture;
+	
+	private GestureStroke(Gesture gesture) {
+		super();
+		this.gesture = gesture;
+	}
+
+	public Gesture getGesture() {
+		return gesture;
 	}
 }

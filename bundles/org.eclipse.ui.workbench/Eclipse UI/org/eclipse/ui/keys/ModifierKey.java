@@ -9,23 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.keys;
 
-public class Gesture {
+public class ModifierKey extends Key {
 
-	public final static Gesture DOWN = new Gesture("DOWN"); 
-	public final static Gesture LEFT = new Gesture("LEFT"); 
-	public final static Gesture RIGHT = new Gesture("RIGHT"); 
-	public final static Gesture UP = new Gesture("UP"); 
+	public final static ModifierKey ALT = new ModifierKey("ALT"); 
+	public final static ModifierKey COMMAND = new ModifierKey("COMMAND"); 
+	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
+	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
 
-	private String direction;
+	private String name;
 	
-	private Gesture(String direction) {
+	private ModifierKey(String name) {
 		super();
-		this.direction = direction;
+		this.name = name;
 	}
 
 	public String toString() {
-		return direction;
+		return name;
 	}
 }

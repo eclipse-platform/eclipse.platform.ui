@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.keys;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,12 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContextListener {
+public interface IKeyManagerEvent {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param contextEvent
+	 * @return
 	 */	
-	void contextChanged(IContextEvent contextEvent);
+	IKeyManager getKeyManager();
 }

@@ -9,29 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.keys;
 
 import java.util.List;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IGestureSequence {
+public class KeySequence {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	List getGestureStrokes();
+	public static KeySequence create(List keyStrokes) {
+		return new KeySequence(keyStrokes);
+	}
+
+	private List keyStrokes;
+	
+	private KeySequence(List keyStrokes) {
+		super();
+		this.keyStrokes = keyStrokes;
+	}
+
+	public List getKeyStrokes() {
+		return keyStrokes;
+	}
 }

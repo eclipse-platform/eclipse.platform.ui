@@ -9,27 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.keys;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IContextEvent {
+public abstract class NonModifierKey extends Key {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	IContext getContext();
+	NonModifierKey() {
+		super();
+	}
 }

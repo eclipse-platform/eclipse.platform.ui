@@ -12,32 +12,26 @@
 package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextEvent;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.contexts.IContextHandle;
+import org.eclipse.ui.handles.NotDefinedException;
+import org.eclipse.ui.internal.handles.Handle;
 
-final class ContextEvent implements IContextEvent {
+final class ContextHandle extends Handle implements IContextHandle {
 
-	private IContext context;
-
-	ContextEvent(IContext context)
-		throws IllegalArgumentException {		
-		super();
-		
-		if (context == null)
-			throw new IllegalArgumentException();
-		
-		this.context = context;
-	}
-
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextEvent))
-			return false;
-
-		ContextEvent contextEvent = (ContextEvent) object;	
-		return Util.equals(context, contextEvent.context);
+	ContextHandle(String id) {
+		super(id);
 	}
 	
-	public IContext getContext() {
-		return context;
+	public IContext getContext()
+		throws NotDefinedException {
+		return (IContext) getObject();
+	}
+		
+	public void define(Object object)
+		throws IllegalArgumentException {
+		if (!(object instanceof IContext))
+			throw new IllegalArgumentException();
+			
+		super.define(object);	
 	}
 }

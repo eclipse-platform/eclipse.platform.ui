@@ -21,8 +21,8 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandEvent;
 import org.eclipse.ui.commands.ICommandHandler;
 import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.handles.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {

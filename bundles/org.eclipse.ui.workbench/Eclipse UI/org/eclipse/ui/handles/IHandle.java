@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.handles;
 
 /**
  * <p>
@@ -24,54 +24,46 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface IGestureBinding {
+public interface IHandle {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * Registers an IHandleListener instance with this handle.
+	 *
+	 * @param handleListener the IHandleListener instance to register.
+	 * @throws IllegalArgumentException
 	 */	
-	String getCommandId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getGestureConfigurationId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	IGestureSequence getGestureSequence();
+	void addHandleListener(IHandleListener handleListener)
+		throws IllegalArgumentException;
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getLocale();
+	String getId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 * @throws NotDefinedException;
+	 */	
+	Object getObject()
+		throws NotDefinedException;
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getPlatform();
+	boolean isDefined();
 	
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
+	 * Unregisters an IHandleListener instance with this handle.
+	 *
+	 * @param handleListener the IHandleListener instance to unregister.
+	 * @throws IllegalArgumentException
+	 */
+	void removeHandleListener(IHandleListener handleListener)
+		throws IllegalArgumentException;
 }
