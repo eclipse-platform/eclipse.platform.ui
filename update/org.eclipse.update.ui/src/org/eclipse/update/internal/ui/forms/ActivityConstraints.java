@@ -674,6 +674,7 @@ public class ActivityConstraints {
 			IFeature[] array =
 				(IFeature[]) siteFeatures.toArray(
 					new IFeature[siteFeatures.size()]);
+			ArrayList removeTree = new ArrayList();
 			for (int j = 0; j < array.length; j++) {
 				VersionedIdentifier id1 = array[j].getVersionedIdentifier();
 				for (int k = 0; k < array.length; k++) {
@@ -682,12 +683,18 @@ public class ActivityConstraints {
 					VersionedIdentifier id2 = array[k].getVersionedIdentifier();
 					if (id1.getIdentifier().equals(id2.getIdentifier())) {
 						if (id2.getVersion().isGreaterThan(id1.getVersion())) {
+							removeTree.add(array[j]);
 							siteFeatures.remove(array[j]);
 							break;
 						}
 					}
 				}
 			}
+			// Compute patches that will need to be removed together with 
+			// the removed features
+			ArrayList patchesTree = new ArrayList();
+			contributePatchesFor(removeTree, siteFeatures, patchesTree);
+			siteFeatures.removeAll(patchesTree);
 
 			// accumulate site results
 			features.addAll(siteFeatures);
