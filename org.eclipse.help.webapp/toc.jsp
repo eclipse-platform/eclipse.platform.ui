@@ -18,7 +18,6 @@ BODY {
 	margin:0;
 	padding:0;
 	border:0;
-	cursor:default;
 
 	scrollbar-highlight-color:ThreeDShadow;
 	scrollbar-shadow-color:ThreeDShadow;
@@ -57,14 +56,13 @@ LI.leaf {
 	list-style-type:none;
 }
 
-A {
+A, A:visited, A:hover, A:link {
 	text-decoration:none; 
 	text-indent:15px;
 	color:WindowText; 
 	padding:0px;;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
-	cursor:default;
 }
 
 A.node {
@@ -189,7 +187,7 @@ A.book {
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 %>
 		<li class='<%=li_className%>'>
-			<a class='<%=a_className%>' href="<%=href%>"><nobr><%=topic.getAttribute("label")%></nobr></a>
+			<a class='<%=a_className%>' href="<%=href%>" title="<%=topic.getAttribute("label")%>"><nobr><%=topic.getAttribute("label")%></nobr></a>
 <%
 		if (hasNodes) {
 			childrenStack.pushChildren(topic);
