@@ -201,7 +201,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			Runnable r = new Runnable() {
 				public void run() {
 					try {
-						runner.run();
+						runner.run(process);
 					} catch (CoreException e) {
 					}
 					process.terminated();

@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -22,7 +23,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 /**
  * 
  */
-public class AntProcess implements IProcess {
+public class AntProcess implements IProcess, IProgressMonitor {
 	
 	/**
 	 * Process attribute with process identifier - links the ant process build
@@ -35,6 +36,7 @@ public class AntProcess implements IProcess {
 	private ILaunch fLaunch = null;
 	private Map fAttributes = null;
 	private boolean fTerminated = false;
+	private boolean fCancelled = false;
 	private IConsole fConsole = null;
 	
 	public AntProcess(String label, ILaunch launch, Map attributes) {
@@ -101,7 +103,7 @@ public class AntProcess implements IProcess {
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return false;
+		return !isCanceled() && !isTerminated();
 	}
 
 	/**
@@ -122,6 +124,7 @@ public class AntProcess implements IProcess {
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
+		setCanceled(true);
 	}
 
 	/**
@@ -141,5 +144,58 @@ public class AntProcess implements IProcess {
 	protected void setConsole(IConsole console) {
 		fConsole = console;
 	}
+	
+	// IProgressMontior implemented to support termination.
+	
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
+	 */
+	public void beginTask(String name, int totalWork) {
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
+	 */
+	public void done() {
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+	 */
+	public void internalWorked(double work) {
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+	 */
+	public boolean isCanceled() {
+		return fCancelled;
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+	 */
+	public void setCanceled(boolean value) {
+		fCancelled = value;
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+	 */
+	public void setTaskName(String name) {
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+	 */
+	public void subTask(String name) {
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+	 */
+	public void worked(int work) {
+	}
+
 }
 
