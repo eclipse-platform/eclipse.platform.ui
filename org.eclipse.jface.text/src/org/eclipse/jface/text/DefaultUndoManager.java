@@ -297,6 +297,7 @@ public class DefaultUndoManager implements IUndoManager {
 			if (fStart < 0) {
 				if (fCommands.size() > 0 && !fFoldingIntoCompoundChange) {
 					super.updateCommandStack();
+					fCurrent= createCurrent();
 					return;
 				}
 			}
