@@ -20,6 +20,19 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class SyncViewerSorter extends ResourceSorter {
 			
+	private boolean compareFullPaths = false;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.navigator.ResourceSorter#compareNames(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IResource)
+	 */
+	protected int compareNames(IResource resource1, IResource resource2) {
+		if(compareFullPaths) {
+			return collator.compare(resource1.getFullPath().toString(), resource2.getFullPath().toString());
+		} else {
+			return collator.compare(resource1.getName(), resource2.getName());
+		}
+	}
+
 	public SyncViewerSorter(int criteria) {
 		super(criteria);
 	}
@@ -28,7 +41,12 @@ public class SyncViewerSorter extends ResourceSorter {
 	 * Method declared on ViewerSorter.
 	 */
 	public int compare(Viewer viewer, Object o1, Object o2) {
-		return super.compare(viewer, getResource(o1), getResource(o2));
+		if(o1 instanceof CompressedFolder || o2 instanceof CompressedFolder) {
+			compareFullPaths = true;
+		}
+		int result = super.compare(viewer, getResource(o1), getResource(o2));
+		compareFullPaths = false;
+		return result;
 	}
 	
 	protected IResource getResource(Object obj) {
