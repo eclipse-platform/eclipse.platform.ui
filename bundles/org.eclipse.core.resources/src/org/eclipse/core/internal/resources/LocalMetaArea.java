@@ -273,7 +273,11 @@ public void writeLocation(IProject target) throws CoreException {
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
-public void write(WorkspaceDescription description) throws CoreException {
+/**
+ * Writes the workspace description to the local meta area. This method
+ * is synchronized to prevent multiple current write attempts.
+ */
+public synchronized void write(WorkspaceDescription description) throws CoreException {
 	IPath path = getWorkspaceDescriptionLocation();
 	path.toFile().getParentFile().mkdirs();
 	IPath tempPath = getBackupLocationFor(path);
