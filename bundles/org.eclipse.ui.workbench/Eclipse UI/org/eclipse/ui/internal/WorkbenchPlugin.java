@@ -258,7 +258,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      *
      * @return the workbench action set registry
      */
-    public ActionSetRegistry getActionSetRegistry() {
+    public synchronized ActionSetRegistry getActionSetRegistry() {
         if (actionSetRegistry == null) {
             actionSetRegistry = new ActionSetRegistry();
         }
@@ -281,7 +281,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * by this plug-in.
      */
 
-    public IEditorRegistry getEditorRegistry() {
+    public synchronized IEditorRegistry getEditorRegistry() {
         if (editorRegistry == null) {
             editorRegistry = new EditorRegistry();
         }
@@ -411,7 +411,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * Return the perspective registry.
      * @return IPerspectiveRegistry. The registry for the receiver.
      */
-    public IPerspectiveRegistry getPerspectiveRegistry() {
+    public synchronized IPerspectiveRegistry getPerspectiveRegistry() {
         if (perspRegistry == null) {
             perspRegistry = new PerspectiveRegistry();
             perspRegistry.load();
@@ -425,7 +425,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the working set manager
      * @since 2.0
      */
-    public IWorkingSetManager getWorkingSetManager() {
+    public synchronized IWorkingSetManager getWorkingSetManager() {
         if (workingSetManager == null) {
             workingSetManager = new WorkingSetManager(bundleContext);
             workingSetManager.restoreState();
@@ -439,7 +439,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the working set registry
      * @since 2.0
      */
-    public WorkingSetRegistry getWorkingSetRegistry() {
+    public synchronized WorkingSetRegistry getWorkingSetRegistry() {
         if (workingSetRegistry == null) {
             workingSetRegistry = new WorkingSetRegistry();
             workingSetRegistry.load();
@@ -453,7 +453,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the introduction registry.
      * @since 3.0
      */
-    public IIntroRegistry getIntroRegistry() {
+    public synchronized IIntroRegistry getIntroRegistry() {
         if (introRegistry == null) {
             introRegistry = new IntroRegistry();
         }
@@ -466,7 +466,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @return the workbench operation support.
 	 * @since 3.1
 	 */
-    public IWorkbenchOperationSupport getOperationSupport() {
+    public synchronized IWorkbenchOperationSupport getOperationSupport() {
         if (operationSupport == null) {
         	operationSupport = new WorkbenchOperationSupport();
         }
@@ -479,7 +479,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return PreferenceManager the preference manager for
      * the receiver.
      */
-    public PreferenceManager getPreferenceManager() {
+    public synchronized PreferenceManager getPreferenceManager() {
         if (preferenceManager == null) {
             preferenceManager = new WorkbenchPreferenceManager(
                     PREFERENCE_PAGE_CATEGORY_SEPARATOR);
@@ -500,7 +500,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      *
      * @return the shared image manager
      */
-    public ISharedImages getSharedImages() {
+    public synchronized ISharedImages getSharedImages() {
         if (sharedImages == null)
             sharedImages = new SharedImages();
         return sharedImages;
@@ -511,7 +511,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * 
      * @return the theme registry
      */
-    public IThemeRegistry getThemeRegistry() {
+    public synchronized IThemeRegistry getThemeRegistry() {
         if (themeRegistry == null) {
             themeRegistry = new ThemeRegistry();
             ThemeRegistryReader reader = new ThemeRegistryReader();
@@ -526,7 +526,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return IViewRegistry the view registry for the
      * receiver.
      */
-    public IViewRegistry getViewRegistry() {
+    public synchronized IViewRegistry getViewRegistry() {
         if (viewRegistry == null) {
             viewRegistry = new ViewRegistry();
         }
@@ -651,7 +651,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return DecoratorManager the decorator manager
      * for the receiver.
      */
-    public DecoratorManager getDecoratorManager() {
+    public synchronized DecoratorManager getDecoratorManager() {
         if (this.decoratorManager == null) {
             this.decoratorManager = new DecoratorManager();
         }
