@@ -175,6 +175,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		
 		
 		
+	/** The location */
+	protected IPath fLocation;
 	/** The element for which the info is stored */
 	protected IFile fFile;
 	/** How often the element has been connected */
@@ -217,6 +219,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		if (file == null || !file.exists())
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "File does not exist", null));
 		
+		fLocation= location;
 		fFile= file;
 		fFileSynchronizer= new FileSynchronizer();
 		
@@ -255,7 +258,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getLocation()
 	 */
 	public IPath getLocation() {
-		return fFile.getLocation();
+		return fLocation;
 	}
 
 	/*
