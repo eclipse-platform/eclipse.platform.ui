@@ -144,6 +144,11 @@ public class TextPresentation {
 	private ArrayList fRanges;
 	/** A clipping region against which the presentation can be clipped when asked for results */
 	private IRegion fResultWindow;
+	/**
+	 * The optional extent for this presentation.
+	 * @since 3.0
+	 */
+	private IRegion fExtent;
 	
 	
 	/**
@@ -162,6 +167,19 @@ public class TextPresentation {
 	public TextPresentation(int sizeHint) {
 		Assert.isTrue(sizeHint > 0);
 		fRanges= new ArrayList(sizeHint);
+	}
+
+	/**
+	 * Creates a new empty text presentation with the given extent.
+	 * <code>sizeHint</code>  tells the expected size of this presentation.
+	 * 
+	 * @param sizeHint the expected size of this presentation
+	 * @since 3.0
+	 */
+	public TextPresentation(IRegion extent, int sizeHint) {
+		this(sizeHint);
+		Assert.isNotNull(extent);
+		fExtent= extent;
 	}
 	
 	/**
@@ -440,7 +458,30 @@ public class TextPresentation {
 		newRange.length= end - start;
 		return newRange;
 	}
+
+	/**
+	 * Returns the region which is relative to the specified window and
+	 * appropriately clipped if necessary.
+	 *
+	 * @param region the absolute coverage
+	 * @return the window relative region based on the absolute coverage
+	 * @since 3.0
+	 */
+	private IRegion createWindowRelativeRegion(IRegion coverage) {
+		if (fResultWindow == null || coverage == null)
+			return coverage;
 		
+		int start= coverage.getOffset() - fResultWindow.getOffset();
+		if (start < 0)
+			start= 0;
+		
+		int rangeEnd= coverage.getOffset() + coverage.getLength();
+		int windowEnd= fResultWindow.getOffset() + fResultWindow.getLength();
+		int end= (rangeEnd > windowEnd ? windowEnd : rangeEnd);
+		end -= fResultWindow.getOffset();
+		
+		return new Region(start, end - start);
+	}
 	
 	/**
 	 * Returns an iterator which enumerates all style ranged which define a style 
@@ -543,6 +584,20 @@ public class TextPresentation {
 	}
 	
 	/**
+	 * Returns the extent of this presentation clipped by the
+	 * presentation's result window.
+	 *
+	 * @return the clipped extent 
+	 * @since 3.0
+	 */
+	public IRegion getExtent() {
+		if (fExtent != null)
+			return createWindowRelativeRegion(fExtent);
+		else
+			return getCoverage();
+	}
+	
+	/**
 	 * Clears this presentation by resetting all applied changes.
 	 * @since 2.0
 	 */
@@ -551,4 +606,6 @@ public class TextPresentation {
 		fResultWindow= null;
 		fRanges.clear();
 	}
+
+
 }

@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -75,7 +77,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	/**
 	 * Opertion created by the document provider and to be executed by the providers runnable context.
 	 */
-	protected static abstract class DocumentProviderOperation implements IRunnableWithProgress {
+	protected static abstract class DocumentProviderOperation implements IRunnableWithProgress, ISchedulingRuleProvider {
 		
 		/**
 		 * The actual functionality of this operation.
@@ -93,6 +95,13 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			} catch (CoreException x) {
 				throw new InvocationTargetException(x);
 			}
+		}
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.ISchedulingRuleProvider#getSchedulingRule()
+		 */
+		public ISchedulingRule getSchedulingRule() {
+			return ResourcesPlugin.getWorkspace().getRoot();
 		}
 	}
 	
@@ -559,6 +568,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
 				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					if (info.fElement instanceof IFileEditorInput)
+						return ((IFileEditorInput)info.fElement).getFile();
+					else
+						return null;
+				}
 			};
 			executeOperation(operation, getProgressMonitor());
 		} else {
@@ -594,6 +612,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					commitFileBuffer(monitor, info, overwrite);					
 				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					if (info.fElement instanceof IFileEditorInput)
+						return ((IFileEditorInput)info.fElement).getFile().getParent();
+					else
+						return null;
+				}
 			};
 			
 		} else if (element instanceof IFileEditorInput) {
@@ -602,6 +629,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			return new DocumentProviderOperation() {
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					createFileFromDocument(monitor, file, document);
+				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					IResource existingParent= file.getParent();
+					while (!existingParent.exists())
+						existingParent= existingParent.getParent();
+					return existingParent;
 				}
 			};
 		}
@@ -762,6 +798,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.validateState(monitor, computationContext);
 				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					if (info.fElement instanceof IFileEditorInput)
+						return ((IFileEditorInput)info.fElement).getFile().getParent();
+					else
+						return null;
+				}
 			};
 			executeOperation(operation, getProgressMonitor());
 		} else
@@ -822,6 +867,15 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
+				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					if (info.fElement instanceof IFileEditorInput)
+						return ((IFileEditorInput)info.fElement).getFile().getParent();
+					else
+						return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());

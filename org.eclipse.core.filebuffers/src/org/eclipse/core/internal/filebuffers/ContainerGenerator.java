@@ -104,8 +104,15 @@ public class ContainerGenerator {
 				}
 			}
 		};
+
+		// Get scheduling rule
+		IWorkspaceRoot root= fWorkspace.getRoot();
+		IPath existingParentPath= fContainerFullPath;
+		while (!root.exists(existingParentPath))
+			existingParentPath= existingParentPath.removeLastSegments(1);
 		
-		fWorkspace.run(runnable, monitor);
+		IResource schedulingRule= root.findMember(existingParentPath);
+		fWorkspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, monitor);
 		return fContainer;
 	}
 }
