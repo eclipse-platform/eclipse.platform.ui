@@ -78,6 +78,7 @@ public ProjectLocationSelectionDialog(
 private void applyValidationResult(String errorMsg) {
 	int code;
 	
+	getOkButton().setEnabled(errorMsg == null);
 	if (errorMsg == null) {
 		code = IStatus.OK;
 		errorMsg = "";	//$NON-NLS-1$
@@ -93,8 +94,6 @@ private void applyValidationResult(String errorMsg) {
 			code,
 			errorMsg,
 			null));
-	if (errorMsg != null)
-		getOkButton().setEnabled(false);
 }
 /**
  * Check whether the entries are valid. If so return null. Otherwise
