@@ -2202,4 +2202,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return fastViewBar.getSide();
 	}
 	
+	/**
+	 * Close the floating window just for this instance.
+	 *
+	 */
+	public void closeFloatingWindow(){
+		animationItem.closeFloatingWindow();
+	}
+	
 }

@@ -84,7 +84,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		super.configureShell(newShell);
 		newShell.setLayout(getLayout());
 		setBackground(newShell);
-		newShell.setSize(getMaximumSize(newShell.getDisplay()));
 		addRoundBorder(newShell,borderSize);
 		
 	}

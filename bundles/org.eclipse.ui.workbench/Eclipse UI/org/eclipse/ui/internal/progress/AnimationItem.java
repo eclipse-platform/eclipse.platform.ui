@@ -201,7 +201,18 @@ public class AnimationItem {
 					}
 					if (floatingWindow == null)
 						return Status.CANCEL_STATUS;
-					floatingWindow.open();
+					if (window != null
+							&& window == window.getWorkbench()
+									.getActiveWorkbenchWindow()) {
+						floatingWindow.open();
+						for (int index = 0; index < window.getWorkbench()
+								.getWorkbenchWindowCount(); index++) {
+							WorkbenchWindow progressToClose = (WorkbenchWindow) window
+									.getWorkbench().getWorkbenchWindows()[index];
+							if (progressToClose != window)
+								progressToClose.closeFloatingWindow();
+						}
+					}
 					return Status.OK_STATUS;
 				}
 			}
@@ -226,8 +237,9 @@ public class AnimationItem {
 	 * The animation has begun.
 	 */
 	void animationStart() {
-		if (AnimationManager.getInstance().showingDetails() && isActiveWorkbenchItem())
-				openFloatingWindow();
+		if (AnimationManager.getInstance().showingDetails()
+				&& isActiveWorkbenchItem())
+			openFloatingWindow();
 	}
 	/**
 	 * Check to see if this workbench is the main workbench.
@@ -244,7 +256,7 @@ public class AnimationItem {
 	/**
 	 * Close the floating window.
 	 */
-	void closeFloatingWindow() {
+	public void closeFloatingWindow() {
 		synchronized (windowLock) {
 			closeWindowInUI();
 		}
