@@ -282,8 +282,9 @@ public class MenuEnablementTest extends EclipseTest {
 		assertDisabledForCommonReasons(action, project);
 		assertEnablement(action, project, MANAGED, false /* expected enablement */);
 		assertEnablement(action, project, ADDED, false /* expected enablement */);
-		assertEnablement(action, project, IGNORED, false /* expected enablement */);
+		assertEnablement(action, project, IGNORED, true /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED, true /* expected enablement */);
+		assertEnablement(action, project, UNMANAGED | IGNORED, true /* expected enablement */);		
 		assertEnablement(action, project, UNMANAGED | SINGLE_ONLY, true /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED | MANAGED | IGNORED, false /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED_PARENT, true /* expected enablement */);

@@ -80,4 +80,11 @@ public class AddAction extends WorkspaceAction {
 		return true;
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForIgnoredResources()
+	 */
+	protected boolean isEnabledForIgnoredResources() {
+		return true;
+	}
+
 }
