@@ -77,7 +77,7 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 
 		this.label = original.getLabel();
 		this.id = original.getId();		
-		this.categoryId = original.getLabel();
+		this.categoryId = original.getCategoryId();
 		this.description = original.getDescription();
 		this.isEditable = original.isEditable();
 		this.pluginId = original.getPluginId();
