@@ -214,21 +214,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}
 		});
-		
-		//Listen for the selection changing and update the
-		//actions that are interested
-		window.getSelectionService().addSelectionListener(new ISelectionListener(){
-			/*
-			 * @see ISelectionListener.selectionChanges
-			 */
-			public void selectionChanged(IWorkbenchPart part, ISelection selection){
-				if(selection instanceof IStructuredSelection){
-					IStructuredSelection structured = (IStructuredSelection) selection;
-					importResourcesAction.selectionChanged(structured);
-					exportResourcesAction.selectionChanged(structured);
-				}				
-			}				
-		});
 	}
 
 	/**
