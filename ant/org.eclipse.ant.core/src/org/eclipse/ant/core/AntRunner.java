@@ -113,7 +113,7 @@ public void addUserProperties(Map properties) {
 /**
  * Runs the build script.
  */
-public void run() throws CoreException {
+public void run(IProgressMonitor monitor) throws CoreException {
 	try {
 		ClassLoader loader = getClassLoader();
 		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner");
@@ -128,6 +128,11 @@ public void run() throws CoreException {
 		if (buildLoggerClassName != null) {
 			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] {String.class});
 			addBuildLogger.invoke(runner, new Object[] {buildLoggerClassName});
+		}
+		// add progress monitor
+		if (monitor != null) {
+			Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] {IProgressMonitor.class});
+			setProgressMonitor.invoke(runner, new Object[] {monitor});
 		}
 		// add properties
 		Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] {Map.class});
@@ -154,6 +159,13 @@ public void run() throws CoreException {
 	} catch (Exception e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), e));
 	}
+}
+
+/**
+ * Runs the build script.
+ */
+public void run() throws CoreException {
+	run(null);
 }
 
 /**

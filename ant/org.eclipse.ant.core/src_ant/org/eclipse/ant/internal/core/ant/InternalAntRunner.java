@@ -72,6 +72,7 @@ import org.eclipse.ant.internal.core.*;
 import org.eclipse.ant.internal.core.Policy;
 import org.eclipse.ant.internal.core.Task;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
  * to ensure that the functionality is equivalent when running in the platform.
@@ -84,6 +85,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * </p>
  */
 public class InternalAntRunner {
+
+	/**
+	 *
+	 */
+	protected IProgressMonitor monitor;
 
 	/**
 	 *
@@ -258,6 +264,7 @@ public void run() {
 			printHelp(project);
 			return;
 		}
+		createMonitorBuildListener(project);
 		if (targets != null && !targets.isEmpty())
 			project.executeTargets(targets);
 		else
@@ -275,6 +282,14 @@ public void run() {
         System.setOut(originalOut);
 		fireBuildFinished(project, error);
 	}
+}
+
+protected void createMonitorBuildListener(Project project) {
+	if (monitor == null)
+		return;
+	monitor.beginTask("", project.getTargets().size());
+	project.addBuildListener(new ProgressBuildListener(monitor));
+	project.addReference("eclipse.progress.monitor", monitor);
 }
 
 /**
@@ -730,4 +745,12 @@ private ArrayList getArrayList(String args) {
 	}
 	return result;
 }
+
+/**
+ * Sets the build progress monitor.
+ */
+public void setProgressMonitor(IProgressMonitor monitor) {
+	this.monitor = monitor;
+}
+
 }
