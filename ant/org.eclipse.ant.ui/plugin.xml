@@ -47,15 +47,6 @@
       </editor>
    </extension>
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            type="org.eclipse.ant.AntLaunchConfigurationType"
-            helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
-            class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
-            id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
-      </launchConfigurationTabGroup>
-   </extension>
-   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="%AntBuild"
@@ -248,12 +239,14 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntLaunchConfigurationType"
+            description="%antLaunchConfigurationTabGroup.description"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntBuilderLaunchConfigurationType"
+            description="%antBuilderLaunchConfigurationTabGroup.description"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant_builder"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntBuilderTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant.builder">
