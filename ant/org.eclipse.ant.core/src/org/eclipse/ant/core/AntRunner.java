@@ -9,9 +9,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 
+import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
@@ -32,12 +34,8 @@ public class AntRunner implements IPlatformRunnable {
 	protected String inputHandlerClassName;
 	protected String[] arguments;
 	protected String[] propertyFiles;
-
-	/** 
-	 * Constructs an instance of this class.
-	 */
-	public AntRunner() {
-	}
+	protected URL[] customClasspath;
+	protected boolean reuseClassLoader= true;
 
 	/**
 	 * Sets the build file location on the file system.
@@ -251,7 +249,7 @@ public class AntRunner implements IPlatformRunnable {
 		Object runner= null;
 		Class classInternalAntRunner= null;
 		try {
-			ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
+			ClassLoader loader = getClassLoader();
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -407,12 +405,28 @@ public class AntRunner implements IPlatformRunnable {
 			newArgs[args.length] = "-debug"; //$NON-NLS-1$
 			argArray = newArgs;
 		}
-		ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
+		ClassLoader loader = getClassLoader();
 		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 		Object runner = classInternalAntRunner.newInstance();
 		Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
 		run.invoke(runner, new Object[] { argArray });
 		return null;
+	}
+	
+	private ClassLoader getClassLoader() {
+		if (customClasspath == null) {
+			if (reuseClassLoader) {
+				return AntCorePlugin.getPlugin().getClassLoader();
+			} else {
+				return AntCorePlugin.getPlugin().getNewClassLoader();
+			}
+		} else {
+			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+			List fullClasspath= new ArrayList();
+			fullClasspath.addAll(Arrays.asList(preferences.getDefaultURLs()));
+			fullClasspath.addAll(Arrays.asList(customClasspath));
+			return new AntClassLoader((URL[])fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
+		}
 	}
 	
 	/**
@@ -435,5 +449,20 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public void setPropertyFiles(String[] propertyFiles) {
 		this.propertyFiles= propertyFiles;
+	}
+
+	/**
+	 * Sets the custom classpath to use for this build
+	 * @param array of URLs that define the custom classpath
+	 */
+	public void setCustomClasspath(URL[] customClasspath) {
+		this.customClasspath = customClasspath;
+	}
+
+	/**
+	 * Sets whether or not to reuse the cached classloader for this build
+	 */
+	public void setReuseClassLoader(boolean reuseClassLoader) {
+		this.reuseClassLoader = reuseClassLoader;
 	}
 }

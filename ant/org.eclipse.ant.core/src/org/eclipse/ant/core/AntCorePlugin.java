@@ -181,13 +181,22 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * 	 * @return the cached class loader	 */
 	protected ClassLoader getClassLoader() {
 		if (classLoader == null) {
-			AntCorePreferences preferences = getPreferences();
-			URL[] urls = preferences.getURLs();
-			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
-			classLoader= new AntClassLoader(urls, pluginLoaders);
+			classLoader= getNewClassLoader();
 			getPluginPreferences().addPropertyChangeListener(this);
 		}
 		return classLoader;
+	}
+	
+	/**
+	 * Returns a new class loader to use when executing Ant scripts.
+	 * 
+	 * @return the new class loader
+	 */
+	protected ClassLoader getNewClassLoader() {
+		AntCorePreferences preferences = getPreferences();
+		URL[] urls = preferences.getURLs();
+		ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
+		return new AntClassLoader(urls, pluginLoaders);
 	}
 	
 	/**

@@ -335,6 +335,16 @@ public class AntCorePreferences {
 		}
 	}
 
+	/**
+	 * Return the list of urls added to the classpath by the extra classpath
+	 * entries extension point.
+	 * 
+	 * @return URL[]
+	 */
+	public URL[] getDefaultURLs() {
+		return (URL[])defaultURLs.toArray(new URL[defaultURLs.size()]);
+	}
+	
 	public URL[] getURLs() {
 		List result = new ArrayList(10);
 		if (defaultURLs != null) {
