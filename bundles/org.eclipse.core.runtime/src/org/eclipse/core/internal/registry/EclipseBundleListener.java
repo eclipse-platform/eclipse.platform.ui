@@ -21,6 +21,7 @@ import org.osgi.framework.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+//TODO The comment needs to fixed
 // using a synchronous listener until asynchronous ones work properly
 // Actually synchronous might be the right answer here anyway. If the
 // bundle activator code tries to access the registry to get its extension
