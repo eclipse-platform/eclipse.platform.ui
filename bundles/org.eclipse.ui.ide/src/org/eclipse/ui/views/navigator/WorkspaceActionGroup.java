@@ -150,6 +150,9 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			if (refreshAction.isEnabled()) {
 				refreshAction.refreshAll();
 			}
+			
+			// Swallow the event
+			event.doit = false;
 		}
 	}
 	/**
