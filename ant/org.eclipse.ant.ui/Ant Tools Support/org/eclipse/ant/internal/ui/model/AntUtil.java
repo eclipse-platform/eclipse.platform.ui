@@ -139,7 +139,7 @@ public final class AntUtil {
 			String[] propertyFiles= AntUtil.parseString(attribute, ","); //$NON-NLS-1$
 			for (int i = 0; i < propertyFiles.length; i++) {
 				String propertyFile = propertyFiles[i];
-				propertyFile= expandVariableString(propertyFile, AntUIModelMessages.getString("AntUtil.5"), AntUIModelMessages.getString("AntUtil.6")); //$NON-NLS-1$ //$NON-NLS-2$
+				propertyFile= expandVariableString(propertyFile, AntUIModelMessages.getString("AntUtil.6")); //$NON-NLS-1$ //$NON-NLS-2$
 				propertyFiles[i]= propertyFile;
 			}
 			return propertyFiles;
@@ -274,7 +274,7 @@ public final class AntUtil {
 		for (int i = 0; i < URLStrings.length; i++) {
 			String string = URLStrings[i];
 			if (expandVariables) {
-				string= expandVariableString(string, AntUIModelMessages.getString("AntUtil.7"), AntUIModelMessages.getString("AntUtil.8")); //$NON-NLS-1$ //$NON-NLS-2$
+				string= expandVariableString(string, AntUIModelMessages.getString("AntUtil.8")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			try {
 				URLs.add(new URL("file:" + string)); //$NON-NLS-1$
@@ -286,10 +286,10 @@ public final class AntUtil {
 		}
 	}
 
-	private static String expandVariableString(String variableString, String statusMessage, String invalidMessage) throws CoreException {
+	private static String expandVariableString(String variableString, String invalidMessage) throws CoreException {
 		String expandedString = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
 		if (expandedString == null || expandedString.length() == 0) {
-			String msg = MessageFormat.format(invalidMessage, new String[] { variableString});
+			String msg = MessageFormat.format(invalidMessage, new String[] {variableString});
 			throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
 		} else {
 			variableString= expandedString;
