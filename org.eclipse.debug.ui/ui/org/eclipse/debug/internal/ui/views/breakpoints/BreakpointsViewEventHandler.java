@@ -12,6 +12,10 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -155,44 +159,30 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer(); 
-						boolean refreshCheckedState= false;
+						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer();
+						if (haveGroupsChanged(breakpoints, deltas)) {
+							// If the groups has changed, completely refresh the view to
+							// pick up structural changes.
+							fView.getViewer().refresh();
+							fView.initializeCheckedState();
+							if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+							    fView.updateViewerBackground();
+							}
+							fView.updateObjects();
+							return;
+						}
+						List groupsToUpdate= new ArrayList();
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
 							IMarker marker= breakpoint.getMarker();
 							if (marker != null && marker.exists()) {
-								IMarkerDelta delta= deltas[i];
-								if (delta != null) {
-									String oldGroup= (String) delta.getAttribute(IBreakpoint.GROUP);
-									String newGroup= null;
-									try {
-										newGroup= breakpoint.getGroup();
-									} catch (CoreException e1) {
-									}
-									boolean needsRefresh= false;
-									if (newGroup != oldGroup) { // new == old if they're both null
-										if (newGroup == null || oldGroup == null) {
-											// one is null, one isn't => changed
-											needsRefresh= true;
-										} else { // moved from one group to another ?
-											needsRefresh= !newGroup.equals(oldGroup);
-										}
-									}
-									if (needsRefresh) {
-										// If the group has changed, completely refresh the view to
-										// pick up structural changes.
-										fView.getViewer().refresh();
-										fView.initializeCheckedState();
-										if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-										    fView.updateViewerBackground();
-										}
-										return;
-									}
-								}
 								try {
 									boolean enabled= breakpoint.isEnabled();
 									if (viewer.getChecked(breakpoint) != enabled) {
-										refreshCheckedState= true;
+									    String group= breakpoint.getGroup();
+									    if (group != null) {
+											groupsToUpdate.add(group);   
+                                        }
 										viewer.setChecked(breakpoint, breakpoint.isEnabled());
 										viewer.update(breakpoint, null);							
 									}
@@ -202,14 +192,43 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 								}
 							}
 						}
-						if (refreshCheckedState) {
-							fView.initializeCheckedState();
+						// Update the checked/grayed state of groups whose children changed
+						Iterator iter= groupsToUpdate.iterator();
+						while (iter.hasNext()) {
+						    String group = (String) iter.next();
+						    fView.updateGroupCheckedState(group);
 						}
 						fView.updateObjects();
 					}
 				}
 			});
 		}
+	}
+	
+	private boolean haveGroupsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+	    for (int i = 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint = breakpoints[i];
+			IMarker marker= breakpoint.getMarker();
+			if (marker != null && marker.exists()) {
+				IMarkerDelta delta= deltas[i];
+				if (delta != null) {
+					String oldGroup= (String) delta.getAttribute(IBreakpoint.GROUP);
+					String newGroup= null;
+					try {
+						newGroup= breakpoint.getGroup();
+					} catch (CoreException e1) {
+					}
+					if (newGroup != oldGroup) { // new == old if they're both null
+						if (newGroup == null || oldGroup == null || !newGroup.equals(oldGroup)) {
+							// one is null, one isn't => changed
+						    // both not null && !one.equals(other) => changed
+							return true;
+						}
+					}
+				}
+			}
+		}
+	    return false;
 	}
 
 	/**

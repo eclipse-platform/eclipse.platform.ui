@@ -180,6 +180,34 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	}
 	
 	/**
+	 * Updates the checked state of the given group based on
+	 * the state of its children.
+	 */
+	protected void updateGroupCheckedState(String group) {
+	    ITreeContentProvider provider = getTreeContentProvider();
+	    CheckboxTreeViewer viewer = getCheckboxViewer();
+	    Object[] children = provider.getChildren(group);
+	    int enabledChildren= 0;
+	    for (int i = 0; i < children.length; i++) {
+            try {
+                if (((IBreakpoint) children[i]).isEnabled()) {
+                    enabledChildren++;
+                }
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+        }
+	    if (enabledChildren == 0) {
+	        viewer.setGrayChecked(group, false);
+	    } else if (enabledChildren == children.length) {
+	        viewer.setGrayed(group, false);
+	        viewer.setChecked(group, true);
+	    } else {
+	        viewer.setGrayChecked(group, true);
+	    }
+	}
+	
+	/**
 	 * Sets the group that new breakpoints will automatically be
 	 * added to.
 	 * @param group the group name
