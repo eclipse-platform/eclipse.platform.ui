@@ -1,9 +1,15 @@
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbench;
@@ -32,6 +38,7 @@ public class BuildOrderPreferencePage
 	private Label buildLabel;
 	private List buildList;
 	private Composite buttonComposite;
+	private Label noteLabel;
 	
 	private String[] defaultBuildOrder;
 	private String[] customBuildOrder;
@@ -44,6 +51,14 @@ public class BuildOrderPreferencePage
 	private static String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
 	private static String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
 	private static String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
+	private static String NOTE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.note"); //$NON-NLS-1$
+	
+	// marks projects with unspecified build orders
+	private static final String MARKER = "*";
+	
+	// the index of the first project with an unspecified build order
+	// the rest of the list consists of projects with unspecified build orders
+	private int markedItemsStartIndex = 0;
 	
 /**
  * Add another project to the list at the end.
@@ -142,14 +157,27 @@ protected Control createContents(Composite parent) {
 	boolean useDefault = (buildOrder.length < 1);
 	
 	createDefaultPathButton(composite, useDefault);
-	createBuildOrderList(composite, !useDefault);
+	// List always enabled so user can scroll list.
+	// Only the button need to be disabled.
+	createBuildOrderList(composite, true);
 	createListButtons(composite, !useDefault);
+	
+	// a note about projects with unspecified build orders
+	noteLabel = new Label(composite, SWT.NONE);
+	noteLabel.setText(NOTE_LABEL);
 
-	if (useDefault)
+
+	if (useDefault) {
 		this.buildList.setItems(getDefaultProjectOrder());
-	else
+		// if there are no marked items, do not show the note
+		if(markedItemsStartIndex >= buildList.getItemCount())
+			noteLabel.setVisible(false);
+	} else {
 		this.buildList.setItems(buildOrder);
-
+		// when not using default build order, do not show the note
+		noteLabel.setVisible(false);
+	}
+	
 	return composite;
 
 }
@@ -246,14 +274,26 @@ private void defaultsButtonSelected(boolean selected) {
 	if (selected) {
 		setBuildOrderWidgetsEnablement(false);
 		buildList.setItems(getDefaultProjectOrder());
+		// if there are marked items, make the note visible
+		if(markedItemsStartIndex < buildList.getItemCount())
+			noteLabel.setVisible(true);
 	}
 	else {
 		setBuildOrderWidgetsEnablement(true);
 		String[] buildOrder = getCurrentBuildOrder();
-		if (buildOrder.length < 1)
-			buildList.setItems(getDefaultProjectOrder());
-		else
+		if (buildOrder.length < 1) {
+			// Get a copy of the default order and remove markers
+			String[] names = getDefaultProjectOrder();
+			String[] copy = new String[names.length];
+			System.arraycopy(names, 0, copy, 0, names.length);
+			for (int i = markedItemsStartIndex; i < copy.length; i++)
+				copy[i] = names[i].substring(1);
+			buildList.setItems(copy);
+		} else {
 			buildList.setItems(buildOrder);
+		}
+		// make the note invisible
+		noteLabel.setVisible(false);
 	}
 }
 /**
@@ -291,8 +331,9 @@ private String[] getDefaultProjectOrder() {
 		int foundSize = foundProjects.length;
 		for (int i = 0; i < foundSize; i++)
 			defaultBuildOrder[i] = foundProjects[i].getName();
+		markedItemsStartIndex = foundSize;
 		for (int i = 0; i < ambiguousProjects.length; i++)
-			defaultBuildOrder[i + foundSize] = ambiguousProjects[i].getName();
+			defaultBuildOrder[i + foundSize] = MARKER + ambiguousProjects[i].getName();
 	}
 	
 	return defaultBuildOrder;
@@ -402,13 +443,12 @@ private void removeSelection() {
  */
 private void setBuildOrderWidgetsEnablement(boolean value) {
 
-	this.buildLabel.setEnabled(value);
-	this.buildList.setEnabled(value);
+	// Only change enablement of buttons. Leave list alone
+	// because you can't scroll it when disabled.
 	Control[] children = this.buttonComposite.getChildren();
 	for (int i = 0; i < children.length; i++) {
 		children[i].setEnabled(value);
 	}
-
 }
 /**
  * Set the grid data of the supplied button to grab the whole column
