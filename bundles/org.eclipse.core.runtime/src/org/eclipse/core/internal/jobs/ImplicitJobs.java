@@ -71,7 +71,7 @@ class ImplicitJobs {
 		 */
 		boolean pop(ISchedulingRule rule) {
 			if (top < 0 || ruleStack[top] != rule)
-				throw new IllegalArgumentException("IJobManager.endRule without matching IJobManager.beginRule: " + rule); //$NON-NLS-1$
+				Assert.isLegal(false, "IJobManager.endRule without matching IJobManager.beginRule: " + rule); //$NON-NLS-1$
 			ruleStack[top--] = null;
 			return top < 0;
 		}
@@ -163,7 +163,7 @@ class ImplicitJobs {
 		Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
 		if (threadJob == null)
-			Assert.isTrue(rule == null, "endRule without matching beginRule"); //$NON-NLS-1$
+			Assert.isLegal(rule == null, "endRule without matching beginRule"); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
