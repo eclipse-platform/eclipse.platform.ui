@@ -36,16 +36,15 @@ import org.eclipse.ui.PlatformUI;
 public class EditorArea extends PartSashContainer {
 	
 	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
-	private IPartDropListener partDropListener;
 	private ArrayList editorWorkbooks = new ArrayList(3);
 	private EditorWorkbook activeEditorWorkbook;
 	private DropTarget dropTarget;
 	private WorkbenchPage page;
 	
-public EditorArea(String editorId, IPartDropListener listener, WorkbenchPage page) {
+public EditorArea(String editorId, WorkbenchPage page) {
 	super(editorId,page);
 
-	this.partDropListener = listener;
+	//this.partDropListener = listener;
 	this.page = page;
 	createDefaultWorkbook();
 }
@@ -145,12 +144,6 @@ public ArrayList getEditorWorkbooks() {
  */
 public int getEditorWorkbookCount() {
 	return editorWorkbooks.size();
-}
-/**
- * Return the interested listener of d&d events.
- */
-public IPartDropListener getPartDropListener() {
-	return partDropListener;
 }
 /**
  * Return true is the workbook specified
@@ -333,6 +326,7 @@ public void updateTabList() {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		
 		//let the user drop files/editor input on the editor area
 		addDropSupport();		
 	}
@@ -353,15 +347,50 @@ public void updateTabList() {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
-	 */ 
-	public int getType() {
-		return EDITOR;
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
 	 */
 	public boolean allowsAutoFocus() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
+	 */
+	public boolean isStackType(LayoutPart toTest) {
+		return (toTest instanceof EditorWorkbook);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#isPaneType(org.eclipse.ui.internal.LayoutPart)
+	 */
+	public boolean isPaneType(LayoutPart toTest) {
+		return (toTest instanceof EditorPane);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
+	 */
+	protected LayoutPart createStack(LayoutPart sourcePart) {
+		EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(this, page);
+		newWorkbook.add((EditorPane)sourcePart);
+		newWorkbook.setVisibleEditor((EditorPane)sourcePart);
+		
+		return newWorkbook;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#setVisiblePart(org.eclipse.ui.internal.ILayoutContainer, org.eclipse.ui.internal.LayoutPart)
+	 */
+	protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart) {
+		EditorWorkbook refPart = (EditorWorkbook)container;
+		
+		refPart.becomeActiveWorkbook(true);
+		refPart.setVisibleEditor((EditorPane)visiblePart);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
+	 */
+	protected LayoutPart getVisiblePart(ILayoutContainer container) {
+		EditorWorkbook refPart = (EditorWorkbook)container;
+
+		return refPart.getVisibleEditor();
+	}
+
 }
