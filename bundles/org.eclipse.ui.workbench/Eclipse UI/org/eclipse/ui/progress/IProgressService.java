@@ -10,9 +10,10 @@
 package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
@@ -58,5 +59,21 @@ public interface IProgressService {
 	 */
 	public void busyCursorWhile(IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException;
+	
+	/**
+	 * Open a dialog on job when it starts to run and close it 
+	 * when the job is finished. If the job is already running 
+	 * open the dialog immediately and increment the progress
+	 * to the current point.
+	 * 
+	 * Parent the dialog from the shell.
+	 * @param job The Job that will be reported in the dialog.
+	 * @param shell The Shell to parent the dialog from or 
+	 * <code>null</code> if the active shell is to be used.
+	 * @param runImmediately. If true open the dialog immediately.
+	 * If false then add a job listener and do not open the dialog
+	 * until it is about to run.
+	 */
+	public void runInDialog(Shell shell, Job job, boolean runImmediately);
 
 }

@@ -57,7 +57,6 @@ public class ProgressRegion {
 		item = new ProgressAnimationItem(this);
 		item.createControl(region);
 		Control itemControl = item.getControl();
-		
 		viewer = new ProgressViewer(region, SWT.NO_FOCUS, 1, 36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
@@ -153,10 +152,9 @@ public class ProgressRegion {
 			if (items.length > 0 && items[0] instanceof JobInfo) {
 				JobInfo info = (JobInfo) items[0];
 				if (info.getJob().isUser()) {
-					ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
-							workbenchWindow.getShell());
-					dialog.setJobAndOpen(info.getJob(),true);
-					
+					workbenchWindow.getWorkbench().getProgressService()
+							.runInDialog(workbenchWindow.getShell(),
+									info.getJob(), true);
 					return;
 				}
 			}

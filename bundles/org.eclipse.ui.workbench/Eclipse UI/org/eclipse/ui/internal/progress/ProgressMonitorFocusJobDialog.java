@@ -35,7 +35,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * particular job in a modal dialog so as to give a user accustomed to a modal
  * UI a more famiiar feel.
  */
-public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
+class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	Job job;
 	/**
 	 * Create a new instance of the receiver with progress reported on the job.
