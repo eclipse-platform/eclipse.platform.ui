@@ -905,6 +905,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return null;
 	}
 
+	protected void loadLegacy() {
+		// sub-classes to over-ride if necessary
+	}
+
 	protected void loaded() {
 		// do nothing
 	}
@@ -931,6 +935,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return result;
 		try {
 			loading = true;
+			result.loadLegacy();
 			result.load(result.getLocation());
 			result.loaded();
 		} catch (BackingStoreException e) {

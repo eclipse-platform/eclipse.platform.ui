@@ -85,10 +85,8 @@ public class InstancePreferences extends EclipsePreferences {
 	 * Load the Eclipse 2.1 preferences for the given bundle. If a file
 	 * doesn't exist then assume that conversion has already occurred
 	 * and do nothing.
-	 * 
-	 * @param node the node
 	 */
-	private void loadLegacy() {
+	protected void loadLegacy() {
 		IPath path = new Path(absolutePath());
 		if (path.segmentCount() != 2)
 			return;
