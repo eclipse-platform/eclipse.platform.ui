@@ -23,15 +23,14 @@ import org.eclipse.core.runtime.*;
 
 public class HistoryStore {
 	protected Workspace workspace;
-	protected IPath location;
 	protected BlobStore blobStore;
 	IndexedStoreWrapper store;
 	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
-		blobStore = new BlobStore(location, limit);
-		store = new IndexedStoreWrapper(location.append(INDEX_FILE));
+		this.blobStore = new BlobStore(location, limit);
+		this.store = new IndexedStoreWrapper(location.append(INDEX_FILE));
 	}
 
 	/**
@@ -107,7 +106,7 @@ public class HistoryStore {
 		class BitVisitor implements IHistoryStoreVisitor {
 			BitSet bits = new BitSet();
 
-			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			public boolean visit(HistoryStoreEntry entry) {
 				bits.set(entry.getCount());
 				return true;
 			}
@@ -280,7 +279,7 @@ public class HistoryStore {
 	boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
 		final boolean[] rc = new boolean[] {false};
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
-			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			public boolean visit(HistoryStoreEntry entry) {
 				if (uuid.equals(entry.getUUID())) {
 					rc[0] = true;
 					return false;
@@ -327,7 +326,7 @@ public class HistoryStore {
 		final Set matches = new HashSet();
 
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
-			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			public boolean visit(HistoryStoreEntry entry) {
 				IPath path = entry.getPath();
 				int prefixSegments = source.matchingFirstSegments(path);
 				// if there are no matching segments then we have an internal error...something
@@ -428,7 +427,7 @@ public class HistoryStore {
 		final int max = workspace.internalGetDescription().getMaxFileStates();
 		final List result = new ArrayList(max);
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
-			public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			public boolean visit(HistoryStoreEntry entry) {
 				result.add(new FileState(HistoryStore.this, key, entry.getLastModified(), entry.getUUID()));
 				return true;
 			}
@@ -572,8 +571,7 @@ public class HistoryStore {
 
 	protected void resetIndexedStore() {
 		store.reset();
-		IPath location = workspace.getMetaArea().getHistoryStoreLocation();
-		java.io.File target = location.toFile();
+		java.io.File target = workspace.getMetaArea().getHistoryStoreLocation().toFile();
 		Workspace.clear(target);
 		target.mkdirs();
 		String message = Policy.bind("history.corrupt"); //$NON-NLS-1$
