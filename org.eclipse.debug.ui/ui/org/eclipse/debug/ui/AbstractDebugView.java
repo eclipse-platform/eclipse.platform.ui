@@ -37,7 +37,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
@@ -208,9 +207,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		createActions();
 		initializeToolBar();
 		createContextMenu(getViewer().getControl());
-		WorkbenchHelp.setHelp(
-			parent,
-			new ViewContextComputer(this, getHelpContextId()));
+		WorkbenchHelp.setHelp(parent, getHelpContextId());
 		getViewer().getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
