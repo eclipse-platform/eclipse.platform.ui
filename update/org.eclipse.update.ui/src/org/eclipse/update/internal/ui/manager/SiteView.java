@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.manager;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;
@@ -25,6 +25,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Insert the type's description here.
@@ -33,7 +34,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class SiteView
 	extends BaseTreeView
 	implements IUpdateModelChangedListener {
+	private static final String KEY_NEW = "SiteView.Popup.new";
 	private static final String KEY_NEW_SITE = "SiteView.Popup.newSite";
+	private static final String KEY_NEW_FOLDER = "SiteView.Popup.newFolder";
 	private static final String KEY_NEW_LOCAL_SITE = "SiteView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "SiteView.Popup.delete";
 	private static final String KEY_REFRESH = "SiteView.Popup.refresh";
@@ -42,8 +45,9 @@ public class SiteView
 		"SiteView.menu.showCategories";
 	private Action propertiesAction;
 	private Action newAction;
+	private Action newFolderAction;
 	private Action newLocalAction;
-	private Action deleteAction;
+	private DeleteAction deleteAction;
 	private Action fileFilterAction;
 	private Action showCategoriesAction;
 	private Image siteImage;
@@ -53,6 +57,29 @@ public class SiteView
 	private SelectionChangedListener selectionListener;
 	private Hashtable fileImages = new Hashtable();
 	private FileFilter fileFilter = new FileFilter();
+
+	class DeleteAction extends Action implements IUpdate {
+		public DeleteAction() {
+		}
+		public void run() {
+			performDelete();
+		}
+		public void update() {
+			boolean enabled = true;
+			IStructuredSelection sel =
+				(IStructuredSelection) SiteView.this.viewer.getSelection();
+			for (Iterator iter = sel.iterator(); iter.hasNext();) {
+				Object obj = iter.next();
+				if (obj instanceof NamedModelObject) {
+					if (!(obj instanceof DiscoveryFolder))
+						continue;
+				}
+				enabled = false;
+				break;
+			}
+			setEnabled(enabled);
+		}
+	}
 
 	class FileFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parent, Object child) {
@@ -76,6 +103,9 @@ public class SiteView
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
 				return getBookmarks((UpdateModel) parent);
+			}
+			if (parent instanceof BookmarkFolder) {
+				return ((BookmarkFolder) parent).getChildren(parent);
 			}
 			if (parent instanceof SiteBookmark) {
 				return getSiteCatalog((SiteBookmark) parent);
@@ -112,6 +142,12 @@ public class SiteView
 			if (parent instanceof MyComputer) {
 				return true;
 			}
+			if (parent instanceof DiscoveryFolder) {
+				return true;
+			}
+			if (parent instanceof BookmarkFolder) {
+				return ((BookmarkFolder) parent).hasChildren();
+			}
 			if (parent instanceof MyComputerDirectory) {
 				return ((MyComputerDirectory) parent).hasChildren(parent);
 			}
@@ -135,10 +171,12 @@ public class SiteView
 			if (obj instanceof FeatureReferenceAdapter) {
 				try {
 					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
-					VersionedIdentifier versionedIdentifier=(feature!=null)?feature.getVersionedIdentifier():null;
+					VersionedIdentifier versionedIdentifier =
+						(feature != null) ? feature.getVersionedIdentifier() : null;
 					String version = "";
-					if (versionedIdentifier!=null) version = versionedIdentifier.getVersion().toString();
-					String label = (feature!=null)?feature.getLabel():"";
+					if (versionedIdentifier != null)
+						version = versionedIdentifier.getVersion().toString();
+					String label = (feature != null) ? feature.getLabel() : "";
 					return label + " " + version;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
@@ -165,7 +203,7 @@ public class SiteView
 				}
 				return image;
 			}
-			if (obj instanceof SiteCategory) {
+			if (obj instanceof SiteCategory || obj instanceof BookmarkFolder) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_FOLDER);
 			}
@@ -212,10 +250,17 @@ public class SiteView
 			new PropertyDialogAction(UpdateUIPlugin.getActiveWorkbenchShell(), viewer);
 		newAction = new Action() {
 			public void run() {
-				performNew();
+				performNewBookmark();
 			}
 		};
 		newAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SITE));
+
+		newFolderAction = new Action() {
+			public void run() {
+				performNewBookmarkFolder();
+			}
+		};
+		newFolderAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
 
 		newLocalAction = new Action() {
 			public void run() {
@@ -224,11 +269,7 @@ public class SiteView
 		};
 		newLocalAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
 
-		deleteAction = new Action() {
-			public void run() {
-				performDelete();
-			}
-		};
+		deleteAction = new DeleteAction();
 		deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
 
 		refreshAction = new Action() {
@@ -272,30 +313,38 @@ public class SiteView
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());
 		menuManager.add(showCategoriesAction);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteAction);
 	}
 
 	public void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		Object obj = sel.getFirstElement();
-
+		Object obj = getSelectedObject();
 		manager.add(refreshAction);
 		manager.add(new Separator());
-		manager.add(newAction);
+		MenuManager newMenu =
+			new MenuManager(UpdateUIPlugin.getResourceString(KEY_NEW));
+		newMenu.add(newAction);
+		newMenu.add(newFolderAction);
+		manager.add(newMenu);
 		if (obj instanceof SiteBookmark) {
-			SiteBookmark site = (SiteBookmark)obj;
-			if (site.getType()==SiteBookmark.LOCAL)
+			SiteBookmark site = (SiteBookmark) obj;
+			if (site.getType() == SiteBookmark.LOCAL)
 				manager.add(newLocalAction);
 			else
 				manager.add(deleteAction);
-		}
+		} else if (obj instanceof BookmarkFolder && !(obj instanceof DiscoveryFolder))
+			manager.add(deleteAction);
 		manager.add(new Separator());
 		super.fillContextMenu(manager);
 		if (obj instanceof SiteBookmark)
 			manager.add(propertiesAction);
 	}
 
-	private void performNew() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	private Object getSelectedObject() {
+		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		return sel.getFirstElement();
+	}
+
+	private void performNewBookmark() {
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewSiteDialog dialog = new NewSiteDialog(shell);
 		dialog.create();
@@ -303,8 +352,32 @@ public class SiteView
 			UpdateUIPlugin.getResourceString(NewSiteDialog.KEY_TITLE));
 		dialog.getShell().setSize(400, 150);
 		if (dialog.open() == NewSiteDialog.OK) {
-			SiteBookmark site = dialog.getNewSite();
-			model.addBookmark(site);
+			updateBookmarks(dialog.getNewSite());
+		}
+	}
+
+	private void updateBookmarks(NamedModelObject obj) {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		Object sel = getSelectedObject();
+		if (sel instanceof BookmarkFolder && !(sel instanceof DiscoveryFolder)) {
+			BookmarkFolder folder = (BookmarkFolder) sel;
+			folder.addChild(obj);
+		} else {
+			model.addBookmark(obj);
+		}
+		model.saveBookmarks();
+	}
+
+	private void performNewBookmarkFolder() {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+		NewFolderDialog dialog = new NewFolderDialog(shell);
+		dialog.create();
+		dialog.getShell().setText(
+			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
+		dialog.getShell().setSize(400, 150);
+		if (dialog.open() == NewFolderDialog.OK) {
+			updateBookmarks(dialog.getNewFolder());
 		}
 	}
 
@@ -315,13 +388,13 @@ public class SiteView
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof SiteBookmark) {
 				SiteBookmark bookmark = (SiteBookmark) obj;
-				if (bookmark.getType()==SiteBookmark.LOCAL) {
+				if (bookmark.getType() == SiteBookmark.LOCAL) {
 					UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 					Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 					NewSiteDialog dialog = new NewSiteDialog(shell, bookmark);
 					dialog.create();
 					dialog.getShell().setText(
-							UpdateUIPlugin.getResourceString(NewSiteDialog.KEY_TITLE));
+						UpdateUIPlugin.getResourceString(NewSiteDialog.KEY_TITLE));
 					dialog.getShell().setSize(400, 150);
 					if (dialog.open() == NewSiteDialog.OK) {
 						SiteBookmark site = dialog.getNewSite();
@@ -339,8 +412,13 @@ public class SiteView
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
-				if (obj instanceof SiteBookmark) {
-					model.removeBookmark((SiteBookmark) obj);
+				if (obj instanceof NamedModelObject) {
+					NamedModelObject child = (NamedModelObject) obj;
+					BookmarkFolder folder = (BookmarkFolder) child.getParent(child);
+					if (folder != null)
+						folder.removeChildren(new NamedModelObject[] { child });
+					else
+						model.removeBookmark(child);
 				}
 			}
 		}
@@ -356,7 +434,8 @@ public class SiteView
 					try {
 						// reinitialize the authenticator 
 						AuthorizationDatabase auth = UpdateUIPlugin.getDefault().getDatabase();
-						if (auth!=null) auth.reset();							
+						if (auth != null)
+							auth.reset();
 						if (obj instanceof SiteBookmark)
 							 ((SiteBookmark) obj).connect();
 						viewer.refresh(obj);
@@ -369,11 +448,12 @@ public class SiteView
 	}
 
 	private Object[] getBookmarks(UpdateModel model) {
-		SiteBookmark[] bookmarks = model.getBookmarks();
-		Object[] array = new Object[1 + bookmarks.length];
+		NamedModelObject[] bookmarks = model.getBookmarks();
+		Object[] array = new Object[2 + bookmarks.length];
 		array[0] = new MyComputer();
-		for (int i = 1; i < array.length; i++) {
-			array[i] = bookmarks[i - 1];
+		array[1] = new DiscoveryFolder();
+		for (int i = 2; i < array.length; i++) {
+			array[i] = bookmarks[i - 2];
 		}
 		return array;
 	}
@@ -413,28 +493,39 @@ public class SiteView
 		}
 	}
 
-	public void objectAdded(Object parent, Object child) {
-		if (child instanceof SiteBookmark) {
+	protected void handleSelectionChanged(SelectionChangedEvent e) {
+		deleteAction.update();
+	}
+
+	protected void deleteKeyPressed(Widget widget) {
+		if (deleteAction.isEnabled())
+			deleteAction.run();
+	}
+
+	public void objectsAdded(Object parent, Object[] children) {
+		if (children[0] instanceof NamedModelObject) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-			viewer.add(model, child);
-			viewer.setSelection(new StructuredSelection(child));
+			if (parent == null)
+				parent = model;
+			viewer.add(parent, children);
+			viewer.setSelection(new StructuredSelection(children));
 		}
 	}
 
-	public void objectRemoved(Object parent, Object child) {
-		if (child instanceof SiteBookmark) {
-			viewer.remove(child);
+	public void objectsRemoved(Object parent, Object[] children) {
+		if (children[0] instanceof NamedModelObject) {
+			viewer.remove(children);
 		}
 	}
 
 	public void objectChanged(Object object, String property) {
-		if (object instanceof SiteBookmark && property.equals(SiteBookmark.P_NAME))
+		if (object instanceof SiteBookmark && property.equals(SiteBookmark.P_NAME)) {
 			viewer.update(object, null);
 			viewer.setSelection(viewer.getSelection());
+		}
 	}
-	
+
 	public void selectSiteBookmark(SiteBookmark bookmark) {
 		viewer.setSelection(new StructuredSelection(bookmark), true);
 	}
-
 }

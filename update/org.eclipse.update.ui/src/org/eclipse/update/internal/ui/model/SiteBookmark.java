@@ -13,27 +13,24 @@ import org.eclipse.ui.model.*;
 import java.util.*;
 import org.eclipse.update.internal.ui.*;
 
-public class SiteBookmark extends ModelObject 
-						implements IWorkbenchAdapter,
-									ISiteAdapter {
+public class SiteBookmark extends NamedModelObject 
+							implements ISiteAdapter {
 	public static final int USER = 0;
 	public static final int LOCAL = 1;
 	public static final int LOCAL_BOOKMARK = 2;
-	private String name;
 	private URL url;
 	private ISite site;
 	private Vector catalog;
 	private SiteCategory otherCategory;
 	private int type;
-	
-	public static final String P_NAME="p_name";
+
 	public static final String P_URL="p_url";
 	
 	public SiteBookmark() {
 	}
 	
 	public SiteBookmark(String name, URL url) {
-		this.name = name;
+		super(name);
 		this.url = url;
 	}
 	
@@ -43,28 +40,6 @@ public class SiteBookmark extends ModelObject
 	
 	public int getType() {
 		return type;
-	}
-	
-	public Object getAdapter(Class adapter) {
-		if (adapter.equals(IWorkbenchAdapter.class)) {
-			return this;
-		}
-		return super.getAdapter(adapter);
-	}
-	
-
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String toString() {
-		return getName();
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-		notifyObjectChanged(P_NAME);
 	}
 	
 	public URL getURL() {
@@ -100,37 +75,6 @@ public class SiteBookmark extends ModelObject
 	public void connect() throws CoreException {
 		site = SiteManager.getSite(url);
 		createCatalog();
-	}
-	
-	/**
-	 * @see IWorkbenchAdapter#getChildren(Object)
-	 */
-	public Object[] getChildren(Object parent) {
-		return null;
-	}
-
-
-	/**
-	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
-	 */
-	public ImageDescriptor getImageDescriptor(Object obj) {
-		return null;
-	}
-
-
-	/**
-	 * @see IWorkbenchAdapter#getLabel(Object)
-	 */
-	public String getLabel(Object obj) {
-		return getName();
-	}
-
-
-	/**
-	 * @see IWorkbenchAdapter#getParent(Object)
-	 */
-	public Object getParent(Object arg0) {
-		return null;
 	}
 	
 	private void createCatalog() {

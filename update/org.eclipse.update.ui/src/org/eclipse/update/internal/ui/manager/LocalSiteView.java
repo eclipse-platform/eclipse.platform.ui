@@ -61,18 +61,18 @@ public class LocalSiteView
 		/**
 		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
 		 */
-		public void objectAdded(Object parent, Object child) {
+		public void objectsAdded(Object parent, Object[] children) {
 			if (parent instanceof AvailableUpdates) {
-				viewer.add(parent, child);
+				viewer.add(parent, children);
 			}
 		}
 
 		/**
 		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
 		 */
-		public void objectRemoved(Object parent, Object child) {
+		public void objectsRemoved(Object parent, Object [] children) {
 			if (parent instanceof AvailableUpdates) {
-				viewer.remove(child);
+				viewer.remove(children);
 			}
 		}
 

@@ -294,7 +294,7 @@ public class AvailableUpdates
 		final UpdateModel model = getModel();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				model.fireObjectAdded(parent, child);
+				model.fireObjectsAdded(parent, new Object[]{child});
 			}
 		});
 	}

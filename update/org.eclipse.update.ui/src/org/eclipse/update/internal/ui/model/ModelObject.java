@@ -12,7 +12,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class ModelObject extends PlatformObject implements IWorkbenchAdapter {
 	UpdateModel model;
 	
-	void setModel(UpdateModel model) {
+	public void setModel(UpdateModel model) {
 		this.model = model;
 	}
 	
@@ -23,6 +23,16 @@ public class ModelObject extends PlatformObject implements IWorkbenchAdapter {
 	protected void notifyObjectChanged(String property) {
 		if (model==null) return;
 		model.fireObjectChanged(this, property);
+	}
+	
+	protected void notifyObjectsAdded(Object parent, Object [] objects) {
+		if (model==null) return;
+		model.fireObjectsAdded(parent, objects);
+	}
+	
+	protected void notifyObjectsRemoved(Object parent, Object [] objects) {
+		if (model==null) return;
+		model.fireObjectsRemoved(parent, objects);
 	}
 	
 	public Object [] getChildren(Object obj) {

@@ -5,7 +5,7 @@ package org.eclipse.update.internal.ui.model;
  */
 
 public interface IUpdateModelChangedListener {
-	public void objectAdded(Object parent, Object child);
-	public void objectRemoved(Object parent, Object child);
+	public void objectsAdded(Object parent, Object [] children);
+	public void objectsRemoved(Object parent, Object [] children);
 	public void objectChanged(Object object, String property);
 }

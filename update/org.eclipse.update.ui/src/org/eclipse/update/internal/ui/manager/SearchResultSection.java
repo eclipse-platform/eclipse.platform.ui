@@ -241,7 +241,7 @@ public class SearchResultSection {
 
 	private void openSite(ISite site) {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		SiteBookmark[] siteBookmarks = model.getBookmarks();
+		SiteBookmark[] siteBookmarks = model.getBookmarkLeafs();
 		URL siteURL = site.getURL();
 		String siteURLName = siteURL.toString();
 		SiteBookmark targetBookmark = null;

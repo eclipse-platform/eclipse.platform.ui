@@ -9,14 +9,14 @@ import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.update.internal.ui.*;
 import java.net.*;
+import org.eclipse.core.runtime.IPath;
 
 public class UpdateModel {
 	private Vector changes = new Vector();
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
 	private IDialogSettings settings;
-	private static final String KEY_BOOKMARK_NAMES = "bookmark.names"; 
-	private static final String KEY_BOOKMARK_URLS = "bookmark.urls";
+	private static final String BOOKMARK_FILE = "bookmarks.xml";
 	private AvailableUpdates availableUpdates;
 	
 	public UpdateModel() {
@@ -25,45 +25,22 @@ public class UpdateModel {
 	
 	public void startup() {
 		// load bookmarks
-		String [] names = settings.getArray(KEY_BOOKMARK_NAMES);
-		String [] urls = settings.getArray(KEY_BOOKMARK_URLS);
-		if (names==null || urls == null) return;
-		for (int i=0; i<names.length; i++) {
-			String name = names[i];
-			String urlName = urls[i];
-			try {
-				URL url = new URL(urlName);
-				SiteBookmark bookmark = new SiteBookmark(name, url);
-				bookmark.setModel(this);
-				bookmarks.add(bookmark);
-			}
-			catch (MalformedURLException e) {
-			}
-		}
+		BookmarkUtil.parse(getBookmarksFileName(), bookmarks);
+	}
+	
+	private String getBookmarksFileName() {
+		IPath path = UpdateUIPlugin.getDefault().getStateLocation();
+		path = path.append(BOOKMARK_FILE);
+		return path.toOSString();
 	}
 	
 	public void shutdown() {
-		// save bookmarks
-		String [] names = null;
-		String [] urls = null;
-		
-		if (bookmarks.size()>0) {
-			names = new String [bookmarks.size()];
-			urls = new String [bookmarks.size()];
-			for (int i=0; i<bookmarks.size(); i++) {
-				SiteBookmark bookmark = (SiteBookmark)bookmarks.get(i);
-				names[i] = bookmark.getName();
-				urls[i] = bookmark.getURL().toString();
-			}
-		}
-		else {
-			names = new String [0];
-			urls = new String [0];
-		}
-		settings.put(KEY_BOOKMARK_NAMES, names);
-		settings.put(KEY_BOOKMARK_URLS, urls);
+		saveBookmarks();
 	}
-
+	
+	public void saveBookmarks() {
+		BookmarkUtil.store(getBookmarksFileName(), bookmarks);
+	}
 
 	public PendingChange [] getPendingChanges() {
 		return (PendingChange[])
@@ -98,13 +75,13 @@ public class UpdateModel {
 	public void addPendingChange(PendingChange change) {
 		changes.add(change);
 		change.setModel(this);
-		fireObjectAdded(this, change);
+		fireObjectsAdded(this, new Object[] {change});
 	}
 	
 	public void removePendingChange(PendingChange change) {
 		changes.remove(change);
 		change.setModel(null);
-		fireObjectRemoved(this, change);
+		fireObjectsRemoved(this, new Object[] {change});
 	}
 	
 	public void removePendingChange(IFeature scheduledFeature) {
@@ -113,20 +90,24 @@ public class UpdateModel {
 		   removePendingChange(change);
 	}	
 
-	public void addBookmark(SiteBookmark bookmark) {
+	public void addBookmark(NamedModelObject bookmark) {
 		bookmarks.add(bookmark);
 		bookmark.setModel(this);
-		fireObjectAdded(null, bookmark);
+		fireObjectsAdded(null, new Object []{bookmark});
 	}
 	
-	public void removeBookmark(SiteBookmark bookmark) {
+	public void removeBookmark(NamedModelObject bookmark) {
 		bookmarks.remove(bookmark);
 		bookmark.setModel(null);
-		fireObjectRemoved(null, bookmark);
+		fireObjectsRemoved(null, new Object []{bookmark});
 	}
 	
-	public SiteBookmark [] getBookmarks() {
-		return (SiteBookmark[])bookmarks.toArray(new SiteBookmark[bookmarks.size()]);
+	public NamedModelObject [] getBookmarks() {
+		return (NamedModelObject[])bookmarks.toArray(new NamedModelObject[bookmarks.size()]);
+	}
+	
+	public SiteBookmark [] getBookmarkLeafs() {
+		return BookmarkUtil.getBookmarks(bookmarks);
 	}
 	
 	public void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
@@ -140,20 +121,20 @@ public class UpdateModel {
 			listeners.remove(listener);
 	}
 	
-	void fireObjectAdded(Object parent, Object child) {
+	void fireObjectsAdded(Object parent, Object [] children) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
-			listener.objectAdded(parent, child);
+			listener.objectsAdded(parent, children);
 		}
 	}
 
 
-	void fireObjectRemoved(Object parent, Object child) {
+	void fireObjectsRemoved(Object parent, Object [] children) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
-			listener.objectRemoved(parent, child);
+			listener.objectsRemoved(parent, children);
 		}
 	}
 	

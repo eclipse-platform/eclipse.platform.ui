@@ -67,7 +67,8 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DIALOG_UMESSAGE = "FeaturePage.dialog.umessage";
 	private static final String KEY_DIALOG_MESSAGE = "FeaturePage.dialog.message";
 	private static final String KEY_DIALOG_CMESSAGE = "FeaturePage.dialog.cmessage";
-	private static final String KEY_DIALOG_UCMESSAGE = "FeaturePage.dialog.ucmessage";
+	private static final String KEY_DIALOG_UCMESSAGE =
+		"FeaturePage.dialog.ucmessage";
 	//	
 
 	private Label imageLabel;
@@ -100,25 +101,30 @@ public class DetailsForm extends PropertyWebForm {
 		/**
 		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
 		 */
-		public void objectAdded(Object parent, Object child) {
-			if (child instanceof PendingChange) {
-				PendingChange job = (PendingChange) child;
-				if (job.getFeature().equals(currentFeature)) {
-					refresh();
+		public void objectsAdded(Object parent, Object[] children) {
+			if (isCurrentFeature(children))
+				refresh();
+		}
+
+		boolean isCurrentFeature(Object[] children) {
+			for (int i = 0; i < children.length; i++) {
+				Object obj = children[i];
+				if (obj instanceof PendingChange) {
+					PendingChange job = (PendingChange) obj;
+					if (job.getFeature().equals(currentFeature)) {
+						return true;
+					}
 				}
 			}
+			return false;
 		}
 
 		/**
 		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
 		 */
-		public void objectRemoved(Object parent, Object child) {
-			if (child instanceof PendingChange) {
-				PendingChange job = (PendingChange) child;
-				if (job.getFeature().equals(currentFeature)) {
-					doButton.setEnabled(true);
-				}
-			}
+		public void objectsRemoved(Object parent, Object[] children) {
+			if (isCurrentFeature(children))
+				doButton.setEnabled(true);
 		}
 
 		/**
@@ -359,7 +365,7 @@ public class DetailsForm extends PropertyWebForm {
 		alreadyInstalled = false;
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
 		Version version = vid.getVersion();
-		newerVersion = installedFeatures.length>0;
+		newerVersion = installedFeatures.length > 0;
 
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < installedFeatures.length; i++) {
@@ -371,9 +377,9 @@ public class DetailsForm extends PropertyWebForm {
 			buf.append(iversion.toString());
 			if (ivid.equals(vid)) {
 				alreadyInstalled = true;
-			}
-			else {
-				if (version.compare(iversion)<=0) newerVersion = false;
+			} else {
+				if (version.compare(iversion) <= 0)
+					newerVersion = false;
 			}
 		}
 		if (buf.length() > 0) {
@@ -435,7 +441,7 @@ public class DetailsForm extends PropertyWebForm {
 			format = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
 		}
 		sizeLabel.setText(format);
-		if (feature.getDescription()!=null)
+		if (feature.getDescription() != null)
 			descriptionText.setText(feature.getDescription().getAnnotation());
 		else
 			descriptionText.setText("");
@@ -444,8 +450,8 @@ public class DetailsForm extends PropertyWebForm {
 			logoImage = providerImage;
 		imageLabel.setImage(logoImage);
 		infoLinkURL = null;
-		if (feature.getDescription()!=null)
-		   infoLinkURL = feature.getDescription().getURL();
+		if (feature.getDescription() != null)
+			infoLinkURL = feature.getDescription().getURL();
 		infoLinkLabel.setVisible(infoLinkURL != null);
 
 		setOS(feature.getOS());
@@ -464,13 +470,14 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private boolean getDoButtonVisibility() {
-		if (currentFeature instanceof MissingFeature) return false;
+		if (currentFeature instanceof MissingFeature)
+			return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			// part of the local configuration
-			IConfiguredSiteContext context = (IConfiguredSiteContext)currentAdapter;
+			IConfiguredSiteContext context = (IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
 			else
@@ -482,13 +489,14 @@ public class DetailsForm extends PropertyWebForm {
 		// Not installed - check if there are other 
 		// features with this ID that are installed
 		// and that are newer than this one
-		if (installedFeatures.length>0 && !newerVersion)
+		if (installedFeatures.length > 0 && !newerVersion)
 			return false;
 		return true;
 	}
-	
+
 	private boolean getUninstallButtonVisibility() {
-		if (currentFeature instanceof MissingFeature) return false;
+		if (currentFeature instanceof MissingFeature)
+			return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
@@ -645,7 +653,7 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 	}
-	
+
 	private void doUninstall() {
 		executeJob(PendingChange.UNINSTALL);
 	}
@@ -667,7 +675,7 @@ public class DetailsForm extends PropertyWebForm {
 			});
 		}
 	}
-	
+
 	private void doButtonSelected() {
 		if (currentFeature != null) {
 			int mode;

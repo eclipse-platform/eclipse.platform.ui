@@ -51,6 +51,14 @@ public abstract class BaseTreeView extends ViewPart {
 		viewer.getTree().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 		makeActions();
+		
+		viewer.getTree().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					deleteKeyPressed(event.widget);
+				}
+			}
+		});
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -104,6 +112,9 @@ public abstract class BaseTreeView extends ViewPart {
 			}
 		};
 		showDetailsAction.setText(UpdateUIPlugin.getResourceString(KEY_SHOW_DETAILS));
+	}
+	
+	protected void deleteKeyPressed(Widget widget) {
 	}
 
 	protected void handleSelectionChanged(SelectionChangedEvent e) {
