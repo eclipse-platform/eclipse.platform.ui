@@ -28,8 +28,6 @@ public class TemplateVariable {
 	private final String fType;
 	/** The name of the variable. */
 	private final String fName;
-	/** The length of the variable. */
-	private int fLength;
 	/** The offsets of the variable. */
 	private int[] fOffsets;
 	/** Flag indicating if the variable has been resolved umambiguously. */
@@ -47,10 +45,9 @@ public class TemplateVariable {
 	 * @param type the type of the variable
 	 * @param defaultValue the default value of the variable
 	 * @param offsets the array of offsets of the variable
-	 * @param length the length of the variable
 	 */
-	public TemplateVariable(String type, String defaultValue, int[] offsets, int length) {
-		this(type, new String[] { defaultValue }, offsets, length);
+	public TemplateVariable(String type, String defaultValue, int[] offsets) {
+		this(type, new String[] { defaultValue }, offsets);
 	}
 
 	/**
@@ -60,10 +57,9 @@ public class TemplateVariable {
 	 * @param name the name of the variable
 	 * @param defaultValue the default value of the variable
 	 * @param offsets the array of offsets of the variable
-	 * @param length the length of the variable
 	 */
-	public TemplateVariable(String type, String name, String defaultValue, int[] offsets, int length) {
-		this(type, name, new String[] { defaultValue }, offsets, length);
+	public TemplateVariable(String type, String name, String defaultValue, int[] offsets) {
+		this(type, name, new String[] { defaultValue }, offsets);
 	}
 
 	/**
@@ -73,10 +69,9 @@ public class TemplateVariable {
 	 * @param type the type of the template variable
 	 * @param values the values available at this variable, non-empty
 	 * @param offsets the array of offsets of the variable
-	 * @param length the length of the variable
 	 */
-	public TemplateVariable(String type, String[] values, int[] offsets, int length) {
-		this(type, type, values, offsets, length);
+	public TemplateVariable(String type, String[] values, int[] offsets) {
+		this(type, type, values, offsets);
 	}
 
 	/**
@@ -86,9 +81,8 @@ public class TemplateVariable {
 	 * @param name the name of the variable
 	 * @param values the values available at this variable, non-empty
 	 * @param offsets the array of offsets of the variable
-	 * @param length the length of the variable
 	 */
-	public TemplateVariable(String type, String name, String[] values, int[] offsets, int length) {
+	public TemplateVariable(String type, String name, String[] values, int[] offsets) {
 		Assert.isNotNull(type);
 		Assert.isNotNull(name);
 		fType= type;
@@ -122,7 +116,7 @@ public class TemplateVariable {
 	 * @return the default value of the variable
 	 */
 	public String getDefaultValue() {
-	 	return fValues[0];
+	 	return getValues()[0];
 	}
 	
 	/**
@@ -141,7 +135,7 @@ public class TemplateVariable {
 	 * @return the length of the variable
 	 */
 	public int getLength() {
-	 	return fLength;   
+	 	return getDefaultValue().length();   
 	}
 	
 	/**
@@ -181,7 +175,6 @@ public class TemplateVariable {
 	public void setValues(String[] values) {
 		Assert.isTrue(values.length > 0);
 		fValues= values;
-		fLength= getDefaultValue().length();
 	}
 
 	/**

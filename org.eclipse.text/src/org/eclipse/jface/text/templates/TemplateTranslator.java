@@ -131,7 +131,7 @@ public class TemplateTranslator {
 		return new TemplateBuffer(translatedString, variables);
 	}
 	
-	private static TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
+	private TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
 
 		Map map= new HashMap();
 		
@@ -160,11 +160,24 @@ public class TemplateTranslator {
 			for (int j= 0; j != offsets_.length; j++)
 				offsets_[j]= ((Integer) vector.get(j)).intValue();
 				
-			variables[k]= new TemplateVariable(name, name, offsets_, name.length());
+			variables[k]= createVariable(name, name, offsets_);
 			k++;
 		}
 		
 		return variables;
+	}
+
+	/**
+	 * Hook method to create new variables. Subclasses may override to supply their
+	 * custom variable type.
+	 * 
+	 * @param type the type of the new variable.
+	 * @param name the name of the new variable.
+	 * @param offsets the offsets where the variable occurs in the template
+	 * @return a new instance of <code>TemplateVariable</code>
+	 */
+	protected TemplateVariable createVariable(String type, String name, int[] offsets) {
+		return new TemplateVariable(type, name, offsets);
 	}
 
 	/** internal parser */
