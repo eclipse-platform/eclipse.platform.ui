@@ -387,13 +387,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		 * @see IFindReplaceTarget#getSelection()
 		 */
 		public Point getSelection() {
-			return TextViewer.this.getSelectedRange();
+			Point point= TextViewer.this.getSelectedRange();
+			point.x -= TextViewer.this.getVisibleRegionOffset();
+			return point;
 		}
 		
 		/*
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+			offset += TextViewer.this.getVisibleRegionOffset();
 			return TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
 		}
 		
@@ -1412,22 +1415,23 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		int end= start + length;
 
 		IDocument doc= getVisibleDocument();
-		if (doc instanceof ChildDocument) {
-			Position p= ((ChildDocument) doc).getParentDocumentRange();
-			if (p.overlapsWith(start, length)) {
+		Position p= (doc instanceof ChildDocument)
+			? ((ChildDocument) doc).getParentDocumentRange()
+			: new Position(0, doc.getLength());
+			
+		if (p.overlapsWith(start, length)) {
 				
-				if (start < p.getOffset())
-					start= p.getOffset();
-				start -= p.getOffset();	
+			if (start < p.getOffset())
+				start= p.getOffset();
+			start -= p.getOffset();	
 				
-				int e= p.getOffset() + p.getLength();				
-				if (end > e)
-					end= e;
-				end -= p.getOffset();
+			int e= p.getOffset() + p.getLength();				
+			if (end > e)
+				end= e;
+			end -= p.getOffset();
 				
-			} else
-				return; 
-		}
+		} else
+			return; 
 		
 		internalRevealRange(start, end);
 	}

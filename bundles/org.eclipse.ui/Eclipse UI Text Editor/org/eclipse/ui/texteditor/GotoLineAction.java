@@ -6,6 +6,7 @@ package org.eclipse.ui.texteditor;
  */
 
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Composite;
@@ -151,7 +152,7 @@ public class GotoLineAction extends TextEditorAction {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 		
 			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
-			String message= fBundle.getString(fPrefix + "dialog.message"); //$NON-NLS-1$
+			String message= MessageFormat.format(fBundle.getString(fPrefix + "dialog.message"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
 			String value= Integer.toString(selection.getStartLine() + 1);
 			
 			/*
