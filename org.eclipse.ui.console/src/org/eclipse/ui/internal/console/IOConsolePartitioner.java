@@ -284,10 +284,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-				if (!updateJob.scheduled) {
-				    updateJob.scheduled = true;
-				    updateJob.schedule(50);
-				}
+				updateJob.schedule(50);
 			}
 		}
 	}
@@ -307,8 +304,6 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	}
 	
 	private class DocumentUpdaterJob extends Job {
-		
-		private boolean scheduled = false;
 
         DocumentUpdaterJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
@@ -334,7 +329,6 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			
 			final ArrayList finalCopy = pendingCopy;
 			final String toAppend = buffer.toString();		
-			scheduled = false;
 			
 			display.asyncExec(new Runnable() {
 			    public void run() {    
@@ -353,11 +347,15 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			return Status.OK_STATUS;
 		}        
 		
-        /* (non-Javadoc)
-         * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
+        /* 
+         * Job will process as much as it can each time it's run, but it gets
+         * scheduled everytime a PendingPartition is added to the list, meaning
+         * that this job could get scheduled unnecessarily in cases of heavy output.
+         * Note however, that schedule() will only reschedule a running/scheduled Job
+         * once even if it's called many times.
          */
-        public boolean shouldSchedule() {
-            return scheduled;
+        public boolean shouldRun() {
+            return pendingPartitions != null && pendingPartitions.size() > 0;
         }
 	}
 	
