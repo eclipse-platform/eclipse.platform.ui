@@ -137,6 +137,17 @@ for (int i=0; i<buttons.length; i++) {
 }
 %>
 
+function mozillaVersion(){
+	if (!isMozilla)
+		return "0";
+	var start = navigator.userAgent.indexOf('rv:') + 3;
+	if (start < 3 || start>=navigator.userAgent.length)
+		return "0";
+	var end = navigator.userAgent.indexOf(')', start);
+	if (end <= start)
+		return "0";
+	return navigator.userAgent.substr(start, end-start);
+}
 
 function setTitle(label)
 {
@@ -150,14 +161,21 @@ function setTitle(label)
 
 
 /**
- * handler for double click: maximize/restore this view
- * Note: Mozilla browsers do not support programmatic frame resizing well or at all.
+ * Handler for double click: maximize/restore this view
+ * Note: Mozilla browsers prior to 1.2.1 do not support programmatic frame resizing well.
  */
 function mouseDblClickHandler(e) {
-	if (!isIE)
+	if (!isIE && !isMozilla)
 		return;
-		
-	var target = window.event.srcElement;
+	if (isMozilla && mozillaVersion() < "1.2.1")
+		return;
+
+	// ignore double click on buttons
+	var target;
+  	if (isMozilla)
+  		target = e.target;
+	else if (isIE)
+   		target = window.event.srcElement;
 	if (target.tagName && (target.tagName == "A" || target.tagName == "IMG"))
 		return;
 		
@@ -173,11 +191,9 @@ function mouseDblClickHandler(e) {
 	return false;
 }
 
-// Mozilla browsers do not support programmatic frame resizing well or at all.
-//if (isMozilla)
-//  document.addEventListener('dblclick', mouseDblClickHandler, true);
-//else 
-if (isIE)
+if (isMozilla)
+  document.addEventListener('dblclick', mouseDblClickHandler, true);
+else if (isIE)
    document.ondblclick = mouseDblClickHandler;
 
 </script>
