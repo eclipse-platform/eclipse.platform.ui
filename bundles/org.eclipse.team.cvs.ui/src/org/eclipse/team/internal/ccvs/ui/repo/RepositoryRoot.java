@@ -106,6 +106,9 @@ public class RepositoryRoot extends PlatformObject {
 			} catch (CVSException e) {
 				// we could't fetch the modules. Log the problem and continue
 				CVSUIPlugin.log(e);
+				// Return an empty map but don't save it so the fetching of 
+				// the modules will occur again
+				return new HashMap();
 			}
 		}
 		return modulesCache;
