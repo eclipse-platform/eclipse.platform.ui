@@ -687,7 +687,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
 			
 			end = location.indexOf(HOST_SEPARATOR, start);
-			String user = null;;
+			String user = null;
 			String password = null;
 			// if end is -1 then there is no host separator meaning that the username is not present
 			if (end != -1) {		
@@ -954,8 +954,35 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if(firstSpace != -1) {						
 			// remove the program name and the space
 			message = message.substring(firstSpace + 1);
-			if (message.startsWith(prefix)) {
-				message = message.substring(prefix.length());
+			// Quick fix to handle changes in server message format (see Bug 45138)
+			if (prefix.startsWith("[")) {
+				// This is the server aborted message
+				// Remove the pattern "[command_name aborted]: "
+				int closingBracket = message.indexOf("]: ");
+				if (closingBracket == -1) return null;
+				// get what is inside the brackets
+				String realPrefix = message.substring(1, closingBracket);
+				// check that there is two words and the second word is "aborted"
+				int space = realPrefix.indexOf(' ');
+				if (space == -1) return null;
+				if (realPrefix.indexOf(' ', space +1) != -1) return null;
+				if (!realPrefix.substring(space +1).equals("aborted")) return null;
+				// It's a match, return the rest of the line
+				message = message.substring(closingBracket + 2);
+				if (message.charAt(0) == ' ') {
+					message = message.substring(1);
+				}
+				return message;
+			} else {
+				// This is the server command message
+				// Remove the pattern "command_name: "
+				int colon = message.indexOf(": ");
+				if (colon == -1) return null;
+				// get what is before the colon
+				String realPrefix = message.substring(0, colon);
+				// ensure that it is a single word
+				if (realPrefix.indexOf(' ') != -1) return null;
+				message = message.substring(colon + 1);
 				if (message.charAt(0) == ' ') {
 					message = message.substring(1);
 				}
