@@ -10,19 +10,58 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
+import java.util.Map;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class UpdateListener extends CommandOutputListener {
 
+	// Pattern matchers
+	private static ServerMessageLineMatcher MERGED_BINARY_FILE_LINE_1;
+	private static ServerMessageLineMatcher MERGED_BINARY_FILE_LINE_2;
+	
+	// Pattern Variables
+	private static final String REVISION_VARIABLE_NAME = "revision"; //$NON-NLS-1$
+	private static final String LOCAL_FILE_PATH_VARIABLE_NAME = "localFilePath"; //$NON-NLS-1$
+	private static final String BACKUP_FILE_VARIABLE_NAME = "backupFile"; //$NON-NLS-1$
+	
+	static {
+		try {
+			String line1 = "revision " //$NON-NLS-1$
+				+ Util.getVariablePattern(IMessagePatterns.REVISION_PATTERN, REVISION_VARIABLE_NAME)
+				+ " from repository is now in "  //$NON-NLS-1$
+				+ Util.getVariablePattern(IMessagePatterns.FILE_PATH_PATTERN, LOCAL_FILE_PATH_VARIABLE_NAME);
+			MERGED_BINARY_FILE_LINE_1 = new ServerMessageLineMatcher(
+					line1, 
+					new String[] {REVISION_VARIABLE_NAME, LOCAL_FILE_PATH_VARIABLE_NAME});
+			String line2 = "file from working directory is now in " //$NON-NLS-1$
+				+ Util.getVariablePattern(IMessagePatterns.REVISION_PATTERN, BACKUP_FILE_VARIABLE_NAME);
+			MERGED_BINARY_FILE_LINE_2 = new ServerMessageLineMatcher(
+					line2, 
+					new String[] {BACKUP_FILE_VARIABLE_NAME});
+
+		} catch (CVSException e) {
+			// Shouldn't happen
+			CVSProviderPlugin.log(e);
+		}
+	}
+	
 	IUpdateMessageListener updateMessageListener;
 	boolean merging = false;
+	boolean mergingBinary = false;
+	String mergedBinaryFileRevision, mergedBinaryFilePath;
 
 	public UpdateListener(IUpdateMessageListener updateMessageListener) {
 		this.updateMessageListener = updateMessageListener;
@@ -30,6 +69,7 @@ public class UpdateListener extends CommandOutputListener {
 	
 	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
+		mergingBinary = false;
 		if (updateMessageListener == null) return OK;
 		if(line.startsWith("Merging differences")) { //$NON-NLS-1$
 			merging = true;
@@ -96,11 +136,18 @@ public class UpdateListener extends CommandOutputListener {
 	 *    cvs [server aborted]: no such tag
 	 * Merge contained conflicts
 	 *    rcsmerge: warning: conflicts during merge
+	 * Binary file conflict
+	 *    cvs server: nonmergeable file needs merge
+	 *    cvs server: revision 1.4 from repository is now in a1/a2/test
+	 *    cvs server: file from working directory is now in .#test.1.3
 	 */
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
 		try {
+			// Reset flag globally here because we have to many exit points
+			boolean wasMergingBinary = mergingBinary;
+			mergingBinary = false;
 			String serverMessage = getServerMessage(line, location);
 			if (serverMessage != null) {
 				// Strip the prefix from the line
@@ -162,10 +209,46 @@ public class UpdateListener extends CommandOutputListener {
 				} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
 					// This line is info only. The server doesn't report an error.
 					return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
-				} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
+				} else if (message.startsWith("nonmergeable file needs merge")) { //$NON-NLS-1$
+					mergingBinary = true;
+					mergedBinaryFileRevision = null;
+					mergedBinaryFilePath = null;
+					return OK;
+				} else if (wasMergingBinary) {
+					Map variables = MERGED_BINARY_FILE_LINE_1.processServerMessage(message);
+					if (variables != null) {
+						mergedBinaryFileRevision = (String)variables.get(REVISION_VARIABLE_NAME);
+						mergedBinaryFilePath = (String)variables.get(LOCAL_FILE_PATH_VARIABLE_NAME);
+						mergingBinary = true;
+						return OK;
+					}
+					variables = MERGED_BINARY_FILE_LINE_2.processServerMessage(message);
+					if (variables != null) {
+						String backupFile = (String)variables.get(BACKUP_FILE_VARIABLE_NAME);
+						try {
+							if (mergedBinaryFileRevision != null && mergedBinaryFilePath != null) {
+								ICVSFile file = commandRoot.getFile(mergedBinaryFilePath);
+								IResource resource = file.getIResource();
+								if (resource != null) {
+									return new CVSStatus(IStatus.ERROR, CVSStatus.UNMEGERED_BINARY_CONFLICT,
+										Policy.bind("UpdateListener.0", new Object[] { //$NON-NLS-1$
+												resource.getFullPath().toString(), 
+												mergedBinaryFileRevision, 
+												resource.getFullPath().removeLastSegments(1).append(backupFile).toString()}));
+								}
+							}
+						} catch (CVSException e1) {
+							CVSProviderPlugin.log(e1);
+						}
+						return OK;
+					}
+				}
+				
+				// Fallthrough case for "cvs server" messages
+				if (!message.startsWith("cannot open directory") //$NON-NLS-1$
 						&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
 					return super.errorLine(line, location, commandRoot, monitor);
-				}
+				} 
 			} else {
 				String serverAbortedMessage = getServerAbortedMessage(line, location);
 				if (serverAbortedMessage != null) {

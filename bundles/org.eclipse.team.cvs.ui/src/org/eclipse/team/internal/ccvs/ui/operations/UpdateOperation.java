@@ -106,6 +106,17 @@ public class UpdateOperation extends SingleCommandOperation {
 			IStatus status = errors[i];
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				serverErrors.add(status);
+			} else if (status.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT) {
+				serverErrors.add(status);
+			} else if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				for (int j = 0; j < children.length; j++) {
+					IStatus child = children[j];
+					if (child.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT) {
+						serverErrors.add(status);
+						break;
+					}
+				}
 			}
 		}
 		if (serverErrors.isEmpty()) return;

@@ -30,6 +30,7 @@ public class CVSStatus extends Status {
 	public static final int PROTOCOL_ERROR = -23;
 	public static final int ERROR_LINE_PARSE_FAILURE = -24;
 	public static final int FAILED_TO_CACHE_SYNC_INFO = -25;
+	public static final int UNMEGERED_BINARY_CONFLICT = -26;
 	
 	// Path for resource related status
 	private ICVSFolder commandRoot;

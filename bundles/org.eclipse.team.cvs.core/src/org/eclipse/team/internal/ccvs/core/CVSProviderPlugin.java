@@ -606,7 +606,7 @@ public class CVSProviderPlugin extends Plugin {
 	public org.osgi.service.prefs.Preferences getInstancePreferences() {
 		IPreferencesService service = Platform.getPreferencesService();
 		IEclipsePreferences root = service.getRootNode();
-		return root.node(InstanceScope.SCOPE).node(getDescriptor().getUniqueIdentifier());
+		return root.node(InstanceScope.SCOPE).node(getBundle().getSymbolicName());
 	}
 	
 	/**
