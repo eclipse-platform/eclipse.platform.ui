@@ -206,9 +206,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					found= fFindReplaceMatcher.find(index + 1);
 				}
 				fFindReplaceMatchOffset= index;
-				if (index > -1)
+				if (index > -1) {
+					// must set matcher to correct position
+					fFindReplaceMatcher.find(index);
 					return new Region(index, length);
-				else
+				} else
 					return null;
 			}
 		}
