@@ -32,8 +32,13 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * If possible, the controls are right-aligned along the title bar of the tab folder.
  * If there isn't enough room without compressing or hiding tabs, the trim controls
- * are moved to the top of the client area.
+ * are moved to the top of the client area. 
  * </p> 
+ * <p>
+ * Note that this isn't really an SWT Layout (it can't be, since
+ * the controls it arranges are siblings of the tab folder rather than children). However, we
+ * use the name "Layout" to indicate that the function of this object is to arrange controls.
+ * </p>
  * 
  * @since 3.0
  */
@@ -301,7 +306,7 @@ public class TabFolderLayout {
 	}
 	
 	public int differenceBetweenTabHeightAndTrimRegion() {
-		return 2;
+		return 1;
 	}
 	
 	/**
