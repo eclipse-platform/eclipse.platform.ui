@@ -15,36 +15,43 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
 /**
  * @since 3.1
  */
-public class OpenEditorStressTest extends BasicPerformanceTest {
+public class OpenMultipleEditorTest extends BasicPerformanceTest {
+
+    private String extension;
+    private boolean closeAll;
 
     /**
      * @param testName
      */
-    public OpenEditorStressTest(String testName) {
-        super(testName);
+    public OpenMultipleEditorTest(String extension, boolean closeAll) {
+        super ("testOpeMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"));
+        this.extension = extension;        
+        this.closeAll = closeAll;
     }
     
-    
-    public void measureOpenEditor(IFile file) throws PartInitException {
-        assertTrue(file.exists());
-        // Open both files outside the loop so as not to include
-        // the initial time to open, just switching.
+    protected void runTest() throws Throwable {
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-
+        
         performanceMeter.start();
-        try {
-	        // Switch between the two editors one hundred times.
-	        for (int i = 0; i < 100; i++) {
+        try {            
+	        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+	            IFile file = getProject().getFile(i + "." + extension);
 	            IEditorPart part = IDE.openEditor(activePage, file, true);
 	            processEvents();
-	            activePage.closeEditor(part, false);
-	            processEvents();	            
+	        }
+	        if (closeAll) {
+	            activePage.closeAllEditors(false);
+	        }
+	        else {
+	            IEditorPart [] parts = activePage.getEditors();
+	            for (int i = 0; i < parts.length; i++) {
+                    activePage.closeEditor(parts[i], false);
+                }
 	        }
 	        performanceMeter.stop();
 	        performanceMeter.commit();
@@ -52,18 +59,7 @@ public class OpenEditorStressTest extends BasicPerformanceTest {
         }
         finally {
             performanceMeter.dispose();
-        }
+        }        
     }
-    
-    public void testMock3EditorOpening() throws PartInitException {
-        measureOpenEditor(getProject().getFile(UIPerformanceTestSetup.MOCK3_FILE));
-    }
-    
-    public void testMultiEditorOpening() throws PartInitException {
-        measureOpenEditor(getProject().getFile(UIPerformanceTestSetup.MULTI_FILE));
-    }
-    
-    public void testJavaEditorOpening() throws PartInitException {
-        measureOpenEditor(getProject().getFile(UIPerformanceTestSetup.JAVA_FILE));
-    }
+
 }

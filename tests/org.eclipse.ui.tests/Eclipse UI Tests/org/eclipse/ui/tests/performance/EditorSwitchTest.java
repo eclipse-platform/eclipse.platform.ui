@@ -21,42 +21,47 @@ import org.eclipse.ui.ide.IDE;
  */
 public class EditorSwitchTest extends BasicPerformanceTest {
 
+    private String extension1;
+    private String extension2;
+
     /**
      * Constructor.
      * 
      * @param testName
      *            Test's name.
      */
-    public EditorSwitchTest(String testName) {
-        super(testName);
+    public EditorSwitchTest(String [] pair) { 
+        super("editorSwitchTest:" + pair[0] + "," + pair[1]);
+        extension1 = pair[0];
+        extension2 = pair[1];
     }
 	
     /**
      * Test perspective switching performance. This test always fails.
      */
-    public void testEditorSwitching() throws CoreException {
+    protected void runTest() throws CoreException {
 
         // Open both files outside the loop so as not to include
         // the initial time to open, just switching.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IFile mock3File = getProject().getFile(UIPerformanceTestSetup.MOCK3_FILE);
-        assertTrue(mock3File.exists());
-        IFile multiFile = getProject().getFile(UIPerformanceTestSetup.MULTI_FILE);
-        assertTrue(multiFile.exists());
-        IDE.openEditor(activePage, mock3File, true);
-        IDE.openEditor(activePage, multiFile, true);
+        IFile file1 = getProject().getFile("1." + extension1);
+        assertTrue(file1.exists());
+        IFile file2 = getProject().getFile("1." + extension2);
+        assertTrue(file2.exists());
+        IDE.openEditor(activePage, file1, true);
+        IDE.openEditor(activePage, file2, true);
         processEvents();
 
         // Switch between the two editors one hundred times.
         for (int i = 0; i < 20; i++) {
             performanceMeter.start();
-            IDE.openEditor(activePage, mock3File, true);
+            IDE.openEditor(activePage, file1, true);
             processEvents();
-            IDE.openEditor(activePage, multiFile, true);
+            IDE.openEditor(activePage, file2, true);
             processEvents();
             performanceMeter.stop();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -11,12 +11,9 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.test.performance.Performance;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.api.MockViewPart;
 
 /**
  * Performance tests for showing views.
@@ -24,14 +21,16 @@ import org.eclipse.ui.tests.api.MockViewPart;
  * and a more complex view (Resource Navigator).
  * The views are shown in an empty perspective.
  */
-public class ShowViewTest extends BasicPerformanceTest {
-    static final int RUNS = 20;
+public class OpenCloseViewTest extends BasicPerformanceTest {
 
-    public ShowViewTest(String testName) {
-        super(testName);
+    private String viewId;
+
+    public OpenCloseViewTest(String viewId) {
+        super("showView:" + viewId);
+        this.viewId = viewId;
     }
 
-    private void measureShowView(String viewId) throws WorkbenchException {
+    protected void runTest() throws Throwable {
         IWorkbenchWindow window = openTestWindow();
         IWorkbenchPage page = window.getActivePage();
         
@@ -39,8 +38,8 @@ public class ShowViewTest extends BasicPerformanceTest {
         IViewPart view = page.showView(viewId);
         page.hideView(view);
         processEvents();
-    	        
-        for (int i = 0; i < RUNS; i++) {
+                
+        for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
             performanceMeter.start();
             view = page.showView(viewId);
             processEvents();
@@ -48,21 +47,8 @@ public class ShowViewTest extends BasicPerformanceTest {
             page.hideView(view);
             processEvents();
         }
+        
         performanceMeter.commit();
         Performance.getDefault().assertPerformance(performanceMeter);
-   }
-
-    /**
-     * Test showing the MockViewPart.
-     */
-    public void testShowMockView() throws WorkbenchException {
-        measureShowView(MockViewPart.ID);
     }
-
-    /**
-     * Test showing the Navigator.
-     */
-    public void testShowNavigator() throws WorkbenchException {
-        measureShowView(IPageLayout.ID_RES_NAV);
-   }
 }

@@ -11,34 +11,41 @@
 
 package org.eclipse.ui.tests.performance;
 
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.tests.api.MockViewPart;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Runs a test specified by the org.eclipse.ui.performance.test property.  
- * This test is prepped via the UIPerformanceTestSetup test setup.
- * 
  * @since 3.1
  */
-public class PerformanceTestRunner extends TestSuite {
+public class ViewPerformanceSuite extends TestSuite {
 
+    public static final String [] VIEW_IDS = {IPageLayout.ID_RES_NAV, MockViewPart.ID};
+    
+    public static final int ITERATIONS = 100;
+    
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
      */
     public static Test suite() {
-        return new UIPerformanceTestSetup(new PerformanceTestRunner());
+        return new EditorPerformanceSuite();
+    }
+    
+    /**
+     * 
+     */
+    public ViewPerformanceSuite() {        
+        addOpenCloseScenarios();
     }
 
-    public PerformanceTestRunner() {
-        String className = System.getProperty("org.eclipse.ui.performance.test");
-        try {
-            Class clazz = Class.forName(className);
-            if (TestSuite.class.isAssignableFrom(clazz))
-                addTest((Test) clazz.newInstance());
-            else
-                addTestSuite(clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * 
+     */
+    private void addOpenCloseScenarios() {
+        for (int i = 0; i < VIEW_IDS.length; i++) {
+            addTest(new OpenCloseViewTest(VIEW_IDS[i]));            
+        }         
     }
 }

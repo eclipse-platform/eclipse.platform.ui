@@ -41,6 +41,10 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 	    super.doSetUp();
+	    
+	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
+                fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
+                        UIPerformanceTestSetup.PERSPECTIVE));
 		Performance performance = Performance.getDefault();
 		performanceMeter = performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
 	}

@@ -52,7 +52,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
         // Open the file.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IFile mock3File = getProject().getFile(UIPerformanceTestSetup.MOCK3_FILE);
+        IFile mock3File = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
         assertTrue(mock3File.exists());
 
         IDE.openEditor(activePage, mock3File, true);

@@ -1744,4 +1744,31 @@
       		categoryId="org.eclipse.ui.PT.C2" />
       		           
    </extension>
+   
+   <!-- Performance related components -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            icon="icons/anything.gif"
+            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart"
+            default="true"
+            name="Basic Performance Editor"
+            id="org.eclipse.ui.tests.perf_basic"
+            extensions="perf_basic"/>
+            
+      <editor
+            icon="icons/anything.gif"
+            class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart:outline"
+            default="true"
+            name="Editor w/Outline"
+            id="org.eclipse.ui.tests.perf_outline"
+            extensions="perf_outline"/>    
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.ui.tests.performance.PerformancePerspective"
+            name="org.eclipse.ui.tests.PerformancePerspective"
+            id="org.eclipse.ui.tests.performancePerspective"/>
+   </extension>
 </plugin>            

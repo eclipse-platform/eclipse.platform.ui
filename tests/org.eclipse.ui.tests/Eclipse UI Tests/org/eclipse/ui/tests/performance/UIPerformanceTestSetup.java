@@ -11,11 +11,7 @@
 
 package org.eclipse.ui.tests.performance;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -25,24 +21,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.TestPlugin;
 
 public class UIPerformanceTestSetup extends TestSetup {
 
-	private static final String PERSPECTIVE= "org.eclipse.ui.tests.fastview_perspective";
+	public static final String PERSPECTIVE= "org.eclipse.ui.tests.performancePerspective";
 
 	public static final String PROJECT_NAME = "Performance Project";
 
-	public static final String MOCK3_FILE = "TestFile.mock3";
-	public static final String MULTI_FILE = "TestFile.multi";
-    public static final String JAVA_FILE = "TestFile.java";
-	
 	private static final String INTRO_VIEW= "org.eclipse.ui.internal.introview";
 
     private IProject testProject;
@@ -92,7 +81,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 		}
 	}
 	
-	private void setUpProject() throws IOException, CoreException {
+	private void setUpProject() throws CoreException {
    
         // Create a java project.
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -107,26 +96,21 @@ public class UIPerformanceTestSetup extends TestSetup {
         projectDescription.setBuildSpec(new ICommand[] { buildCommand });
         testProject.setDescription(projectDescription, null);*/
         
-        importFile(MOCK3_FILE);  
-        importFile(MULTI_FILE);
-        importFile(JAVA_FILE);
+        for (int i = 0; i < EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS.length; i++) {
+            createFiles(EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[i]);
+        }
 	}
 
+    
     /**
-     * @param fileName
-     * @throws IOException
+     * @param ext
      * @throws CoreException
      */
-    private IFile importFile(String fileName) throws IOException, CoreException {
-        TestPlugin plugin = TestPlugin.getDefault();
-        URL fullPathString = plugin.getDescriptor().find(
-                new Path("data/performance/" + fileName));
-        IPath path = new Path(fullPathString.getPath());
-        File file = path.toFile();
-        InputStream inputStream = new FileInputStream(file);
-        IFile iFile = testProject.getFile(fileName);
-        iFile.create(inputStream, true, null);
-        inputStream.close();
-        return iFile;
+    private void createFiles(String ext) throws CoreException {
+        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+            String fileName = i + "." + ext;
+	        IFile iFile = testProject.getFile(fileName);
+	        iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
+        }
     }
 }
