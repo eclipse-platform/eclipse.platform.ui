@@ -254,9 +254,14 @@ public class BasicStackPresentation extends StackPresentation {
 			}
 		});
 		
-		//viewToolBar.setVisible(true);
-		
-		tabFolder.setTabHeight(24);
+		// Compute the tab height
+		int toolbarHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		int tabHeight = toolbarHeight + layout.differenceBetweenTabHeightAndTrimRegion();
+		// Enforce a minimum tab height
+		if (tabHeight < 20) {
+			tabHeight = 20;
+		}
+		tabFolder.setTabHeight(tabHeight);
 	}
 
 	/**
@@ -608,7 +613,6 @@ public class BasicStackPresentation extends StackPresentation {
 			current.setVisible(isVisible);
 		}
 		tabFolder.setVisible(isVisible);
-		//viewToolBar.setVisible(isVisible);
 	}
 
 	/* (non-Javadoc)

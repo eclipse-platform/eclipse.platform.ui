@@ -135,7 +135,7 @@ public class TabFolderLayout {
 		
 		Rectangle clientBounds = calculatePageBounds(tabFolder);
 		
-		trimOnTop = trimSize.x < trimRegion.width && trimSize.y < trimRegion.height; 
+		trimOnTop = trimSize.x <= trimRegion.width && trimSize.y <= trimRegion.height; 
 		// Check if we have room for all our topRight controls on the top border
 		if (trimOnTop) {
 			
@@ -207,7 +207,7 @@ public class TabFolderLayout {
 		for (int idx = firstControl + numControls - 1; idx >= firstControl; idx--) {
 			Point size = cache.computeSize(idx, SWT.DEFAULT, SWT.DEFAULT);
 			
-			topControls[idx].setBounds(currentPos - size.x, region.y, size.x, size.y);
+			topControls[idx].setBounds(currentPos - size.x, region.y + (region.height - size.y) / 2, size.x, size.y);
 
 			currentPos -= size.x;
 		}
@@ -242,7 +242,7 @@ public class TabFolderLayout {
 		
 		int borderSize = 1;
 		result.y += borderSize;
-		result.height -= borderSize;
+		result.height = tabFolder.getTabHeight() - differenceBetweenTabHeightAndTrimRegion();
 		
 		// Amount to shift to avoid stomping on the curve
 		int xShift = 3;
@@ -250,6 +250,10 @@ public class TabFolderLayout {
 		result.width -= xShift;
 		
 		return result;
+	}
+	
+	public int differenceBetweenTabHeightAndTrimRegion() {
+		return 2;
 	}
 	
 	/**
