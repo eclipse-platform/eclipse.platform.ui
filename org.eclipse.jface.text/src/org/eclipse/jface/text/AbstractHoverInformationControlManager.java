@@ -87,13 +87,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void start(Rectangle subjectArea) {
 			
-			if (fIsActive)
-				return;
+			if (fIsActive) return;
 			fIsActive= true;
 			
 			fSubjectArea= subjectArea;
-			
-			setEnabled(false);
 			
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseListener(this);
@@ -119,8 +116,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		protected void stop(boolean delayRestart) {
 			
-			if (!fIsActive)
-				return;
+			if (!fIsActive) return;
 			fIsActive= false;
 			
 			hideInformationControl();
@@ -208,11 +204,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * </ul>
 	 */
 	class MouseTracker extends ShellAdapter implements MouseTrackListener, MouseMoveListener {
-		
-		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18393
-		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19686
-		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19719
-		
+				
 		/** Margin around the original hover event location for coputing the hover area. */
 		private final static int EPSILON= 3;
 		
@@ -223,13 +215,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		/** The tracker's subject control. */
 		private Control fSubjectControl;
 		
-		/** Indicates whether the tracker is computing the start function. */
-		private boolean fIsActive= false;
+		/** Indicates whether the tracker is in restart mode ignoring hover events. */
+		private boolean fIsInRestartMode= false;
+		/** Indicates whether the tracker is computing the information to be presented. */
+		private boolean fIsComputing= false;
 		/** Indicates whether the mouse has been lost. */
-		private boolean fMouseLost= false;
+		private boolean fMouseLostWhileComputing= false;
 		/** Indicates whether the subject control's shell has been deactivated. */
-		private boolean fShellDeactivated= false;
-		
+		private boolean fShellDeactivatedWhileComputing= false;
+				
 		/**
 		 * Creates a new mouse tracker.
 		 */
@@ -258,11 +252,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fSubjectControl != null && !fSubjectControl.isDisposed())
 				fSubjectControl.addMouseTrackListener(this);
 				
-			fIsActive= false;
-			fMouseLost= false;
-			fShellDeactivated= false;
+			fIsInRestartMode= false;
+			fIsComputing= false;
+			fMouseLostWhileComputing= false;
+			fShellDeactivatedWhileComputing= false;
 		}
-		
+				
 		/**
 		 * Stops this mouse tracker. Removes itself  as mouse track, mouse move, and
 		 * shell listener from the subject control.
@@ -273,9 +268,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.getShell().removeShellListener(this);
 			}
-			
-			fMouseLost= false;
-			fShellDeactivated= false;
 		}
 		
 		/**
@@ -286,15 +278,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void mouseHover(MouseEvent event) {
 			
-			if (fIsActive)
-				return;
+			if (fIsComputing || fIsInRestartMode) return;
+						
+			fIsInRestartMode= true;
+			fIsComputing= true;
+			fMouseLostWhileComputing= false;
+			fShellDeactivatedWhileComputing= false;
 			
-			fIsActive= true;
-			fMouseLost= false;
-			fShellDeactivated= false;
-			
-			setEnabled(false);
-
 			fHoverEventStateMask= event.stateMask;
 			fHoverEventLocation= new Point(event.x, event.y);
 			fHoverArea= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
@@ -315,15 +305,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * computing the information to be presented.
 		 */
 		protected void deactivate() {
-			if (fIsActive)
-				return;
-			
+			if (fIsComputing) return;
+			fIsInRestartMode= false;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.getShell().removeShellListener(this);
 			}
-			
-			setEnabled(true);
 		}
 		
 		/*
@@ -336,7 +323,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseTrackListener#mouseExit(MouseEvent)
 		 */
 		public void mouseExit(MouseEvent e) {
-			fMouseLost= true;
+			fMouseLostWhileComputing= true;
 			deactivate();
 		}
 		
@@ -352,7 +339,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
 		public void shellDeactivated(ShellEvent e) {
-			fShellDeactivated= true;
+			fShellDeactivatedWhileComputing= true;
 			deactivate();
 		}
 		
@@ -360,7 +347,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see ShellListener#shellIconified(ShellEvent)
 		 */
 		public void shellIconified(ShellEvent e) {
-			fShellDeactivated= true;
+			fShellDeactivatedWhileComputing= true;
 			deactivate();
 		}
 		
@@ -368,9 +355,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * Tells this tracker that the start function processing has been completed.
 		 */
 		public void computationCompleted() {
-			fIsActive= false;
-			fMouseLost= false;
-			fShellDeactivated= false;
+			fIsComputing= false;
+			fMouseLostWhileComputing= false;
+			fShellDeactivatedWhileComputing= false;
 		}
 		
 		/**
@@ -383,7 +370,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public boolean isMouseLost() {
 			
-			if (fMouseLost || fShellDeactivated)
+			if (fMouseLostWhileComputing || fShellDeactivatedWhileComputing)
 				return true;
 								
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -437,7 +424,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			super.presentInformation();
 		}
 	}
-	
+		
 	/*
 	 * @see AbstractInformationControlManager#setEnabled(boolean)
 	 */
@@ -454,8 +441,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fMouseTracker.stop();
 		}
 	}
-
-
+	
 	/**
 	 * Disposes this manager's information control.
 	 */

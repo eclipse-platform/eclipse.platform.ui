@@ -2731,7 +2731,8 @@ public class TextViewer extends Viewer implements
 				deleteText();
 				break;
 			case SELECT_ALL: {
-				setSelectedRange(0, getDocument().getLength());
+				if (getDocument() != null)
+					setSelectedRange(0, getDocument().getLength());
 				break;
 			}
 			case SHIFT_RIGHT:
