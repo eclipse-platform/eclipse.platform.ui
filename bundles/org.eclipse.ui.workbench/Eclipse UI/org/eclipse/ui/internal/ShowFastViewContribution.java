@@ -28,8 +28,8 @@ public class ShowFastViewContribution extends ContributionItem {
 	/**
 	 * Create a new menu item.
 	 */
-	public ShowFastViewContribution(IWorkbenchWindow window, String id) {
-		super(id);
+	public ShowFastViewContribution(IWorkbenchWindow window) {
+		super("showFastViewContr"); //$NON-NLS-1$
 		this.window = window;
 	}
 	/**
