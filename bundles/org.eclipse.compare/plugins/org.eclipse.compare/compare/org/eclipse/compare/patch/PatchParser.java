@@ -128,6 +128,12 @@ import org.eclipse.jface.util.Assert;
 					case '-':
 						lines.add(line);
 						continue;
+					case '\\':
+						if (line.startsWith("No newline at end of file", 2)) {
+							// FIXME: we need to remove line terminator from last line
+							continue;
+						}
+						break;
 					default:
 						break;
 					}
@@ -378,7 +384,7 @@ import org.eclipse.jface.util.Assert;
 				} catch (ParseException ex) {
 				}
 			}
-			System.err.println("can't parse date: <" + line + ">");
+			// System.err.println("can't parse date: <" + line + ">");
 		}
 		return -1;
 	}
@@ -392,21 +398,34 @@ import org.eclipse.jface.util.Assert;
 	/**
 	 * Tries to extract two integers separated by a comma.
 	 * The parsing of the line starts at the position after
-	 * the first occurrence of the given character start.
+	 * the first occurrence of the given character start an ends
+	 * at the first blank (or the end of the line).
+	 * If only a single number is found this is assumed to be the length of the range.
+	 * In this case the start of the range is set to 1.
+	 * If an error occurs the range -1,-1 is returned.
 	 */
 	private void extractPair(String line, char start, int[] pair) {
 		pair[0]= pair[1]= -1;
 		int startPos= line.indexOf(start);
-		if (startPos < 0)
+		if (startPos < 0) {
+			System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'");
 			return;
+		}
 		line= line.substring(startPos+1);
 		int endPos= line.indexOf(' ');
+		if (endPos < 0) {
+			System.out.println("parsing error in extractPair: couldn't find end blank");
+			return;
+		}
+		line= line.substring(0, endPos);
 		int comma= line.indexOf(',');
 		if (comma >= 0) {
-			pair[1]= Integer.parseInt(line.substring(comma+1, endPos));
-			endPos= comma;
+			pair[0]= Integer.parseInt(line.substring(0, comma));
+			pair[1]= Integer.parseInt(line.substring(comma+1));
+		} else {
+			pair[0]= 1;
+			pair[1]= Integer.parseInt(line.substring(comma+1));
 		}
-		pair[0]= Integer.parseInt(line.substring(0, endPos));
 	}
 }
 

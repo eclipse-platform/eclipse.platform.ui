@@ -51,16 +51,18 @@ import org.eclipse.compare.internal.*;
 			return null;
 		
 		IPath p= new Path(path);
-		IPath p2= p.removeFirstSegments(1);
+		int sc= p.segmentCount();
+		System.out.println(path + " " + sc);
+		if (sc > 1)
+			p= p.removeFirstSegments(1);
 		
 		IResource[] selection= Utilities.getResources(fSelection);
 		for (int i= 0; i < selection.length; i++) {
 			IResource r= selection[i];
 			if (r instanceof IContainer) {
 				IContainer c= (IContainer) r;
-				if (c.exists(p2)) {
-					return c.getFile(p2);
-				}
+				if (c.exists(p))
+					return c.getFile(p);
 			}
 		}
 		return null;

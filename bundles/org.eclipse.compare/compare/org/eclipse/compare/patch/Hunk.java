@@ -16,12 +16,12 @@ import org.eclipse.jface.util.Assert;
 	
 	/* package */ Hunk(int[] oldRange, int[] newRange, List lines) {
 		if (oldRange[0] > 0)
-			fOldStart= oldRange[0]-1;
+			fOldStart= oldRange[0]-1;	// line number start at 0!
 		else
 			fOldStart= 0;
 		fOldLength= oldRange[1];
 		if (newRange[0] > 0)
-			fNewStart= newRange[0]-1;
+			fNewStart= newRange[0]-1;	// line number start at 0!
 		else
 			fNewStart= 0;
 		fNewLength= newRange[1];
