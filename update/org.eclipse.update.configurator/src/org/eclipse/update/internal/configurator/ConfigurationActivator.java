@@ -189,7 +189,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
-						Utils.log("Could not install bundle " + bundlesToInstall[i] + "\nReason: " + e.getMessage());
+						Utils.log("Could not install bundle " + bundlesToInstall[i] + "   " + e.getMessage());
 				}
 			}
 			context.ungetService(reference);
