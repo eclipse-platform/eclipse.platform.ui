@@ -70,13 +70,14 @@ public class DocumentPartitioningChangedEvent {
 	}
 
 	/**
-	 * Sets the specified range as changed region for the given partitioning.
+	 * Sets the specified range as changed region for the given partitioning
+	 * if this event is not sealed.
 	 * 
 	 * @param partitioning the partitioning
 	 * @param offset the region offset
 	 * @param length the region length
 	 */
-	void setPartitionChange(String partitioning, int offset, int length) {
+	public void setPartitionChange(String partitioning, int offset, int length) {
 		Assert.isNotNull(partitioning);
 		fMap.put(partitioning, new Region(offset, length));
 	}
