@@ -11,7 +11,7 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
-import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -50,7 +50,7 @@ class AntPreviewerUpdater {
 	 * @param configuration the configuration
 	 * @param preferenceStore the preference store
 	 */
-	public AntPreviewerUpdater(final SourceViewer viewer, final AbstractAntSourceViewerConfiguration configuration, final IPreferenceStore preferenceStore) {
+	public AntPreviewerUpdater(final SourceViewer viewer, final AntSourceViewerConfiguration configuration, final IPreferenceStore preferenceStore) {
 		
 		initializeViewerColors(viewer, preferenceStore);
 		
