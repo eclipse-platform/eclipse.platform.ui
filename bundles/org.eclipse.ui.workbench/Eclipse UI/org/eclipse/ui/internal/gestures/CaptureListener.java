@@ -9,9 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.gestures;
 
-public interface XCaptureListener {
+public interface CaptureListener {
 
-	void capture(XCaptureEvent captureEvent);
+	void capture(CaptureEvent captureEvent);
 }

@@ -193,48 +193,7 @@ public final class Util {
 	public static int hashCode(Object object) {
 		return object != null ? object.hashCode() : 0;	
 	}
-
-	/*
-	public static Sequence recognize(Point[] points, int sensitivity) {
-		Stroke stroke = null;
-		List strokes = new ArrayList();
-		int x0 = 0;
-		int y0 = 0;
-
-		for (int i = 0; i < points.length; i++) {
-			Point point = points[i];
-
-			if (i == 0) {
-				x0 = point.getX();
-				y0 = point.getY();
-				continue;
-			}
-
-			int x1 = point.getX();
-			int y1 = point.getY();
-			int dx = (x1 - x0) / sensitivity;
-			int dy = (y1 - y0) / sensitivity;
-
-			if ((dx != 0) || (dy != 0)) {
-				if (dx > 0 && !STROKE_RIGHT.equals(stroke)) {
-					strokes.add(stroke = STROKE_RIGHT);
-				} else if (dx < 0 && !STROKE_LEFT.equals(stroke)) {
-					strokes.add(stroke = STROKE_LEFT);
-				} else if (dy > 0 && !STROKE_DOWN.equals(stroke)) {
-					strokes.add(stroke = STROKE_DOWN);
-				} else if (dy < 0 && !STROKE_UP.equals(stroke)) {
-					strokes.add(stroke = STROKE_UP);
-				}
-
-				x0 = x1;
-				y0 = y1;
-			}
-		}
-
-		return Sequence.create(strokes);
-	}
-	*/
-
+	
 	public static List safeCopy(List list, Class c) {
 		if (list == null || c == null)
 			throw new NullPointerException();

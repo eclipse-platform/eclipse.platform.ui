@@ -9,27 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.gestures;
 
 import java.util.Arrays;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class XCaptureEvent implements Comparable {
+public final class CaptureEvent implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = XCaptureEvent.class.getName().hashCode();
+	private final static int HASH_INITIAL = CaptureEvent.class.getName().hashCode();
 
-	public static XCaptureEvent create(int data, int pen, XPoint[] points)
+	public static CaptureEvent create(int data, int pen, Point[] points)
 		throws IllegalArgumentException {
-		return new XCaptureEvent(data, pen, points);
+		return new CaptureEvent(data, pen, points);
 	}
 
 	private int data;
 	private int pen;
-	private XPoint[] points;
+	private Point[] points;
 
-	private XCaptureEvent(int data, int pen, XPoint[] points)
+	private CaptureEvent(int data, int pen, Point[] points)
 		throws IllegalArgumentException {
 		super();
 		this.data = data;
@@ -38,7 +38,7 @@ public final class XCaptureEvent implements Comparable {
 		if (points == null)
 			throw new IllegalArgumentException();
 		
-		points = (XPoint[]) points.clone();
+		points = (Point[]) points.clone();
 
 		for (int i = 0; i < points.length; i++)
 			if (points[i] == null)
@@ -48,7 +48,7 @@ public final class XCaptureEvent implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		XCaptureEvent captureEvent = (XCaptureEvent) object;
+		CaptureEvent captureEvent = (CaptureEvent) object;
 		int compareTo = data - captureEvent.data;
 
 		if (compareTo == 0) {
@@ -62,10 +62,10 @@ public final class XCaptureEvent implements Comparable {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof XCaptureEvent))
+		if (!(object instanceof CaptureEvent))
 			return false;
 
-		XCaptureEvent captureEvent = (XCaptureEvent) object;
+		CaptureEvent captureEvent = (CaptureEvent) object;
 		return data == captureEvent.data && pen == captureEvent.pen && Arrays.equals(points, captureEvent.points);
 	}
 
@@ -77,8 +77,8 @@ public final class XCaptureEvent implements Comparable {
 		return pen;
 	}
 
-	public XPoint[] getPoints() {
-		return (XPoint[]) points.clone();
+	public Point[] getPoints() {
+		return (Point[]) points.clone();
 	}
 
 	public int hashCode() {

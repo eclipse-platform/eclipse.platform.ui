@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.gestures;
 
-public final class XPoint implements Comparable {
+public final class Point implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = XPoint.class.getName().hashCode();
+	private final static int HASH_INITIAL = Point.class.getName().hashCode();
 
 	private int x;
 	private int y;
@@ -23,13 +23,13 @@ public final class XPoint implements Comparable {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	XPoint(int x, int y) {
+	Point(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
 	public int compareTo(Object object) {
-		XPoint point = (XPoint) object;
+		Point point = (Point) object;
 		int compareTo = x - point.x;
 
 		if (compareTo == 0)
@@ -39,10 +39,10 @@ public final class XPoint implements Comparable {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof XPoint))
+		if (!(object instanceof Point))
 			return false;
 
-		XPoint point = (XPoint) object;
+		Point point = (Point) object;
 		boolean equals = true;
 		equals &= x == point.x;
 		equals &= y == point.y;

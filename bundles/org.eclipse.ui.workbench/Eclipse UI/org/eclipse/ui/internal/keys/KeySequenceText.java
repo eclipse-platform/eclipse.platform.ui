@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -32,7 +37,6 @@ import org.eclipse.ui.keys.NaturalKey;
  */
 public final class KeySequenceText {
                 
-
 	/** An empty string instance for use in clearing text values. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 

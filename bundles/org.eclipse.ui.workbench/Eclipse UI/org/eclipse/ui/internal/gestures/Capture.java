@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.gestures;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,10 +20,10 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Control;
 
-public final class XCapture {
+public final class Capture {
 
-	public static XCapture create() {
-		return new XCapture();
+	public static Capture create() {
+		return new Capture();
 	}		
 
 	private List captureListeners;
@@ -35,7 +35,7 @@ public final class XCapture {
 	private int pen;
 	private List points;	
 	
-	private XCapture() {
+	private Capture() {
 		super();
 		captureListeners = new ArrayList();
 
@@ -49,7 +49,7 @@ public final class XCapture {
 					data = mouseEvent.stateMask;
 					pen = mouseEvent.button;
 					points.clear();
-					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
 					control.addMouseMoveListener(mouseMoveListener);
 				}
 			}
@@ -57,8 +57,8 @@ public final class XCapture {
 			public void mouseUp(MouseEvent mouseEvent) {
 				if (capturing && mouseEvent.button == pen) {
 					control.removeMouseMoveListener(mouseMoveListener);
-					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
-					XCaptureEvent captureEvent = XCaptureEvent.create(data, pen, (XPoint[]) points.toArray(new XPoint[points.size()]));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
+					CaptureEvent captureEvent = CaptureEvent.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
 					capturing = false;
 					data = 0;
 					pen = 0;
@@ -66,7 +66,7 @@ public final class XCapture {
 					Iterator iterator = captureListeners.iterator();
 
 					while (iterator.hasNext())
-						((XCaptureListener) iterator.next()).capture(captureEvent);
+						((CaptureListener) iterator.next()).capture(captureEvent);
 				}
 			}
 		};
@@ -74,14 +74,14 @@ public final class XCapture {
 		mouseMoveListener = new MouseMoveListener() {
 			public void mouseMove(MouseEvent mouseEvent) {
 				if (capturing)
-					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
+					points.add(new Point(mouseEvent.x, mouseEvent.y));
 			}
 		};	
 		
 		points = new ArrayList();
 	}
 
-	public void addCaptureListener(XCaptureListener captureListener) {
+	public void addCaptureListener(CaptureListener captureListener) {
 		captureListeners.add(captureListener);	
 	}
 
@@ -89,7 +89,7 @@ public final class XCapture {
 		return control;	
 	}
 
-	public void removeCaptureListener(XCaptureListener captureListener) {
+	public void removeCaptureListener(CaptureListener captureListener) {
 		captureListeners.remove(captureListener);			
 	}
 
