@@ -322,6 +322,71 @@ ul
 
 <h1>Eclipse Platform Build Notes<br>
 Workbench</h1>
+<p>Integration Build (<st1:date Year="2004" Day="08" Month="24">August 24, 2004, 8 a.m. (EDT)</st1:date>)</p>
+<h2>What's new in this drop</h2>
+  <h2>Other highlights</h2>
+  <h2>Breaking API Changes</h2>
+  <h2><span class=GramE>Known deficiencies.</span> </h2>
+  <p><b style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt'>Problem 
+    reports fixed<o:p></o:p></span></b></p>
+      <p><p>Integration Build (<st1:date Year="2004" Day="XX" Month="XX">XXXX XX, 2004, XXXX x.m. (EDT)</st1:date>)</p>
+<h2>What's new in this drop</h2>
+  <p>The structured selection generated for object contributions now includes
+  the editor input, if the active part is an editor part.  This means Team and
+  CVS entries appear in the context menu over editors.</p>
+  <p>Plug-in version numbers have been bumped to 3.1.0.</p>
+  <h2>Other highlights</h2>
+  <p>There has been a massive reformatting of our source code.</p>
+  <h2>Breaking API Changes</h2>
+  <h2><span class=GramE>Known deficiencies.</span> </h2>
+  <p><b style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt'>Problem 
+    reports fixed<o:p></o:p></span></b></p>
+      <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=16329">Bug 16329</a>.  [EditorMgmt] Activate editor (F12) does not set focus in editor<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=25303">Bug 25303</a>.  would like to have a way to temporarily reduce and restore individual editors (partial fix)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=38547">Bug 38547</a>.  [Preferences] Changing preferences ignored after "Restore defaults" pressed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=40965">Bug 40965</a>.  [Workbench] Tool bar buttons require mouse focus to get read using MSAA<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46576">Bug 46576</a>.  [RCP] prune message catalogs and icon directories<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=52506">Bug 52506</a>.  [Workbench] minimize needs keyboard shortcut and menu entry<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53427">Bug 53427</a>.  [RCP] include RCP tests in automated test suite<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57093">Bug 57093</a>.  [Viewers] "Widget is disposed" when updating from CVS<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=60768">Bug 60768</a>.  CBanner at top does vertical sizing based on left components<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=61869">Bug 61869</a>.  [JFace] JFace does not reflect the new color options for SWT Table and tree<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62970">Bug 62970</a>.  Layout problem when the user presses details in the error dialog<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63255">Bug 63255</a>.  [Preferences] some pages cannot be displayed in high contrast<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63546">Bug 63546</a>.  [OLE] In-place editor fails with: Class ID not found in registry<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=64761">Bug 64761</a>.  [Progress] [RCP] Need to reorganize progress icons in ide<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65363">Bug 65363</a>.  [ViewMgmt] Missing command and action for minimize view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65724">Bug 65724</a>.  NPE in UILockListener.doPendingWork<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=65497">Bug 65497</a>.  [Graphics] Old stop icon shown in application window's progress bar<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66065">Bug 66065</a>.  Test to verify that EditorReferences are still working<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66574">Bug 66574</a>.  Activity checkbox string should not have a '.'<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66967">Bug 66967</a>.  [ObjectContributions] PropertyParser should be deprecated (or removed)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67028">Bug 67028</a>.  [Workbench] Window > Show View should be disabled if all perspectives closed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67716">Bug 67716</a>.  [ProblemsView] Trying to sort in Problems View removes all items from view<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67221">Bug 67221</a>.  [Themes]  Cannot customize values of colors/fonts when theme is used<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=67293">Bug 67293</a>.  [Themes] Setting inital theme to a bad theme id results in IThemeManager.getCurrentTheme() == null<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68379">Bug 68379</a>.  [FastView] wrong target for restore fastview animation<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68431">Bug 68431</a>.  [ActivityMgmt] Need Add all/Remove all button for capabilities<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68444">Bug 68444</a>.  [Import/Export] cannot fill project name in Import Project wizard<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68505">Bug 68505</a>.  [Progress] Progress view shows waiting job which doesn't exist anymore<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68579">Bug 68579</a>.  [Progress] Cleared error still in progress error list<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68774">Bug 68774</a>.  [Perspectives] NPE in PerspectiveSwitcher.setCoolItemSize()<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68776">Bug 68776</a>.  [Perspectives] Perspective extension view element requires relative even if relationship="fast"<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68779">Bug 68779</a>.  [Perspectives] closeable and moveable attributes ignored if relationship is fixed or stack<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68802">Bug 68802</a>.  org.eclipse.ui.themes identifier incorrect<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=68804">Bug 68804</a>.  [Preferences] Always Run in background not restored to default in Workbench preference page<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69097">Bug 69097</a>.  Provide utility classes for creating Eclipse presentations<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69365">Bug 69365</a>.  Non NLS'd string shipped with eclipse 3.0<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69473">Bug 69473</a>.  [Workbench] File > New menu is enabled when no perspectives open<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69541">Bug 69541</a>.  [Dialogs] TVT3.0:  Task List Description text entry widget truncated in Korean<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69607">Bug 69607</a>.  [Preferences] TVT3.0:  nonexternalized string in Preferences->Workbench->Appearance<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69612">Bug 69612</a>.  [Font/Colour] TVT3.0:  Duplicated mnemonics in Preferences->Workbench->Colors and Fonts<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69724">Bug 69724</a>.  [Fonts] TVT3.0: Description for colors & fonts are switched<br>
+      </p>
+      
+      </p>
+
 <p>Integration Build (<st1:date Year="2004" Day="23" Month="6">Aug 10, 2004, 00:10 a.m. (EDT)</st1:date>)</p>
 <h2>What's new in this drop</h2>
 <h2>Other highlights</h2>
