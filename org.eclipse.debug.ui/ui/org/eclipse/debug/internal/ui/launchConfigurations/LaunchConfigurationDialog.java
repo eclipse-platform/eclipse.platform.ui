@@ -181,6 +181,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			cancelPressed();
 		}
 	};
+	/**
+	 * Whether initlialing tabs
+	 */
+	private boolean fInitializingTabs = false;
 		
 	/**
 	 * Indicates if selection changes in the tree should be ignored
@@ -1143,6 +1147,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 */
  	protected void setLaunchConfiguration(ILaunchConfiguration config, boolean init) {
 		try {
+			
+			// turn on initializing flag to ignore message updates
+			setInitializingTabs(true);
+			
 			getEditArea().setVisible(true);
 			setTabsForConfigType(config.getType());
 			
@@ -1168,6 +1176,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		// update the name field after in case client changed it 
 	 		getNameTextWidget().setText(config.getName());
 	 				
+	 		// turn off initializing flag to update message
+			setInitializingTabs(false);
+			
 	 		refreshStatus();
 	 		
 		} catch (CoreException ce) {
@@ -1994,6 +2005,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
+		if (isInitializingTabs()) {
+			return;
+		}
+		
 		// new, copy, delete buttons
 		IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
 		
@@ -2054,6 +2069,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see ILaunchConfigurationDialog#updateMessage()
 	 */
 	public void updateMessage() {
+		if (isInitializingTabs()) {
+			return;
+		}
+		
 		if (getLaunchConfiguration() == null) {
 			setErrorMessage(null);
 			setMessage("Select a type of configuration to create, and press 'new'.");
@@ -2157,6 +2176,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			handleLaunchPressed();
 		}
 	}
+	
+	/**
+	 * Sets whether this dialog is initializing pages
+	 * and should not bother to refresh status (butttons
+	 * and message).
+	 */
+	private void setInitializingTabs(boolean init) {
+		fInitializingTabs = init;
+	}
+	
+	/**
+	 *Returns whether this dialog is initializing pages
+	 * and should not bother to refresh status (butttons
+	 * and message).
+	 */
+	protected boolean isInitializingTabs() {
+		return fInitializingTabs;
+	}	
 
 }
 
