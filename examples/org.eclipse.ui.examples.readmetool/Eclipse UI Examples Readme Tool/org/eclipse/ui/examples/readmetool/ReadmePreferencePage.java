@@ -37,7 +37,6 @@ public class ReadmePreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private Text textField;
 	
-	private Button pushButton_textField;
 /**
  * Creates an new checkbox instance and sets the default
  * layout data.
@@ -87,7 +86,7 @@ protected Control createContents(Composite parent)
 	Composite composite_textField = createComposite(parent, 2);
 	createLabel(composite_textField, MessageUtil.getString("Text_Field"));	 //$NON-NLS-1$
 	textField = createTextField(composite_textField);
-	pushButton_textField = createPushButton(composite_textField, MessageUtil.getString("Change")); //$NON-NLS-1$
+	createPushButton(composite_textField, MessageUtil.getString("Change")); //$NON-NLS-1$
 
 	//composite_tab << parent
 	Composite composite_tab = createComposite(parent, 2);
