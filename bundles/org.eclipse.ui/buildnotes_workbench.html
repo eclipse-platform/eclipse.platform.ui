@@ -9,6 +9,227 @@
 
 <h1> Eclipse Platform Build Notes<br>
   Workbench</h1>
+  
+<!-- I20040127 -->
+<p>Integration Build (Tuesday, January 27, 2004)</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<ul>
+<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=41410">41410</a> Default Text Font should be fixed-width on Linux-GTK</li>
+</ul>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20040120 -->
+<p>Integration Build (Tuesday, January 20, 2004)</p>
+<h2>What's new in this drop</h2>
+<p> </p>
+<h2>Other highlights</h2>
+A possible fix for Bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49970">49970</a> ([ViewMgmt] Ant View will not display first in the Java Browsing perspective) has been introduced.
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20040113 -->
+<p>Integration Build (Tuesday, January 13, 2004)</p>
+<h2>What's new in this drop</h2>
+<p> </p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=41561">41581</a> Minor 
+  usability problems with progress view errors</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=42616">42616</a> [Preferences] Null pointer exception creating CVS preference page </p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=42858">42858</a> [Jobs] 
+  Offer a way to clear errors without opening Progress view</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44455">44455</a> [ActivityMgmt] No Running man menu+tool even though java role enabled. </p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47091">47091</a> [ActivityMgmt] Unable toeasily turn off activities in a category without all activities being enabled.</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47098">47098</a> [ActivityMgmt] Empty Menu bar item (Run) when External tools filtered out</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20040106 -->
+<p>Integration Build (Tuesday, January 6, 2004)</p>
+<h2>What's new in this drop</h2>
+<p>
+</p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=40980">40980</a> [Dialogs] NPE in property dialog when adaptable provides contributor resource adapter</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49331">49331</a> [Dialogs] Workbench Machine Speed Preference not persistent</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031223 -->
+<p>Integration Build (Tuesday, December 23, 2003)</p>
+<h2>What's new in this drop</h2>
+<p>
+</p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49274">49274</a> [Activities] Cannot open preference dialog if previous selected node not in fitlered list</p>
+<hr SIZE="0" WIDTH="100%">
+
+
+<!-- I20031216 -->
+<p>Integration Build (Tuesday, December 16, 2003)</p>
+<h2>What's new in this drop</h2>
+<p>
+The initial implementation of the platform UI colors API has been released.  This API is analogous to the existing fonts API in that it provides a registry (see org.eclipse.jface.resource.JFaceResources.getColorRegistry())  from which instances of defined colors may be obtained and the org.eclipse.ui.colorDefinitions extension point which plugins may use to define them.  Additionally, there is now a Colors preference page located under the Workbench page that allows user customization of colors.
+</p>
+<p>
+Although the API is in place and relatively complete (see Bug 48745), the workbench does not yet utilize it for its own color needs.  This will come for subsequent builds.
+</p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=48745">48745</a> Colors preference page does not properly handle ancestor color changes</p>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37436">37436</a> [Preferences] one preference page for colors</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=38462">38462</a> [Dialogs] Tree in Preference &amp; Properties dialog should be resizable</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44671">44671</a> [ActivityMgmt] Need to showAll option for role support</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45825">45825</a> [ActivityMgmt] Perspectives don't respect activity enablement</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=48364">48364</a> PreferenceDialog can reopen empty</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=48745">48745</a> Colors preference page does not properly handle ancestor color changes</p>
+<hr SIZE="0" WIDTH="100%">
+  
+<!-- I20031209 -->
+<p>Integration Build (Tuesday, December 9, 2003)</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+	Deprecated matching methods on IActivity and IActivityManager have been 
+	removed as well as getActivityManager() and setEnabledActivities() on 
+	IWorkbench.  To accomodate for futher extensions, IWorkbench now inherits 
+	from IAdaptable and a new class IWorkbenchActivitySupport may be obtained 
+	in this way.  IWorkbenchActivitySupport contains getActivityManager() and 
+	setEnabledActivities().
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=36297">36297</a> 
+[Preferences] Need a page that informs of preference page creation failure</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47404">47404</a> [Jobs] 
+  UI no longer responsive during CVS update action</p>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47852">47852</a> [Jobs] 
+  NPE during redraw animation</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031202 -->
+<p>Integration Build (Tuesday, December 2, 2003)</p>
+<h2>What's new in this drop</h2>
+<p>
+	We have provided a new key configuration available on the keys preference 
+	page.  This shows some of the ideas that might enter into the key bindings
+	defined for 3.0.  This is a rough draft, and prone to a lot of change.  
+	Please try it out, and provide feedback to either 
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37934">Bug 37934</a> 
+	or the <a href="mailto:platform-ui-dev@eclipse.org">platform-ui-dev mailing
+	list</a>.
+</p>
+<h2>Other highlights</h2>
+<p>
+	Key configurations are no longer forced to inherit from the default key
+	configuration.
+</p>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47532">47532</a> SystemSummaryDialog 
+  uses core.runtime internal API</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031125 -->
+<p>Integration Build (Tuesday, November 25, 2003)</p>
+<h2>What's new in this drop</h2>
+<p>
+	CyclePartAction (used by the next/previous view/editor/perspective commands)
+	now supports multiple-stroke key bindings.  For example, if you bind "Next
+	Editor" to "Ctrl+L Ctrl+E", then you can press "Ctrl+L Ctrl+E" to open the
+	cycle part dialog and press "Ctrl+E" to continue cycling through the list.
+</p>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<hr SIZE="0" WIDTH="100%">
+  
+<!-- I20031120 -->
+<p>Eclipse M5 Candidate Build 20031120</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<p>
+	The roles API has been made obsolete in favour of categories of activities.
+</p>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=33018">33018</a> plugin.xml context menu should not have "Run Ant..." item<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46958">46958</a> IllegalStateException: Job manager has been shut down.<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47046">47046</a> Caps Lock maps to R<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47046">47116</a> Exception on startup after crash<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47046">47150</a> ProgressMonitorJobsDialog used on shutdown
+</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031119 -->
+<p>Eclipse Integration Build 20031119</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46492">46492</a> Explicit 
+  job manager startup/shutdown needed</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031118 -->
+<p>Eclipse Integration Build 20031118</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45943">45943</a> [Fonts] 
+  Java Compare Text Font fails to Map To Other Font</p>
+<hr SIZE="0" WIDTH="100%">
+
+<!-- I20031111 -->  
+<p>Eclipse Integration Build 20031111</p>
+<h2>What's new in this drop</h2>
+<ul>
+<li>Changes for the Rich Client Platform effort have been released.
+The Platform UI, Platform Text, Platform Help, and downstream components in the Eclipse SDK (e.g. JDT, PDE) have adapted to these changes.
+For more details, see <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/rcp-proposal/rich_client_platform_facilities.html">the RCP proposal page</a>.</li>
+</ul>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<ul>
+<li>There have been several breaking API changes due to the Rich Client Platform effort.
+For more details, see the Porting Guide, available on the <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/rcp-proposal/rich_client_platform_facilities.html">the RCP proposal page</a>.</li>
+</ul>
+<h2>Known deficiencies. </h2>
+<ul>
+<li>The support for embedded OLE editors on Windows platforms is currently broken.  This will be fixed for Milestone 5 (Nov 21, 2003).</li>
+<li>The prompt to exit when closing the last window is currently disabled.  This will be fixed for Milestone 5 (Nov 21, 2003).
+</ul>
+<h2>Problem reports fixed</h2>
+<p>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=41806">41806</a> Platform mechanism for asynchronous prompts<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=43657">43657</a> Allow delete selection in key sequence entry widget<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=43801">43801</a> Can't assign "Esc Backspace"<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=43804">43804</a> Entering key sequence appends to previous<br>
+	<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44930">44930</a> Show Views dialog should flatten a single category
+</p>
+  
+<hr SIZE="0" WIDTH="100%">
+
 <p>Eclipse Integration Build 20031104</p>
 <h2>What's new in this drop</h2>
 We've removed dependencies on Xerces from all of platform-ui.

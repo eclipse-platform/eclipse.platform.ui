@@ -1,7 +1,7 @@
-# Debugging options for the org.eclipse.iu plugin.
+# Debugging options for the org.eclipse.ui plugin.
 
-# Turn on debugging for the org.eclipse.iu plugin.
-org.eclipse.ui/debug=true
+# Turn on debugging for the org.eclipse.ui plugin.
+org.eclipse.ui/debug=false
 
 # Show a dialog with details button when an internal error occur.
 org.eclipse.ui/debug/internalerror/openDialog=false
@@ -29,3 +29,9 @@ org.eclipse.ui/trace/part.listeners=false
 
 # Reports the time to run an action
 org.eclipse.jface/trace/actions=false
+
+# Reports events received and dispatched by the key binding architecture
+org.eclipse.ui/trace/keyBindings=false
+
+# Report every event received by the key binding architecture
+org.eclipse.ui/trace/keyBindings.verbose=false
