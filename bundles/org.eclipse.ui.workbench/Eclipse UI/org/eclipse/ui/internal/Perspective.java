@@ -975,7 +975,7 @@ public IStatus restoreState() {
 	for (int x = 0; x < actions.length; x ++) {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		actionsArray.add(actionSetID);
-		knownActionSetIds += " " + actionSetID + " ";
+		knownActionSetIds += " " + actionSetID + " "; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	// Now go through the registry to ensure we pick up any new action sets
@@ -986,7 +986,7 @@ public IStatus restoreState() {
 	int count = array.length;
 	for (int i = 0; i < count; i++) {
 		IActionSetDescriptor desc = array[i];
-		String searchId = " " + desc.getId() + " ";
+		String searchId = " " + desc.getId() + " "; //$NON-NLS-1$ //$NON-NLS-2$
 		if ( (knownActionSetIds.indexOf(searchId) == -1) &&
 		     (desc.isInitiallyVisible()) ) {
 			addActionSet(desc);

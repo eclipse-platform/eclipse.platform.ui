@@ -155,8 +155,8 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 						// green arrow with exclamation mark
 						String tt= action.getToolTipText();
 						if (tt == null || tt.trim().length() == 0)
-							tt= ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } );
-						initButton(okImage, tt); //$NON-NLS-1$
+							tt= ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } ); //$NON-NLS-1$
+						initButton(okImage, tt);
 						return;			
 					}
 					// just the green arrow

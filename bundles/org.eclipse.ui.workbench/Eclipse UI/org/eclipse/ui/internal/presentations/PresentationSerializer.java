@@ -34,7 +34,7 @@ public class PresentationSerializer implements IPresentationSerializer {
 	public String getId(IPresentablePart part) {
 		int index = parts.indexOf(part);
 
-		return "" + index;
+		return "" + index; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
