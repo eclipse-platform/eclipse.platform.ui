@@ -36,14 +36,14 @@ public class AntEditorMarkerUpdater {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
-	public void acceptProblem(IProblem problem) {
+	public synchronized void acceptProblem(IProblem problem) {
 		if (fCollectedProblems.contains(problem)) {
 			return;
 		}
 		fCollectedProblems.add(problem);
 	}
 	
-	public void beginReporting() {
+	public synchronized void beginReporting() {
 		fCollectedProblems.clear();
 	}
 	
@@ -72,7 +72,7 @@ public class AntEditorMarkerUpdater {
 		fModel= model;
 	}
 	
-	public void updateMarkers() {
+	public synchronized void updateMarkers() {
 		removeProblems();
 		if (!shouldAddMarkers()) {
 			return;
