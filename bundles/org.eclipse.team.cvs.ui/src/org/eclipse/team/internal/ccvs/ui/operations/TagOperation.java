@@ -37,13 +37,6 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 		super(shell, resources);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName()
-	 */
-	protected String getTaskName() {
-		return "Tagging";
-	}
-
 	public CVSTag getTag() {
 		return tag;
 	}
@@ -126,5 +119,9 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	 */
 	public void recurse() {
 		addLocalOption(Command.DO_NOT_RECURSE);
+	}
+
+	protected  String getTaskName() {
+		return Policy.bind("TagFromWorkspace.taskName");
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -51,7 +52,7 @@ public class CVSWorkspaceModifyOperation extends WorkspaceModifyOperation {
 	}
 	
 	protected void runAsJob() {
-		Job job = new Job() {
+		Job job = new Job(Policy.bind("CVSOperation.workspaceOperationJobName", operation.getTaskName())) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					operation.run(monitor);

@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.UpdateMergableOnly;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * This operation performs an update that will only effect files
@@ -38,10 +39,6 @@ public class UpdateOnlyMergableOperation extends RepositoryProviderOperation {
 
 	List skippedFiles = new ArrayList();
 	
-	/**
-	 * @param shell
-	 * @param resources
-	 */
 	public UpdateOnlyMergableOperation(Shell shell, IResource[] resources, LocalOption[] localOptions) {
 		super(shell, resources);
 		this.localOptions = localOptions;
@@ -51,7 +48,7 @@ public class UpdateOnlyMergableOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return "Updating";
+		return Policy.bind("UpdateOnlyMergeable.taskName");
 	}
 
 	/* (non-Javadoc)
@@ -79,9 +76,6 @@ public class UpdateOnlyMergableOperation extends RepositoryProviderOperation {
 
 	}
 
-	/**
-	 * @param files
-	 */
 	protected void addSkippedFiles(IFile[] files) {
 		skippedFiles.addAll(Arrays.asList(files));
 	}
@@ -89,5 +83,4 @@ public class UpdateOnlyMergableOperation extends RepositoryProviderOperation {
 	public IFile[] getSkippedFiles() {
 		return (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]);
 	}
-
 }

@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Operation which checks for the existance of the .project file (or .vcm_meta file) 
@@ -89,4 +90,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 		return metaFileExists;
 	}
 
+	protected String getTaskName() {
+		return Policy.bind("HasProjectMetaFile.taskName");
+	}
 }

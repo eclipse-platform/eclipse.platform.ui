@@ -99,4 +99,7 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 		addLocalOption(Command.DO_NOT_RECURSE);
 	}
 
+	protected String getTaskName() {
+		return Policy.bind("TagFromRepository.taskName");
+	}
 }

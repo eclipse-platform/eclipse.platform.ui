@@ -46,13 +46,14 @@ public class RefreshSubscriberJob extends Job {
 		}
 	}
 	
-	protected RefreshSubscriberJob() {
+	protected RefreshSubscriberJob(String name) {
+		super(name);
 		setPriority(Job.DECORATE);
 		setRule(new BatchSimilarSchedulingRule("org.eclipse.team.core.refreshsubscribers"));
 	}
 	
-	public RefreshSubscriberJob(TeamSubscriber subscriber, IResource[] roots) {
-		this();
+	public RefreshSubscriberJob(String name, TeamSubscriber subscriber, IResource[] roots) {
+		this(name);
 		this.subscriber = subscriber;
 		this.roots = roots;
 	}

@@ -26,15 +26,19 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class RefreshAllRegisteredSubscribersJob extends RefreshSubscriberJob implements ITeamResourceChangeListener {
 	
+	private boolean restartOnCancel = false; 
 	private static long refreshInterval = 20000; //5 /* minutes */ * (60 * 1000); 
 	private Map subscribers = Collections.synchronizedMap(new  HashMap());
 	
-	public RefreshAllRegisteredSubscribersJob() {
-		super();
+	public RefreshAllRegisteredSubscribersJob(String name) {
+		super(name);
 		TeamProvider.addListener(this);
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(Job job, IStatus result) {
-				startup();
+				if(result.getSeverity() != IStatus.CANCEL || restartOnCancel) {					
+					startup();
+					restartOnCancel = false;
+				}
 			}
 		});
 	}
@@ -100,5 +104,9 @@ public class RefreshAllRegisteredSubscribersJob extends RefreshSubscriberJob imp
 
 	protected TeamSubscriber[] getSubscribers() {
 		return (TeamSubscriber[]) subscribers.values().toArray(new TeamSubscriber[subscribers.size()]);
+	}
+
+	public void setRestartOnCancel(boolean restartOnCancel) {
+		this.restartOnCancel = restartOnCancel;
 	}
 }

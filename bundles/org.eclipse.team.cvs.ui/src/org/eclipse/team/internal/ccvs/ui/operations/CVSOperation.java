@@ -94,7 +94,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 	
 	protected void runAsJob() {
-		Job job = new Job() {
+		Job job = new Job(Policy.bind("CVSOperation.operationJobName", getTaskName())) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					CVSOperation.this.execute(monitor);
@@ -330,4 +330,12 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	public void setInvolvesMultipleResources(boolean b) {
 		involvesMultipleResources = b;
 	}
+
+	/**
+	 * Return the string that is to be used as the task name for the operation
+	 * 
+	 * @param remoteFolders
+	 * @return
+	 */
+	protected abstract String getTaskName();
 }

@@ -402,4 +402,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				throw CVSException.wrapException(e);
 			}
 	}
+
+	public String getName() {
+		return getTaskName();
+	}
 }

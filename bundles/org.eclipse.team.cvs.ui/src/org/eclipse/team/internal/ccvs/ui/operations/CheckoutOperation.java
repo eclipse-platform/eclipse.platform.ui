@@ -27,14 +27,6 @@ public abstract class CheckoutOperation extends RemoteOperation {
 		super(shell, remoteFolders);
 	}
 
-	/**
-	 * Return the string that is to be used as the task name for the operation
-	 * 
-	 * @param remoteFolders
-	 * @return
-	 */
-	protected abstract String getTaskName();
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
