@@ -1,13 +1,14 @@
-/*
-Copyright (c) 2000, 2001, 2002 IBM Corp.
-All rights reserved.  This program and the accompanying materials
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
-activated and used by other components.
-*/
+	IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346
+************************************************************************/
 
 package org.eclipse.ui.internal.actions.keybindings;
 
