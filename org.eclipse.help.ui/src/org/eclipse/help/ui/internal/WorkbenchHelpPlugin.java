@@ -71,4 +71,8 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 			browser = BrowserManager.getInstance().createBrowser();
 		return browser;
 	}
+	
+	public HelpWorkingSetSynchronizer getWorkingSetSynchronizer() {
+		return workingSetListener;
+	}
 }

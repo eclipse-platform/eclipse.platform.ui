@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 import org.eclipse.help.ui.internal.util.WorkbenchResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
@@ -139,8 +140,11 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 			}
 		});
 
-		if (workingSet != null)
+		if (workingSet != null) {
 			workingSetName.setText(workingSet.getName());
+			// May need to reconcile working sets
+			WorkbenchHelpPlugin.getDefault().getWorkingSetSynchronizer().addWorkingSet(workingSet);
+		}
 		initializeCheckedState();
 		validateInput();
 
