@@ -93,19 +93,9 @@ public class ProgressManager extends ProgressProvider
 	IJobChangeListener changeListener;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
-	private static final String PROGRESS_20 = "progress20.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_40 = "progress40.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_80 = "progress80.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_100 = "progress100.gif"; //$NON-NLS-1$
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
-	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
-	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
-	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
-	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
 
 	/**
 	 * The key for the sleeping job icon.
@@ -121,9 +111,6 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
-	//A list of keys for looking up the images in the image registry
-	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY,
-			PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY};
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 	final Object monitorKey = new Object();
 	//A table that maps families to keys in the Jface image
@@ -140,17 +127,7 @@ public class ProgressManager extends ProgressProvider
 			singleton = new ProgressManager();
 		return singleton;
 	}
-	/**
-	 * Return the image for the percent done.
-	 * 
-	 * @param done.
-	 *            int between 0 and 100.
-	 * @return
-	 */
-	public static Image getProgressImageFor(int done) {
-		int index = Math.min(4, (done / 20));
-		return JFaceResources.getImage(keys[index]);
-	}
+
 	/**
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
@@ -322,11 +299,6 @@ public class ProgressManager extends ProgressProvider
 		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
 				ProgressManager.PROGRESS_FOLDER);
 		try {
-			setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);
-			setUpImage(iconsRoot, PROGRESS_40, PROGRESS_40_KEY);
-			setUpImage(iconsRoot, PROGRESS_60, PROGRESS_60_KEY);
-			setUpImage(iconsRoot, PROGRESS_80, PROGRESS_80_KEY);
-			setUpImage(iconsRoot, PROGRESS_100, PROGRESS_100_KEY);
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
