@@ -112,14 +112,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Executes the 'freeSaveDocument' operation when called the first time. Self-destructs afterwards.
+	 * Executes the 'replaceVisibleDocument' operation when called the first time. Self-destructs afterwards.
 	 */
-	private class FreeSlaveDocumentExecutor implements IDocumentListener {
+	private class ReplaceVisibleDocumentExecutor implements IDocumentListener {
 		
 		private IDocument fSlaveDocument;
 		private IDocument fExecutionTrigger;
 		
-		public FreeSlaveDocumentExecutor(IDocument slaveDocument) {
+		public ReplaceVisibleDocumentExecutor(IDocument slaveDocument) {
 			fSlaveDocument= slaveDocument;
 		}
 
@@ -141,12 +141,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 */
 		public void documentChanged(DocumentEvent event) {
 			fExecutionTrigger.removeDocumentListener(this);
-			executeFreeSlaveDocument(fSlaveDocument);
+			executeReplaceVisibleDocument(fSlaveDocument);
 		}
 	}
 	
 	/**
-	 * Internal listener to find the document onto which to hook the free-slave-document command.
+	 * Internal listener to find the document onto which to hook the replace-visible-document command.
 	 */
 	private class DocumentListener implements IDocumentListener {
 
@@ -154,14 +154,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			fFreeSlaveDocumentExecutionTrigger= event.getDocument();
+			fReplaceVisibleDocumentExecutionTrigger= event.getDocument();
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent event) {
-			fFreeSlaveDocumentExecutionTrigger= null;
+			fReplaceVisibleDocumentExecutionTrigger= null;
 		}
 	}
 	
@@ -181,8 +181,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private Object fLock= new Object();
 	/** The list of pending requests */
 	private List fPendingRequests= new ArrayList();
-	/** The free-slave-document execution trigger */
-	private IDocument fFreeSlaveDocumentExecutionTrigger;
+	/** The replace-visible-document execution trigger */
+	private IDocument fReplaceVisibleDocumentExecutionTrigger;
 	/** Internal document listener */
 	private IDocumentListener fDocumentListener= new DocumentListener();
 	
@@ -406,7 +406,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
 				if (pa.isCollapsed()) {
 					Position pos= fProjectionAnnotationModel.getPosition(pa);
-					// take the first most finegrained match
+					// take the first most fine grained match
 					if (touches(selection, pos))
 						if (found == null || pos.includes(found.offset) && pos.includes(found.offset + found.length)) {
 							found= pos;
@@ -433,7 +433,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
 				if (!pa.isCollapsed()) {
 					Position pos= fProjectionAnnotationModel.getPosition(pa);
-					// take the first most finegrained match
+					// take the first most fine grained match
 					if (touches(selection, pos))
 						if (found == null || found.includes(pos.offset) && found.includes(pos.offset + pos.length)) {
 							found= pos;
@@ -520,7 +520,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @param visibleDocument the visible document
 	 */
-	private void replaceVisibleDocument(IDocument visibleDocument) {
+	private void replaceVisibleDocument(IDocument slave) {
+		if (fReplaceVisibleDocumentExecutionTrigger != null) {
+			ReplaceVisibleDocumentExecutor executor= new ReplaceVisibleDocumentExecutor(slave);
+			executor.install(fReplaceVisibleDocumentExecutionTrigger);
+		} else
+			executeReplaceVisibleDocument(slave);
+	}
+	
+	
+	private void executeReplaceVisibleDocument(IDocument visibleDocument) {
 		StyledText textWidget= getTextWidget();
 		try {
 			if (textWidget != null && !textWidget.isDisposed())
@@ -537,7 +546,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				textWidget.setRedraw(true);
 		}
 	}
-		
+
 	/**
 	 * Hides the given range by collapsing it. If requested, a redraw request is issued.
 	 * 
@@ -941,18 +950,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (moveCursor)
 			exposeModelRange(new Region(start, length));
 		super.setRangeIndication(start, length, moveCursor);
-	}
-	
-	protected final void executeFreeSlaveDocument(IDocument slave) {
-		super.freeSlaveDocument(slave);
-	}
-	
-	protected void freeSlaveDocument(IDocument slave) {
-		if (fFreeSlaveDocumentExecutionTrigger != null) {
-			FreeSlaveDocumentExecutor executor= new FreeSlaveDocumentExecutor(slave);
-			executor.install(fFreeSlaveDocumentExecutionTrigger);
-		} else
-			executeFreeSlaveDocument(slave);
 	}
 	
 	/*
