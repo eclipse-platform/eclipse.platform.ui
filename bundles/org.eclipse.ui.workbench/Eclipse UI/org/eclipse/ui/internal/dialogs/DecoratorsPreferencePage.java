@@ -224,7 +224,7 @@ public class DecoratorsPreferencePage
 			DecoratorDefinition[] definitions = manager.getAllDecoratorDefinitions();
 			for (int i = 0; i < definitions.length; i++) {
 				boolean checked = checkboxViewer.getChecked(definitions[i]);
-				definitions[i].setEnabledWithErrorHandling(checked);
+				definitions[i].setEnabled(checked);
 				
 			}
 			manager.reset();

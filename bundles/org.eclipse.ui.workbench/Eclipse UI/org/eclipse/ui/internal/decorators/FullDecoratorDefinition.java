@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  */
 
 class FullDecoratorDefinition extends DecoratorDefinition {
-	
+
 	private ILabelDecorator decorator;
 
 	/**
@@ -72,14 +72,14 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 							(ILabelDecorator) WorkbenchPlugin.createExtension(
 								definingElement,
 								WizardsRegistryReader.ATT_CLASS);
-						decorator.addListener(WorkbenchPlugin.getDefault().getDecoratorManager());
+						decorator.addListener(
+							WorkbenchPlugin.getDefault().getDecoratorManager());
 					} catch (CoreException exception) {
 						exceptions[0] = exception;
 					}
 				}
 			});
-		}
-		else
+		} else
 			return decorator;
 
 		if (decorator == null) {
@@ -92,30 +92,19 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 
 		return decorator;
 	}
-	/**
-	 * Refresh the current decorator based on our enable
-	 * state.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
 	 */
 
-	private void refreshDecorator() throws CoreException {
-		DecoratorManager manager =
-			(DecoratorManager) WorkbenchPlugin
-				.getDefault()
-				.getDecoratorManager();
+	protected void refreshDecorator() throws CoreException {
 		//Only do something if disabled so as to prevent
 		//gratutitous activation
-		if (!this.enabled) {
-			if (decorator != null) {
-				ILabelDecorator cached = decorator;
-				cached.removeListener(manager);
-				//Clear the decorator before disposing
-				decorator = null;
-				cached.dispose();
-			}
+		if (!this.enabled && decorator != null) {
+			disposeCachedDecorator(decorator);
 		}
-
 	}
-
+	
 	/**
 	 * Sets the enabled flag and adds or removes the decorator
 	 * manager as a listener as appropriate.

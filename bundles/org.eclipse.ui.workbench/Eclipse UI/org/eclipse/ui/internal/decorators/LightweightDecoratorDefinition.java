@@ -165,4 +165,15 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 		return decorator;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
+	 */
+
+	protected void refreshDecorator() throws CoreException {
+		//Only do something if disabled so as to prevent
+		//gratutitous activation
+		if (!this.enabled && decorator != null) {
+			disposeCachedDecorator(decorator);
+		}
+	}
 }

@@ -11,10 +11,12 @@ package org.eclipse.ui.internal.decorators;
  * IBM - Initial implementation
  ******************************************************************************/
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The DecoratorDefinition is the class that holds onto
@@ -94,18 +96,37 @@ public abstract class DecoratorDefinition {
 		//Only refresh if there has been a change
 		if (this.enabled != newState) {
 			this.enabled = newState;
+			try {
+				refreshDecorator();
+			} catch (CoreException exception) {
+				handleCoreException(exception);
+			}
+
 		}
 	}
 
 	/**
-	 * Sets the enabled flag and adds or removes the decorator
-	 * manager as a listener as appropriate. Handle any exceptions
-	 * within this class
-	 * @param enabled The enabled to set
+	 * Refresh the current decorator based on our enable
+	 * state.
 	 */
-	public void setEnabledWithErrorHandling(boolean newState) {
+	protected abstract void refreshDecorator() throws CoreException;
 
-		setEnabled(newState);
+	/**
+	 * Dispose the decorator instance and remove listeners
+	 * as appropirate.
+	 *  @param decorator
+	 */
+	protected void disposeCachedDecorator(IBaseLabelProvider decorator) {
+		DecoratorManager manager =
+			(DecoratorManager) WorkbenchPlugin
+				.getDefault()
+				.getDecoratorManager();
+		IBaseLabelProvider cached = decorator;
+		cached.removeListener(manager);
+		//Clear the decorator before disposing
+		decorator = null;
+		cached.dispose();
+
 	}
 
 	/**
@@ -195,7 +216,7 @@ public abstract class DecoratorDefinition {
 	protected void handleCoreException(CoreException exception) {
 
 		//If there is an error then reset the enabling to false
-		InternalPlatform.getRuntimePlugin().getLog().log(exception.getStatus());		
+		InternalPlatform.getRuntimePlugin().getLog().log(exception.getStatus());
 		this.enabled = false;
 	}
 

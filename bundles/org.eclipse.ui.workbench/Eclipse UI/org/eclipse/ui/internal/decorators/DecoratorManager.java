@@ -478,10 +478,10 @@ public class DecoratorManager
 		for (int i = 0; i < fullDefinitions.length; i++) {
 			String id = fullDefinitions[i].getId();
 			if (enabledIds.contains(id))
-				fullDefinitions[i].setEnabledWithErrorHandling(true);
+				fullDefinitions[i].setEnabled(true);
 			else {
 				if (disabledIds.contains(id))
-					fullDefinitions[i].setEnabledWithErrorHandling(false);
+					fullDefinitions[i].setEnabled(false);
 			}
 		}
 
@@ -490,10 +490,10 @@ public class DecoratorManager
 		for (int i = 0; i < lightweightDefinitions.length; i++) {
 			String id = lightweightDefinitions[i].getId();
 			if (enabledIds.contains(id))
-				lightweightDefinitions[i].setEnabledWithErrorHandling(true);
+				lightweightDefinitions[i].setEnabled(true);
 			else {
 				if (disabledIds.contains(id))
-					lightweightDefinitions[i].setEnabledWithErrorHandling(
+					lightweightDefinitions[i].setEnabled(
 						false);
 			}
 		}
@@ -506,11 +506,11 @@ public class DecoratorManager
 	 * on them.
 	 */
 	public void shutdown() {
-		//Disable all fo the enabled decorators 
+		//Disable all of the enabled decorators 
 		//so as to force a dispose of thier decorators
 		for (int i = 0; i < fullDefinitions.length; i++) {
 			if (fullDefinitions[i].isEnabled())
-				fullDefinitions[i].setEnabledWithErrorHandling(false);
+				fullDefinitions[i].setEnabled(false);
 		}
 		lightweightManager.shutdown();
 		scheduler.shutdown();

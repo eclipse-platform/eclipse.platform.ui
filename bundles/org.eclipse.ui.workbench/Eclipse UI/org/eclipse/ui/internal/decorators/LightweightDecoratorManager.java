@@ -120,7 +120,7 @@ class LightweightDecoratorManager {
 		//so as to force a dispose of thier decorators
 		for (int i = 0; i < lightweightDefinitions.length; i++) {
 			if (lightweightDefinitions[i].isEnabled())
-				lightweightDefinitions[i].setEnabledWithErrorHandling(false);
+				lightweightDefinitions[i].setEnabled(false);
 		}
 		overlayCache.disposeAll();
 	}
