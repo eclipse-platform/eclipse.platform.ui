@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.tests.keys;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -64,7 +64,7 @@ public class Bug43321Test extends UITestCase {
 		editor.selectAndReveal(0, 1);
 
 		// Press "Ctrl+C" to perform a copy.
-		Set keyStrokes = new HashSet();
+		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
 		Event event = new Event();
 		((Workbench) window.getWorkbench()).workbenchActivitiesCommandsAndRoles.press(keyStrokes, event);

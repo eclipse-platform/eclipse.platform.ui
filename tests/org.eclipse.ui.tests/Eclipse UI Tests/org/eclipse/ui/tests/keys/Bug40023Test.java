@@ -13,8 +13,8 @@ package org.eclipse.ui.tests.keys;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Event;
@@ -89,7 +89,7 @@ public class Bug40023Test extends UITestCase {
 		PreferenceMutator.setKeyBinding(commandId, keySequenceText);
 
 		// Press "CTRL+ALT+L" to lock the toolbars.
-		Set keyStrokes = new HashSet();
+		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance(keySequenceText));
 		Event event = new Event();
 		workbench.workbenchActivitiesCommandsAndRoles.press(keyStrokes, event);

@@ -12,7 +12,7 @@
 package org.eclipse.ui.tests.keys;
 
 import java.io.ByteArrayInputStream;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.resources.ICommand;
@@ -91,7 +91,7 @@ public class Bug44460Test extends UITestCase {
 		ctrlShiftT.stateMask = SWT.SHIFT | SWT.CTRL;
 		ctrlShiftT.character = 'T';
 		ctrlShiftT.keyCode = 't';
-		Set keyStrokes = WorkbenchActivitiesCommandsAndRoles.generatePossibleKeyStrokes(ctrlShiftT);
+		List keyStrokes = WorkbenchActivitiesCommandsAndRoles.generatePossibleKeyStrokes(ctrlShiftT);
 		Workbench workbench = (Workbench) window.getWorkbench();
 		workbench.workbenchActivitiesCommandsAndRoles.press(keyStrokes, null);
 
