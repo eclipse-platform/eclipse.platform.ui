@@ -187,14 +187,20 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     protected String shortenText(String textValue, ToolItem item) {
         if (textValue == null || toolItem == null || toolItem.isDisposed())
                 return null;
+        String returnText = textValue;
         GC gc = new GC(item.getDisplay());
         int maxWidth = item.getImage().getBounds().width * 5;
-        if (gc.textExtent(textValue).x < maxWidth) return textValue;
-        for (int i = textValue.length(); i > 0; i--) {
-            String test = textValue.substring(0, i);
-            test = test + ellipsis;
-            if (gc.textExtent(test).x < maxWidth) return test;
+        if (gc.textExtent(textValue).x >= maxWidth) {
+        	for (int i = textValue.length(); i > 0; i--) {
+        		String test = textValue.substring(0, i);
+        		test = test + ellipsis;
+        		if (gc.textExtent(test).x < maxWidth){
+        			returnText = test;
+        			break;
+        		}
+        	}
         }
-        return textValue;
+        gc.dispose();
+        return returnText;
     }
 }
