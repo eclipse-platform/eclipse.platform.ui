@@ -101,7 +101,6 @@ public class HelpApplication
 				return;
 			}
 			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
-			Object o = c.newInstance();
 			Method m=c.getMethod("run", new Class[]{} ); //$NON-NLS-1$
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
@@ -114,7 +113,6 @@ public class HelpApplication
 				return;
 			}
 			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
-			Object o = c.newInstance();
 			Method m=c.getMethod("wakeup", new Class[]{} ); //$NON-NLS-1$
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
