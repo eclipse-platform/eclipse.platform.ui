@@ -302,7 +302,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 		while (iterator.hasNext())
 			accelerators[i++] = ((Stroke) iterator.next()).getValue();
 		
-		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
+		if ((acceleratorMenu == null || acceleratorMenu.isDisposed()) && workbenchWindow != null && workbenchWindow.getShell() != null && workbenchWindow.getShell().getMenuBar() != null) {		
 			Menu parent = workbenchWindow.getShell().getMenuBar();
 			
 			if (parent == null || parent.getItemCount() < 1)
@@ -336,12 +336,14 @@ public class ContextAndHandlerManager implements IContextResolver {
 			});
 		}
 
-		acceleratorMenu.setAccelerators(accelerators);		
-
-		if (size == 0)
-			acceleratorMenu.removeVerifyListener(verifyListener);
-		else
-			acceleratorMenu.addVerifyListener(verifyListener);
+		if (acceleratorMenu != null) {
+			acceleratorMenu.setAccelerators(accelerators);		
+	
+			if (size == 0)
+				acceleratorMenu.removeVerifyListener(verifyListener);
+			else
+				acceleratorMenu.addVerifyListener(verifyListener);
+		}
 
 		ContextResolver.getInstance().setContextResolver(this);
 		MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
