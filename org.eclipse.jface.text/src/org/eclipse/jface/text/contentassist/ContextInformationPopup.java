@@ -235,8 +235,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				if (info == null)
-					if (Helper.okToUse(fContextInfoPopup))
-						validateContextInformation();
+					validateContextInformation();
 				else {
 					ContextFrame frame= createContextFrame(info, position);
 					if (isDuplicate(frame))
@@ -764,6 +763,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		 * Otherwise, we'd validate the context information based on the 
 		 * pre-key-stroke state.
 		 */
+		if (!Helper.okToUse(fContextInfoPopup))
+			return;
+		
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
 			
 			private ContextFrame fFrame= (ContextFrame) fContextFrameStack.peek();
