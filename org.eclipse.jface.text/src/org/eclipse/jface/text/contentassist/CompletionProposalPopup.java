@@ -1078,6 +1078,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 				return;
 			}
 		}
+		
+		// all equal up to minimum
+		buffer.delete(min, buffer.length());
 	}
 
 	/**
