@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Handles the redirection of the global actions Cut, Copy, Paste,
@@ -409,6 +410,7 @@ public void addCellEditor(CellEditor editor) {
 		return;
 
 	Control control = editor.getControl();
+	Assert.isNotNull(control);
 	controlToEditor.put(control, editor);
 	control.addListener(SWT.Activate, controlListener);
 	control.addListener(SWT.Deactivate, controlListener);
