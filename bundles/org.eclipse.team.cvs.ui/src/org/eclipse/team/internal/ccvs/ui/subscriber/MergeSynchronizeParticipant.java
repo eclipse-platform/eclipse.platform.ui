@@ -142,7 +142,7 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 		
 		IMemento[] rootNodes = memento.getChildren(CTX_ROOT);
 		if(rootNodes == null || rootNodes.length == 0) {
-			throw new CVSException(Policy.bind("MergeSynchronizeParticipant.10",id.toString())); //$NON-NLS-1$
+			throw new CVSException(Policy.bind("MergeSynchronizeParticipant.10", id.toString())); //$NON-NLS-1$
 		}
 		
 		List resources = new ArrayList();
@@ -154,7 +154,7 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("MergeSynchronizeParticipant.11", resource.getFullPath().toString()), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("MergeSynchronizeParticipant.11", path.toString()), null); //$NON-NLS-1$
 			}
 		}
 		if(resources.isEmpty()) {

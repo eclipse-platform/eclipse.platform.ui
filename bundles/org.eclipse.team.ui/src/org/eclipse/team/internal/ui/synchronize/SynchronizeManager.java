@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantRegistry;
@@ -120,29 +119,39 @@ public class SynchronizeManager implements ISynchronizeManager {
 			this.participant = participant;
 		}
 		
-		public ISynchronizeParticipant getParticipant() {
+		public ISynchronizeParticipant getParticipant() throws TeamException {
 			if (participant == null) {
 				try {
 					participant = (ISynchronizeParticipant) TeamUIPlugin.createExtension(descriptor.getConfigurationElement(), SynchronizeParticipantDescriptor.ATT_CLASS);
 					participant.setInitializationData(descriptor.getConfigurationElement(), null, null);
 					participant.init(savedState);
 				} catch (PartInitException e2) {
-					TeamUIPlugin.log(IStatus.ERROR, Policy.bind("SynchronizeManager.11"), e2); //$NON-NLS-1$
+					participant = null;					
+					throw new TeamException(Policy.bind("SynchronizeManager.11"), e2);					
 				} catch (CoreException e) {
-					TeamUIPlugin.log(IStatus.ERROR, Policy.bind("SynchronizeManager.11"), e); //$NON-NLS-1$
+					participant = null;
+					throw TeamException.asTeamException(e);
 				}
 			}
 			return participant;
 		}
 		
+		public boolean isParticipantInitialized() {
+			return participant != null;
+		}
+		
 		public boolean equals(Object other) {
-			if(other == this) return true;
-			if (other instanceof ISynchronizeParticipant) {
-				return other == this.getParticipant();
-			} else if(other instanceof ParticipantInstance) {
-				return ((ParticipantInstance)other).getParticipant() == this.getParticipant();
+			try {
+				if(other == this) return true;
+				if (other instanceof ISynchronizeParticipant) {
+					return other == this.getParticipant();
+				} else if(other instanceof ParticipantInstance) {
+					return ((ParticipantInstance)other).getParticipant() == this.getParticipant();
+				}
+				return false;
+			} catch (TeamException e) {
+				return false;
 			}
-			return false;
 		}
 		
 		public void dispose() {
@@ -207,6 +216,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 				participant.init(null);
 			} catch (PartInitException e) {
 				TeamUIPlugin.log(IStatus.ERROR, Policy.bind("SynchronizeManager.13"), e); //$NON-NLS-1$
+				continue;
 			}
 			added.add(participant);
 		}
@@ -253,6 +263,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		}
 		return (ISynchronizeParticipant[]) participants.toArray(new ISynchronizeParticipant[participants.size()]);
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -266,7 +277,17 @@ public class SynchronizeManager implements ISynchronizeManager {
 		List participants = new ArrayList(instances.size());
 		for (Iterator it = instances.iterator(); it.hasNext(); ) {
 			ParticipantInstance instance = (ParticipantInstance) it.next();
-			participants.add(instance.getParticipant());
+			ISynchronizeParticipant participant;
+			try {
+				participant = instance.getParticipant();
+				if(participant != null) {
+					participants.add(participant);
+				}
+			} catch (TeamException e) {
+				// Participant instance is invalid - remove from list
+				synchronizeParticipants.remove(instance);
+				TeamUIPlugin.log(e);
+			}				
 		}
 		return (ISynchronizeParticipant[]) participants.toArray(new ISynchronizeParticipant[participants.size()]);
 	}
@@ -380,7 +401,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 
 	/**
 	 * Saves a file containing the list of participant ids that are registered
-	 * with this manager. Each participant is also given the chance to save
+	 * with this manager. Each initialized participant is also given the chance to save
 	 * it's state.
 	 */
 	private void saveState() {
@@ -391,10 +412,20 @@ public class SynchronizeManager implements ISynchronizeManager {
 			List participants = (List) synchronizeParticipants.get(id);
 			for (Iterator it2 = participants.iterator(); it2.hasNext(); ) {
 				ParticipantInstance instance = (ParticipantInstance) it2.next();
-				ISynchronizeParticipant participant = instance.getParticipant();
-				IMemento participantNode = xmlMemento.createChild(CTX_PARTICIPANT);
-				participantNode.putString(CTX_ID, participant.getId());
-				participant.saveState(participantNode.createChild(CTX_PARTICIPANT_DATA));
+				// An un-instantiated participant can't have any state to save, also
+				// we don't want to trigger class creation when saving state.
+				if(instance.isParticipantInitialized()) {
+					ISynchronizeParticipant participant;
+					try {
+						participant = instance.getParticipant();
+					} catch (TeamException e1) {
+						// Continue with the next participant instance.
+						continue;
+					}
+					IMemento participantNode = xmlMemento.createChild(CTX_PARTICIPANT);
+					participantNode.putString(CTX_ID, participant.getId());
+					participant.saveState(participantNode.createChild(CTX_PARTICIPANT_DATA));
+				}
 			}
 		}
 		try {
@@ -433,14 +464,21 @@ public class SynchronizeManager implements ISynchronizeManager {
 			ParticipantInstance instance = null;
 			while (it.hasNext()) {
 				ParticipantInstance tempInstance = (ParticipantInstance) it.next();
-				if(tempInstance.getParticipant() == participant) {
-					instance = tempInstance;
+				try {
+					if(tempInstance.getParticipant() == participant) {
+						instance = tempInstance;
+					}
+				} catch (TeamException e) {
+					// Participant instance is invalid - remove from list
+					synchronizeParticipants.remove(tempInstance);
+					TeamUIPlugin.log(e);
 				}
 			}
-			Assert.isNotNull(instance);
-			removed = instances.remove(instance);
-			if (instances.isEmpty()) {
-				synchronizeParticipants.remove(id);
+			if(instance != null) {
+				removed = instances.remove(instance);
+				if (instances.isEmpty()) {
+					synchronizeParticipants.remove(id);
+				}
 			}
 		}
 		return removed;
