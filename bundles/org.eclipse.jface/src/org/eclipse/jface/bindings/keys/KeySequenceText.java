@@ -709,10 +709,14 @@ public final class KeySequenceText {
 		}
 
 		KeyStroke[][] deletedKeyStrokes = new KeyStroke[1][];
-		final int index = deleteSelection(newKeyStrokes, false,
+		int index = deleteSelection(newKeyStrokes, false,
 				deletedKeyStrokes);
-		final KeyStroke[] keyStrokes = insertStrokeAt(deletedKeyStrokes[0],
-				stroke, index);
+		if (index == -1) {
+			index = 0;
+		}
+		final KeyStroke[] strokes = (deletedKeyStrokes[0] == null) ? new KeyStroke[0]
+				: deletedKeyStrokes[0];
+		final KeyStroke[] keyStrokes = insertStrokeAt(strokes, stroke, index);
 		keyFilter.clearInsertionIndex();
 		setKeySequence(KeySequence.getInstance(keyStrokes));
 	}
@@ -737,7 +741,7 @@ public final class KeySequenceText {
 			KeyStroke stroke, int index) {
 		final int keyStrokesLength = keyStrokes.length;
 		final KeyStroke currentStroke = (index >= keyStrokesLength) ? null
-				: (KeyStroke) keyStrokes[index];
+				: keyStrokes[index];
 		if ((currentStroke != null) && (!currentStroke.isComplete())) {
 			int modifierKeys = currentStroke.getModifierKeys();
 			final int naturalKey = stroke.getNaturalKey();
