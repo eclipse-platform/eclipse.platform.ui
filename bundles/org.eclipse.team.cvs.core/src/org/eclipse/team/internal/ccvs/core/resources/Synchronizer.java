@@ -361,7 +361,7 @@ public class Synchronizer {
 	}
 	
 	/**
-	 * Reload the sync information from disk for this folder and all its children.
+	 * Reload the sync information from disk for this folder and all its children depth first.
 	 * 
 	 * @param folder the root folder at which to start reloading.
 	 * @param monitor the progress monitor, cannot be <code>null</code>.
@@ -370,6 +370,13 @@ public class Synchronizer {
 		if (folder instanceof LocalFolder) {
 			LocalFolder fsFolder = (LocalFolder) folder;
 			File file = fsFolder.getLocalFile();
+									
+			ICVSFolder[] folders = folder.getFolders();
+			for (int i = 0; i < folders.length; i++) {
+				ICVSFolder iCVSFolder = folders[i];
+				reload(iCVSFolder, monitor);
+			}
+			
 			FolderSyncInfo info = getFolderSync(file, true);
 			
 			// info will be null if the CVS subdirectory or folder does not exist, then we can safely
@@ -380,14 +387,8 @@ public class Synchronizer {
 			} else {			
 				getResourceSync(new File(file, "dummy"), true);
 			}
-			
-			monitor.worked(1);
-			
-			ICVSFolder[] folders = folder.getFolders();
-			for (int i = 0; i < folders.length; i++) {
-				ICVSFolder iCVSFolder = folders[i];
-				reload(iCVSFolder, monitor);
-			}
+						
+			monitor.worked(1);			
 		}
 	}
 	
@@ -472,7 +473,7 @@ public class Synchronizer {
 			depth = IResource.DEPTH_ONE;
 		}
 		
-		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
+		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile()) || !file.exists()) {
 			return;
 		}
 		
