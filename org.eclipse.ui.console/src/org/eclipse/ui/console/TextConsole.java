@@ -432,6 +432,7 @@ public abstract class TextConsole extends AbstractConsole {
 		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
 			document.addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
+			firePropertyChange(this, IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED, null, null);
 		} catch (BadPositionCategoryException e) {
 			ConsolePlugin.log(e);
 		} 

@@ -149,4 +149,6 @@ public interface IConsoleConstants {
      */
     public static final int DEFAULT_TAB_SIZE = 8;
 
+    public static final String P_CONSOLE_HYPERLINK_ADDED = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_HYPERLINK_ADDED"; //$NON-NLS-1$
+
 }

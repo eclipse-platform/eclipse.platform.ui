@@ -9,10 +9,14 @@
 
 package org.eclipse.ui.console;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
@@ -36,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
+import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
 /**
  * Viewer used to display a TextConsole
@@ -105,8 +110,33 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     public void lineGetStyle(LineStyleEvent event) {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0) {
-            StyleRange[] styles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
-            event.styles = styles;
+            ArrayList ranges = new ArrayList();
+            int offset = event.lineOffset;
+            int length = event.lineText.length();
+            try {
+                Display display = ConsolePlugin.getStandardDisplay();
+                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
+                int rangeEnd = offset + length - 1;
+                Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+                
+                for (int i = 0; i < positions.length; i++) {
+                    Position position = positions[i];
+                    int positionEnd = position.offset + position.length - 1;
+                    if ((position.offset>=offset && positionEnd<=offset) || (positionEnd>=position.offset && positionEnd <= rangeEnd)) {
+                        ranges.add(new StyleRange(position.offset, position.length, hyperlinkText, null));
+                    }
+                }
+            } catch (BadPositionCategoryException e) {
+            }
+            
+            StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
+            if (partitionerStyles != null) {
+                for (int i = 0; i < partitionerStyles.length; i++) {
+                    ranges.add(partitionerStyles[i]);
+                }
+            }
+                    
+            event.styles = (StyleRange[]) ranges.toArray(new StyleRange[0]);
         }
     }
 
@@ -144,6 +174,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                 Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
                 Color color = e.gc.getForeground();
                 e.gc.setForeground(fontColor);
+                
                 FontMetrics metrics = e.gc.getFontMetrics();
                 int height = metrics.getHeight();
                 int width = metrics.getAverageCharWidth();
@@ -157,6 +188,9 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                     Point p1 = text.getLocationAtOffset(styleStart);
                     Point p2 = text.getLocationAtOffset(styleEnd - 1);
                     e.gc.drawLine(p1.x, p1.y + height, p2.x + width, p2.y + height);
+                    
+                    String hyperlinkText = text.getText(styleStart, styleEnd-1);
+                    e.gc.drawString(hyperlinkText, p1.x, p1.y);
                 }
                 e.gc.setForeground(color);
             }
