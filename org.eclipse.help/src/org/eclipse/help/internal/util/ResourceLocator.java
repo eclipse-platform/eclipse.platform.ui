@@ -11,6 +11,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 
 public class ResourceLocator {
+	private static final Hashtable zipCache = new Hashtable();
+	private static final Object zipNotFound = new Object();
 
 	/**
 	 * Opens an input stream to a file contained in a zip in a plugin.
@@ -79,31 +81,21 @@ public class ResourceLocator {
 		String zip,
 		String file,
 		String locale) {
-		IPath zipFilePath = new Path(zip);
-		Map override = new HashMap(1);
-		override.put("$nl$", locale);
-		try {
-			URL zipFileURL = pluginDesc.getPlugin().find(zipFilePath, override);
-			if (zipFileURL != null) {
-				try {
-					URL realZipURL = Platform.resolve(zipFileURL);
-					if (realZipURL == null)
-						return null;
-					URL jurl = new URL("jar", "", realZipURL.toExternalForm() + "!/" + file);
-
-					URLConnection jconnection = jurl.openConnection();
-					jconnection.setDefaultUseCaches(false);
-					jconnection.setUseCaches(false);
-					return jconnection.getInputStream();
-
-				} catch (IOException ioe) {
-					return null;
-				}
-			}
-		} catch (CoreException ce) {
+		String realZipURL = findZip(pluginDesc, zip, locale);
+		if (realZipURL == null) {
 			return null;
 		}
-		return null;
+		try {
+			URL jurl = new URL("jar", "", realZipURL + "!/" + file);
+
+			URLConnection jconnection = jurl.openConnection();
+			jconnection.setDefaultUseCaches(false);
+			jconnection.setUseCaches(false);
+			return jconnection.getInputStream();
+
+		} catch (IOException ioe) {
+			return null;
+		}
 	}
 
 	/**
@@ -117,7 +109,8 @@ public class ResourceLocator {
 		Map override = new HashMap(1);
 		override.put("$nl$", locale);
 		try {
-			URL flatFileURL = pluginDesc.getPlugin().find(flatFilePath, override);
+			URL flatFileURL =
+				pluginDesc.getPlugin().find(flatFilePath, override);
 			if (flatFileURL != null)
 				try {
 					return flatFileURL.openStream();
@@ -129,6 +122,46 @@ public class ResourceLocator {
 			return null;
 		}
 		return null;
+	}
+	/**
+	 * @param pluginDesc
+	 * @param zip zip file path as required by Plugin.find()
+	 * @param locale
+	 * @return String form of resolved URL of a zip or null
+	 */
+	private static String findZip(
+		IPluginDescriptor pluginDesc,
+		String zip,
+		String locale) {
+		String pluginID = pluginDesc.getUniqueIdentifier();
+		// check cache
+		Object cached = zipCache.get(pluginID + '/' + zip + '/' + locale);
+		if (cached == null) {
+			// not in cache find on filesystem
+			IPath zipFilePath = new Path(zip);
+			Map override = new HashMap(1);
+			override.put("$nl$", locale);
+			try {
+				URL zipFileURL =
+					pluginDesc.getPlugin().find(zipFilePath, override);
+				if (zipFileURL != null) {
+					URL realZipURL = Platform.resolve(zipFileURL);
+					cached = realZipURL.toExternalForm();
+				} else {
+					cached = zipNotFound;
+				}
+			} catch (CoreException ce) {
+				cached = zipNotFound;
+			} catch (IOException ioe) {
+				cached = zipNotFound;
+			}
+			// cache it
+			zipCache.put(pluginID + '/' + zip + '/' + locale, cached);
+		}
+		if (cached == zipNotFound) {
+			return null;
+		}
+		return (String) cached;
 	}
 
 }
