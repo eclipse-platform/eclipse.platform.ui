@@ -4,7 +4,7 @@
    id="org.eclipse.update.ui.forms"
    name="Install/Update Forms"
    version="2.0.0"
-   provider-name="Object Technology International"
+   provider-name="International Business Machines Corp."
    class="">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
