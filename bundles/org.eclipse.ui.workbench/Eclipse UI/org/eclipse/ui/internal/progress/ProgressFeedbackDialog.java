@@ -87,7 +87,7 @@ public class ProgressFeedbackDialog extends Dialog {
 		viewer = new ListViewer(mainArea, SWT.BORDER);
 
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		data.widthHint = convertHorizontalDLUsToPixels(200);
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		data.heightHint = convertVerticalDLUsToPixels(100);
 
 		viewer.getControl().setLayoutData(data);
