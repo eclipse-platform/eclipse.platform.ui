@@ -90,6 +90,7 @@ protected void dirty(final IProject[] projects) throws CoreException {
 					}
 				}
 			}
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		}
 	}, getMonitor());
 }
@@ -139,6 +140,7 @@ protected void tearDown() throws Exception {
 public void testDeltas() {
 	//add builder and do an initial build to get the instance
 	try {
+		setAutoBuilding(false);
 		addBuilder(project1, DeltaVerifierBuilder.BUILDER_NAME);
 		project1.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 	} catch (CoreException e) {
@@ -147,19 +149,22 @@ public void testDeltas() {
 	final DeltaVerifierBuilder builder = DeltaVerifierBuilder.getInstance();
 	assertTrue("1.1", builder != null);
 	//always check deltas for all projects
-	final IProject[] allProjects = new IProject[] {project1, project2, project3, project4};
+	final IProject[] allProjects = new IProject[] { project1, project2, project3, project4 };
 	builder.checkDeltas(allProjects);
 
 	//hold onto the set of requested projects here
-	final IProject[][] previousRequest = new IProject[][] {new IProject[] {project1}};
+	final IProject[][] previousRequest = new IProject[][] { new IProject[] { project1 }
+	};
 	//hold onto projects that have been modified since the last time the builder was run.
 	final HashSet previouslyModified = new HashSet();
 	new TestPerformer("testDeltas") {
-		public Object[] interestingOldState(Object[] args) throws Exception {return null;}
+		public Object[] interestingOldState(Object[] args) throws Exception {
+			return null;
+		}
 		public Object invokeMethod(Object[] args, int count) throws Exception {
 			//set requests for next build
-			IProject[] requested = (IProject[])args[0];
-			IProject[] toModify = (IProject[])args[1];
+			IProject[] requested = (IProject[]) args[0];
+			IProject[] toModify = (IProject[]) args[1];
 			builder.reset();
 			builder.requestDeltas(requested);
 			//do the build
@@ -174,19 +179,21 @@ public void testDeltas() {
 			}
 			return result;
 		}
-		public boolean shouldFail(Object[] args, int count) {return false;}
+		public boolean shouldFail(Object[] args, int count) {
+			return false;
+		}
 		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-			HashSet requested = new HashSet(Arrays.asList((IProject[])result));
-			HashSet modified = new HashSet(Arrays.asList((IProject[])args[1]));
+			HashSet requested = new HashSet(Arrays.asList((IProject[]) result));
+			HashSet modified = new HashSet(Arrays.asList((IProject[]) args[1]));
 			modified.addAll(previouslyModified);
 			HashSet obtained = new HashSet();
 			if (!builder.getReceivedDeltas().isEmpty())
 				obtained.addAll(builder.getReceivedDeltas());
 			ArrayList emptyDeltas = builder.getEmptyDeltas();
-			
+
 			//the builder's project is implicitly requested
 			requested.add(builder.getProject());
-				
+
 			for (int i = 0; i < allProjects.length; i++) {
 				IProject project = allProjects[i];
 				boolean wasObtained = obtained.contains(project);
@@ -199,12 +206,14 @@ public void testDeltas() {
 						return false;
 				} else {
 					//if delta was not obtained, then must be unchanged or not requested
-					if (wasRequested && wasModified) return false;
+					if (wasRequested && wasModified)
+						return false;
 				}
 			}
 			return true;
 		}
-	}.performTest(new Object[][] {interestingProjects(), reverse(interestingProjects())});
+	}
+	.performTest(new Object[][] { interestingProjects(), reverse(interestingProjects())});
 }
 /**
  * Tests a builder that requests deltas for closed and missing projects.

@@ -13,7 +13,9 @@ package org.eclipse.core.tests.internal.builders;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 
@@ -104,5 +106,14 @@ protected void tearDown() throws Exception {
 	setAutoBuilding(autoBuilding);
 	super.tearDown();
 }
+/**
+ * Blocks the calling thread until autobuild completes.
+ */
+protected void waitForBuild() {
+	try {
+		Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+	} catch (OperationCanceledException e) {
+	} catch (InterruptedException e) {
+	}
 }
-
+}
