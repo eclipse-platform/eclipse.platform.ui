@@ -61,6 +61,8 @@ public static void register(String type, Class connectionClass) {
 		Constructor c = connectionClass.getConstructor(new Class[] { URL.class });	
 		connectionType.put(type, c);
 	}
-	catch(NoSuchMethodException e) {}
+	catch(NoSuchMethodException e) {
+		//don't register connection classes that don't conform to the spec
+	}
 }
 }

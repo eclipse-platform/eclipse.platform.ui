@@ -136,6 +136,7 @@ private static PlatformClassLoader configurePlatformLoader() {
 	try {
 		base = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING+RUNTIMEDIR);
 	} catch (MalformedURLException e) {
+		//proceed without runtime plugin in platform loader -- is this possible?
 	}
 	return new PlatformClassLoader((URL[]) loadPath[0], (URLContentFilter[]) loadPath[1], InternalBootLoader.class.getClassLoader(), base);
 }
@@ -198,6 +199,7 @@ public static URL getInstallURL() {
 				System.out.println("Install URL:\n    "+installURL.toExternalForm());
 			return installURL;
 		} catch(MalformedURLException e) {
+			//fall through to code below
 		}
 	}
 
@@ -257,6 +259,7 @@ public static String decode(String urlString) {
 		if (result != null)
 			return (String)result;
 	} catch (Exception e) {
+		//JDK 1.4 method not found or failed -- fall through to manual decode
 	}
 	//decode URL by hand
 	int len = urlString.length();
@@ -392,6 +395,7 @@ public static URL[] getPluginPath(URL pluginPathLocation/*R1.0 compatibility*/) 
 	try {
 		input = pluginPathLocation.openStream();
 	} catch (IOException e) {
+		//fall through
 	}
 
 	// if the given path was null or did not exist, look for a plugin path
@@ -401,7 +405,9 @@ public static URL[] getPluginPath(URL pluginPathLocation/*R1.0 compatibility*/) 
 			URL url = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
 			input = url.openStream();
 		} catch (MalformedURLException e) {
+			//fall through
 		} catch (IOException e) {
+			//fall through
 		}
 
 	// nothing was found at the supplied location or in the install location
@@ -416,6 +422,7 @@ public static URL[] getPluginPath(URL pluginPathLocation/*R1.0 compatibility*/) 
 			input.close();
 		}
 	} catch (IOException e) {
+		//let it return null on failure to read
 	}
 	return result;
 }
@@ -694,6 +701,8 @@ private static URL[] readPluginPath(InputStream input) {
 				try {
 					result.addElement(new URL(entry));
 				} catch (MalformedURLException e) {
+					//intentionally ignore bad URLs
+					System.err.println("Ignoring invalid plugin location: " + entry);
 				}
 		}
 	}
@@ -721,12 +730,7 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 public static Object run(String applicationName/*R1.0 compatibility*/, URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args, Runnable handler) throws Exception {
 	Object result = null;
 	applicationR10 = applicationName; // for R1.0 compatibility
-	String[] applicationArgs = null;
-	try {
-		applicationArgs = startup(pluginPathLocation, location, args, handler);
-	} catch (Exception e) {
-		throw e;
-	}
+	String[] applicationArgs = startup(pluginPathLocation, location, args, handler);
 	
 	String application = getCurrentPlatformConfiguration().getApplicationIdentifier();
 	IPlatformRunnable runnable = getRunnable(application);

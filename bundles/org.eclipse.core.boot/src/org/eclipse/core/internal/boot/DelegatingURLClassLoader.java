@@ -554,6 +554,7 @@ private Enumeration findResources(String name, DelegatingURLClassLoader requesto
 	try {
 		e = super.findResources(name);
 	} catch (IOException ioe) {
+		//fall through and search prerequisites
 	}
 	ResourceEnumeration result = new ResourceEnumeration(name, e, this, requestor);
 
@@ -576,35 +577,9 @@ protected String getFileFromURL(URL target) {
 		if (protocol.equals(PlatformURLHandler.FILE))
 			return url.getFile();
 	} catch (IOException e) {
+		//couldn't resolve the target - return null
 	}
 	return null;
-}
-private File[] getNativeLibraryAsLocal(String osname) {
-	URL[] tempResult = null;
-	File[] result = null;
-
-	try {
-		URL liburl = new URL(base, osname);
-		PlatformURLConnection c = (PlatformURLConnection) liburl.openConnection();
-		URL localName = c.getURLAsLocal();
-		tempResult = c.getAuxillaryURLs();
-		int tempLength = (tempResult == null) ? 0 : tempResult.length;
-	
-		result = new File[tempLength + 1];	
-		result[0] = new File(localName.getFile());
-		
-		// Now add the fragment URLs to the result
-		for (int i = 1; i < result.length; i++) {
-			liburl = new URL(tempResult[i-1], osname);
-			c = (PlatformURLConnection) liburl.openConnection();
-			localName = c.getURLAsLocal();
-			result[i] = new File(localName.getFile());
-		}
-	} catch (IOException e) {
-		// Why don't we do anything with this exception??
-	}
-	
-	return result;
 }
 
 private URL[] getSearchURLs (URL base) {

@@ -171,6 +171,7 @@ private static synchronized void clearLockFile() {
 			lockRAF = null;
 		}
 	} catch (IOException e) {
+		//don't complain, we're making a best effort to clean up
 	}
 	if (lockFile != null) {
 		lockFile.delete();
@@ -224,6 +225,7 @@ private static void createXMLClassLoader() {
 		descriptor.setLocation(url.toExternalForm());
 	} catch (MalformedURLException e) {
 		// ISSUE: What to do when this fails.  It's pretty serious
+		e.printStackTrace();
 	}
 
 	ArrayList libList = new ArrayList();
@@ -253,6 +255,7 @@ public static void endSplash() {
 				long end = System.currentTimeMillis();
 				System.out.println("Startup complete: " + (end - start) + "ms");
 			} catch (NumberFormatException e) {
+				//this is just debugging code -- ok to swallow exception
 			}
 	}	
 	if (splashDown) 
@@ -361,6 +364,8 @@ public static Plugin getPlugin(String id) {
 	try {
 		return descriptor.getPlugin();
 	} catch (CoreException e) {
+		//failed to activate the plugin -- return null
+		log(e.getStatus());
 		return null;
 	}
 }
@@ -391,6 +396,8 @@ public static Plugin getRuntimePlugin() {
 	try {
 		return getPluginRegistry().getPluginDescriptor(Platform.PI_RUNTIME).getPlugin();
 	} catch (CoreException e) {
+		//impossible for the runtime plugin to be missing
+		log(e.getStatus());
 		return null;
 	}
 }
@@ -402,7 +409,9 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 		try {
 			plugin = ((PluginClassLoader)code.getClass().getClassLoader()).getPluginDescriptor().getPlugin();
 		} catch (ClassCastException e1) {
+			//ignore and attribute exception to runtime
 		} catch (CoreException e1) {
+			//ignore and attribute exception to runtime
 		}
 		String pluginId =  plugin.getDescriptor().getUniqueIdentifier();
 		String message = Policy.bind("meta.pluginProblems", pluginId);
@@ -439,8 +448,7 @@ public static IPlatformRunnable loaderGetRunnable(String applicationName) {
 		IConfigurationElement config = configs[0];
 		return (IPlatformRunnable) config.createExecutableExtension("run");
 	} catch (CoreException e) {
-		if (DEBUG)
-			getRuntimePlugin().getLog().log(e.getStatus());
+		getRuntimePlugin().getLog().log(e.getStatus());
 		return null;
 	}
 }
@@ -460,8 +468,7 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
 	try {
 		return (IPlatformRunnable) descriptor.createExecutableExtension(className, args, null, null);
 	} catch (CoreException e) {
-		if (DEBUG)
-			getRuntimePlugin().getLog().log(e.getStatus());
+		getRuntimePlugin().getLog().log(e.getStatus());
 		return null;
 	}
 }
