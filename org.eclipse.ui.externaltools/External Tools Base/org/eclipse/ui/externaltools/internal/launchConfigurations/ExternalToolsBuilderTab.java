@@ -297,4 +297,18 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		workingSet = wizard.getSelection();
 		updateLaunchConfigurationDialog();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		// do nothing on activation
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+		// do nothing on deactivation
+	}
+
 }
