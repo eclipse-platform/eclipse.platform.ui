@@ -147,6 +147,12 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	int work = 1;
 	try {
+		//location can be null if based on an undefined variable
+		if (node.getLocalLocation() == null) {
+			String message = Policy.bind("localstore.locationUndefined", node.getResource().getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL,  node.getResource().getFullPath(), message, null);
+		}
+
 		boolean wasSynchronized = isSynchronized(node);
 		if (force && !wasSynchronized) {
 			synchronize(node);
