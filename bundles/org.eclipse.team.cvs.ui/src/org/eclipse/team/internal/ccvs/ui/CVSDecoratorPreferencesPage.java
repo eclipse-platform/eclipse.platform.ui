@@ -145,7 +145,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		fileTextGroup.setLayoutData(data);
-		fileTextGroup.setText("Customize Text Labels");
+		fileTextGroup.setText("Text Labels");
 		createLabel(fileTextGroup, "Select the format for file, folders, and project text labels:", 3);
 
 		TextPair format = createFormatEditorControl(fileTextGroup, "File Format:", getFileBindingDescriptions());
@@ -187,7 +187,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
-		imageGroup.setText("Customize Icon Overlays");
+		imageGroup.setText("Icon Overlays");
 		imageShowDirty = createCheckBox(imageGroup, "Show outgoing");
 		imageShowHasRemote = createCheckBox(imageGroup, "Show has remote");
 		imageShowAdded = createCheckBox(imageGroup, "Show is added");
