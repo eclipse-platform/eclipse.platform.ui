@@ -119,9 +119,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
      */
     private void simpleTest(String source, String target,
             FormattingPreferences prefs, String indent) throws Exception {
-
-        XmlTagFormatter tagFormatter = new XmlTagFormatter();
-        String result = tagFormatter.format(source, prefs, indent);
+    	
+        String result = XmlTagFormatter.format(source, prefs, indent);
         assertEquals(target, result);
     }
 
