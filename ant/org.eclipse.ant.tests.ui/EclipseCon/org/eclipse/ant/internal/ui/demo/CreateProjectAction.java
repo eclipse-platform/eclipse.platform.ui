@@ -73,6 +73,7 @@ public class CreateProjectAction implements IWorkbenchWindowActionDelegate {
 				fWindow.getShell(),
 				"Ant Demo",
 				"Currently only support creating a project from a single javac declaration");
+			return;
 		}
 		
 		List javacTasks= resolveJavacTasks(javacNodes);
