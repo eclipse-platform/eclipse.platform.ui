@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -35,7 +32,6 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	
 	// widgets
 	private NewWizardNewPage		newResourcePage;
-    private NewWizardNewPage2       newResourcePage2;
 /**
  *	Create an instance of this class
  */
@@ -56,31 +52,18 @@ public void advanceToNextPage() {
  */
 public void createControl(Composite parent) {
 	IDialogSettings settings = getDialogSettings();
-    if (WorkbenchActivityHelper.isFiltering()) {
-    	newResourcePage2 = new NewWizardNewPage2(this, this.workbench, wizardCategories);
-    	newResourcePage2.setDialogSettings(settings);
+    newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
+    newResourcePage.setDialogSettings(settings);
     
-    	Control control = newResourcePage2.createControl(parent);
-    	WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
-    	setControl(control);
-    }
-    else {
-        newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
-        newResourcePage.setDialogSettings(settings);
-        
-        Control control = newResourcePage.createControl(parent);
-        WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
-        setControl(control);        
-    }
+    Control control = newResourcePage.createControl(parent);
+    WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
+    setControl(control);        
 }
 /**
  * Since Finish was pressed, write widget values to the dialog store so that they
  *will persist into the next invocation of this wizard page
  */
 protected void saveWidgetValues() {
-    if (WorkbenchActivityHelper.isFiltering())
-        newResourcePage2.saveWidgetValues();
-    else 
-    	newResourcePage.saveWidgetValues();
+   	newResourcePage.saveWidgetValues();
 }
 }

@@ -11,9 +11,14 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import java.text.Collator;
-import org.eclipse.jface.viewers.*;
+
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
@@ -43,8 +48,8 @@ private NewWizardCollectionSorter() {
  *			and a value greater than <code>0</code> if o1 is greater than o2.
  */
 public int compare(Viewer viewer,Object o1,Object o2) {
-	String name1 = ((WizardCollectionElement)o1).getLabel(o1);
-	String name2 = ((WizardCollectionElement)o2).getLabel(o2);
+	String name1 = ((WorkbenchAdapter)o1).getLabel(o1);
+	String name2 = ((WorkbenchAdapter)o2).getLabel(o2);
 	if (name1.equals(name2))
 		return 0;
 		
