@@ -230,7 +230,8 @@ public final class Section extends ExpandableComposite {
 	public Color getTitleBarGradientBackground() {
 		if (titleColors == null)
 			return null;
-		return (Color) titleColors.get(COLOR_GBG);
+		//return (Color) titleColors.get(COLOR_GBG);
+		return getBackground();
 	}
 	/**
 	 * Returns the title bar foreground when TITLE_BAR style is used.
