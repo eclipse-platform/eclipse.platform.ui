@@ -744,7 +744,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	getEditorManager().closeEditor(ref);
 	firePartClosed(editor);
 	editor.dispose();
-
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
@@ -761,8 +760,17 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	} else if(partWasVisible) {
 		IEditorPart top = activationList.getTopEditor();
 		zoomOutIfNecessary(top);
-		if (top != null)
+
+		// The editor we are bringing to top may already the visible
+		// editor (due to editor manager behavior when it closes and editor).
+		// If this is the case, bringToTop will not call firePartBroughtToTop.
+		// We must fire it from here.
+		if (top != null) {
+			boolean isTop = editorMgr.getVisibleEditor() == top;
 			bringToTop(top);
+			if (isTop)
+				firePartBroughtToTop(top);
+		}
 		else
 			actionSwitcher.updateTopEditor(top);
 	}
