@@ -665,7 +665,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				refreshFile(input.getFile());
 			} catch (CoreException x) {
-				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
 			}
 			
 			IDocument d= null;
@@ -674,6 +674,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				d= createDocument(element);
 			} catch (CoreException x) {
+				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
 				s= x.getStatus();
 				d= createEmptyDocument();
 			}
