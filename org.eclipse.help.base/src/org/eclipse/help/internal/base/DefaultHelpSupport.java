@@ -36,7 +36,7 @@ public class DefaultHelpSupport {
 	 */
 	public void displayHelp() {
 		// Do not start help view if documentaton is not available, display error
-		if (getTocs().length == 0) {
+		if (HelpSystem.getTocs().length == 0) {
 			// There is no documentation
 			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString("WW001"));
@@ -50,7 +50,7 @@ public class DefaultHelpSupport {
 	/**
 	 * Displays a help resource
 	 */
-	public void displayHelpResource(IHelpResource helpResource) {
+	private void displayHelpResource(IHelpResource helpResource) {
 		if (helpResource instanceof IToc)
 			displayHelpURL("toc=" + URLEncoder.encode(helpResource.getHref()));
 		else if (helpResource instanceof ITopic)
@@ -149,31 +149,6 @@ public class DefaultHelpSupport {
 			BaseHelpSystem.getDefaultErrorUtil().displayError(e.getMessage());
 		}
 	}
-	/**
-	 * Computes context information for a given context ID.
-	 * @param contextID java.lang.String ID of the context
-	 * @return IContext
-	 */
-	public IContext getContext(String contextID) {
-		//return HelpSystem.getContextManager().getContext(contextID);
-		return new ContextProxy(contextID);
-	}
-	/**
-	 * Returns the list of all integrated tables of contents available.
-	 * @return an array of TOC's
-	 */
-	public IToc[] getTocs() {
-		return HelpCore.getTocManager().getTocs(BootLoader.getNL());
-	}
-
-	/**
-	 * Returns <code>true</code> if the context-sensitive help
-	 * window is currently being displayed, <code>false</code> if not.
-	 */
-	public boolean isContextHelpDisplayed() {
-		return false;
-	}
-
 	private String getContextID(IContext context) {
 		if (context instanceof Context)
 			return ((Context) context).getID();
