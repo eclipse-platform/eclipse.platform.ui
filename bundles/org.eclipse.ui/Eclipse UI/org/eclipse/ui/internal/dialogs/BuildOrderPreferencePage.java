@@ -448,7 +448,7 @@ public boolean performOk() {
 		// If auto build is turned on, then do a global incremental
 		// build on all the projects.
 		if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			GlobalBuildAction action = new GlobalBuildAction(workbench, getShell(), IncrementalProjectBuilder.AUTO_BUILD);
+			GlobalBuildAction action = new GlobalBuildAction(workbench, getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
 			action.doBuild();
 		}	
 	}

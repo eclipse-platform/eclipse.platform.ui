@@ -459,7 +459,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			// If auto build is turned on, then do a global incremental
 			// build on all the projects.
 			if (newAutoBuildSetting) {
-				GlobalBuildAction action = new GlobalBuildAction(this.workbench, getShell(), IncrementalProjectBuilder.AUTO_BUILD);
+				GlobalBuildAction action = new GlobalBuildAction(this.workbench, getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
 				action.doBuild();
 			}
 		}

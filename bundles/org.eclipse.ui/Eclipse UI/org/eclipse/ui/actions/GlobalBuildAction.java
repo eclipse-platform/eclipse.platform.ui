@@ -95,21 +95,25 @@ public GlobalBuildAction(IWorkbenchWindow window, int type) {
  *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
  */
 private void setBuildType(int type) {
-	if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-		setText(WorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.BUILD);
-		WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
-		setAccelerator(SWT.CTRL | 'b');
-	}
-	else if (type == IncrementalProjectBuilder.FULL_BUILD) {
-		setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.REBUILD_ALL);
-		WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
-	}
-	else {
-		Assert.isTrue(false, "Invalid build type"); //$NON-NLS-1$
+	// allow AUTO_BUILD as well for backwards compatibility, but treat it the same as INCREMENTAL_BUILD
+	switch (type) {
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+		case IncrementalProjectBuilder.AUTO_BUILD:
+			setText(WorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
+			setId(IWorkbenchActionConstants.BUILD);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
+			setAccelerator(SWT.CTRL | 'b');
+			break;
+		case IncrementalProjectBuilder.FULL_BUILD:
+			setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
+			setId(IWorkbenchActionConstants.REBUILD_ALL);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
+			break;
+		default:
+			Assert.isTrue(false, "Invalid build type"); //$NON-NLS-1$
+			break;
 	}
 	this.buildType = type;
 }
