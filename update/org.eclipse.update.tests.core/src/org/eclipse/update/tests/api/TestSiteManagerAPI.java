@@ -17,15 +17,13 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	}
 	
 	public void testFile() throws Exception {
-		URL url = new URL(TARGET_FILE_SITE);
-		ISite fileSite = SiteManager.getSite(url);
-		assertEquals(url, fileSite.getURL());
+		ISite fileSite = SiteManager.getSite(TARGET_FILE_SITE);
+		assertEquals(TARGET_FILE_SITE, fileSite.getURL());
 	}
 
 	public void testHttp() throws Exception {
-		URL url = new URL(SOURCE_HTTP_SITE);
-		ISite httpSite = SiteManager.getSite(url);
-		assertEquals(url, httpSite.getURL());
+		ISite httpSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		assertEquals(SOURCE_HTTP_SITE, httpSite.getURL());
 	}
 	
 	public void testUnknown() throws Exception {
@@ -41,7 +39,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	
 	public void testLocalSite() throws Exception {
 		ISite site = SiteManager.getLocalSite();
-		System.out.println(site.getURL().toExternalForm());
+		System.out.println("TEST LOCAL SITE TODO:"+site.getURL().toExternalForm());
 		//FIXME: what kind of test for localSite API
 		// I cannot test the URL as it doesn't mean anything
 		// for a Real Local Site

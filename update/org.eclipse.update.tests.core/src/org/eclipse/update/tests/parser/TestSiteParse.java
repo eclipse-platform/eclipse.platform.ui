@@ -29,7 +29,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			IFeature[] feature = remoteSite.getFeatures();
 			ICategory[] categories = remoteSite.getCategories();
 			
-			assertEquals(remoteUrl.toExternalForm()+"info/siteInfo.html",remoteSite.getInfoURL().toExternalForm());
+			assertEquals(remoteUrl.getPath()+"info/siteInfo.html",remoteSite.getInfoURL().getPath());
 			
 		} catch (Exception e){
 			fail(e.toString());

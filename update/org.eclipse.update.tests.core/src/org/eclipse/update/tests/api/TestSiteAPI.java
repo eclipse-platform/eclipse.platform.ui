@@ -17,16 +17,13 @@ public class TestSiteAPI extends UpdateManagerTestCase {
 	}
 	
 	public void testURL(){
-		try {
-		URL url = new URL(SOURCE_FILE_SITE);
-		AbstractSite site = (AbstractSite)new FileSite(url);
-		assertEquals(site.getURL(),url);
+
+		AbstractSite site = (AbstractSite)new FileSite(SOURCE_FILE_SITE);
+		assertEquals(site.getURL(),SOURCE_FILE_SITE);
 		
-		AbstractSite site2 = (AbstractSite)new URLSite(url);
-		assertEquals(site2.getURL(),url);
-		} catch (MalformedURLException e){
-			fail("URL error: cannot create URL");
-		}
+		AbstractSite site2 = (AbstractSite)new URLSite(SOURCE_FILE_SITE);
+		assertEquals(site2.getURL(),SOURCE_FILE_SITE);
+
 	}
 
 }

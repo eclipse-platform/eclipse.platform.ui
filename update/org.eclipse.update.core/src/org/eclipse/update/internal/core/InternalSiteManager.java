@@ -58,14 +58,14 @@ public class InternalSiteManager {
 			try {
 			URL installURL = ResourcesPlugin.getPlugin().getDescriptor().getInstallURL();
 			URL resolvedURL = Platform.resolve(installURL);
-			String externalForm = resolvedURL.toExternalForm();
+			String externalForm = resolvedURL.getPath();
 			int index = externalForm.lastIndexOf("/");
 			if (externalForm.endsWith("/")){
 				 externalForm = externalForm.substring(0,index);
 				 index = externalForm.lastIndexOf("/");
 			}
 			URL newURL = null;
-			newURL = new URL(resolvedURL.toExternalForm().substring(0,index));
+			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),resolvedURL.getPath().substring(0,index));
 			localSite = new LocalSite(newURL);
 			} catch (Exception e){
 				// FIXME: exception
@@ -120,8 +120,8 @@ public class InternalSiteManager {
 	public static ISite getTempSite() {
 		if (TEMP_SITE == null) {
 			try {
-				TEMP_SITE =
-					new FileSite(new URL("file:///" + System.getProperty("java.io.tmpdir")));
+				String tempDir = System.getProperty("java.io.tmpdir");
+				TEMP_SITE =	new FileSite(new URL("file",null,tempDir));
 			} catch (MalformedURLException e) {
 				//FIXME: should never occur... hardcoded ?
 				e.printStackTrace();

@@ -44,9 +44,9 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	public void testFileSite() throws Exception{
 		
-		ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
+		ISite remoteSite = new URLSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
-		ISite localSite = new FileSite(new URL(TARGET_FILE_SITE));
+		ISite localSite = new FileSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature,null);
 		
 		// verify
@@ -85,9 +85,9 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	public void testHTTPSite() throws Exception{
 		
-		ISite remoteSite = new URLSite(new URL(SOURCE_HTTP_SITE));
+		ISite remoteSite = new URLSite(SOURCE_HTTP_SITE);
 		IFeature remoteFeature = getFeature2(remoteSite);
-		ISite localSite = new FileSite(new URL(TARGET_FILE_SITE));
+		ISite localSite = new FileSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature,null);
 
 		String site = localSite.getURL().getFile();

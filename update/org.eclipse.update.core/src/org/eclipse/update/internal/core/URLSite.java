@@ -38,22 +38,17 @@ public class URLSite extends AbstractSite {
 	 * In other implementations, we may have to use the site.xml archive tag, that maps
 	 * an id and a URL
 	 */
-	public InputStream getInputStream(IFeature sourceFeature, String archiveId) {
+	public URL getURL(IFeature sourceFeature, String archiveId) {
 		URL contentURL = null;
-		InputStream result = null;
 		try {
 			//FIXME: delete ?
 			contentURL = getArchiveURLfor(archiveId);
 			if (contentURL==null) contentURL = new URL(getURL(),DEFAULT_PLUGIN_PATH+archiveId);
-			result = contentURL.openStream();
 		} catch (MalformedURLException e){
 			//FIXME:
 			e.printStackTrace();
-		} catch (IOException e){
-			//FIXME:
-			e.printStackTrace();
-		}
-		return result;
+		} 
+		return contentURL;
 	}
 
 	/**

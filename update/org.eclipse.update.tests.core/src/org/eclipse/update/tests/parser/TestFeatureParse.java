@@ -24,7 +24,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	
 		String xmlFile = "xmls/";
 		try {		
-			ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
+			ISite remoteSite = new URLSite(SOURCE_FILE_SITE);
 			VersionedIdentifier id = new VersionedIdentifier("feature","1.0.0");
 			DefaultExecutableFeature feature = new DefaultExecutableFeature(id,remoteSite);
 			feature.setURL(new URL(remoteSite.getURL(),xmlFile));

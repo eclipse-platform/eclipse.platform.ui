@@ -72,7 +72,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+feature.getURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+feature.getRootURL().toExternalForm());
 			}
 		}
 		

@@ -6,9 +6,11 @@ package org.eclipse.update.tests;
  */
 
 import java.io.File;
+import java.net.URL;
 import junit.framework.*;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.core.UpdateManagerPlugin;
 /**
  * All Help System Test cases must subclass this base Testcase.
  * See SampleTestCase.java for a template.
@@ -17,9 +19,9 @@ import org.eclipse.core.runtime.Platform;
 public abstract class UpdateManagerTestCase extends TestCase {
 
 
-	protected static String SOURCE_FILE_SITE;
-	protected static String SOURCE_HTTP_SITE;	
-	protected static String TARGET_FILE_SITE;
+	protected static URL SOURCE_FILE_SITE;
+	protected static URL SOURCE_HTTP_SITE;	
+	protected static URL TARGET_FILE_SITE;
 
 
 	/**
@@ -33,16 +35,21 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	protected void init(){
 		
 		String home = System.getProperty("user.home");
-				
+
 		IPluginDescriptor dataDesc =  Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.core.tests");
-		SOURCE_FILE_SITE = dataDesc.getInstallURL().toExternalForm()+"data/";
-		SOURCE_HTTP_SITE = "http://9.26.150.182/UpdateManager2/";
-		TARGET_FILE_SITE = "file:///"+home+"/target/";
+		try {
+			URL realURL = Platform.resolve(dataDesc.getInstallURL());
+			SOURCE_FILE_SITE = new URL("file",null,realURL.getPath()+"data/");
+			SOURCE_HTTP_SITE = new URL("http://9.26.150.182/UpdateManager2/");
+			TARGET_FILE_SITE = new URL("file",null,home+"/target/");
+		} catch (Exception e){
+			fail(e.toString());
+			e.printStackTrace();
+		}
 		
 		//cleanup target
 		File target= new File(home+"target");
 		removeFromFileSystem(target);
-
 
 	}
 

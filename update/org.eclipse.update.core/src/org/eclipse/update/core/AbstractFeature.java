@@ -1,5 +1,5 @@
 package org.eclipse.update.core;
-
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,98 +12,99 @@ import java.util.Arrays;
 import java.util.List;
 import org.eclipse.update.internal.core.DefaultFeatureParser;
 import org.eclipse.update.internal.core.PluginEntry;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
  */
 public abstract class AbstractFeature implements IFeature {
-
+
 	/**
 	 * 
 	 */
 	public static final String FEATURE_XML = "feature.xml";
-
+
 	/**
 	 * Identifier of the Feature
 	 */
 	private VersionedIdentifier versionIdentifier;
-
+
 	/**
 	 * Site in which teh feature resides
 	 */
 	private ISite site;
-
+
 	/**
 	 * User label fo the Feature
 	 */
 	private String label;
-
+
 	/**
 	 * reference to the feature inside the site.
 	 * This URL can be a Jar file, a directory or any URL that is understood by the 
 	 * Subclass of AbstractFeature.
 	 */
 	private URL url;
-
+
 	/**
 	 * Url and label of site where update of this feature can ve found
 	 */
 	private IInfo updateInfo;
-
+
 	/**
 	 * Url and label of site where other informations related to this feature can be found
 	 */
 	private List discoveryInfos;
-
+
 	/**
 	 * provider of the Feature
 	 */
 	private String provider;
-
+
 	/**
 	 * Short description and url for long description of this feature
 	 */
 	private IInfo description;
-
+
 	/**	
 	 * Short copyright and url for long copyright of this feature
 	 */
 	private IInfo copyright;
-
+
 	/**
 	 * Short license and url for long license of this feature
 	 */
 	private IInfo license;
-
+
 	/**
 	 * Image (shoudl be either GIF or JPG)
 	 */
 	private URL image;
-
+
 
 	private String nl;
 	private String os;
 	private String ws;
-
+
 	/**
 	 * List of ID representing the *bundles/archives*
 	 *  coming with the feature
 	 */
 	private String[] contentReferences;
-
+
 	/**
 	 * List of plugin entries teh feature contains
 	 * read from teh xml file
 	 */
 	private List pluginEntries;
-
+
 	/**
 	 * private internal
 	 * used for lazy instantiation and 
 	 * hydration with the XML file
 	 */
 	private boolean isInitialized = false;
-
+
 	/**
 	 * Copy constructor
 	 */
@@ -120,7 +121,7 @@ public abstract class AbstractFeature implements IFeature {
 		this.setPluginEntries(sourceFeature.getPluginEntries());
 		this.isInitialized = true;
 	}
-
+
 	/**
 	 * Constructor
 	 */
@@ -128,7 +129,7 @@ public abstract class AbstractFeature implements IFeature {
 		this.site = targetSite;
 		this.versionIdentifier = identifier;
 	}
-
+
 	/**
 	 * @see IFeature#getIdentifier()
 	 * Do not hydrate, varibale set in constructor
@@ -136,7 +137,7 @@ public abstract class AbstractFeature implements IFeature {
 	public VersionedIdentifier getIdentifier() {
 		return versionIdentifier;
 	}
-
+
 	/**
 	 * @see IFeature#getSite()
 	 * Do not hydrate, value set ins constructor
@@ -144,7 +145,7 @@ public abstract class AbstractFeature implements IFeature {
 	public ISite getSite() {
 		return site;
 	}
-
+
 	/**
 	 * @see IFeature#getLabel()
 	 */
@@ -153,7 +154,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return label;
 	}
-
+
 	/**
 	 * @see IFeature#getURL()
 	 * Do not hydrate. Initialization will not populate the url.
@@ -166,7 +167,7 @@ public abstract class AbstractFeature implements IFeature {
 	public URL getURL() {
 		return url;
 	}
-
+
 	/**
 	 * @see IFeature#getRootURL()
 	 * In general, the Root URL is the URL of teh Feature
@@ -183,7 +184,7 @@ public abstract class AbstractFeature implements IFeature {
 	public URL getRootURL() {
 		return url;
 	}
-
+
 	/**
 	 * @see IFeature#getUpdateInfo()
 	 */
@@ -192,7 +193,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return updateInfo;
 	}
-
+
 	/**
 	 * @see IFeature#getDiscoveryInfos()
 	 */
@@ -205,7 +206,7 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see IFeature#getProvider()
 	 */
@@ -214,7 +215,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return provider;
 	}
-
+
 	/**
 	 * @see IFeature#getDescription()
 	 */
@@ -223,7 +224,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return description;
 	}
-
+
 	/**
 	 * @see IFeature#getCopyright()
 	 */
@@ -232,7 +233,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return copyright;
 	}
-
+
 	/**
 	 * @see IFeature#getLicense()
 	 */
@@ -241,7 +242,7 @@ public abstract class AbstractFeature implements IFeature {
 			init();
 		return license;
 	}
-
+
 	/**
 	 * @see IFeature#getImage()
 	 */
@@ -256,7 +257,7 @@ public abstract class AbstractFeature implements IFeature {
 		if (nl == null && !isInitialized)init();		
 		return nl;
 	}
-
+
 
 	/**
 	 * @see IFeature#getOS()
@@ -265,7 +266,7 @@ public abstract class AbstractFeature implements IFeature {
 		if (os == null && !isInitialized)init();		
 		return os;
 	}
-
+
 
 	/**
 	 * @see IFeature#getWS()
@@ -274,7 +275,7 @@ public abstract class AbstractFeature implements IFeature {
 		if (ws == null && !isInitialized)init();		
 		return ws;
 	}
-
+
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -282,7 +283,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setSite(ISite site) {
 		this.site = site;
 	}
-
+
 	/**
 	 * Sets the label
 	 * @param label The label to set
@@ -290,7 +291,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
+
 	/**
 	 * Sets the url
 	 * @param url The url to set
@@ -298,7 +299,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setURL(URL url) {
 		this.url = url;
 	}
-
+
 	/**
 	 * Sets the updateInfo
 	 * @param updateInfo The updateInfo to set
@@ -306,7 +307,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setUpdateInfo(IInfo updateInfo) {
 		this.updateInfo = updateInfo;
 	}
-
+
 	/**
 	 * Sets the discoveryInfos
 	 * @param discoveryInfos The discoveryInfos to set
@@ -319,7 +320,7 @@ public abstract class AbstractFeature implements IFeature {
 			}
 		}
 	}
-
+
 	/**
 	 * Adds a discoveryInfo
 	 * @param discoveryInfo The discoveryInfo to add
@@ -329,7 +330,7 @@ public abstract class AbstractFeature implements IFeature {
 			discoveryInfos = new ArrayList(0);
 		discoveryInfos.add(discoveryInfo);
 	}
-
+
 	/**
 	 * Sets the provider
 	 * @param provider The provider to set
@@ -344,7 +345,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setDescription(IInfo description) {
 		this.description = description;
 	}
-
+
 	/**
 	 * Sets the copyright
 	 * @param copyright The copyright to set
@@ -352,7 +353,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setCopyright(IInfo copyright) {
 		this.copyright = copyright;
 	}
-
+
 	/**
 	 * Sets the license
 	 * @param license The license to set
@@ -360,7 +361,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setLicense(IInfo license) {
 		this.license = license;
 	}
-
+
 	/**
 	 * Sets the image
 	 * @param image The image to set
@@ -368,7 +369,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setImage(URL image) {
 		this.image = image;
 	}
-
+
 	/**
 	 * Sets the nl
 	 * @param nl The nl to set
@@ -392,7 +393,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setWS(String ws) {
 		this.ws = ws;
 	}
-
+
 	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
@@ -400,7 +401,7 @@ public abstract class AbstractFeature implements IFeature {
 		Assert.isTrue(entry instanceof PluginEntry);
 		return ((PluginEntry)entry).getDownloadSize();
 	}
-
+
 	/**
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
@@ -462,7 +463,7 @@ public abstract class AbstractFeature implements IFeature {
 	public boolean isInstallable() {
 		return false;
 	}
-
+
 	/**
 	 * @see IFeature#install(IFeature)
 	 * 
@@ -473,42 +474,26 @@ public abstract class AbstractFeature implements IFeature {
 			IPluginEntry[] targetSitePluginEntries =
 				targetFeature.getSite().getPluginEntries();
 			AbstractSite tempSite = (AbstractSite) SiteManager.getTempSite();
-
+
 			// determine list of plugins to install
 			// find the intersection between the two arrays of IPluginEntry...
 			// The one teh site contains and teh one the feature contains
 			IPluginEntry[] pluginsToInstall =
 				intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
-
+
 			// private abstract - Determine list of content references id /archives id /bundles id that 
 			// map the list of plugins to install
 			String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
-
+
 			// optmization, may be private to implementation
 			// copy *blobs/content references/archives/bundles* in TEMP space
 			if (archiveIDToInstall != null) {
 				for (int i = 0; i < archiveIDToInstall.length; i++) {
-					InputStream sourceArchiveStream =
-						((AbstractSite) getSite()).getInputStream(this, archiveIDToInstall[i]);
-					if (sourceArchiveStream != null) {
 						// the name of teh file in teh temp directory
 						// should be the regular plugins/id_ver as the Temp site is OUR site
-						String newFile =
-							tempSite.getURL().getPath()
-								+ tempSite.DEFAULT_PLUGIN_PATH
-								+ archiveIDToInstall[i];
-						//FIXME: better idea ?
-						File dir = new File(tempSite.getURL().getPath() + tempSite.DEFAULT_PLUGIN_PATH);
-						if (!dir.exists())
-							dir.mkdirs();
-
-						FileOutputStream localArchiveStream = new FileOutputStream(newFile);
-						transferStreams(sourceArchiveStream, localArchiveStream);
-					} else {
-						throw new IOException(
-							"Cannot find the file: "
-								+ ((AbstractSite) getSite()).getArchiveURLfor(archiveIDToInstall[i]));
-					}
+						URL sourceURL =	((AbstractSite) getSite()).getURL(this, archiveIDToInstall[i]);
+						String newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
+						UpdateManagerUtils.resolveAsLocal(sourceURL,newFile);
 				}
 			}
 			// the site of this feature now becomes the TEMP directory
@@ -516,11 +501,11 @@ public abstract class AbstractFeature implements IFeature {
 			// like asking for stuff that hasn't been copied
 			// or reusing this feature
 			// of having an un-manageable temp site
-
+
 			// transfer the possible mapping to the temp site
 			tempSite.setArchives(getSite().getArchives());
 			this.setSite(tempSite);
-
+
 			// obtain the list of *Streamable Storage Unit*
 			// from the archive
 			if (pluginsToInstall != null) {
@@ -533,7 +518,7 @@ public abstract class AbstractFeature implements IFeature {
 					}
 				}
 			}
-
+
 			// install the Feature info
 			InputStream inStream = null;			
 			String[] names = getStorageUnitNames();
@@ -541,13 +526,13 @@ public abstract class AbstractFeature implements IFeature {
 				if ((inStream = getInputStreamFor(names[j])) != null)
 					targetFeature.getSite().storeFeatureInfo(getIdentifier(), names[j], inStream);
 			}
-
+
 		} catch (IOException e) {
 			//FIXME: implement serviceability
 			e.printStackTrace();
 		}
 	}
-
+
 	/** 
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
@@ -566,38 +551,6 @@ public abstract class AbstractFeature implements IFeature {
 		}
 	}
 	/**
-	 * Transfer a Stream into another Stream
-	 * 
-	 * This method also closes both streams.
-	 * Taken from FileSystemStore
-	 */
-	private void transferStreams(InputStream source, OutputStream destination)
-		throws IOException {
-
-		Assert.isNotNull(source);
-		Assert.isNotNull(destination);
-
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = source.read(buffer);
-				if (bytesRead == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	/**
 	 * Returns the intersection between two array of PluginEntries.
 	 */
 	private IPluginEntry[] intersection(
@@ -609,7 +562,7 @@ public abstract class AbstractFeature implements IFeature {
 		if (array2 == null) {
 			return array1;
 		}
-
+
 		List list1 = Arrays.asList(array1);
 		List result = new ArrayList(0);
 		for (int i = 0; i < array2.length; i++) {
@@ -618,7 +571,7 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		return (IPluginEntry[]) result.toArray();
 	}
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 */
@@ -631,14 +584,14 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
 	}
-
+
 	/**
 	 * Sets the pluginEntries
 	 * @param pluginEntries The pluginEntries to set
@@ -651,7 +604,7 @@ public abstract class AbstractFeature implements IFeature {
 			}
 		}
 	}
-
+
 	/**
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */
@@ -660,7 +613,7 @@ public abstract class AbstractFeature implements IFeature {
 			pluginEntries = new ArrayList(0);
 		pluginEntries.add(pluginEntry);
 	}
-
+
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
@@ -683,40 +636,40 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		getSite().store(pluginEntry, contentKey, inStream);
 	}
-
+
 	/**
 	 * @see IFeature#getContentReferences()
 	 * Private implementation of the feature. return the list of ID.
 	 * Call the site with the ID to get the URL of the contentReference of the Site
 	 */
 	public abstract String[] getContentReferences();
-
+
 	/**
 	 * return the list of FILE to be transfered for a Plugin
 	 */
 	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry);
-
+
 	/**
 	 * return the list of FILE to be transfered from within the Feature
 	 */
 	protected abstract String[] getStorageUnitNames();
-
+
 	/**
 	 * return the Stream of the FILE to be transfered for a Plugin
 	 */
 	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry,String name);
-
+
 	/**
 	 * return the Stream of FILE to be transfered from within the Feature
 	 */
 	protected abstract InputStream getInputStreamFor(String name);
-
+
 	/**
 	 * returns the Stream corresponding to the XML file
 	 */
 	protected InputStream getFeatureInputStream() throws IOException{
 		InputStream result = null;
-
+
 		//FIXME: is that global to ALL implementation ?
 		
 		// get the stream inside the Feature
@@ -727,10 +680,10 @@ public abstract class AbstractFeature implements IFeature {
 			//FIXME:
 			e.printStackTrace();
 		}
-
+
 		return insideURL.openStream();
 	};
-
+
 	/**
 	 * returns the list of bundles/id to transfer/install
 	 * in order to install the list of plugins

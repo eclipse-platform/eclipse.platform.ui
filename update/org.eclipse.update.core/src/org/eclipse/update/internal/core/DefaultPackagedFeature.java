@@ -1,5 +1,5 @@
 package org.eclipse.update.internal.core;
-
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-
+
 import org.eclipse.update.core.AbstractFeature;
 import org.eclipse.update.core.AbstractSite;
 import org.eclipse.update.core.Assert;
@@ -18,12 +18,13 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.UpdateManagerPlugin;
 import org.eclipse.update.core.VersionedIdentifier;
-
+
 public class DefaultPackagedFeature extends AbstractFeature {
-
+
 	private JarFile currentOpenJarFile = null;
-
+
 	public static final String JAR_EXTENSION = ".jar";
 	
 	
@@ -42,7 +43,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 	public URL getRootURL() {
 		URL rootURL = null;
 		try {
-			rootURL = new URL("jar:"+getURL().toExternalForm()+"!/");
+			rootURL = new URL("jar",null,getURL().toExternalForm()+"!/");
 		} catch (MalformedURLException e){
 			//FIXME:
 			e.printStackTrace();
@@ -50,14 +51,14 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		return rootURL;
 	}
 	
-
+
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
 	public DefaultPackagedFeature(IFeature sourceFeature, ISite targetSite) {
 		super(sourceFeature, targetSite);
 	}
-
+
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
@@ -66,7 +67,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		ISite targetSite) {
 		super(identifier, targetSite);
 	}
-
+
 	/**
 	 * @see AbstractFeature#getContentReferenceToInstall(IPluginEntry[])
 	 */
@@ -80,7 +81,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return names;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
@@ -99,7 +100,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 				// has to be local, file ?
 				filePath = fileURL.getPath();
 			}
-
+
 			if (currentOpenJarFile != null) {
 				if (!currentOpenJarFile.getName().equals(filePath)) {
 					currentOpenJarFile.close();
@@ -110,7 +111,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			} else {
 				currentOpenJarFile = new JarFile(filePath);
 			}
-
+
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
@@ -124,7 +125,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getStorageUnitNames(IPluginEntry)
 	 */
@@ -139,7 +140,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			if (jarURL == null) {
 				// default path
 				jarURL =
-					new URL(siteURL, AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
+					new URL(siteURL.getProtocol(),siteURL.getHost(),siteURL.getPath()+AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
 			}
 			jarFile = new JarFile(jarURL.getPath());
 			result = new String[jarFile.size()];
@@ -160,7 +161,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getFeatureInputStream()
 	 * The feature url is pointing at the JAR
@@ -172,83 +173,32 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		transferLocally();
 		return super.getFeatureInputStream();
 	}
-
+
 	/**
 	 * Transfer feature.jar file locally
 	 */
 	private void transferLocally() throws IOException {
-		// 
-		//
-		if (!(getURL() == null || getURL().getProtocol().equals("file"))) {
-			InputStream sourceContentReferenceStream =
-				getURL() == null ? null : getURL().openStream();
-			if (sourceContentReferenceStream != null) {
-				// install in DEFAULT PATH for feature
-				// as we OWN the temp site
+		// install in DEFAULT PATH for feature
+		// as we OWN the temp site
+		String newFile = 
+				AbstractSite.DEFAULT_FEATURE_PATH
+				+ getIdentifier().toString()
+				+ JAR_EXTENSION;
+		URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),newFile);		this.setURL(resolvedURL);
 
-				AbstractSite tempSite = (AbstractSite) SiteManager.getTempSite();
-				String newFile =
-					tempSite.getURL().getPath()
-						+ tempSite.DEFAULT_FEATURE_PATH
-						+ getIdentifier().toString()
-						+ JAR_EXTENSION;
-
-				// FIXME: better solution ?
-				File dir =
-					new File(tempSite.getURL().getPath() + tempSite.DEFAULT_FEATURE_PATH);
-				if (!dir.exists())
-					dir.mkdirs();
-
-				FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
-				transferStreams(sourceContentReferenceStream, localContentReferenceStream);
-				this.setURL(new URL("file://" + newFile));
-
-				//TRACE:
-				System.out.println("-----------------------" + newFile);
-
-			} else {
-				throw new IOException("Couldn\'t find the file: " + getURL().toExternalForm());
-			}
+		// DEBUG:
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
+			System.out.println("the feature on TEMP file is :"+newFile);					
 		}
 	}
-
-	/**
-	 * This method also closes both streams.
-	 * Taken from FileSystemStore
-	 */
-	private void transferStreams(InputStream source, OutputStream destination)
-		throws IOException {
-
-		Assert.isNotNull(source);
-		Assert.isNotNull(destination);
-
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = source.read(buffer);
-				if (bytesRead == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-			}
-		}
-	}
-
+
 	/**
 	 * return the archive ID for a plugin
 	 */
 	private String getArchiveID(IPluginEntry entry) {
 		return entry.getIdentifier().toString() + JAR_EXTENSION;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
@@ -259,24 +209,24 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return names;
 	}
-
+
 	/**
 	 * @see AbstractFeature#isInstallable()
 	 */
 	public boolean isInstallable() {
 		return true;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
 	protected InputStream getInputStreamFor(String name) {
 		URL siteURL = getSite().getURL();
 		InputStream result = null;
-
+
 		try {
 			transferLocally();
-
+
 			// default			
 			String filePath =
 				siteURL.getPath()
@@ -288,7 +238,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 				// has to be local, file ?
 				filePath = fileURL.getPath();
 			}
-
+
 			if (currentOpenJarFile != null) {
 				if (!currentOpenJarFile.getName().equals(filePath)) {
 					currentOpenJarFile.close();
@@ -299,7 +249,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			} else {
 				currentOpenJarFile = new JarFile(filePath);
 			}
-
+
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
 			ZipEntry entry = currentOpenJarFile.getEntry(name);
@@ -313,7 +263,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see AbstractFeature#getStorageUnitNames()
 	 */
@@ -321,11 +271,11 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		URL siteURL = getSite().getURL();
 		JarFile jarFile = null;
 		String[] result = null;
-
+
 		try {
-
+
 			transferLocally();
-
+
 			// get the URL of the feature JAR file
 			URL jarURL = getURL();
 			if (jarURL == null) {
@@ -354,5 +304,5 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return result;
 	}
-
+
 }

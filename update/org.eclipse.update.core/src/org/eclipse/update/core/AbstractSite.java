@@ -143,7 +143,7 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 *
 	 */
-	public abstract InputStream getInputStream(
+	public abstract URL getURL(
 		IFeature sourceFeature,
 		String streamKey);
 

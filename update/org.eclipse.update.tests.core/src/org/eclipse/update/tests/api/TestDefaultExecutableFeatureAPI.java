@@ -30,13 +30,11 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 */
 	private AbstractFeature getFeature(){
 		if (remoteFeature == null){
-		try {
-		ISite site = new FileSite(new URL(SOURCE_FILE_SITE));
+
+		ISite site = new FileSite(SOURCE_FILE_SITE);
 		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.feature1","1.0.0");
 		remoteFeature = new DefaultExecutableFeature(id,site);
-		} catch (java.net.MalformedURLException e){
-			fail("Wrong source site URL");
-		}
+
 		}
 		return remoteFeature;
 	}
@@ -49,8 +47,8 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		String ident2 = "org.eclipse_test_feature";
 		String ver2   = "2.0.2";
 		
-		try {
-			ISite site = new FileSite(new URL(SOURCE_FILE_SITE));
+
+			ISite site = new FileSite(SOURCE_FILE_SITE);
 			
 			VersionedIdentifier id = new VersionedIdentifier(ident1);
 			remoteFeature = new DefaultExecutableFeature(id,site);
@@ -60,9 +58,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 			remoteFeature = new DefaultExecutableFeature(id2,site);
 			assertEquals(id2,remoteFeature.getIdentifier());
 		
-		} catch (java.net.MalformedURLException e){
-			fail("Wrong source site URL");
-		}
+
 	}
 
 
@@ -71,15 +67,13 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testSite() {
 		String ident1 = "org.eclipse.test.feature_1.0.0";		
-		try {
-			ISite site = new FileSite(new URL(SOURCE_FILE_SITE));
+
+			ISite site = new FileSite(SOURCE_FILE_SITE);
 			
 			VersionedIdentifier id = new VersionedIdentifier(ident1);
 			remoteFeature = new DefaultExecutableFeature(id,site);
 			assertEquals(site,remoteFeature.getSite());
-		} catch (java.net.MalformedURLException e){
-			fail("Wrong source site URL");
-		}
+
 	}
 
 

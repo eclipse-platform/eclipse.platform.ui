@@ -22,11 +22,9 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	 */
 	private AbstractSite getSite() {
 		if (site == null) {
-			try {
-				site = new FileSite(new URL(SOURCE_FILE_SITE));
-			} catch (java.net.MalformedURLException e) {
-				fail("Wrong source site URL");
-			}
+
+			site = new FileSite(SOURCE_FILE_SITE);
+
 		}
 		return site;
 	}
@@ -52,7 +50,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	}
 
 	public void testAbstractFeature() {
-		PluginEntry pluginEntry = new PluginEntry("id","ver");
+		PluginEntry pluginEntry = new PluginEntry("id", "ver");
 		AbstractFeature _feature = getFeature();
 		_feature.addPluginEntry(pluginEntry);
 		assertEquals(_feature.getPluginEntryCount(), 1);
@@ -61,7 +59,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	}
 
 	public void testAbstactSite() {
-		PluginEntry pluginEntry = new PluginEntry("id","ver");
+		PluginEntry pluginEntry = new PluginEntry("id", "ver");
 		AbstractSite _site = getSite();
 		_site.addPluginEntry(pluginEntry);
 		assertEquals(_site.getPluginEntryCount(), 1);
@@ -70,4 +68,3 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	}
 
 }
-
