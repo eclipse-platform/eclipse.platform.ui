@@ -18,8 +18,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.activities.support.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * Property page node allows us to achive presence in the property page dialog
@@ -43,8 +43,8 @@ public class PropertyPageNode extends PreferenceNode implements IPluginContribut
     
     /**
 	 * Creates the preference page this node stands for. If the page is null,
- * it will be created by loading the class. If loading fails,
- * empty filler page will be created instead.
+     * it will be created by loading the class. If loading fails,
+     * empty filler page will be created instead.
 	 */
     public void createPage() {
         try {
@@ -97,21 +97,21 @@ public class PropertyPageNode extends PreferenceNode implements IPluginContribut
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return getId();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
 		return contributor.getPluginId();

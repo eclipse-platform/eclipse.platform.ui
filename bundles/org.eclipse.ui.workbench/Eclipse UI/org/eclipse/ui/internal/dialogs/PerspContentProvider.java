@@ -18,18 +18,21 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.registry.IPluginContribution;
+import org.eclipse.ui.activities.support.FilterableObject;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 
-public class PerspContentProvider implements IStructuredContentProvider {
+public class PerspContentProvider
+	extends FilterableObject
+	implements IStructuredContentProvider {
 
 	/**
-	 * PerspContentProvider constructor comment.
+	 * Create a new <code>PerspContentProvider</code>.
+	 * 
+	 * @param filtering
+	 *            the initial filtering state.
 	 */
-	public PerspContentProvider() {
-		super();
+	public PerspContentProvider(boolean filtering) {
+		super(filtering);
 	}
 
 	/*
@@ -50,24 +53,14 @@ public class PerspContentProvider implements IStructuredContentProvider {
 	 */
 	IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+		if (!getFiltering())
+			return descriptors;
+
 		Collection filtered = new ArrayList();
 
 		for (int i = 0; i < descriptors.length; i++) {
-			if (descriptors[i] instanceof IPluginContribution) {
-				IPluginContribution contribution =
-					(IPluginContribution) descriptors[i];
-				if (contribution.fromPlugin()) {
-					IIdentifier identifier =
-						PlatformUI
-							.getWorkbench()
-							.getActivityManager()
-							.getIdentifier(
-							WorkbenchActivityHelper.createUnifiedId(
-								contribution));
-					if (!identifier.isEnabled()) 
-                        continue;
-				} 
-            }
+            if (WorkbenchActivityHelper.filterItem(descriptors[i]))
+				continue;
 			filtered.add(descriptors[i]);
 		}
 

@@ -299,7 +299,7 @@ public final class Workbench implements IWorkbench {
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
 		new WorkbenchActivitiesCommandsAndRoles(this);
 	private WorkbenchKeyboard keyboard;
-	private WorkbenchActivityHelper activityHelper;
+	private ActivityPersistanceHelper activityHelper;
 
 	public IActivityManager getActivityManager() {
 		return activityManager;
@@ -887,7 +887,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		// initialize activities
-		activityHelper = WorkbenchActivityHelper.getInstance();
+		activityHelper = ActivityPersistanceHelper.getInstance();
 
 		// attempt to restore a previous workbench state
 		try {

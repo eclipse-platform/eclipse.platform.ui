@@ -53,10 +53,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -245,20 +244,8 @@ public class EditorRegistry implements IEditorRegistry {
 		if (desc == null && mapping[1] != null)
 			desc = mapping[1].getDefaultEditor();
         
-        if (desc instanceof IPluginContribution) {
-            IPluginContribution contribution = (IPluginContribution) desc;
-            if (contribution.fromPlugin()) {
-                IIdentifier identifier =
-                PlatformUI
-                .getWorkbench()
-                .getActivityManager()
-                .getIdentifier(
-                        WorkbenchActivityHelper.createUnifiedId(contribution));
-                if (!identifier.isEnabled())
-                    return null;
-            }
-            
-        }        
+        if (WorkbenchActivityHelper.filterItem(desc))
+            return null;
         
 		return desc;
 	}
@@ -297,20 +284,8 @@ public class EditorRegistry implements IEditorRegistry {
         ArrayList filtered = new ArrayList();
         for (Iterator i = list.iterator(); i.hasNext();) {
             Object next = i.next();
-            if (next instanceof IPluginContribution) {
-                IPluginContribution contribution = (IPluginContribution) next;
-                if (contribution.fromPlugin()) {
-                    IIdentifier identifier =
-                    PlatformUI
-                    .getWorkbench()
-                    .getActivityManager()
-                    .getIdentifier(
-                            WorkbenchActivityHelper.createUnifiedId(contribution));
-                    if (!identifier.isEnabled())
-                        continue;
-                }
-                
-            }
+            if (WorkbenchActivityHelper.filterItem(next)) 
+                continue;
             filtered.add(next);
         }        
         editors = (IEditorDescriptor[]) filtered.toArray(new IEditorDescriptor[filtered.size()]);

@@ -35,16 +35,14 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * A menu for perspective selection.  
@@ -219,14 +217,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
 			String perspID = (String) ids.get(i);
 			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
 			if (desc != null && !list.contains(desc)) {
-                if (desc instanceof IPluginContribution) {
-                	IPluginContribution contribution = (IPluginContribution) desc;
-                    if (contribution.fromPlugin()) {
-                    	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
-                        if (!identifier.isEnabled()) 
-                            continue;
-                    }
-                }
+                if (WorkbenchActivityHelper.filterItem(desc))
+                    continue;
 				list.add(desc);
             }
 		}

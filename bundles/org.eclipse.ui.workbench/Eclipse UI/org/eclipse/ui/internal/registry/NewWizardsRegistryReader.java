@@ -114,10 +114,12 @@ protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurat
  *
  *	@return org.eclipse.ui.internal.model.WizardCollectionElement
  *	@param parent org.eclipse.ui.internal.model.WizardCollectionElement
- *	@param childName java.lang.String
+ *  @param id the id of the new collection
+ *  @param pluginId the originating plugin id of the collection, if any. <code>null</code> otherwise.
+ *	@param label java.lang.String
  */
-protected WizardCollectionElement createCollectionElement(WizardCollectionElement parent, String id, String label) {
-	WizardCollectionElement newElement = new WizardCollectionElement(id, label, parent);
+protected WizardCollectionElement createCollectionElement(WizardCollectionElement parent, String id, String pluginId, String label) {
+	WizardCollectionElement newElement = new WizardCollectionElement(id, pluginId, label, parent);
 
 	parent.add(newElement);
 	return newElement;
@@ -127,7 +129,7 @@ protected WizardCollectionElement createCollectionElement(WizardCollectionElemen
  * initial elements, if needed.
  */
 protected void createEmptyWizardCollection() {
-	wizardElements = new WizardCollectionElement("root", "root", null);//$NON-NLS-2$//$NON-NLS-1$
+	wizardElements = new WizardCollectionElement("root", null, "root", null);//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Returns a new WorkbenchWizardElement configured according to the parameters
@@ -222,7 +224,7 @@ private void finishCategory(Category category) {
 		return;
 		
 	if (parent != null)
-		createCollectionElement(parent, category.getId(), category.getLabel());
+		createCollectionElement(parent, category.getId(), category.getPluginId(), category.getLabel());
 }
 /**
  *	Insert the passed wizard element into the wizard collection appropriately
@@ -306,7 +308,7 @@ protected void moveElementToUncategorizedCategory(WizardCollectionElement root, 
 	WizardCollectionElement otherCategory = getChildWithID(root, UNCATEGORIZED_WIZARD_CATEGORY);
 	
 	if (otherCategory == null)
-		otherCategory = createCollectionElement(root,UNCATEGORIZED_WIZARD_CATEGORY,UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
+		otherCategory = createCollectionElement(root,UNCATEGORIZED_WIZARD_CATEGORY, null, UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
 
 	otherCategory.add(element);
 }

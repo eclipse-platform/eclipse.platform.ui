@@ -31,6 +31,7 @@ public class CategoryLabelProvider extends LabelProvider {
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param activityManager
+	 *            the manager to check <code>String</code> content against.
 	 * @since 3.0
 	 */
 	public CategoryLabelProvider(IActivityManager activityManager) {
@@ -47,8 +48,15 @@ public class CategoryLabelProvider extends LabelProvider {
 	}
 
 	/**
+	 * Provide label text for a given <code>ICategory</code>.
+	 * 
 	 * @param category
-	 * @return @since 3.0
+	 *            the <code>ICategory</code> to provide a label for. Will be
+	 *            the value of <code>ICategory.getName()</code> if <code>ICategory.isDefined()</code>
+	 *            is <code>true</code> or <code>ICategory.getId()</code>
+	 *            otherwise.
+	 * @return the label.
+	 * @since 3.0
 	 */
 	private String getCategoryText(ICategory category) {
 		try {
@@ -65,7 +73,8 @@ public class CategoryLabelProvider extends LabelProvider {
 	 */
 	public String getText(Object element) {
 		if (element instanceof String) {
-			return getCategoryText(activityManager.getCategory((String) element));
+			return getCategoryText(
+				activityManager.getCategory((String) element));
 		} else if (element instanceof ICategory) {
 			return getCategoryText((ICategory) element);
 		} else {

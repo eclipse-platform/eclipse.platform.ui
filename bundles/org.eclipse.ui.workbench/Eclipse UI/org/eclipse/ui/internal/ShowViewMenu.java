@@ -36,11 +36,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
@@ -133,14 +131,8 @@ public class ShowViewMenu extends ContributionItem {
 			String id = (String) i.next();
 			IAction action = getAction(id);
 			if (action != null) {
-                if (action instanceof IPluginContribution) {
-                	IPluginContribution contribution = (IPluginContribution) action;
-                    if (contribution.fromPlugin()) {
-                    	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
-                        if (!identifier.isEnabled())
-                            continue;
-                    }
-                }
+                if (WorkbenchActivityHelper.filterItem(action))
+                    continue;
 				actions.add(action);
 			}
 		}

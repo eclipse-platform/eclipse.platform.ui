@@ -52,14 +52,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.support.IPluginContribution;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 /**

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -18,7 +21,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 
 /**
  * Utility class that manages promotion of activites in response to workspace changes.
@@ -82,14 +87,18 @@ public class IDEWorkbenchActivityHelper {
 
                     try {
                         IResourceDelta[] children = mainDelta.getAffectedChildren();
+                        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
                         for (int i = 0; i < children.length; i++) {
                             IResourceDelta delta = children[i];
                             if (delta.getResource().getType() == IResource.PROJECT) {
                                 IProject project = (IProject) delta.getResource();
                                 String[] ids = project.getDescription().getNatureIds();
                                 for (int j = 0; j < ids.length; j++) {
-                                	// @issue WorkbenchActivityHelper is internal to the generic workbench
-                                    WorkbenchActivityHelper.enableActivities(ids[j]);
+                                    IIdentifier identifier = activityManager.getIdentifier(ids[j]);
+                                    Set activities = new HashSet(activityManager .getEnabledActivityIds());
+                                    if (activities.addAll(identifier.getActivityIds())) {
+                                        PlatformUI.getWorkbench().setEnabledActivityIds(activities);
+                                    }
                                 }
                             }
                         }

@@ -21,9 +21,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.activities.support.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * A proxy for a preference page to avoid creation of preference page just to
@@ -75,10 +75,9 @@ public class WorkbenchPreferenceNode
 		page.setTitle(getLabelText());
 		setPage(page);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return true;
@@ -89,19 +88,16 @@ public class WorkbenchPreferenceNode
 	public String getCategory() {
 		return category;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
 		return configurationElement

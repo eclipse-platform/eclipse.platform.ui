@@ -16,20 +16,26 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.support.FilterableObject;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
-public class ViewContentProvider implements ITreeContentProvider {
+/**
+ * Provides content for viewers that wish to show Views.
+ */
+public class ViewContentProvider
+	extends FilterableObject
+	implements ITreeContentProvider {
 
 	/**
 	 * Create a new instance of the ViewContentProvider.
+	 * 
+	 * @param filtering
+	 *            the initial filtering state.
 	 */
-	public ViewContentProvider() {
-		super();
+	public ViewContentProvider(boolean filtering) {
+		super(filtering);
 	}
 
 	/*
@@ -50,24 +56,19 @@ public class ViewContentProvider implements ITreeContentProvider {
 			IViewRegistry reg = (IViewRegistry) element;
 			Category[] categories = reg.getCategories();
 
-			ArrayList filtered = new ArrayList();
-			for (int i = 0; i < categories.length; i++) {
-				if (categories[i].fromPlugin()) {
-					IIdentifier identifier =
-						PlatformUI
-							.getWorkbench()
-							.getActivityManager()
-							.getIdentifier(
-							WorkbenchActivityHelper.createUnifiedId(
-								categories[i]));
-					if (!identifier.isEnabled()) 
+			if (getFiltering()) {
+				ArrayList filtered = new ArrayList();
+				for (int i = 0; i < categories.length; i++) {
+                    if (WorkbenchActivityHelper.filterItem(categories[i]))
 						continue;
-				} 
-                filtered.add(categories[i]);
-			}
-			categories =
-				(Category[]) filtered.toArray(new Category[filtered.size()]);
 
+					filtered.add(categories[i]);
+				}
+				categories =
+					(Category[]) filtered.toArray(
+						new Category[filtered.size()]);
+			}
+            
 			// if there is only one category, return it's children directly
 			if (categories.length == 1) {
 				return getChildren(categories[0]);
@@ -76,36 +77,21 @@ public class ViewContentProvider implements ITreeContentProvider {
 		} else if (element instanceof Category) {
 			ArrayList list = ((Category) element).getElements();
 			if (list != null) {
-
-				ArrayList filtered = new ArrayList();
-				for (Iterator i = list.iterator(); i.hasNext();) {
-					Object o = i.next();
-					if (o instanceof IPluginContribution) {
-						IPluginContribution contribution =
-							(IPluginContribution) o;
-
-						if (contribution.fromPlugin()) {
-							IIdentifier identifier =
-								PlatformUI
-									.getWorkbench()
-									.getActivityManager()
-									.getIdentifier(
-									WorkbenchActivityHelper.createUnifiedId(
-										contribution));
-							if (!identifier.isEnabled())
-                                continue;
-						} 
-                    }
-                    filtered.add(o);
-
+				if (getFiltering()) {
+					ArrayList filtered = new ArrayList();
+					for (Iterator i = list.iterator(); i.hasNext();) {
+                        Object o = i.next();
+                        if (WorkbenchActivityHelper.filterItem(o))
+							continue;
+						filtered.add(o);
+					}
+					return filtered.toArray();
 				}
-				return filtered.toArray();
+				return list.toArray();
 			}
 
-		} else {
-			return new Object[0];
 		}
-
+        
 		return new Object[0];
 	}
 

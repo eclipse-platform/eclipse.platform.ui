@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.activities.ui.ActivityMessages;
 import org.eclipse.ui.internal.activities.ui.SwapActivityHelper;
 
 /**
@@ -36,7 +36,7 @@ public class ActivityEnablementAction extends Action {
 	 * @since 3.0
 	 */
 	public ActivityEnablementAction() {
-		super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
+		super(ActivityMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
 	}
 
 	/*

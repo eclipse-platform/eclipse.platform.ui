@@ -37,12 +37,9 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 
 
 
@@ -273,14 +270,8 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-		if (node instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) node;
-            if (contribution.fromPlugin()) {
-            	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
-                if (!identifier.isEnabled())
-                    return;
-            }
-        }
+        if (WorkbenchActivityHelper.filterItem(node))
+            return;
         
         super.createTreeItemFor(parent, node);
 	}    

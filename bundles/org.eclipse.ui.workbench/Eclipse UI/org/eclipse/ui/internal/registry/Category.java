@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.activities.support.*;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -200,21 +201,21 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return pluginId != null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return id;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
 		return pluginId;

@@ -21,6 +21,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.support.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -236,24 +237,24 @@ public IStatus saveState(IMemento memento) {
      */
     public IConfigurationElement getConfigElement() {
         return configElement;
-    }
-    
+    }  
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return pluginId != null;
 	}
-    
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return id;
 	}
-    
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
 		return pluginId;

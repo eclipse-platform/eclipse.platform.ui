@@ -20,9 +20,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IMutableActivityManager;
-
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
+import org.eclipse.ui.internal.activities.ui.ActivityMessages;
 
 /**
  * Activates the Activity configuration dialog. 
@@ -40,12 +39,11 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
      * @since 3.0
      */
     public ActivityEnablerAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
+        super(ActivityMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
         if (window == null) {
         	throw new IllegalArgumentException();
         }
-        this.workbenchWindow = window;
-        // TODO: down-cast
+		this.workbenchWindow = window;
         this.activityManager = (IMutableActivityManager) window.getWorkbench().getActivityManager();
     }
 

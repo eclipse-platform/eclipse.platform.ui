@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.NewWizardNewPage;
-import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardSelectionPage;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 /**
@@ -26,12 +26,16 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *	registered 'New' wizard to be launched, or to select a solution or
  *	projects to be retrieved from an available server.  This page
  *	contains two visual tabs that allow the user to perform these tasks.
+ *
+ *  Temporarily has two inner pages.  The new format page is used if the system 
+ *  is currently aware of activity categories.
  */
 class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	private WizardCollectionElement	wizardCategories;
 	
 	// widgets
 	private NewWizardNewPage		newResourcePage;
+    private NewWizardNewPage2       newResourcePage2;
 /**
  *	Create an instance of this class
  */
@@ -52,18 +56,31 @@ public void advanceToNextPage() {
  */
 public void createControl(Composite parent) {
 	IDialogSettings settings = getDialogSettings();
-	newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
-	newResourcePage.setDialogSettings(settings);
-
-	Control control = newResourcePage.createControl(parent);
-	WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
-	setControl(control);
+    if (WorkbenchActivityHelper.isFiltering()) {
+    	newResourcePage2 = new NewWizardNewPage2(this, this.workbench, wizardCategories);
+    	newResourcePage2.setDialogSettings(settings);
+    
+    	Control control = newResourcePage2.createControl(parent);
+    	WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
+    	setControl(control);
+    }
+    else {
+        newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
+        newResourcePage.setDialogSettings(settings);
+        
+        Control control = newResourcePage.createControl(parent);
+        WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
+        setControl(control);        
+    }
 }
 /**
  * Since Finish was pressed, write widget values to the dialog store so that they
  *will persist into the next invocation of this wizard page
  */
 protected void saveWidgetValues() {
-	newResourcePage.saveWidgetValues();
+    if (WorkbenchActivityHelper.isFiltering())
+        newResourcePage2.saveWidgetValues();
+    else 
+    	newResourcePage.saveWidgetValues();
 }
 }

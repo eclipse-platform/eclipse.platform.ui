@@ -8,17 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.registry;
+package org.eclipse.ui.activities.support;
 
 /**
- * An interface that descriptor classes should inherit in addition to their
+ * An interface that descriptor classes may implement in addition to their
  * descriptor interface. This indicates that they may or may not originate from
- * a plugin contribution.
+ * a plugin contribution. This is useful in various activity filtering
+ * scenarios.
+ * 
+ * <em>EXPERIMENTAL</em>
  * 
  * @since 3.0
  */
 public interface IPluginContribution {
-    
+
 	/**
 	 * @return whether or not this contribution originated from a plugin.
 	 */
@@ -26,6 +29,8 @@ public interface IPluginContribution {
 
 	/**
 	 * @return the local id of the contribution. Must not be <code>null</code>.
+	 *         This should correspond to the extension-specific identifier for
+	 *         a given contribution.
 	 */
 	public String getLocalId();
 

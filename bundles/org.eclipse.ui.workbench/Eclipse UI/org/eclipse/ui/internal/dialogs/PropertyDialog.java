@@ -18,10 +18,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.registry.IPluginContribution;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -80,14 +77,8 @@ public class PropertyDialog extends PreferenceDialog {
 	 *      org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        if (node instanceof IPluginContribution) {
-            IPluginContribution contribution = (IPluginContribution) node;
-            if (contribution.fromPlugin()) {
-                IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
-                if (!identifier.isEnabled())
-                    return;
-            }
-        }
+        if (WorkbenchActivityHelper.filterItem(node))
+            return;
         
         super.createTreeItemFor(parent, node);
 	}

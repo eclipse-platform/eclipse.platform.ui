@@ -14,9 +14,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.ActionContributionItem;
 
 import org.eclipse.ui.IActionDelegate2;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.registry.IPluginContribution;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 
 /**
  * Contribution item for actions provided by plugins via workbench action
@@ -55,20 +53,8 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
 	 */
 	public boolean isVisible() {
-		if (getAction() instanceof IPluginContribution) {
-			IPluginContribution contribution =
-				(IPluginContribution) getAction();
-			if (contribution.fromPlugin()) {
-				IIdentifier identifier =
-					PlatformUI
-						.getWorkbench()
-						.getActivityManager()
-						.getIdentifier(
-						WorkbenchActivityHelper.createUnifiedId(contribution));
-				if (!identifier.isEnabled())
-					return false;
-			}
-		}
+        if (WorkbenchActivityHelper.filterItem(getAction()))
+            return false;
 		return super.isVisible();
 	}
 }

@@ -94,7 +94,7 @@ public class ActivityEnabler {
 		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		{
+		{			
 			categoryViewer =
 				CheckboxTableViewer.newCheckList(mainComposite, SWT.BORDER);
 			categoryViewer.getControl().setLayoutData(
@@ -132,8 +132,8 @@ public class ActivityEnabler {
 						lastCategory = categoryId;
 						activitiesViewer.setInput(
 							getCategoryActivities(categoryId));
-					}
 				}
+			}
 			}
 		});
 

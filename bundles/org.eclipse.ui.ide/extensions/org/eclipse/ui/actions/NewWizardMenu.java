@@ -28,14 +28,11 @@ import org.eclipse.jface.action.Separator;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
@@ -112,15 +109,8 @@ public class NewWizardMenu extends ContributionItem {
 					String id = (String) i.next();
 					IAction action = getAction(id);
 					if (action != null) {
-                        if (action instanceof IPluginContribution) {
-                            IPluginContribution contribution = (IPluginContribution) action;
-                            if (contribution.fromPlugin()) {
-                                IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
-                                if (!identifier.isEnabled())
-                                    continue;
-                            }
-                        }
-                        
+                        if (WorkbenchActivityHelper.filterItem(action))
+                            continue;                        
 						innerMgr.add(action);
                     }
 				}
