@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1559,15 +1558,16 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @param time
 	 * @throws CVSException
 	 */
-	public void setTimeStamp(IFile file, long time) throws CVSException {
+	public void setTimeStamp(ICVSFile cvsFile, long time) throws CVSException {
 		ISchedulingRule rule = null;
+		IFile file = (IFile)cvsFile.getIResource();
 		try {
 			rule = beginBatching(file, null);
 			try {
 				beginOperation();
 				try {
 					file.setLocalTimeStamp(time);
-					setModified(file, null, null, ICVSFile.CLEAN);
+					setModified(cvsFile, ICVSFile.CLEAN);
 				} catch (CoreException e) {
 					throw CVSException.wrapException(e);
 				}
@@ -1652,36 +1652,33 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * ICVSFile.UNKNOWN, it is computed. However, if it is CLEAN or DIRTY, 
 	 * it is set accordingly. CLEAN or DIRTY can only be used if the caller is protected
 	 * from resource modifications (either by a scheduling rule or inside a delta handler).
-	 * The info and modificationTime are only used if the modificationType is UNKNOWN.
-	 * Otherwise, they can be null.
 	 * @param file
-	 * @param info
-	 * @param modificationTime
 	 * @param modificationState
 	 * @return true if the file is dirty
 	 */
-	public boolean setModified(IFile file, ResourceSyncInfo info, Date modificationTime, int modificationState) throws CVSException {
+	public boolean setModified(ICVSFile cvsFile, int modificationState) throws CVSException {
 		try {
 			beginOperation();
 			boolean dirty;
 			if (modificationState == ICVSFile.UNKNOWN) {
 				// if there is no sync info and it doesn't exist then it is a phantom we don't care about.
+				ResourceSyncInfo info = cvsFile.getSyncInfo();
 				if (info == null) {
-					dirty = file.exists();
+					dirty = cvsFile.exists();
 				} else {
 					// isMerged() must be called because when a file is updated and merged by the cvs server the timestamps
 					// are equal. Merged files should however be reported as dirty because the user should take action and commit
 					// or review the merged contents.
-					if(info.isAdded() || info.isMerged() || !file.exists()) {
+					if(info.isAdded() || info.isMerged() || !cvsFile.exists()) {
 						dirty = true;
 					} else {
-						dirty = !modificationTime.equals(info.getTimeStamp());
+						dirty = !cvsFile.getTimeStamp().equals(info.getTimeStamp());
 					}
 				}
 			} else {
 				dirty = modificationState == ICVSFile.DIRTY;
 			}
-			setDirtyIndicator(file, dirty);
+			setDirtyIndicator(cvsFile.getIResource(), dirty);
 			return dirty;
 		} finally {
 			endOperation();

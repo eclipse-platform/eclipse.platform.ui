@@ -101,7 +101,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		} else {
 			time = date.getTime();
 		}
-		EclipseSynchronizer.getInstance().setTimeStamp(getIFile(), time);
+		EclipseSynchronizer.getInstance().setTimeStamp(this, time);
 	}
 
 	/*
@@ -129,10 +129,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		}
 		
 		// nothing cached, need to manually check (and record)
-		ResourceSyncInfo info = getSyncInfo();
-		if (info == null && isIgnored()) return false;
+		byte[] syncBytes = getSyncBytes();
+		if (syncBytes == null && isIgnored()) return false;
 		// unmanaged files are reported as modified
-		return EclipseSynchronizer.getInstance().setModified(getIFile(), info, getTimeStamp(), UNKNOWN);
+		return EclipseSynchronizer.getInstance().setModified(this, UNKNOWN);
 	}
 	
 	/*
@@ -382,7 +382,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 						setSyncInfo(newInfo, ICVSFile.CLEAN);
 					} else {
 						// an unedited file is no longer modified
-						EclipseSynchronizer.getInstance().setModified(getIFile(), null, null, CLEAN);
+						EclipseSynchronizer.getInstance().setModified(EclipseFile.this, CLEAN);
 					}
 				} else {
 					// We still need to report a state change
@@ -496,16 +496,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	private void setSyncBytes(byte[] syncBytes, ResourceSyncInfo info, int modificationState) throws CVSException {
 		Assert.isNotNull(syncBytes);
 		setSyncBytes(syncBytes);
-		Date timestamp = null;
-		if (modificationState == UNKNOWN) {
-			// The sync info is only need if the modification state is unknown
-			if (info == null) {
-				info = new ResourceSyncInfo(syncBytes);
-			}
-			// The timesatmp is only need if the modification state is unknown
-			timestamp = getTimeStamp();
-		} 
-		EclipseSynchronizer.getInstance().setModified(getIFile(), info, timestamp, modificationState);
+		EclipseSynchronizer.getInstance().setModified(this, modificationState);
 	}
 	
 	public void handleModification(boolean forAddition) throws CVSException {
@@ -517,12 +508,12 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			// There may be a better was of handling resources that transition from un-managed to
 			// ignored but for now this seems like the safest change. 
 			if(! resource.isDerived()) {
-				EclipseSynchronizer.getInstance().setModified(getIFile(), null, null, CLEAN);
+				EclipseSynchronizer.getInstance().setModified(this, CLEAN);
 			}
 			return;
 		} 
 		// set the modification state to what it really is and return true if the modification state changed
-		EclipseSynchronizer.getInstance().setModified(getIFile(), getSyncInfo(), getTimeStamp(), UNKNOWN);
+		EclipseSynchronizer.getInstance().setModified(this, UNKNOWN);
 	}
 	
 	/**
