@@ -21,22 +21,25 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -63,14 +66,16 @@ import org.eclipse.ui.part.WorkbenchPart;
 public class ViewPane extends PartPane
 	implements IPropertyListener
 {
-	private CLabel titleLabel;
 		
 	private boolean fast = false;
 	private boolean showFocus = false;
 	private ToolBar viewToolBar;
 	private ToolBarManager viewToolBarMgr;
-	private ToolBar isvToolBar;
+	ToolBar isvToolBar;
+	ToolBar isvToolBar2;
 	private ToolBarManager isvToolBarMgr;
+	private ToolBarManager isvToolBarMgr2;
+	private Shell isvToolBarShell;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
 	
@@ -214,10 +219,10 @@ public void createControl(Composite parent) {
 	// All actions on the System toolbar should be accessible on the pane menu.
 	if (control.getContent() == null) {
 		// content can be null if view creation failed
-		control.setTabList(new Control[] { isvToolBar, viewToolBar });
+		control.setTabList(new Control[] { isvToolBar , viewToolBar });
 	}
 	else {
-		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
+		control.setTabList(new Control[] {  isvToolBar , viewToolBar, control.getContent() });
 	}
 }
 
@@ -295,18 +300,9 @@ public boolean isDragAllowed(Point p) {
 	// See also similar restrictions in addMoveItems method
 	// No need to worry about fast views as they do not
 	// register for D&D operations
-	return !overImage(p.x) && !isZoomed();
+	return !isZoomed();
 }
-/*
- * Return true if <code>x</code> is over the label image.
- */
-private boolean overImage(int x) {
-	if (titleLabel.getImage() == null) {
-		return false;
-	} else {
-		return x < titleLabel.getImage().getBounds().width;
-	}
-}
+
 /**
  * Create a title bar for the pane.
  * 	- the view icon and title to the far left
@@ -315,32 +311,11 @@ private boolean overImage(int x) {
  */
 protected void createTitleBar() {
 	// Only do this once.
-	if (titleLabel != null)
+	if (viewToolBar != null)
 		return;
 
-	// Title.   
-	titleLabel = new CLabel(control, SWT.SHADOW_NONE);
-	titleLabel.setAlignment(SWT.LEFT);
-	titleLabel.setBackground(null, null);
-	titleLabel.addMouseListener(new MouseAdapter() {
-		public void mouseDown(MouseEvent e) {
-			if ((e.button == 1) && overImage(e.x))
-				showPaneMenu();
-		}
-		public void mouseDoubleClick(MouseEvent event){
-			doZoom();
-		}
-	});
-	// Listen for popup menu mouse event
-	titleLabel.addListener(SWT.MenuDetect, new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.MenuDetect) {
-				showPaneMenu(titleLabel, new Point(event.x, event.y));
-			}
-		}
-	});
 	updateTitles();
-	control.setTopLeft(titleLabel);
+
 
 	// Listen to title changes.
 	getPartReference().addPropertyListener(this);
@@ -359,16 +334,80 @@ protected void createTitleBar() {
 	viewToolBarMgr.add(systemContribution);
 	
 	// ISV toolbar.
+	isvToolBarShell = new Shell(control.getShell(), SWT.ON_TOP | SWT.NO_TRIM);
+	Point loc = control.toDisplay(0,0);
+	loc.x += control.getSize().x;
+	isvToolBarShell.setLocation(loc);
+	//isvToolBarShell.setSize(100,100);
+	// isvToolBarShell.setVisible(true);
+	GridLayout layout = new GridLayout();
+	isvToolBarShell.setLayout(layout);
+	Composite composite = new Composite(isvToolBarShell, SWT.NONE);
+	GridLayout layout2 = new GridLayout();
+	composite.setLayout(layout2);
+	
+	isvToolBar2 = new ToolBar(composite, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-	control.setTopCenter(isvToolBar);
-	isvToolBar.addMouseListener(new MouseAdapter(){
+	
+	control.setTopLeft(isvToolBar);
+	
+	isvToolBar2.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
 			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
 			if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
 				doZoom();
 		}
 	});
+	
+	control.getShell().addControlListener(new ControlListener() {
+
+		public void controlMoved(ControlEvent e) {
+			setToolBarShellPosition();
+		}
+
+		public void controlResized(ControlEvent e) {
+			// TODO Auto-generated method stub
+			
+		}});
+	
+	control.addControlListener(new ControlListener() {
+
+		public void controlMoved(ControlEvent e) {
+			setToolBarShellPosition();
+		}
+
+		public void controlResized(ControlEvent e) {
+			// TODO Auto-generated method stub
+			
+		}});
+	
+	control.getShell().addShellListener(new ShellListener() {
+
+		public void shellActivated(ShellEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void shellClosed(ShellEvent e) {
+			isvToolBarShell.dispose();
+			
+		}
+
+		public void shellDeactivated(ShellEvent e) {
+			isvToolBarShell.setVisible(false);
+			
+		}
+
+		public void shellDeiconified(ShellEvent e) {
+			isvToolBarShell.setVisible(true);
+			
+		}
+
+		public void shellIconified(ShellEvent e) {
+			isvToolBarShell.setVisible(false);
+		}});
 	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
+	isvToolBarMgr2 = new PaneToolBarManager(isvToolBar2);
 }
 public void dispose() {
 	super.dispose();
@@ -379,12 +418,12 @@ public void dispose() {
 	 * containing the titleLabel will also disappear (disposing of the 
 	 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
 	 */ 
-	titleLabel = null;
-	
 	if (isvMenuMgr != null)
 		isvMenuMgr.dispose();
 	if (isvToolBarMgr != null)
 		isvToolBarMgr.dispose();
+	if (isvToolBarMgr2 != null)
+		isvToolBarMgr2.dispose();
 	if (viewToolBarMgr != null)
 		viewToolBarMgr.dispose();
 }
@@ -413,36 +452,12 @@ protected void doDock() {
 	getPage().removeFastView(getViewReference());
 }
 
-/**
- * Draws the applicable gradient on the view's title area
- */
-/* package */ void drawGradient() {
-	if (titleLabel == null || viewToolBar == null || isvToolBar == null)
-		return;
-
-	if (showFocus) {
-		if (getShellActivated()) {
-			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-		}
-		else {
-			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-		}
-	}
-	else {
-		titleLabel.setBackground(null, null);
-		titleLabel.setForeground(null);
-	}
-
-	titleLabel.update();
-}
 
 /**
  * Returns the drag control.
  */
 public Control getDragHandle() {
-	return titleLabel;
+	return viewToolBar;
 }
 /**
  * @see ViewActionBars
@@ -478,7 +493,8 @@ public Control[] getTabList() {
  * @see ViewActionBars
  */
 public ToolBarManager getToolBarManager() {
-	return isvToolBarMgr;
+	//return isvToolBarMgr;
+	return isvToolBarMgr2;
 }
 /**
  * Answer the view part child.
@@ -516,36 +532,38 @@ public void setFastViewSash(Sash s) {
  * Method declared on PartPane.
  */
 /* package */ void shellActivated() {
-	drawGradient();
+//	drawGradient();
 }
 
 /* (non-Javadoc)
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
-	drawGradient();
+	//isvToolBarShell.setVisible(false);
+//	drawGradient();
 }
 
 /**
  * Indicate focus in part.
  */
 public void showFocus(boolean inFocus) {
-	if (titleLabel == null)
-		return;
-
 	showFocus = inFocus;
-	drawGradient();
+//	drawGradient();
+	Control c = getControl();
+	if (getContainer() instanceof PartTabFolder) {
+		PartTabFolder tf = (PartTabFolder) getContainer();
+		CTabFolder2 f = (CTabFolder2) tf.getControl();
+		f.setBorderVisible(inFocus);
+	}
+	
+	
 }
 
 /**
  * Shows the pane menu (system menu) for this pane.
  */
 public void showPaneMenu() {
-	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getViewReference()))
-		return;
-	Rectangle bounds = titleLabel.getBounds();
-	showPaneMenu(titleLabel, titleLabel.toDisplay(new Point(0, bounds.height)));
+	
 }
 /**
  * Return true if this view is a fast view.
@@ -685,12 +703,8 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 		return this;
 }
 public String toString() {
-	String label = "disposed";//$NON-NLS-1$
-	if((titleLabel != null) && (!titleLabel.isDisposed()))
-		label = titleLabel.getText();
-	
-	return getClass().getName() + "@" + Integer.toHexString(hashCode()) + //$NON-NLS-1$
-	"(" + label + ")";//$NON-NLS-2$//$NON-NLS-1$
+
+	return getClass().getName() + "@" + Integer.toHexString(hashCode()); //$NON-NLS-1$
 }
 /**
  * @see ViewActionBars
@@ -702,47 +716,34 @@ public void updateActionBars() {
 		viewToolBarMgr.update(false);
 	if (isvToolBarMgr != null)
 		isvToolBarMgr.update(false);
+	if (isvToolBarMgr2 != null)
+		isvToolBarMgr2.update(false);
 }
 /**
  * Update the title attributes.
  */
 public void updateTitles() {
-	IViewReference ref = getViewReference();
-	if (titleLabel != null && !titleLabel.isDisposed()) {
-		boolean changed = false;
-		
-		// only update if text or image has changed 
-		String text = ref.getTitle();
-		if (text == null)
-			text = "";//$NON-NLS-1$
-		if (!text.equals(titleLabel.getText())) {
-			titleLabel.setText(text);
-			changed = true;
-		}
-		Image image = ref.getTitleImage();
-		if (image != titleLabel.getImage()) {
-			titleLabel.setImage(image);
-			changed = true;
-		}
-		// only relayout if text or image has changed
-		if (changed) {
-			((Composite) getControl()).layout();
-		}
-		
-		String tooltip = ref.getTitleToolTip();
-		if (!(tooltip == null ? titleLabel.getToolTipText() == null : tooltip.equals(titleLabel.getToolTipText()))) {
-			titleLabel.setToolTipText(ref.getTitleToolTip());
-			changed = true;
-		}
-		
-		if (changed) {
-			// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
-			titleLabel.update();
-			
-			// notify the page that this view's title has changed
-			// in case it needs to update its fast view button
-			page.updateTitle(ref);
-		}
-	}
 }
+
+/**
+ * Locate the floating shell according to the Panes size and location 
+ */
+void setToolBarShellPosition() {
+	// this should not be necessary if toolbars are static
+	isvToolBarShell.setSize(isvToolBarShell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	
+	
+	Control c = getControl();
+	if (c == null) 
+		return;
+	Rectangle displayRect = c.getMonitor().getClientArea();
+	Point size = c.getSize();
+	Point p = c.getDisplay().map(c, null, c.getLocation());
+	p.x += size.x;
+	if (p.y + size.y > displayRect.y + displayRect.height) 
+		p.y -= size.y;
+	isvToolBarShell.setLocation(p);	
 }
+
+}
+
