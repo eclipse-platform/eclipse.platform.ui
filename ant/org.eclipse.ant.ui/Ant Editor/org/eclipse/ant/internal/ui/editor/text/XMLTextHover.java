@@ -101,6 +101,9 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			}
 		}
 		AntModel antModel= fEditor.getAntModel();
+		if (antModel == null) { //the ant model has not been created yet
+			return null;
+		}
 		try {
 			IDocument document= textViewer.getDocument();
 			int offset= hoverRegion.getOffset();
