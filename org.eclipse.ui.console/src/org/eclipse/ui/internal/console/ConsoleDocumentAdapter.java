@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,19 +39,16 @@ import org.eclipse.swt.custom.TextChangingEvent;
 public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
     
     private int consoleWidth = -1;
-    private ArrayList textChangeListeners;
+    private List textChangeListeners;
     private IDocument document;
 
-    private ArrayList regions;
+    private List regions;
     private Pattern pattern = Pattern.compile("$", Pattern.MULTILINE); //$NON-NLS-1$
     
-    public ConsoleDocumentAdapter(IDocument doc, int width) {
+    public ConsoleDocumentAdapter(int width) {
         textChangeListeners = new ArrayList();
         consoleWidth = width;
-        document = doc;
-        document.addDocumentListener(this);
         regions = new ArrayList();
-        repairLines(0);
     }
     
     /*
@@ -97,8 +95,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     }
     
     /**
-     * Returns true if the line ends with a legal line delimiter
-     * @return true if the line ends with a legal line delimiter, false otherwise
+     * Returns <code>true</code> if the line ends with a legal line delimiter
+     * @return <code>true</code> if the line ends with a legal line delimiter, <code>false</code> otherwise
      */
     private boolean lineEndsWithDelimeter(String line) {
         String[] lld = document.getLegalLineDelimiters();
@@ -114,8 +112,14 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * @see org.eclipse.jface.text.IDocumentAdapter#setDocument(org.eclipse.jface.text.IDocument)
      */
     public void setDocument(IDocument doc) {
-        document = doc;
         if (document != null) {
+            document.removeDocumentListener(this);
+        }
+        
+        document = doc;
+        
+        if (document != null) {
+            document.addDocumentListener(this);
             repairLines(0);
         }
     }
@@ -347,15 +351,4 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             element.textSet(changeEvent);
         }
     }
-
-
-    public void dispose() {
-        textChangeListeners = null;
-        if (document != null) {
-            document.removeDocumentListener(this);
-        }
-        document = null;
-        regions = null;
-    }
-    
 }

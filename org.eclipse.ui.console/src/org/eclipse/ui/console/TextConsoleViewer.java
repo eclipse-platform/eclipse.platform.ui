@@ -466,7 +466,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     protected IDocumentAdapter createDocumentAdapter() {
         if (documentAdapter == null) {
-            documentAdapter = new ConsoleDocumentAdapter(getDocument(), consoleWidth = -1);
+            documentAdapter = new ConsoleDocumentAdapter(consoleWidth = -1);
         }
         return documentAdapter;
     }
@@ -495,8 +495,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         styledText.removeLineBackgroundListener(this);
         styledText.removeMouseTrackListener(this);
         styledText.removePaintListener(this);
-
-        documentAdapter.dispose();
         
         handCursor = null;
         textCursor = null;
