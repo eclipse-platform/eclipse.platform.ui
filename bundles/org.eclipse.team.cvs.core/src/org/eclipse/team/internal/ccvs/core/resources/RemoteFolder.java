@@ -781,4 +781,11 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return (ICVSRemoteFolder)forTag(null, tagName);
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder#isDefinedModule()
+	 */
+	public boolean isDefinedModule() {
+		return false;
+	}
+
 }

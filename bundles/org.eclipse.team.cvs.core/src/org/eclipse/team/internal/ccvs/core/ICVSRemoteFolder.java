@@ -40,4 +40,11 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
 	 * They can still be checked out.
 	 */
 	public boolean isExpandable();
+	
+	/**
+	 * Indicates whether the remote folder is an actual remote folder is a
+	 * module defined in the CVSROOT/modules file (or some other module
+	 * definition).
+	 */
+	public boolean isDefinedModule();
 }

@@ -349,4 +349,10 @@ public class RemoteModule extends RemoteFolder {
 		return r;
 	}
 	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder#isDefinedModule()
+	 */
+	public boolean isDefinedModule() {
+		return true;
+	}
 }

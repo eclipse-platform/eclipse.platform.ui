@@ -7,7 +7,6 @@ package org.eclipse.team.internal.ccvs.core;
  
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.sync.IRemoteResource;
 
 /**
  * This interface provides access to the specific portions of
