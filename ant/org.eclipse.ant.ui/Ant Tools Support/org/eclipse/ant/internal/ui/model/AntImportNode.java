@@ -97,7 +97,7 @@ public class AntImportNode extends AntTaskNode {
 		if (fFile != null) {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
 			String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-			if ("file".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
+			if (IAntModelConstants.ATTR_FILE.equals(attributeString)) {
 				return fFile;
 			}
         }
