@@ -669,7 +669,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 						AnnotationPreference preference= (AnnotationPreference)iter2.next();
 						String key= preference.getVerticalRulerPreferenceKey();
 						boolean showAnnotation= true;
-						if (key != null)
+						if (key != null && store.contains(key))
 							showAnnotation= store.getBoolean(key);
 						if (showAnnotation)
 							fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
