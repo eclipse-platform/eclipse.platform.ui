@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
 public class FilePropertySource extends ResourcePropertySource {
 
     private static PropertyDescriptor fileDescriptor;
-    {
+    static {
         fileDescriptor = new PropertyDescriptor(
                 IResourcePropertyConstants.P_SIZE_RES,
                 IResourcePropertyConstants.P_DISPLAY_SIZE);
