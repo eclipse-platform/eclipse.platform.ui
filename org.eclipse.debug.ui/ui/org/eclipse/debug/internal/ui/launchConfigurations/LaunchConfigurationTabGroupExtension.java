@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
@@ -20,13 +18,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.osgi.framework.Bundle;
 
 
 /**
@@ -49,12 +43,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 * Perspectives for each mode
 	 */
 	private Map fPerspectives;
-	
-	/**
-	 * Wizard banner image
-	 */
-	private ImageDescriptor fBannerImage;
-	
+		
 	/**
 	 * Constructs a launch configuration tab extension based
 	 * on the given configuration element
@@ -204,28 +193,5 @@ public class LaunchConfigurationTabGroupExtension {
 		return description;
 	}
 	
-	/**
-	 * Returns a wizard banner image for this tab group, or <code>null</code>
-	 * if unspecified.
-	 * 
-	 * @return a wizard banner image for this tab group, or <code>null</code>
-	 * @since 3.1
-	 */	
-	protected ImageDescriptor getBannerImageDescriptor() {
-	    if (fBannerImage == null) {
-	        String path = getConfigurationElement().getAttribute("bannerImage"); //$NON-NLS-1$
-	        if (path != null) {
-				Bundle bundle = Platform.getBundle(getConfigurationElement().getNamespace());
-				URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
-				try {
-					iconURL = new URL(iconURL, path);
-					fBannerImage = ImageDescriptor.createFromURL(iconURL);
-				} catch (MalformedURLException mue) {
-					DebugUIPlugin.log(mue);
-				}	            
-	        }
-	    }
-	    return fBannerImage;
-	}	
 }
 
