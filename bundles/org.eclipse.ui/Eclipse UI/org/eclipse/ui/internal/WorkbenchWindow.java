@@ -215,10 +215,10 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	addMenuBar();
 	
 	IPreferenceStore store = workbench.getPreferenceStore();
-	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
+//	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
 		addCoolBar(SWT.FLAT);
-	else
-		addToolBar(SWT.FLAT | SWT.WRAP);
+//	else
+//		addToolBar(SWT.FLAT | SWT.WRAP);
 		
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
