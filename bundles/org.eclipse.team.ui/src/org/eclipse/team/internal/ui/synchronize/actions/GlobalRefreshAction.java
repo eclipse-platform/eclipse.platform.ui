@@ -58,15 +58,6 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
-	public void update() {
-		ISynchronizeParticipantReference[] pages = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-		setEnabled(pages.length >= 1);
-	}
-
 	public GlobalRefreshAction() {
 		synchronizeAction = new Action(Policy.bind("GlobalRefreshAction.4")) { //$NON-NLS-1$
 			public void run() {
@@ -159,8 +150,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			p.run(null /* no workbench part */);
 			updateTooltipMessage();
 		} catch (TeamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Utils.handle(e);
 		}
 	}
 	
@@ -174,6 +164,5 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	
 	protected void updateTooltipMessage() {
 		setToolTipText(Policy.bind("GlobalRefreshAction.4")); //$NON-NLS-1$
-		setToolTipText("THIS IS COOL"); //$NON-NLS-1$
 	}
 }

@@ -95,7 +95,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	/*
 	 * Constant used for postponement
 	 */
-	private static final IStatus POSTPONED = new Status(IStatus.CANCEL, TeamUIPlugin.ID, 0, "Scheduled refresh postponed due to conflicting operation", null);
+	private static final IStatus POSTPONED = new Status(IStatus.CANCEL, TeamUIPlugin.ID, 0, "Scheduled refresh postponed due to conflicting operation", null); //$NON-NLS-1$
 	
 	/**
 	 * Notification for safely notifying listeners of refresh lifecycle.
@@ -257,7 +257,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(! isJobModal()));
-				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 				event.setStatus(calculateStatus(event));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
@@ -356,7 +355,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				if(gotoAction[0] != null) {
 					return gotoAction[0].isEnabled();
 				}
-				return false;
+				return true;
 			}
 			
 			public void dispose() {
@@ -389,7 +388,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 					if(isModal) {
 						if(runnable != null) {
 							final IAction[] r = new IAction[] {runnable};
-							Job update = new UIJob("") {
+							Job update = new UIJob("") { //$NON-NLS-1$
 								public IStatus runInUIThread(IProgressMonitor monitor) {
 									r[0].run();
 									return Status.OK_STATUS;
