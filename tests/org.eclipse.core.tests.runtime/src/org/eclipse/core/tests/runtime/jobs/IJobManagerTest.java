@@ -456,7 +456,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			
 		//try finding all jobs by supplying the NULL parameter
 		Job [] result = manager.find(null);
-		assertTrue("1.0", result.length == NUM_JOBS);
+		assertEquals("1.0", NUM_JOBS, result.length);
 		for(int i = 0; i < result.length; i++) {
 				assertTrue("1." +(i+1), (result[i].belongsTo(first) || result[i].belongsTo(second) || result[i].belongsTo(third) || 
 						result[i].belongsTo(fourth) || result[i].belongsTo(fifth)));
