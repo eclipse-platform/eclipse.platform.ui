@@ -428,11 +428,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					fControl= control;
 					fImage= image;
 					fText= text;
-					fDx= -8;
+					fDx= -5;
 					fDy= dy;
 					if (fgCarbon) {
 						if (control instanceof Text) {
-							fDx= -5;
 							fDy+= 3;
 						} else if (control instanceof Combo) {
 							fDx= -9;
@@ -440,9 +439,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					} else if (fgWin32) {
 						if (control instanceof Text) {
 							fDx= -7;
-							fDy-= 3;
-						} else if (control instanceof Combo) {
-							fDx= -5;
+							fDy-= 2;
 						}
 					}
 				}

@@ -146,7 +146,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		 * FIXME: the two space widths below is a workaround for bug 44072
 		 */
 		int x= 2 * spaceWidth + fCombo.getClientArea().x + fCombo.getBorderWidth() + extent.x;
-		return new Point(x, 0);
+		return new Point(x, fCombo.getClientArea().y);
 	}
 
 	/*
