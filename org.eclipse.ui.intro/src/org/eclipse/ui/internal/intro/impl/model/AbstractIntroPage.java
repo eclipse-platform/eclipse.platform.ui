@@ -278,7 +278,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 // call init on the new element. the filtering and the style-id
                 // are loaded by the parent class.
                 init(pageElement, getBundle());
-                // TODO: revisit.
+                // TODO: revisit. Special processing here should be made
+                // general.
                 style_id = element
                         .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
                 filteredFrom = element

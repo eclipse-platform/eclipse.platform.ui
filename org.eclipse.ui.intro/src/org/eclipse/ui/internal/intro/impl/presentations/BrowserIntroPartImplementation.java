@@ -34,7 +34,6 @@ public class BrowserIntroPartImplementation extends
             this);
 
 
-
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
             forwardAction.setEnabled(canNavigateForward());
@@ -52,7 +51,6 @@ public class BrowserIntroPartImplementation extends
      * create the browser and set it's contents
      */
     public void createPartControl(Composite parent) {
-
         browser = new Browser(parent, SWT.NONE);
 
         // add a location listener on the browser so we can intercept
@@ -102,7 +100,6 @@ public class BrowserIntroPartImplementation extends
 
 
     private void handleDynamicIntro() {
-
         IntroHomePage homePage = getModel().getHomePage();
         // check cache state.
         String cachedPage = getCachedCurrentPage();
@@ -117,19 +114,20 @@ public class BrowserIntroPartImplementation extends
                     return;
                 }
             } else {
-                // Generate HTML for the cached page, and set it
-                // on the browser.
-                getModel().setCurrentPageId(cachedPage);
-                generateDynamicContentForPage(getModel().getCurrentPage());
+                // Generate HTML for the cached page, and set it on the browser.
+                // getModel().setCurrentPageId(cachedPage);
+                // generateDynamicContentForPage(getModel().getCurrentPage());
             }
             updateHistory(cachedPage);
 
         } else {
             // No cached page. Generate HTML for the home page, and set it
             // on the browser.
-            generateDynamicContentForPage(homePage);
+            // generateDynamicContentForPage(homePage);
             updateHistory(homePage.getId());
         }
+        // REVISIT: all setText calls above are commented out because calling
+        // setText twice causes problems. revisit when swt bug is fixed.
 
         // Add this presentation as a listener to model
         // only in dynamic case, for now.
@@ -199,6 +197,7 @@ public class BrowserIntroPartImplementation extends
 
     public void dynamicStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
+
         // if we have a standby part, regardless if standby state, disable
         // actions.
         if (isStandbyPartNeeded | standby) {
@@ -221,17 +220,19 @@ public class BrowserIntroPartImplementation extends
         if (standbyPage == null)
             standbyPage = homePage;
 
-        // TODO: revisit. do we really need to set current page?
-        if (standby)
-            getModel().setCurrentPageId(standbyPage.getId());
-        else {
-            // trick model into firing event, outside thread.
-            String currentPageId = getModel().getCurrentPageId();
-            getModel().setCurrentPageId("", false); //$NON-NLS-1$
-            getModel().setCurrentPageId(currentPageId);
+        if (standby) {
+            generateDynamicContentForPage(getModel().getStandbyPage());
+        } else {
+            // REVISIT: If cached page is the standby page and we are not
+            // initially in standby mode, it means standby was forced on
+            // intro view on close. react.
+            if (getModel().getCurrentPage().equals(standbyPage.getId()))
+                getModel().setCurrentPageId(getModel().getHomePage().getId());
+            generateDynamicContentForPage(getModel().getCurrentPage());
         }
-
     }
+
+
 
     /**
      * Handle model property changes. Property listeners are only added in the
@@ -272,7 +273,7 @@ public class BrowserIntroPartImplementation extends
         // and returns "about:blank" if we are on a dynamic page
         if (browser != null && browser.getUrl() != null
                 && browser.getUrl().length() > 0
-                && !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
+                && !(browser.getUrl().equals("about:blank"))) {
             String currentURL = browser.getUrl();
             if (currentURL != null) {
                 memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
