@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -665,5 +667,22 @@ public abstract class WorkbenchAdvisor {
         }
         return true;
     }
+
+	/**
+	 * Creates and returns the control to be shown when a window has no open pages.
+	 * If <code>null</code> is returned, the default window background is shown.
+	 * <p>
+	 * The default implementation returns <code>null</code>.
+	 * Subclasses may override.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the workbench window
+	 * @param parent the parent composite
+	 * @return the control or <code>null</code>
+	 * @since 3.1
+	 */
+	public Control createEmptyWindowContents(IWorkbenchWindowConfigurer configurer, Composite parent) {
+		return null;
+	}
 }
 

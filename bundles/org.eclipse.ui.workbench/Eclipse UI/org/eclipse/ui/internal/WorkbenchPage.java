@@ -42,9 +42,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -102,8 +99,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IWorkingSet workingSet;
 
     private Composite composite;
-
-    private ControlListener resizeListener;
 
     private IWorkbenchPart activePart;
 
@@ -1121,16 +1116,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Creates the client composite.
      */
     private void createClientComposite() {
-        final Composite parent = window.getPageComposite();
+        Composite parent = window.getPageComposite();
         composite = new Composite(parent, SWT.NONE);
         composite.setVisible(false); // Make visible on activate.
-        composite.setBounds(parent.getClientArea());
-        resizeListener = new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                composite.setBounds(parent.getClientArea());
-            }
-        };
-        parent.addControlListener(resizeListener);
+        // force the client composite to be layed out
+        parent.layout();
     }
 
     /**
@@ -1291,7 +1281,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         editorPresentation.dispose();
 
         // Get rid of composite.
-        window.getPageComposite().removeControlListener(resizeListener);
         composite.dispose();
 
         navigationHistory.dispose();

@@ -46,11 +46,11 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -133,7 +133,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
     ProgressRegion progressRegion;
 
-    private Label noOpenPerspective;
+	private boolean emptyWindowContentsCreated = false;
+
+	private Control emptyWindowContents;
 
     private Rectangle normalBounds;
 
@@ -329,7 +331,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private int largeUpdates = 0;
 
 	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
-    
+
     void registerActionSets(IActionSet[] actionSets) {
         
         HashMap newActionSetHandlersByCommandId = new HashMap();
@@ -574,6 +576,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * @see Window
      */
     public int open() {
+    	if (getPages().length == 0) {
+    		showEmptyWindowContents();
+    	}
         getAdvisor().postWindowCreate(getWindowConfigurer());
         getAdvisor().openIntro(getWindowConfigurer());
         int result = super.open();
@@ -642,7 +647,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
             page.dispose();
         }
         if (!closing)
-            showEmptyWindowMessage();
+            showEmptyWindowContents();
     }
 
     /**
@@ -689,17 +694,28 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 setActivePage(newPage);
         }
         if (!closing && pageList.isEmpty())
-            showEmptyWindowMessage();
+            showEmptyWindowContents();
         return true;
     }
 
-    private void showEmptyWindowMessage() {
-        Composite parent = getPageComposite();
-        if (noOpenPerspective == null) {
-            noOpenPerspective = new Label(parent, SWT.NONE);
-            noOpenPerspective.setText(WorkbenchMessages
-                    .getString("WorkbenchWindow.noPerspective")); //$NON-NLS-1$
-            noOpenPerspective.setBounds(parent.getClientArea());
+    private void showEmptyWindowContents() {
+        if (!emptyWindowContentsCreated) {
+            Composite parent = getPageComposite();
+	        emptyWindowContents = getAdvisor().createEmptyWindowContents(getWindowConfigurer(), parent);
+	        emptyWindowContentsCreated = true;
+            // force the empty window composite to be layed out
+            parent.layout();
+        }
+    }
+    
+    private void hideEmptyWindowContents() {
+        if (emptyWindowContentsCreated) {
+            if (emptyWindowContents != null) {
+                emptyWindowContents.dispose();
+                emptyWindowContents = null;
+                getPageComposite().layout();
+            }
+            emptyWindowContentsCreated = false;
         }
     }
 
@@ -737,6 +753,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     protected Composite createPageComposite(Composite parent) {
         pageComposite = new Composite(parent, SWT.NONE);
+        pageComposite.setLayout(new FillLayout());        
         return pageComposite;
     }
 
@@ -2137,6 +2154,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                     pageList.setActive(in);
                 WorkbenchPage newPage = pageList.getActive();
                 if (newPage != null) {
+                	hideEmptyWindowContents();
                     newPage.onActivate();
                     firePageActivated(newPage);
                     if (newPage.getPerspective() != null)
@@ -2156,11 +2174,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
                     perspectiveSwitcher.update(false);
 
                 getMenuManager().update(IAction.TEXT);
-
-                if (noOpenPerspective != null && in != null) {
-                    noOpenPerspective.dispose();
-                    noOpenPerspective = null;
-                }
             }
         });
     }
