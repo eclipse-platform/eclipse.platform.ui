@@ -24,7 +24,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
-public class BreakpointsView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
+public class BreakpointsView extends AbstractDebugView implements IDoubleClickListener {
 	
 	protected final static String PREFIX= "breakpoints_view.";
 	
@@ -51,7 +51,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 		createContextMenu(((TableViewer)fViewer).getTable());
 				
 		fViewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
-		fViewer.addSelectionChangedListener(this);
 		fViewer.addDoubleClickListener(this);
 		fViewer.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -68,7 +67,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 	public void dispose() {
 		super.dispose();
 		if (fViewer != null) {
-			fViewer.removeSelectionChangedListener(this);
 			fViewer.removeDoubleClickListener(this);
 		}
 		cleanupActions();
@@ -119,10 +117,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 
 	/**
 	 * Opens a marker for the current selection.
-	 * An editor will be opened if <code>open</code> is <code>true</code>
-	 * This will only occur for selections containing a single breakpoint.
+	 * This will only occur for selections containing a single existing breakpoint.
 	 */
-	public void openMarkerForCurrentSelection(boolean open) {
+	public void openMarkerForCurrentSelection() {
 		IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
 		if (selection.size() != 1) {
 			//Single selection only
@@ -136,14 +133,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
 		IWorkbenchPage page= dwindow.getActivePage();
 		if (page == null) {
-			return;
-		}
-		IEditorPart editor= getOpenEditor(breakpoint, page);
-		if (editor != null) {
-			editor.gotoMarker(breakpoint);
-			return;
-		}
-		if (!open) {
 			return;
 		}
 		
@@ -191,18 +180,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 	 * @see IDoubleClickListener
 	 */
 	public void doubleClick(DoubleClickEvent event) {
-		openMarkerForCurrentSelection(true);
-	}
-
-	/**
-	 * @see ISelectionChangedListener
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		if (event.getSelection().isEmpty()) {
-			return;
-		}
-		//FIXME: See PR 1G4CLUB
-		openMarkerForCurrentSelection(false);
+		openMarkerForCurrentSelection();
 	}
 
 	/**
