@@ -9,23 +9,22 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.GenericListItem;
-import org.eclipse.jface.viewers.GenericListViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -36,14 +35,13 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * Baseclass for preference dialogs that will show two tabs of preferences -
+ * Base class for preference dialogs that will show two tabs of preferences -
  * filtered and unfiltered.
  * 
  * @since 3.0
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
-	private GenericListViewer genericListViewer;
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
@@ -84,10 +82,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		genericListViewer = createListViewer(composite);
-
-		GridData listData = new GridData(GridData.FILL_HORIZONTAL);
-		genericListViewer.getControl().setLayoutData(listData);
+		ToolBar toolbar = createToolBar(composite);
+		
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		data.horizontalAlignment = SWT.CENTER;
+		toolbar.setLayoutData(data);
 
 		super.createDialogArea(composite);
 
@@ -101,61 +100,31 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @param composite
 	 * @return GenericListViewer
 	 */
-	private GenericListViewer createListViewer(Composite composite) {
+	private ToolBar createToolBar(Composite composite) {
 
 		final ILabelProvider labelProvider = getCategoryLabelProvider();
-
-		final GenericListViewer listViewer = new GenericListViewer(composite, SWT.BORDER) {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.GenericListViewer#createListItem(java.lang.Object,
-			 *      org.eclipse.swt.graphics.Color,
-			 *      org.eclipse.jface.viewers.GenericListViewer)
-			 */
-			public GenericListItem createListItem(Object element, Color color,
-					GenericListViewer viewer) {
-				PreferencesCategoryItem item = new PreferencesCategoryItem(element, labelProvider);
-				item.createControl(viewer.getComposite(), color);
-				return item;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.GenericListViewer#itemSelected(org.eclipse.jface.viewers.GenericListItem)
-			 */
-			protected void itemSelected(GenericListItem item) {
-				getTreeViewer().setInput(item.getElement());
-				
-
-			}
-
-		};
-
-		listViewer.getControl().setBackground(
-				composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		// Register help listener on the tree to use context sensitive help
-		listViewer.getControl().addHelpListener(new HelpListener() {
-			public void helpRequested(HelpEvent event) {
-				// call perform help on the current page
-				if (getCurrentPage() != null) {
-					getCurrentPage().performHelp();
+		
+		ToolBar toolbar = new ToolBar(composite,SWT.HORIZONTAL);
+	
+		WorkbenchPreferenceGroup[] groups = getGroups();
+		
+		for (int i = 0; i < groups.length; i++) {
+			final WorkbenchPreferenceGroup group = groups[i];
+			ToolItem newItem = new ToolItem(toolbar,SWT.RADIO);
+			newItem.setText(group.getName());
+			newItem.setImage(group.getImage());
+			newItem.addSelectionListener(new SelectionAdapter(){
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetSelected(SelectionEvent e) {
+					getTreeViewer().setInput(group);
 				}
-			}
-		});
-		listViewer.setLabelProvider(labelProvider);
-		listViewer.setContentProvider(getCategoryContentProvider());
+			});
+			
+		}
 
-		listViewer.setInput(getPreferenceManager());
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = getLastRightWidth();
-		gd.verticalSpan = 1;
-		listViewer.getControl().setLayoutData(gd);
-
-		return listViewer;
+		return toolbar;
 	}
 
 	/**
