@@ -7,6 +7,7 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.ICombinedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 
 /**
@@ -340,4 +341,10 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * </p>
  */
 public ILabelDecorator getDecoratorManager();
+
+/**
+ * Returns an ICombinedLabelDecorator version of the 
+ * decorator manager
+ */
+public ICombinedLabelDecorator getCombinedDecoratorManager();
 }

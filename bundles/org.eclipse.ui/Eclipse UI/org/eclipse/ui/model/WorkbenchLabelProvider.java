@@ -4,11 +4,12 @@ package org.eclipse.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import java.util.*;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -17,7 +18,7 @@ import java.util.*;
  * This class provides a facility for subclasses to define annotations
  * on the labels and icons of adaptable objects.
  */
-public class WorkbenchLabelProvider extends LabelProvider {
+public class WorkbenchLabelProvider extends LabelProvider implements ICombinedLabelProvider{
 	/**
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
@@ -115,4 +116,11 @@ public final String getText(Object element) {
 	//return the decorated label
 	return decorateText(label, element);
 }
+	/**
+	 * @see ICombinedLabelProvider#getCombinedLabel(Object)
+	 */
+	public CombinedLabel getCombinedLabel(Object element) {
+		return new CombinedLabel(getText(element),getImage(element));
+	}
+
 }

@@ -21,7 +21,7 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * @since 2.0
  */
 public class DecoratorManager
-	implements ICombinedLabelDecorator, ILabelProviderListener {
+	implements ICombinedLabelDecorator, ILabelDecorator, ILabelProviderListener {
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
@@ -144,22 +144,9 @@ public class DecoratorManager
 		Object element,
 		boolean checkAdapted) {
 
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		String result = text;
-		for (int i = 0; i < decorators.length; i++) {
-			String newResult = decorators[i].decorateText(result, element);
-			if (newResult != null)
-				result = newResult;
-		}
-
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				result = decorateText(result, adapted, false);
-		}
-
-		return result;
+		CombinedLabel result = new CombinedLabel(text,null);
+		decorateLabel(element,result,checkAdapted);
+		return result.getText();
 	}
 
 	/**
@@ -180,22 +167,9 @@ public class DecoratorManager
 		Object element,
 		boolean checkAdapted) {
 
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		Image result = image;
-		for (int i = 0; i < decorators.length; i++) {
-			Image newResult = decorators[i].decorateImage(result, element);
-			if (newResult != null)
-				result = newResult;
-		}
-
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				result = decorateImage(result, adapted, false);
-		}
-
-		return result;
+		CombinedLabel result = new CombinedLabel(null,image);
+		decorateLabel(element,result,checkAdapted);
+		return result.getImage();
 	}
 
 	/**

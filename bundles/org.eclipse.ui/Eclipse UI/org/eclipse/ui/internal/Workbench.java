@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.ICombinedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -1106,6 +1107,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public ILabelDecorator getDecoratorManager() {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
+	}
+
+	/**
+	 * @see IWorkbench#getCombinedDecoratorManager()
+	 */
+	public ICombinedLabelDecorator getCombinedDecoratorManager() {
+		return (ICombinedLabelDecorator) WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
 }

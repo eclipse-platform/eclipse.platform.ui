@@ -149,9 +149,9 @@ public class ResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(
-			new DecoratingLabelProvider(
+			new CombinedDecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				getPlugin().getWorkbench().getDecoratorManager()));
+				getPlugin().getWorkbench().getCombinedDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
@@ -660,11 +660,11 @@ public class ResourceNavigator
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
 	 * @deprecated use the decorators extension point instead; see IWorkbench.getDecoratorManager()
 	 */
-	public void setLabelDecorator(ILabelDecorator decorator) {
-		DecoratingLabelProvider provider =
-			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
+	public void setLabelDecorator(ICombinedLabelDecorator decorator) {
+		CombinedDecoratingLabelProvider provider =
+			(CombinedDecoratingLabelProvider) getTreeViewer().getLabelProvider();
 		if(decorator == null)
-			provider.setLabelDecorator(getPlugin().getWorkbench().getDecoratorManager());
+			provider.setLabelDecorator(getPlugin().getWorkbench().getCombinedDecoratorManager());
 		else
 			provider.setLabelDecorator(decorator);
 	}
