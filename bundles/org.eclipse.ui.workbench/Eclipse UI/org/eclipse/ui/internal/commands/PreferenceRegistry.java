@@ -173,7 +173,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (scope == null)
 			scope = Persistence.ZERO_LENGTH_STRING;
 
-		return KeyBinding.create(command, keyConfiguration, keySequence, Persistence.ZERO_LENGTH_STRING, Persistence.ZERO_LENGTH_STRING, plugin, 0, scope);
+		return KeyBinding.create(command, keyConfiguration, keySequence, Persistence.ZERO_LENGTH_STRING, Persistence.ZERO_LENGTH_STRING, plugin, RANK_PREFERENCE, scope);
 	}
 
 	private static List readDeprecatedKeyBindings(IMemento memento, String name)

@@ -279,10 +279,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		List pathItems = new ArrayList();
-		pathItems.add(Manager.systemPlatform());
-		pathItems.add(Manager.systemLocale());
-		state = State.create(pathItems);
+		List paths = new ArrayList();
+		paths.add(Manager.systemPlatform());
+		paths.add(Manager.systemLocale());
+		state = State.create(paths);
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
@@ -979,11 +979,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			CommandRecord commandRecord = getSelectedCommandRecord();
 		
 			if (commandRecord == null)
+				// TODO constant RANK_PREFERENCE instead of 0
 				set(tree, KeyBinding.create(commandId, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
 			else {
 				if (!commandRecord.customSet.isEmpty())
 					clear(tree, keySequence, scopeId, keyConfigurationId);
 				else
+					// TODO constant RANK_PREFERENCE instead of 0
 					set(tree, KeyBinding.create(null, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
 			}
 

@@ -252,14 +252,14 @@ public final class Machine {
 				if (keyConfiguration == null)
 					continue;
 
-				List pathItems = new ArrayList();
-				pathItems.add(scope);
-				pathItems.add(keyConfiguration);
-				State scopeKeyConfiguration = State.create(pathItems);						
-				pathItems = new ArrayList();
-				pathItems.add(Manager.pathForPlatform(keyBinding.getPlatform()));
-				pathItems.add(Manager.pathForLocale(keyBinding.getLocale()));
-				State platformLocale = State.create(pathItems);		
+				List paths = new ArrayList();
+				paths.add(scope);
+				paths.add(keyConfiguration);
+				State scopeKeyConfiguration = State.create(paths);						
+				paths = new ArrayList();
+				paths.add(Manager.pathForPlatform(keyBinding.getPlatform()));
+				paths.add(Manager.pathForLocale(keyBinding.getLocale()));
+				State platformLocale = State.create(paths);		
 				KeyNode.add(tree, keyBinding, scopeKeyConfiguration, platformLocale);
 			}
 		}
@@ -297,16 +297,16 @@ public final class Machine {
 				if (scope == null)
 					scope = Path.create();
 
-				List pathItems = new ArrayList();
-				pathItems.add(scope);
-				pathItems.add(keyConfiguration);		
-				scopeKeyConfigurations[i] = State.create(pathItems);
+				List paths = new ArrayList();
+				paths.add(scope);
+				paths.add(keyConfiguration);		
+				scopeKeyConfigurations[i] = State.create(paths);
 			}
 			
-			List pathItems = new ArrayList();
-			pathItems.add(Manager.systemPlatform());
-			pathItems.add(Manager.systemLocale());
-			State platformLocale = State.create(pathItems);			
+			List paths = new ArrayList();
+			paths.add(Manager.systemPlatform());
+			paths.add(Manager.systemLocale());
+			State platformLocale = State.create(paths);			
 			KeyNode.solve(tree, scopeKeyConfigurations, new State[] { platformLocale } );
 			solved = true;
 		}

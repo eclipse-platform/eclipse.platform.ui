@@ -264,7 +264,7 @@ public final class CoreRegistry extends AbstractRegistry {
 				
 					while (iterator.hasNext()) {
 						KeySequence keySequence = (KeySequence) iterator.next();			
-						keyBindings.add(KeyBinding.create(id, keyConfiguration, keySequence, locale, platform, plugin, 0, scope));	
+						keyBindings.add(KeyBinding.create(id, keyConfiguration, keySequence, locale, platform, plugin, RANK_CORE, scope));	
 					}
 				}
 			}
