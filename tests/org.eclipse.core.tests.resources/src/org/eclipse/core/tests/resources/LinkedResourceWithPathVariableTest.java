@@ -169,7 +169,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	 * Tests a scenario where a variable used in a linked file location is
 	 * removed.
 	 */
-	public void testVariableRemoved() {
+	public void testFileVariableRemoved() {
 		final IPathVariableManager manager = getWorkspace().getPathVariableManager();
 
 		IFile file = nonExistingFileInExistingProject;
@@ -209,8 +209,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			file.refreshLocal(IResource.DEPTH_ONE, getMonitor());
 			file.getProject().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
-			fail("3.2", e);
+			fail("3.2");
 		}
+
 		assertExistsInWorkspace("3.3", file);
 
 		// try to change resource's contents
@@ -242,5 +243,93 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		} catch (CoreException e) {
 			fail("5.4", e);
 		}
+	}
+
+	/**
+	 * Tests a scenario where a variable used in a linked folder location is
+	 * removed.
+	 */
+	public void testFolderVariableRemoved() {
+		final IPathVariableManager manager = getWorkspace().getPathVariableManager();
+	
+		IFolder folder = nonExistingFolderInExistingProject;
+		IFile childFile = folder.getFile(childName);
+		IPath existingValue = manager.getValue(VARIABLE_NAME);
+	
+		// creates a variable-based location
+		IPath variableBasedLocation = getRandomLocation();
+	
+		// the file should not exist yet
+		assertDoesNotExistInWorkspace("1.0", folder);
+	
+		try {
+			folder.createLink(variableBasedLocation, IResource.ALLOW_MISSING_LOCAL, null);
+			childFile.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		try {
+			childFile.setContents(getContents("contents for a file"), IResource.FORCE, null);
+		} catch (CoreException e) {
+			fail("1.2", e);
+		}
+	
+		// now the file exists in both workspace and file system
+		assertExistsInWorkspace("2.0", folder);
+		assertExistsInWorkspace("2.1", childFile);
+		assertExistsInFileSystem("2.2", folder);
+		assertExistsInFileSystem("2.3", childFile);
+	
+		// removes the variable - the location will be undefined (null)
+		try {
+			manager.setValue(VARIABLE_NAME, null);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		assertExistsInWorkspace("3,1", folder);
+		
+		//refresh local - should not fail but should cause link's children to disappear
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			folder.getProject().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.2", e);
+		}
+		assertExistsInWorkspace("3.3", folder);
+		assertDoesNotExistInWorkspace("3.4", childFile);
+		// try to change resource's contents
+		try {
+			childFile.setContents(getContents("new contents"), IResource.NONE, null);
+			// Resource has no-defined location - should fail
+			fail("3.5");
+		} catch (CoreException re) {
+			// success: resource had no defined location
+		}
+	
+		assertExistsInWorkspace("3.6", folder);
+		// the location is null
+		assertNull("3.7", folder.getLocation());
+	
+		// re-creates the variable with its previous value
+		try {
+			manager.setValue(VARIABLE_NAME, existingValue);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+	
+		assertExistsInWorkspace("5.0", folder);
+		assertNotNull("5.1", folder.getLocation());
+		assertExistsInFileSystem("5.2", folder);
+		assertDoesNotExistInWorkspace("5.3", childFile);
+		assertExistsInFileSystem("5.4", childFile);
+		
+		//refresh should recreate the child
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+		assertExistsInWorkspace("6.1", folder);
+		assertExistsInWorkspace("6.2", childFile);
 	}
 }
