@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -33,8 +32,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class DebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
 
 	private RadioGroupFieldEditor fSaveRadioFieldEditor;
-	
-	private static final String PERSPECTIVE_NONE_NAME = LaunchConfigurationsMessages.getString("CommonTab.None");; //$NON-NLS-1$
 	
 	public DebugPreferencePage() {
 		super(GRID);
