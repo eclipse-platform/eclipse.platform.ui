@@ -247,8 +247,7 @@ public class BasicStackPresentation extends StackPresentation {
         	.addPropertyChangeListener(themeListener);
 		
 		
-		viewToolBar = new ToolBar(control.getControl(), SWT.HORIZONTAL 
-				| SWT.FLAT);
+		viewToolBar = new ToolBar(control.getControl(), SWT.FLAT);
 		viewToolBar.moveAbove(null);
 
 		updateGradient();
@@ -396,18 +395,12 @@ public class BasicStackPresentation extends StackPresentation {
     
     /**
      * Update the folder colors and fonts based on the current active state.  
-     * Default implementation only sets the viewToolBar background to the 
-     * correct value.  Subclasses should override, ensuring that they call
+     * Subclasses should override, ensuring that they call
      * super after all color/font changes.
      */
     protected void updateGradient() {        
-        if (viewToolBar == null || viewToolBar.isDisposed())
-            return;
-        
-		//ensure the bar has the same background as the view title.
-		viewToolBar.setBackground(tabFolder.getControl().getBackground());        
+    	// do nothing
     }   
-    
 	
 	/**
      * @return the required tab height for this folder.
