@@ -159,6 +159,8 @@ public class UpdateCommand extends ScriptedCommand {
 					null);
 
 			IConfiguredSite site = UpdateUtils.getDefaultTargetSite(config, op);
+			if (site == null) {
+				site = UpdateUtils.getAffinitySite(config, feature);
 			if (site == null)
 				site = targetSite;
 
