@@ -71,7 +71,7 @@ class WorkerPool {
 		int threadCount = threads.size();
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
-		if ((busyThreads == threadCount && threadCount < MAX_THREADS) || (job != null && job.getPriority() == Job.INTERACTIVE)) {
+		if (busyThreads >= threadCount && (threadCount < MAX_THREADS || (job != null && job.getPriority() == Job.INTERACTIVE))) {
 			Worker worker = new Worker(this);
 			threads.add(worker);
 			if (JobManager.DEBUG)
