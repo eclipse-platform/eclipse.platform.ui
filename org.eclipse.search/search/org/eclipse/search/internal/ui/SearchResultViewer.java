@@ -5,7 +5,10 @@
 package org.eclipse.search.internal.ui;
 
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
@@ -14,6 +17,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -27,12 +31,14 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -83,8 +89,12 @@ public class SearchResultViewer extends TableViewer {
 	private IActionGroupFactory fActionGroupFactory;	
 	private IAction fGotoMarkerAction;
 	
+	private ResourceToItemsMapper fResourceToItemsMapper;
+	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
 		super(new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
+
+		fResourceToItemsMapper= new ResourceToItemsMapper(this);
 		
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
@@ -614,4 +624,55 @@ public class SearchResultViewer extends TableViewer {
 	void saveState(IMemento memento) {
 		fSortDropDownAction.saveState(memento);
 	}	
+
+	/*
+	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
+	 */
+	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
+		Object[] changed= event.getElements();
+		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
+			ArrayList others= new ArrayList(changed.length);
+			for (int i= 0; i < changed.length; i++) {
+				Object curr= changed[i];
+				if (curr instanceof IResource) {
+					fResourceToItemsMapper.resourceChanged((IResource) curr);
+				} else {
+					others.add(curr);
+				}
+			}
+			if (others.isEmpty()) {
+				return;
+			}
+			event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
+		}
+		super.handleLabelProviderChanged(event);
+	}
+
+	/*
+	 * @see StructuredViewer#mapElement(Object, Widget)
+	 */
+	protected void mapElement(Object element, Widget item) {
+		super.mapElement(element, item);
+		if (item instanceof Item) {
+			fResourceToItemsMapper.addToMap(element, (Item)item);
+		}
+	}
+
+	/*
+	 * @see StructuredViewer#unmapElement(Object, Widget)
+	 */
+	protected void unmapElement(Object element, Widget item) {
+		if (item instanceof Item) {
+			fResourceToItemsMapper.removeFromMap(element, (Item)item);
+		}		
+		super.unmapElement(element, item);
+	}
+
+	/*
+	 * @see StructuredViewer#unmapAllElements()
+	 */
+	protected void unmapAllElements() {
+		fResourceToItemsMapper.clearMap();
+		super.unmapAllElements();
+	}
 }
