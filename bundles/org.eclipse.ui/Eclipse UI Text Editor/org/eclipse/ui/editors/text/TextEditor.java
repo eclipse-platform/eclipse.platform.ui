@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
@@ -37,6 +40,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
@@ -66,7 +70,10 @@ public class TextEditor extends StatusTextEditor {
 	 */
 	public TextEditor() {
 		super();
-		
+		initializeEditor();
+	}
+	
+	protected void initializeEditor() {
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
@@ -100,20 +107,35 @@ public class TextEditor extends StatusTextEditor {
 		Shell shell= getSite().getShell();
 		
 		SaveAsDialog dialog= new SaveAsDialog(shell);
-		IEditorInput input = getEditorInput();
-		if (input instanceof IFileEditorInput)
-			dialog.setOriginalFile(((IFileEditorInput) input).getFile());
-		dialog.open();
-		IPath path= dialog.getResult();
+		dialog.create();
 		
-		if (path == null) {
+		IEditorInput input = getEditorInput();
+		
+		IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
+		if (original != null)
+			dialog.setOriginalFile(original);
+			
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider.isDeleted(input) && original != null) {
+			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() });
+			dialog.setMessage(message, IMessageProvider.WARNING);
+		}
+		
+		if (dialog.open() == Dialog.CANCEL) {
+			if (progressMonitor != null)
+				progressMonitor.setCanceled(true);
+			return;
+		}
+			
+		IPath filePath= dialog.getResult();
+		if (filePath == null) {
 			if (progressMonitor != null)
 				progressMonitor.setCanceled(true);
 			return;
 		}
 			
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IFile file= workspace.getRoot().getFile(path);
+		IFile file= workspace.getRoot().getFile(filePath);
 		final IEditorInput newInput= new FileEditorInput(file);
 		
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
@@ -194,9 +216,10 @@ public class TextEditor extends StatusTextEditor {
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONVERT_LINE_DELIMITERS_TO_MAC);
 		setAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, action);
 		
-//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
-//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
-//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=17709
+		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
 		
 		fEncodingSupport= new DefaultEncodingSupport();
 		fEncodingSupport.initialize(this);
