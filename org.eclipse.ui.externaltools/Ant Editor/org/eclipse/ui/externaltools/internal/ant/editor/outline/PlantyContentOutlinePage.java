@@ -195,6 +195,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	}
 	
 	private boolean isDefaultTargetNode(XmlElement node) {
+		XmlAttribute type= node.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+		if (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_TARGET)) {
+			return false;
+		}
 		XmlElement parent= node.getParentNode();
 		if (parent == null){
 			return false; 

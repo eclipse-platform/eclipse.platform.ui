@@ -20,5 +20,21 @@ public interface IAntEditorConstants {
 	public static final String ATTR_ZIPFILE= "zipfile"; //$NON-NLS-1$
 	public static final String ATTR_COMMAND= "command"; //$NON-NLS-1$
 	public static final String ATTR_EXECUTABLE= "executable"; //$NON-NLS-1$
+	public static final String ATTR_TYPE= "type"; //$NON-NLS-1$
+	/**
+	 * Values of the type attribute stored in XmlElements
+	 */
+	public static final String TYPE_TARGET = "target"; //$NON-NLS-1$
+	public static final String TYPE_PROJECT = "project";
+	public static final String TYPE_PROPERTY = "property"; //$NON-NLS-1$
+	public static final String TYPE_ANTCALL = "antcall"; //$NON-NLS-1$
+	public static final String TYPE_MKDIR = "mkdir"; //$NON-NLS-1$
+	public static final String TYPE_COPY = "copy"; //$NON-NLS-1$
+	public static final String TYPE_ARCHIVE = "archive"; //$NON-NLS-1$
+	public static final String TYPE_DECOMPRESS = "decompress"; //$NON-NLS-1$
+	public static final String TYPE_COMPRESS = "compress"; //$NON-NLS-1$
+	public static final String TYPE_EXEC = "exec"; //$NON-NLS-1$
+	public static final String TYPE_DELETE = "delete"; //$NON-NLS-1$
+	public static final String TYPE_UNKNOWN = "unknown"; //$NON-NLS-1$
 
 }
