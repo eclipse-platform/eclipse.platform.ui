@@ -117,6 +117,13 @@
             class="org.eclipse.update.internal.ui.views.SelectedUpdatesView"
             id="org.eclipse.update.ui.ItemsView">
       </view>
+      <view
+            name="New Configuration View"
+            icon="icons/full/cview16/configs.gif"
+            category="org.eclipse.update.ui"
+            class="org.eclipse.update.internal.ui.views.NewConfigurationView"
+            id="org.eclipse.update.ui.newConfigurationView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -158,6 +165,18 @@
             name="%properties.search.label"
             class="org.eclipse.update.internal.ui.properties.SearchObjectPropertyPage"
             id="org.eclipse.update.ui.searchPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
+            name="Supported Platforms"
+            class="org.eclipse.update.internal.ui.properties.FeatureEnvironmentPropertyPage"
+            id="org.eclipse.update.ui.featureEnvironmentPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
+            name="General Information"
+            class="org.eclipse.update.internal.ui.properties.FeatureGeneralPropertyPage"
+            id="org.eclipse.update.ui.featureGeneralPropertyPage">
       </page>
    </extension>
    <extension
