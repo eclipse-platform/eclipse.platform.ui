@@ -19,7 +19,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.RetargetAction;
 
 /**
@@ -129,8 +128,8 @@ public final class ActionHandler extends AbstractHandler {
                     String property = propertyChangeEvent.getProperty();
                     if (IAction.ENABLED.equals(property)
                             || IAction.CHECKED.equals(property)
-                            || (SubActionBars.P_ACTION_HANDLERS
-                                    .equals(property))) {
+                            || RetargetAction.HANDLER
+                                    .equals(property)) {
 
                         Map previousAttributeValuesByName = attributeValuesByName;
                         attributeValuesByName = getAttributeValuesByNameFromAction();

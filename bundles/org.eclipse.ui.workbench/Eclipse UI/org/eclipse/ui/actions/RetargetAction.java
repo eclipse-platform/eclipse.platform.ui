@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -45,6 +44,14 @@ import org.eclipse.ui.internal.PartSite;
  */
 public class RetargetAction extends PartEventAction implements
         ActionFactory.IWorkbenchAction {
+
+    /**
+     * Property name of a retarget action's current handler
+     * (value <code>"handler"</code>).
+     * 
+     * @since 3.1
+     */
+    public static final String HANDLER = "handler"; //$NON-NLS-1$
 
     /**
      * The help listener assigned to this action, or <code>null</code> if none.
@@ -128,8 +135,7 @@ public class RetargetAction extends PartEventAction implements
     public int getAccelerator() {
         if (enableAccelerator)
             return super.getAccelerator();
-        else
-            return 0;
+        return 0;
     }
 
     /**
@@ -187,15 +193,17 @@ public class RetargetAction extends PartEventAction implements
      * handlers on the action bars have changed. Update self.
      */
     protected void propagateChange(PropertyChangeEvent event) {
-        if (event.getProperty().equals(Action.ENABLED)) {
+        if (event.getProperty().equals(IAction.ENABLED)) {
             Boolean bool = (Boolean) event.getNewValue();
             setEnabled(bool.booleanValue());
-        } else if (event.getProperty().equals(Action.CHECKED)) {
+        } else if (event.getProperty().equals(IAction.CHECKED)) {
             Boolean bool = (Boolean) event.getNewValue();
             setChecked(bool.booleanValue());
         } else if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
-            setActionHandler(((IActionBars) event.getSource())
-                    .getGlobalActionHandler(getId()));
+            if (event.getSource() instanceof IActionBars) {
+                IActionBars bars = (IActionBars) event.getSource();
+                setActionHandler(bars.getGlobalActionHandler(getId()));
+            }
         }
     }
 
@@ -261,7 +269,7 @@ public class RetargetAction extends PartEventAction implements
         }
 		
 		// Notify listeners that the handler has changed.
-        firePropertyChange(SubActionBars.P_ACTION_HANDLERS, oldHandler,
+        firePropertyChange(HANDLER, oldHandler,
                 newHandler);
     }
 
