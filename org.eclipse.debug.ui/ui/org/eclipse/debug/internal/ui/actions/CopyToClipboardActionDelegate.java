@@ -64,20 +64,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	protected void doAction(Object element, StringBuffer buffer) {
 		append(element, buffer, (ILabelProvider)getViewer().getLabelProvider(), 0);
 	}
-	
-	/**
-	 * @see AbstractDebugActionDelegate#doAction(Object)
-	 */
-	protected void doAction(Object element) {
-		StringBuffer buffer= new StringBuffer();
-		doAction(element, buffer);
-		TextTransfer plainTextTransfer = TextTransfer.getInstance();
-		Clipboard clipboard= new Clipboard(getViewer().getControl().getDisplay());
-		clipboard.setContents(
-			new String[]{buffer.toString()}, 
-			new Transfer[]{plainTextTransfer});
-	}
-
 
 	/** 
 	 * Appends the representation of the specified element (using the label provider and indent)
@@ -136,6 +122,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 				clipboard.setContents(
 					new String[]{buffer.toString()}, 
 					new Transfer[]{plainTextTransfer});
+				clipboard.dispose();
 			}
 		});
 	}
@@ -192,5 +179,11 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 
 	protected void setViewer(ContentViewer viewer) {
 		fViewer = viewer;
+	}
+	/**
+	 * @see AbstractDebugActionDelegate#doAction(Object)
+	 */
+	protected void doAction(Object element) {
+		//not used
 	}
 }
