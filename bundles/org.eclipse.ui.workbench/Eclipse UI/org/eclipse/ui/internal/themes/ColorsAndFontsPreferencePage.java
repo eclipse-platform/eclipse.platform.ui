@@ -401,8 +401,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	Label label = new Label(mainColumn, SWT.LEFT);
     	label.setText(RESOURCE_BUNDLE.getString("category")); //$NON-NLS-1$
     	myApplyDialogFont(label);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;		
+		GridData data = new GridData(GridData.BEGINNING);		
 		label.setLayoutData(data);    	
         categoryCombo = new Combo(mainColumn, SWT.READ_ONLY);
         myApplyDialogFont(categoryCombo);
@@ -413,8 +412,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         }
         categoryCombo.add(RESOURCE_BUNDLE.getString("uncategorized")); //$NON-NLS-1$
         
-        data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;		
+        data = new GridData(GridData.FILL_HORIZONTAL);		
 		categoryCombo.setLayoutData(data);
          
         if (categories.length == 0) {
@@ -444,14 +442,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
-
-//		Label label = new Label(composite, SWT.LEFT);
-//		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
-//		myApplyDialogFont(label);
-//		Dialog.applyDialogFont(label);
-//		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-//		data.horizontalSpan = 2;
-//		label.setLayoutData(data);
 
 		colorSelector = new ColorSelector(composite);
 		colorSelector.getButton().setLayoutData(new GridData());
@@ -498,7 +488,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		});		
 		Composite mainColumn = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		mainColumn.setFont(parent.getFont());
@@ -506,17 +496,24 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		
 		ThemeElementCategory category = createCategoryControl(mainColumn);
 
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;	
+		GridData data = new GridData(GridData.BEGINNING);	
 		Label label = new Label(mainColumn, SWT.LEFT);	
 		label.setText(RESOURCE_BUNDLE.getString("colorsAndFonts")); //$NON-NLS-1$
 		myApplyDialogFont(label);
 		label.setLayoutData(data);
 		
-		createList(mainColumn);
-		Composite controlColumn = new Composite(mainColumn, SWT.NONE);
-		data = new GridData(GridData.FILL_BOTH);
-		//data.grabExcessHorizontalSpace = true;
+		Composite controlRow = new Composite(mainColumn, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		controlRow.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		controlRow.setLayoutData(data);		
+		
+		createList(controlRow);
+		Composite controlColumn = new Composite(controlRow, SWT.NONE);
+		data = new GridData(GridData.FILL_VERTICAL);
 		controlColumn.setLayoutData(data);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -561,8 +558,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = true;
-		data.horizontalSpan = 3;
 		composite.setLayoutData(data);
 
 		Label label = new Label(composite, SWT.LEFT);
@@ -585,13 +580,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
-
-//		Label label = new Label(composite, SWT.LEFT);
-//		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
-//		myApplyDialogFont(label);
-//		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-//		data.horizontalSpan = 2;
-//		label.setLayoutData(data);
 		
 		fontSystemButton = createButton(composite, WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
 
@@ -614,9 +602,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         presentationList.setLabelProvider(labelProvider);
 		presentationList.setSorter(new ViewerSorter());
 		
-		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
-		data.grabExcessVerticalSpace = true;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		presentationList.getControl().setLayoutData(data);
         myApplyDialogFont(presentationList.getControl());
 	}
@@ -627,8 +613,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private void createPreviewControl(Composite mainColumn) {
         Composite composite = new Composite(mainColumn, SWT.NONE);
         GridData data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan = 2;
-        data.widthHint = 400;
         data.heightHint = 175;
         composite.setLayoutData(data);
         GridLayout layout = new GridLayout(1, true);
@@ -962,11 +946,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {
-	    this.workbench = workbench;
-		setPreferenceStore(workbench.getPreferenceStore());
+	public void init(IWorkbench aWorkbench) {
+	    this.workbench = aWorkbench;
+		setPreferenceStore(aWorkbench.getPreferenceStore());
 		
-		final IThemeManager themeManager = workbench.getThemeManager();
+		final IThemeManager themeManager = aWorkbench.getThemeManager();
         
 		themeChangeListener = new IPropertyChangeListener() {
 
