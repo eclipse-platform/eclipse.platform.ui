@@ -438,13 +438,17 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 
 			// set the description
 			destProject.internalSetDescription(destDesc, false);
-			// call super.copy for each child
-			IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-			for (int i = 0; i < children.length; i++)
-				children[i].copy(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
-			// write out the new project description to the meta area. This will ovewrite 
-			//the .project file that was copied during the recursive copy in the previous step
+			// call super.copy for each child (excluding project description file)
+			IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			final int childWork = Policy.opWork * 50 / 100 / (children.length - 1);
+			for (int i = 0; i < children.length; i++) {
+				IResource child = children[i];
+				if (!isProjectDescriptionFile(child))
+					child.copy(destProject.getFullPath().append(child.getName()), force, Policy.subMonitorFor(monitor, childWork));
+			}
+
+			// write out the new project description to the meta area
 			try {
 				destProject.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
@@ -580,6 +584,15 @@ public boolean isOpen() {
  */
 public boolean isOpen(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_OPEN);
+}
+/**
+ * Returns true if this resource represents the project description file, and
+ * false otherwise.
+ */
+protected boolean isProjectDescriptionFile(IResource resource) {
+	return resource.getType() == IResource.FILE && 
+		resource.getFullPath().segmentCount() == 2 &&
+		resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
 
 /**
