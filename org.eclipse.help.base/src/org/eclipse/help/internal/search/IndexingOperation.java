@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.protocols.*;
@@ -243,7 +242,7 @@ class IndexingOperation {
 	 */
 	private Set getAllDocuments(String locale) {
 		HashSet hrefs = new HashSet();
-		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		IToc[] tocs = index.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
 			for (int j = 0; j < topics.length; j++) {

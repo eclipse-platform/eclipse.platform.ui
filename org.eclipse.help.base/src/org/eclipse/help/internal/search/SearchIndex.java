@@ -19,9 +19,9 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
+import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
 
@@ -34,6 +34,7 @@ public class SearchIndex {
 	private IndexWriter iw;
 	private File indexDir;
 	private String locale;
+	private TocManager tocManager;
 	private AnalyzerDescriptor analyzerDescriptor;
 	private PluginVersionInfo docPlugins;
 	// table of all document names, used during indexing batches
@@ -53,9 +54,10 @@ public class SearchIndex {
 	 * @param locale the locale this index uses
 	 * @param analyzerDesc the analyzer used to index
 	 */
-	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc) {
+	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc, TocManager tocManager) {
 		this.locale = locale;
 		this.analyzerDescriptor = analyzerDesc;
+		this.tocManager = tocManager;
 
 		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale);
 		
@@ -306,7 +308,7 @@ public class SearchIndex {
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
 			Collection docPluginsIds =
-				HelpPlugin.getTocManager().getContributingPlugins();
+				tocManager.getContributingPlugins();
 			docPlugins =
 				new PluginVersionInfo(
 					INDEXED_CONTRIBUTION_INFO_FILE,
@@ -507,4 +509,10 @@ public class SearchIndex {
 		return getDocPlugins().detectChange();
 	}
 
+	/**
+	 * @return Returns the tocManager.
+	 */
+	public TocManager getTocManager() {
+		return tocManager;
+	}
 }

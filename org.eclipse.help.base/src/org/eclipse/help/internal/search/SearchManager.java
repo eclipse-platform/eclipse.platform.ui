@@ -13,6 +13,7 @@ package org.eclipse.help.internal.search;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.IndexingOperation.*;
 
@@ -37,7 +38,7 @@ public class SearchManager {
 		synchronized (indexes) {
 			Object index = indexes.get(locale);
 			if (index == null) {
-				index = new SearchIndex(locale, getAnalyzer(locale));
+				index = new SearchIndex(locale, getAnalyzer(locale), HelpPlugin.getTocManager());
 				indexes.put(locale, index);
 			}
 			return (SearchIndex) index;
