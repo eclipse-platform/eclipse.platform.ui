@@ -20,12 +20,13 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.IWorkingSet;
-import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
@@ -89,7 +90,7 @@ public class ScopePart {
 		if (fgSettingsStore == null)
 			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
 		String lruWorkingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
-		fWorkingSet= SearchUI.findWorkingSet(lruWorkingSetName);
+		fWorkingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(lruWorkingSetName);
 	}
 
 	/**
@@ -176,7 +177,7 @@ public class ScopePart {
 		Assert.isNotNull(workingSet);
 		setSelectedScope(WORKING_SET_SCOPE);
 		String name= workingSet.getName();
-		workingSet= SearchUI.findWorkingSet(name);
+		workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
 		if (workingSet != null) {
 			fWorkingSet= workingSet;
 			fgSettingsStore.put(STORE_LRU_WORKING_SET_NAME, workingSet.getName());
@@ -267,11 +268,12 @@ public class ScopePart {
 	}
 
 	private boolean handleChooseWorkingSet() {
-		SelectionDialog dialog= SearchUI.createWorkingSetDialog(fUseSelection.getShell());
+		IWorkingSetSelectionDialog dialog=	PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(fUseSelection.getShell());
+		
 		if (fWorkingSet != null)
-			dialog.setInitialSelections(new IWorkingSet[] {fWorkingSet});
-		if (dialog.open() == dialog.OK) {
-			Object[] result= dialog.getResult();
+			dialog.setSelection(new IWorkingSet[] {fWorkingSet});
+		if (dialog.open() == Window.OK) {
+			Object[] result= dialog.getSelection();
 			if (result.length == 1) {
 				setSelectedWorkingSet((IWorkingSet)result[0]);
 				return true;
@@ -283,7 +285,7 @@ public class ScopePart {
 			return false;
 		} else {
 			// test if selected working set has been removed
-			if (!Arrays.asList(SearchUI.getWorkingSets()).contains(fWorkingSet)) {
+			if (!Arrays.asList(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()).contains(fWorkingSet)) {
 				fWorkingSetText.setText(""); //$NON-NLS-1$
 				fWorkingSet= null;
 				updateSearchPageContainerActionPerformedEnablement();

@@ -39,7 +39,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
-import org.eclipse.search.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 

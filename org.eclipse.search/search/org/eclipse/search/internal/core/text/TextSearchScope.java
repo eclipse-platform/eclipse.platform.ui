@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -55,6 +56,22 @@ public class TextSearchScope extends SearchScope {
 
 	public TextSearchScope(String description, IResource[] resources) {
 		super(description, resources);
+	}
+
+	public TextSearchScope(String description, IAdaptable[] elements) {
+		super(description, convertToResources(elements));
+
+	}
+	
+	private static IResource[] convertToResources(IAdaptable[] elements) {
+		int length= elements.length;
+		Set resources= new HashSet(length);
+		for (int i= 0; i < length; i++) {
+			IResource resource= (IResource)elements[i].getAdapter(IResource.class);
+			if (resource != null)
+				resources.add(resource);
+		}
+		return (IResource[])resources.toArray(new IResource[resources.size()]);
 	}
 	
 	/**

@@ -7,6 +7,8 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.ui.IWorkingSet;
+
 /**
  * Offers client access to the search dialog.
  * A search page can enable or disable the dialog's action

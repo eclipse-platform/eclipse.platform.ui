@@ -51,7 +51,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
@@ -122,7 +122,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet workingSet= getContainer().getSelectedWorkingSet();
 				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName()); //$NON-NLS-1$
-				scope= new TextSearchScope(desc, workingSet.getResources());
+				scope= new TextSearchScope(desc, workingSet.getElements());
 		}		
 		scope.addExtensions(patternData.fileNamePatterns);
 
