@@ -10,7 +10,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-
+import org.eclipse.jface.resource.JFaceResources;
+
 public class MainForm extends UpdateWebForm {
 	Image itemImage;
 	
@@ -48,7 +49,7 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	
 	Label topic;
-	Label link;
+	SelectableFormLabel link;
 	Label text;
 	IHyperlinkListener listener;
 
@@ -59,7 +60,8 @@ protected void createContents(Composite parent) {
 	};
 	topic = factory.createLabel(parent, null);
 	topic.setImage(itemImage);
-	link = factory.createHeadingLabel(parent, null);
+	link = new SelectableFormLabel(parent, SWT.NULL);
+	link.setFont(JFaceResources.getBannerFont());
 	link.setText("Feature Updates");
 	factory.turnIntoHyperlink(link, listener);
 
@@ -80,7 +82,8 @@ protected void createContents(Composite parent) {
 	};
 	topic = factory.createLabel(parent, null);
 	topic.setImage(itemImage);
-	link = factory.createHeadingLabel(parent, null);
+	link = new SelectableFormLabel(parent, SWT.NULL);
+	link.setFont(JFaceResources.getBannerFont());
 	link.setText("New Feature Installs");
 	factory.turnIntoHyperlink(link, listener);
 
@@ -102,7 +105,8 @@ protected void createContents(Composite parent) {
 	};
 	topic = factory.createLabel(parent, null);
 	topic.setImage(itemImage);
-	link = factory.createHeadingLabel(parent, null);
+	link = new SelectableFormLabel(parent, SWT.NULL);
+	link.setFont(JFaceResources.getBannerFont());
 	link.setText("Uninstalling Features");
 	factory.turnIntoHyperlink(link, listener);
 
@@ -122,7 +126,8 @@ protected void createContents(Composite parent) {
 	};
 	topic = factory.createLabel(parent, null);
 	topic.setImage(itemImage);
-	link = factory.createHeadingLabel(parent, null);
+	link = new SelectableFormLabel(parent, SWT.NULL);
+	link.setFont(JFaceResources.getBannerFont());
 	link.setText("Installation History");
 	factory.turnIntoHyperlink(link, listener);
 	factory.createLabel(parent, null);	

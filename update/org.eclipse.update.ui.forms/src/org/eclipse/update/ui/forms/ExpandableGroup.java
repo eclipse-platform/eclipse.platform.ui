@@ -13,11 +13,10 @@ public abstract class ExpandableGroup {
 	private String text;
 	private boolean expanded;
 	private Composite expansion;
-	protected Label textLabel;
+	protected SelectableFormLabel textLabel;
 	private Composite control;
 	private int style;
 	private boolean expandable=true;
-	private boolean hasFocus;
 	
 class ExpandableLayout extends Layout {
 	protected void layout(Composite parent, boolean changed) {
@@ -78,29 +77,6 @@ class ExpandableLayout extends Layout {
 				if (expandable) repaint(e);
 			}
 		});
-		container.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				if (!hasFocus) {
-					hasFocus = true;
-					container.redraw();
-				}
-			}
-			public void focusLost(FocusEvent e) {
-				if (hasFocus) {
-					hasFocus = false;
-					container.redraw();
-				}
-			}
-		});
-		container.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.character=='\r') {
-					if (isExpandable()) {
-						setExpanded(!isExpanded());
-					}
-				}
-			}
-		});
 		container.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				Rectangle box = getBoxBounds(null);
@@ -122,13 +98,10 @@ class ExpandableLayout extends Layout {
 		this.control = container;
 	}
 	
-	protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
-		return factory.createLabel(parent, "", SWT.NULL);
-		/*
-		FormText text = new FormText(parent, SWT.WRAP);
+	protected SelectableFormLabel createTextLabel(Composite parent, FormWidgetFactory factory) {
+		SelectableFormLabel text = new SelectableFormLabel(parent, SWT.WRAP);
 		text.setBackground(factory.getBackgroundColor());
 		return text;
-		*/
 	}
 	
 	protected HyperlinkHandler getHyperlinkHandler(FormWidgetFactory factory) {
@@ -168,6 +141,7 @@ class ExpandableLayout extends Layout {
 				aboutToCollapse();
 			}
 			this.expanded = expanded;
+			expansion.setVisible(expanded);
 			control.layout();
 			if (expanded) {
 				this.expanded();
@@ -187,11 +161,6 @@ class ExpandableLayout extends Layout {
 		gc.drawLine(box.x+2, box.y+4, box.x+6, box.y+4);
 		if (!isExpanded()) {
 			gc.drawLine(box.x+4, box.y+2, box.x+4, box.y+6);
-		}
-		Rectangle textBox = textLabel.getBounds();
-		if (isExpandable() && hasFocus) {
-			gc.setLineStyle(SWT.LINE_DOT);
-			gc.drawRectangle(textBox.x, textBox.y, textBox.width, textBox.height);
 		}
 	}
 	

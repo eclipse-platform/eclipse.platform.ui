@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.*;
 
 public class TableLayoutTest {
 
@@ -100,9 +101,9 @@ public static void main (String [] args) {
      		HTMLTableLayout layout = new HTMLTableLayout();
      		container.setLayout(layout);
      		layout.leftMargin = layout.rightMargin = 0;
-     		Label label = factory.createLabel(container, null, SWT.WRAP);
-     		label.setText("This text will be part of the expandable section");
-     	}
+     		Button button = factory.createButton(container, null, SWT.PUSH);
+     		button.setText("Button");
+    	}
      	public void expanded() {
      		c.layout(true);
      		updateSize(sc, c);
@@ -122,12 +123,35 @@ public static void main (String [] args) {
      td.align = TableData.FILL;
      exp.getControl().setLayoutData(td);
      
+     factory.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
      
-     FormText ft = new FormText(c, SWT.WRAP);
+     SelectableFormLabel ft = new SelectableFormLabel(c, SWT.WRAP);
      ft.setText("Some text in the form text that should also wrap");
+     factory.turnIntoHyperlink(ft, new IHyperlinkListener() {
+     	public void linkEntered(Control link) {
+     		System.out.println("Link entered");
+     	}
+     	public void linkExited(Control link) {
+    		System.out.println("Link exited");
+     	}
+     	public void linkActivated(Control link) {
+     		System.out.println("Link activated");
+     	}
+     });
 
-     ft = new FormText(c, SWT.WRAP);
+     ft = new SelectableFormLabel(c, SWT.WRAP);
      ft.setText("Some more form text here");
+     factory.turnIntoHyperlink(ft, new IHyperlinkListener() {
+     	public void linkEntered(Control link) {
+     		System.out.println("Link entered");
+     	}
+     	public void linkExited(Control link) {
+    		System.out.println("Link exited");
+     	}
+     	public void linkActivated(Control link) {
+     		System.out.println("Link activated");
+     	}
+     });
    
      shell.open ();
      while (!shell.isDisposed ()) {

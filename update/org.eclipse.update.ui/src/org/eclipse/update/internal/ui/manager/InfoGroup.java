@@ -9,11 +9,12 @@ import org.eclipse.update.ui.forms.FormWidgetFactory;
 import org.eclipse.update.core.*;
 import org.eclipse.swt.layout.*;
 import java.net.URL;
+import org.eclipse.swt.SWT;
 
 public class InfoGroup extends ExpandableGroup {
 	private IInfo info;
-	private Label textLink;
-	private Label urlLink;
+	private SelectableFormLabel textLink;
+	private SelectableFormLabel urlLink;
 	private String textLabelText;
 	private String urlLabelText;
 	private DetailsView view;
@@ -28,14 +29,18 @@ public class InfoGroup extends ExpandableGroup {
    		GridLayout layout = new GridLayout();
   		expansion.setLayout(layout);
    		layout.marginWidth = 0;
-		textLink = factory.createHyperlinkLabel(expansion, textLabelText, new HyperlinkAdapter() {
+		textLink = new SelectableFormLabel(expansion, SWT.NULL);
+		textLink.setText(textLabelText);
+		factory.turnIntoHyperlink(textLink, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 				showText();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		//textLink.setLayoutData(gd);
-		urlLink = factory.createHyperlinkLabel(expansion, urlLabelText, new HyperlinkAdapter() {
+		urlLink = new SelectableFormLabel(expansion, SWT.NULL);
+		urlLink.setText(urlLabelText);
+		factory.turnIntoHyperlink(urlLink, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 				showURL();
 			}

@@ -52,7 +52,6 @@ protected void createContents(Composite parent) {
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText("Expand the site folder to browse the features available for download.");
 
-	Label link;
 	IHyperlinkListener listener;
 
 	listener = new HyperlinkAdapter() {
@@ -73,7 +72,7 @@ protected void createContents(Composite parent) {
 			});
 		}
 	};
-	link = factory.createLabel(parent, null);
+	SelectableFormLabel link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setText("Site home page");
 	factory.turnIntoHyperlink(link, listener);
 }

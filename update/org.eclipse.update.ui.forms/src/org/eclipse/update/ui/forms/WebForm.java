@@ -127,7 +127,7 @@ private int getHeadingHeight(Composite parent) {
 	GC gc = new GC(parent);
 	gc.setFont(titleFont);
 	int textWidth = width - 2*HMARGIN;
-	height = FormText.computeWrapHeight(gc, getHeadingText(), textWidth);
+	height = FormLabel.computeWrapHeight(gc, getHeadingText(), textWidth);
 	height += 2*VMARGIN;
 	height = Math.max(height, imageHeight);
 	if (headingUnderlineImage!=null) {
@@ -187,7 +187,7 @@ private void paint(PaintEvent e) {
 	if (getHeadingForeground()!=null)
 		gc.setForeground(getHeadingForeground());
 	gc.setFont(titleFont);
-	FormText.paintWrapText(gc, size, getHeadingText(), HMARGIN, VMARGIN);
+	FormLabel.paintWrapText(gc, size, getHeadingText(), HMARGIN, VMARGIN);
 	if (headingUnderlineImage!=null) {
 		int y = getHeadingHeight((Composite)control) - headingUnderlineImage.getBounds().height;
 		gc.drawImage(headingUnderlineImage, 0, y);

@@ -15,45 +15,19 @@ import java.text.*;
  * FormText is a windowless control that
  * draws text in the provided context.
  */
-public class FormText extends Canvas {
-	private Image backgroundImage;
+public class FormLabel extends Canvas {
 	private String text="";
-	private int textMarginWidth=5;
-	private int textMarginHeight=5;
-	private boolean hasFocus=false;
+	int textMarginWidth=5;
+	int textMarginHeight=5;
+	private boolean underlined;
 
-	public FormText(Composite parent, int style) {
+	public FormLabel(Composite parent, int style) {
 		super(parent, style);
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paint(e);
 			}
 		});
-		addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.character == '\r') {
-				   System.out.println("Form text active: "+getText());
-				}
-			}
-		});
-		addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				if (!hasFocus) {
-				   hasFocus=true;
-				   redraw();
-				}
-			}
-			public void focusLost(FocusEvent e) {
-				if (hasFocus) {
-					hasFocus=false;
-					redraw();
-				}
-			}
-		});
-	}
-	public boolean traverse(int traversal) {
-		//System.out.println("Traversal = "+traversal+"("+getText()+")");
-		return super.traverse(traversal);
 	}
 	public String getText() {
 		return text;
@@ -62,13 +36,14 @@ public class FormText extends Canvas {
 		this.text = text;
 	}
 	
-	public Image getBackgroundImage() {
-		return backgroundImage;
+	public void setUnderlined(boolean underlined) {
+		this.underlined = underlined;
 	}
 	
-	public void setBackgroundImage(Image image) {
-		this.backgroundImage = image;
+	public boolean isUnderlined() {
+		return underlined;
 	}
+	
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int innerWidth = wHint;
 		if (innerWidth!=SWT.DEFAULT)
@@ -119,17 +94,23 @@ public class FormText extends Canvas {
 		gc.dispose();
 		return extent;
 	}
-	
+
 	public static void paintWrapText(GC gc, Point size, String text, int marginWidth, int marginHeight) {
+		paintWrapText(gc, size, text, marginWidth, marginHeight, false);
+ 	}
+
+	public static void paintWrapText(GC gc, Point size, String text, int marginWidth, int marginHeight, boolean underline) {
   		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
+		int descent = fm.getDescent();
 
 		int saved = 0;
 		int last = 0;
 		int y = marginHeight;
 		int width = size.x - marginWidth*2;
+
 		for (int loc = wb.first();
 		     loc != BreakIterator.DONE;
 		     loc = wb.next()) {
@@ -139,6 +120,12 @@ public class FormText extends Canvas {
 	   			// overflow
 	   			String prevLine = text.substring(saved, last);
 	   			gc.drawString(prevLine, marginWidth, y, true);
+	   			if (underline) {
+					Point prevExtent = gc.textExtent(prevLine);
+	   				int lineY = y + lineHeight - descent + 1;
+	   				gc.drawLine(marginWidth, lineY, prevExtent.x, lineY);
+	   			}
+	   			
 	   			saved = last;
 	   			y += lineHeight;
 	   		}
@@ -147,25 +134,29 @@ public class FormText extends Canvas {
 		// paint the last line
 		String lastLine = text.substring(saved, last);
 		gc.drawString(lastLine, marginWidth, y, true);
+		if (underline) {
+			int lineY = y + lineHeight - descent + 1;
+			Point lastExtent = gc.textExtent(lastLine);
+			gc.drawLine(marginWidth, lineY, marginWidth + lastExtent.x, lineY);
+		}
 	}
 	
-	private void paint(PaintEvent e) {
+	protected void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Point size = getSize();
-		if (backgroundImage!=null) {
-	       gc.drawImage(backgroundImage, 0, 0);
-		}
 	   	gc.setFont(getFont());
 	   	gc.setForeground(getForeground());
 	   	if ((getStyle() & SWT.WRAP)!=0) {
-	   		paintWrapText(gc, size, text, textMarginWidth, textMarginHeight);
+	   		paintWrapText(gc, size, text, textMarginWidth, textMarginHeight, underlined);
 	   	}
 	   	else {
 		   gc.drawText(getText(), textMarginWidth, textMarginHeight, true);
+		   if (underlined) {
+	   			FontMetrics fm = gc.getFontMetrics();
+				int descent = fm.getDescent();
+		   		int lineY = size.y - textMarginHeight - descent + 1;
+		      	gc.drawLine(textMarginWidth, lineY, size.x-textMarginWidth, lineY);
+		   }
 	   	}
-	   	if (hasFocus) {
-	   		gc.setLineStyle(SWT.LINE_DOT);
-	   		gc.drawRectangle(0, 0, size.x-1, size.y-1);
-		}
 	}
 }

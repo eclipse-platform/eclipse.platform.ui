@@ -95,8 +95,8 @@ protected void createContents(Composite parent) {
 			cdromCheck = factory.createButton(expansion, null, SWT.CHECK);
 			cdromCheck.setText("Include CD-ROM in the search");
 		}
-		protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
-			Label label = super.createTextLabel(parent, factory);
+		protected SelectableFormLabel createTextLabel(Composite parent, FormWidgetFactory factory) {
+			SelectableFormLabel label = super.createTextLabel(parent, factory);
 			label.setFont(JFaceResources.getBannerFont());
 			return label;
 		}

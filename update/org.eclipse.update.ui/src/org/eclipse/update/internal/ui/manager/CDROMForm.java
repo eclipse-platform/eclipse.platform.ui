@@ -18,7 +18,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 
 public class CDROMForm extends UpdateWebForm {
-	private Label url;
 	private SiteBookmark currentBookmark;
 	
 public CDROMForm(UpdateFormPage page) {

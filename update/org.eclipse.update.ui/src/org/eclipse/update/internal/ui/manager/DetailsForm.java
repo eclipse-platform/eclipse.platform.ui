@@ -34,7 +34,7 @@ private Label wsLabel;
 private Label nlLabel;
 private Label descriptionText;
 private URL infoLinkURL;
-private Label infoLinkLabel;
+private SelectableFormLabel infoLinkLabel;
 private InfoGroup licenseGroup;
 private InfoGroup copyrightGroup;
 private ReflowGroup supportedPlatformsGroup;
@@ -124,8 +124,8 @@ abstract class ReflowGroup extends ExpandableGroup {
 		reflow();
 		updateSize();
 	}
-	protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
-		Label label = super.createTextLabel(parent, factory);
+	protected SelectableFormLabel createTextLabel(Composite parent, FormWidgetFactory factory) {
+		SelectableFormLabel label = super.createTextLabel(parent, factory);
 		label.setFont(JFaceResources.getBannerFont());
 		return label;
 	}
@@ -256,8 +256,9 @@ public void createContents(Composite container) {
 	LinkListener listener = new LinkListener() {
 		public URL getURL() { return infoLinkURL; }
 	};
-   	infoLinkLabel = factory.createHyperlinkLabel(footer,
-   						"More Info", listener);
+   	infoLinkLabel = new SelectableFormLabel(footer, SWT.NULL);
+   	infoLinkLabel.setText("More Info");
+   	factory.turnIntoHyperlink(infoLinkLabel, listener);
    	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	infoLinkLabel.setLayoutData(gd);
    	licenseGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
