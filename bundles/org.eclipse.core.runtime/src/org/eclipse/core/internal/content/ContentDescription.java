@@ -133,8 +133,22 @@ public final class ContentDescription implements IContentDescription {
 		}
 		QualifiedName[] tmpKeys = (QualifiedName[]) this.keys;
 		for (int i = 0; i < tmpKeys.length; i++)
-			if (tmpKeys[i].equals(newKey))
+			if (tmpKeys[i].equals(newKey)) {
 				((Object[]) values)[i] = newValue;
+				return;
+			}
+		if ((flags & ALL_OPTIONS) == 0)
+			return;
+		// need to resize arrays 		
+		int currentSize = tmpKeys.length;
+		tmpKeys = new QualifiedName[currentSize + 1];
+		System.arraycopy(keys, 0, tmpKeys, 0, currentSize);
+		Object[] tmpValues = new Object[currentSize + 1];
+		System.arraycopy(values, 0, tmpValues, 0, currentSize);
+		tmpKeys[tmpKeys.length - 1] = newKey;
+		tmpValues[tmpValues.length - 1] = newValue;
+		keys = tmpKeys;
+		values = tmpValues;
 	}
 
 	public String toString() {

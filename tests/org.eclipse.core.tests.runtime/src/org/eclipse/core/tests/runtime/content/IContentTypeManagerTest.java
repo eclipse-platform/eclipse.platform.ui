@@ -372,6 +372,19 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("3.0", preferredConflict3);
 		assertEquals("3.1", PI_RUNTIME_TESTS + ".conflict3", preferredConflict3.getId());
 	}
+	
+	public void testMyContentDescriber() throws UnsupportedEncodingException, IOException {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentType myContent = manager.getContentType(PI_RUNTIME_TESTS + '.' + "myContent");
+		assertNotNull("0.5", myContent);
+		assertEquals("0.6", myContent, manager.findContentTypeFor("myContent.mc"));
+		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc", IContentDescription.ALL);
+		assertNotNull("1.0", description);
+		assertEquals("1.1", myContent, description.getContentType());
+		assertTrue("1.2", !(description instanceof DefaultDescription));
+		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++) 
+			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));		
+	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
