@@ -14,6 +14,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -187,7 +188,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		dhelpAsWindowButton.setText(HelpUIResources.getString("BrowsersPreferencePage.window")); //$NON-NLS-1$
 		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
 		dhelpAsInfopopButton.setText(HelpUIResources.getString("BrowsersPreferencePage.dinfopop")); //$NON-NLS-1$
-		boolean dinfopop = HelpBasePlugin.getDefault()
+		boolean dinfopop = HelpUIPlugin.getDefault()
 		.getPluginPreferences().getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
@@ -292,12 +293,12 @@ public class BrowsersPreferencePage extends PreferencePage
 							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
 		}
 		
-		boolean winfopop = HelpBasePlugin.getDefault()
+		boolean winfopop = HelpUIPlugin.getDefault()
 		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
 		whelpAsViewButton.setSelection(!winfopop);
 		whelpAsInfopopButton.setSelection(winfopop);		
 		
-		boolean dinfopop = HelpBasePlugin.getDefault()
+		boolean dinfopop = HelpUIPlugin.getDefault()
 		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);		
@@ -308,7 +309,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
 		/*
 		for (int i = 0; i < externalBrowsers.length; i++) {
 			if (externalBrowsers[i].getSelection()) {

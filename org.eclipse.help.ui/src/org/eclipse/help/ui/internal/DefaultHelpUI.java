@@ -206,7 +206,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayContext(IContext context, int x, int y) {
 		if (context == null)
 			return;
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
 		boolean winfopop = pref.getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
 		boolean dinfopop = pref.getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
 		
