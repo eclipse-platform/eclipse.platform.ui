@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */

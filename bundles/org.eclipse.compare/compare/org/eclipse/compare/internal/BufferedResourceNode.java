@@ -3,14 +3,14 @@
  * All Rights Reserved.
  */
 package org.eclipse.compare.internal;
-
+
 import java.io.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-
+
 /**
  * A buffer for a workspace resource.
  */
