@@ -72,6 +72,7 @@ public interface IDocumentProviderExtension {
 	 * Returns whether the state of the given element has been validated.
 	 * 
 	 * @param element the element
+	 * @return <code>true</code> if the state has been validated
 	 */
 	boolean isStateValidated(Object element);
 	

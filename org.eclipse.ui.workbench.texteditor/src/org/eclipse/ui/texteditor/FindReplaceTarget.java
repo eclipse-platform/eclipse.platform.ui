@@ -24,25 +24,43 @@ import org.eclipse.jface.text.IRegion;
  */
 class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2 {
 	
+	/** The editor */
 	private AbstractTextEditor fEditor;
+	/** The find/replace target */
 	private IFindReplaceTarget fTarget;
 
+	/**
+	 * Creates a new find/replace target.
+	 * 
+	 * @param editor the editor
+	 * @param target the wrapped find/replace target
+	 */
 	public FindReplaceTarget(AbstractTextEditor editor, IFindReplaceTarget target) {
 		fEditor= editor;
 		fTarget= target;
 	}
 	
+	/**
+	 * Returns the wrapped find/replace target.
+	 * 
+	 * @return the wrapped find/replace target
+	 */
 	private IFindReplaceTarget getTarget() {
 		return fTarget;
 	}
 	
+	/**
+	 * Returns the find/replace target extension.
+	 * 
+	 * @return the find/replace target extension
+	 */
 	private IFindReplaceTargetExtension getExtension() {
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			return (IFindReplaceTargetExtension) fTarget;
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
 	 */
 	public boolean canPerformFind() {
@@ -51,7 +69,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
 	 */
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
@@ -60,7 +78,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
 	 */
 	public Point getSelection() {
@@ -69,7 +87,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
 	 */
 	public String getSelectionText() {
@@ -78,7 +96,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
 	 */
 	public boolean isEditable() {
@@ -90,7 +108,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
 	 */
 	public void replaceSelection(String text) {
@@ -98,7 +116,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getTarget().replaceSelection(text);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#beginSession()
 	 */
 	public void beginSession() {
@@ -106,7 +124,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().beginSession();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#endSession()
 	 */
 	public void endSession() {
@@ -114,7 +132,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().endSession();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#getScope()
 	 */
 	public IRegion getScope() {
@@ -123,7 +141,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setScope(org.eclipse.jface.text.IRegion)
 	 */
 	public void setScope(IRegion scope) {
@@ -131,7 +149,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().setScope(scope);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#getLineSelection()
 	 */
 	public Point getLineSelection() {
@@ -140,7 +158,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setSelection(int, int)
 	 */
 	public void setSelection(int offset, int length) {
@@ -148,7 +166,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().setSelection(offset, length);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setScopeHighlightColor(org.eclipse.swt.graphics.Color)
 	 */
 	public void setScopeHighlightColor(Color color) {
@@ -156,7 +174,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().setScopeHighlightColor(color);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setReplaceAllMode(boolean)
 	 */
 	public void setReplaceAllMode(boolean replaceAll) {
@@ -164,7 +182,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getExtension().setReplaceAllMode(replaceAll);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.ui.texteditor.IFindReplaceTargetExtension2#validateTargetState()
 	 */
 	public boolean validateTargetState() {

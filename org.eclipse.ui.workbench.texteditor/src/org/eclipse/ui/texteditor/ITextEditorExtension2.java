@@ -38,7 +38,8 @@ public interface ITextEditorExtension2 {
 	 * Validates the state of the given editor input. The predominate intent
 	 * of this method is to take any action propably necessary to ensure that
 	 * the input can persistently be changed.
-	 * Returns <code>true</code> if the input was validated, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if the input was validated, <code>false</code> otherwise
 	 */
 	boolean validateEditorInputState();
 

@@ -45,15 +45,20 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 * target is retrieved from the active part using  
 	 * <code>getAdapter(IFindReplaceTarget.class)</code>.
 	 * <p>
-	 * The stub has the same life cycle as the find/replace dialog.
+	 * The stub has the same life cycle as the find/replace dialog.</p>
 	 */
 	class FindReplaceDialogStub implements IPartListener, DisposeListener {
 		
+		/** The workbench part */
 		private IWorkbenchPart fPart;
+		/** The previous workbench part */
 		private IWorkbenchPart fPreviousPart;
+		/** The previous find/replace target */
 		private IFindReplaceTarget fPreviousTarget;
 		
+		/** The workbench window */
 		private IWorkbenchWindow fWindow;
+		/** The find/replace dialog */
 		private FindReplaceDialog fDialog;
 		
 		/**
@@ -162,7 +167,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	private IWorkbenchWindow fWorkbenchWindow;
 
 	/**
-	 * Creates a new find/replace action for the given text editor. 
+	 * Creates a new find/replace action for the given workbench part. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -170,7 +175,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param editor the text editor
+	 * @param workbenchPart	 the workbench part
 	 * @see ResourceAction#ResourceAction
 	 */
 	public FindReplaceAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart) {
@@ -180,7 +185,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
-	 * Creates a new find/replace action for the given text editor. 
+	 * Creates a new find/replace action for the given workbench window. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -200,7 +205,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	}
 	
 	/*
-	 *	@see IAction#run
+	 *	@see IAction#run()
 	 */
 	public void run() {
 		if (fTarget == null)

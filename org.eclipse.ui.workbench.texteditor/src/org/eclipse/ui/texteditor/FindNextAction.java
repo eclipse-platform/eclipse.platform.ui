@@ -65,7 +65,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private boolean fWholeWordInit;
 	
 	/**
-	 * Creates a new find/replace action for the given text editor. 
+	 * Creates a new find/replace action for the given workbench part. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -73,7 +73,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param editor the text editor
+	 * @param workbenchPart the workbench part
 	 * @param forward the search direction
 	 * @see ResourceAction#ResourceAction
 	 */
@@ -85,7 +85,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
-	 * Creates a new find/replace action for the given text editor. 
+	 * Creates a new find/replace action for the given workbench window. 
 	 * The action configures its visual representation from the given 
 	 * resource bundle.
 	 *
@@ -163,7 +163,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	}
 	
 	/*
-	 *	@see IAction#run
+	 *	@see IAction#run()
 	 */
 	public void run() {
 		if (fTarget != null) {
@@ -201,7 +201,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
 
-	/**
+	/*
 	 * @see FindReplaceDialog#findIndex(String, int, boolean, boolean, boolean, boolean)
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
@@ -229,6 +229,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
+	 * 
 	 * @param findString the string to search for
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive should the search honor cases
@@ -288,7 +289,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	}
 
 	/**
-	 * Stores it current configuration in the dialog store.
+	 * Stores its current configuration in the dialog store.
 	 */
 	private void writeConfiguration() {
 		IDialogSettings s= getDialogSettings();
@@ -312,7 +313,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	}
 
 	/**
-	 * Returns the actual selection of the find replace target
+	 * Returns the actual selection of the find replace target.
 	 */
 	private String getSelectionString() {
 		

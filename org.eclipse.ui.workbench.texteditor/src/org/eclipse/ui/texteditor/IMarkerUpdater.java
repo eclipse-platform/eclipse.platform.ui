@@ -48,12 +48,12 @@ public interface IMarkerUpdater {
 	/**
 	 * Updates the given marker according to the position of the given document.
 	 * If the given position is <code>null</code>, the marker is assumed to
-	 * carry the correct positional information. If the updater recognizes that
-	 * the marker should be deleted, it returns <code>false</code>.
+	 * carry the correct positional information.
 	 *
 	 * @param marker the marker to be updated
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
+	 * @return  <code>false</code> if the updater recognizes that the marker should be deleted
 	 */
 	boolean updateMarker(IMarker marker, IDocument document, Position position);
 }

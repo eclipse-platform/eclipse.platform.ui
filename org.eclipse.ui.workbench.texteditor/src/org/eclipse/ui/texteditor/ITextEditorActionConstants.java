@@ -65,9 +65,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Context menu group for actions which do not fit in one of the other categories. 
 	 * Value: <code>"group.rest"</code>
 	 */
-	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$	
-	
-	
+	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$
 	
 	/** 
 	 * Name of the action for shifting text blocks to the right. 

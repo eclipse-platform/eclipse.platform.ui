@@ -84,7 +84,7 @@ public class GotoLineAction extends TextEditorAction {
 	class GotoLineDialog extends InputDialog {
 		
 		/*
-		 * @see InputDialog#InputDialog
+		 * @see InputDialog#InputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)
 		 */
 		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
 			super(parent, title, message, initialValue, validator);

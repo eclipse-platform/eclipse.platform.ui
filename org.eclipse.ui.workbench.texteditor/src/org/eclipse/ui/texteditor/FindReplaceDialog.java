@@ -201,7 +201,7 @@ class FindReplaceDialog extends Dialog {
 	
 	
 	/**
-	 * Returns <code>true</code> if control can be used
+	 * Returns <code>true</code> if control can be used.
 	 *
 	 * @param control the control to be checked
 	 * @return <code>true</code> if control can be used
@@ -211,7 +211,7 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/*
-	 * @see Window#create
+	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
 		
@@ -241,7 +241,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Create the button section of the find/replace dialog
+	 * Create the button section of the find/replace dialog.
 	 *
 	 * @param parent the parent composite
 	 * @return the button section
@@ -329,7 +329,7 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/*
-	 * @see Window#createContents
+	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 
@@ -499,8 +499,8 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Create the panel where the user specifies the text to search
-	 * for and the optional replacement text
+	 * Creates the panel where the user specifies the text to search
+	 * for and the optional replacement text.
 	 *
 	 * @param parent the parent composite
 	 * @return the input panel
@@ -679,7 +679,7 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns whether the specified  search string can be found using the given options.
+	 * Returns whether the specified search string can be found using the given options.
 	 * 
 	 * @param findString the string to search for
 	 * @param forwardSearch the direction of the search
@@ -769,7 +769,7 @@ class FindReplaceDialog extends Dialog {
 	// ------- init / close ---------------------------------------
 
 	/**
-	 * Returns the actual selection of the find replace target
+	 * Returns the actual selection of the find replace target.
 	 * @return the selection of the target
 	 */
 	private String getSelectionString() {
@@ -789,8 +789,8 @@ class FindReplaceDialog extends Dialog {
 		return null;
 	}
 	
-	/*
-	 * @see Window#close()
+	/**
+	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		handleDialogClose();
@@ -1173,7 +1173,7 @@ class FindReplaceDialog extends Dialog {
 	// ------- ui creation ---------------------------------------
 	
 	/**
-	 * Attaches the given layout specification to the <code>component</code>
+	 * Attaches the given layout specification to the <code>component</code>.
 	 * 
 	 * @param component the component
 	 * @param horizontalAlignment horizontal alignment
@@ -1228,7 +1228,7 @@ class FindReplaceDialog extends Dialog {
 	// ------- open / reopen ---------------------------------------
 	
 	/**
-	 * Called after executed find/replace action to update the history
+	 * Called after executed find/replace action to update the history.
 	 */
 	private void updateFindAndReplaceHistory() {
 		updateFindHistory();
@@ -1239,7 +1239,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Called after executed find action to update the history
+	 * Called after executed find action to update the history.
 	 */
 	private void updateFindHistory() {
 		if (okToUse(fFindField)) {
@@ -1268,7 +1268,7 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns whether the target is editable
+	 * Returns whether the target is editable.
 	 * @return <code>true</code> if target is editable
 	 */
 	private boolean isEditable() {
@@ -1332,7 +1332,7 @@ class FindReplaceDialog extends Dialog {
 	//--------------- configuration handling --------------
 	
 	/**
-	 * Returns the dialog settings object used to share state 
+	 * Returns the dialog settings object used to share state
 	 * between several find/replace dialogs.
 	 * 
 	 * @return the dialog settings to be used
@@ -1384,7 +1384,7 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Stores it current configuration in the dialog store.
+	 * Stores its current configuration in the dialog store.
 	 */
 	private void writeConfiguration() {
 		IDialogSettings s= getDialogSettings();

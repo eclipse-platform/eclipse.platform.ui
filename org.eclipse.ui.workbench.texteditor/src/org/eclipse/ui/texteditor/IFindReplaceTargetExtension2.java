@@ -21,8 +21,9 @@ public interface IFindReplaceTargetExtension2 {
 	/**
 	 * Validates the state of this target. The predominate intent of this method
 	 * is to take any action propably necessary to ensure that the target can
-	 * persistently be changed. Returns <code>true</code> if the target was
-	 * validated, <code>false</code> otherwise.
+	 * persistently be changed.
+	 * 
+	 * @return <code>true</code> if the target was validated, <code>false</code> otherwise
 	 */
 	boolean validateTargetState();
 }
