@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -20,7 +21,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPresentationPreview;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 
 
@@ -29,19 +32,38 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class WorkbenchPreview implements IPresentationPreview {
 
+    private IPreferenceStore store;
+    private boolean disposed = false;
     private CTabFolder folder;
     private ITheme theme;
-    private IPropertyChangeListener listener;
+    private IPropertyChangeListener fontAndColorListener = new IPropertyChangeListener(){        
+        public void propertyChange(PropertyChangeEvent event) {  
+            if (!disposed)
+                setColorsAndFonts();              
+        }};
+        
+    private IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
+
+        public void propertyChange(PropertyChangeEvent event) {
+			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(event.getProperty()) && !disposed) {				 
+				setTabPosition();
+			} else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(event.getProperty()) && !disposed) {				
+				setTabStyle();
+			}		
+        }};
+
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.themes.ITheme)
      */
     public void createControl(Composite parent, ITheme currentTheme) {        
         this.theme = currentTheme;
+        store = WorkbenchPlugin.getDefault().getPreferenceStore();
         folder = new CTabFolder(parent, SWT.BORDER);
-        folder.setSimpleTab(false);
         folder.setUnselectedCloseVisible(false);
         folder.setEnabled(false);
+        folder.setMaximizeVisible(true);
+        folder.setMinimizeVisible(true);
         CTabItem item = new CTabItem(folder, SWT.CLOSE);        
         item.setText("Lorem"); //$NON-NLS-1$
         Composite c = new Composite(folder, SWT.READ_ONLY);
@@ -51,22 +73,42 @@ public class WorkbenchPreview implements IPresentationPreview {
         text.setText("Lorem ipsum dolor sit amet\n"); //$NON-NLS-1$                
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Ipsum"); //$NON-NLS-1$
-        item.setControl(c);
-        
-        listener = new IPropertyChangeListener(){        
-            public void propertyChange(PropertyChangeEvent event) {
-                setAll();              
-            }};
+        item.setControl(c);        
             
         folder.setSelection(item);
-        currentTheme.addPropertyChangeListener(listener);
-        setAll();
+        
+        item = new CTabItem(folder, SWT.CLOSE);
+        item.setText("Dolor"); //$NON-NLS-1$
+        item = new CTabItem(folder, SWT.CLOSE);
+        item.setText("Sit"); //$NON-NLS-1$
+        
+        currentTheme.addPropertyChangeListener(fontAndColorListener);
+        store.addPropertyChangeListener(preferenceListener);
+        setColorsAndFonts();
+        setTabPosition();
+        setTabStyle();
     }
 
     /**
-     * 
+     * Set the tab style from preferences.
      */
-    private void setAll() {
+    protected void setTabStyle() {
+        boolean traditionalTab = store.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+        folder.setSimpleTab(traditionalTab);
+    }
+
+    /**
+     * Set the tab location from preferences.
+     */
+    protected void setTabPosition() {
+        int tabLocation = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+        folder.setTabPosition(tabLocation);        
+    }
+
+    /**
+     * Set the folder colors and fonts
+     */
+    private void setColorsAndFonts() {
         folder.setSelectionForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));               
         folder.setForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
         
@@ -83,11 +125,12 @@ public class WorkbenchPreview implements IPresentationPreview {
     }
 
 
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#dispose()
      */
     public void dispose() {
-        theme.removePropertyChangeListener(listener);
+        disposed = true;
+        theme.removePropertyChangeListener(fontAndColorListener);
+        store.removePropertyChangeListener(preferenceListener);
     }
 }
