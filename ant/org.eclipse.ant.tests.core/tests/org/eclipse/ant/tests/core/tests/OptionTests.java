@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 public class OptionTests extends AbstractAntTest {
 	
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
-	protected static final String VERSION= "Apache Ant version 1.5.2 compiled on February 28 2003";
+	protected static final String VERSION= "Apache Ant version 1.5.3 compiled on April 9 2003";
 	 
 	public OptionTests(String name) {
 		super(name);
