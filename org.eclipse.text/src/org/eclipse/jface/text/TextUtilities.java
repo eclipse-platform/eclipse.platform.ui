@@ -336,14 +336,14 @@ public class TextUtilities {
 			while (e.hasNext()) {
 				String partitioning= (String) e.next();
 				IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(partitioning);
-				extension3.setDocumentPartitioner(partitioning, partitioner);
 				partitioner.connect(document);
+				extension3.setDocumentPartitioner(partitioning, partitioner);
 			}
 			partitioners.clear();
 		} else {
 			IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(IDocumentExtension3.DEFAULT_PARTITIONING);
-			document.setDocumentPartitioner(partitioner);
 			partitioner.connect(document);
+			document.setDocumentPartitioner(partitioner);
 		}
 	}
 	
