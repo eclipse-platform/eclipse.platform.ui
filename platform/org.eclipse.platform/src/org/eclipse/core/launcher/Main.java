@@ -576,7 +576,7 @@ public class Main {
         }
     }
 
-    private void addEntry(URL url, List result) {
+	protected void addEntry(URL url, List result) {
         if (new File(url.getFile()).exists())
             result.add(url);
     }
