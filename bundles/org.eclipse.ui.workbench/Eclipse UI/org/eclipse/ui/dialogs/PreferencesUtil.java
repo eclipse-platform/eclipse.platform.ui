@@ -46,7 +46,9 @@ public final class PreferencesUtil {
 	}
 
 	/**
-	 * Creates a workbench preference dialog to a particular preference page.
+	 * Creates a workbench preference dialog and selects particular preference page.
+	 * If there is already a preference dialog open this dialog is used and its
+	 * selection is set to the page with id preferencePageId.
 	 * Show the other pages as filtered results using whatever filtering
 	 * criteria the search uses. It is the responsibility of the caller to then
 	 * call <code>open()</code>. The call to <code>open()</code> will not
@@ -126,37 +128,6 @@ public final class PreferencesUtil {
 
 		return dialog;
 
-	}
-
-	/**
-	 * Creates a workbench preference dialog to a particular preference page.
-	 * Show the other pages as filtered results using whatever filtering
-	 * criteria the search uses. It is the responsibility of the caller to then
-	 * call <code>open()</code>. The call to <code>open()</code> will not
-	 * return until the dialog closes, so this is the last chance to manipulate
-	 * the dialog.
-	 * 
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
-	 * @param displayedIds
-	 *            The ids of the other pages to be displayed using the same
-	 *            filtering criterea as search. If this is <code>null</code>,
-	 *            then the all preference pages are shown.
-	 * @param data
-	 *            Data that will be passed to all of the preference pages to be
-	 *            applied as specified within the page as they are created. If
-	 *            the data is <code>null</code> nothing will be called.
-	 * 
-	 * @return a preference dialog.
-	 * @since 3.1
-	 * @deprecated use #createPreferenceDialogOn(Shell,String, String[],Object) instead
-	 * This will be deleted before 3.1 M5.
-	 */
-	public static final PreferenceDialog createPreferenceDialogOn(String preferencePageId,
-			String[] displayedIds, Object data) {
-		return createPreferenceDialogOn(null, preferencePageId, displayedIds, data);
 	}
 
 }
