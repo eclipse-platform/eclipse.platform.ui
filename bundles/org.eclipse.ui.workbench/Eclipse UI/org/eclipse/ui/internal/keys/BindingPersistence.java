@@ -744,7 +744,7 @@ public final class BindingPersistence {
 				if ((schemeId == null) || (schemeId.length() == 0)) {
 					// The scheme id should never be null. This is invalid.
 					WorkbenchPlugin
-							.log("Key bindings need a scheme or key configuration.  I believe this binding was defined by '" //$NON-NLS-1$
+							.log("Key bindings need a scheme.  This binding was defined by '" //$NON-NLS-1$
 									+ configurationElement.getNamespace()
 									+ '\'');
 					continue;
@@ -775,7 +775,7 @@ public final class BindingPersistence {
 						|| (keySequenceText.length() == 0)) {
 					// The key sequence should never be null. This is pointless
 					WorkbenchPlugin
-							.log("Defining a key binding with no key sequence or string has no effect.  I believe this binding was defined by '" //$NON-NLS-1$
+							.log("Defining a key binding with no key sequence has no effect.  This binding was defined by '" //$NON-NLS-1$
 									+ configurationElement.getNamespace()
 									+ "'.  The command id was '" //$NON-NLS-1$
 									+ commandId + "'."); //$NON-NLS-1$
@@ -791,7 +791,7 @@ public final class BindingPersistence {
 					keySequence = KeySequence.getInstance(keySequenceText);
 				} catch (final ParseException e) {
 					WorkbenchPlugin.log("Could not parse '" + keySequenceText //$NON-NLS-1$
-							+ "'.  I believe this binding was defined by '" //$NON-NLS-1$
+							+ "'.  This binding was defined by '" //$NON-NLS-1$
 							+ configurationElement.getNamespace()
 							+ "'.  The command id was '" //$NON-NLS-1$
 							+ commandId + "'."); //$NON-NLS-1$
@@ -801,7 +801,7 @@ public final class BindingPersistence {
 					WorkbenchPlugin
 							.log("Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
 									+ keySequence
-									+ "'.  I believe this binding was defined by '" //$NON-NLS-1$
+									+ "'.  This binding was defined by '" //$NON-NLS-1$
 									+ configurationElement.getNamespace()
 									+ "'.  The command id was '" //$NON-NLS-1$
 									+ contextId + "'."); //$NON-NLS-1$
