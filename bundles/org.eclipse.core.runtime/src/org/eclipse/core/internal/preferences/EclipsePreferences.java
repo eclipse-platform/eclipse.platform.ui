@@ -40,6 +40,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String FALSE = "false"; //$NON-NLS-1$
 	public static final String PREFS_FILE_EXTENSION = "prefs"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
+	private static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
+	private static final String VERSION_VALUE = "1"; //$NON-NLS-1$
 	private String cachedPath;
 	protected Map children;
 	protected boolean dirty = false;
@@ -166,26 +168,25 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected IPath computeLocation(IPath root, String qualifier) {
 		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
-
 	private void convertFromProperties(Properties table) {
-		IPath fullPath = new Path(absolutePath());
+		if (!VERSION_VALUE.equals(table.get(VERSION_KEY))) {
+			legacyConvertFromProperties(table);
+			return;
+		}
+		table.remove(VERSION_KEY);
 		for (Iterator i = table.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = table.getProperty(key);
 			if (value != null) {
 				IPath childPath = new Path(key);
-				if (childPath.segmentCount() > 0) {
+				if (!childPath.isAbsolute() && childPath.segmentCount() > 0) {
 					key = childPath.lastSegment();
 					IPath child = childPath.removeLastSegments(1);
-					// calculate the node relative to this node
-					if (fullPath.isPrefixOf(childPath)) {
-						child = child.removeFirstSegments(fullPath.segmentCount());
-						//use internal methods to avoid notifying listeners
-						((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
-					} else {
-						if (InternalPlatform.DEBUG_PREFERENCES)
-							Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					}
+					//use internal methods to avoid notifying listeners
+					((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
+				} else {
+					if (InternalPlatform.DEBUG_PREFERENCES)
+						Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
@@ -515,6 +516,30 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (temp == null || temp.size() == 0)
 			return EMPTY_STRING_ARRAY;
 		return (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
+	}
+
+	private void legacyConvertFromProperties(Properties table) {
+		IPath fullPath = new Path(absolutePath());
+		for (Iterator i = table.keySet().iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			String value = table.getProperty(key);
+			if (value != null) {
+				IPath childPath = new Path(key);
+				if (childPath.segmentCount() > 0) {
+					key = childPath.lastSegment();
+					IPath child = childPath.removeLastSegments(1);
+					// calculate the node relative to this node
+					if (fullPath.isPrefixOf(childPath)) {
+						child = child.removeFirstSegments(fullPath.segmentCount());
+						//use internal methods to avoid notifying listeners
+						((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
+					} else {
+						if (InternalPlatform.DEBUG_PREFERENCES)
+							Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
+				}
+			}
+		}
 	}
 
 	protected void load(IPath location) throws BackingStoreException {
@@ -930,7 +955,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Saving preferences to file: " + location); //$NON-NLS-1$
-		Properties table = convertToProperties(new Properties(), new Path(absolutePath()));
+		Properties table = convertToProperties(new Properties(), Path.EMPTY);
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.
 			if (location.toFile().exists() && !location.toFile().delete()) {
@@ -939,6 +964,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			}
 			return;
 		}
+		table.put(VERSION_KEY, VERSION_VALUE);
 		OutputStream output = null;
 		try {
 			// create the parent dirs if they don't exist

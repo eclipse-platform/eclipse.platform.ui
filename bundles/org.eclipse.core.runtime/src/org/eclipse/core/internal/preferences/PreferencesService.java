@@ -37,7 +37,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private static final String ELEMENT_PREFERENCES = "preferences"; //$NON-NLS-1$
 
 	private static IPreferencesService instance;
-	private static final RootPreferences root = new RootPreferences();
+	static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
 

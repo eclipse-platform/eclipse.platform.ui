@@ -1003,7 +1003,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		newFile = newFile.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).append(pluginID).addFileExtension(EclipsePreferences.PREFS_FILE_EXTENSION);
 		assertTrue("4.0", newFile.toFile().exists());
 		// then check to see if the value is in the file
-		String newKey = Path.ROOT.append(InstanceScope.SCOPE).append(pluginID).append(key).toString();
 		Properties newProperties = new Properties();
 		InputStream input = null;
 		try {
@@ -1019,7 +1018,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 					// ignore
 				}
 		}
-		actual = newProperties.getProperty(newKey);
+		actual = newProperties.getProperty(key);
 		assertEquals("4.2", value, actual);
 	}
 }
