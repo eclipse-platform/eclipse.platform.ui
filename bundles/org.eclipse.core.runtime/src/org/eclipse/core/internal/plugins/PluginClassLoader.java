@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.*;
  * PlatformClassLoader (assumes to be initialized by this point).
  *
  */
-
 public final class PluginClassLoader extends DelegatingURLClassLoader {
 	private PluginDescriptor descriptor;
 	private volatile boolean pluginActivationInProgress = false;
