@@ -104,7 +104,7 @@ public class ChooseWorkspaceData {
      * separator characters.
      */
 	private void setInitialDefault(String dir) {
-	    if (dir == null) {
+	    if (dir == null || dir.length() <= 0) {
 	        initialDefault = null;
 	        return;
 	    }
