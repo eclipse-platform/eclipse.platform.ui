@@ -14,11 +14,14 @@ package org.eclipse.ui.internal.commands;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
 
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandEvent;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.commands.old.ICommandHandler;
 
 final class Command implements ICommand {
 
@@ -43,6 +46,17 @@ final class Command implements ICommand {
 		
 		if (!commandListeners.contains(commandListener))
 			commandListeners.add(commandListener);
+	}
+
+	public ICommandHandler getCommandHandler()
+		throws NotHandledException {
+		SortedMap commandHandlersById = commandManager.getCommandHandlersById();
+		ICommandHandler commandHandler = (ICommandHandler) commandHandlersById.get(id);
+		
+		if (commandHandlersById.containsKey(id))
+			return commandHandler;
+		else 		
+			throw new NotHandledException();
 	}
 
 	public String getDescription() 
@@ -89,12 +103,12 @@ final class Command implements ICommand {
 			throw new NotDefinedException();
 	}
 
-	public boolean isActive() {
-		return commandManager.getActiveCommandIds().contains(id);
-	}
-
 	public boolean isDefined() {
 		return commandManager.getCommandElement(id) != null && commandManager.getDefinedCommandIds().contains(id);
+	}
+
+	public boolean isHandled() {
+		return commandManager.getCommandHandlersById().containsKey(id);
 	}
 
 	public void removeCommandListener(ICommandListener commandListener)

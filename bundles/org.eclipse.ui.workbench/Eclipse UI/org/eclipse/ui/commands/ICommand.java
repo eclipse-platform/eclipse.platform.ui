@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.commands;
 
+import org.eclipse.ui.commands.old.ICommandHandler;
+
 /**
  * <p>
  * TODO javadoc
@@ -43,6 +45,15 @@ public interface ICommand {
 	 */	
 	String getDescription()
 		throws NotDefinedException;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 * @throws NotHandledException
+	 */	
+	ICommandHandler getCommandHandler()
+		throws NotHandledException;
 		
 	/**
 	 * TODO javadoc
@@ -83,14 +94,14 @@ public interface ICommand {
 	 * 
 	 * @return
 	 */	
-	boolean isActive();
+	boolean isDefined();
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */	
-	boolean isDefined();
+	boolean isHandled();
 	
 	/**
 	 * Unregisters an ICommandListener instance with this command.

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.SortedMap;
 import java.util.SortedSet;
 
 /**
@@ -40,19 +41,19 @@ public interface ICommandManager {
 	/**
 	 * TODO javadoc
 	 *
-	 * @return
-	 */
-	SortedSet getActiveCommandIds();
-
-	/**
-	 * TODO javadoc
-	 *
 	 * @param commandId
 	 * @return
 	 * @throws IllegalArgumentException
 	 */	
 	ICommand getCommand(String commandId)
 		throws IllegalArgumentException;
+
+	/**
+	 * TODO javadoc
+	 *
+	 * @return
+	 */
+	SortedMap getCommandHandlersById();
 
 	/**
 	 * TODO javadoc

@@ -26,12 +26,13 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.old.ICommandHandler;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {
 
-	private SortedSet activeCommandIds = new TreeSet();
 	private SortedMap commandElementsById = new TreeMap();
+	private SortedMap commandHandlersById = new TreeMap();
 	private ICommandManagerEvent commandManagerEvent;
 	private List commandManagerListeners;
 	private SortedMap commandsById = new TreeMap();
@@ -55,10 +56,6 @@ public final class CommandManager implements ICommandManager {
 			commandManagerListeners.add(commandManagerListener);
 	}
 
-	public SortedSet getActiveCommandIds() {
-		return Collections.unmodifiableSortedSet(activeCommandIds);
-	}
-
 	public ICommand getCommand(String commandId)
 		throws IllegalArgumentException {
 		if (commandId == null)
@@ -74,8 +71,12 @@ public final class CommandManager implements ICommandManager {
 		return command;
 	}
 
+	public SortedMap getCommandHandlersById() {
+		return Collections.unmodifiableSortedMap(commandHandlersById);
+	}
+
 	public SortedSet getDefinedCommandIds() {
-		return Collections.unmodifiableSortedSet(activeCommandIds);
+		return Collections.unmodifiableSortedSet(definedCommandIds);
 	}
 
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener)
@@ -91,35 +92,43 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setActiveCommandIds(SortedSet activeCommandIds)
+	public void setCommandHandlersById(SortedMap commandHandlersById)
 		throws IllegalArgumentException {
-		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
-		SortedSet activatingCommandIds = new TreeSet();
-		SortedSet deactivatingCommandIds = new TreeSet();
-		Iterator iterator = activeCommandIds.iterator();
-
-		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
+		commandHandlersById = Util.safeCopy(commandHandlersById, String.class, ICommandHandler.class);	
+		SortedSet commandHandlerAdditions = new TreeSet();		
+		SortedSet commandHandlerChanges = new TreeSet();
+		SortedSet commandHandlerRemovals = new TreeSet();		
+		Iterator iterator = commandHandlersById.entrySet().iterator();
 		
-			if (!this.activeCommandIds.contains(id))
-				activatingCommandIds.add(id);
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String id = (String) entry.getKey();
+			ICommandHandler commandHandler = (ICommandHandler) entry.getValue();
+			
+			if (!this.commandHandlersById.containsKey(id))
+				commandHandlerAdditions.add(id);
+			else if (!Util.equals(commandHandler, this.commandHandlersById.get(id)))
+				commandHandlerChanges.add(id);								
 		}
 
-		iterator = this.activeCommandIds.iterator();
+		iterator = this.commandHandlersById.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
-		
-			if (!activeCommandIds.contains(id))
-				deactivatingCommandIds.add(id);					
-		}		
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String id = (String) entry.getKey();
+			ICommandHandler commandHandler = (ICommandHandler) entry.getValue();
+			
+			if (!commandHandlersById.containsKey(id))
+				commandHandlerRemovals.add(id);						
+		}
 
 		SortedSet commandChanges = new TreeSet();
-		commandChanges.addAll(activatingCommandIds);		
-		commandChanges.addAll(deactivatingCommandIds);			
+		commandChanges.addAll(commandHandlerAdditions);		
+		commandChanges.addAll(commandHandlerChanges);		
+		commandChanges.addAll(commandHandlerRemovals);		
 
 		if (!commandChanges.isEmpty()) {
-			this.activeCommandIds = activeCommandIds;	
+			this.commandHandlersById = commandHandlersById;	
 			fireCommandManagerChanged();
 
 			iterator = commandChanges.iterator();
