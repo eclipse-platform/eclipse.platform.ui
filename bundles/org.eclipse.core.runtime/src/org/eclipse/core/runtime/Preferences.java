@@ -298,10 +298,6 @@ public class Preferences {
 	 * @see #validatePreferenceVersions
 	 */
 	public static void exportPreferences(IPath path) throws CoreException {
-		if (InternalPlatform.USE_LEGACY_PREFS) {
-			exporterInvoker("exportPreferences", path); //$NON-NLS-1$
-			return;
-		}
 		File file = path.toFile();
 		if (file.exists())
 			file.delete();
@@ -364,10 +360,6 @@ public class Preferences {
 	 * @see #validatePreferenceVersions
 	 */
 	public static void importPreferences(IPath path) throws CoreException {
-		if (InternalPlatform.USE_LEGACY_PREFS) {
-			exporterInvoker("importPreferences", path); //$NON-NLS-1$
-			return;
-		}
 		if (!path.toFile().exists()) {
 			String msg = Policy.bind("preferences.fileNotFound", path.toOSString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));

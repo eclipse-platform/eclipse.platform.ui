@@ -419,10 +419,7 @@ public abstract class Plugin implements BundleActivator {
 		}
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
-		if (InternalPlatform.USE_LEGACY_PREFS)
-			preferences = new Preferences();
-		else
-			preferences = new PreferenceForwarder(getDescriptor().getUniqueIdentifier());
+		preferences = new PreferenceForwarder(getDescriptor().getUniqueIdentifier());
 		// load settings into preference store 
 		loadPluginPreferences();
 
