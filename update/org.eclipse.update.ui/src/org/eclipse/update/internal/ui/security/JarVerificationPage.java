@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
@@ -201,6 +202,10 @@ public class JarVerificationPage extends BannerPage {
 		compositeInformation.setLayout(layout);
 		compositeInformation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		// get bold face
+		FontRegistry fregistry = JFaceResources.getFontRegistry();
+		Font boldFont = fregistry.getBold(JFaceResources.DIALOG_FONT);
+		
 		// Feature name
 		//---------------
 		Label keyLabel = null;
@@ -211,7 +216,7 @@ public class JarVerificationPage extends BannerPage {
 				UpdateUI.getString("JarVerificationDialog.FeatureName")); //$NON-NLS-1$
 
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
-			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setFont(boldFont);
 			valueLabel.setText(_strFeatureName);
 			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
@@ -223,7 +228,7 @@ public class JarVerificationPage extends BannerPage {
 				UpdateUI.getString("JarVerificationDialog.FeatureIdentifier")); //$NON-NLS-1$
 
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
-			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setFont(boldFont);
 			valueLabel.setText(_strId);
 			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
@@ -235,7 +240,7 @@ public class JarVerificationPage extends BannerPage {
 				UpdateUI.getString("JarVerificationDialog.Provider")); //$NON-NLS-1$
 
 			valueLabel = new CLabel(compositeInformation, SWT.NULL);
-			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setFont(boldFont);
 			valueLabel.setText(_strProviderName);
 			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
@@ -246,7 +251,7 @@ public class JarVerificationPage extends BannerPage {
 			UpdateUI.getString("JarVerificationDialog.FileName")); //$NON-NLS-1$
 
 		valueLabel = new CLabel(compositeInformation, SWT.NULL);
-		valueLabel.setFont(JFaceResources.getBannerFont());
+		valueLabel.setFont(boldFont);
 		valueLabel.setText(_fileName);
 		valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
