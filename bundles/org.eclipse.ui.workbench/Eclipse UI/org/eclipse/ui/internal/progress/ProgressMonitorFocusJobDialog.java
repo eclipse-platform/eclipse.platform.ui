@@ -389,6 +389,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				return Status.OK_STATUS;
 			}
 		};
+		openJob.setSystem(true);
 		openJob.schedule();
 		
 	}
