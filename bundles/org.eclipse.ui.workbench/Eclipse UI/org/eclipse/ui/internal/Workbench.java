@@ -152,11 +152,11 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.roles.IDERoleManager;
 import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.progress.IProgressManager;
-
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -292,17 +292,30 @@ public class Workbench
 		}
 	};
 
-	private final ICommandManagerListener commandManagerListener =
-		new ICommandManagerListener() {
+	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
 		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
 			updateActiveContextIds();
 		}
 	};
 
-	private final IContextManagerListener contextManagerListener =
-		new IContextManagerListener() {
+	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+		
+		List activeContextIds;
+		
 		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
 			updateActiveContextIds();
+			
+			List activeContextIds = contextManagerEvent.getContextManager().getActiveContextIds();
+
+			if (!Util.equals(this.activeContextIds, activeContextIds)) {
+				this.activeContextIds = activeContextIds;
+				IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+				if (workbenchWindow instanceof WorkbenchWindow) {
+					MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+					menuManager.updateAll(true);
+				}
+			}
 		}
 	};
 
@@ -754,17 +767,14 @@ public class Workbench
  	}
 
 	public void updateActiveContextIds() {
-		commandManager.setActiveContextIds(
-			contextManager.getActiveContextIds());
-		
+		commandManager.setActiveContextIds(contextManager.getActiveContextIds());
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
 		if (workbenchWindow instanceof WorkbenchWindow) {
-			MenuManager menuManager =
-				((WorkbenchWindow) workbenchWindow).getMenuManager();
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();			
 			menuManager.update(IAction.TEXT);
 		}
 	}
