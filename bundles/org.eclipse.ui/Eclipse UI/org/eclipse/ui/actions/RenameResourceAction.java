@@ -302,15 +302,11 @@ private void queryNewResourceNameInline(final IResource resource) {
 	});
 	textEditor.addFocusListener(new FocusAdapter() {
 		public void focusLost(FocusEvent fe) {
-			// Workaround for 1GF7TXO
-			if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
-				saveChangesAndDispose(resource);
-			} else {
-				fe.widget.getDisplay ().asyncExec (new Runnable () {
+			fe.widget.getDisplay ().asyncExec (new Runnable () {
 				public void run () {
 					saveChangesAndDispose(resource);
-				}});
-			}
+				}
+			});
 		}
 	});
 	if (textActionHandler != null)
