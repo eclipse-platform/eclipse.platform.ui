@@ -12,9 +12,19 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class Policy {
+	public static boolean DEBUG_CONSOLE_BUFFERING = false;
+
+	static {
+		//init debug options
+		if (CVSUIPlugin.getPlugin().isDebugging()) {
+			DEBUG_CONSOLE_BUFFERING = "true".equalsIgnoreCase(Platform.getDebugOption(CVSUIPlugin.ID + "/consolebuffering")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
 	protected static ResourceBundle bundle = null;
 
 	/**

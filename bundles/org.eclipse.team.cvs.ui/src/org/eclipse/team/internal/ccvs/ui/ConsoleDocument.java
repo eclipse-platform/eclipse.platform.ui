@@ -65,7 +65,7 @@ public class ConsoleDocument extends AbstractDocument {
 	/**
 	 * Appends a line of the specified type to the end of the console.
 	 */
-	public void appendConsoleLine(int type, String line, boolean purgeExcess) {
+	public void appendConsoleLine(int type, String line) {
 		if (lineTypes == null) {
 			lineTypes = new int[16];
 		} else if (currentLine >= lineTypes.length) {
@@ -76,9 +76,6 @@ public class ConsoleDocument extends AbstractDocument {
 		lineTypes[currentLine++] = type;
 		try { 
 			replace(getLength(), 0, line + "\n"); //$NON-NLS-1$
-			if (purgeExcess && type == COMMAND) {
-				keepPreviousCommands(2);
-			}
 		} catch (BadLocationException e) {
 			CVSProviderPlugin.log(CVSException.wrapException(e));
 		}
@@ -100,25 +97,5 @@ public class ConsoleDocument extends AbstractDocument {
 			commandLines[i++] = ((Integer) iter.next()).intValue();
 		}
 		return commandLines;
-	}
-	
-	/**
-	 * Purge all but the output of the last N commands from the document
-	 */
-	private void keepPreviousCommands(int number) throws BadLocationException{
-		// Get the index of the line and character to keep
-		int[] commandLines = getCommandLines();
-		if (commandLines.length <= number) return;
-		int lineIndex = commandLines[commandLines.length - number];
-		int characterIndex = getLineOffset(lineIndex);
-		
-		// Keep everything from the character to the end
-		set(get(characterIndex, getLength() - characterIndex));
-		
-		// Adjust the line types
-		int[] oldLineTypes = lineTypes;
-		lineTypes = new int[oldLineTypes.length];
-		System.arraycopy(oldLineTypes, lineIndex, lineTypes, 0, oldLineTypes.length - lineIndex);
-		currentLine -= lineIndex;
-	}
+	}	
 }
