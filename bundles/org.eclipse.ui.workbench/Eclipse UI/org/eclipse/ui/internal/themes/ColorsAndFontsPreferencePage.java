@@ -394,6 +394,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          * workaround to bug 56593.
          */
         private void updateColumn(String text, Font font) {
+        	
+        	if(text == null)
+        		return;
+        	
             Display display = tree.getDisplay();
 
             GC gc = new GC(display);

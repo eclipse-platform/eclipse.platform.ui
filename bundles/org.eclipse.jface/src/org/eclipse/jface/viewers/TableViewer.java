@@ -232,7 +232,10 @@ public class TableViewer extends StructuredViewer {
                         }
                     }
                 }
-
+                
+                //Avoid setting text to null
+                if(text == null)
+                	text = ""; //$NON-NLS-1$
                 ti.setText(column, text);
                 if (ti.getImage(column) != image) {
                     ti.setImage(column, image);

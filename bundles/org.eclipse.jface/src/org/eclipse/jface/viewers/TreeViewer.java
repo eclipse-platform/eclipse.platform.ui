@@ -120,7 +120,11 @@ public class TreeViewer extends AbstractTreeViewer {
         } else {
             if (baseProvider instanceof ILabelProvider) {
                 ILabelProvider provider = (ILabelProvider) baseProvider;
-                item.setText(provider.getText(element));
+                
+                String text = provider.getText(element);
+                if(text == null)
+                	text = ""; //$NON-NLS-1$
+                item.setText(text);
                 Image image = provider.getImage(element);
                 if (item.getImage() != image)
                     item.setImage(image);

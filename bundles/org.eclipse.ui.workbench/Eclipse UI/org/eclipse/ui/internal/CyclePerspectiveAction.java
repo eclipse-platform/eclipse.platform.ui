@@ -106,7 +106,10 @@ public class CyclePerspectiveAction extends CyclePartAction implements
         for (int i = perspectives.length - 1; i >= 0; i--) {
             TableItem item = new TableItem(table, SWT.NONE);
             IPerspectiveDescriptor desc = perspectives[i];
-            item.setText(labelProvider.getText(desc));
+            String text = labelProvider.getText(desc);
+            if(text == null)
+            	text = "";//$NON-NLS-1$
+            item.setText(text);
             item.setImage(labelProvider.getImage(desc));
             item.setData(desc);
         }

@@ -150,6 +150,8 @@ public class StringMatcher {
      * @param <code>text</code>, a String object 
      */
     public boolean match(String text) {
+    	if(text == null)
+    		return false;
         return match(text, 0, text.length());
     }
 

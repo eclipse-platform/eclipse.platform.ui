@@ -546,7 +546,11 @@ public class ResourceTreeAndListGroup implements ICheckStateListener,
         if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
             parentName += File.separatorChar;
         }
-        return parentName + treeLabelProvider.getText(treeElement);
+        
+        String elementText = treeLabelProvider.getText(treeElement);
+        if(elementText == null)
+        	return parentName;
+        return parentName + elementText;
     }
 
     /**

@@ -189,6 +189,8 @@ public class ProgressViewer extends StructuredViewer {
 
                 for (int i = 0; i < itemCount; i++) {
                     String string = labelProvider.getText(displayedItems[i]);
+                    if(string == null)
+                    	string = "";//$NON-NLS-1$
                     gc.drawString(string, 2, yOffset
                             + (i * fontMetrics.getHeight()), true);
                 }

@@ -62,6 +62,8 @@ public class PatternFilter extends ViewerFilter {
 
         String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
                 .getLabelProvider()).getText(element);
+        if(labelText == null)
+        	return false;
         return match(labelText);
     }
 

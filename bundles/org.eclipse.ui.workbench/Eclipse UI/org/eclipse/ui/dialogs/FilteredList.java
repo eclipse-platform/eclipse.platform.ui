@@ -140,11 +140,14 @@ public class FilteredList extends Composite {
         /**
          * Create a new instance of label.
          * 
-         * @param string
+         * @param newString
          * @param image
          */
-        public Label(String string, Image image) {
-            this.string = string;
+        public Label(String newString, Image image) {
+        	if(newString == null)
+        		this.string = "";
+        	else
+        		this.string = newString;
             this.image = image;
         }
 

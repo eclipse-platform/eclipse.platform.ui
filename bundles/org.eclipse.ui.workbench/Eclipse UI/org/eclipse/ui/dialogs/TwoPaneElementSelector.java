@@ -246,8 +246,12 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
     private void updateLowerListWidget(Object[] elements) {
         int length = elements.length;
         String[] qualifiers = new String[length];
-        for (int i = 0; i != length; i++)
-            qualifiers[i] = fQualifierRenderer.getText(elements[i]);
+        for (int i = 0; i != length; i++){
+        	String text = fQualifierRenderer.getText(elements[i]);
+        	if(text == null)
+        		text = ""; //$NON-NLS-1$
+            qualifiers[i] = text;
+        }
         TwoArrayQuickSorter sorter = new TwoArrayQuickSorter(isCaseIgnored());
         sorter.sort(qualifiers, elements);
         for (int i = 0; i != length; i++) {

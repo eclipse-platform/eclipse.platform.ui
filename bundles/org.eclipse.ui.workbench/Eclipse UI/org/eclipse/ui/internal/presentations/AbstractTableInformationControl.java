@@ -78,6 +78,9 @@ public abstract class AbstractTableInformationControl {
 
             String matchName = ((ILabelProvider) tableViewer.getLabelProvider())
                     .getText(element);
+            
+            if(matchName == null)
+            	return false;
             // A dirty editor's label will start with dirty prefix, this prefix 
             // should not be taken in consideration when matching with a pattern
             String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
@@ -476,6 +479,8 @@ public abstract class AbstractTableInformationControl {
 
             if (element != null) {
                 String label = labelProvider.getText(element);
+                if(label == null)
+                	return null;
                 // remove the dirty prefix from the editor's label
                 String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
                 if (label.startsWith(prefix))

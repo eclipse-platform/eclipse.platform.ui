@@ -71,6 +71,8 @@ public class TreeFrame extends Frame {
         setInput(input);
         ILabelProvider provider = (ILabelProvider) viewer.getLabelProvider();
         String name = provider.getText(input);
+        if(name == null)
+        	name = "";//$NON-NLS-1$
         setName(name);
         setToolTipText(name);
     }

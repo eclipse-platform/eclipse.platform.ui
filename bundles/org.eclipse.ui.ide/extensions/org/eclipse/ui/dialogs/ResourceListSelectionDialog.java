@@ -684,6 +684,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         } else {
             text = parent.getFullPath().makeRelative().toString();
         }
+        if(text == null)
+        	return ""; //$NON-NLS-1$
         return text;
     }
 

@@ -192,6 +192,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
                     image = lprov.getImage(element);
                 }
             }
+            
+            //Avoid setting text to null
+            if(text == null)
+            	text = ""; //$NON-NLS-1$
+            
             ti.setText(column, text);
             // Apparently a problem to setImage to null if already null
             if (ti.getImage(column) != image)

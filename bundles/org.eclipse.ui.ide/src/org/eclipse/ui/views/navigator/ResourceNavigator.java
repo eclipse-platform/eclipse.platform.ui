@@ -609,12 +609,13 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Used as the name for the current frame. 
      */
     String getFrameName(Object element) {
-        if (element instanceof IResource) {
+        if (element instanceof IResource) 
             return ((IResource) element).getName();
-        } else {
-            return ((ILabelProvider) getTreeViewer().getLabelProvider())
-                    .getText(element);
-        }
+        String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
+        .getText(element);
+        if(text == null)
+        	return "";//$NON-NLS-1$
+        return text;
     }
 
     /**
@@ -624,16 +625,17 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     String getFrameToolTipText(Object element) {
         if (element instanceof IResource) {
             IPath path = ((IResource) element).getFullPath();
-            if (path.isRoot()) {
+            if (path.isRoot()) 
                 return ResourceNavigatorMessages
                         .getString("ResourceManager.toolTip"); //$NON-NLS-1$
-            } else {
-                return path.makeRelative().toString();
-            }
-        } else {
-            return ((ILabelProvider) getTreeViewer().getLabelProvider())
-                    .getText(element);
-        }
+            return path.makeRelative().toString();
+        } 
+        
+        String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
+        	.getText(element);
+        if(text == null)
+        	return "";//$NON-NLS-1$
+        return text;
     }
 
     /**
@@ -1227,7 +1229,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             ILabelProvider labelProvider = (ILabelProvider) getTreeViewer()
                     .getLabelProvider();
             String inputToolTip = getFrameToolTipText(input);
-            setContentDescription(labelProvider.getText(input));
+            String text = labelProvider.getText(input);
+            if(text != null)
+            	setContentDescription(text);
             if (workingSet != null) {
                 setTitleToolTip(ResourceNavigatorMessages.format(
                         "ResourceNavigator.workingSetInputToolTip", //$NON-NLS-1$

@@ -133,10 +133,25 @@ public abstract class AbstractListViewer extends StructuredViewer {
         for (int i = 0; i < filtered.length; i++) {
             Object element = filtered[i];
             int ix = indexForElement(element);
-            listAdd(labelProvider.getText(element), ix);
+            listAdd(getLabelProviderText(labelProvider,element), ix);
             listMap.add(ix, element);
             mapElement(element, getControl()); // must map it, since findItem only looks in map, if enabled
         }
+    }
+    
+    /**
+     * Return the text for the element from the labelProvider.
+     * If it is null then return the empty String.
+     * @param labelProvider ILabelProvider
+     * @param element
+     * @return String. Return the emptyString if the labelProvider
+     * returns null for the text.
+     */
+    private String getLabelProviderText(ILabelProvider labelProvider, Object element){
+    	String text = labelProvider.getText(element);
+        if(text == null)
+        	return "";//$NON-NLS-1$
+        return text;
     }
 
     /**
@@ -187,7 +202,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
             int ix = listMap.indexOf(element);
             if (ix >= 0) {
                 ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-                listSetItem(ix, labelProvider.getText(element));
+                listSetItem(ix, getLabelProviderText(labelProvider,element));
             }
         }
     }
@@ -282,7 +297,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
         String[] labels = new String[size];
         for (int i = 0; i < size; i++) {
             Object el = children[i];
-            labels[i] = ((ILabelProvider) getLabelProvider()).getText(el);
+            labels[i] = getLabelProviderText((ILabelProvider) getLabelProvider(),el);
             listMap.add(el);
             mapElement(el, getControl()); // must map it, since findItem only looks in map, if enabled
         }
@@ -308,7 +323,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
             ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
             for (int i = 0; i < children.length; i++) {
                 Object el = children[i];
-                listAdd(labelProvider.getText(el), i);
+                listAdd(getLabelProviderText(labelProvider, el), i);
                 listMap.add(el);
                 mapElement(el, list); // must map it, since findItem only looks in map, if enabled
             }

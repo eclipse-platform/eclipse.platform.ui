@@ -443,7 +443,10 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         ILabelProvider provider = descriptor.getLabelProvider();
         if (provider == null)
             return editValue.toString();
-        return provider.getText(editValue);
+        String text = provider.getText(editValue);
+        if(text == null)
+        	return "";//$NON-NLS-1$
+        return text;
     }
 
     /**
