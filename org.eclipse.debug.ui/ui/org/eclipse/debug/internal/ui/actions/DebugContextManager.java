@@ -86,7 +86,7 @@ public class DebugContextManager implements ILaunchListener2 {
 		}
 	}
 	
-	public void launchAdded(ILaunch launch) {
+	public synchronized void launchAdded(ILaunch launch) {
 		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 			setDebugging(true);
 		}
@@ -101,7 +101,7 @@ public class DebugContextManager implements ILaunchListener2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener2#launchTerminated(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchTerminated(ILaunch launch) {
+	public synchronized void launchTerminated(ILaunch launch) {
 		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 			// if nothing left in debug mode, turn debugging off
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
