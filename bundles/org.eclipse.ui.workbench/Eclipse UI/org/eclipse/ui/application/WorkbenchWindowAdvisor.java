@@ -60,39 +60,6 @@ public class WorkbenchWindowAdvisor {
 
     private IWorkbenchWindowConfigurer windowConfigurer;
 
-// TODO: Will be needed when the window advisor is created via extension point     
-//    /**
-//     * Creates a new workbench window advisor for configuring a 
-//     * workbench window.
-//     * 
-//     * @see #initialize(IWorkbenchWindowConfigurer)
-//     */
-//    public WorkbenchWindowAdvisor() {
-//    }
-//    
-//    /**
-//     * Initializes the workbench window advisor, and remembers the given
-//     * workbench window configurer.
-//     * It can be obtained later via <code>getWindowConfigurer()</code>. 
-//     * <p>
-//     * This method is called during workbench window initialization prior to any
-//     * windows being opened. 
-//     * Clients must not call this method directly.
-//     * Clients should subclass <code>preWindowOpen</code> for any further
-//     * configuration needed before the window opens.
-//     * </p>
-//     * 
-//     * @param configurer an object for configuring the workbench
-//     */
-//    public final void initialize(IWorkbenchWindowConfigurer configurer) {
-//        Assert.isNotNull(configurer);
-//        if (windowConfigurer != null) {
-//            throw new IllegalStateException();
-//        }
-//        this.windowConfigurer = configurer;
-//    }
-//
-
     /**
      * Creates a new workbench window advisor for configuring a workbench
      * window via the given workbench window configurer.
@@ -125,7 +92,6 @@ public class WorkbenchWindowAdvisor {
      * {@link ActionBarAdvisor#fillActionBars}, which is called immediately
      * after this method is called.
      * </p>
-     * TODO: pass in initial page input from openWindow call
      */
     public void preWindowOpen() {
         // do nothing
@@ -175,10 +141,10 @@ public class WorkbenchWindowAdvisor {
      * <code>true</code> and the introduction was visible on last shutdown.  
      * Subclasses may override.
      * </p>
-     * 
-     * TODO: Refactor this into an IIntroManager.openIntro(IWorkbenchWindow) call
      */
     public void openIntro() {
+        // TODO: Refactor this into an IIntroManager.openIntro(IWorkbenchWindow) call
+        
         // introOpened flag needs to be global
         IWorkbenchConfigurer wbConfig = getWindowConfigurer().getWorkbenchConfigurer();
         final String key = "introOpened"; //$NON-NLS-1$
@@ -269,66 +235,6 @@ public class WorkbenchWindowAdvisor {
         // do nothing
     }
 
-//  TODO:  Should getDefaultPageInput be added to allow different windows 
-//  to have different default page inputs?
-//    /**
-//     * Returns the default input for workbench pages that are newly
-//     * created within this window.
-//     * <p>
-//     * The default implementation returns <code>null</code>.
-//     * Subclasses may override.
-//     * </p>
-//     * 
-//     * @return the default input for a new workbench page, or
-//     * <code>null</code> if none
-//     */
-//    public IAdaptable getDefaultPageInput() {
-//        // default: no input
-//        return null;
-//    }
-
-//  TODO:  Should getDefaultPerspectiveId be added to allow different windows 
-//  to have different default perspectives?
-//    /**
-//     * Returns the id of the perspective to use if not explicitly specified by
-//     * a caller opening a new window.
-//     * Returns <code>null</code> if no perspective should be shown.
-//     * <p>
-//     * This method is called during startup when the workbench is creating 
-//     * the first new window, and when opening a window via 
-//     * {@link org.eclipse.ui.IWorkbench#openWorkbenchWindow(org.eclipse.core.runtime.IAdaptable)}.
-//     * The default implementation returns <code>null</code>.
-//     * Subclasses may override.
-//     * </p>
-//     * <p>
-//     * If the {@link IWorkbenchPreferenceConstants#DEFAULT_PERSPECTIVE_ID} preference
-//     * is specified, it supercedes the perspective specified here.
-//     * </p>
-//     * 
-//     * @return the id of the perspective to use by default
-//     */
-//    public String getDefaultPerspectiveId() {
-//        return null;
-//    }
-
-//  TODO:  Should getMainPreferencePageId be added to allow different windows 
-//    to organize prefs differently?
-//    /**
-//     * Returns the id of the preference page that should be presented most
-//     * prominently.
-//     * <p>
-//     * The default implementation returns <code>null</code>. 
-//     * Subclasses may override.
-//     * </p>
-//     * 
-//     * @return the id of the preference page, or <code>null</code> if none
-//     */
-//    public String getMainPreferencePageId() {
-//        // default: no opinion
-//        return null;
-//    }
-//
-    
     /**
      * Creates the contents of the window.
      * <p>

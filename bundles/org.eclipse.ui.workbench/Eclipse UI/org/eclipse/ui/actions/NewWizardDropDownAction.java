@@ -49,8 +49,10 @@ public class NewWizardDropDownAction extends Action implements
 
         private MenuManager dropDownMenuMgr;
 
-       
-        protected void createDropDownMenuMgr() {
+        /**
+         * Creates the menu manager for the drop-down.
+         */
+        private void createDropDownMenuMgr() {
             if (dropDownMenuMgr == null) {
                 dropDownMenuMgr = new MenuManager();
                 dropDownMenuMgr.add(newWizardMenu);
