@@ -89,7 +89,5 @@ public void partVisible(IWorkbenchPartReference ref);
  *
  * @param part the part that is visible
  */
-/* Commented out sender in PartListenerList2 as well.
- * public void partInputChanged(IWorkbenchPartReference ref);
-*/
+public void partInputChanged(IWorkbenchPartReference ref);
 }

@@ -191,7 +191,7 @@ public void firePartInputChanged(final IWorkbenchPartReference ref) {
 			
 		Platform.run(new SafeRunnable() {
 			public void run() {
-//				l.partInputChanged(ref);
+				l.partInputChanged(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
