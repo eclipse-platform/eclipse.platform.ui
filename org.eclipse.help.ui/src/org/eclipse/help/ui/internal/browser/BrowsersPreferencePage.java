@@ -37,6 +37,8 @@ public class BrowsersPreferencePage
 		//data.grabExcessHorizontalSpace = true;
 		mainComposite.setLayoutData(data);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setText(WorkbenchResources.getString("select_browser"));
@@ -86,7 +88,7 @@ public class BrowsersPreferencePage
 				item.setChecked(false);
 			item.setGrayed(aDescs.length == 1);
 		}
-		return new Composite(parent, SWT.NULL);
+		return mainComposite;
 	}
 	/**
 	 * @see IWorkbenchPreferencePage
