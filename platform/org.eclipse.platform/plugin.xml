@@ -281,7 +281,7 @@
 	                  label="%news.eclipse.label"
 	                  id="eclipse">
 	               <text>
-	                  %news.updates.text
+	                  %news.eclipse.text
 	               </text>
 	            </link>
             </div>
