@@ -386,7 +386,7 @@ protected void fireDoubleClick(final DoubleClickEvent event) {
  *
  * @param event a double-click event
  *
- * @see IOpenListener#doubleClick
+ * @see IOpenListener#open(OpenEvent)
  */
 protected void fireOpen(final OpenEvent event) {
 	Object[] listeners = openListeners.getListeners();

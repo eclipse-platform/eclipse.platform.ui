@@ -151,7 +151,6 @@ public class FontRegistry {
 	/**
 	 * Load the FontRegistry using the ClassLoader from the PlatformUI
 	 * plug-in
-	 * @see FontRegistry(String,loader) 
 	 */
 	public FontRegistry(String location) throws MissingResourceException {
 		// FIXE:

@@ -46,7 +46,7 @@ public interface IMemento {
 	 * Special reserved key used to store the memento id 
 	 * (value <code>"org.eclipse.ui.id"</code>).
 	 *
-	 * @see #getId
+	 * @see #getID()
 	 */
 	public static final String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
 /**

@@ -19,7 +19,7 @@ package org.eclipse.ui;
  * This interface may be implemented by clients.
  * </p>
  *
- * @see IPartService#addPartListener2
+ * @see IPartService#addPartListener(IPartListener2)
  */
 public interface IPartListener2 {
 	
