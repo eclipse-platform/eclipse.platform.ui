@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.RefreshTab;
@@ -50,7 +51,7 @@ public class MigrationTests extends TestCase {
 		assertEquals("Wrong number of targets", 2, targets.length);
 		assertEquals("target1", targets[0]);
 		assertEquals("target2", targets[1]);
-		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, false));
+		assertEquals(true, config.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false));
 		assertEquals(true, config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false));
 		assertEquals("build kinds", config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""));
 		assertEquals("arg  ", config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""));
@@ -91,7 +92,7 @@ public class MigrationTests extends TestCase {
 		assertEquals("program tool", config.getName());
 		assertEquals("location", config.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""));
 		assertEquals("refresh scope", config.getAttribute(RefreshTab.ATTR_REFRESH_SCOPE, ""));
-		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, false));
+		assertEquals(true, config.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false));
 		assertEquals(true, config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false));
 		assertEquals("build kinds", config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""));
 		assertEquals("arg ${ant_target:target1} ${ant_target:target2}", config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""));
@@ -134,7 +135,7 @@ public class MigrationTests extends TestCase {
 		assertEquals("ant config", config.getName());
 		assertEquals("location", config.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""));
 		assertEquals("working directory", config.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""));
-		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, false));
+		assertEquals(true, config.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false));
 		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, false));
 		assertEquals(true, config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false));
 		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, false));
@@ -189,7 +190,7 @@ public class MigrationTests extends TestCase {
 		assertEquals("program config", config.getName());
 		assertEquals("location", config.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""));
 		assertEquals("working directory", config.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""));
-		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, false));
+		assertEquals(true, config.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false));
 		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, false));
 		assertEquals(true, config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false));
 		assertEquals(true, config.getAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, false));
