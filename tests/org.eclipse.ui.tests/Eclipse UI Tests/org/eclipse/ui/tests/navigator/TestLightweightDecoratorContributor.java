@@ -10,12 +10,13 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.tests.TestPlugin;
 
-public class TestLightweightDecoratorContributor implements ILightweightLabelDecorator {
+public class TestLightweightDecoratorContributor
+	implements ILightweightLabelDecorator {
 
 	public static TestLightweightDecoratorContributor contributor;
 	private Set listeners = new HashSet();
 	public static String DECORATOR_SUFFIX = "_SUFFIX";
-	public static String DECORATOR_PREFIX= "PREFIX_";
+	public static String DECORATOR_PREFIX = "PREFIX_";
 	private ImageDescriptor descriptor;
 
 	public TestLightweightDecoratorContributor() {
@@ -59,8 +60,10 @@ public class TestLightweightDecoratorContributor implements ILightweightLabelDec
 	public void refreshListeners(Object element) {
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, element);
-			((ILabelProviderListener) iterator.next()).labelProviderChanged(event);
+			LabelProviderChangedEvent event =
+				new LabelProviderChangedEvent(this, element);
+			((ILabelProviderListener) iterator.next()).labelProviderChanged(
+				event);
 		}
 	}
 
@@ -69,31 +72,28 @@ public class TestLightweightDecoratorContributor implements ILightweightLabelDec
 	 */
 	public ImageDescriptor getOverlay(Object element) {
 		Assert.isTrue(element instanceof IResource);
-		if(descriptor == null){
-			URL source = TestPlugin.getDefault().getDescriptor().getInstallURL();
-			try{
-				descriptor = ImageDescriptor.createFromURL(new URL(source,"icons/binary_co.gif"));
-			}
-			catch(MalformedURLException exception){
+		if (descriptor == null) {
+			URL source =
+				TestPlugin.getDefault().getDescriptor().getInstallURL();
+			try {
+				descriptor =
+					ImageDescriptor.createFromURL(
+						new URL(source, "icons/binary_co.gif"));
+			} catch (MalformedURLException exception) {
 				return null;
 			}
 		}
 		return descriptor;
-	
+
 	}
 
 	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getPrefix(java.lang.Object)
+	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
-	public String getPrefix(Object element) {
-		return DECORATOR_PREFIX;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getSuffix(java.lang.Object)
-	 */
-	public String getSuffix(Object element) {
-		return DECORATOR_SUFFIX;
+	public void decorate(Object element, IDecoration decoration) {
+		decoration.addOverlay(getOverlay(element));
+		decoration.addPrefix(DECORATOR_PREFIX);
+		decoration.addSuffix(DECORATOR_SUFFIX);
 	}
 
 }
