@@ -741,8 +741,8 @@ public void setVisibleEditor(EditorPane comp) {
 		return;
 	}
 
-	// Hide old part.
-	if (visibleEditor != null && visibleEditor != comp){
+	// Hide old part. Be sure that it is not in the middle of closing
+	if (visibleEditor != null && visibleEditor != comp && visibleEditor.getControl()!= null){
 		visibleEditor.getControl().setVisible(false);
 	}
 

@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.FillLayout;
  */
 public class EditorPresentation {
 	private WorkbenchPage page;
-	private List editorTable = new ArrayList(4);
+	private ArrayList editorTable = new ArrayList(4);
 	private Map mapEditorToPane = new HashMap(11);
 	private EditorArea editorArea;
 /**
@@ -43,10 +43,11 @@ public EditorPresentation(WorkbenchPage workbenchPage, Listener mouseDownListene
  */
 public void closeAllEditors() {
 	editorArea.removeAllEditors();
-	for (int i = 0; i < editorTable.size(); i++){
-		((EditorPane)editorTable.get(i)).dispose();
-	}
+	ArrayList editorsToDispose = (ArrayList) editorTable.clone();
 	editorTable.clear();
+	for (int i = 0; i < editorsToDispose.size(); i++){
+		((EditorPane)editorsToDispose.get(i)).dispose();
+	}	
 }
 /**
  * Closes an editor.   
@@ -58,9 +59,10 @@ public void closeEditor(IEditorPart part) {
 	if (pane != null) {
 		if (!(pane instanceof MultiEditorInnerPane))
 			editorArea.removeEditor(pane);
+		editorTable.remove(pane);
 		pane.dispose();
 	}
-	editorTable.remove(pane);
+	
 }
 /**
  * Deref a given part.  Deconstruct its container as required.
