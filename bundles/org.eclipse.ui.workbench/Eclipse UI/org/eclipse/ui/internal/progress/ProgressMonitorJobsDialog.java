@@ -122,7 +122,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				ProgressMessages
-						.getString("ProgressMonitorJobsDialog.DetailsTitle"),
+						.getString("ProgressMonitorJobsDialog.DetailsTitle"), //$NON-NLS-1$
 				false);
 		detailsButton.addSelectionListener(new SelectionAdapter() {
 			/*

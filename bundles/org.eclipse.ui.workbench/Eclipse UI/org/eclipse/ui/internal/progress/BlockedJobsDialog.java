@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IconAndMessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -29,6 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IconAndMessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * The BlockedJobsDialog class displays a dialog that provides information on the running jobs.
  */
@@ -68,7 +68,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 		 */
 		String getDisplayString() {
-			return "User interface operation awaiting lock";
+			return ProgressMessages.getString("BlockedJobsDialog.UserInterfaceTreeElement"); //$NON-NLS-1$
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayImage()
@@ -123,7 +123,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	public BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking) {
 		super(parentShell);
-		setMessage("The user interface is blocked. Wait for an operation to complete or cancel it.");
+		setMessage(ProgressMessages.getString("BlockedJobsDialog.BlockedMessage")); //$NON-NLS-1$
 		blockingMonitor = blocking;
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
@@ -280,7 +280,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("User Interface is Blocked");
+		shell.setText(ProgressMessages.getString("BlockedJobsDialog.BlockedTitle")); //$NON-NLS-1$
 		if (waitCursor == null)
 			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
 		shell.setCursor(waitCursor);
