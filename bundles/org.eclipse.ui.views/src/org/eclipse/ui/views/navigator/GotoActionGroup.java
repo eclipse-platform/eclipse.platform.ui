@@ -10,12 +10,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.views.framelist.*;
@@ -30,21 +27,26 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	private GoIntoAction goIntoAction;
 	private UpAction upAction;
 	private GotoResourceAction gotoResourceAction;
-
+	private IResourceChangeListener resourceChangeListener;
+	
 	public GotoActionGroup(IResourceNavigator navigator) {
 		super(navigator);
+	
+		// Listen for project open/close changes. Fixes bug 5958
+		resourceChangeListener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				updateActionBars();
+			}
+		};
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener);
 	}
 
-	protected void makeActions() {
-		FrameList frameList = navigator.getFrameList();
-		goIntoAction = new GoIntoAction(frameList);
-		backAction = new BackAction(frameList);
-		forwardAction = new ForwardAction(frameList);
-		upAction = new UpAction(frameList);
-		gotoResourceAction =
-			new GotoResourceAction(
-				navigator,
-				ResourceNavigatorMessages.getString("ResourceNavigator.resourceText")); //$NON-NLS-1$
+	/**
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
+		super.dispose();
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
@@ -90,14 +92,35 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		toolBar.add(forwardAction);
 		toolBar.add(upAction);
 	}
-	
+
+	protected void makeActions() {
+		FrameList frameList = navigator.getFrameList();
+		goIntoAction = new GoIntoAction(frameList);
+		backAction = new BackAction(frameList);
+		forwardAction = new ForwardAction(frameList);
+		upAction = new UpAction(frameList);
+		gotoResourceAction =
+			new GotoResourceAction(
+				navigator,
+				ResourceNavigatorMessages.getString("ResourceNavigator.resourceText")); //$NON-NLS-1$
+	}	
+
 	public void updateActionBars() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
-		goIntoAction.setEnabled(selection.size() == 1
-			&& ResourceSelectionUtil.allResourcesAreOfType(
-				selection,
-				IResource.PROJECT | IResource.FOLDER));
+		boolean enable = false;
+				
+		if (selection.size() == 1) {
+			Object object = selection.getFirstElement();
+			if (object instanceof IProject) {
+				enable = ((IProject) object).isOpen();
+			}
+			else
+			if (object instanceof IFolder) {
+				enable = true;
+			}
+		}
+		goIntoAction.setEnabled(enable);
 		// the rest of the actions update by listening to frame list changes
 	}
 }
