@@ -19,14 +19,16 @@ import junit.framework.TestCase;
  * Tests the implemented get/set methods of the abstract class Job
  */
 public class JobTest extends TestCase {
-	Job main;
+	Job shortJob;
+	Job longJob;
 	
 	/*
 	 * @see TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		main = new TestJob("Testing Job Class", 100, 10);
+		shortJob = new TestJob("Short Test Job", 100, 10);
+		longJob = new TestJob("Long Test Job", 1000000, 10);
 	}
 
 	/*
@@ -37,12 +39,14 @@ public class JobTest extends TestCase {
 	}
 
 	public void testGetName() {
-		assertTrue("1.0", main.getName().equals("Testing Job Class"));
+		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
+		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
+		
 		
 		//try creating a job with a null name
 		try {
 			Job test = new TestJob(null);
-			fail("1.1");
+			fail("2.0");
 		} catch (RuntimeException e) {
 			//should fail
 		}
@@ -51,55 +55,47 @@ public class JobTest extends TestCase {
 	public void testGetPriority() {
 		//set priorities to all allowed options
 		//check if getPriority() returns proper result
-		main.setPriority(Job.SHORT);
-		assertTrue("1.0", main.getPriority() == Job.SHORT);
-		main.setPriority(Job.LONG);
-		assertTrue("1.1", main.getPriority() == Job.LONG);
-		main.setPriority(Job.INTERACTIVE);
-		assertTrue("1.2", main.getPriority() == Job.INTERACTIVE);
-		main.setPriority(Job.BUILD);
-		assertTrue("1.3", main.getPriority() == Job.BUILD);
-		main.setPriority(Job.DECORATE);
-		assertTrue("1.4", main.getPriority() == Job.DECORATE);
+		
+		int [] priority = {Job.SHORT, Job.LONG, Job.INTERACTIVE, Job.BUILD, Job.DECORATE};
+		
+		for(int i = 0; i < priority.length; i++) {
+			shortJob.setPriority(priority[i]);
+			assertTrue("1." + (i+1), shortJob.getPriority() == priority[i]);
+		}
 	}
 
 	public void testGetResult() {
 		//execute the job several times and check if get result returns the result of job execution
-		assertTrue("1.0", main.getResult() == null);
-		main.schedule();
-		while(main.getState() != Job.NONE) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
-		assertTrue("1.1", main.getResult().getSeverity() == IStatus.OK);
-		main.schedule(1000);
-		assertTrue("1.3", main.sleep());
-		main.wakeUp();
-		waitForStart(main);
-		main.cancel();
-		while(main.getState() != Job.NONE) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
-		assertTrue("2.0", main.getResult().getSeverity() == IStatus.CANCEL);
+		//execute a short job
+		assertTrue("1.0", shortJob.getResult() == null);
+		shortJob.schedule();
+		waitForEnd(shortJob);
+		assertTrue("1.1", shortJob.getResult().getSeverity() == IStatus.OK);
+		
+		//cancel a long job
+		longJob.schedule(1000000);
+		assertTrue("1.3", longJob.sleep());
+		longJob.wakeUp();
+		waitForStart(longJob);
+		longJob.cancel();
+		waitForEnd(longJob);
+		assertTrue("2.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
 	}
 
 	public void testGetRule() {
 		//set several rules for the job, check if getRule returns the rule that was set
-		assertTrue("1.0", main.getRule() == null);
-		main.setRule(new IdentityRule());
-		assertTrue("1.1", (main.getRule() instanceof IdentityRule));
+		//no rule was set yet
+		assertTrue("1.0", shortJob.getRule() == null);
+		
+		shortJob.setRule(new IdentityRule());
+		assertTrue("1.1", (shortJob.getRule() instanceof IdentityRule));
+		
 		ISchedulingRule rule = new RuleSetA();
-		main.setRule(rule);
-		assertTrue("1.2", main.getRule() == rule);
-		main.setRule(null);
-		assertTrue("1.3", main.getRule() == null);
+		shortJob.setRule(rule);
+		assertTrue("1.2", shortJob.getRule() == rule);
+		
+		shortJob.setRule(null);
+		assertTrue("1.3", shortJob.getRule() == null);
 	}
 
 	public void testGetThread() {
@@ -107,91 +103,62 @@ public class JobTest extends TestCase {
 		//if the job is scheduled, only jobs that return the asynch_exec status will run in the indicated thread
 		
 		//main is not running now
-		assertTrue("1.0", main.getThread() == null);
+		assertTrue("1.0", shortJob.getThread() == null);
 		
 		Thread t = new Thread();
-		main.setThread(t);
-		assertTrue("1.1", main.getThread() == t);
+		shortJob.setThread(t);
+		assertTrue("1.1", shortJob.getThread() == t);
 		
-		main.setThread(new Thread());
-		assertTrue("1.2", main.getThread() instanceof Thread);
+		shortJob.setThread(new Thread());
+		assertTrue("1.2", shortJob.getThread() instanceof Thread);
 		
-		main.setThread(null);
-		assertTrue("1.3", main.getThread() == null);
-		
+		shortJob.setThread(null);
+		assertTrue("1.3", shortJob.getThread() == null);
 	}
 
 	public void testIsSystem() {
 		//reset the system parameter several times
-		assertTrue("1.0", !main.isSystem());
-		main.setSystem(true);
-		assertTrue("1.1", main.isSystem());
-		main.setSystem(false);
-		assertTrue("1.2", !main.isSystem());
+		assertTrue("1.0", !shortJob.isSystem());
+		shortJob.setSystem(true);
+		assertTrue("1.1", shortJob.isSystem());
+		shortJob.setSystem(false);
+		assertTrue("1.2", !shortJob.isSystem());
 	}
 
 	//see bug #43458
-	public void _testSetPriority() {
-		//set priority to non-existent type
-		try {
-			main.setPriority(1000);
-			fail("1.0");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//set priority to non-existent type
-		try {
-			main.setPriority(-Job.DECORATE);
-			fail("1.1");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//set priority to non-existent type
-		try {
-			main.setPriority(25);
-			fail("1.2");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//set priority to non-existent type
-		try {
-			main.setPriority(0);
-			fail("1.3");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//set priority to non-existent type
-		try {
-			main.setPriority(5);
-			fail("1.4");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//set priority to non-existent type
-		try {
-			main.setPriority(Job.INTERACTIVE - Job.BUILD);
-			fail("1.5");
-		} catch (RuntimeException e) {
-			//should fail
+	public void testSetPriority() {
+		int [] wrongPriority = {1000, -Job.DECORATE, 25, 0, 5, Job.INTERACTIVE - Job.BUILD};
+		
+		for(int i = 0; i < wrongPriority.length; i++) {
+			//set priority to non-existent type
+			try {
+				shortJob.setPriority(wrongPriority[i]);
+				fail("1." + (i+1));
+			} catch (RuntimeException e) {
+				//should fail
+			}
 		}
 	}
 
 	//see bug #43459
-	public void _testSetRule() {
+	public void testSetRule() {
 		//setting a scheduling rule for a job after it was already scheduled should throw an exception
-		
-		main.setRule(new IdentityRule());
-		assertTrue("1.0", main.getRule() instanceof IdentityRule);
-		main.schedule();
+		shortJob.setRule(new IdentityRule());
+		assertTrue("1.0", shortJob.getRule() instanceof IdentityRule);
+		shortJob.schedule(1000000);
 		try {
-			main.setRule(new RuleSetA());
+			shortJob.setRule(new RuleSetA());
 			fail("1.1");
 		} catch (RuntimeException e) {
 			//should fail
 		}
-		while(main.getState() != Job.NONE) {
+		
+		//wake up the sleeping job
+		shortJob.wakeUp();
+		
+		while(shortJob.getState() != Job.NONE) {
 			try {
-				main.setRule(new RuleSetB());
+				shortJob.setRule(new RuleSetB());
 				fail("2.0");
 			}  catch (RuntimeException e1) {
 				//should fail
@@ -204,143 +171,105 @@ public class JobTest extends TestCase {
 		}
 		
 		//after the job has finished executing, the scheduling rule for it can once again be reset
-		main.setRule(new RuleSetD());
-		assertTrue("1.2", main.getRule() instanceof RuleSetD);
-		main.setRule(null);
-		assertTrue("1.3", main.getRule() == null);
+		shortJob.setRule(new RuleSetD());
+		assertTrue("1.2", shortJob.getRule() instanceof RuleSetD);
+		shortJob.setRule(null);
+		assertTrue("1.3", shortJob.getRule() == null);
 	}
 
 	public void testSetThread() {
 		//setting the thread of a job that is not an asynchronous job should not affect the actual thread the job will run in
+		assertTrue("0.0", longJob.getThread() == null);
 		
-		assertTrue("1.0", main.getThread() == null);
-		main.setThread(Thread.currentThread());
-		assertTrue("2.0", main.getThread() == Thread.currentThread());
-		main.schedule();
-		waitForStart(main);
+		longJob.setThread(Thread.currentThread());
+		assertTrue("1.0", longJob.getThread() == Thread.currentThread());
+		longJob.schedule();
+		waitForStart(longJob);
 		
 		//the setThread method should have no effect on jobs that execute normally
-		assertTrue("2.0", main.getThread() != Thread.currentThread());
+		assertTrue("2.0", longJob.getThread() != Thread.currentThread());
 		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
+		longJob.cancel();
+		waitForEnd(longJob);
 		
 		//the thread should reset to null when the job finishes execution
-		assertTrue("3.0", main.getThread() == null);
+		assertTrue("3.0", longJob.getThread() == null);
 		
-		main.setThread(null);
-		assertTrue("4.0", main.getThread() == null);
+		longJob.setThread(null);
+		assertTrue("4.0", longJob.getThread() == null);
 		
-		main.schedule();
-		waitForStart(main);
+		longJob.schedule();
+		waitForStart(longJob);
 		
 		//the thread that the job is executing in is not the one that was set
-		assertTrue("5.0", main.getThread() != null);
+		assertTrue("5.0", longJob.getThread() != null);
+		longJob.cancel();
+		waitForEnd(longJob);
 		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
 		//thread should reset to null after execution of job
-		assertTrue("6.0", main.getThread() == null);
+		assertTrue("6.0", longJob.getThread() == null);
 		
 		Thread t = new Thread();
-		main.setThread(t);
-		assertTrue("4.0", main.getThread() == t);
-		main.schedule();
-		
-		waitForStart(main);
+		longJob.setThread(t);
+		assertTrue("7.0", longJob.getThread() == t);
+		longJob.schedule();
+		waitForStart(longJob);
 		
 		//the thread that the job is executing in is not the one that it was set to
-		assertTrue("5.0", main.getThread() != t);
-		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
+		assertTrue("8.0", longJob.getThread() != t);
+		longJob.cancel();
+		waitForEnd(longJob);
 		
 		//execution thread should reset to null after job is finished
-		assertTrue("6.0", main.getThread() == null);
+		assertTrue("9.0", longJob.getThread() == null);
 	}
 	
-	/**
-	 * This test needs to be fixed.  "Main" is not a long running job, so it is not safe
-	 * to call waitForStart.  Should instead use an "infinitely long" job:
-	 * - schedule infinitely long job
-	 * - wait for it to start
-	 * - trying calling done with invalid status
-	 * - cancel job
-	 * - check status
-	 * 
-	 * Currently fails due to bug 43591.
-	 */
-	public void _testDone() {
+	//see bug #43591
+	public void testDone() {
 		//calling the done method on a job that is not executing asynchronously should have no effect
 		
-		main.done(Status.OK_STATUS);
-		assertTrue("1.0", main.getResult() == null);
+		shortJob.done(Status.OK_STATUS);
+		assertTrue("1.0", shortJob.getResult() == null);
 		
-		main.done(Status.CANCEL_STATUS);
-		assertTrue("2.0", main.getResult() == null);
+		shortJob.done(Status.CANCEL_STATUS);
+		assertTrue("2.0", shortJob.getResult() == null);
 		
-		main.schedule();
-		waitForStart(main);
-				
-		while(main.getState() == Job.RUNNING) {
-			try {
-				main.done(Status.CANCEL_STATUS);
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-						
-			} 
-		}
+		//calling the done method after the job is scheduled
+		shortJob.schedule();
+		shortJob.done(Status.CANCEL_STATUS);
+		waitForEnd(shortJob);
+
+		//the done call should be ignored, and the job should finish execution normally
+		assertTrue("3.0", shortJob.getResult().getSeverity() == IStatus.OK);
 		
-		assertTrue("3.0", main.getResult().getSeverity() == IStatus.OK);
+		shortJob.done(Status.CANCEL_STATUS);
+		assertTrue("4.0", shortJob.getResult().getSeverity() == IStatus.OK);
 		
-		main.done(Status.CANCEL_STATUS);
-		assertTrue("4.0", main.getResult().getSeverity() == IStatus.OK);
+		//calling the done method before a job is cancelled
+		longJob.schedule();
+		waitForStart(longJob);
+		longJob.done(Status.OK_STATUS);
+		longJob.cancel();
+		waitForEnd(longJob);
 		
-		main.schedule();
-		waitForStart(main);
-		main.cancel();
+		//the done call should be ignored, and the job status should still be cancelled
+		assertTrue("5.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
 		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				main.done(Status.OK_STATUS);
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
-		
-		assertTrue("5.0", main.getResult().getSeverity() == IStatus.CANCEL);
-		
-		main.done(Status.OK_STATUS);
-		assertTrue("6.0", main.getResult().getSeverity() == IStatus.CANCEL);
+		longJob.done(Status.OK_STATUS);
+		assertTrue("6.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
 		
 	}
 	
 	//see bug #43566
 	public void testAsynchJob() {
 		final int [] status = {0};
-		
+				
 		//execute a job asynchronously and check the result
 		AsynchTestJob main = new AsynchTestJob("Test Asynch Finish", status);
 				
 		assertTrue("1.0", main.getThread() == null);
 		assertTrue("2.0", main.getResult() == null);
-		
+		//schedule the job to run
 		main.schedule();
 		
 		waitForStart(main);
@@ -361,14 +290,11 @@ public class JobTest extends TestCase {
 		assertTrue("3.1", status[0] == 1);
 		assertTrue("3.2", main.getThread() != null);
 		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
+		//let the job run
+		status[0] = 2;
+		waitForEnd(main);
 		
+		//after the job is finished, the thread should be reset
 		assertTrue("4.0", main.getState() == Job.NONE);
 		assertTrue("4.1", main.getResult().getSeverity() == IStatus.OK);
 		assertTrue("4.2", main.getThread() == null);
@@ -376,6 +302,7 @@ public class JobTest extends TestCase {
 		//reset status
 		status[0] = 0;
 		
+		//schedule the job to run again
 		main.schedule();
 		waitForStart(main);
 		assertTrue("5.0", main.getState() == Job.RUNNING);
@@ -394,16 +321,13 @@ public class JobTest extends TestCase {
 		
 		assertTrue("5.1",status[0] == 1);
 		assertTrue("5.2", main.getThread() != null);
+		
+		//cancel the job, then let the job get the cancellation request
 		main.cancel();
+		status[0] = 2;
+		waitForEnd(main);
 		
-		while(main.getState() == Job.RUNNING) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			} 
-		}
-		
+		//thread should be reset to null after cancellation
 		assertTrue("6.0", main.getState() == Job.NONE);
 		assertTrue("6.1", main.getResult().getSeverity() == IStatus.CANCEL);
 		assertTrue("6.2", main.getThread() == null);		
@@ -425,6 +349,24 @@ public class JobTest extends TestCase {
 			
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to start", i++ < 1000);
+		}
+	}
+	
+	/**
+	 * A job was scheduled to run.  Pause this thread so that a worker thread
+	 * has a chance to finish the job
+	 */
+	private void waitForEnd(Job job) {
+		int i = 0;
+		while(job.getState() != Job.NONE) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				
+			} 
+			
+			//sanity test to avoid hanging tests
+			assertTrue("Timeout waiting for job to end", i++ < 1000);
 		}
 	}	
 

@@ -25,9 +25,10 @@ class AsynchTestJob extends Job {
 	}
 			
 	public IStatus run(IProgressMonitor monitor) {
+		//wait
 		Thread t = new Thread(new AsynchExecThread(monitor, this, 100, 10, getName(), status));
-				
 		t.start();
+		
 		return Job.ASYNC_FINISH;
 	}
 		

@@ -9,6 +9,8 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import junit.framework.Assert;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -36,14 +38,23 @@ public class AsynchExecThread implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		 
 		//set the current thread as the execution thread
 		job.setThread(Thread.currentThread());
 		status[0] = 1;
+		int j = 0;
+		while(status[0] != 2) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				
+			}
+			//sanity test to avoid hanging tests
+			Assert.assertTrue("Timeout waiting for thread to be allowed to run", j++ < 100);
+		}
 		//must have positive work
 		current.beginTask(jobName, ticks <= 0 ? 1 : ticks);
 		try {
-			//assertTrue("3.0", main.getThread() == Thread.currentThread());
+			
 			for (int i = 0; i < ticks; i++) {
 				current.subTask("Tick: " + i);
 				if (current.isCanceled())
