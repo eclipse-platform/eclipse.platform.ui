@@ -267,7 +267,7 @@ public class ConfigurationView
 								feature,
 								true,
 								false,
-								ref.isOptional()));
+								false));
 					}
 					bag[0] = getRootFeatures(result);
 				}
@@ -294,7 +294,7 @@ public class ConfigurationView
 						feature,
 						csite.isConfigured(feature),
 						false,
-						allRefs[i].isOptional()));
+						false));
 			}
 			return getRootFeatures(result);
 		}
@@ -326,7 +326,7 @@ public class ConfigurationView
 
 		private void addChildFeatures(IFeature feature, IConfiguredSite csite, ArrayList children, boolean configured) {
 			try {
-				IFeatureReference[] included =
+				IIncludedFeatureReference[] included =
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < included.length; i++) {
 					IFeature childFeature;

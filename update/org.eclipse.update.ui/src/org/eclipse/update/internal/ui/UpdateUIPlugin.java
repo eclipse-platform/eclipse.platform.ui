@@ -301,7 +301,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	 * Gets the authenticator.
 	 * @return Returns a UpdateManagerAuthenticator
 	 */
-	public UpdateManagerAuthenticator getDatabase() {
+	public UpdateManagerAuthenticator getAuthenticator() {
 		return authenticator;
 	}
 	

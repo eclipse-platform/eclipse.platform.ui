@@ -40,7 +40,7 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 	
 	public IFeatureAdapter[] getIncludedFeatures() {
 		try {
-			IFeatureReference[] included = getFeature().getIncludedFeatureReferences();
+			IIncludedFeatureReference[] included = getFeature().getIncludedFeatureReferences();
 			SimpleFeatureAdapter[] result =
 				new SimpleFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {

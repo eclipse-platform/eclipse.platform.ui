@@ -34,19 +34,19 @@ public class MissingFeature implements IFeature {
 	public MissingFeature(IFeatureReference ref) {
 		this(null, ref);
 	}
-	
+
 	public MissingFeature(IFeature parent, IFeatureReference ref) {
 		this(ref.getSite(), ref.getURL());
 		this.reference = ref;
 		this.parent = parent;
-		
-		if (ref.isOptional()) {
+
+		if (isOptional()) {
 			desc = new IURLEntry() {
 				public URL getURL() {
 					return null;
 				}
 				public String getAnnotation() {
-					return UpdateUIPlugin.getResourceString("MissingFeature.desc.optional");  //$NON-NLS-1$
+					return UpdateUIPlugin.getResourceString("MissingFeature.desc.optional"); //$NON-NLS-1$
 				}
 				public Object getAdapter(Class key) {
 					return null;
@@ -54,18 +54,21 @@ public class MissingFeature implements IFeature {
 			};
 		}
 	}
-	
+
 	public boolean isOptional() {
-		return reference!=null && reference.isOptional();
+		return reference != null
+			&& reference instanceof IIncludedFeatureReference
+			&& ((IIncludedFeatureReference) reference).isOptional();
 	}
-	
+
 	public IFeature getParent() {
 		return parent;
 	}
-	
+
 	public URL getOriginatingSiteURL() {
 		VersionedIdentifier vid = getVersionedIdentifier();
-		if (vid==null) return null;
+		if (vid == null)
+			return null;
 		String key = vid.getIdentifier();
 		return UpdateUIPlugin.getOriginatingURL(key);
 	}
@@ -74,11 +77,10 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getIdentifier()
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		if (reference!=null) {
+		if (reference != null) {
 			try {
 				return reference.getVersionedIdentifier();
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 			}
 		}
 		return id;
@@ -95,9 +97,11 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getLabel()
 	 */
 	public String getLabel() {
-		if (reference!=null) {
-			String name = reference.getName();
-			if (name!=null) return name;
+		if (reference != null
+			&& reference instanceof IIncludedFeatureReference) {
+			String name = ((IIncludedFeatureReference) reference).getName();
+			if (name != null)
+				return name;
 		}
 		return url.toString();
 	}
@@ -175,7 +179,7 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getArch()
 	 */
-	public String getArch() {
+	public String getOSArch() {
 		return null;
 	}
 
@@ -192,7 +196,6 @@ public class MissingFeature implements IFeature {
 	public IImport[] getImports() {
 		return null;
 	}
-
 
 	/*
 	 * @see IFeature#getArchives()
@@ -305,10 +308,11 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getFeatureContentConsumer()
 	 */
-	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
+	public IFeatureContentConsumer getFeatureContentConsumer()
+		throws CoreException {
 		return null;
 	}
-	
+
 	/*
 	 * @see IFeature#setSite(ISite)
 	 */
@@ -319,21 +323,31 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getFeatureContentProvider()
 	 */
-	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
+	public IFeatureContentProvider getFeatureContentProvider()
+		throws CoreException {
 		return null;
 	}
 
 	/*
 	 * @see IFeature#install(IFeature,IVerifier, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature targetFeature, IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(
+		IFeature targetFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException {
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.update.core.IFeature#install(IFeature, IFeatureReference[], IVerificationListener, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature targetFeature, IFeatureReference[] optionalFeatures, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException {
+	public IFeatureReference install(
+		IFeature targetFeature,
+		IFeatureReference[] optionalFeatures,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws InstallAbortedException, CoreException {
 		return null;
 	}
 	/*
@@ -345,7 +359,8 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IPluginContainer#remove(IPluginEntry, IProgressMonitor)
 	 */
-	public void remove(IPluginEntry entry, IProgressMonitor monitor) throws CoreException {
+	public void remove(IPluginEntry entry, IProgressMonitor monitor)
+		throws CoreException {
 	}
 
 	/*
@@ -364,9 +379,9 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getIncludedFeatureReferences()
 	 */
-	public IFeatureReference[] getIncludedFeatureReferences()
+	public IIncludedFeatureReference[] getIncludedFeatureReferences()
 		throws CoreException {
-		return new IFeatureReference[0];
+		return new IIncludedFeatureReference[0];
 	}
 
 	/**
@@ -375,5 +390,26 @@ public class MissingFeature implements IFeature {
 	public String getAffinityFeature() {
 		return null;
 	}
-}
+	/**
+	 * @see org.eclipse.update.core.IFeature#getRawIncludedFeatureReferences()
+	 */
+	public IIncludedFeatureReference[] getRawIncludedFeatureReferences()
+		throws CoreException {
+		return getIncludedFeatureReferences();
+	}
 
+	/**
+	 * @see org.eclipse.update.core.IFeature#getRawNonPluginEntries()
+	 */
+	public INonPluginEntry[] getRawNonPluginEntries() {
+		return getNonPluginEntries();
+	}
+
+	/**
+	 * @see org.eclipse.update.core.IFeature#getRawPluginEntries()
+	 */
+	public IPluginEntry[] getRawPluginEntries() {
+		return getPluginEntries();
+	}
+
+}

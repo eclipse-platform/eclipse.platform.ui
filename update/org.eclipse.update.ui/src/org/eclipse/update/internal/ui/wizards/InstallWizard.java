@@ -343,9 +343,9 @@ public class InstallWizard extends Wizard {
 	}
 	static boolean hasOptionalFeatures(IFeature feature) {
 		try {
-			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < irefs.length; i++) {
-				IFeatureReference iref = irefs[i];
+				IIncludedFeatureReference iref = irefs[i];
 				if (iref.isOptional())
 					return true;
 				// see if it has optional children
@@ -427,9 +427,9 @@ public class InstallWizard extends Wizard {
 		// be installed.
 		URL url = feature.getSite().getURL();
 		try {
-			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < irefs.length; i++) {
-				IFeatureReference iref = irefs[i];
+				IIncludedFeatureReference iref = irefs[i];
 				boolean preserve = false;
 				if (iref.isOptional()) {
 					boolean onTheList = false;

@@ -521,7 +521,7 @@ public class DetailsForm extends PropertyWebForm {
 		setOS(feature.getOS());
 		setWS(feature.getWS());
 		setNL(feature.getNL());
-		setArch(feature.getArch());
+		setArch(feature.getOSArch());
 
 		licenseLink.setInfo(feature.getLicense());
 		copyrightLink.setInfo(feature.getCopyright());
@@ -628,9 +628,9 @@ public class DetailsForm extends PropertyWebForm {
 
 	private boolean hasMissingOptionalFeatures(IFeature feature) {
 		try {
-			IFeatureReference refs[] = feature.getIncludedFeatureReferences();
+			IIncludedFeatureReference refs[] = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < refs.length; i++) {
-				IFeatureReference ref = refs[i];
+				IIncludedFeatureReference ref = refs[i];
 
 				try {
 					IFeature child = ref.getFeature();

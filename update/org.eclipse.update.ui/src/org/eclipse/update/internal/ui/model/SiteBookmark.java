@@ -92,11 +92,11 @@ public class SiteBookmark extends NamedModelObject
 			addCategoryToCatalog(category);
 		}
 		// Add features to categories
-		IFeatureReference [] featureRefs;
+		ISiteFeatureReference [] featureRefs;
 		featureRefs = site.getFeatureReferences();
 
 		for (int i=0; i<featureRefs.length; i++) {
-			IFeatureReference featureRef = featureRefs[i];
+			ISiteFeatureReference featureRef = featureRefs[i];
 			addFeatureToCatalog(featureRef);
 		}
 		if (otherCategory.getChildCount()>0)
@@ -134,7 +134,7 @@ public class SiteBookmark extends NamedModelObject
 			}
 		}
 	}
-	private void addFeatureToCatalog(IFeatureReference feature) {
+	private void addFeatureToCatalog(ISiteFeatureReference feature) {
 		ICategory [] categories = feature.getCategories();
 		boolean orphan = true;
 

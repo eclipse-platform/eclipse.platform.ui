@@ -370,7 +370,7 @@ public class ActivityConstraints {
 
 		// return specified base feature and all its children
 		features.add(feature);
-		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] children = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
 				IFeature child = children[i].getFeature();
@@ -657,7 +657,7 @@ public class ActivityConstraints {
 			IFeature feature = (IFeature) features.get(i);
 			ArrayList fos = createList(feature.getOS());
 			ArrayList fws = createList(feature.getWS());
-			ArrayList farch = createList(feature.getArch());
+			ArrayList farch = createList(feature.getOSArch());
 
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
@@ -913,17 +913,18 @@ public class ActivityConstraints {
 		boolean included = false;
 		for (int i = 0; i < csites.length; i++) {
 			IConfiguredSite csite = csites[i];
-			IFeatureReference[] crefs = csite.getSite().getFeatureReferences();
+			ISiteFeatureReference[] crefs = csite.getSite().getFeatureReferences();
 			for (int j = 0; j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
 				IFeature cfeature = null;
 				try {
 					cfeature = cref.getFeature();
 				} catch (CoreException e) {
+					//FIXME: cannot ask 'isOptional' here
 					// Ignore missing optional feature.
-					if (cref.isOptional())
+					/* if (cref.isOptional())
 						continue;
-					else
+					else */
 						throw e;
 				}
 				if (isParent(cfeature, feature, true)) {
@@ -953,9 +954,9 @@ public class ActivityConstraints {
 		IFeature feature,
 		boolean optionalOnly)
 		throws CoreException {
-		IFeatureReference[] refs = candidate.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] refs = candidate.getIncludedFeatureReferences();
 		for (int i = 0; i < refs.length; i++) {
-			IFeatureReference child = refs[i];
+			IIncludedFeatureReference child = refs[i];
 			VersionedIdentifier cvid;
 			try {
 				cvid = child.getVersionedIdentifier();

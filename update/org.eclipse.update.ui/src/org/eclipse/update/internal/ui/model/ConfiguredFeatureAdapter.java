@@ -49,12 +49,12 @@ public class ConfiguredFeatureAdapter
 	}
 	public IFeatureAdapter[] getIncludedFeatures() {
 		try {
-			IFeatureReference[] included =
+			IIncludedFeatureReference[] included =
 				getFeature().getIncludedFeatureReferences();
 			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {
-				IFeatureReference fref = included[i];
+				IIncludedFeatureReference fref = included[i];
 				IFeature feature;
 				boolean childConfigured=configured;
 				boolean updated = false;

@@ -10,7 +10,7 @@ public class EnvironmentUtil {
 		String os = candidate.getOS();
 		String ws = candidate.getWS();
 		String nl = candidate.getNL();
-		String arch = candidate.getArch();
+		String arch = candidate.getOSArch();
 		if (os!=null && isMatching(os, BootLoader.getOS())==false) return false;
 		if (ws!=null && isMatching(ws, BootLoader.getWS())==false) return false;
 		if (nl!=null && isMatching(nl, BootLoader.getNL())==false) return false;

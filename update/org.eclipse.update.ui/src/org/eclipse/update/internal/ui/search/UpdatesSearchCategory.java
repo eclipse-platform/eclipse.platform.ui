@@ -79,7 +79,10 @@ public class UpdatesSearchCategory extends SearchCategory {
 			return root;
 		}
 		public IURLEntry getUpdateEntry() {
-			int location = ref.getSearchLocation();
+			int location = IUpdateConstants.SEARCH_ROOT;
+			
+			if (ref instanceof IIncludedFeatureReference)
+				location = ((IIncludedFeatureReference)ref).getSearchLocation();
 			if (parent == null || location==IUpdateConstants.SEARCH_SELF) {
 				return getFeature().getUpdateSiteEntry();
 			}
@@ -110,7 +113,17 @@ public class UpdatesSearchCategory extends SearchCategory {
 			}
 		}
 		public boolean isUpdatable() {
-			return parent==null || ref.getMatch()!=IUpdateConstants.RULE_PERFECT;
+			if (parent == null) return true;
+			if (ref instanceof IIncludedFeatureReference) {
+				return ((IIncludedFeatureReference)ref).getMatch()!=IUpdateConstants.RULE_PERFECT;
+			}
+			return false;
+		}
+		
+		public int getMatch() {
+			if (ref instanceof IIncludedFeatureReference)
+				return ((IIncludedFeatureReference)ref).getMatch();
+			return IUpdateConstants.RULE_PERFECT;
 		}
 	}
 
@@ -219,9 +232,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 		}
 		private boolean isMissingOptionalChildren(IFeature feature) {
 			try {
-				IFeatureReference [] children=feature.getIncludedFeatureReferences();
+				IIncludedFeatureReference [] children=feature.getIncludedFeatureReferences();
 				for (int i=0; i<children.length; i++) {
-					IFeatureReference ref = children[i];
+					IIncludedFeatureReference ref = children[i];
 					try {
 						IFeature child = ref.getFeature();
 						// If we are here, the child is not missing.
@@ -383,7 +396,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		for (int i = 0; i < selected.size(); i++) {
 			Candidate candidate = (Candidate)selected.get(i);
 			IFeature feature = candidate.getFeature();
-			int match = candidate.getReference().getMatch();
+			int match = candidate.getMatch();
 			IURLEntry updateEntry = candidate.getUpdateEntry();
 			if (feature==null) {
 				queries[i] = null;

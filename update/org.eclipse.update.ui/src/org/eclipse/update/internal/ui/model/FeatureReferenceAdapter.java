@@ -12,12 +12,8 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;
 
 	public FeatureReferenceAdapter(IFeatureReference featureRef) {
-		this(featureRef, false);
-	}
-	
-	public FeatureReferenceAdapter(IFeatureReference featureRef, boolean included) {
 		this.featureRef = featureRef;
-		setIncluded(included);
+		setIncluded(featureRef instanceof IIncludedFeatureReference);
 	}
 	
 	public IFeature getFeature() throws CoreException {
@@ -33,7 +29,8 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 	}
 	
 	public boolean isOptional() {
-		return featureRef.isOptional();
+		return featureRef instanceof IIncludedFeatureReference ? 
+			((IIncludedFeatureReference)featureRef).isOptional():false;
 	}
 
 	public IFeatureAdapter[] getIncludedFeatures() {
@@ -43,7 +40,7 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 			FeatureReferenceAdapter[] result =
 				new FeatureReferenceAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {
-				result[i] = new FeatureReferenceAdapter(included[i], true);
+				result[i] = new FeatureReferenceAdapter(included[i]);
 			}
 			return result;
 		} catch (CoreException e) {

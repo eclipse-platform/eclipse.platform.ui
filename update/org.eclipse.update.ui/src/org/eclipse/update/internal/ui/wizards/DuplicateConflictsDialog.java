@@ -271,9 +271,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		IFeatureReference[] optionalFeatures)
 		throws CoreException {
 		addEntry(feature, csite, table);
-		IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < irefs.length; i++) {
-			IFeatureReference iref = irefs[i];
+			IIncludedFeatureReference iref = irefs[i];
 			boolean add = true;
 
 			if (iref.isOptional() && optionalFeatures != null) {

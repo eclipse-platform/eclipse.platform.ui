@@ -1,15 +1,10 @@
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 
@@ -53,7 +48,7 @@ public class FeatureHierarchyElement {
 	 */
 	public boolean isEditable() {
 		// cannot uncheck non-optional features
-		if (newFeatureRef.isOptional() == false)
+		if (!isOptional() == false)
 			return false;
 		// cannot uncheck optional feature that
 		// has already been installed
@@ -86,7 +81,8 @@ public class FeatureHierarchyElement {
 	 * Returns true if feature is included as optional.
 	 */
 	public boolean isOptional() {
-		return newFeatureRef.isOptional();
+		return newFeatureRef instanceof IIncludedFeatureReference &&
+			((IIncludedFeatureReference)newFeatureRef).isOptional();
 	}
 	/**
 	 * Returns true if this optional feature is selected
@@ -150,8 +146,10 @@ public class FeatureHierarchyElement {
 			IFeature feature = newFeatureRef.getFeature();
 			return getFeatureLabel(feature);
 		} catch (CoreException e) {
-			if (newFeatureRef.getName() != null)
-				return newFeatureRef.getName();
+			if (newFeatureRef instanceof IIncludedFeatureReference) {
+				String iname = ((IIncludedFeatureReference)newFeatureRef).getName();
+				if (iname!=null) return iname;
+			}
 			try {
 				VersionedIdentifier vid =
 					newFeatureRef.getVersionedIdentifier();
@@ -262,7 +260,8 @@ public class FeatureHierarchyElement {
 					}
 				}
 				// test if the old optional feature exists
-				if (oldRef!=null && oldRef.isOptional()) {
+				if (oldRef!=null && oldRef instanceof IIncludedFeatureReference &&
+				((IIncludedFeatureReference)oldRef).isOptional()) {
 					try {
 						oldRef.getFeature();
 					}
@@ -276,7 +275,7 @@ public class FeatureHierarchyElement {
 				// If this is an update (old feature exists), 
 				// only check the new optional feature if the old exists.
 				// Otherwise, always check.
-				if (newRef.isOptional() && update) {
+				if (element.isOptional() && update) {
 					element.setChecked(oldRef != null);
 					if (oldRef == null) {
 						// Does not have an old reference,

@@ -7,13 +7,10 @@ package org.eclipse.update.internal.ui.security;
 
 
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.update.internal.core.net.http.client.Authenticator;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -194,7 +191,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 		ui.setBlockOnOpen(true);
 		ui.open();
 
-		boolean isCancelled = ui.getReturnCode() == ui.CANCEL;
+		boolean isCancelled = ui.getReturnCode() == UserValidationDialog.CANCEL;
 		if (!isCancelled){
 			result= new HashMap();
 			result.put(INFO_USERNAME, ui.getUserid());
