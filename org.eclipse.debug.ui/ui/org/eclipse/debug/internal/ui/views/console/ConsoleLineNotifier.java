@@ -39,7 +39,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	 */
 	private IConsole fConsole = null;
 
-    private String[] lineDelimiters;
+//    private String[] lineDelimiters;
 	
 	
 	/**
@@ -54,7 +54,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
 			listener.init(console);
 		}
-		lineDelimiters = fConsole.getDocument().getLegalLineDelimiters();
+//		lineDelimiters = fConsole.getDocument().getLegalLineDelimiters();
 		fConsole.addPatternMatchListener(this);
 	}
 	
@@ -117,7 +117,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
      * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
      */
     public String getPattern() {
-    	return ".*\n";
+    	return ".*\n"; //$NON-NLS-1$
     }
 
 	/* (non-Javadoc)
@@ -134,7 +134,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
         try  {
             IDocument document = fConsole.getDocument();
             String text = document.get(event.getOffset(), event.getLength());
-            text = text.replaceAll("[\r\n]", "");
+            text = text.replaceAll("[\r\n]", "");  //$NON-NLS-1$//$NON-NLS-2$
             Region region = new Region(event.getOffset(), text.length()); 
             lineAppended(region);
         } catch (BadLocationException e) {}

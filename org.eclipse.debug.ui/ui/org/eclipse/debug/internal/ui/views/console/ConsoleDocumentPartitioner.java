@@ -717,10 +717,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	protected void checkOverflow() {
 		if (fHighWaterMark >= 0) {
 			if (fDocument.getLength() > fHighWaterMark) {
-				int lineDifference = 0;
+//				int lineDifference = 0;
 				if (fLineNotifier != null) {
 //					int processed = fLineNotifier.getLinesProcessed();
-					int numLines = fDocument.getNumberOfLines();
+//					int numLines = fDocument.getNumberOfLines();
 //					lineDifference = numLines - processed;
 				}
 				int overflow = fDocument.getLength() - fLowWaterMark; 
