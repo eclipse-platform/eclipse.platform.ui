@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -33,7 +34,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button linkButton;
 	private Combo accelConfigCombo;
-	private IntegerFieldEditor reuseEditors;
+	
+	private Button reuseEditors;
+	private IntegerFieldEditor reuseEditorsThreshold;
 	private IntegerFieldEditor recentFilesEditor;
 
 	//Widgets for perspective switching when creating new projects
@@ -102,13 +105,17 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		linkButton = new Button(composite, SWT.CHECK);
 		linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 
-		createEditorGroup(composite);
+		createSpace(composite);
+		createEditorHistoryGroup(composite);
+		
+		createSpace(composite);
+		createEditorReuseGroup(composite);
 		
 		createSpace(composite);
 		createProjectPerspectiveGroup(composite);
 		
-//		createSpace(composite);
-//		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+		//createSpace(composite);
+		//createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
 
 		// set initial values
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -148,10 +155,49 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		}	
 	}
 	/**
-	 * Create a composite that contains entry fields specifying editor preferences.
+	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
-	private void createEditorGroup(Composite composite) {
+	private void createEditorReuseGroup(Composite composite) {
 
+		final Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = gd.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);		
+		
+		reuseEditors = new Button(groupComposite, SWT.CHECK);
+		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
+
+		GridData reuseEditorsData = new GridData();
+		reuseEditorsData.horizontalSpan = layout.numColumns;
+		reuseEditors.setLayoutData(reuseEditorsData);
+		
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
+		reuseEditors.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e){
+				reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
+			}
+		});
+		
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), groupComposite);
+		
+		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+		reuseEditorsThreshold.setPreferencePage(this);
+		reuseEditorsThreshold.setTextLimit(2);
+		reuseEditorsThreshold.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThresholdError"));
+		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		reuseEditorsThreshold.setValidRange(1, 99);
+		reuseEditorsThreshold.load();
+		reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
+	}
+	/**
+	 * Create a composite that contains entry fields specifying editor history preferences.
+	 */
+	private void createEditorHistoryGroup(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -159,18 +205,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);
-
-		reuseEditors = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditors"), groupComposite);
-
-		reuseEditors.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		reuseEditors.setPreferencePage(this);
-		reuseEditors.setTextLimit(2);
-		reuseEditors.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsError"));
-		reuseEditors.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		reuseEditors.setValidRange(1, 99);
-		reuseEditors.load();
-
+		groupComposite.setLayoutData(gd);	
+		
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite);
 
 		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;
@@ -331,7 +367,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-		reuseEditors.loadDefault();
+		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
+		reuseEditorsThreshold.loadDefault();
+		
 		recentFilesEditor.loadDefault();
 		
 		// Sets the accelerator configuration selection to the default configuration
@@ -391,7 +429,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
 
 		// store the reuse editors setting
-		reuseEditors.store();
+		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
+		reuseEditorsThreshold.store();
 
 		// store the recent files setting
 		recentFilesEditor.store();

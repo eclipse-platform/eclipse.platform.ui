@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.PartInitException;
@@ -306,6 +307,11 @@ public class EditorManager {
 	private IEditorPart findReusableEditor(EditorDescriptor desc) {
 
 		IEditorPart editors[] = page.getSortedEditors();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
+		boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+		if(!reuse)
+			return null;
+	
 		if (editors.length < page.getEditorReuseThreshold())
 			return null;
 
