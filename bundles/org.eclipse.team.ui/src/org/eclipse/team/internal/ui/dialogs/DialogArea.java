@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.*;
  */
 public abstract class DialogArea {
 
-	protected static final int LABEL_WIDTH_HINT = 400;
-	
 	protected Dialog parentDialog;
 	protected FontMetrics fontMetrics;
 	protected IDialogSettings settings;
@@ -149,7 +147,7 @@ public abstract class DialogArea {
 		data.horizontalSpan = horizontalSpan;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = LABEL_WIDTH_HINT;
+		data.widthHint= 0;
 		label.setLayoutData(data);
 		return label;
 	}
@@ -164,26 +162,19 @@ public abstract class DialogArea {
 	}
 	/**
 	 * Creates composite control and sets the default layout data.
-	 *
 	 * @param parent  the parent of the new composite
 	 * @param numColumns  the number of columns for the new composite
+	 * @param grab specify whether the composite should grab for excessive space in both directions.
 	 * @return the newly-created coposite
 	 */
-	protected Composite createComposite(Composite parent, int numColumns) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		Font font = parent.getFont();
+	protected Composite createComposite(Composite parent, int numColumns, boolean grab) {
+		final Composite composite = new Composite(parent, SWT.NULL);
+		final Font font = parent.getFont();
 		composite.setFont(font);
 		
-		// GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		composite.setLayout(layout);
-
-		// GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
+		composite.setLayout(new GridLayout(numColumns, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, grab, grab));
+		
 		return composite;
 	}
 	

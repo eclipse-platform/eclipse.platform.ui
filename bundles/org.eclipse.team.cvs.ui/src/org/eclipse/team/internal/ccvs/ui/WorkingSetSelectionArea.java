@@ -95,10 +95,9 @@ public class WorkingSetSelectionArea extends DialogArea {
 	 */
 	public void createArea(Composite parent) {
         Dialog.applyDialogFont(parent);
-		Composite composite = createComposite(parent, 2);
+		final Composite composite = createComposite(parent, 2, false);
 		initializeDialogUnits(composite);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
-		composite.setLayoutData(data);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
@@ -122,8 +121,8 @@ public class WorkingSetSelectionArea extends DialogArea {
 
 		// Create the combo/button which allows working set selection
 		mruList = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
-		data.horizontalIndent=15;
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		data.horizontalIndent= 15;
 		mruList.setLayoutData(data);
 
 		selectButton = createButton(composite, Policy.bind("WorkingSetSelectionArea.workingSetOther"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$

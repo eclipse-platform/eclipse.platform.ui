@@ -75,12 +75,6 @@ public class GenerateDiffFileWizard extends Wizard {
     private class LocationPage extends WizardPage {
         
         /**
-         * Sizing constants.
-         */
-        private static final int SIZING_SELECTION_PANE_HEIGHT = 125;
-        private static final int SIZING_SELECTION_PANE_WIDTH = 200;
-        
-        /**
          * The possible locations to save a patch.
          */
         public final static int CLIPBOARD = 1;
@@ -240,9 +234,7 @@ public class GenerateDiffFileWizard extends Wizard {
         public void createControl(Composite parent) {
             
             final Composite composite= new Composite(parent, SWT.NULL);
-            GridLayout layout= new GridLayout();
-            composite.setLayout(layout);
-            composite.setLayoutData(new GridData());
+            composite.setLayout(new GridLayout());
             setControl(composite);
             initializeDialogUnits(composite);
             
@@ -281,8 +273,8 @@ public class GenerateDiffFileWizard extends Wizard {
             
             wsTreeViewer = new TreeViewer(composite, SWT.BORDER);
             final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-            gd.widthHint = SIZING_SELECTION_PANE_WIDTH;
-            gd.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+            gd.widthHint= 0;
+            gd.heightHint= 0;
             wsTreeViewer.getTree().setLayoutData(gd);
             
             final ContainerContentProvider cp = new ContainerContentProvider();
@@ -291,13 +283,14 @@ public class GenerateDiffFileWizard extends Wizard {
             wsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
             wsTreeViewer.setInput(ResourcesPlugin.getWorkspace());
             
-            final Composite group = new Composite(composite,SWT.NONE);
+            final Composite group = new Composite(composite, SWT.NONE);
             final GridLayout layout = new GridLayout(2, false);
             layout.marginWidth = 0;
             group.setLayout(layout);
-            group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+            group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
             
             final Label label = new Label(group, SWT.NONE);
+            label.setLayoutData(new GridData());
             label.setText(Policy.bind("Fi&le_name__9")); //$NON-NLS-1$
             
             wsFilenameText = new Text(group,SWT.BORDER);
@@ -310,6 +303,7 @@ public class GenerateDiffFileWizard extends Wizard {
         private void setupFilesystemControls(final Composite composite) {
             GridLayout layout;
             fsRadio= new Button(composite, SWT.RADIO);
+
             fsRadio.setText(Policy.bind("Save_In_File_System_3")); //$NON-NLS-1$
             
             final Composite nameGroup = new Composite(composite,SWT.NONE);
@@ -317,7 +311,7 @@ public class GenerateDiffFileWizard extends Wizard {
             layout.numColumns = 2;
             layout.marginWidth = 0;
             nameGroup.setLayout(layout);
-            GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+            final GridData data = new GridData(SWT.FILL, SWT.FILL, false, false);
             nameGroup.setLayoutData(data);
             
             fsPathText= new Text(nameGroup, SWT.BORDER);
@@ -326,10 +320,6 @@ public class GenerateDiffFileWizard extends Wizard {
             
             fsBrowseButton = new Button(nameGroup, SWT.NULL);
             fsBrowseButton.setText(Policy.bind("Browse..._4")); //$NON-NLS-1$
-            data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-            data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-            data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-            fsBrowseButton.setLayoutData(data);
         }
         
         /**

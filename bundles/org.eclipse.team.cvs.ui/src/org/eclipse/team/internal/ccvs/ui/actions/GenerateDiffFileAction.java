@@ -23,6 +23,10 @@ import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
  * by a create patch command in the compare viewer.
  */
 public class GenerateDiffFileAction extends WorkspaceAction {
+    
+    // The initial size of this wizard.
+    private final static int INITIAL_WIDTH = 300;
+    private final static int INITIAL_HEIGHT = 350;
 	
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
@@ -33,7 +37,7 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(resources[0]);
 		wizard.setWindowTitle(title);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		dialog.setMinimumPageSize(350, 250);
+		dialog.setMinimumPageSize(INITIAL_WIDTH, INITIAL_HEIGHT);
 		dialog.open();
 	}
 	

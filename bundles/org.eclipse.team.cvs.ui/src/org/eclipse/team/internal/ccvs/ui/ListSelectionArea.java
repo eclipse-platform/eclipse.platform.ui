@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,10 +46,6 @@ public class ListSelectionArea extends DialogArea {
 	
 	private Object[] previousCheckedElements;
 
-	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
-	
 	public static final String LIST_SELECTION = "ListSelection"; //$NON-NLS-1$
 	
 	/**
@@ -67,17 +71,20 @@ public class ListSelectionArea extends DialogArea {
 	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createArea(Composite parent) {
-        Dialog.applyDialogFont(parent);
-		Composite composite = createComposite(parent, 1);
+
+	    Dialog.applyDialogFont(parent);
+
+        final Composite composite = createComposite(parent, 1, true);
+        
 		initializeDialogUnits(composite);
 
 		if (message != null)
 			createWrappingLabel(composite, message, 1);
 
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.heightHint = 0; // It will expand to the size of the wizard page!
+		data.widthHint = 0;
 		listViewer.getTable().setLayoutData(data);
 
 		listViewer.setLabelProvider(labelProvider);
@@ -124,12 +131,8 @@ public class ListSelectionArea extends DialogArea {
 	 */
 	private void addSelectionButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setData(data);
+		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setData(new GridData(SWT.END, SWT.BEGINNING, true, false));
 
 		Button selectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.selectAll"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 

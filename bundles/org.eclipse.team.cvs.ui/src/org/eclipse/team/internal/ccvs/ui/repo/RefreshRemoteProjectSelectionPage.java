@@ -18,6 +18,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -38,7 +40,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * refreshed.
  */
 public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
-
+    
 	private Dialog parentDialog;
 	private ICVSRemoteResource[] rootFolders;
 	private ListSelectionArea listArea;
@@ -94,8 +96,12 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 1);
+		
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		
 		setControl(composite);
+		
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.REFRESH_REMOTE_PROJECT_SELECTION_PAGE);
 		
@@ -105,6 +111,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			new WorkbenchLabelProvider(), 
 			Policy.bind("RefreshRemoteProjectSelectionPage.selectRemoteProjects")); //$NON-NLS-1$
 		listArea.createArea(composite);
+
 		listArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				updateEnablement();
@@ -151,7 +158,6 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 				ICVSRemoteResource resource = resources[i];
 				listArea.getViewer().setChecked(resource, true);
 			}
-
 		}
 	}
 	
@@ -168,5 +174,4 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		Object[] checked = listArea.getViewer().getCheckedElements();
 		return (ICVSRemoteResource[]) Arrays.asList(checked).toArray(new ICVSRemoteResource[checked.length]);
 	}
-
 }

@@ -49,6 +49,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * for widget creation.
  */
 public abstract class CVSWizardPage extends WizardPage {
+    
 	protected static final int LABEL_WIDTH_HINT = 400;
 	protected static final int LABEL_INDENT_WIDTH = 32;
 	protected static final int LIST_HEIGHT_HINT = 100;
@@ -120,18 +121,9 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @return the newly-created coposite
 	 */
 	protected Composite createComposite(Composite parent, int numColumns) {
-		Composite composite = new Composite(parent, SWT.NULL);
-	
-		// GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		composite.setLayout(layout);
-	
-		// GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
+		final Composite composite = new Composite(parent, SWT.NULL);
+		composite.setLayout(new GridLayout(numColumns, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		return composite;
 	}
 	/**
@@ -181,11 +173,8 @@ public abstract class CVSWizardPage extends WizardPage {
 	protected Label createWrappingLabel(Composite parent, String text, int indent, int horizontalSpan) {
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setText(text);
-		GridData data = new GridData();
-		data.horizontalSpan = horizontalSpan;
-		data.horizontalAlignment = GridData.FILL;
+		GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		data.horizontalIndent = indent;
-		data.grabExcessHorizontalSpace = true;
 		data.widthHint = LABEL_WIDTH_HINT;
 		label.setLayoutData(data);
 		return label;

@@ -44,7 +44,7 @@ public class DateTagDialog extends Dialog {
 		}
 
 		public void createArea(Composite parent) {
-			Composite composite = createComposite(parent, 4);
+			Composite composite = createComposite(parent, 4, false);
 			initializeDialogUnits(composite);
 			createLabel(composite, Policy.bind("DateTagDialog.0"), 1); //$NON-NLS-1$
 			fromMonthCombo = new Combo(composite, SWT.READ_ONLY);
@@ -119,7 +119,7 @@ public class DateTagDialog extends Dialog {
 		 * @see org.eclipse.team.internal.ui.dialogs.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 		 */
 		public void createArea(Composite parent) {
-			Composite composite = createComposite(parent, 2);
+			Composite composite = createComposite(parent, 2, false);
 			initializeDialogUnits(composite);
 			includeTime = createCheckbox(composite, Policy.bind("DateTagDialog.1"), 2);  //$NON-NLS-1$
 			createLabel(composite, Policy.bind("DateTagDialog.2"), 1); //$NON-NLS-1$

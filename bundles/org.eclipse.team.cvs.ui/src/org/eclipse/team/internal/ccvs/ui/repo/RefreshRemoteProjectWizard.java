@@ -32,11 +32,17 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
+
+
 /**
  * Wizard for refreshing the tags for a CVS repository location
  */
 public class RefreshRemoteProjectWizard extends Wizard {
-	
+    
+    // The initial size of this wizard.
+    private final static int INITIAL_WIDTH = 300;
+    private final static int INITIAL_HEIGHT = 350;
+    
 	private Dialog parentDialog;
 	private ICVSRepositoryLocation root;
 	private ICVSRemoteResource[] rootFolders;
@@ -64,6 +70,11 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		}
 		RefreshRemoteProjectWizard wizard = new RefreshRemoteProjectWizard(root, rootFolders[0]);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
+		/**
+		 * This is the only place where a size hint > 0 is required. The wizard
+		 * page should in general have hints of 0 (and grab excessive space).
+		 */
+		dialog.setMinimumPageSize(INITIAL_WIDTH, INITIAL_HEIGHT);
 		wizard.setParentDialog(dialog);
 		return (dialog.open() == Window.OK);
 	}
