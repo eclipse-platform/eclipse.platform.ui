@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.widgets.Tree;
@@ -892,7 +893,12 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 */
 	protected void doRemove(ISynchronizeModelElement[] elements) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.remove(elements);
+		try {
+            viewer.remove(elements);
+        } catch (SWTException e) {
+            // The remove failed due to an SWT exception. Log it and continue
+            TeamUIPlugin.log(IStatus.ERROR, "An error occurred removing elements from the synchronize view", e); //$NON-NLS-1$
+        }
 	    if (DEBUG) {
 	        for (int i = 0; i < elements.length; i++) {
                 ISynchronizeModelElement element = elements[i];        
