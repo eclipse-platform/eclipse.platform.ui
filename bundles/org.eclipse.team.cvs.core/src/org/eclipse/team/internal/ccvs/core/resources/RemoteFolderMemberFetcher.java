@@ -303,7 +303,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	 * @return
 	 */
 	protected ICVSFile[] getFiles() {
-		return (ICVSFile[]) files.toArray(new ICVSFile[files.size()]);;
+		return (ICVSFile[]) files.toArray(new ICVSFile[files.size()]);
 	}
 	
 	/**
