@@ -59,8 +59,8 @@ public interface IJobChangeListener {
 	 */
 	public void running(IJobChangeEvent event);
 	/**
-	 * Notification that a job has been added to the queue of scheduled jobs.  
-	 * The event details includes the scheduling delay before the event should start 
+	 * Notification that a job is being added to the queue of scheduled jobs.  
+	 * The event details includes the scheduling delay before the job should start 
 	 * running.
 	 * 
 	 * @param event the event details, including the job instance and the scheduling
