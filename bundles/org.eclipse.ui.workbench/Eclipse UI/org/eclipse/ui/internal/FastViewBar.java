@@ -247,7 +247,7 @@ public class FastViewBar implements IWindowTrim {
 			}
 		};
 		CellLayout controlLayout = new CellLayout(0)
-			.setMargins(0, 3)
+			.setMargins(0, newSide == SWT.BOTTOM ? 0 : 3)
 			.setDefaultRow(Row.growing())
 			.setDefaultColumn(Row.fixed())
 			.setColumn(newSide == SWT.BOTTOM ? 1 : 0, Row.growing());
