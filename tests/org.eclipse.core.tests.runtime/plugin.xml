@@ -125,7 +125,6 @@
             name="Sample Binary 1"
             id="sample-binary1">
          <describer
-         	plugin="org.eclipse.core.runtime"
             class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
             <parameter name="signature" value="10, AB, CD, FF"/>
             <parameter name="offset" value="5"/>                           
@@ -136,7 +135,6 @@
             name="Sample Binary 2"
             id="sample-binary2">
          <describer
-         	plugin="org.eclipse.core.runtime"
             class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
             <parameter name="signature" value="10, AB, CD, EF"/>   
          </describer>
@@ -146,7 +144,6 @@
             name="Java Class file"
             id="javaClass">
          <describer
-         	plugin="org.eclipse.core.runtime"
             class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
             <parameter name="signature" value="CA, FE, BA, BE"/>   
          </describer>
