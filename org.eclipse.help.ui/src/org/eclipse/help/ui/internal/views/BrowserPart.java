@@ -89,8 +89,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		});
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
-				if (statusURL!=null)
-					BrowserPart.this.parent.showExternalURL(BrowserPart.this.parent.toRelativeURL(statusURL));
+				if (statusURL!=null) {
+					String relativeURL = BrowserPart.this.parent.toRelativeURL(statusURL);
+					if (BrowserPart.this.parent.isHelpResource(relativeURL))
+						BrowserPart.this.parent.showExternalURL(relativeURL);
+				}
 			}
 		});
 		contributeToToolBar(tbm);
