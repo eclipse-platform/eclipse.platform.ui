@@ -65,6 +65,15 @@ public class CopyFilesAndFoldersOperation {
 	private boolean alwaysOverwrite = false;
 
 	/**
+	 * Auto deep copy flag
+	 */
+	private boolean alwaysDeepCopy = false;
+	
+	/**
+	 * Auto shallow copy flag
+	 */
+	private boolean neverDeepCopy = false;	
+	/**
 	 * Returns a new name for a copy of the resource at the given path in 
 	 * the given workspace. This name is determined automatically. 
 	 *
@@ -110,6 +119,91 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	protected boolean canPerformAutoRename() {
 		return true;
+	}
+	/**
+	 * Returns the message for querying deep copy/move of a linked 
+	 * resource.
+	 *
+	 * @param source resource the query is made for
+	 * @return the deep query message
+	 */
+	protected String getDeepCheckQuestion(IResource source) {
+		return WorkbenchMessages.format(
+			"CopyFilesAndFoldersOperation.deepCopyQuestion", //$NON-NLS-1$
+			new Object[] {source.getFullPath().makeRelative()});
+	}
+	/**
+	 * Check if the user wishes to deep copy the supplied linked resource,  
+	 * 
+	 * @param source the resource to be copied
+	 * @return true the resource should be deep copied. false a shallow
+	 * 	copy of the resource should be made. 
+	 */
+	protected boolean checkDeep(final IResource source) {
+		final int[] result = new int[1];
+		IPath location = source.getLocation();
+		
+		if (location == null) {
+			//undefined path variable
+			return false;
+		}
+		if (location.toFile().exists() == false) {
+			//link target does not exist
+			return false;
+		}
+		if (alwaysDeepCopy) {
+			return true;
+		}
+		if (neverDeepCopy) {
+			return false;
+		}
+		// Dialogs need to be created and opened in the UI thread
+		Runnable query = new Runnable() {
+			public void run() {
+				String message;
+				int resultId[] = {
+					IDialogConstants.YES_ID,
+					IDialogConstants.YES_TO_ALL_ID,
+					IDialogConstants.NO_ID,
+					IDialogConstants.NO_TO_ALL_ID,
+					IDialogConstants.CANCEL_ID};
+ 
+				message = WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.deepCopyQuestion", //$NON-NLS-1$
+					new Object[] {source.getFullPath().makeRelative()});
+				MessageDialog dialog = new MessageDialog(
+					parentShell, 
+					WorkbenchMessages.getString("CopyFilesAndFoldersOperation.linkedFolder"), //$NON-NLS-1$
+					null,
+					message,
+					MessageDialog.QUESTION,
+					new String[] {
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.YES_TO_ALL_LABEL,
+						IDialogConstants.NO_LABEL,
+						IDialogConstants.NO_TO_ALL_LABEL,
+						IDialogConstants.CANCEL_LABEL },
+					0);
+				dialog.open();
+				result[0] = resultId[dialog.getReturnCode()];
+			}
+		};
+		parentShell.getDisplay().syncExec(query);
+		if (result[0] == IDialogConstants.YES_TO_ALL_ID) {
+			alwaysDeepCopy = true;
+			return true;		
+		}
+		if (result[0] == IDialogConstants.YES_ID) {
+			return true;
+		}
+		if (result[0] == IDialogConstants.NO_TO_ALL_ID) {
+			neverDeepCopy = true;
+		}
+		if (result[0] == IDialogConstants.CANCEL_ID) {
+			canceled = true;
+			throw new OperationCanceledException();
+		}
+		return false;
 	}
 	/**
 	 * Checks whether the files with the given names exist. 
@@ -258,7 +352,13 @@ public class CopyFilesAndFoldersOperation {
 					}
 				}
 				if (canCopy) {
-					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
+					int flags = IResource.SHALLOW;
+					
+					if (source.isLinked() && checkDeep(source)) {
+						// do a deep copy of the resource
+						flags = IResource.NONE;
+					}					
+					source.copy(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
@@ -301,6 +401,8 @@ public class CopyFilesAndFoldersOperation {
 		final IPath destinationPath = destination.getFullPath();
 		final IResource[][] copiedResources = new IResource[1][0];
 
+		alwaysDeepCopy = false;
+		neverDeepCopy = false;
 		String errorMsg = validateDestination(destination, resources);
 		if (errorMsg != null) {
 			displayError(errorMsg);
@@ -431,6 +533,29 @@ public class CopyFilesAndFoldersOperation {
 			errorStatus);
 			errorStatus = null;
 		}
+	}
+	/**
+	 * Creates a file or folder handle for the source resource as if 
+	 * it were to be created in the destination container.
+	 * 
+	 * @param destination destination container
+	 * @param source source resource
+	 * @return IResource file or folder handle, depending on the source 
+	 * 	type.
+	 */
+	IResource createLinkedResourceHandle(IContainer destination, IResource source) {
+		IWorkspace workspace = destination.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		IPath linkPath = destination.getFullPath().append(source.getName());
+		IResource linkHandle;
+		
+		if (source.getType() == IResource.FOLDER) {
+			linkHandle = workspaceRoot.getFolder(linkPath);
+		}
+		else {
+			linkHandle = workspaceRoot.getFile(linkPath);
+		}
+		return linkHandle;
 	}
 	/**
 	 * Removes the given resource from the workspace. 
@@ -705,15 +830,21 @@ public class CopyFilesAndFoldersOperation {
 					resources.length);
 
 			for (int i = 0; i < resources.length; i++) {
-				IResource currentResource = resources[i];
-				IPath destinationPath = destination.append(currentResource.getName());
+				IResource source = resources[i];
+				IPath destinationPath = destination.append(source.getName());
 
 				if (workspace.getRoot().exists(destinationPath)) {
 					destinationPath = getNewNameFor(destinationPath, workspace);
 				}
 				if (destinationPath != null) {
 					try {
-						currentResource.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
+						int flags = IResource.SHALLOW;
+						
+						if (source.isLinked() && checkDeep(source)) {
+							// do a deep copy of the resource
+							flags = IResource.NONE;
+						}					
+						source.copy(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
 					} catch (CoreException e) {
 						recordError(e); // log error
 						return false;
@@ -856,6 +987,9 @@ public class CopyFilesAndFoldersOperation {
 					"CopyFilesAndFoldersOperation.resourceDeleted",			//$NON-NLS-1$
 					new Object[] {sourceResource.getName()});				
 			}
+			/*
+			 * Remove once bug 28754 is fixed
+			 */
 			if (sourceLocation == null) {
 				if (sourceResource.isLinked()) {
 					return WorkbenchMessages.format(
@@ -867,15 +1001,20 @@ public class CopyFilesAndFoldersOperation {
 						"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
 				}
-			}
-			if (sourceLocation.equals(destinationLocation)) {
-				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.sameSourceAndDest", 	//$NON-NLS-1$
-					new Object[] {sourceResource.getName()});
-			}
-			// is the source a parent of the destination?
-			if (sourceLocation.isPrefixOf(destinationLocation)) {
-				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+			}/*
+			  * End remove workaround for bug 28754
+			  */
+			
+			if (sourceLocation != null) {
+				if (sourceLocation.equals(destinationLocation)) {
+					return WorkbenchMessages.format(
+						"CopyFilesAndFoldersOperation.sameSourceAndDest", 	//$NON-NLS-1$
+						new Object[] {sourceResource.getName()});
+				}
+				// is the source a parent of the destination?
+				if (sourceLocation.isPrefixOf(destinationLocation)) {
+					return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+				}
 			}
 			String linkedResourceMessage = validateLinkedResource(destination, sourceResource);
 			if (linkedResourceMessage != null) {
@@ -990,18 +1129,24 @@ public class CopyFilesAndFoldersOperation {
 	 * @return String error message or null if the destination is valid
 	 */
 	private String validateLinkedResource(IContainer destination, IResource source) {
-		if (source.isLinked() && destination.getType() != IResource.PROJECT) {
-			return WorkbenchMessages.format(
-				"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
-				new Object[] {source.getName()});				
+		if (source.isLinked() == false) {
+			return null;
 		}
+		IWorkspace workspace = destination.getWorkspace();
+		IResource linkHandle = createLinkedResourceHandle(destination, source);
+		IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	source.getRawLocation());
+		
+		if (locationStatus.getSeverity() == IStatus.ERROR) {
+			return locationStatus.getMessage();
+		}
+		IPath sourceLocation = source.getLocation();
 		if (source.getProject().equals(destination.getProject()) == false &&
-			source.getType() == IResource.FOLDER) {
+			source.getType() == IResource.FOLDER &&
+			sourceLocation != null) {
 			// prevent merging linked folders that point to the same
 			// file system folder 
 			try {
 				IResource[] members = destination.members();
-				IPath sourceLocation = source.getLocation();
 				for (int j = 0; j < members.length; j++) {
 					if (sourceLocation.equals(members[j].getLocation()) && 
 						source.getName().equals(members[j].getName())) {

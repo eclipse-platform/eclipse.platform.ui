@@ -79,7 +79,14 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				}
 				// was the resource deleted successfully or was there no existing resource to delete?
 				if (canMove) {
-					source.move(destinationPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
+					int flags = IResource.SHALLOW;
+					
+					if (source.isLinked() && checkDeep(source)) {
+						// do a deep move of the resource
+						flags = IResource.NONE;
+					}			
+					flags |= IResource.KEEP_HISTORY;		
+					source.move(destinationPath, flags, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
@@ -88,6 +95,18 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			}
 		}
 	}	
+	/**
+	 * Returns the message for querying deep copy/move of a linked 
+	 * resource.
+	 *
+	 * @param source resource the query is made for
+	 * @return the deep query message
+	 */
+	protected String getDeepCheckQuestion(IResource source) {
+		return WorkbenchMessages.format(
+			"CopyFilesAndFoldersOperation.deepMoveQuestion", //$NON-NLS-1$
+			new Object[] {source.getFullPath().makeRelative()});
+	}
 	/**
 	 * Returns the message for this operation's problems dialog.
 	 *
