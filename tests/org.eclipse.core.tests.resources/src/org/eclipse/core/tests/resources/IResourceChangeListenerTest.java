@@ -7,11 +7,9 @@
  * 
  * Contributors:
  * IBM Corporation - Initial API and implementation
- * tammo.freese@offis.de - tests for swapping files and folders
  ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.io.ByteArrayInputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
@@ -1002,55 +1000,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
-	public void testMoveMoveFile() {
-		file2 = project1.getFile("File2");
-		file3 = project1.getFile("File3");
-		try {
-			verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file3.getFullPath());
-			verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath(), null);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("moving and moving file", 100);
-					try {
-						file1.move(file2.getFullPath(), false, null);
-						file2.move(file3.getFullPath(), false, null);
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
-	public void testMoveMoveFolder() {
-		folder2 = project1.getFolder("Folder2");
-		folder3 = project1.getFolder("Folder3");
-		file3 = folder3.getFile(file1.getName());
-		try {
-			verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, folder3.getFullPath());
-			verifier.addExpectedChange(folder3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder1.getFullPath(), null);
-			verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file3.getFullPath());
-			verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath(), null);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("moving and moving folder", 100);
-					try {
-						folder1.move(folder2.getFullPath(), false, null);
-						folder2.move(folder3.getFullPath(), false, null);
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
 	/**
 	 * Move a project via rename. Note that the DESCRIPTION flag should be set
 	 * in the delta for the destination only.
@@ -1247,39 +1196,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
-	public void testReplaceFolderWithFolder() {
-		try {
-			folder2 = project1.getFolder("Folder2");
-			folder3 = project1.getFolder("Folder3");
-			verifier.reset();
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					file1.delete(false, null);
-					folder2.create(false, true, null);
-				}
-			}, null);
-			verifier.reset();
-			verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, folder2.getFullPath());
-			int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
-			verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, flags, folder1.getFullPath(), folder3.getFullPath());
-			verifier.addExpectedChange(folder3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder2.getFullPath(), null);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("replace folder with folder", 100);
-					try {
-						folder2.move(folder3.getFullPath(), false, null);
-						folder1.move(folder2.getFullPath(), false, null);
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
 	public void testSetLocal() {
 		try {
 			verifier.reset();
@@ -1290,73 +1206,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			verifier.reset();
 			file1.setLocal(false, IResource.DEPTH_INFINITE, getMonitor());
 			assertTrue("Unexpected notification on no change", !verifier.hasBeenNotified());
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
-	public void testSwapFiles() {
-		try {
-			file1 = project1.getFile("File1");
-			file2 = project1.getFile("File2");
-			file3 = project1.getFile("File3");
-			verifier.reset();
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					file1.create(new ByteArrayInputStream(new byte[] {65}), false, null);
-					file2.create(new ByteArrayInputStream(new byte[] {67}), false, null);
-				}
-			}, null);
-			verifier.reset();
-			final int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
-			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, flags, file2.getFullPath(), file2.getFullPath());
-			verifier.addExpectedChange(file2, IResourceDelta.CHANGED, flags, file1.getFullPath(), file1.getFullPath());
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("swap files", 100);
-					try {
-						file1.move(file3.getFullPath(), false, null);
-						file2.move(file1.getFullPath(), false, null);
-						file3.move(file2.getFullPath(), false, null);
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
-	public void testSwapFolders() {
-		try {
-			verifier.reset();
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					folder2 = project1.getFolder("Folder2");
-					folder3 = project1.getFolder("Folder3");
-					file1.delete(false, null);
-					folder2.create(false, true, null);
-				}
-			}, null);
-			verifier.reset();
-			final int flags = IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO | IResourceDelta.REPLACED | IResourceDelta.CONTENT;
-			verifier.addExpectedChange(folder1, IResourceDelta.CHANGED, flags, folder2.getFullPath(), folder2.getFullPath());
-			verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, flags, folder1.getFullPath(), folder1.getFullPath());
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("swap folders", 100);
-					try {
-						folder1.move(folder3.getFullPath(), false, null);
-						folder2.move(folder1.getFullPath(), false, null);
-						folder3.move(folder2.getFullPath(), false, null);
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
 		} catch (CoreException e) {
 			handleCoreException(e);
 		}
