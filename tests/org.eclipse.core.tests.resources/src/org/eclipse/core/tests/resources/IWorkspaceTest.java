@@ -831,6 +831,9 @@ public void testValidateEdit() {
 	// remove the read-only status so test cleanup will work ok
 	file.setReadOnly(false);
 }
+public void testValidateLinkLocation() {
+	//TODO
+}
 /**
  * Performs black box testing of the following method:
  *     IStatus validateName(String, int)
