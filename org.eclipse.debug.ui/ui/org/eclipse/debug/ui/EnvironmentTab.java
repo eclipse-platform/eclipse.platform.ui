@@ -418,10 +418,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		environmentTable.getTable().removeAll();
-		appendEnvironment.setSelection(true);
-		updateAppendReplace();
-		updateLaunchConfigurationDialog();
 	}
 
 	/* (non-Javadoc)
