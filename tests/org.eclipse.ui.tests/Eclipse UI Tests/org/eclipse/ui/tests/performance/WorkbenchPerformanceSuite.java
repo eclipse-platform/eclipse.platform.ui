@@ -22,6 +22,7 @@ import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.RecursiveTrimLayoutWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
+import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
  * @since 3.1
@@ -31,6 +32,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
     // Note: to test perspective switching properly, we need perspectives with lots of
     // associated actions. 
     public static final String [] PERSPECTIVE_IDS = {
+        EmptyPerspective.PERSP_ID2,
         UIPerformanceTestSetup.PERSPECTIVE, 
         "org.eclipse.ui.resourcePerspective",
         "org.eclipse.jdt.ui.JavaPerspective", 
@@ -51,7 +53,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
         "org.eclipse.ui.views.ProblemView",
         "org.eclipse.ui.views.ResourceNavigator"
     };
-    public static final int ITERATIONS = 100;
+    public static final int ITERATIONS = 25;
     
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
@@ -68,14 +70,16 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addResizeScenarios();
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
-        addWindowOpeningScenarios();
+        addWindowOpenCloseScenarios();
     }
 
     /**
      * 
      */
-    private void addWindowOpeningScenarios() {
-        
+    private void addWindowOpenCloseScenarios() {
+        for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {
+            addTest(new OpenCloseWindowTest(PERSPECTIVE_IDS[i]));
+        }        
     }
 
     /**

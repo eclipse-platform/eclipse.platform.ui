@@ -76,10 +76,10 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             
             performanceMeter.start();
             activePage.setPerspective(perspective1);
-            processEvents();            
+            processEvents();      
+            closePerspective(activePage);
+            processEvents(); 
             performanceMeter.stop();
-
-            closePerspective(activePage);            
         }
         performanceMeter.commit();
         Performance.getDefault().assertPerformance(performanceMeter);
