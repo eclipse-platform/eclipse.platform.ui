@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Calendar;
-import java.io.InputStream;
 import java.text.*;
 
 import org.eclipse.swt.SWT;
@@ -120,9 +119,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 					if (fItem instanceof IStreamContentAccessor) {
 						IStreamContentAccessor sca= (IStreamContentAccessor) fItem;
 						try {
-							InputStream is= sca.getContents();
-							if (is != null)
-								fContent= Utilities.readString(is);
+							fContent= Utilities.readString(sca);
 						} catch (CoreException ex) {
 							// NeedWork
 						}

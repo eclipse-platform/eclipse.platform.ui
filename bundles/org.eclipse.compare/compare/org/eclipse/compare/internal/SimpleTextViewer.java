@@ -54,9 +54,8 @@ public class SimpleTextViewer extends AbstractViewer {
 	private String getString(Object input) {
 		
 		if (input instanceof IStreamContentAccessor) {
-			IStreamContentAccessor sca= (IStreamContentAccessor) input;
 			try {
-				return Utilities.readString(sca.getContents());
+				return Utilities.readString((IStreamContentAccessor) input);
 			} catch (CoreException ex) {
 				// NeedWork
 			}

@@ -20,6 +20,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 
 /**
@@ -192,6 +193,13 @@ public class ResourceNode extends BufferedContent
 	 */
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
 		return child;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IStreamContentAccessor#getEncoding()
+	 */
+	public String getCharset() {
+		return Utilities.getCharset(fResource);
 	}
 }
 

@@ -41,9 +41,10 @@ import org.eclipse.compare.contentmergeviewer.IDocumentRange;
  * @see Differencer
  */
 public class DocumentRangeNode
-		implements IDocumentRange, IStructureComparator, IEditableContent, IStreamContentAccessor {
+		implements IDocumentRange, IStructureComparator, IEditableContent, IStreamContentAccessorExtension2 {
 
 	private static final boolean POS_UPDATE= true;
+	private static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		
 	private IDocument fBaseDocument;
 	private Position fRange; // the range in the base document
@@ -300,8 +301,8 @@ public class DocumentRangeNode
 			s= fBaseDocument.get(fRange.getOffset(), fRange.getLength());
 		} catch (BadLocationException ex) {
 			s= ""; //$NON-NLS-1$
-		}
-		return new ByteArrayInputStream(Utilities.getBytes(s));
+		}		
+		return new ByteArrayInputStream(Utilities.getBytes(s, UTF_16));
 	}
 
 	/* (non Javadoc)
@@ -324,8 +325,7 @@ public class DocumentRangeNode
 			
 			if (other instanceof IStreamContentAccessor) {
 				try {
-					InputStream is= ((IStreamContentAccessor)other).getContents();
-					srcContents= Utilities.readString(is);
+					srcContents= Utilities.readString((IStreamContentAccessor)other);
 				} catch(CoreException ex) {
 					// NeedWork
 				}
@@ -342,6 +342,13 @@ public class DocumentRangeNode
 	 * see IEditableContent.setContent
 	 */
 	public void setContent(byte[] content) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IStreamContentAccessor#getEncoding()
+	 */
+	public String getCharset() {
+		return UTF_16;
 	}
 }
 

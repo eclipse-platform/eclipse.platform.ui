@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
 import java.lang.reflect.InvocationTargetException;
@@ -43,7 +42,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
@@ -1777,9 +1775,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (newDoc == null) {
 				IStreamContentAccessor sca= (IStreamContentAccessor) o;
 				String s= null;
-			
+		
 				try {
-					s= Utilities.readString(sca.getContents());
+					s= Utilities.readString(sca);
 				} catch (CoreException ex) {
 					// NeedWork
 				}
@@ -1932,19 +1930,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer v= left ? fLeft : fRight;
 		if (v != null) {
 			IDocument d= v.getDocument();
-			if (d != null) {
-				String contents= d.get();
-				if (contents != null) {
-					byte[] bytes;
-					try {
-						bytes= contents.getBytes(ResourcesPlugin.getEncoding());
-					} catch(UnsupportedEncodingException ex) {
-						// use default encoding
-						bytes= contents.getBytes();
-					}
-					return bytes;
-				}
-			}
+			if (d != null)
+				return Utilities.getBytes(d.get(), "UTF-16"); //$NON-NLS-1$
 		}	
 		return null;	
 	}

@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
  */
-public class HistoryItem implements IStreamContentAccessor, ITypedElement, IModificationDate {
+public class HistoryItem implements IStreamContentAccessorExtension2, ITypedElement, IModificationDate {
 	
 	private ITypedElement fBase;
 	private IFileState fFileState; 
@@ -78,6 +79,13 @@ public class HistoryItem implements IStreamContentAccessor, ITypedElement, IModi
 	 */
 	public InputStream getContents() throws CoreException {
 		return new BufferedInputStream(fFileState.getContents());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IStreamContentAccessor#getEncoding()
+	 */
+	public String getCharset() {
+		return Utilities.guessCharset(getName());
 	}
 }
 

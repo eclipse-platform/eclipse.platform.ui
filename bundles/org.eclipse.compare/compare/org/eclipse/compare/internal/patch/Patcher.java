@@ -860,7 +860,7 @@ public class Patcher {
 				
 				Reader streamReader= null;
 				try {
-					streamReader= new InputStreamReader(is, ResourcesPlugin.getEncoding());
+					streamReader= new InputStreamReader(is, Utilities.getCharset(file));
 				} catch (UnsupportedEncodingException x) {
 					// use default encoding
 					streamReader= new InputStreamReader(is);
@@ -901,7 +901,7 @@ public class Patcher {
 		
 		byte[] bytes;
 		try {
-			bytes= contents.getBytes(ResourcesPlugin.getEncoding());
+			bytes= contents.getBytes(Utilities.getCharset(file));
 		} catch (UnsupportedEncodingException x) {
 			// uses default encoding
 			bytes= contents.getBytes();

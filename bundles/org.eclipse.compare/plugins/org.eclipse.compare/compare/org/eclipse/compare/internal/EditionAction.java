@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ResourceBundle;
 import java.lang.reflect.InvocationTargetException;
 
@@ -44,8 +44,8 @@ public class EditionAction extends BaseCompareAction {
 	 * Implements the IStreamContentAccessor and ITypedElement protocols
 	 * for a Document.
 	 */
-	class DocumentBufferNode implements ITypedElement, IStreamContentAccessor {
-		
+	class DocumentBufferNode implements ITypedElement, IStreamContentAccessorExtension2 {
+		private static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		private IDocument fDocument;
 		private IFile fFile;
 		
@@ -67,7 +67,11 @@ public class EditionAction extends BaseCompareAction {
 		}
 		
 		public InputStream getContents() {
-			return new ByteArrayInputStream(fDocument.get().getBytes());
+			return new ByteArrayInputStream(Utilities.getBytes(fDocument.get(), UTF_16));
+		}
+
+		public String getCharset() {
+			return UTF_16;
 		}
 	}
 
@@ -189,8 +193,7 @@ public class EditionAction extends BaseCompareAction {
 	
 	private void updateDocument(IDocument document, IStreamContentAccessor sa) throws InvocationTargetException {
 		try {
-			InputStream is= sa.getContents();
-			String text= Utilities.readString(is);
+			String text= Utilities.readString(sa);
 			document.replace(0, document.getLength(), text);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);

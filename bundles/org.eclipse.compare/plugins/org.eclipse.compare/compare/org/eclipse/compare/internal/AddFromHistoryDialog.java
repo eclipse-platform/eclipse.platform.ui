@@ -32,7 +32,7 @@ import org.eclipse.compare.*;
 
 public class AddFromHistoryDialog extends ResizableDialog {
 	
-	static class HistoryInput implements ITypedElement, IStreamContentAccessor, IModificationDate {
+	static class HistoryInput implements ITypedElement, IStreamContentAccessorExtension2, IModificationDate {
 		IFile fFile;
 		IFileState fFileState;
 		
@@ -42,6 +42,10 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		}
 		public InputStream getContents() throws CoreException {
 			return new BufferedInputStream(fFileState.getContents());
+		}
+		public String getCharset() {
+			Utilities.guessCharset(fFile.getName());
+			return Utilities.getCharset(fFile);
 		}
 		public String getName() {
 			return fFile.getName();
