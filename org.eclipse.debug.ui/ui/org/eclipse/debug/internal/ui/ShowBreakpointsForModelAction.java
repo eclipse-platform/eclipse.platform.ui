@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,18 +21,17 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * An view filter action that filters showing breakpoints based on the model identifier
  * of the selected debug element in the launch view.
  * 
  */
-public class ShowBreakpointsForModelAction extends ToggleFilterAction implements ISelectionListener {
+public class ShowBreakpointsForModelAction extends ToggleFilterAction implements IUpdate {
 
 	/**
 	 * The filter this action applies to the viewer
@@ -99,32 +97,22 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION });
-	}
-	
-	public void run() {
-		if (isChecked()) {
-			DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		} else {
-			DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
-		}		
-		super.run();
+		IViewPart part= DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (part != null) {
+			IDebugViewAdapter adapter= (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+			adapter.setAction(getClass().getName(), this);
+		}
 	}
 
-	public void dispose() {
-		DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
-	}
 	/** 
 	 * This action listens for selection changes in the <code>LaunchView</code>
-	 *
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 * 
+	 * @see AbstractDebugView#updateActions()
 	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
-			if (sel instanceof IStructuredSelection) {
-				//selection has changed need to reapply the filter.
-				getViewer().refresh();
-			}
-		}
+	public void update() {
+		//selection has changed in the debug view
+		//need to reapply the filter.
+		getViewer().refresh();
 	}
 	/**
 	 * @see ToggleFilterAction#getViewerFilter()
