@@ -105,7 +105,22 @@ function confirmed(){
 	<%=request.getParameter("message")%>
 	</div>
 </div>
-
+<% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>
+<div style="height:30px;">
+	<div style="padding-left:10px;padding-right:10px;">
+	<input class='check' style="padding:10px;" 
+							type="checkbox" 
+							id='dontask' 
+							name='dontask'>
+							<label
+								for="dontask"
+								accesskey="<%=ServletResources.getAccessKey("dontask", request)%>"
+							>
+							<%=ServletResources.getLabel("dontask", request)%>
+							</label>
+	</div>				
+</div>
+<% } %>
 <div style="height:50px;">
 	<table valign="bottom" align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">

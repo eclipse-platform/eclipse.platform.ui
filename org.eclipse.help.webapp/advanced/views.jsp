@@ -131,7 +131,7 @@ function dontShowAll(){
 
 var confirmShowAllDialog;
 var w = 350;
-var h = 200;
+var h = 230;
 
 function confirmShowAll()
 {
