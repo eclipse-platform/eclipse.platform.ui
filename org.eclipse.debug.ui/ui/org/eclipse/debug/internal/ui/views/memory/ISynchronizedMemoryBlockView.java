@@ -30,7 +30,7 @@ public interface ISynchronizedMemoryBlockView
 	/**
 	 * This function will be called when a property of the memory block
 	 * being blocked is changed.
-	 * @param propertyName
+	 * @param propertyId
 	 * @param value
 	 */
 	public void propertyChanged(String propertyId, Object value);
@@ -39,7 +39,7 @@ public interface ISynchronizedMemoryBlockView
 	 * Return the value of a property.  Return null if the property
 	 * is not supported by the view tab.
 	 * @param propertyId
-	 * @return
+	 * @return the value of a property
 	 */
 	public Object getProperty(String propertyId);
 	

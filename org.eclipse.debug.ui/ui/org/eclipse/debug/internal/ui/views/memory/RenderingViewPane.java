@@ -22,8 +22,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingListener;
@@ -108,9 +108,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			
 			fViewPaneCanvas.layout();
 		}	
-		
-		// check number of memory block for the debug target
-		IDebugTarget dt = memory.getDebugTarget();
 		
 		updateToolBarActionsEnablement();
 	}
@@ -710,20 +707,20 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		{
 			MemoryBlockRenderingAdded(renderings[i]);
 			
-			// disable after done
-			if (renderings[i].getBlock() instanceof IExtendedMemoryBlock)
-			{
-				((IExtendedMemoryBlock)renderings[i].getBlock()).disable();
-			}
+//			// disable after done
+//			if (renderings[i].getBlock() instanceof IMemoryBlockExtension)
+//			{
+//				((IMemoryBlockExtension)renderings[i].getBlock()).disconnect(this);
+//			}
 		}
 
 		// enable memory block
 		IMemoryViewTab viewTab = getTopMemoryTab();
 		if (viewTab != null)
 		{
-			if (viewTab.getMemoryBlock() instanceof IExtendedMemoryBlock)
+			if (viewTab.getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				((IExtendedMemoryBlock)viewTab.getMemoryBlock()).enable();
+				((IMemoryBlockExtension)viewTab.getMemoryBlock()).connect(this);
 			}
 		}		
 	}
@@ -990,7 +987,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			{
 				TabFolder folder = (TabFolder)fStackLayout.topControl;
 				TabItem newItem = new TabItem(folder, SWT.NULL);
-				CreateRenderingTab createTab = new CreateRenderingTab(memoryBlock, newItem);
+				new CreateRenderingTab(memoryBlock, newItem);
 				folder.setSelection(0);						
 			}
 		}

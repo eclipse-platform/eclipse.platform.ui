@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
@@ -382,18 +382,18 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		for (int i=0; i<fMemoryBlocks.length; i++)
 		{	
 			String text = ""; //$NON-NLS-1$
-			if (fMemoryBlocks[i] instanceof IExtendedMemoryBlock)
+			if (fMemoryBlocks[i] instanceof IMemoryBlockExtension)
 			{
 				try {
-					text = ((IExtendedMemoryBlock)fMemoryBlocks[i]).getExpression();
+					text = ((IMemoryBlockExtension)fMemoryBlocks[i]).getExpression();
 					
 					if (text == null)
 						text = DebugUIMessages.getString("AddMemoryRenderingDialog.Unknown"); //$NON-NLS-1$
 					
-					if (((IExtendedMemoryBlock)fMemoryBlocks[i]).getBigBaseAddress() != null)
+					if (((IMemoryBlockExtension)fMemoryBlocks[i]).getBigBaseAddress() != null)
 					{
 						text += " : 0x"; //$NON-NLS-1$
-						text += ((IExtendedMemoryBlock)fMemoryBlocks[i]).getBigBaseAddress().toString(16);
+						text += ((IMemoryBlockExtension)fMemoryBlocks[i]).getBigBaseAddress().toString(16);
 					}	
 				} catch (DebugException e) {
 					long address = fMemoryBlocks[i].getStartAddress();

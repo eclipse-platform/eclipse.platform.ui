@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -22,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -187,7 +186,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 					contentProvider.dispose();
 				
 				JFaceResources.getFontRegistry().removeListener(fFontChangeListener);
-				removeReferenceFromSynchronizer();
 				getMemoryBlockViewSynchronizer().removeView(fViewTab);				
 			}
 		}
@@ -297,7 +295,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		fTabItem.setControl(createFolderPage(renderer));
 		
-		if (!(newMemory instanceof IExtendedMemoryBlock))
+		if (!(newMemory instanceof IMemoryBlockExtension))
 		{		
 			// If not extended memory block, do not create any buffer
 			// no scrolling
@@ -336,9 +334,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			fTabItem.addDisposeListener(fTabFolderDisposeListener);
 		}
 		
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			if(((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress() == null)
+			if(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress() == null)
 			{
 				DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null));
 				displayError(e);				
@@ -415,9 +413,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 			tabName = ""; //$NON-NLS-1$
 			try {			
-				if (newMemory instanceof IExtendedMemoryBlock)
+				if (newMemory instanceof IMemoryBlockExtension)
 				{
-					tabName = ((IExtendedMemoryBlock)newMemory).getExpression();
+					tabName = ((IMemoryBlockExtension)newMemory).getExpression();
 					
 					if (tabName.startsWith("&")) //$NON-NLS-1$
 						tabName = "&" + tabName; //$NON-NLS-1$
@@ -427,10 +425,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						tabName = DebugUIMessages.getString(UNKNOWN);
 					}
 					
-					if (showAddress && ((IExtendedMemoryBlock)newMemory).getBigBaseAddress() != null)
+					if (showAddress && ((IMemoryBlockExtension)newMemory).getBigBaseAddress() != null)
 					{	
 						tabName += " : 0x"; //$NON-NLS-1$
-						tabName += ((IExtendedMemoryBlock)newMemory).getBigBaseAddress().toString(16);
+						tabName += ((IMemoryBlockExtension)newMemory).getBigBaseAddress().toString(16);
 					}
 				}
 				else
@@ -602,9 +600,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		// manager sets up initial position of the cursor
 		fCursorManager = new ViewTabCursorManager(this, row, col, fMenuMgr);
 		
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			BigInteger address = ((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress();
+			BigInteger address = ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress();
 			
 			if (address == null)
 			{
@@ -1074,7 +1072,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						case SWT.ARROW_RIGHT:
 							// If blocking an extended memory block,
 							// check to see if additional memory needs to be obtained.
-							if (fMemoryBlock instanceof IExtendedMemoryBlock)
+							if (fMemoryBlock instanceof IMemoryBlockExtension)
 							{
 								// User could have used scroll bar to scroll away
 								// from the highlighted address.
@@ -1221,7 +1219,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 		// calculate number of lines needed
 		long numLines = 0;
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			// number of lines is number of visible lines + buffered lines
 			numLines = getNumberOfVisibleLines()+TABLE_PREBUFFER+TABLE_POSTBUFFER;
@@ -1233,7 +1231,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		contentProvider.forceRefresh();
 		
 
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			int topIdx = findAddressIndex(topAddress);
 			
@@ -1406,9 +1404,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			IMemoryBlock mem = fMemoryBlock;
 			BigInteger address;
 			
-			if (mem instanceof IExtendedMemoryBlock)
+			if (mem instanceof IMemoryBlockExtension)
 			{
-				address = ((IExtendedMemoryBlock)mem).getBigBaseAddress();
+				address = ((IMemoryBlockExtension)mem).getBigBaseAddress();
 				
 				if (address == null)
 				{	
@@ -1456,7 +1454,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	private void resizeTable() {
 		
-		if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
+		if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 			return;
 		
 		if (!isEnabled())
@@ -1546,7 +1544,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	private void handleScrollBarSelection(SelectionEvent event)
 	{	
-		if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
+		if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 		{
 			// if not instance of extended memory block
 			// just get current top visible address and fire event
@@ -1574,7 +1572,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						case SWT.HOME :
 						case SWT.PAGE_UP :
 						case SWT.ARROW_UP :
-							if (fMemoryBlock instanceof IExtendedMemoryBlock)
+							if (fMemoryBlock instanceof IMemoryBlockExtension)
 							{
 								updateSyncTopAddress(true);
 								//if we are approaching the limits of the currently loaded memory, reload the table
@@ -1639,9 +1637,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			// and to make sure content is updated
 			refresh();
 			
-			if (mem instanceof IExtendedMemoryBlock)
+			if (mem instanceof IMemoryBlockExtension)
 			{
-				BigInteger baseAddress = ((IExtendedMemoryBlock)mem).getBigBaseAddress();
+				BigInteger baseAddress = ((IMemoryBlockExtension)mem).getBigBaseAddress();
 				
 				if (baseAddress == null)
 				{
@@ -1651,11 +1649,11 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 						baseAddress = new BigInteger("0"); //$NON-NLS-1$
 				}
 				
-				ArrayList references = (ArrayList)getSynchronizedProperty(IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES);				
+				Object[] connected = ((IMemoryBlockExtension)mem).getConnected();				
 				
 				// if the base address has changed, update cursor
 				// and this is the first time this memory block is enabled
-				if (!baseAddress.equals(oldBase) && references.size() == 1)
+				if (!baseAddress.equals(oldBase) && connected.length == 1)
 				{
 					setSelectedAddress(baseAddress, true);
 					updateCursorPosition();
@@ -1676,7 +1674,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		}
 		else
 		{
-			if (mem instanceof IExtendedMemoryBlock)
+			if (mem instanceof IMemoryBlockExtension)
 			{	
 				setTabName(mem, false);
 			}
@@ -1854,9 +1852,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		BigInteger lineAddr = new BigInteger(lineAddress, 16);
 		BigInteger memoryAddr;
 		
-		if (memory instanceof IExtendedMemoryBlock)
+		if (memory instanceof IMemoryBlockExtension)
 		{
-			memoryAddr = ((IExtendedMemoryBlock)memory).getBigBaseAddress();
+			memoryAddr = ((IMemoryBlockExtension)memory).getBigBaseAddress();
 		}
 		else
 		{
@@ -1879,14 +1877,14 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		try
 		{	
 			IMemoryBlock mem = getMemoryBlock();
-			if (mem instanceof IExtendedMemoryBlock)
+			if (mem instanceof IMemoryBlockExtension)
 			{
 				// if text editor is activated, removes its focus and commit
 				// any changes made
 				setCursorFocus();
 					
 				// reload table at base address	
-				BigInteger address = ((IExtendedMemoryBlock)mem).getBigBaseAddress();
+				BigInteger address = ((IMemoryBlockExtension)mem).getBigBaseAddress();
 				
 				if (address == null)
 				{
@@ -1969,7 +1967,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			{
 				// if not extended memory block
 				// do not allow user to go to an address that's out of range
-				if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
+				if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 				{
 					Status stat = new Status(
 					 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
@@ -1993,7 +1991,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	}
 
 	/**
-	 * @return
+	 * @return current column size
 	 */
 	public int getColumnSize()
 	{
@@ -2001,7 +1999,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	}
 
 	/**
-	 * @return
+	 * @return number of bytes per line
 	 */
 	public int getBytesPerLine()
 	{
@@ -2120,7 +2118,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			if (!fSelectedAddress.equals(address))
 			{	
-				if (getMemoryBlock() instanceof IExtendedMemoryBlock)
+				if (getMemoryBlock() instanceof IMemoryBlockExtension)
 				{
 					goToAddress(address, false);
 				}
@@ -2154,7 +2152,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			if (!address.equals(getTopVisibleAddress()))
 			{
-				if (getMemoryBlock() instanceof IExtendedMemoryBlock)
+				if (getMemoryBlock() instanceof IMemoryBlockExtension)
 				{
 				
 					if (!isAddressOutOfRange(address))
@@ -2262,7 +2260,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	/**
 	 * Check if address provided is out of buffered range
 	 * @param address
-	 * @return
+	 * @return if address is out of bufferred range
 	 */
 	private boolean isAddressOutOfRange(BigInteger address)
 	{
@@ -2272,7 +2270,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	/**
 	 * Check if address is visible
 	 * @param address
-	 * @return
+	 * @return if the given address is visible
 	 */
 	protected boolean isAddressVisible(BigInteger address)
 	{
@@ -2434,7 +2432,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 	protected boolean needMoreLines()
 	{
-		if (getMemoryBlock() instanceof IExtendedMemoryBlock)
+		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{		
 			Table table = fTableViewer.getTable();
 			TableItem firstItem = table.getItem(0);
@@ -2491,7 +2489,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * Checks to see if the event is valid for activating
 	 * cell editing in a view tab
 	 * @param event
-	 * @return
+	 * @return true if the edit event is valid  for activating the cell editor
 	 */
 	public boolean isValidEditEvent(int event) {
 		for (int i = 0; i < MemoryViewTab.ignoreEvents.length; i++) {

@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -143,9 +143,9 @@ public class PrintViewTabAction extends AbstractMemoryAction
 				IMemoryBlock memBlock = getViewTab().getMemoryBlock();
 		
 		
-				if (memBlock instanceof IExtendedMemoryBlock)
+				if (memBlock instanceof IMemoryBlockExtension)
 				{
-					numBytes = ((IExtendedMemoryBlock)memBlock).getAddressSize();
+					numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
 					
 					if (numBytes <= 0)
 						numBytes = 4;

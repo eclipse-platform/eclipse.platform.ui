@@ -51,8 +51,7 @@ public interface IMemoryBlockManager {
 	void removeListener(IMemoryBlockListener listener);
 	
 	/**
-	 * Get all memory blocks in the workbench.
-	 * @return
+	 * @return all memory blocks in the workbench.
 	 */
 	public IMemoryBlock[] getAllMemoryBlocks();
 	
@@ -60,14 +59,14 @@ public interface IMemoryBlockManager {
 	 * Get all memory blocks associated with the given debug target
 	 * (i.e <memoryBlock>.getDebugTarget == debugTarget)
 	 * @param debugTarget
-	 * @return
+	 * @return all memory blocks associated with the given debug target
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget);
 	
 	/**
 	 * Get all memory blocks associated with the given memory block retrieval.
 	 * @param retrieve
-	 * @return
+	 * @return all memory blocks associated with the given memory block retrieval.
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval retrieve);
 

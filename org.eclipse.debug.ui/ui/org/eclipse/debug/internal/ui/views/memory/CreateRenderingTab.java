@@ -20,8 +20,8 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
@@ -250,31 +250,31 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		return composite;		
 	}
 	
+
 	/**
-	 * @param memoryBlockLabel
-	 * @return
+	 * @return tab label for this memory view tab
 	 */
 	private String getLabel() {
 		
 		String memoryBlockLabel = " "; //$NON-NLS-1$
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			try {
 				
-				if (((IExtendedMemoryBlock)fMemoryBlock).getExpression() != null)
+				if (((IMemoryBlockExtension)fMemoryBlock).getExpression() != null)
 				{
 					String prefix = ""; //$NON-NLS-1$
-					if (((IExtendedMemoryBlock)fMemoryBlock).getExpression().startsWith("&")) //$NON-NLS-1$
+					if (((IMemoryBlockExtension)fMemoryBlock).getExpression().startsWith("&")) //$NON-NLS-1$
 					{
 						prefix = "&"; //$NON-NLS-1$
 						memoryBlockLabel += prefix;
 					}
-					memoryBlockLabel += ((IExtendedMemoryBlock)fMemoryBlock).getExpression();
+					memoryBlockLabel += ((IMemoryBlockExtension)fMemoryBlock).getExpression();
 				}
 				
-				if (((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress() != null)
+				if (((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress() != null)
 				{
-					memoryBlockLabel += " <0x" + ((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress().toString(16) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+					memoryBlockLabel += " <0x" + ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress().toString(16) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} catch (DebugException e) {
 				memoryBlockLabel = fMemoryBlock.toString();

@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -175,7 +175,7 @@ public class ViewTabCursorManager
 					try
 					{
 						// if cursor is at boundry, reload
-						if (fViewTab.getMemoryBlock() instanceof IExtendedMemoryBlock)
+						if (fViewTab.getMemoryBlock() instanceof IMemoryBlockExtension)
 						{
 							if (fRow+1 >= fTable.getItemCount() || fRow-1 <= 0)
 							{
@@ -192,7 +192,7 @@ public class ViewTabCursorManager
 					
 					if (e.detail == SWT.TRAVERSE_TAB_NEXT)
 					{
-						if (!(fViewTab.getMemoryBlock() instanceof IExtendedMemoryBlock))
+						if (!(fViewTab.getMemoryBlock() instanceof IMemoryBlockExtension))
 						{
 							if (fRow+1 >= fTable.getItemCount() &&
 								fCol == getNumCol())
@@ -214,7 +214,7 @@ public class ViewTabCursorManager
 					}
 					else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
 					{
-						if (!(fViewTab.getMemoryBlock() instanceof IExtendedMemoryBlock))
+						if (!(fViewTab.getMemoryBlock() instanceof IMemoryBlockExtension))
 						{
 							if (fRow-1 < 0 && fCol == 1)
 							{

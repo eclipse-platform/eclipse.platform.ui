@@ -24,7 +24,7 @@ public abstract class MemoryByte {
 	public static final byte	CHANGED		= 0x04; 		// Attribute to indicate that the byte has changed
 	public static final byte	UNCHANGED	= 0x08;			// Attribute to indicate that the byte is unchanged
 															// The changed and unchanged attribute will only
-															// take effect if IExtendedMemoryBlock.isMemoryChangesManaged
+															// take effect if IMemoryBlockExtension.supportsChangeManagement()
 															// returns true.
 
 	// value of the byte

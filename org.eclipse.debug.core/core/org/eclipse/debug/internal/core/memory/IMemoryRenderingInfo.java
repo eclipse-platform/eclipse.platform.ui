@@ -40,7 +40,7 @@ public interface IMemoryRenderingInfo
 	 * Given the property id, get rendering specific property
 	 * Return null if the property is nto available.
 	 * @param propertyId
-	 * @return
+	 * @return the value of the given property
 	 */
 	public String getProperty(String propertyId);
 	

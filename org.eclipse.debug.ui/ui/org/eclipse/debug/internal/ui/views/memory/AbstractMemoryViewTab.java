@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
-import java.util.ArrayList;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -72,86 +70,22 @@ abstract public class AbstractMemoryViewTab implements IMemoryViewTab {
 		// if add enabled reference
 		if (addReference)
 		{
-			if (getMemoryBlock() instanceof IExtendedMemoryBlock)
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				// add view tab to synchronizer
-				ArrayList references = addReferenceToSynchronizer();
-				
-				// if this is the first enabled reference to the memory block
-				// enable the memory block
-				if (references.size() == 1 && !((IExtendedMemoryBlock)getMemoryBlock()).isEnabled() )
-					((IExtendedMemoryBlock)getMemoryBlock()).enable();
+				((IMemoryBlockExtension)getMemoryBlock()).connect(this);
 			}
 		}
 		// if remove enabled reference
 		else if (!addReference){
-			if (getMemoryBlock() instanceof IExtendedMemoryBlock)
+			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				ArrayList references = removeReferenceFromSynchronizer();
-				
-				if (references == null)
-					return;
-				
-				// if there is not more enabled reference to the memory block
-				// disable the memory block
-				if (references.size() == 0 && ((IExtendedMemoryBlock)getMemoryBlock()).isEnabled())							
-					((IExtendedMemoryBlock)getMemoryBlock()).disable();
+				if (getMemoryBlock() instanceof IMemoryBlockExtension)
+				{
+					((IMemoryBlockExtension)getMemoryBlock()).disconnect(this);
+				}
 			}			
 		}		
 	}
-	
-	/**
-	 * 	Multiple view tabs can reference to the same memory block.
-	 *	Use this property to keep track of all references that are enabled.
-	 *	(i.e.  requiring change events from the memory block.)
-	 *	When a view tab is created/enabled, a reference will be added to the synchronizer.
-	 *	When a view tab is disposed/disabled, the reference will be removed from the synchronizer.
-	 *	The view tab examines this references array and will only enable
-	 *	a memory block if there is at least one enabled reference to the memory
-	 *	block.  If there is no enabled reference to the memory block, the
-	 *	memory block should be disabled.
-	 * @return the reference object
-	 */
-	protected ArrayList addReferenceToSynchronizer() {
-
-		ArrayList references = (ArrayList)DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().getSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES);
-		
-		// first reference count
-		if (references == null)
-		{
-			references = new ArrayList();
-		}
-		
-		// add the reference to the reference counting object
-		if (!references.contains(this))
-		{
-			references.add(this);
-		}
-		
-		DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES, references);
-		return references;
-	}
-	
-	/**
-	 * @return the reference object, null if the reference object does not exisit in the synchronizer
-	 */
-	protected ArrayList removeReferenceFromSynchronizer()
-	{
-		ArrayList references = (ArrayList)DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().getSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES);
-		
-		// do not create a new reference object if it does not exist
-		// the memory block may have been deleted
-		if (references == null)
-		{
-			return null;
-		}
-		
-		// remove the reference from the reference counting object
-		references.remove(this);
-		
-		DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES, references);
-		return references;		
-	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryViewTab#dispose()

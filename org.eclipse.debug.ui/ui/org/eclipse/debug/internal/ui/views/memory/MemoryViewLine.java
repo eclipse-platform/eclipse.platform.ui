@@ -113,7 +113,7 @@ public class MemoryViewLine extends Object {
 	/**
 	 * @param start
 	 * @param end
-	 * @return
+	 * @return padded string
 	 */
 	public String getPaddedString(int start, int end) {
 		StringBuffer buf = new StringBuffer();
@@ -133,7 +133,7 @@ public class MemoryViewLine extends Object {
 	/**
 	 * @param start
 	 * @param end
-	 * @return
+	 * @return is the bytes between start and end are all valid
 	 */
 	public boolean isAvailable(int start, int end) {
 		boolean available = true;

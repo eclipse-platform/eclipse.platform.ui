@@ -27,7 +27,7 @@ public class RendererUtil {
 	 * @param array
 	 * @param size
 	 * @param endianess
-	 * @return
+	 * @return an array of bytes
 	 */
 	protected static byte[] fillArray(byte[] array, int size, int endianess)
 	{
@@ -107,7 +107,7 @@ public class RendererUtil {
 	 * Convert byte array to long.
 	 * @param array
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in long
 	 */
 	static public long convertByteArrayToLong(byte[] array, int endianess)
 	{	
@@ -201,7 +201,7 @@ public class RendererUtil {
 	 * Convert byte array to integer.
 	 * @param array
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in int
 	 */
 	static public int convertByteArrayToInt(byte[] array, int endianess)
 	{	
@@ -235,7 +235,7 @@ public class RendererUtil {
 	 * Convert byte array to short.
 	 * @param array
 	 * @param endianess
-	 * @return
+	 * @return result of teh conversion in short
 	 */
 	static public short convertByteArrayToShort(byte[] array, int endianess)
 	{	
@@ -268,7 +268,7 @@ public class RendererUtil {
 	 * Convert big integer to byte array.
 	 * @param i
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in raw byte array
 	 */
 	static public byte[] convertBigIntegerToByteArray(BigInteger i, int endianess)
 	{
@@ -295,7 +295,7 @@ public class RendererUtil {
 	 * Convert big integer to byte array.
 	 * @param i
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in raw byte array
 	 */
 	static public byte[] convertUnsignedBigIntegerToByteArray(BigInteger i, int endianess)
 	{
@@ -322,7 +322,7 @@ public class RendererUtil {
 	 * Convert long to byte array.
 	 * @param i
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in raw byte array
 	 */
 	static public byte[] convertLongToByteArray(long i, int endianess)
 	{
@@ -347,7 +347,7 @@ public class RendererUtil {
 	 * Convert integer to byte array.
 	 * @param i
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in raw byte array
 	 */
 	static public byte[] convertIntToByteArray(int i, int endianess)
 	{
@@ -372,7 +372,7 @@ public class RendererUtil {
 	 * Convert short to byte array.
 	 * @param i
 	 * @param endianess
-	 * @return
+	 * @return result of the conversion in raw byte array
 	 */
 	static public byte[] convertShortToByteArray(short i, int endianess)
 	{

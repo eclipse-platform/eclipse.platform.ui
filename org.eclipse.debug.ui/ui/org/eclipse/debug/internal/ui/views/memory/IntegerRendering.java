@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 
 /**
  * Represents an integer rendering.
@@ -28,9 +28,9 @@ public class IntegerRendering extends AbstractMemoryRendering{
 	public IntegerRendering(IMemoryBlock memBlock, String renderingId){
 		super(memBlock, renderingId);
 		
-		if (memBlock instanceof IExtendedMemoryBlock)
+		if (memBlock instanceof IMemoryBlockExtension)
 		{
-			IExtendedMemoryBlock exBlk = (IExtendedMemoryBlock)memBlock;
+			IMemoryBlockExtension exBlk = (IMemoryBlockExtension)memBlock;
 			
 			if(exBlk.isBigEndian()){
 				fCurrentEndianess = RendererUtil.BIG_ENDIAN;

@@ -31,7 +31,7 @@ public interface IMemoryBlockModelPresentation extends IDebugModelPresentation
 	 * @param renderingId - rendering id of the tab
 	 * @return tab label for this memory block.  Return null if default is to be used.
 	 * Default tab label is:
-	 *   "expression:evaluated address" for IExtendedMemoryBlock
+	 *   "expression:evaluated address" for IMemoryBlockExtension
 	 *   "Base Address"  for IMemoryBlock
 	 */
 	public String getTabLabel(IMemoryBlock blk, String renderingId);

@@ -16,8 +16,8 @@ import java.util.Enumeration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -236,27 +236,28 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 	{
 		for (int i=0; i<memoryBlocks.length; i++)
 		{
-			// enable to get latest data
-			if (memoryBlocks[i] instanceof IExtendedMemoryBlock)
-			{
-				((IExtendedMemoryBlock)memoryBlocks[i]).enable();
-			}
+//			// enable to get latest data
+//			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
+//			{
+//				((IMemoryBlockExtension)memoryBlocks[i]).connect(this);
+//			}
+			
 			MemoryBlockAdded(memoryBlocks[i]);
 			
-			// disable after done
-			if (memoryBlocks[i] instanceof IExtendedMemoryBlock)
-			{
-				((IExtendedMemoryBlock)memoryBlocks[i]).disable();
-			}
+//			// disable after done
+//			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
+//			{
+//				((IMemoryBlockExtension)memoryBlocks[i]).disconnect(this);
+//			}
 		}
 
 		// enable memory block
 		IMemoryViewTab viewTab = getTopMemoryTab();
 		if (viewTab != null)
 		{
-			if (viewTab.getMemoryBlock() instanceof IExtendedMemoryBlock)
+			if (viewTab.getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				((IExtendedMemoryBlock)viewTab.getMemoryBlock()).enable();
+				((IMemoryBlockExtension)viewTab.getMemoryBlock()).connect(viewTab);
 			}
 		}		
 	}

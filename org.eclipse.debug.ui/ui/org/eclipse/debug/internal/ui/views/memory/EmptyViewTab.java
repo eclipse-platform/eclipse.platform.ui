@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -39,7 +39,6 @@ public class EmptyViewTab extends AbstractMemoryViewTab {
 	 * @param newMemory
 	 * @param newTab
 	 * @param menuMgr
-	 * @param renderingId
 	 */
 	public EmptyViewTab(IMemoryBlock newMemory, TabItem newTab, MenuManager menuMgr, IMemoryRendering rendering) {
 		super(newMemory, newTab, menuMgr, rendering);
@@ -79,8 +78,8 @@ public class EmptyViewTab extends AbstractMemoryViewTab {
 
 		tabName = ""; //$NON-NLS-1$
 		try {
-			if (newMemory instanceof IExtendedMemoryBlock) {
-				tabName = ((IExtendedMemoryBlock) newMemory).getExpression();
+			if (newMemory instanceof IMemoryBlockExtension) {
+				tabName = ((IMemoryBlockExtension) newMemory).getExpression();
 				
 				if (tabName == null)
 				{

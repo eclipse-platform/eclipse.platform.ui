@@ -23,14 +23,13 @@ public interface IMemoryRenderingListener
 {
 	/**
 	 * This function is called when a new rendering is added.
-	 * @param memory
-	 * @param renderingId
+	 * @param rendering
 	 */
 	void MemoryBlockRenderingAdded(IMemoryRendering rendering);
 
 	/**
 	 * Fired when a memory rendering is removed.
-	 * @param memory
+	 * @param rendering
 	 */
 	void MemoryBlockRenderingRemoved(IMemoryRendering rendering);	
 }

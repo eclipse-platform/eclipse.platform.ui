@@ -169,8 +169,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	}
 	
 	/**
-	 * @param elements
-	 * @param j
+	 * @param element
 	 */
 	private void addRendering(IConfigurationElement element) {
 		
@@ -216,8 +215,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	}
 
 	/**
-	 * @param elements
-	 * @param j
+	 * @param element
 	 */
 	private void addRenderingProperty(IConfigurationElement element) {
 		String renderingId = element.getAttribute(RENDERING_ID);

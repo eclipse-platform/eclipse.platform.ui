@@ -49,9 +49,6 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 		fViewer= (StructuredViewer) viewer;
 	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Display.asyncExec(java.lang.Runnable)
-	 */
 	protected void asyncExec(Runnable r) {
 		if (fViewer != null) {
 			Control ctrl= fViewer.getControl();
@@ -61,9 +58,6 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.swt.widgets.Display.syncExec(java.lang.Runnable)
-	 */
 	protected void syncExec(Runnable r) {
 		if (fViewer != null) {
 			Control ctrl= fViewer.getControl();

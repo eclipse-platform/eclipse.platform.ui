@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -71,7 +71,7 @@ public class LittleEndianAction implements IObjectActionDelegate {
 			if(strucSelection.getFirstElement() instanceof IMemoryRendering){
 				fRendering = (IMemoryRendering)strucSelection.getFirstElement();
 				
-				if (fRendering.getBlock() instanceof IExtendedMemoryBlock)
+				if (fRendering.getBlock() instanceof IMemoryBlockExtension)
 					action.setEnabled(false);
 				else
 					action.setEnabled(true);

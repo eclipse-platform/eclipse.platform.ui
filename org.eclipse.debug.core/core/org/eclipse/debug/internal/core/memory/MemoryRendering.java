@@ -30,15 +30,16 @@ public class MemoryRendering implements IMemoryRendering
 	}
 	
 	/**
-	 * @return
+	 * @return the memory block that this rendering displays
 	 */
 	public IMemoryBlock getBlock()
 	{
 		return fBlock;
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryRendering#getRenderingId()
+	 * @see org.eclipse.debug.internal.core.memory.IMemoryRendering#getRenderingId()
 	 */
 	public String getRenderingId()
 	{

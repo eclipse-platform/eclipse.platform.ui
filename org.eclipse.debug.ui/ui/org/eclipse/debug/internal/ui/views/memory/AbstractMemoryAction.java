@@ -55,7 +55,7 @@ abstract public class AbstractMemoryAction extends Action
 	 * Given a view id, return the top view tab from the view.
 	 * Returns null if the view cannot be opened or a top view tab is not found.
 	 * @param viewId
-	 * @return
+	 * @return the top memory view tab from the Memory View
 	 */
 	public IMemoryViewTab getTopViewTabFromView(String viewId){
 		

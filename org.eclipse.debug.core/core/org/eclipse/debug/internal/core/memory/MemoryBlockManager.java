@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 
@@ -212,9 +213,9 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 		
-		if (mem instanceof IExtendedMemoryBlock)
+		if (mem instanceof IMemoryBlockExtension)
 		{ 
-			((IExtendedMemoryBlock)mem).delete();
+			((IMemoryBlockExtension)mem).dispose();
 		}
 		
 		notifyListeners(mem, REMOVED);
@@ -293,10 +294,10 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		
 		for (int i=0; i<blocks.length; i++)
 		{
-			if (blocks[i] instanceof IExtendedMemoryBlock)
+			if (blocks[i] instanceof IMemoryBlockExtension)
 			{	
 			
-				if (((IExtendedMemoryBlock)blocks[i]).getMemoryBlockRetrieval() == retrieve)
+				if (((IMemoryBlockExtension)blocks[i]).getMemoryBlockRetrieval() == retrieve)
 				{	
 					memoryBlocksList.add(blocks[i]);
 				}

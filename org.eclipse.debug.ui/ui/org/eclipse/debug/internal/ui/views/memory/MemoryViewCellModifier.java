@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.core.memory.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -224,9 +224,9 @@ public class MemoryViewCellModifier implements ICellModifier
 		BigInteger lineAddr = new BigInteger(lineAddress, 16);
 		BigInteger memoryAddr;
 		
-		if (memory instanceof IExtendedMemoryBlock)
+		if (memory instanceof IMemoryBlockExtension)
 		{
-			memoryAddr = ((IExtendedMemoryBlock)memory).getBigBaseAddress();
+			memoryAddr = ((IMemoryBlockExtension)memory).getBigBaseAddress();
 		}
 		else
 		{

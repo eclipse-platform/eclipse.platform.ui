@@ -38,12 +38,4 @@ public interface IMemoryViewConstants {
 	// Top visble address of MemoryViewTab
 	public static final String PROPERTY_TOP_ADDRESS = "org.eclipse.debug.ui.MemoryViewTab.topAddress"; //$NON-NLS-1$
 	
-	// Enabled Reference of the memory block
-	// This property acts as a reference count object for the memory block blocked
-	// by view tabs from Memory View or Memory Rendering View.  When a view tab
-	// is enabled, it needs to add itself to this property object.
-	// When a view tab is disabled, it removes itself from this property object.  This
-	// property is used to determine if a memory block can be disabled when no more
-	// view tab is referencing to the memory block.
-	public static final String PROPERTY_ENABLED_REFERENCES = "org.eclipse.debug.ui.MemoryViewTab.enabledReferences"; //$NON-NLS-1$
 }

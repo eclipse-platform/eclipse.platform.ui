@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.core.model;
 
 import java.math.BigInteger;
+
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.core.memory.MemoryByte;
 
 /**
  * Represents a memory block.
@@ -32,9 +32,9 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  * Please note that these APIs will be called multiple times by the Memory View.
  * To improve performance, debug adapters need to cache the content of its memory block and only
  * retrieve updated data when necessary.
- * @since 3.0
+ * @since 3.1
  */
-public interface IExtendedMemoryBlock extends IMemoryBlock {
+public interface IMemoryBlockExtension extends IMemoryBlock {
 	
 	/**
 	 * Returns the expression of this memory block.
@@ -50,7 +50,7 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 	
 	/**
 	 * Get the base address of this memory block in BigInteger
-	 * @return 
+	 * @return the base address of this memory block
 	 */
 	public BigInteger getBigBaseAddress();
 	
@@ -64,7 +64,7 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 	 * Indicate if the base address of this memory block block could be modified
 	 * If return true, setBaseAddress will be used to change the base address
 	 * of this memory block.
-	 * * @return
+	 * * @return if the memory block supports base address modification
 	 */
 	public boolean supportBaseAddressModification();
 	
@@ -80,7 +80,7 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 	 * If this function returns false, the Memory View will calculate
 	 * delta information for each byte based on its history.
 	 */
-	public boolean isMemoryChangesManaged();
+	public boolean supportsChangeManagement();
 	
 	/**
 	 * Set the base address of this memory block
@@ -102,7 +102,7 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 	 * 
 	 * @param offset
 	 * @param length
-	 * @return
+	 * @return an array of bytes from the memory block based on the given offset and length
 	 * @throws DebugException if the method fails.
 	 */
 	public MemoryByte[] getBytesFromOffset(long offset, long length) throws DebugException;
@@ -117,7 +117,7 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 	 * 
 	 * @param address
 	 * @param length
-	 * @return
+	 * @return an array of bytes from the memory block based on the given address and length
 	 * @throws DebugException if method fails
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long length) throws DebugException;	
@@ -129,32 +129,34 @@ public interface IExtendedMemoryBlock extends IMemoryBlock {
 
 	
 	/**
-	 * Enable this memory block.  Block is enabled when its view tab is in focus.
+	 * Connect a view to the memory block. Called by UI when a view that displays
+	 * the memory block is visible.
+	 * @param object 
 	 */
-	public void enable();
+	public void connect(Object object);
 	
 	
 	/**
-	 * Disable this memory block.  Block is disabled when its view tab loses focus.
+	 * Disconnect a view from the memory block. Called by UI when a view
+	 * that displays the memory block is hidden.
+	 * @param object 
 	 */
-	public void disable();
+	public void disconnect(Object object);
 	
 	/**
-	 * Indicate if this memory block is enabled/disabled.
-	 * @return
+	 * @return objects that are currently connected to the memory block.
+	 * Return an empty array if nothing is connected
 	 */
-	public boolean isEnabled();
+	public Object[] getConnected();
 	
 	
 	/**
-	 * Delete this memory block.
+	 * Dispose this memory block.
 	 */
-	public void delete();
+	public void dispose();
 	
 	/**
-	 * Return the IMemoryBlockRetrieval responsible for getting
-	 * this memory block.
-	 * @return
+	 * @return the IMemoryBlockRetrieval responsible for creating this memory block
 	 */
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval();
 }

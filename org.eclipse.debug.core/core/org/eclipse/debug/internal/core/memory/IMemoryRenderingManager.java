@@ -78,7 +78,7 @@ public interface IMemoryRenderingManager
 	 * Get all memory renderings from the given debug target
 	 * Return an empty array if nothing can be found for the debug target.
 	 * @param target
-	 * @return
+	 * @return all memory renderings from the given debug target
 	 */
 	public IMemoryRendering[] getRenderingsFromDebugTarget(IDebugTarget target);
 	
@@ -86,7 +86,7 @@ public interface IMemoryRenderingManager
 	 * Get all memory renderings from the given memory block
 	 * Return an empty array if nothing can be found for the memory block.
 	 * @param block
-	 * @return
+	 * @return all memory renderings from the given memory block
 	 */
 	public IMemoryRendering[] getRenderingsFromMemoryBlock(IMemoryBlock block);	
 	

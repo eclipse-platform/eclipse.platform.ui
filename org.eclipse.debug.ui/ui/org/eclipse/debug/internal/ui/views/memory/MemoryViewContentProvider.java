@@ -23,9 +23,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlockRetrieval;
 import org.eclipse.debug.internal.core.memory.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -124,10 +124,10 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		if (lineCache.isEmpty()) { 
 		
 			try {
-				if (fMemoryBlock instanceof IExtendedMemoryBlock)
+				if (fMemoryBlock instanceof IMemoryBlockExtension)
 				{
 					// calculate top buffered address
-					BigInteger address = ((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress();
+					BigInteger address = ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress();
 					
 					if (address == null)
 					{
@@ -174,7 +174,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	}
 	
 	/**
-	 * @return
+	 * @return the memroy block
 	 */
 	public IMemoryBlock getMemoryBlock() {
 		return fMemoryBlock;
@@ -200,7 +200,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		int addressLength = addressSize * IInternalDebugUIConstants.CHAR_PER_BYTE;
 
 		// align starting address with double word boundary
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			if (!adjustedAddress.endsWith("0")) //$NON-NLS-1$
 			{
@@ -210,7 +210,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			}
 		}
 
-		IExtendedMemoryBlock extMemoryBlock = null;
+		IMemoryBlockExtension extMemoryBlock = null;
 		MemoryByte[] memoryBuffer = null;
 		
 		// required number of bytes
@@ -219,10 +219,10 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		
 		try
 		{
-			if (fMemoryBlock instanceof IExtendedMemoryBlock)
+			if (fMemoryBlock instanceof IMemoryBlockExtension)
 			{
 				// get memory from memory block
-				extMemoryBlock = (IExtendedMemoryBlock) fMemoryBlock;
+				extMemoryBlock = (IMemoryBlockExtension) fMemoryBlock;
 				
 				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumBytes);
 				
@@ -234,9 +234,9 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				
 				// get padded string
 				IMemoryBlockRetrieval retrieval = extMemoryBlock.getMemoryBlockRetrieval();
-				if (retrieval != null && retrieval instanceof IExtendedMemoryBlockRetrieval)
+				if (retrieval != null && retrieval instanceof IMemoryBlockExtensionRetrieval)
 				{
-					paddedString = ((IExtendedMemoryBlockRetrieval)retrieval).getPaddedString();
+					paddedString = ((IMemoryBlockExtensionRetrieval)retrieval).getPaddedString();
 					
 					if (paddedString == null)
 					{
@@ -329,8 +329,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		String address = startingAddress.toString(16);
 		// save address of the top of buffer
 		fBufferTopAddress = startingAddress;
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
-			fBaseAddress = ((IExtendedMemoryBlock) fMemoryBlock).getBigBaseAddress();
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
+			fBaseAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress();
 		else
 			fBaseAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
 		
@@ -346,9 +346,9 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		// If change information is not managed by the memory block
 		// The view tab will manage it and calculate delta information
 		// for its content cache.
-		if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			manageDelta = !((IExtendedMemoryBlock)fMemoryBlock).isMemoryChangesManaged();
+			manageDelta = !((IMemoryBlockExtension)fMemoryBlock).supportsChangeManagement();
 		}
 			
 		// put memory information into MemoryViewLine
@@ -412,6 +412,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			{
 				if (oldLine != null)
 					newLine.isMonitored = true;
+				else
+					newLine.isMonitored = false;
 			}
 			else
 			{
@@ -468,7 +470,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	
 	/**
 	 * @param numberOfLines
-	 * @return
+	 * @return an array of dummy MemoryByte
 	 */
 	private MemoryByte[] makeDummyContent(long numberOfLines) {
 		MemoryByte[] memoryBuffer;
@@ -522,7 +524,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	/**
 	 * Checks to see if the content needs to be refreshed
 	 * TODO: this methd is never called
-	 * @return
+	 * @return true if refresh is needed, false otherwise
 	 */
 	protected boolean isRefreshNeeded()
 	{	
@@ -537,7 +539,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			// convert IMemory to a flat array of MemoryBlockByte
 			ArrayList newMemory = new ArrayList();
 				
-			if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
+			if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 			{
 				byte[] memory = fMemoryBlock.getBytes();
 				
@@ -559,7 +561,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			else
 			{		
 			
-				IExtendedMemoryBlock extMB = (IExtendedMemoryBlock)fMemoryBlock;
+				IMemoryBlockExtension extMB = (IMemoryBlockExtension)fMemoryBlock;
 				
 				MemoryByte[] memory = extMB.getBytesFromAddress(fBufferTopAddress, lineCache.size()*fViewTab.getBytesPerLine());
 				
@@ -622,10 +624,10 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	 */
 	private boolean isBaseAddressChanged()
 	{
-		if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
+		if (!(fMemoryBlock instanceof IMemoryBlockExtension))
 			return false;
 		
-		IExtendedMemoryBlock extMB = (IExtendedMemoryBlock)fMemoryBlock;
+		IMemoryBlockExtension extMB = (IMemoryBlockExtension)fMemoryBlock;
 			
 		// if base address has changed, refresh is needed
 		BigInteger newBaseAddress = extMB.getBigBaseAddress();
@@ -691,22 +693,14 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			lines[i].isMonitored = true;
 		}
 		
-		// if view tab is enabled but block is disabled, enable the block
-		if (fViewTab.getMemoryBlock() instanceof IExtendedMemoryBlock)
-		{
-			if (!((IExtendedMemoryBlock)fViewTab.getMemoryBlock()).isEnabled())
-			{
-				((IExtendedMemoryBlock)fViewTab.getMemoryBlock()).enable();
-			}
-		}
 		boolean updateTopAddress = false;
 		// if base address has changed, set cursor back to the base address
 		if (isBaseAddressChanged())
 		{
 			updateTopAddress = true;
-			if (fMemoryBlock instanceof IExtendedMemoryBlock)
+			if (fMemoryBlock instanceof IMemoryBlockExtension)
 			{
-				BigInteger address = ((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress();
+				BigInteger address = ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress();
 				
 				if (address == null)
 				{
@@ -739,7 +733,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	}
 
 	/**
-	 * @return
+	 * @return buffer's top address
 	 */
 	public BigInteger getBufferTopAddress()
 	{
@@ -749,7 +743,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	/**
 	 * Calculate address size of the given address
 	 * @param address
-	 * @return
+	 * @return size of address from the debuggee
 	 */
 	public int getAddressSize(BigInteger address)
 	{
@@ -757,12 +751,12 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		 String adjustedAddress = address.toString(16);
 		
 		 int addressSize = 0;
-		 if (fMemoryBlock instanceof IExtendedMemoryBlock)
+		 if (fMemoryBlock instanceof IMemoryBlockExtension)
 		 {
-			 addressSize = ((IExtendedMemoryBlock)fMemoryBlock).getAddressSize();
+			 addressSize = ((IMemoryBlockExtension)fMemoryBlock).getAddressSize();
 		 }
 		
-		 // handle IMemoryBlock and invalid address size returned by IExtendedMemoryBlock
+		 // handle IMemoryBlock and invalid address size returned by IMemoryBlockExtension
 		 if (addressSize <= 0)
 		 {
 			 if (adjustedAddress.length() > 8)
@@ -803,7 +797,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	/**
 	 * Check if address is out of buffered range
 	 * @param address
-	 * @return
+	 * @return true if address is out of bufferred range, false otherwise
 	 */
 	protected boolean isAddressOutOfRange(BigInteger address)
 	{

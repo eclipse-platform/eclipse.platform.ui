@@ -99,9 +99,9 @@ public class HexRenderer extends AbstractMemoryRenderer implements IFixedLengthO
 	}
 
 	/**
-	 * Convert raw memory datat to byte array
+	 * Convert raw memory data to byte array
 	 * @param str
-	 * @return
+	 * @return an array of byte, converted from a hex string
 	 * @throws NumberFormatException
 	 */
 	public byte[] convertHexStringToByteArray(String str) throws NumberFormatException

@@ -26,10 +26,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MemoryViewUtil {
 	/**
-	 * Helper function to check if a given selection is valid for
-	 * creating a memory block.
 	 * @param selection
-	 * @return
+	 * @return true if the given selection is valid for creating a memory block
 	 */
 	static public boolean isValidSelection(ISelection selection) {
 	

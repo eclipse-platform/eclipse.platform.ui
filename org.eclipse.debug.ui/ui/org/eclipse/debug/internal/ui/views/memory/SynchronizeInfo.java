@@ -95,7 +95,7 @@ public class SynchronizeInfo
 		 * If the property matches one of the filters, the property
 		 * is valid and the view should be notified about its change.
 		 * @param property
-		 * @return
+		 * @return if the property is specified in the filter
 		 */
 		public boolean isValidProperty(String property){
 			if (fFilters == null)
@@ -111,8 +111,9 @@ public class SynchronizeInfo
 		}
 
 		/**
-		 * Add a property to the listener.
-		 * @param property
+		 * Set property filters, indicating what property change events
+		 * the listener is interested in.
+		 * @param filters
 		 */
 		public void setPropertyFilters(String[] filters){	
 			fFilters = filters;
@@ -185,7 +186,7 @@ public class SynchronizeInfo
 	/**
 	 * Returns the value of the property from the info object
 	 * @param propertyId
-	 * @return
+	 * @return value of the property
 	 */
 	public Object getProperty(String propertyId)
 	{

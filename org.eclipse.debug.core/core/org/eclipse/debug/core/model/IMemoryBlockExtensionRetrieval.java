@@ -9,18 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 
 /**
  * Extended capabilites for memory block retrieval.
- * @since 3.0
+ * @since 3.1
  */
-public interface IExtendedMemoryBlockRetrieval extends IMemoryBlockRetrieval {
+public interface IMemoryBlockExtensionRetrieval extends IMemoryBlockRetrieval {
 	
 	/**
 	 * Retrieves a memory block. 
@@ -28,11 +26,11 @@ public interface IExtendedMemoryBlockRetrieval extends IMemoryBlockRetrieval {
 	 * @param expression - expression to be evalutated to an address, evaluation context can be retrieved
 	 *                     from the selected debug element 
 	 * @param selected - selected debug element from Debug View
-	 * @return
+	 * @return a memory block based on the given expression and selected debug element
 	 * @throws DebugException
 	 */
 	
-	public IExtendedMemoryBlock getExtendedMemoryBlock(String expression, IDebugElement selected) throws DebugException;
+	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, IDebugElement selected) throws DebugException;
 
 	/**
 	 * @return the string to be used in place of this memory content when bytes

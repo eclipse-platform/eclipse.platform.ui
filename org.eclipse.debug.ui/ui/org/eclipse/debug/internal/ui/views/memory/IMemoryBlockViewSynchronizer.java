@@ -56,7 +56,7 @@ public interface IMemoryBlockViewSynchronizer
 	 * Get the property from the synchronizer for a memory block
 	 * @param memoryBlock
 	 * @param propertyId
-	 * @return
+	 * @return the synchronized property for the given memory block and property id
 	 */
 	public Object getSynchronizedProperty(IMemoryBlock memoryBlock, String propertyId);
 	

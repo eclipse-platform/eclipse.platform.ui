@@ -109,7 +109,7 @@ public class SignedIntegerRenderer
 	}
 	
 	/**
-	 * @return
+	 * @return current endianess
 	 */
 	private int getEndianess() {
 		// default to Big Endian in case the endianess cannot be determined

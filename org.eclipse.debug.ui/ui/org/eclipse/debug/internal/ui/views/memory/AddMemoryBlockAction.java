@@ -21,10 +21,10 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlockRetrieval;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -151,13 +151,13 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		String expression = dialog.getExpression();
 
 		try {
-			if (standardMemRetrieval instanceof IExtendedMemoryBlockRetrieval)
+			if (standardMemRetrieval instanceof IMemoryBlockExtensionRetrieval)
 			{
-				// if the debug session supports IExtendedMemoryBlockRetrieval
-				IExtendedMemoryBlockRetrieval memRetrieval = (IExtendedMemoryBlockRetrieval)standardMemRetrieval;
+				// if the debug session supports IMemoryBlockExtensionRetrieval
+				IMemoryBlockExtensionRetrieval memRetrieval = (IMemoryBlockExtensionRetrieval)standardMemRetrieval;
 				
 				// get extended memory block with the expression entered
-				IExtendedMemoryBlock memBlock = memRetrieval.getExtendedMemoryBlock(expression, ((IDebugElement)elem));
+				IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, ((IDebugElement)elem));
 				
 				// add block to memory block manager
 				if (memBlock != null)
@@ -175,7 +175,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			}
 			else
 			{
-				// if the debug session does not support IExtendedMemoryBlockRetrieval
+				// if the debug session does not support IMemoryBlockExtensionRetrieval
 				expression = expression.toUpperCase();
 				String hexPrefix = "0X"; //$NON-NLS-1$
 				if (expression.startsWith(hexPrefix))
@@ -208,11 +208,11 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				// get standard memory block
 				IMemoryBlock memBlock = standardMemRetrieval.getMemoryBlock(longAddress, length);
 				
-				// make sure the memory block returned is not an instance of IExtendedMemoryBlock
-				if (memBlock instanceof IExtendedMemoryBlock)
+				// make sure the memory block returned is not an instance of IMemoryBlockExtension
+				if (memBlock instanceof IMemoryBlockExtension)
 				{
 					Status status = new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(),	0, 
-						"IMemoryBlockRetrieval returns IExtendedMemoryBlock.  This may result in unexpected behavior.", null); //$NON-NLS-1$
+						"IMemoryBlockRetrieval returns IMemoryBlockExtension.  This may result in unexpected behavior.", null); //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 				}
 				

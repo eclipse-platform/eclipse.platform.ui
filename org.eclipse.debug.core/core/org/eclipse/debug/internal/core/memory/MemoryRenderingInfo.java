@@ -39,7 +39,7 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 		fElement = element;
 	}
 	/**
-	 * @return
+	 * @return the rendering id
 	 */
 	public String getRenderingId()
 	{
@@ -47,7 +47,7 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 	}
 
 	/**
-	 * @return
+	 * @return the name of the rendering type
 	 */
 	public String getName()
 	{
@@ -57,7 +57,7 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 	/**
 	 * Add a property to the rendering type.
 	 * @param propertyId
-	 * @param value
+	 * @param element
 	 */
 	public void addProperty(String propertyId, IConfigurationElement element){
 		if (fProperties == null){
