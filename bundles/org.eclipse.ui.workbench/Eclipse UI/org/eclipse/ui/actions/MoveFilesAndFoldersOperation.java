@@ -1,12 +1,14 @@
-package org.eclipse.ui.actions;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- */
-import java.util.ArrayList;
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.actions;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -46,11 +48,10 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * called recursively to merge folders during folder move.
 	 * 
 	 * @param resources the resources to move
-	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination destination to which resources will be moved
 	 * @param subMonitor a progress monitor for showing progress and for cancelation
 	 */
-	protected void copy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	protected void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -62,23 +63,16 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				// the resource is a folder and it exists in the destination, copy the
 				// children of the folder
 				IResource[] children = ((IContainer) source).members();
-				copy(children, rejectedFiles, destinationPath, subMonitor);
+				copy(children, destinationPath, subMonitor);
 				// need to explicitly delete the folder since we're not moving it
 				delete(source, subMonitor);
-			} else if (!rejectedFiles.contains(destinationPath)) {
+			} else {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
-				boolean canMove = true;
-
-				if (existing != null) {
-					canMove = !moveExisting(source, existing, subMonitor);
-					
-					if (canMove) { 	
-						canMove = delete(existing, subMonitor);
-					}
-				}
-				// was the resource deleted successfully or was there no existing resource to delete?
-				if (canMove) {
+				
+				if (existing != null)
+					moveExisting(source, existing, subMonitor);
+				else {
 					int flags = IResource.SHALLOW;
 					
 					if (source.isLinked() && checkDeep(source)) {
@@ -124,18 +118,26 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
 	}
 	/**
+	 * Returns whether the source file in a destination collision
+	 * will be validateEdited together with the collision itself.
+	 * Returns true.
+	 * 
+	 * @return boolean <code>true</code>, the source file in a  
+	 * 	destination collision should be validateEdited.  
+	 */
+	protected boolean getValidateConflictSource() {
+		return true;
+	}
+	/**
 	 * Sets the content of the existing file to the source file content.
 	 * Deletes the source file.
 	 * 
 	 * @param source source file to move
 	 * @param existing existing file to set the source content in
 	 * @param subMonitor a progress monitor for showing progress and for cancelation
-	 * @return boolean <code>true</code> if the source file was moved. 
-	 * 	<code>false</code> otherwise
 	 * @throws CoreException setContents failed
 	 */
-	private boolean moveExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
-		boolean moved = false;
+	private void moveExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
 		IFile existingFile = getFile(existing);
 
 		if (existingFile != null) {
@@ -144,10 +146,8 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			if (sourceFile != null) {
 				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
 				delete(sourceFile, subMonitor);
-				moved = true;
 			}
 		}
-		return moved;
 	}
 	/* (non-Javadoc)
 	 * Overrides method in CopyFilesAndFoldersOperation

@@ -359,8 +359,16 @@ public class CopyFilesAndFoldersOperation {
 			else {
 				IFile file = getFile(newDestination);
 				
-				if (file != null && file.isReadOnly()) {
-					existing.add(file);
+				if (file != null) {
+					if (file.isReadOnly()) {
+						existing.add(file);
+					}
+					if (getValidateConflictSource()) {
+						IFile sourceFile = getFile(source);
+						if (sourceFile != null) {
+							existing.add(sourceFile);
+						}
+					}
 				}
 			}
 		}
@@ -370,11 +378,10 @@ public class CopyFilesAndFoldersOperation {
 	 * called recursively to merge folders during folder copy.
 	 * 
 	 * @param resources the resources to copy
-	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination destination to which resources will be copied
 	 * @param subMonitor a progress monitor for showing progress and for cancelation
 	 */
-	protected void copy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	protected void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -384,20 +391,14 @@ public class CopyFilesAndFoldersOperation {
 				// the resource is a folder and it exists in the destination, copy the
 				// children of the folder
 				IResource[] children = ((IContainer) source).members();
-				copy(children, rejectedFiles, destinationPath, subMonitor);
-			} else if (!rejectedFiles.contains(destinationPath)) {
+				copy(children, destinationPath, subMonitor);
+			} else {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
-				boolean canCopy = true;
 				
-				if (existing != null) {					
-					canCopy = !copyExisting(source, existing, subMonitor);
-					
-					if (canCopy) { 	
-						canCopy = delete(existing, subMonitor);
-					}
-				}
-				if (canCopy) {
+				if (existing != null)					
+					copyExisting(source, existing, subMonitor);
+				else {
 					int flags = IResource.SHALLOW;
 					
 					if (source.isLinked() && checkDeep(source)) {
@@ -419,12 +420,9 @@ public class CopyFilesAndFoldersOperation {
 	 * @param source source file to copy
 	 * @param existing existing file to set the source content in
 	 * @param subMonitor a progress monitor for showing progress and for cancelation
-	 * @return boolean <code>true</code> if the source file was copied. 
-	 * 	<code>false</code> otherwise
 	 * @throws CoreException setContents failed
 	 */
-	private boolean copyExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
-		boolean copied = false;
+	private void copyExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
 		IFile existingFile = getFile(existing);
 
 		if (existingFile != null) {
@@ -432,10 +430,8 @@ public class CopyFilesAndFoldersOperation {
 
 			if (sourceFile != null) {
 				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
-				copied = true;
 			}
 		}
-		return copied;
 	}
 	/**
 	 * Copies the given resources to the destination. 
@@ -478,7 +474,6 @@ public class CopyFilesAndFoldersOperation {
 					monitor.worked(10); // show some initial progress
 				boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				ArrayList rejectedFiles = new ArrayList();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
 					// If we're copying to the source container then perform
@@ -495,8 +490,7 @@ public class CopyFilesAndFoldersOperation {
 							displayError(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.nameCollision")); //$NON-NLS-1$
 							return;
 						}
-						rejectedFiles = validateEdit(container, copyResources);
-						if (canceled)
+						if (validateEdit(container, copyResources) == false)
 							return;
 					}
 				}
@@ -506,7 +500,7 @@ public class CopyFilesAndFoldersOperation {
 					if (copyWithAutoRename)
 						performCopyWithAutoRename(copyResources, destinationPath, monitor);
 					else
-						performCopy(copyResources, rejectedFiles, destinationPath, monitor);
+						performCopy(copyResources, destinationPath, monitor);
 				}
 				copiedResources[0] = copyResources;
 			}
@@ -799,6 +793,19 @@ public class CopyFilesAndFoldersOperation {
 		return rejectedFiles;
 	}
 	/**
+	 * Returns whether the source file in a destination collision
+	 * will be validateEdited together with the collision itself.
+	 * Returns false. Should return true if the source file is to be
+	 * deleted after the operation.
+	 * 
+	 * @return boolean <code>true</code> if the source file in a 
+	 * 	destination collision should be validateEdited. 
+	 *	<code>false</code> if only the destination should be validated.  
+	 */
+	protected boolean getValidateConflictSource() {
+		return false;
+	}
+	/**
 	 * Returns whether the given resource is accessible.
 	 * Files and folders are always considered accessible and a project is 
 	 * accessible if it is open.
@@ -855,19 +862,18 @@ public class CopyFilesAndFoldersOperation {
 	 * </p>
 	 *
 	 * @param resources the resources to copy
-	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination the path of the destination container
 	 * @param monitor a progress monitor for showing progress and for cancelation
 	 * @return <code>true</code> if the copy operation completed without 
 	 * 	errors
 	 */
-	private boolean performCopy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor monitor) {
+	private boolean performCopy(IResource[] resources, IPath destination, IProgressMonitor monitor) {
 		try {
 			monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying")); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			copy(resources, rejectedFiles, destination, subMonitor);
+			copy(resources, destination, subMonitor);
 		} catch (CoreException e) {
 			recordError(e); // log error
 			return false;
@@ -1120,9 +1126,11 @@ public class CopyFilesAndFoldersOperation {
 	 * 
 	 * @param destination copy destination
 	 * @param sourceResources source resources
-	 * @return list of rejected files as absolute paths. Object type IPath.
+	 * @return <code>true</code> all files passed validation or there 
+	 * 	were no files to validate. <code>false</code> one or more files
+	 * 	did not pass validation. 
 	 */
-	private ArrayList validateEdit(IContainer destination, IResource[] sourceResources) {
+	private boolean validateEdit(IContainer destination, IResource[] sourceResources) {
 		ArrayList copyFiles = new ArrayList();
 		ArrayList rejectedFiles = new ArrayList();
 		
@@ -1132,14 +1140,10 @@ public class CopyFilesAndFoldersOperation {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IStatus status = workspace.validateEdit(files, parentShell);
 			
-			if (status.isMultiStatus()) {
-				rejectedFiles = getRejectedFiles(status, files);
-			}
-			else {
-				canceled = status.isOK() == false;
-			}
+			canceled = status.isOK() == false;
+			return status.isOK();
 		}
-		return rejectedFiles;
+		return true;
 	}
 	/**
 	 * Checks whether the destination is valid for copying the source 
