@@ -284,6 +284,8 @@ public class MergeSourceViewer extends SourceViewer
 		MergeViewerAction action= (MergeViewerAction) fActions.get(actionId);
 		if (action == null) {
 			action= createAction(actionId);
+			if (action == null)
+				return null;
 			
 			if (action.isContentDependent())
 				addTextListener(this);

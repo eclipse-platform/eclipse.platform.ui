@@ -21,7 +21,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.*;
 
-
 /**
  * A tree viewer that works on objects implementing
  * the <code>IDiffContainer</code> and <code>IDiffElement</code> interfaces.
@@ -127,7 +126,7 @@ public class DiffTreeViewer extends TreeViewer {
 			return false;
 		}
 	}
-
+	
 	private ResourceBundle fBundle;
 	private CompareConfiguration fCompareConfiguration;
 	private boolean fLeftIsLocal;
@@ -164,9 +163,19 @@ public class DiffTreeViewer extends TreeViewer {
 	
 	private void initialize(CompareConfiguration configuration) {
 		
+		Control tree= getControl();
+		
+		CompareNavigator.hookNavigation(tree);
+
+		INavigatable nav= new INavigatable() {
+			public boolean gotoDifference(boolean next) {
+				return internalNavigate(next);
+			}
+		};
+		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
+		
 		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
 
-		Control tree= getControl();
 		
 		tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
 
@@ -301,15 +310,18 @@ public class DiffTreeViewer extends TreeViewer {
 	
 	protected void inputChanged(Object in, Object oldInput) {
 		super.inputChanged(in, oldInput);
-		expandToLevel(2);
-		updateActions();
+		//expandToLevel(2);
 		
-//			System.out.println("inputChanged: " + in);
-//			if (fCompareConfiguration != null) {
-//				System.out.println("  left: " + fCompareConfiguration.isLeftEditable());
-//				System.out.println("  right: " + fCompareConfiguration.isRightEditable());
+//		Control c= getControl();
+//		Display display= c.getDisplay();
+//		display.asyncExec(
+//			new Runnable() {
+//				public void run() {
+					navigate(true);
+					updateActions();
+//				}
 //			}
-
+//		);
 	}
 
 	/**
@@ -356,21 +368,21 @@ public class DiffTreeViewer extends TreeViewer {
 //		Utilities.initAction(fCopyRightToLeftAction, fBundle, "action.TakeRight.");
 //		toolbarManager.appendToGroup("merge", fCopyRightToLeftAction);
 		
-		fNextAction= new Action() {
-			public void run() {
-				navigate(true);
-			}
-		};
-		Utilities.initAction(fNextAction, fBundle, "action.NextDiff.");
-		toolbarManager.appendToGroup("navigation", fNextAction);
-
-		fPreviousAction= new Action() {
-			public void run() {
-				navigate(false);
-			}
-		};
-		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff.");
-		toolbarManager.appendToGroup("navigation", fPreviousAction);
+//		fNextAction= new Action() {
+//			public void run() {
+//				navigate(true);
+//			}
+//		};
+//		Utilities.initAction(fNextAction, fBundle, "action.NextDiff.");
+//		toolbarManager.appendToGroup("navigation", fNextAction);
+//
+//		fPreviousAction= new Action() {
+//			public void run() {
+//				navigate(false);
+//			}
+//		};
+//		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff.");
+//		toolbarManager.appendToGroup("navigation", fPreviousAction);
 	}
 	
 	/**
@@ -432,116 +444,146 @@ public class DiffTreeViewer extends TreeViewer {
 	 *
 	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
 	 */
-	protected void navigate(boolean next) {
+	protected void navigate(boolean next) {	
+		internalNavigate(next);
+	}
+	
+	//---- private
+	
+	/**
+	 * Selects the next (or previous) node of the current selection.
+	 * If there is no current selection the first (last) node in the tree is selected.
+	 * Wraps around at end or beginning.
+	 * Clients may override. 
+	 *
+	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
+	 * @return <code>true</code> if at end (or beginning)
+	 */
+	private boolean internalNavigate(boolean next) {
 		
 		Control c= getControl();
 		if (!(c instanceof Tree))
-			return;
+			return false;
 			
 		Tree tree= (Tree) c;
-		TreeItem children[]= tree.getSelection();
 		TreeItem item= null;
-		
+		TreeItem children[]= tree.getSelection();
 		if (children != null && children.length > 0)
 			item= children[0];
+		if (item == null) {
+			children= tree.getItems();
+			if (children != null && children.length > 0) {
+				item= children[0];
+				if (item != null && item.getItemCount() <= 0) {
+					internalSetSelection(item);
+					return false;
+				}
+			}
+		}
 			
+		while (true) {
+			item= findNextPrev(item, next);
+			if (item == null)
+				break;
+			if (item.getItemCount() <= 0)
+				break;
+		}
+		
 		if (item != null) {
-			if (!next) {
+			internalSetSelection(item);
+			return false;
+		}
+		return true;
+	}
+
+	private TreeItem findNextPrev(TreeItem item, boolean next) {
+		
+		if (item == null)
+			return null;
+		
+		TreeItem children[]= null;
+
+		if (!next) {
+		
+			TreeItem parent= item.getParentItem();
+			if (parent != null)
+				children= parent.getItems();
+			else
+				children= item.getParent().getItems();
 			
+			if (children != null && children.length > 0) {
+				// goto previous child
+				int index= 0;
+				for (; index < children.length; index++)
+					if (children[index] == item)
+						break;
+				
+				if (index > 0) {
+					
+					item= children[index-1];
+					
+					while (true) {
+						int n= item.getItemCount();
+						if (n <= 0)
+							break;
+							
+						item.setExpanded(true);
+						item= item.getItems()[n-1];
+					}
+
+					// previous
+					return item;
+				}
+			}
+			
+			// go up
+			return parent;
+					
+		} else {
+			item.setExpanded(true);
+			createChildren(item);
+			
+			if (item.getItemCount() > 0) {
+				// has children: go down
+				children= item.getItems();
+				return children[0];
+			}
+			
+			while (item != null) {
+				children= null;
 				TreeItem parent= item.getParentItem();
 				if (parent != null)
 					children= parent.getItems();
 				else
-					children= tree.getItems();
+					children= item.getParent().getItems();
 				
 				if (children != null && children.length > 0) {
-					// goto previous child
+					// goto next child
 					int index= 0;
 					for (; index < children.length; index++)
 						if (children[index] == item)
 							break;
 					
-					if (index > 0) {
-						
-						item= children[index-1];
-						
-						while (true) {
-							int n= item.getItemCount();
-							if (n <= 0)
-								break;
-								
-							item.setExpanded(true);
-							item= item.getItems()[n-1];
-						}
-
-						// previous
-						internalSetSelection(item);
-						return;
+					if (index < children.length-1) {
+						// next
+						return children[index+1];
 					}
 				}
 				
 				// go up
-				if (parent != null) {
-					internalSetSelection(parent);
-					return;
-				}
-				item= null;
-						
-			} else {
-				item.setExpanded(true);
-				createChildren(item);
-				
-				if (item.getItemCount() > 0) {
-					// has children: go down
-					children= item.getItems();
-					internalSetSelection(children[0]);
-					return;
-				}
-				
-				while (item != null) {
-					children= null;
-					TreeItem parent= item.getParentItem();
-					if (parent != null)
-						children= parent.getItems();
-					else
-						children= tree.getItems();
-					
-					if (children != null && children.length > 0) {
-						// goto next child
-						int index= 0;
-						for (; index < children.length; index++)
-							if (children[index] == item)
-								break;
-						
-						if (index < children.length-1) {
-							// next
-							internalSetSelection(children[index+1]);
-							return;
-						}
-					}
-					
-					// go up
-					item= parent;
-				}
+				item= parent;
 			}
 		}
-		
-		// at end (or beginning): wrap around		
-		if (item == null) {
-			children= tree.getItems();
-			if (children != null && children.length > 0)
-				internalSetSelection(children[next ? 0 : children.length-1]);
-		}
+				
+		return item;
 	}
 	
 	private void internalSetSelection(TreeItem ti) {
 		if (ti != null) {
 			Object data= ti.getData();
-			setSelection(new StructuredSelection(data));
+			setSelection(new StructuredSelection(data), true);
 		}
 	}
-	
-	//---- private
 	
 	private void syncShowPseudoConflictFilter() {
 		

@@ -10,9 +10,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
 
 
 public class CompareEditorContributor extends EditorActionBarContributor {
@@ -20,18 +22,24 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	private IEditorPart fActiveEditorPart= null;
 
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
+	private NavigationAction fNext;
+	private NavigationAction fPrevious;
 	//private ShowPseudoConflicts fShowPseudoConflicts;
 
 
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
+		fNext= new NavigationAction(bundle, true);
+		fPrevious= new NavigationAction(bundle, false);
 		//fShowPseudoConflicts= new ShowPseudoConflicts(bundle, null);
 	}
 
 	public void contributeToToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator());
 		tbm.add(fIgnoreWhitespace);
+		tbm.add(fNext);
+		tbm.add(fPrevious);
 		//tbm.add(fShowPseudoConflicts);
 	}
 
@@ -39,6 +47,15 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 				
 		if (fActiveEditorPart != targetEditor) {
 			fActiveEditorPart= targetEditor;
+			
+			if (fActiveEditorPart != null) {
+				IEditorInput input= fActiveEditorPart.getEditorInput();
+				if (input instanceof CompareEditorInput) {
+					CompareEditorInput compareInput= (CompareEditorInput) input;
+					fNext.setCompareEditorInput(compareInput);
+					fPrevious.setCompareEditorInput(compareInput);
+				}
+			}
 				
 			if (targetEditor instanceof CompareEditor) {
 				CompareEditor editor= (CompareEditor) targetEditor;
@@ -46,7 +63,7 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			
 				CompareConfiguration cc= editor.getCompareConfiguration();
 				fIgnoreWhitespace.setCompareConfiguration(cc);
-				//fShowPseudoConflicts.setCompareConfiguration(cc);
+				//fShowPseudoConflicts.setCompareConfiguration(cc);			
 			}
 		}
 	}

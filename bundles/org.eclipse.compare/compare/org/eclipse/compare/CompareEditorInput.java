@@ -110,7 +110,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private Object fInput;
 	private String fTitle= "Compare";
 	private ListenerList fListenerList= new ListenerList();
-	
+	private CompareNavigator fNavigator;
 	private boolean fDirty= false;
 	private IPropertyChangeListener fDirtyStateListener;
 
@@ -144,6 +144,18 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * see IAdaptable.getAdapter
 	 */
 	public Object getAdapter(Class adapter) {
+		if (CompareNavigator.class.equals(adapter)) {
+			if (fNavigator == null)
+				fNavigator= new CompareNavigator(
+					new CompareViewerSwitchingPane[] {
+						fStructureInputPane,
+						fStructurePane1,
+						fStructurePane2,
+						fContentInputPane
+					}
+				);
+			return fNavigator;
+		}
 		return null;
 	}
 	
@@ -327,6 +339,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Control createContents(Composite parent) {
 
 		fComposite= new Splitter(parent, SWT.VERTICAL);
+		fComposite.setData(this);
 			
 		final Splitter h= new Splitter(fComposite, SWT.HORIZONTAL);
 
@@ -431,6 +444,16 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			fStructureInputPane.setInput(input2);
 			fContentInputPane.setInput(input2);
 		}
+		
+		// 
+		fComposite.setData("Nav",
+			new CompareViewerSwitchingPane[] {
+				fStructureInputPane,
+				fStructurePane1,
+				fStructurePane2,
+				fContentInputPane
+			}
+		);
 	
 		return fComposite;
 	}

@@ -53,6 +53,8 @@ import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.MergeViewerAction;
+import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.internal.CompareNavigator;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
@@ -369,7 +371,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
-		
+				
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
 			fPreferenceChangeListener= new IPropertyChangeListener() {
@@ -395,6 +397,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		};
 		
 		buildControl(parent);
+		
+		INavigatable nav= new INavigatable() {
+			public boolean gotoDifference(boolean next) {
+				return navigate(next, false, false);
+			}
+		};
+		fComposite.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
 	}
 	
 	private void updateFont(IPreferenceStore ps, Control c) {
@@ -579,6 +588,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
+			CompareNavigator.hookNavigation(canvas);
 			new Resizer(canvas, HORIZONTAL);
 			return canvas;
 		}
@@ -614,6 +624,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					handleSelectionChanged(part);
+					CompareNavigator.handleNavigationKeys(e);
 				}
 			}
 		);
@@ -691,19 +702,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fLeft.setEditable(leftEditable);
 																			
 		// set new documents
-		setDocument(fAncestor, ancestor);
-		
 		setDocument(fLeft, left);
 		fLeftLineCount= fLeft.getLineCount();
 
 		setDocument(fRight, right);
 		fRightLineCount= fRight.getLineCount();
 		
+		setDocument(fAncestor, ancestor);
+		
 		doDiff();
 				
 		invalidateLines();
 		updateVScrollBar();
-		selectFirstDiff();
+		
+		if (ancestor != null || left != null || right != null)
+			selectFirstDiff();
 	}
 	
 	private void updateDiffBackground(Diff diff) {
@@ -854,6 +867,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		tp.setEnabled(enabled);
+		if (fFocusPart == null) {
+			if (enabled) {
+				fFocusPart= tp;
+				fFocusPart.getTextWidget().setFocus();
+			}
+		}
 
 		return enabled;
 	}
@@ -909,8 +928,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fAncestorCanvas.setBounds(x, y, MARGIN_WIDTH, height-scrollbarHeight);
 			fAncestor.getTextWidget().setBounds(x+MARGIN_WIDTH, y, width-MARGIN_WIDTH, height);
 		} else {
-			if (Utilities.okToUse(fAncestorCanvas))
+			if (Utilities.okToUse(fAncestorCanvas)) {
 				fAncestorCanvas.setVisible(false);
+				if (fFocusPart == fAncestor) {
+					fFocusPart= fLeft;
+					fFocusPart.getTextWidget().setFocus();
+				}
+			}
 			if (fAncestor.isControlOkToUse()) {
 				StyledText t= fAncestor.getTextWidget();
 				t.setVisible(false);
@@ -1467,7 +1491,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 		Action a= new Action() {
 			public void run() {
-				navigate(true);
+				navigate(true, true, true);
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.NextDiff.");
@@ -1476,7 +1500,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		a= new Action() {
 			public void run() {
-				navigate(false);
+				navigate(false, true, true);
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff.");
@@ -1553,7 +1577,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void selectFirstDiff() {
-		Diff firstDiff= findNext(fRight, fChangeDiffs, -1, -1);
+		Diff firstDiff= null;
+		if (CompareNavigator.getDirection(fComposite))
+			firstDiff= findNext(fRight, fChangeDiffs, -1, -1, false);
+		else
+			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);			
 		setCurrentDiff(firstDiff, true);
 	}
 	
@@ -1888,7 +1916,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	/**
 	 */
-	private void navigate(boolean down) {
+	private boolean navigate(boolean down, boolean wrap, boolean deep) {
 
 		Diff diff= null;
 		if (fChangeDiffs != null) {
@@ -1899,27 +1927,31 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (part != null) {
 				Point s= part.getSelectedRange();
 				if (down)
-					diff= findNext(part, fChangeDiffs, s.x, s.x+s.y);
+					diff= findNext(part, fChangeDiffs, s.x, s.x+s.y, deep);
 				else
-					diff= findPrev(part, fChangeDiffs, s.x, s.x+s.y);					
+					diff= findPrev(part, fChangeDiffs, s.x, s.x+s.y, deep);					
 			}		
 		}
 	
 		if (diff == null) {
-			Control c= getControl();
-			if (Utilities.okToUse(c))
-				c.getDisplay().beep();
-			if (DEAD_STEP)
-				return;
-			if (fChangeDiffs.size() > 0) {
-				if (down)
-					diff= (Diff) fChangeDiffs.get(0);
-				else
-					diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
-			}
+			if (wrap) {
+				Control c= getControl();
+				if (Utilities.okToUse(c))
+					c.getDisplay().beep();
+				if (DEAD_STEP)
+					return true;
+				if (fChangeDiffs.size() > 0) {
+					if (down)
+						diff= (Diff) fChangeDiffs.get(0);
+					else
+						diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
+				}
+			} else
+				return true;
 		}
 			
 		setCurrentDiff(diff, true);
+		return false;
 	}	
 		
 	/**
@@ -1939,7 +1971,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
-	private static Diff findNext(MergeSourceViewer tp, List v, int start, int end) {
+	private static Diff findNext(MergeSourceViewer tp, List v, int start, int end, boolean deep) {
 		for (int i= 0; i < v.size(); i++) {
 			Diff diff= (Diff) v.get(i);
 			Position p= diff.getPosition(tp);
@@ -1947,13 +1979,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				int startOffset= p.getOffset();
 				if (end < startOffset)
 					return diff;
-				if (diff.fDiffs != null) {
+				if (deep && diff.fDiffs != null) {
 					Diff d= null;
 					int endOffset= startOffset + p.getLength();
 					if (start == startOffset && end == endOffset) {
-						d= findNext(tp, diff.fDiffs, start, start);
+						d= findNext(tp, diff.fDiffs, start, start, deep);
 					} else if (end < endOffset) {
-						d= findNext(tp, diff.fDiffs, start, end);
+						d= findNext(tp, diff.fDiffs, start, end, deep);
 					}
 					if (d != null)
 						return d;
@@ -1963,7 +1995,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
-	private static Diff findPrev(MergeSourceViewer tp, List v, int start, int end) {
+	private static Diff findPrev(MergeSourceViewer tp, List v, int start, int end, boolean deep) {
 		for (int i= v.size()-1; i >= 0; i--) {
 			Diff diff= (Diff) v.get(i);
 			Position p= diff.getPosition(tp);
@@ -1972,12 +2004,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				int endOffset= startOffset + p.getLength();
 				if (start > endOffset)
 					return diff;
-				if (diff.fDiffs != null) {
+				if (deep && diff.fDiffs != null) {
 					Diff d= null;
 					if (start == startOffset && end == endOffset) {
-						d= findPrev(tp, diff.fDiffs, end, end);
+						d= findPrev(tp, diff.fDiffs, end, end, deep);
 					} else if (start >= startOffset) {
-						d= findPrev(tp, diff.fDiffs, start, end);
+						d= findPrev(tp, diff.fDiffs, start, end, deep);
 					}
 					if (d != null)
 						return d;
@@ -2197,7 +2229,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			diff.setResolved(true);
 
 			if (gotoNext) {
-				navigate(true/*, true*/);
+				navigate(true, true, true);
 			} else {
 				revealDiff(diff, true);
 				updateControls();
@@ -2467,5 +2499,4 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		return viewPos;
 	}
-	
 }

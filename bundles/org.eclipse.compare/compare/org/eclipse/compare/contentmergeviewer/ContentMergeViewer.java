@@ -580,12 +580,14 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		if (input != null) {
 			
 			IMergeViewerContentProvider content= getMergeContentProvider();
-
-			Object ancestor= content.getAncestorContent(input);
-			Object left= content.getLeftContent(input);
-			Object right= content.getRightContent(input);
+			
+			if (content != null) {
+				Object ancestor= content.getAncestorContent(input);
+				Object left= content.getLeftContent(input);
+				Object right= content.getRightContent(input);
 					
-			updateContent(ancestor, left, right);
+				updateContent(ancestor, left, right);
+			}
 		}
 	}
 	
@@ -611,7 +613,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			}
 		};
 		fComposite.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
-
+		
 		hookControl(fComposite);	// hook help & dispose listener
 		
 		fComposite.setLayout(new ContentMergeViewerLayout());
