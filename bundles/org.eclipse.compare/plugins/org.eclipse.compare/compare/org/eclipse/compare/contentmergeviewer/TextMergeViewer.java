@@ -785,7 +785,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		if (diff == null || diff.fIsToken)
 			return;
-		Point region= new Point(0, 0);
 						
 		Color c= getColor(getFillColor(diff));
 		if (c == null)
@@ -1318,20 +1317,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				IDocument leftDoc, String s) {
 
 		int ancestorStart= 0;
-		int ancestorEnd= 0;
 		ITokenComparator sa= null;
 		if (ancestorDoc != null) {
 			ancestorStart= baseDiff.fAncestorPos.getOffset();
-			ancestorEnd= ancestorStart + baseDiff.fAncestorPos.getLength();
 			sa= createTokenComparator(a);
 		}
 		
 		int rightStart= baseDiff.fRightPos.getOffset();	
-		int rightEnd= rightStart + baseDiff.fRightPos.getLength();
 		ITokenComparator sm= createTokenComparator(d);
 		
 		int leftStart= baseDiff.fLeftPos.getOffset();
-		int leftEnd= leftStart + baseDiff.fLeftPos.getLength();
 		ITokenComparator sy= createTokenComparator(s);
 		
 		RangeDifference[] e= RangeDifferencer.findRanges(sa, sy, sm);
@@ -1372,29 +1367,22 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				IDocument ancestorDoc, String a,
 				IDocument rightDoc, String d,
 				IDocument leftDoc, String s) {
-
 		ITokenComparator sa= null;
 		int ancestorStart= 0;
-		int ancestorEnd= 0;
 		if (ancestorDoc != null) {
 			sa= createTokenComparator(a);
 			ancestorStart= baseDiff.fAncestorPos.getOffset();
-			ancestorEnd= ancestorStart + baseDiff.fAncestorPos.getLength();
 		}
 		
 		int rightStart= baseDiff.fRightPos.getOffset();	
-		int rightEnd= rightStart + baseDiff.fRightPos.getLength();
 		ITokenComparator sm= createTokenComparator(d);
 		
 		int leftStart= baseDiff.fLeftPos.getOffset();
-		int leftEnd= leftStart + baseDiff.fLeftPos.getLength();
 		ITokenComparator sy= createTokenComparator(s);
 		
 		RangeDifference[] r= RangeDifferencer.findRanges(sa, sy, sm);
-
 		for (int i= 0; i < r.length; i++) {
 			RangeDifference  es= r[i];
-
 			// determine range of diffs in one line
 			int start= i;
 			int leftLine= -1;
@@ -1407,7 +1395,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			i++;
 			for (; i < r.length; i++) {
 				es= r[i];
-				int ll, rl;
 				try {
 					if (leftLine != leftDoc.getLineOfOffset(leftStart+sy.getTokenStart(es.leftStart())))
 						break;
@@ -1439,7 +1426,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					break;
 				}
 			}
-
 			
 			if (first != null && last != null) {
 				
@@ -1455,7 +1441,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				
 				int rightStart2= rightStart+sm.getTokenStart(first.rightStart());
 				int rightEnd2= rightStart+getTokenEnd(sm, last.rightStart(), last.rightLength());
-
 				Diff diff= new Diff(baseDiff, first.kind(),
 							ancestorDoc, ancestorStart2, ancestorEnd2+1,
 							leftDoc, leftStart2, leftEnd2+1,
@@ -2379,7 +2364,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (virtualPos < 0)
 			virtualPos= virtualPos;
 		
-		GC gc;
 		if (fSynchronizedScrolling) {
 			int s= 0;
 			

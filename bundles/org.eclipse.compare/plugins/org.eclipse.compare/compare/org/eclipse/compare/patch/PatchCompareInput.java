@@ -37,7 +37,7 @@ import org.eclipse.compare.internal.*;
 			fDiff= diff;
 		}
 		public String getName() {
-			return fName;
+			return fName + " *";
 		}
 		public String getType() {
 			return "txt";

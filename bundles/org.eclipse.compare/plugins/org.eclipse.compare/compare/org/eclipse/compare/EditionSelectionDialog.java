@@ -435,7 +435,14 @@ public class EditionSelectionDialog extends Dialog {
  	 * @return a label the target side of a compare viewer
   	 */
 	protected String getTargetLabel(ITypedElement target, ITypedElement item) {
-		String format= Utilities.getString(fBundle, "targetLabel"); //$NON-NLS-1$
+		String format= null;
+		if (target instanceof ResourceNode)
+			format= Utilities.getString(fBundle, "workspaceTargetLabel", null); //$NON-NLS-1$
+		if (format == null)
+			format= Utilities.getString(fBundle, "targetLabel"); //$NON-NLS-1$
+		if (format == null)
+			format= "x{0}"; //$NON-NLS-1$
+		
 		return MessageFormat.format(format, new Object[] { target.getName() });
 	}
 	
@@ -454,7 +461,16 @@ public class EditionSelectionDialog extends Dialog {
  	 * @return a label the edition side of a compare viewer
   	 */
 	protected String getEditionLabel(ITypedElement selectedEdition, ITypedElement item) {
-		String label= Utilities.getString(fBundle, "editionLabel"); //$NON-NLS-1$
+		String format= null;
+		if (selectedEdition instanceof ResourceNode)
+			format= Utilities.getString(fBundle, "workspaceEditionLabel", null);	//$NON-NLS-1$
+		else if (selectedEdition instanceof HistoryItem)
+			format= Utilities.getString(fBundle, "historyEditionLabel", null);	//$NON-NLS-1$
+		if (format == null)
+			format= Utilities.getString(fBundle, "editionLabel");	//$NON-NLS-1$
+		if (format == null)
+			format= "x{0}";	//$NON-NLS-1$
+		
 
 		String date= "";	//$NON-NLS-1$
 		if (selectedEdition instanceof IModificationDate) {
@@ -462,24 +478,20 @@ public class EditionSelectionDialog extends Dialog {
 			date= DateFormat.getDateTimeInstance().format(new Date(modDate));
 		}
 		
-		String type= "";
-		if (selectedEdition instanceof ResourceNode)
-			type= "Workspace File";
-		else if (selectedEdition instanceof HistoryItem)
-			type= "Local History";
-
-		return MessageFormat.format(label, new Object[] { date, type });
+		return MessageFormat.format(format, new Object[] { date });
 	}
 	
 	protected String getShortEditionLabel(ITypedElement edition, ITypedElement item, Date date) {
-		String t= DateFormat.getTimeInstance().format(date);
+		String format= null;
 		if (edition instanceof ResourceNode)
-			t= t + " (Workspace File)";
-		else if (edition instanceof HistoryItem)
-			t= t;
-		else
-			t= t + " (Editor Buffer)";
-		return t;
+			format= Utilities.getString(fBundle, "workspaceTreeFormat", null);	//$NON-NLS-1$
+		if (format == null)
+			format= Utilities.getString(fBundle, "treeFormat", null);	//$NON-NLS-1$
+		if (format == null)
+			format= "x{0}"; //$NON-NLS-1$
+
+		String ds= DateFormat.getTimeInstance().format(date);
+		return MessageFormat.format(format, new Object[] { ds });
 	}
 	
  	/**

@@ -269,8 +269,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void contributeToToolBar(ToolBarManager toolBarManager) {
 		
-		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
-
 		toolBarManager.add(new Separator());
 		toolBarManager.add(fIgnoreWhitespace);
 		toolBarManager.add(fShowPseudoConflicts);

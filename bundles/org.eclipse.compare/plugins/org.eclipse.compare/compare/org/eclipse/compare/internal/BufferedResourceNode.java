@@ -11,6 +11,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 
+/**
+ * A buffer for a workspace resource.
+ */
 public class BufferedResourceNode extends ResourceNode {
 	
 	private boolean fDirty= false;
@@ -73,7 +76,6 @@ public class BufferedResourceNode extends ResourceNode {
 		
 		if (other instanceof IStreamContentAccessor && child instanceof IEditableContent) {
 			IEditableContent dst= (IEditableContent) child;
-			IStreamContentAccessor src= (IStreamContentAccessor) other;
 			
 			try {
 				InputStream is= ((IStreamContentAccessor)other).getContents();

@@ -628,7 +628,6 @@ public class DiffTreeViewer extends TreeViewer {
 			while (e.hasNext()) {
 				Object element= e.next();
 				if (element instanceof ICompareInput) {
-					ICompareInput diff= (ICompareInput) element;
 					if (isEditable(element, false))
 						leftToRight++;
 					if (isEditable(element, true))

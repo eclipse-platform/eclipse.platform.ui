@@ -92,12 +92,11 @@ public class CompareNavigator {
 	}
 	
 	public static void handleNavigationKeys(KeyEvent e) {
-		if ((e.stateMask & SWT.ALT) != 0 &&
-				e.character == ('N'-0x40) || e.character == ('P'-0x40)) { // Control-Alt-N/P
+		if (e.character == ('E'-0x40)) {
 			if (e.widget instanceof Control) {
 				CompareNavigator nav= findNavigator((Control)e.widget);
 				if (nav != null)
-					nav.selectChange(e.character == ('N'-0x40));
+					nav.selectChange((e.stateMask & SWT.SHIFT) == 0);
 			}
 		}
 	}

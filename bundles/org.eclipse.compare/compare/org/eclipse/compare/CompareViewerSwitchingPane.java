@@ -115,7 +115,6 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			// we have to remember and restore the old visibility of the CustomPane
 			// since setContent changes the visibility
 			boolean old= getVisible();
-			Control newControl= fViewer.getControl();
 			setContent(fViewer.getControl());
 			setVisible(old);	// restore old visibility
 

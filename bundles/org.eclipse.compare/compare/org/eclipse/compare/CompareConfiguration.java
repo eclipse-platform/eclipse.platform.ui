@@ -83,11 +83,9 @@ public class CompareConfiguration {
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif"); //$NON-NLS-1$
 		// end PR 1GEHGTZ
 		
-		if (false) {
-			ImageDescriptor tmp= fgImages[Differencer.ADDITION];
-			fgImages[Differencer.ADDITION]= fgImages[Differencer.DELETION];
-			fgImages[Differencer.DELETION]= tmp;
-		}
+//		ImageDescriptor tmp= fgImages[Differencer.ADDITION];
+//		fgImages[Differencer.ADDITION]= fgImages[Differencer.DELETION];
+//		fgImages[Differencer.DELETION]= tmp;
 	}
 
 	private ListenerList fListeners= new ListenerList();
