@@ -64,9 +64,9 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 		instance = this;
 	}
 
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		this.context = context;
+	public void start(BundleContext bundleContext) throws Exception {
+		super.start(bundleContext);
+		this.context = bundleContext;
 	}
 
 	public BundleContext getContext() {

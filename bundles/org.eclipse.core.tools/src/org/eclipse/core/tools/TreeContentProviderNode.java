@@ -213,13 +213,13 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * 
 	 * @return a tree node, or <code>null</code>
 	 */
-	public TreeContentProviderNode findNode(Object value) {
-		if (value.equals(this.value))
+	public TreeContentProviderNode findNode(Object obj) {
+		if (obj.equals(this.value))
 			return this;
 		if (children == null || children.isEmpty())
 			return null;
 		for (Iterator i = children.iterator(); i.hasNext();) {
-			TreeContentProviderNode found = ((TreeContentProviderNode) i.next()).findNode(value);
+			TreeContentProviderNode found = ((TreeContentProviderNode) i.next()).findNode(obj);
 			if (found != null)
 				return found;
 		}

@@ -12,7 +12,7 @@ package org.eclipse.core.tools;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
@@ -56,6 +56,6 @@ public class ClearTextAction extends GlobalAction {
 	 * @see GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */
 	public void registerAsGlobalAction(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, this);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), this);
 	}
 }

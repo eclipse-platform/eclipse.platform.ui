@@ -38,7 +38,6 @@ public abstract class AbstractDumper implements IDumper {
 	 * @param file the file to be dumped
 	 * @return a dump object representing the contents of the dumped file
 	 * @see org.eclipse.core.tools.metadata.IDumper#dump(java.io.File)
-	 * @see #getStringDumpingStrategy(DataInputStream)
 	 * @see IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 * @see #openInputStream(File)
 	 */

@@ -12,7 +12,7 @@ package org.eclipse.core.tools;
 
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 
 public class SelectAllAction extends GlobalAction {
 
@@ -30,7 +30,7 @@ public class SelectAllAction extends GlobalAction {
 	 * @see org.eclipse.core.tools.GlobalAction#registerAsGlobalAction(org.eclipse.ui.IActionBars)
 	 */
 	public void registerAsGlobalAction(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, this);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), this);
 	}
 
 	/**

@@ -37,8 +37,6 @@ public class DumperFactory {
 	 * Provides access to a DumperFactory instance.
 	 * 
 	 * @return a <code>DumperFactory</code> instance
-	 * @throws DumpException if a problem occurs while instantiating the factory
-	 * object
 	 */
 	public synchronized static DumperFactory getInstance() {
 		// currently we allow only one instance for this class
@@ -50,9 +48,6 @@ public class DumperFactory {
 	/**
 	 * Constructs a dumper factory, reading dumper definitions from the 
 	 * extension registry. Forbids instantiation from outside this class. 
-	 * 
-	 * @throws DumpException if there is an error when reading 
-	 * the dumper definition file   
 	 */
 	private DumperFactory() {
 		loadDumpers();

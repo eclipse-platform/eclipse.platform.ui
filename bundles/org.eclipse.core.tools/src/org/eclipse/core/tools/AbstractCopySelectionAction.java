@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * A base abstract implementation for "copy selection" actions.
@@ -59,7 +59,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 	 * org.eclipse.ui.IActionBars)
 	 */
 	public void registerAsGlobalAction(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, this);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), this);
 	}
 
 	/**

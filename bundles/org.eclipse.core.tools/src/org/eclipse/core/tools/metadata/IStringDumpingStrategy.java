@@ -30,7 +30,8 @@ public interface IStringDumpingStrategy {
 	 * 
 	 * @param input the input stream where to dump contents from 
 	 * @return the contents read in string format, or null if no further reading should occur
-	 * @throws Exception any exception occurred while dumping the input stream 
+	 * @throws IOException an exception occurred while dumping the input stream 
+	 * @throws DumpException an exception occurred while dumping the input stream 
 	 */
 	public String dumpStringContents(DataInputStream input) throws IOException, DumpException;
 

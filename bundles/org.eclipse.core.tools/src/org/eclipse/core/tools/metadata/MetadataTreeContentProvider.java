@@ -79,7 +79,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	 * 
 	 * @param input a File object pointing to a metadata directory.
 	 * 
-	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#rebuild(java.lang.Object)
+	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#rebuild(Viewer, Object)
 	 */
 	protected void rebuild(final Viewer viewer, final Object input) {
 		final File metadataRootDir = (File) input;
@@ -135,7 +135,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	 * @return true if the provided dir (or at least one of its sub dirs) 
 	 * contains files with one of the registered types, false otherwise
 	 */
-	private boolean extractInfo(File dir, TreeContentProviderNode dirNode, IProgressMonitor monitor) {
+	boolean extractInfo(File dir, TreeContentProviderNode dirNode, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled())
 			return false;

@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -204,7 +204,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 			}
 		};
 		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 
 		selectAllAction = new Action() {
 			public void run() {
@@ -213,7 +213,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 				viewer.setSelection(viewer.getSelection());
 			}
 		};
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), selectAllAction);
 	}
 
 	protected ISelectionChangedListener getTableListener() {
