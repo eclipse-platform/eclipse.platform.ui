@@ -18,7 +18,7 @@ Variables can be accessed using the &amp;lt;with variable=&quot;...&quot;/&amp;g
       </documentation>
    </annotation>
 
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
