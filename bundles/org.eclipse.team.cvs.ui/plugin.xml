@@ -171,7 +171,14 @@
                menubarPath="team.main/group2"
                id="org.eclipse.team.ccvs.ui.tag">
          </action>
-         <action
+          <action
+               label="%CompareWithTagAction.label"
+               tooltip="%CompareWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithTag">
+         </action>      
+        <action
                label="%CompareWithRemoteAction.label"
                tooltip="%CompareWithRemoteAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
@@ -227,13 +234,6 @@
                menubarPath="team.main/group1"
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
-         <action
-               label="%CompareWithTagAction.label"
-               tooltip="%CompareWithTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithTag">
-         </action>      
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
