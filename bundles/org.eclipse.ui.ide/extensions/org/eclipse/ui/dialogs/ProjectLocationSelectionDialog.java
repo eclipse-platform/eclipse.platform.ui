@@ -368,10 +368,10 @@ private String getCopyNameFor(String projectName) {
 	while (true) {
 		String nameSegment;
 		if (counter > 1) {
-			nameSegment = IDEWorkbenchMessages.format(IDEWorkbenchMessages.getString("CopyProjectAction.copyNameTwoArgs"), new Object[] {new Integer(counter), projectName}); //$NON-NLS-1$
+			nameSegment = IDEWorkbenchMessages.format("CopyProjectAction.copyNameTwoArgs", new Object[] {new Integer(counter), projectName}); //$NON-NLS-1$
 		}
 		else {
-			nameSegment = IDEWorkbenchMessages.format(IDEWorkbenchMessages.getString("CopyProjectAction.copyNameOneArg"), new Object[] {projectName}); //$NON-NLS-1$
+			nameSegment = IDEWorkbenchMessages.format("CopyProjectAction.copyNameOneArg", new Object[] {projectName}); //$NON-NLS-1$
 		}
 	
 		if (!workspace.getRoot().getProject(nameSegment).exists())

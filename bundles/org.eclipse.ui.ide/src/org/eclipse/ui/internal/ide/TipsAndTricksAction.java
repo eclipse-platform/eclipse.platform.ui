@@ -118,7 +118,7 @@ public class TipsAndTricksAction
 					}
 				});
 			} else {
-				IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"), null); //$NON-NLS-1$
 				ErrorDialog.openError(
 					shell, 
 					IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class TipsAndTricksAction
 					status);
 			}
 		} else {
-			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"), null); //$NON-NLS-1$
 			ErrorDialog.openError(
 				shell, 
 				IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
