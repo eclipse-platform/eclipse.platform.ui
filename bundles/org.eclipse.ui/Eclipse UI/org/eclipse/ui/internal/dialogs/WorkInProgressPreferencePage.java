@@ -8,11 +8,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -127,7 +130,10 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		createSpace(composite);
 		createSingleClickGroup(composite);
 
-//		createEncodingGroup(composite);
+		createSpace(composite);
+		createEncodingGroup(composite);
+		
+		validCheck();
 		
 		return composite;
 	}
@@ -211,8 +217,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean useDefault = e.widget == defaultEncodingButton;
-				updateEncodingState(useDefault);
+				updateEncodingState(defaultEncodingButton.getSelection());
+				validCheck();
 			}
 		};
 		
@@ -232,6 +238,11 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		data = new GridData();
 		data.widthHint = convertWidthInCharsToPixels(15);
 		encodingCombo.setLayoutData(data);
+		encodingCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validCheck();
+			}
+		});
 
 		ArrayList encodings = new ArrayList();
 		int n = 0;
@@ -248,31 +259,45 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 			}
 		}
 		
-		IPreferenceStore store = getPreferenceStore();
-		boolean useDefault = !store.getBoolean(IPreferenceConstants.IS_ENCODING_SET);
-		updateEncodingState(useDefault);
-		
 		if (!encodings.contains(defaultEnc)) {
 			encodings.add(defaultEnc);
 		}
 
-		String enc = store.getString(IPreferenceConstants.ENCODING);
-		if (enc.length() > 0) {
-			encodingCombo.setText(enc);
-		 	if (!encodings.contains(enc)) {
-				encodings.add(enc);
-		 	}
+		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		boolean isDefault = enc == null || enc.length() == 0;
+
+	 	if (!isDefault && !encodings.contains(enc)) {
+			encodings.add(enc);
 		}
-		else {
-			encodingCombo.setText(defaultEnc);
-		}
-		
 		Collections.sort(encodings);
 		for (int i = 0; i < encodings.size(); ++i) {
 			encodingCombo.add((String) encodings.get(i));
 		}
+
+		encodingCombo.setText(isDefault ? defaultEnc : enc);
+		
+		updateEncodingState(isDefault);
 	}
 
+	/**
+	 * Updates the valid state of the page, and any error message.
+	 */
+	private void validCheck() {
+		if (!isEncodingValid()) {
+			setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
+			setValid(false);
+		}
+		else {
+			setErrorMessage(null);
+			setValid(true);
+		}
+	}
+	
+	private boolean isEncodingValid() {
+		return defaultEncodingButton.getSelection() ||
+			isValidEncoding(encodingCombo.getText());
+	}
+	
 	private boolean isValidEncoding(String enc) {
 		try {
 			new String(new byte[0], enc);
@@ -311,7 +336,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 		
-//		updateEncodingState(true);
+		updateEncodingState(true);
 	}
 	
 	/**
@@ -338,8 +363,13 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);
 		
-		//store.setValue(IPreferenceConstants.IS_ENCODING_SET, otherEncodingButton.getSelection());
-		//store.setValue(IPreferenceConstants.ENCODING, encodingCombo.getText());
+		if (defaultEncodingButton.getSelection()) {
+			ResourcesPlugin.getPlugin().getPluginPreferences().setToDefault(ResourcesPlugin.PREF_ENCODING);
+		}
+		else {
+			String enc = encodingCombo.getText();
+			ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, enc);
+		}
 		
 		return true;
 	}	

@@ -54,9 +54,4 @@ public interface IPreferenceConstants {
 
 	//Identifier for enabled decorators
 	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
-	
-	//Boolean: true = other encoding selected; false = default encoding selected
-	public static final String IS_ENCODING_SET = "IS_ENCODING_SET"; //$NON-NLS-1$
-	//String: the selected encoding, only valid if IS_ENCODING_SET is true
-	public static final String ENCODING = "ENCODING"; //$NON-NLS-1$
 }
