@@ -127,6 +127,11 @@ public class LockManager {
 	 * Returns true IFF this thread either owns, or is waiting for, any locks.
 	 */
 	public boolean isLockOwner() {
+		//all job threads have to be treated as lock owners because UI thread 
+		//may try to join a job
+		Thread current = Thread.currentThread();
+		if (current instanceof Worker)
+			return true;
 		synchronized (locks) {
 			return locks.contains(Thread.currentThread());
 		}

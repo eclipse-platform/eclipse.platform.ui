@@ -382,8 +382,18 @@ public class JobManager implements IJobManager {
 		}
 		//wait until listener notifies this thread.
 		try {
-			barrier.acquire(Long.MAX_VALUE);
+			while (true) {
+				//notify hook to service pending syncExecs before falling asleep
+				lockManager.aboutToWait(job.getThread());
+				try {
+					if (barrier.acquire(Long.MAX_VALUE))
+						break;
+				} catch (InterruptedException e) {
+					//loop and keep trying
+				}
+			}
 		} finally {
+			lockManager.aboutToRelease();
 			job.removeJobChangeListener(listener);
 		}
 	}
@@ -425,6 +435,8 @@ public class JobManager implements IJobManager {
 					throw new InterruptedException();
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
+				//notify hook to service pending syncExecs before falling asleep
+				lockManager.aboutToWait(null);
 				Thread.sleep(100);
 			}
 		} finally {
