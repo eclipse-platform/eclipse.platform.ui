@@ -330,7 +330,7 @@ public final class WorkbenchKeyboard {
     private void closeMultiKeyAssistShell() {
         if (keyAssistDialog != null) {
             final Shell shell = keyAssistDialog.getShell();
-            if ((shell != null) && (shell.isVisible())) {
+            if ((shell != null) && (!shell.isDisposed()) && (shell.isVisible())) {
                 keyAssistDialog.close(true);
             }
         }
@@ -480,15 +480,18 @@ public final class WorkbenchKeyboard {
                 return;
 
             } else if (widget instanceof StyledText) {
-                /*
-                 * KLUDGE. Some people try to do useful work in verify
-                 * listeners. The way verify listeners work in SWT, we need to
-                 * verify the key as well; otherwise, we can detect that useful
-                 * work has been done.
-                 */
-                ((StyledText) widget)
-                        .addVerifyKeyListener(new OutOfOrderVerifyListener(
-                                new OutOfOrderListener(this)));
+
+                if (event.type == SWT.KeyDown) {
+                    /*
+                     * KLUDGE. Some people try to do useful work in verify
+                     * listeners. The way verify listeners work in SWT, we need
+                     * to verify the key as well; otherwise, we can't detect
+                     * that useful work has been done.
+                     */
+                    ((StyledText) widget)
+                            .addVerifyKeyListener(new OutOfOrderVerifyListener(
+                                    new OutOfOrderListener(this)));
+                }
 
             } else {
                 widget.addListener(event.type, new OutOfOrderListener(this));
