@@ -21,8 +21,8 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 public abstract class UpdateManagerTestCase extends TestCase {
 
-	protected ResourceBundle bundle;
-	protected String dataPath;
+	protected static ResourceBundle bundle;
+	protected static String dataPath;
 
 	protected static URL SOURCE_FILE_SITE;
 	protected static URL SOURCE_HTTP_SITE;
@@ -43,12 +43,12 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		}
 	}
 
-	protected void init() throws MissingResourceException, IOException, MalformedURLException {
+	protected static void init() throws MissingResourceException, IOException, MalformedURLException {
 
 		IPluginDescriptor dataDesc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.tests.core");
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
 		dataPath = UpdateManagerUtils.getPath(resolvedURL)+DATA_PATH;
-		URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), dataPath);
+		URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), resolvedURL.getPort(),dataPath);
 		String homePath = System.getProperty("user.home");
 
 		if (bundle == null) {
@@ -58,9 +58,9 @@ public abstract class UpdateManagerTestCase extends TestCase {
 
 		try {
 			String path = UpdateManagerUtils.getPath(dataURL);
-			SOURCE_FILE_SITE = new URL("file", null, path);
-			SOURCE_HTTP_SITE = new URL("http", bundle.getString("HTTP_HOST_1"), bundle.getString("HTTP_PATH_1"));
-			TARGET_FILE_SITE = new URL("file", null, homePath + "/target/");
+			SOURCE_FILE_SITE = new File(path).toURL();
+			SOURCE_HTTP_SITE = new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1"));
+			TARGET_FILE_SITE = new URL("file",null, "/target/");
 		} catch (Exception e) {
 			fail(e.toString());
 			e.printStackTrace();
@@ -107,6 +107,14 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	 */
 	protected void umTearDown() throws Exception {
 		// do nothing.
+	}
+
+	protected static String getHttpHost(){
+		return UpdateTestsPlugin.getPlugin().getAppServer().getHost();
+	}
+
+	protected static int getHttpPort(){
+		return UpdateTestsPlugin.getPlugin().getAppServer().getPort();
 	}
 
 }

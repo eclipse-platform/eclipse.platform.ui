@@ -61,8 +61,9 @@ public class SiteURLContentProvider extends SiteContentProvider {
 			if (contentURL==null) {
 				String protocol = getURL().getProtocol();
 				String host = getURL().getHost();
+				int port = getURL().getPort();
 				String path = UpdateManagerUtils.getPath(getURL());			
-				contentURL = new URL(protocol,host,path+archiveId);
+				contentURL = new URL(protocol,host,port,path+archiveId);
 			}
 			
 		} catch (MalformedURLException e){

@@ -14,5 +14,7 @@
     <classpathentry kind="var" path="ECLIPSE_HOME/startup.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.junit/junit.jar" sourcepath="ECLIPSE_HOME/plugins/org.junit/src.jar"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.help/help.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.help/helpsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

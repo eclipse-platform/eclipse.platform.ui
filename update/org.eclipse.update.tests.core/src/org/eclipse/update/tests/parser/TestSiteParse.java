@@ -40,7 +40,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 	public void testNumberOfFeatures (){
 
 		try {		
-			URL remoteURL = new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2"));			
+			URL remoteURL = new URL("http",getHttpHost(),getHttpPort(),bundle.getString("HTTP_PATH_2"));			
 			ISite remoteSite = SiteManager.getSite(remoteURL);
 			
 			IFeatureReference[] feature = remoteSite.getFeatureReferences();

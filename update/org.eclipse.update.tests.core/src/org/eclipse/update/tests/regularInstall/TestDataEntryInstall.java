@@ -28,7 +28,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
-		URL newURL = new URL("file", null, dataPath + "dataEntrySiteTest/");
+		URL newURL =new File(dataPath + "dataEntrySiteTest/").toURL();
 		ISite remoteSite = SiteManager.getSite(newURL);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);

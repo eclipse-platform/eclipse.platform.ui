@@ -42,7 +42,7 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 		fileWriter.close();
 		
 		//get the local Site again
-		URL newURL = new URL(tempSite.getURL().getProtocol(),tempSite.getURL().getHost(),tempSite.getURL().getFile());
+		URL newURL = new URL(tempSite.getURL().getProtocol(),tempSite.getURL().getHost(),tempSite.getURL().getPort(),tempSite.getURL().getFile());
 		ISite compareSite = SiteManager.getSite(newURL);
 		
 		// compare

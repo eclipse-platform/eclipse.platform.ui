@@ -124,7 +124,7 @@ public class UpdateManagerUtils {
 			FileOutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			transferStreams(sourceContentReferenceStream, localContentReferenceStream,monitor);
 		}
-		result = new URL("file", null, localFile.getPath());
+		result = localFile.toURL();
 
 		return result;
 	}

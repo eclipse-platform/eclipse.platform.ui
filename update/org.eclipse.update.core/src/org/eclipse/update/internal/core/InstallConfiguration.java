@@ -13,6 +13,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.xml.sax.SAXException;
 
+/**
+ * An InstallConfiguration is 
+ * 
+ */
+
 public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	private ListenersList listeners = new ListenersList();
 	private boolean isCurrent;

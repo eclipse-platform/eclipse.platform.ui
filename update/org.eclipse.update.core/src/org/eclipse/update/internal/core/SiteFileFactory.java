@@ -134,7 +134,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				SiteFileFactory archiveFactory = new SiteFileFactory();							
 					// the URL must ends with '/' for the bundle to be resolved
 					newFilePath = featurePath + dir[index] + "/";
-					featureURL = new URL("file", null, newFilePath);						
+					featureURL = new File(newFilePath).toURL();					
 					IFeature newFeature = createFeature(featureURL);
 					
 					featureRef = archiveFactory.createFeatureReferenceModel();
@@ -174,7 +174,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					
 					SiteFileFactory archiveFactory = new SiteFileFactory();							
 					newFilePath = featurePath + dir[index];
-					featureURL = new URL("file", null, newFilePath);						
+					featureURL = new File(newFilePath).toURL();					
 					IFeature newFeature = createFeature(featureURL);
 					
 					featureRef = archiveFactory.createFeatureReferenceModel();
@@ -207,7 +207,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		Factory factory = new Factory(parsingStatus);
 		
 		try {
-			URL pluginURL = new URL("file", null, path);
+			URL pluginURL = new File(path).toURL();
 			model = Platform.parsePlugins(new URL[] { pluginURL }, factory);
 		} catch (MalformedURLException e) {
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file URL for :" + path, e);
@@ -359,7 +359,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		URL result = url;
 		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			result = new URL(url.getProtocol(), url.getHost(), url.getFile().substring(0,index));
+			result = new URL(url.getProtocol(), url.getHost(), url.getPort(),url.getFile().substring(0,index));
 		}
 		return result;
 	}

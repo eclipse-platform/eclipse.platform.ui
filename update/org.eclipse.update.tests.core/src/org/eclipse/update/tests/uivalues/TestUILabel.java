@@ -25,7 +25,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 */
 	public void testDejanSite() throws Exception{ 
 		
-		ISite remoteSite = SiteManager.getSite(new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2")));
+		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),bundle.getString("HTTP_PATH_2")));
 		ICategory[] categories = remoteSite.getCategories();
 		for (int i =0; i<categories.length; i++){
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());

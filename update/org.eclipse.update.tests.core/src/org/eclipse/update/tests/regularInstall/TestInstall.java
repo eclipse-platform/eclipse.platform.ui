@@ -152,7 +152,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		URL INSTALL_SITE = null;
 		try {
-			INSTALL_SITE = new URL("http", bundle.getString("HTTP_HOST_1"), bundle.getString("HTTP_PATH_2"));
+			INSTALL_SITE = new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_2"));
 		} catch (Exception e) {
 			fail(e.toString());
 			e.printStackTrace();

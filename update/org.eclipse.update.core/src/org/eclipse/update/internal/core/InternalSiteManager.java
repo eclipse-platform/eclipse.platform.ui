@@ -212,7 +212,7 @@ public class InternalSiteManager {
 		Site site = null;
 		if (siteLocation != null) {
 			try {
-				URL siteURL = new URL("file", null, siteLocation.getAbsolutePath());
+				URL siteURL = siteLocation.toURL();
 				site = (Site) getSite(siteURL,true);
 				site.save();
 			} catch (MalformedURLException e) {

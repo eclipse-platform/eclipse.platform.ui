@@ -79,7 +79,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 		URL result = url;
 		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			result = new URL(url.getProtocol(), url.getHost(), url.getFile().substring(0,index));
+			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile().substring(0,index));
 		}
 		return result;
 	}

@@ -3,6 +3,7 @@ package org.eclipse.update.tests.types;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
@@ -74,7 +75,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.exe");
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site1/";
-		ISite site = SiteManager.getSite(new URL("file",null,featurePath));
+		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature();
 		
@@ -96,7 +97,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.jar");
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site2/";
-		ISite site = SiteManager.getSite(new URL("file",null,featurePath));
+		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		IFeature feature = ref.getFeature();
 		
@@ -114,7 +115,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testFeatureUnknownType() throws Exception{ 
 		String featurePath = dataPath+"FeatureTypeExamples/site3/";
-		ISite site = SiteManager.getSite(new URL("file",null,featurePath));
+		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		try {
 			IFeature feature = ref.getFeature();

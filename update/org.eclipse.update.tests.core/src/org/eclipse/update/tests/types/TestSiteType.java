@@ -3,6 +3,7 @@ package org.eclipse.update.tests.types;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
@@ -27,7 +28,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 	public void testSiteType() throws Exception{ 
 		
 		String featurePath = dataPath+"SiteTypeExamples/site1/";
-		ISite site = SiteManager.getSite(new URL("file",null,featurePath));
+		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature();
 	

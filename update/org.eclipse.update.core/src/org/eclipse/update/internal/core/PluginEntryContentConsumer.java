@@ -40,7 +40,9 @@ public class PluginEntryContentConsumer extends ContentConsumer {
 	 * @see IFeatureContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
-		contentConsumer.store( contentReference,monitor);
+		if (!closed){
+			contentConsumer.store( contentReference,monitor);
+		}
 	}
 
 	/*
