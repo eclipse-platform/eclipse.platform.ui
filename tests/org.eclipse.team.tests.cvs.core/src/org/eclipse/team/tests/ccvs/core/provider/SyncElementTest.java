@@ -431,7 +431,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Create a test project (which commits it as well) and delete the resource without committing
 		IProject project = createProject("testDeletionConflictsA", new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"});
-		IFile file = project.getFile("delete1.txt");
+		IFile file = project.getFile("delete1.txt"); // WARNING: This does a "cvs remove"!!!
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete2.txt"}, false);
 		file = project.getFile("delete3.txt");
@@ -465,6 +465,8 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.IN_SYNC });
 				
 		// Catch up to remote changes.
+		// XXX SPECIAL CASE: delete1.txt must be unmanaged before the catch-up
+		makeIncoming(tree, new String[] {"delete1.txt"});
 		// XXX SPECIAL CASE: delete2.txt must be unmanaged before the catch-up
 		makeIncoming(tree, new String[] {"delete2.txt"});
 		// XXX SPECIAL CASE: delete3.txt must ignore local changes (and -C doesn't work so we'll unmanage and delete the local resource)
