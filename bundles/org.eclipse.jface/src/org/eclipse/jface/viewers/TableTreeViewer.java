@@ -140,9 +140,9 @@ protected void doUpdateItem(Item item, Object element) {
 	else
 		lprov = (ILabelProvider) prov;
 	int columnCount = tableTree.getTable().getColumnCount();
+	TableTreeItem ti = (TableTreeItem)item;
 	// Also enter loop if no columns added.  See 1G9WWGZ: JFUIF:WINNT - TableViewer with 0 columns does not work
 	for (int column = 0; column < columnCount || column == 0; column++) {
-	    TableTreeItem ti = (TableTreeItem)item;
 	    String text = "";//$NON-NLS-1$
 	    Image image = null;
 	    if (tprov != null) {
@@ -159,6 +159,11 @@ protected void doUpdateItem(Item item, Object element) {
 		// Apparently a problem to setImage to null if already null
 		if (image != null || ti.getImage(column) != null)
 			ti.setImage(column, image);
+	}
+	if (prov instanceof IColorProvider) {
+		IColorProvider cprov = (IColorProvider) prov;
+		ti.setForeground(cprov.getForeground(element));
+		ti.setBackground(cprov.getBackground(element));
 	}
 }
 /**
