@@ -87,6 +87,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	private StatusLineManager statusLineManager = null;
 	
 	/**
+	 * The seperator between the menu bar and the rest of the window.
+	 */
+	protected Label seperator1;
+	
+	/**
 	 * A flag indicating that an operation is running.
 	 */
 	private boolean operationInProgress = false;
@@ -248,7 +253,7 @@ protected void configureShell(Shell shell) {
 	shell.setLayout(new ApplicationWindowLayout());
 
 	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-		 new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);
 
