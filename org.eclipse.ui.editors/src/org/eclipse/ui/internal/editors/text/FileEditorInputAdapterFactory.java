@@ -29,9 +29,23 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 		 */
 		public IPath getPath(Object element) {
 			if (element instanceof IFileEditorInput) {
+				
 				IFileEditorInput input= (IFileEditorInput) element;
-				return input.getFile().getLocation();
+				IFile file= input.getFile();
+				if (file == null)
+					return null;
+		
+				IPath filePath= file.getFullPath();
+				if (filePath == null)
+					return null;
+				
+				IPath workspacePath= file.getWorkspace().getRoot().getLocation();
+				if (workspacePath == null)
+					return null;
+				
+				return workspacePath.makeAbsolute().append(filePath.makeAbsolute());
 			}
+			
 			return null;
 		}
 	}

@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -33,13 +35,28 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * @since 3.0
  */
 public class OpenExternalFileAction extends Action implements IWorkbenchWindowActionDelegate {
-
+	
+	static class FileLabelProvider extends LabelProvider {
+		/*
+		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			if (element instanceof IFile) {
+				IPath path=  ((IFile) element).getFullPath();
+				return path != null ? path.toString() : ""; //$NON-NLS-1$
+			}
+			return super.getText(element);
+		}
+	}
+	
+	
 	private IWorkbenchWindow fWindow;
 
 	public OpenExternalFileAction() {
@@ -118,6 +135,21 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IFile getWorkspaceFile(File file) {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IPath location= new Path(file.getAbsolutePath());
-		return workspace.getRoot().getFileForLocation(location);		
+		IFile[] files= workspace.getRoot().findFilesForLocation(location);
+		if (files == null || files.length == 0)
+			return null;
+		if (files.length == 1)
+			return files[0];
+		return selectWorkspaceFile(files);
+	}
+
+	private IFile selectWorkspaceFile(IFile[] files) {
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new FileLabelProvider());
+		dialog.setElements(files);
+		dialog.setTitle("Select Workspace File");
+		dialog.setMessage("The selected file is referenced by multiple linked resources in the workspace.\nPlease select the workspace resource you want to use to open the file.");
+		if (dialog.open() == Window.OK)
+			return (IFile) dialog.getFirstResult();
+		return null;
 	}
 }
