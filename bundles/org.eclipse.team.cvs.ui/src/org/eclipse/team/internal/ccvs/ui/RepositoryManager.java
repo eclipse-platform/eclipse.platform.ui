@@ -26,12 +26,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.ui.model.Tag;
+import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 /**
  * This class is repsible for maintaining the UI's list of known repositories,
@@ -43,7 +44,7 @@ public class RepositoryManager {
 	Hashtable repositories = new Hashtable();
 	// Map ICVSRepositoryLocation -> List of Tags
 	Hashtable branchTags = new Hashtable();
-	// Map ICVSRepositoryLocation -> List of Tags
+	// Map ICVSRepositoryLocation -> Hashtable of (Project name -> Set of String tags)
 	Hashtable versionTags = new Hashtable();
 	
 	List listeners = new ArrayList();
@@ -93,24 +94,26 @@ public class RepositoryManager {
 	/**
 	 * Get the list of known branch tags for a given remote root.
 	 */
-	public Tag[] getKnownBranchTags(ICVSRepositoryLocation root) {
+	public BranchTag[] getKnownBranchTags(ICVSRepositoryLocation root) {
 		Set set = (Set)branchTags.get(root);
-		if (set == null) return new Tag[0];
-		return (Tag[])set.toArray(new Tag[0]);
+		if (set == null) return new BranchTag[0];
+		return (BranchTag[])set.toArray(new BranchTag[0]);
 	}
 	/**
-	 * Get the list of known version tags for a given remote root.
+	 * Get the list of known version tags for a given project.
 	 */
-	public Tag[] getKnownVersionTags(ICVSRepositoryLocation root) {
-		Set set = (Set)versionTags.get(root);
-		if (set == null) return new Tag[0];
-		return (Tag[])set.toArray(new Tag[0]);
+	public String[] getKnownVersionTags(ICVSRemoteResource resource) {
+		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
+		if (table == null) return new String[0];
+		Set set = (Set)table.get(resource.getName());
+		if (set == null) return new String[0];
+		return (String[])set.toArray(new String[0]);
 	}
 	/**
 	 * Add the given branch tag to the list of known tags for the given
 	 * remote root.
 	 */
-	public void addBranchTag(ICVSRepositoryLocation root, Tag tag) {
+	public void addBranchTag(ICVSRepositoryLocation root, BranchTag tag) {
 		Set set = (Set)branchTags.get(root);
 		if (set == null) {
 			set = new HashSet();
@@ -120,7 +123,7 @@ public class RepositoryManager {
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.tagAdded(tag, root);
+			listener.branchTagAdded(tag, root);
 		}
 	}
 	/**
@@ -138,47 +141,55 @@ public class RepositoryManager {
 	}
 	/**
 	 * Add the given version tag to the list of known tags for the given
-	 * remote root.
+	 * remote project.
 	 */
-	public void addVersionTag(ICVSRepositoryLocation root, Tag tag) {
-		Set set = (Set)versionTags.get(root);
+	public void addVersionTag(ICVSRemoteResource resource, String tag) {
+		String name = resource.getName();
+		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
+		if (table == null) {
+			table = new Hashtable();
+			versionTags.put(resource.getRepository(), table);
+		}
+		Set set = (Set)table.get(name);
 		if (set == null) {
 			set = new HashSet();
-			versionTags.put(root, set);
+			table.put(name, set);
 		}
 		set.add(tag);
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.tagAdded(tag, root);
+			listener.versionTagAdded(tag, resource.getRepository());
 		}
 	}
 	/**
 	 * Remove the given branch tag from the list of known tags for the
 	 * given remote root.
 	 */
-	public void removeBranchTag(ICVSRepositoryLocation root, Tag tag) {
+	public void removeBranchTag(ICVSRepositoryLocation root, BranchTag tag) {
 		Set set = (Set)branchTags.get(root);
 		if (set == null) return;
 		set.remove(tag);
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.tagRemoved(tag, root);
+			listener.branchTagRemoved(tag, root);
 		}
 	}
 	/**
 	 * Remove the given tag from the list of known tags for the
 	 * given remote root.
 	 */
-	public void removeVersionTag(ICVSRepositoryLocation root, Tag tag) {
-		Set set = (Set)versionTags.get(root);
+	public void removeVersionTag(ICVSRemoteResource resource, String tag) {
+		Hashtable table = (Hashtable)versionTags.get(resource.getRepository());
+		if (table == null) return;
+		Set set = (Set)table.get(resource.getName());
 		if (set == null) return;
 		set.remove(tag);
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.tagRemoved(tag, root);
+			listener.versionTagRemoved(tag, resource.getRepository());
 		}
 	}
 	/**
@@ -186,8 +197,8 @@ public class RepositoryManager {
 	 * Also removed the tags defined for this root.
 	 */
 	public void removeRoot(ICVSRepositoryLocation root) {
-		Tag[] branchTags = getKnownBranchTags(root);
-		Tag[] versionTags = getKnownVersionTags(root);
+		BranchTag[] branchTags = getKnownBranchTags(root);
+		Hashtable vTags = (Hashtable)this.versionTags.get(root);
 		Object o = repositories.remove(root.getLocation());
 		if (o == null) return;
 		this.branchTags.remove(root);
@@ -196,10 +207,17 @@ public class RepositoryManager {
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
 			for (int i = 0; i < branchTags.length; i++) {
-				listener.tagRemoved(branchTags[i], root);
+				listener.branchTagRemoved(branchTags[i], root);
 			}
-			for (int i = 0; i < versionTags.length; i++) {
-				listener.tagRemoved(versionTags[i], root);
+			Iterator keyIt = vTags.keySet().iterator();
+			while (keyIt.hasNext()) {
+				String projectName = (String)keyIt.next();
+				Set tagSet = (Set)vTags.get(projectName);
+				Iterator tagIt = tagSet.iterator();
+				while (tagIt.hasNext()) {
+					String tag = (String)tagIt.next();
+					listener.versionTagRemoved(tag, root);
+				}
 			}
 			listener.repositoryRemoved(root);
 		}
@@ -276,15 +294,30 @@ public class RepositoryManager {
 			dos.writeUTF(root.getHost());
 			dos.writeUTF("" + root.getPort());
 			dos.writeUTF(root.getRootDirectory());
-			Tag[] branchTags = getKnownBranchTags(root);
+			BranchTag[] branchTags = getKnownBranchTags(root);
 			dos.writeInt(branchTags.length);
 			for (int i = 0; i < branchTags.length; i++) {
 				dos.writeUTF(branchTags[i].getTag());
 			}
-			Tag[] versionTags = getKnownVersionTags(root);
-			dos.writeInt(versionTags.length);
-			for (int i = 0; i < versionTags.length; i++) {
-				dos.writeUTF(versionTags[i].getTag());
+			// write number of projects for which there are tags in this root
+			Hashtable table = (Hashtable)versionTags.get(root);
+			if (table == null) {
+				dos.writeInt(0);
+			} else {
+				dos.writeInt(table.size());
+				// for each project, write the name of the project, number of tags, and each tag.
+				Iterator projIt = table.keySet().iterator();
+				while (projIt.hasNext()) {
+					String name = (String)projIt.next();
+					dos.writeUTF(name);
+					Set tagSet = (Set)table.get(name);
+					dos.writeInt(tagSet.size());
+					Iterator tagIt = tagSet.iterator();
+					while (tagIt.hasNext()) {
+						String tag = (String)tagIt.next();
+						dos.writeUTF(tag);
+					}
+				}
 			}
 		}
 	}
@@ -304,14 +337,23 @@ public class RepositoryManager {
 			int tagsSize = dis.readInt();
 			for (int j = 0; j < tagsSize; j++) {
 				String tag = dis.readUTF();
-				addBranchTag(root, new Tag(tag, true, root));
+				addBranchTag(root, new BranchTag(tag, root));
 			}
-			tagsSize = dis.readInt();
-			for (int j = 0; j < tagsSize; j++) {
-				String tag = dis.readUTF();
-				addVersionTag(root, new Tag(tag, false, root));
+			// read the number of projects for this root that have version tags
+			int projSize = dis.readInt();
+			if (projSize > 0) {
+				Hashtable projTable = new Hashtable();
+				versionTags.put(root, projTable);
+				for (int j = 0; j < projSize; j++) {
+					String name = dis.readUTF();
+					Set tagSet = new HashSet();
+					projTable.put(name, tagSet);
+					int numTags = dis.readInt();
+					for (int k = 0; k < numTags; k++) {
+						tagSet.add(dis.readUTF());
+					}
+				}
 			}
-			
 		}
 	}
 	

@@ -28,8 +28,8 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
+import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
-import org.eclipse.team.internal.ccvs.ui.model.Tag;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ccvs.ui.wizards.LocationWizard;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -75,7 +75,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void tagAdded(Tag tag, final ICVSRepositoryLocation root) {
+		public void branchTagAdded(BranchTag tag, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -83,7 +83,23 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void tagRemoved(Tag tag, final ICVSRepositoryLocation root) {
+		public void branchTagRemoved(BranchTag tag, final ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh(root);
+				}
+			});
+		}
+		public void versionTagAdded(String tag, final ICVSRepositoryLocation root) {
+			Display display = viewer.getControl().getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh(root);
+				}
+			});
+		}
+		public void versionTagRemoved(String tag, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -150,6 +166,16 @@ public class RepositoriesView extends ViewPart {
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
+		/*menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mgr) {
+				System.out.println("Menu about to show");
+				ISelection selection = viewer.getSelection();
+				if (selection == null || !(selection instanceof IStructuredSelection)) {
+					return;
+				}
+				IStructuredSelection ss = (IStructuredSelection)selection;
+			}
+		});*/
 		tree.setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	
