@@ -18,7 +18,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -76,7 +76,7 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		initializeDialogUnits(parent);
 		setControl(fViewer= new RefactoringStatusViewer(parent, SWT.NONE));
 		Dialog.applyDialogFont(fViewer);
-		WorkbenchHelp.setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_ERROR_WIZARD_PAGE);			
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_ERROR_WIZARD_PAGE);			
 	}
 	
 	//---- Reimplementation of WizardPage methods ------------------------------------------

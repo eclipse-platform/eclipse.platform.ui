@@ -36,7 +36,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -75,7 +75,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
 			setToolTipText(RefactoringUIMessages.getString("PreviewWizardPage.next_Change")); //$NON-NLS-1$
-			WorkbenchHelp.setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
 		}
 		public void run() {
 			fTreeViewer.revealNext();	
@@ -88,7 +88,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
 			setToolTipText(RefactoringUIMessages.getString("PreviewWizardPage.previous_Change")); //$NON-NLS-1$
-			WorkbenchHelp.setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
 		}	
 		public void run() {
 			fTreeViewer.revealPrevious();
@@ -205,7 +205,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fStandardPage= createStandardPreviewPage(fPageContainer);
 		fNullPage= createNullPage(fPageContainer);
 		setControl(fPageContainer);
-		WorkbenchHelp.setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_PREVIEW_WIZARD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_PREVIEW_WIZARD_PAGE);
 	}
 
 	private Composite createStandardPreviewPage(Composite parent) {

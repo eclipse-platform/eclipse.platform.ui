@@ -29,7 +29,7 @@ public class RefactoringPreferencePage /* extends FieldEditorPreferencePage impl
 	public void createControl(Composite parent) {
 		// added for 1GEUGE6: ITPJUI:WIN2000 - Help is the same on all preference pages
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IJavaHelpContextIds.REFACTORING_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaHelpContextIds.REFACTORING_PREFERENCE_PAGE);
 	}		
 
 	public void createFieldEditors() {

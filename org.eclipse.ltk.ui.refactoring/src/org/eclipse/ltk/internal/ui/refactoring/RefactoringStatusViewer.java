@@ -31,7 +31,7 @@ import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 
 import org.eclipse.compare.CompareUI;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.jface.action.Action;
@@ -71,7 +71,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
 			setToolTipText(RefactoringUIMessages.getString("ErrorWizardPage.next_Change")); //$NON-NLS-1$
-			WorkbenchHelp.setHelp(this, IRefactoringHelpContextIds.NEXT_PROBLEM_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_PROBLEM_ACTION);
 		}
 		public void run() {
 			revealElement(true);
@@ -93,7 +93,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
 			setToolTipText(RefactoringUIMessages.getString("ErrorWizardPage.previous_Change")); //$NON-NLS-1$
-			WorkbenchHelp.setHelp(this, IRefactoringHelpContextIds.PREVIOUS_PROBLEM_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_PROBLEM_ACTION);
 		}	
 		public void run() {
 			revealElement(false);
