@@ -146,7 +146,7 @@ public class Tocs
 				href = "content/help:" + href;
 		}
 		else
-			href = "javascript:void 0";
+			href = "about:blank";
 		out.write("'" + href + "'>");
 		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 		out.write("<nobr>");
