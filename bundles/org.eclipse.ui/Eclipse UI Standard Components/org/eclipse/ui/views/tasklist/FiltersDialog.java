@@ -1,9 +1,16 @@
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+**********************************************************************/
+
 import org.eclipse.ui.help.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
@@ -165,6 +172,7 @@ import java.util.HashMap;
 	
 	private CheckboxTreeViewer typesViewer;
 	private Button anyResourceButton;
+	private Button anyResourceInSameProjectButton; // added by cagatayk@acm.org
 	private Button selectedResourceButton;
 	private Button selectedResourceAndChildrenButton;
 	private LabelComboTextGroup descriptionGroup;
@@ -312,6 +320,7 @@ void createResourceArea(Composite parent) {
 	group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	group.setLayout(new GridLayout());
 	anyResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResource")); //$NON-NLS-1$
+	anyResourceInSameProjectButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
 	selectedResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedResource")); //$NON-NLS-1$
 	selectedResourceAndChildrenButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedAndChildren")); //$NON-NLS-1$
 }
@@ -578,6 +587,8 @@ void updateFilterFromUI(TasksFilter filter) {
 		filter.onResource = TasksFilter.ON_SELECTED_RESOURCE_ONLY;
 	else if (selectedResourceAndChildrenButton.getSelection())
 		filter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
+	else if (anyResourceInSameProjectButton.getSelection()) // added by cagatayk@acm.org
+		filter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
 	else
 		filter.onResource = TasksFilter.ON_ANY_RESOURCE;
 
@@ -605,6 +616,7 @@ void updateUIFromFilter(TasksFilter filter) {
 
 	int on = filter.onResource;
 	anyResourceButton.setSelection(on == TasksFilter.ON_ANY_RESOURCE);
+	anyResourceInSameProjectButton.setSelection(on == TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT); // added by cagatayk@acm.org
 	selectedResourceButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_ONLY);
 	selectedResourceAndChildrenButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
 

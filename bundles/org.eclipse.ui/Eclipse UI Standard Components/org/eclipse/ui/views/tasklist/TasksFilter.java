@@ -1,9 +1,16 @@
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+**********************************************************************/
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +27,7 @@ import java.util.HashSet;
 	static final int ON_ANY_RESOURCE = 0;
 	static final int ON_SELECTED_RESOURCE_ONLY = 1;
 	static final int ON_SELECTED_RESOURCE_AND_CHILDREN = 2;
+	static final int ON_ANY_RESOURCE_OF_SAME_PROJECT = 3; // added by cagatayk@acm.org
 
 	// Description filter kind constants
 	static final int FILTER_CONTAINS = 0;
@@ -49,6 +57,7 @@ import java.util.HashSet;
 	private static final String TAG_PRIORITY_FILTER = "priorityFilter"; //$NON-NLS-1$
 	private static final String TAG_FILTER_ON_COMPLETION = "filterOnCompletion"; //$NON-NLS-1$
 	private static final String TAG_COMPLETION_FILTER = "completionFilter"; //$NON-NLS-1$
+	
 public TasksFilter() {
 	reset();
 }

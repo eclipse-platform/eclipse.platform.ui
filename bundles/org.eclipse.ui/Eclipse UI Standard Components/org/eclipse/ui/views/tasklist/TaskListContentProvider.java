@@ -1,9 +1,16 @@
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+**********************************************************************/
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -43,6 +50,9 @@ protected boolean check(IMarkerDelta markerDelta) {
 protected boolean checkResource(IResource resource) {
 	if (taskList.showSelections() && !taskList.showChildrenHierarchy()) {
 		return resource.equals(taskList.getResource());
+	}
+	else if (taskList.showOwnerProject()) { // added by cagatayk@acm.org
+		return taskList.getResource().getProject().equals(resource.getProject());
 	}
 	else {
 		return taskList.getResource().getFullPath().isPrefixOf(resource.getFullPath());
@@ -167,6 +177,16 @@ IMarker[] getMarkers() throws CoreException {
 	if (!res.exists()) {
 		return new IMarker[0];
 	}
+	
+	// added by cagatayk@acm.org
+	if (taskList.showOwnerProject()) {
+		IResource project = res.getProject();
+		
+		// leave it alone if it's workspace root
+		if (project != null)
+			res = project;
+	}
+	
 	int depth = taskList.getResourceDepth();
 	String[] types = taskList.getMarkerTypes();
 	ArrayList list = new ArrayList();

@@ -1,9 +1,16 @@
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+**********************************************************************/
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -869,6 +876,7 @@ boolean showChildrenHierarchy() {
 	switch (getFilter().onResource) {
 		case TasksFilter.ON_ANY_RESOURCE:
 		case TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN:
+		case TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT: // added by cagatayk@acm.org
 		default:
 			return true;
 		case TasksFilter.ON_SELECTED_RESOURCE_ONLY:
@@ -879,11 +887,19 @@ boolean showSelections() {
 	switch (getFilter().onResource) {
 		case TasksFilter.ON_SELECTED_RESOURCE_ONLY:
 		case TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN:
+		case TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT: // added by cagatayk@acm.org
 			return true;
 		case TasksFilter.ON_ANY_RESOURCE:
 		default:
 			return false;
 	}
+}
+
+/**
+ * Added by cagatayk@acm.org 
+ */
+boolean showOwnerProject() {
+	return getFilter().onResource == TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
 }
 /**
  * Processes state change of the 'showSelections' switch.
@@ -958,9 +974,14 @@ void updateFocusResource(ISelection selection) {
 			}
 		}
 	}
+	
 	if (resource != null && !resource.equals(focusResource)) {
+		// showOwnerProject() handling added by cagatayk@acm.org
+		boolean updateNeeded = showOwnerProject() && 
+				!resource.getProject().equals(
+						focusResource != null ? focusResource.getProject() : null);
 		focusResource = resource;
-		if (showSelections()) {
+		if ((showSelections() && !showOwnerProject()) || updateNeeded) {
 			viewer.refresh();
 			updateStatusMessage();
 			updateTitle();
