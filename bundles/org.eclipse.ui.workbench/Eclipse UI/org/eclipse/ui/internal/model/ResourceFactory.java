@@ -60,28 +60,23 @@ public IAdaptable createElement(IMemento memento) {
 		return null;
 
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	IPath path = new Path(fileName); 
 	String type = memento.getString(TAG_TYPE);
 	if (type == null) {
 		// Old format memento. Create an IResource using findMember. 
 		// Will return null for resources in closed projects.
-		res = root.findMember(path);
+		res = root.findMember(new Path(fileName));
 	}
-	else {
+	else {		
 		int resourceType = Integer.parseInt(type);
 		
-		if (resourceType == IResource.ROOT) {
+		if (resourceType == IResource.ROOT)
 			res = root;		
-		}
-		else {
-			IPath location = root.getLocation().append(path);	
-			if (resourceType == IResource.PROJECT || resourceType == IResource.FOLDER) {
-				res = root.getContainerForLocation(location);
-			}
-			else if (resourceType == IResource.FILE) {
-				res = root.getFileForLocation(location);
-			}
-		}
+		else if (resourceType == IResource.PROJECT) 
+			res = root.getProject(fileName);
+		else if (resourceType == IResource.FOLDER)
+			res = root.getFolder(new Path(fileName));
+		else if (resourceType == IResource.FILE)
+			res = root.getFile(new Path(fileName));
 	}
 	return res;	
 }
