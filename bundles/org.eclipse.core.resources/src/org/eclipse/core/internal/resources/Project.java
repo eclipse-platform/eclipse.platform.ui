@@ -441,8 +441,9 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 
 			// call super.copy for each child (excluding project description file)
 			IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-			final int childWork = Policy.opWork * 50 / 100 / (children.length - 1);
-			for (int i = 0; i < children.length; i++) {
+			final int childCount = children.length;
+			final int childWork = childCount > 1 ? Policy.opWork * 50 / 100 / (childCount- 1) : 0;
+			for (int i = 0; i < childCount; i++) {
 				IResource child = children[i];
 				if (!isProjectDescriptionFile(child))
 					child.copy(destProject.getFullPath().append(child.getName()), force, Policy.subMonitorFor(monitor, childWork));
