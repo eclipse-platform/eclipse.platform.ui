@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.dialogs.FileSystemElement;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.junit.util.FileUtil;
 import org.eclipse.ui.junit.util.UITestCase;
@@ -24,6 +24,8 @@ public class ImportOperationTestCase
 	private String[] directoryNames = { "dir1", "dir2" };
 
 	private String[] fileNames = { "file1.txt", "file2.txt" };
+	
+	private IProject project;
 
 	public ImportOperationTestCase(String testName) {
 		super(testName);
@@ -42,7 +44,7 @@ public class ImportOperationTestCase
 
 	public void testImportAll() throws Exception {
 
-		IProject project = FileUtil.createProject("ImportAll");
+		project = FileUtil.createProject("ImportAll");
 		File element = new File(localDirectory);
 		List importElements = new ArrayList();
 		importElements.add(element);
@@ -92,5 +94,26 @@ public class ImportOperationTestCase
 		//doing anything interesting
 		return "";
 	}
-
+	
+	/**
+	 * Tear down. Delete the project we created and all of the
+	 * files on the file system.
+	 */
+	public void tearDown() throws Exception{
+		super.tearDown();
+		project.delete(true,true,null);
+		File topDirectory = new File(localDirectory);
+		deleteDirectory(topDirectory);
+	}
+	
+	private void deleteDirectory(File directory){
+		File[] children = directory.listFiles();
+		for(int i = 0; i < children.length; i ++){
+			if(children[i].isDirectory())
+				deleteDirectory(children[i]);
+			else
+				children[i].delete();
+		}
+		directory.delete();
+	}
 }
