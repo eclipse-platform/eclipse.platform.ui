@@ -1,7 +1,6 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -14,6 +13,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.internal.dialogs.FileFolderSelectionDialog;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -262,22 +264,43 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		dialog.open();
 	}
 
-	private void handleAddLocal() {
-		FileDialog dialog = new FileDialog(getShell());
-		dialog.setFilterExtensions(new String[] {"site.xml"});
-		dialog.setText("Choose a local site");
-		String res = dialog.open();
-		if (res != null) {
-			try {
-				String location = new Path(res).removeLastSegments(1).toString();
-				URL url = new URL("file:" + location);
-				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-				SiteBookmark bookmark = new SiteBookmark(location, url, false);
-				bookmark.setLocal(true);
-				model.addBookmark(bookmark);
-				model.saveBookmarks();
-			} catch (MalformedURLException e) {
+	private void handleAddLocal() {		
+		ElementTreeSelectionDialog dialog =
+			new ElementTreeSelectionDialog(
+				getShell(),
+				new MyComputerLabelProvider(),
+				new MyComputerContentProvider());
+		dialog.setInput(new MyComputer());
+		dialog.setAllowMultiple(false);
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return !(element instanceof MyComputerFile);
 			}
+		});
+		
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection.length == 1 && selection[0] instanceof SiteBookmark)
+					return new Status(
+						IStatus.OK,
+						UpdateUI.getPluginId(),
+						IStatus.OK,
+						"",
+						null);
+				return new Status(
+					IStatus.ERROR,
+					UpdateUI.getPluginId(),
+					IStatus.ERROR,
+					"",
+					null);
+			}
+		});
+		dialog.setTitle("Local Site");
+		dialog.setMessage("&Select a local site:");
+		if (dialog.open() == FileFolderSelectionDialog.OK) {
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+			model.addBookmark((SiteBookmark) dialog.getFirstResult());
+			model.saveBookmarks();
 		}
 	}
 
