@@ -37,6 +37,10 @@ ElementTreeReaderImpl_1(IElementInfoFlattener factory) {
 public ElementTree readDelta(ElementTree parentTree, DataInput input) throws IOException {
 	DeltaDataTree complete = parentTree.getDataTree();
 	DeltaDataTree delta = dataTreeReader.readTree(input);
+	
+	//if the delta is empty, just return the parent
+	if (delta.isEmptyDelta()) 
+		return parentTree;
 
 	DeltaDataTree reconstructed = complete.assembleWithForwardDelta(delta);
 
