@@ -3,8 +3,8 @@
 	name="%pluginName"
 	id="org.eclipse.team.cvs.ssh"
 	version="2.0.0"
-	class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin"
-	provider-name="Object Technology International, Inc.">
+	provider-name="%providerName"
+	class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin">
 
   <requires>
     <import plugin="org.eclipse.core.resources"/>

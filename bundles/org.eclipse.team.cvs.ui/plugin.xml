@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   id="org.eclipse.team.cvs.ui"
-   name="%pluginName"
-   version="2.0.0"
-   provider-name="Object Technology International, Inc."
-   class="org.eclipse.team.internal.ccvs.ui.CVSUIPlugin">
+	id="org.eclipse.team.cvs.ui"
+	name="%pluginName"
+	version="2.0.0"
+	provider-name="%providerName"
+	class="org.eclipse.team.internal.ccvs.ui.CVSUIPlugin">
 
    <runtime>
       <library name="teamcvsui.jar">
