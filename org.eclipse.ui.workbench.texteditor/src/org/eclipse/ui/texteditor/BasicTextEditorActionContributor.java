@@ -60,6 +60,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.SELECT_ALL,
 		ITextEditorActionConstants.FIND,
 		ITextEditorActionConstants.PRINT,
+		ITextEditorActionConstants.PROPERTIES,
 		ITextEditorActionConstants.REVERT
 	};
 	

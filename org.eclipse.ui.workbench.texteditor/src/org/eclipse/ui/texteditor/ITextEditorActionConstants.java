@@ -361,7 +361,15 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#PRINT
 	 */
 	static final String PRINT= ActionFactory.PRINT.getId();
-	
+
+	/**
+	 * Name of standard Properties global action in the File menu.
+	 * Value <code>"properties"</code>
+	 * @since 3.1
+	 * @see org.eclipse.ui.actions.ActionFactory#PROPERTIES
+	 */
+	static final String PROPERTIES= ActionFactory.PROPERTIES.getId();
+
 	/**
 	 * Name of standard Redo global action in the Edit menu.
 	 * Value <code>"redo"</code>

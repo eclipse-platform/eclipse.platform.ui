@@ -68,6 +68,13 @@ public interface IWorkbenchActionDefinitionIds {
 	public static final String UNDO= "org.eclipse.ui.edit.undo"; //$NON-NLS-1$
 	
 	/**
+	 * Action definition id of the file properties action.
+	 * Value: <code>"org.eclipse.ui.file.properties"</code>
+	 * @since 3.1
+	 */
+	public static final String PROPERTIES= "org.eclipse.ui.file.properties"; //$NON-NLS-1$
+	
+	/**
 	 * Action definition id of the edit redo action.
 	 * Value: <code>"org.eclipse.ui.edit.redo"</code>
 	 */
