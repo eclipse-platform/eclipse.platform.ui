@@ -8,13 +8,7 @@ Bundle-Activator: org.eclipse.help.ui.internal.HelpUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.ui,
- org.eclipse.help.ui.browser,
- org.eclipse.help.ui.internal,
- org.eclipse.help.ui.internal.browser,
- org.eclipse.help.ui.internal.browser.embedded,
- org.eclipse.help.ui.internal.search,
- org.eclipse.help.ui.internal.util,
- org.eclipse.help.ui.internal.views
+ org.eclipse.help.ui.browser
 Require-Bundle: org.eclipse.help.base,
  org.eclipse.help.appserver,
  org.eclipse.ui,
