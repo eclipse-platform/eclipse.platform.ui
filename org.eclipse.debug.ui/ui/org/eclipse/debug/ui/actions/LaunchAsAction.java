@@ -26,8 +26,11 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -123,40 +126,59 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		
-		// Retrieve the current perspective and the registered shortcuts
-		List shortcuts = null;
-		String activePerspID = getActivePerspectiveID();
-		if (activePerspID != null) {
-			shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, getCategory());
-		}
-		
-		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
-		// to avoid an empty cascading menu
-		if (shortcuts == null || shortcuts.isEmpty()) {
-			shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
-		}
-		
 		if (getCreatedMenu() != null) {
-			getCreatedMenu().dispose();
-		}
-		
-		// Sort the applicable config types alphabetically and add them to the menu
+			 getCreatedMenu().dispose();
+		 }
 		setCreatedMenu(new Menu(parent));
-		
-		int menuCount = 1;
-		Iterator iter = shortcuts.iterator();
-		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			if (ext.getModes().contains(getMode())) {
-				populateMenu(ext, getCreatedMenu(), menuCount);
-				menuCount++;
-			}
-		}
-				
+		fillMenu();
+		initMenu();
 		return getCreatedMenu();
 	}
 	
+	private void fillMenu() {
+		//Retrieve the current perspective and the registered shortcuts
+		 List shortcuts = null;
+		 String activePerspID = getActivePerspectiveID();
+		 if (activePerspID != null) {
+			 shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, getCategory());
+		 }
+	
+		 // If NO shortcuts are listed in the current perspective, add ALL shortcuts
+		 // to avoid an empty cascading menu
+		 if (shortcuts == null || shortcuts.isEmpty()) {
+			 shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
+		 }
+	
+		 // Sort the applicable config types alphabetically and add them to the menu
+		 int menuCount = 1;
+		 Iterator iter = shortcuts.iterator();
+		 while (iter.hasNext()) {
+			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			 if (ext.getModes().contains(getMode())) {
+				 populateMenu(ext, getCreatedMenu(), menuCount);
+				 menuCount++;
+			 }
+		 }
+	}
+	
+	/**
+	 * Creates the menu for the action
+	 */
+	private void initMenu() {
+		// Add listener to repopulate the menu each time
+		// it is shown to reflect changes in selection or active perspective
+		fCreatedMenu.addMenuListener(new MenuAdapter() {
+			public void menuShown(MenuEvent e) {
+				Menu m = (Menu)e.widget;
+				MenuItem[] items = m.getItems();
+				for (int i=0; i < items.length; i++) {
+					items[i].dispose();
+				}
+				fillMenu();
+			}
+		});
+	}
+		
 	/**
 	 * Add the shortcut to the menu.
 	 */
