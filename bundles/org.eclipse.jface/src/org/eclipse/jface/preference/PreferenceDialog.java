@@ -1320,7 +1320,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 	/**
 	 * Returns the currentPage.
-	 * @return 
+	 * @return IPreferencePage
 	 */
 	protected IPreferencePage getCurrentPage() {
 		return currentPage;
