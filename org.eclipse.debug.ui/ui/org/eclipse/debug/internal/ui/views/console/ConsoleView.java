@@ -96,17 +96,17 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	
 	/**
 	 * Sets the input to the current process if no debug view is present
-	 * on the current active page.
+	 * on the current active page or if the current process is <code>null</code>.
 	 */
 	public void setViewerInputFromConsoleDocumentManager(IProcess process) {
 		IViewPart debugView= findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (debugView == null) {
+		if (debugView == null || process == null) {
 			setViewerInput(process);
 		}
 	}
 	
 	/** 
-	 * Sets the console to view the documents steams
+	 * Sets the console to view the document's streams
 	 * associated with the given process.
 	 */
 	public void setViewerInput(IProcess process) {
