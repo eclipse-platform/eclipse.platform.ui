@@ -185,7 +185,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		getConsoleViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
 				IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C && event.keyCode == 0 && gotoLine.isEnabled()) {
+				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C && gotoLine.isEnabled()) {
 					gotoLine.run();
 					event.doit= false;
 				}
