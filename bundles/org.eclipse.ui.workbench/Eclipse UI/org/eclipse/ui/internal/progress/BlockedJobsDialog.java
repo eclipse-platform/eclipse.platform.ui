@@ -151,8 +151,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
 		setBlockOnOpen(false);
-		setMessage(ProgressMessages.format("BlockedJobsDialog.BlockedMessage",
-				new Object[]{blockingStatus.getMessage()})); //$NON-NLS-1$
+		setMessage(ProgressMessages.format("BlockedJobsDialog.BlockedMessage",//$NON-NLS-1$
+				new Object[]{blockingStatus.getMessage()})); 
 	}
 	/**
 	 * This method creates the dialog area under the parent composite.
