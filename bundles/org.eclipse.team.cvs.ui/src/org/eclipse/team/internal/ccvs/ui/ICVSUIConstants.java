@@ -41,6 +41,7 @@ public interface ICVSUIConstants {
 	public final String PREF_HISTORY_TRACKS_SELECTION = "pref_history_tracks_selection";
 	public final String PREF_CVS_RSH = "pref_cvs_rsh";
 	public final String PREF_CVS_SERVER = "pref_cvs_server";
+	public final String PREF_CONSIDER_CONTENTS = "pref_consider_contents";
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration";

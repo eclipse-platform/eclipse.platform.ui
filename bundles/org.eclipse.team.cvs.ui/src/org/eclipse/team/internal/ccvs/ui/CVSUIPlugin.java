@@ -168,6 +168,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
+		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
 		store.setDefault(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, false);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_SERVER, CVSProviderPlugin.DEFAULT_CVS_SERVER);

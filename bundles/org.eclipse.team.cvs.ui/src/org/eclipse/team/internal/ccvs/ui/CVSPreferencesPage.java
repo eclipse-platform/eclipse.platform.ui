@@ -44,6 +44,7 @@ public class CVSPreferencesPage
 	private Text timeoutValue;
 	private Combo quietnessCombo;
 	private Button historyTracksSelectionButton;
+	private Button considerContentsInCompare;
 	
 	/**
 	 * Utility method that creates a combo box
@@ -130,6 +131,9 @@ public class CVSPreferencesPage
 		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection"));
 		
+		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare"));
+		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip"));
+		
 		initializeValues();
 
 		return composite;
@@ -176,6 +180,7 @@ public class CVSPreferencesPage
 		//quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
 		//quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
+		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 	}
 
 	/**
@@ -200,7 +205,8 @@ public class CVSPreferencesPage
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		// Quietness preference removed: bug 11036
 		//store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
-		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());	
+		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());
+		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));

@@ -135,7 +135,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		}
 		return element.getName();
 	}
-	
+		
 	/*
 	 * Returns a guess of the resource name being compared, for display
 	 * in the title.
@@ -244,8 +244,11 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				return super.contentsEqual(input1, input2);
 			}
 			protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
-				super.updateProgress(progressMonitor, node);
-				progressMonitor.worked(1);
+				if (node instanceof ITypedElement) {
+					ITypedElement element = (ITypedElement)node;
+					progressMonitor.subTask(Policy.bind("CompareEditorInput.fileProgress", new String[] {element.getName()}));
+					progressMonitor.worked(1);
+				}
 			}
 			protected Object[] getChildren(Object input) {
 				if (input instanceof IStructureComparator) {
@@ -270,7 +273,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			}
 			
 			// do the diff	
-			IProgressMonitor sub = new SubProgressMonitor(monitor, 10);
+			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
 			try {
 				sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100);
 				return d.findDifferences(threeWay, sub, null, ancestor, left, right);
@@ -334,7 +337,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			return NODE_NOT_EQUAL;
 		}
 		
-		if (!leftEdition.getRepository().getLocation().equals(rightEdition.getRepository().getLocation())) {
+		String leftLocation = leftEdition.getRepository().getLocation();
+		String rightLocation = rightEdition.getRepository().getLocation();
+		if (!leftLocation.equals(rightLocation)) {
 			return NODE_UNKNOWN;
 		}
 		try {
@@ -345,14 +350,19 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				leftInfo.getRevision().equals(rightInfo.getRevision())) {
 				return NODE_EQUAL;
 			} else {
-				// Optimized for most common case. There are actually cases where a file is merged from
-				// one branch to another where the revision numbers are different but the file is the same.
-				// We do not handle this case properly.
-				return NODE_NOT_EQUAL;
+				if(considerContentIfRevisionOrPathDiffers()) {
+					return NODE_UNKNOWN;
+				} else {
+					return NODE_NOT_EQUAL;
+				}
 			}
 		} catch (TeamException e) {
 			handle(e);
 			return NODE_UNKNOWN;
 		}
+	}
+	
+	private boolean considerContentIfRevisionOrPathDiffers() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
 	}
 }
