@@ -239,7 +239,9 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		if (fImage != null)
 			return fImage;
 		
-		Object descriptor= fgType2Descriptor.get(fAnnotationType);
+		final String key= fAnnotationType + fSeverity;
+		
+		Object descriptor= fgType2Descriptor.get(key);
 		if (descriptor == NO_DESCRIPTOR)
 			fImage= getImage(fImageName);
 		else if (descriptor != null)
@@ -255,15 +257,16 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 			 */
 			public void execute(IProgressMonitor monitor) throws CoreException,InvocationTargetException, InterruptedException {
 				IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fAnnotationType);
+				tempMarker.setAttribute(IMarker.SEVERITY, fSeverity);
 				if (tempMarker.exists()) {
 					IWorkbenchAdapter adapter= (IWorkbenchAdapter) tempMarker.getAdapter(IWorkbenchAdapter.class);
 					if (adapter != null) {
 						Object imageDescriptor= adapter.getImageDescriptor(tempMarker);
 						if (imageDescriptor != null) {
 							fImage= getImage(display, (ImageDescriptor)imageDescriptor);
-							fgType2Descriptor.put(fAnnotationType, imageDescriptor);
+							fgType2Descriptor.put(key, imageDescriptor);
 						} else {
-							fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+							fgType2Descriptor.put(key, NO_DESCRIPTOR);
 						}
 					}
 					tempMarker.delete();
@@ -273,9 +276,9 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		try {
 			r.run(null);
 		} catch (InvocationTargetException ex) {
-			fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+			fgType2Descriptor.put(key, NO_DESCRIPTOR);
 		} catch (InterruptedException ex) {
-			fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+			fgType2Descriptor.put(key, NO_DESCRIPTOR);
 		}
 		
 		if (fImage == null)
