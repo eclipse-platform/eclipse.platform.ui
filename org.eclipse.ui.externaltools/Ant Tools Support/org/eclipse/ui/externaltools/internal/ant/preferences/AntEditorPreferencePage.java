@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -104,6 +105,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.P_STRING),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.P_TAG),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.P_XML_COMMENT),
+		
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND),		
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS),
 	};
 	
 	private final String[][] fAppearanceColorListModel= new String[][] {
@@ -126,6 +134,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.searchResults"), AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.bookmarks"), AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER }, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.others"), AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER } //$NON-NLS-1$
+	};
+	
+	private final String[][] fContentAssistColorListModel= new String[][] {
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
+		//{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionReplacement"), AntEditorPreferenceConstants.CODEASSIST_REPLACEMENT_BACKGROUND }, //$NON-NLS-1$
+		//{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionReplacement"), AntEditorPreferenceConstants.CODEASSIST_REPLACEMENT_FOREGROUND } //$NON-NLS-1$
 	};
 
 	private OverlayPreferenceStore fOverlayStore;
@@ -157,11 +172,26 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private List fAppearanceColorList;
 	private List fAnnotationList;
+	private List fContentAssistColorList;
+	
 	private ColorEditor fAppearanceColorEditor;
 	private ColorEditor fAnnotationForegroundColorEditor;
+	private ColorEditor fContentAssistColorEditor;
+	
 	private Button fShowInTextCheckBox;
 	private Button fShowInOverviewRulerCheckBox;
 	
+	private Control fAutoInsertDelayText;
+	private Control fAutoInsertTriggerText;
+	private Label fAutoInsertDelayLabel;
+	private Label fAutoInsertJavaTriggerLabel;
+	private Label fAutoInsertJavaDocTriggerLabel;
+	private Control fAutoInsertJavaTriggerText;
+    private Control fAutoInsertJavaDocTriggerText;
+	private Button fCompletionInsertsRadioButton;
+	private Button fCompletionOverwritesRadioButton;
+	
+   	
 	public AntEditorPreferencePage() {
 		setDescription(AntPreferencesMessages.getString("AntEditorPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
@@ -172,6 +202,14 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see IWorkbenchPreferencePage#init()
 	 */	
 	public void init(IWorkbench workbench) {
+	}
+	
+	private Label getLabelControl(Control[] labelledTextField){
+		return (Label)labelledTextField[0];
+	}
+
+	private Text getTextControl(Control[] labelledTextField){
+		return (Text)labelledTextField[1];
 	}
 
 	private void handleAppearanceColorListSelection() {	
@@ -295,6 +333,148 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return appearanceComposite;
 	}
 	
+	/**
+	 * Returns an array of size 2:
+	 *  - first element is of type <code>Label</code>
+	 *  - second element is of type <code>Text</code>
+	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
+	 */
+	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+		Label labelControl= new Label(composite, SWT.NONE);
+		labelControl.setText(label);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		labelControl.setLayoutData(gd);
+	
+		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+		textControl.setLayoutData(gd);
+		textControl.setTextLimit(textLimit);
+		fTextFields.put(textControl, key);
+		if (isNumber) {
+			fNumberFields.add(textControl);
+			textControl.addModifyListener(fNumberFieldListener);
+		} else {
+			textControl.addModifyListener(fTextFieldListener);
+		}
+		
+		return new Control[]{labelControl, textControl};
+	}
+		
+	private Control createContentAssistPage(Composite parent) {
+
+		Composite contentAssistComposite= new Composite(parent, SWT.NULL);
+		GridLayout layout= new GridLayout(); 
+		layout.numColumns= 2;
+		contentAssistComposite.setLayout(layout);
+
+		String text;		
+		text= "Insert single &proposals automatically";
+		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
+
+		//text= "&Fill parameters automatically";
+		//addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_FILL_ARGUMENT_NAMES, 0);
+
+		text= "&Enable auto activation";
+		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
+		autoactivation.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				updateAutoactivationControls();
+			}
+		});		
+		
+		Control[] labelledTextField;
+		text= "Auto activation &delay:";
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, true);
+		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
+		fAutoInsertDelayText= getTextControl(labelledTextField);
+		
+		text= "Auto activation tri&ggers:";
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, false);
+		fAutoInsertJavaTriggerLabel= getLabelControl(labelledTextField);
+		fAutoInsertJavaTriggerText= getTextControl(labelledTextField);
+		
+		Label label= new Label(contentAssistComposite, SWT.LEFT);
+		label.setText("Code assist colo&r options:");
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		label.setLayoutData(gd);
+
+		Composite editorComposite= new Composite(contentAssistComposite, SWT.NONE);
+		layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		editorComposite.setLayout(layout);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		gd.horizontalSpan= 2;
+		editorComposite.setLayoutData(gd);		
+
+		fContentAssistColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd.heightHint= convertHeightInCharsToPixels(8);
+		fContentAssistColorList.setLayoutData(gd);
+						
+		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
+		layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		label= new Label(stylesComposite, SWT.LEFT);
+		label.setText("Col&or:");
+		gd= new GridData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		label.setLayoutData(gd);
+
+		fContentAssistColorEditor= new ColorEditor(stylesComposite);
+		Button colorButton= fContentAssistColorEditor.getButton();
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		colorButton.setLayoutData(gd);
+
+		fContentAssistColorList.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				handleContentAssistColorListSelection();
+			}
+		});
+		
+		colorButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				int i= fContentAssistColorList.getSelectionIndex();
+				String key= fContentAssistColorListModel[i][1];
+				
+				PreferenceConverter.setValue(fOverlayStore, key, fContentAssistColorEditor.getColorValue());
+			}
+		});
+
+		return contentAssistComposite;
+	}
+	
+	private void handleContentAssistColorListSelection() {	
+		int i= fContentAssistColorList.getSelectionIndex();
+		String key= fContentAssistColorListModel[i][1];
+		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		fContentAssistColorEditor.setColorValue(rgb);
+	}
+		
+	private void updateAutoactivationControls() {
+	   boolean autoactivation= fOverlayStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
+	   fAutoInsertDelayText.setEnabled(autoactivation);
+	   fAutoInsertDelayLabel.setEnabled(autoactivation);
+
+	   fAutoInsertJavaTriggerText.setEnabled(autoactivation);
+	   fAutoInsertJavaTriggerLabel.setEnabled(autoactivation);
+   }
 	
 	private Control createAnnotationsPage(Composite parent) {
 		Font font= parent.getFont();
@@ -448,8 +628,14 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		item.setControl(createAppearancePage(folder));
 		
 		item= new TabItem(folder, SWT.NONE);
+		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.codeAssistTab.title")); //$NON-NLS-1$
+		item.setControl(createContentAssistPage(folder));
+				
+		item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationsTab.title")); //$NON-NLS-1$
 		item.setControl(createAnnotationsPage(folder));
+		
+		
 
 		initialize();
 		
@@ -483,7 +669,18 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 				}
 			}
 		});
-
+		
+		for (int i= 0; i < fContentAssistColorListModel.length; i++) {
+			fContentAssistColorList.add(fContentAssistColorListModel[i][0]);
+		}
+		fContentAssistColorList.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (fContentAssistColorList != null && !fContentAssistColorList.isDisposed()) {
+					fContentAssistColorList.select(0);
+					handleContentAssistColorListSelection();
+				}
+			}
+		});
 	}
 	
 	private void initializeFields() {
@@ -500,8 +697,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 			Text t= (Text) e.next();
 			String key= (String) fTextFields.get(t);
 			t.setText(fOverlayStore.getString(key));
-		}
-				
+		}		
 	}
 	
 	/*
@@ -524,6 +720,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		handleAppearanceColorListSelection();
 		handleAnnotationListSelection();
+		handleContentAssistColorListSelection();
 
 		super.performDefaults();
 	}
@@ -608,7 +805,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return status;
 	}
 	
-	void updateStatus(IStatus status) {
+	private void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
 			for (int i= 0; i < fNumberFields.size(); i++) {
 				Text text= (Text) fNumberFields.get(i);
@@ -647,5 +844,4 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 				break;		
 		}
 	}
-	
 }

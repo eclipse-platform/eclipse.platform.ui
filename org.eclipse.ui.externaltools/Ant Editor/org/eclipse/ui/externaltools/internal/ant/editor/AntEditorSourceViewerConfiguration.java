@@ -256,14 +256,6 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p)) {
 			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 			contentAssistant.setProposalSelectorBackground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND.equals(p)) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, manager);
-			contentAssistant.setContextInformationPopupForeground(c);
-			contentAssistant.setContextSelectorForeground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND.equals(p)) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND, manager);
-			contentAssistant.setContextInformationPopupBackground(c);
-			contentAssistant.setContextSelectorBackground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
 			contentAssistant.enableAutoInsert(enabled);
