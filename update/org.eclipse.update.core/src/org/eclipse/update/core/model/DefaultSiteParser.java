@@ -575,7 +575,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		// get label if it exists
 		String label = attributes.getValue("label"); //$NON-NLS-1$
-		if ("".equals(label.trim())) label=null;
+		if (label!=null){
+			if ("".equals(label.trim())) label=null;
+		}
 		feature.setLabel(label);
 		
 		SiteModel site = (SiteModel) objectStack.peek();

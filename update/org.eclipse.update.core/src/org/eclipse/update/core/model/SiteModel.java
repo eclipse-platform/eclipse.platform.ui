@@ -220,7 +220,8 @@ public class SiteModel extends ModelObject {
 		assertIsWriteable();
 		if (this.featureReferences == null)
 			this.featureReferences = new ArrayList();
-		if (!this.featureReferences.contains(featureReference))
+		// PERF: do not check if already present 
+		//if (!this.featureReferences.contains(featureReference))
 			this.featureReferences.add(featureReference);
 	}
 
