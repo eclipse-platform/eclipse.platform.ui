@@ -18,7 +18,7 @@ import java.io.File;
  * A device independent path has <code>null</code> for a device id.
  * <p>
  * Note that paths are value objects; all operations on paths 
- * return a new path; the receiver is unscathed.
+ * return a new path; the path that is operated on is unscathed.
  * </p>
  * <p>
  * UNC paths are denoted by leading double-slashes such 
