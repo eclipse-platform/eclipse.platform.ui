@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -72,7 +71,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	//list of current source containers
 	protected ISourceContainer[] fSourceContainers = null;
 	//the launch config associated with this director
-	protected ILaunchConfiguration fConfig;
+	protected ILaunchConfiguration fConfig; 
 	//whether duplicates should be searched for or not
 	protected boolean fDuplicates = false;
 	/**
@@ -211,7 +210,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * 
 	 * @param participant the particiapant to register
 	 */
-	public void addSourceLookupParticipant(ISourceLookupParticipant participant) {
+	private void addSourceLookupParticipant(ISourceLookupParticipant participant) {
 		if (!fParticipants.contains(participant)) {
 			fParticipants.add(participant);
 			participant.init(this);
@@ -254,7 +253,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * 
 	 * @param participant the participant to remove
 	 */
-	public void removeSourceLookupParticipant(ISourceLookupParticipant participant) {
+	private void removeSourceLookupParticipant(ISourceLookupParticipant participant) {
 		fParticipants.remove(participant);		
 	}	
 
@@ -353,9 +352,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	
 	/**
 	 * Sets the source containers used by this source lookup
-	 * director, and notifies participants of the change.
+	 * director.
 	 * 
-	 * @param containers source containers to use
+	 * @param containers source containers to search
 	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
 		fSourceContainers = containers;
@@ -365,6 +364,12 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 		// clear resolved duplicates
 		fResolvedElements = null;
+		// notify participants
+		ISourceLookupParticipant[] participants = getParticipants();
+		for (int i = 0; i < participants.length; i++) {
+			ISourceLookupParticipant participant = participants[i];
+			participant.sourceContainersChanged(this);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -583,4 +588,23 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			}
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#addParticipants(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant[])
+	 */
+	public void addParticipants(ISourceLookupParticipant[] participants) {
+		for (int i = 0; i < participants.length; i++) {
+			ISourceLookupParticipant participant = participants[i];
+			addSourceLookupParticipant(participant);
+			participant.sourceContainersChanged(this);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#removeParticipants(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant[])
+	 */
+	public void removeParticipants(ISourceLookupParticipant[] participants) {
+		for (int i = 0; i < participants.length; i++) {
+			removeSourceLookupParticipant(participants[i]);
+		}
+	}
+
 }
