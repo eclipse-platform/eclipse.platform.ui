@@ -186,7 +186,7 @@ public class FeatureParser extends DefaultHandler {
 	}
 	
 	/** 
-	 * process the info
+	 * process the URL info
 	 */
 	private IInfo processURLInfo(Attributes attributes) throws MalformedURLException, IOException, CoreException {
 		String infoURL = attributes.getValue("url");

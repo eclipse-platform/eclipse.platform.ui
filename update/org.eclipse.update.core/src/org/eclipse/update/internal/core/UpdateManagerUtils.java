@@ -67,6 +67,28 @@ public class UpdateManagerUtils {
 	}
 
 	/**
+	 * return the url a relative String if the url contains the base url
+	 * 
+	 */
+	public static String getURLAsString(URL rootURL, URL url) {
+		String result = null;
+		String rootString = rootURL.toExternalForm();
+
+		// if no URL , return null
+		if (url != null) {
+			String urlString = url.toExternalForm();
+			if (urlString.indexOf(rootString)!=-1){
+				result = urlString.substring(rootString.length());
+			} else {
+				result = urlString;
+			}
+		}
+		
+		return result;			
+	}
+
+
+	/**
 	 * returns a translated String
 	 */
 	public static String getResourceString(String infoURL, ResourceBundle bundle) {

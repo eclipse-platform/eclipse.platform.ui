@@ -48,5 +48,11 @@ public interface ICategory {
 	 * @return the translated, user-friendly, name of the category.
 	 */
 	String getLabel();
+	
+	/** 
+	 * returns the description associated with the category
+	 * @return teh description of the category
+	 */
+	IInfo getDescription();
 }
 

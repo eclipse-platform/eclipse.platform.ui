@@ -3,8 +3,10 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.PrintWriter;
 import java.util.Comparator;
 import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IInfo;
 
 /**
  * Default Implementation of ICategory
@@ -13,13 +15,15 @@ public class Category implements ICategory {
 	
 	private String name;
 	private String label;
+	private IInfo description;
 	private static Comparator comp;
 	
 	/**
 	 * Default Constructor
 	 */
 	public Category(){}
-	
+
+
 	/**
 	 * Constructor
 	 */
@@ -27,7 +31,6 @@ public class Category implements ICategory {
 		this.name = name;
 		this.label = label;
 	}
-
 
 	/**
 	 * @see ICategory#getName()
@@ -108,5 +111,19 @@ public class Category implements ICategory {
 		return comp;
 	}
 
+	/*
+	 * @see ICategory#getDescription()
+	 */
+	public IInfo getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets the description.
+	 * @param description The description to set
+	 */
+	public void setDescription(IInfo description) {
+		this.description = description;
+	}
 }
 

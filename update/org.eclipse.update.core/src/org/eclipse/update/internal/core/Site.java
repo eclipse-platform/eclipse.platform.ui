@@ -4,15 +4,19 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IPluginEntry;
 
-public abstract class Site implements ISite {
+public abstract class Site implements ISite, IWritable {
 
 	/**
 	 * default path under the site where plugins will be installed
@@ -381,4 +385,107 @@ public abstract class Site implements ISite {
 		return result;
 	}
 
+	/*
+	 * @see IWritable#write(int, PrintWriter)
+	 */
+	public void write(int indent, PrintWriter w) {
+	
+	String gap = "";
+	for (int i = 0; i < indent; i++) gap += " ";
+	String increment = "";
+	for (int i = 0; i < IWritable.INDENT; i++) increment += " ";
+	
+		
+		w.print(gap+"<"+SiteParser.SITE+" ");
+		// FIXME: site type to implement
+		// 
+		// Site URL
+		String URLInfoString = null;
+		if(getInfoURL()!=null) {
+			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(),getInfoURL());
+			w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+		}
+		w.println(">");
+		w.println("");
+		
+		IFeatureReference[] refs = getFeatureReferences();
+		for (int index = 0; index < refs.length; index++) {
+			FeatureReference element = (FeatureReference)refs[index];
+			element.write(indent,w);
+		}
+		w.println("");
+				
+		IInfo[] archives = getArchives();
+		for (int index = 0; index < archives.length; index++) {
+			IInfo element = (IInfo)archives[index];			
+			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(),element.getURL());
+			w.println(gap+"<"+SiteParser.ARCHIVE+" id=\""+Writer.xmlSafe(element.getText())+"\" url=\""+Writer.xmlSafe(URLInfoString)+"\"/>");
+		}
+		w.println("");
+		
+		ICategory[] categories = getCategories();
+		for (int index = 0; index < categories.length; index++) {
+			Category element = (Category)categories[index];			
+			w.println(gap+"<"+SiteParser.CATEGORY_DEF+" label=\""+Writer.xmlSafe(element.getLabel())+"\" name=\""+Writer.xmlSafe(element.getName())+"\">");
+		
+			IInfo info = element.getDescription();
+			if (info!=null){
+			w.print(gap+increment+"<"+SiteParser.DESCRIPTION+" ");
+			URLInfoString = null;
+			if(info.getURL()!=null) {
+				URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(),info.getURL());
+				w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+			}
+			w.println(">");
+			if(info.getText()!=null) {
+				w.println(gap+increment+increment+Writer.xmlSafe(info.getText()));
+			}	
+			w.print(gap+increment+"</"+SiteParser.DESCRIPTION+">");
+			}
+		w.println(gap+"</"+SiteParser.CATEGORY_DEF+">");
+		
+		}		
+		w.println("");
+		// end
+		w.println("</"+SiteParser.SITE+">");
+	}
+
+	/*
+	 * @see IPluginContainer#getPluginEntries()
+	 */
+	public IPluginEntry[] getPluginEntries() {
+		return null;
+	}
+
+	/*
+	 * @see IPluginContainer#getPluginEntryCount()
+	 */
+	public int getPluginEntryCount() {
+		return 0;
+	}
+
+	/*
+	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
+	 */
+	public int getDownloadSize(IPluginEntry entry) {
+		return 0;
+	}
+
+	/*
+	 * @see IPluginContainer#getInstallSize(IPluginEntry)
+	 */
+	public int getInstallSize(IPluginEntry entry) {
+		return 0;
+	}
+
+	/*
+	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {}
+
+	/*
+	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
+	 */
+	public void store(IPluginEntry entry, String name, InputStream inStream) throws CoreException {}
+
 }

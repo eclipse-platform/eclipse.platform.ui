@@ -95,10 +95,10 @@ public class InternalSiteManager {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
-				TEMP_SITE =	new SiteFile(new URL("file",null,tempDir+TEMP_NAME+File.separator));
+				TEMP_SITE =	new SiteFile(new URL("file",null,tempDir+TEMP_NAME+'/')); 	// URL must end with '/' if they refer to a path/directory
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create TEmporary Site",e);
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create Temporary Site",e);
 				throw new CoreException(status);
 			}
 		}

@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.*;
 
@@ -17,7 +18,7 @@ import org.eclipse.update.core.ICategory;
  * 
  */
 
-public class FeatureReference implements IFeatureReference {
+public class FeatureReference implements IFeatureReference, IWritable {
 
 	private URL url;
 
@@ -153,6 +154,34 @@ public class FeatureReference implements IFeatureReference {
 	 */
 	public void addCategory(ICategory category) {
 		this. addCategoryString(category.getName());
+	}
+
+	/*
+	 * @see IWritable#write(int, PrintWriter)
+	 */
+	public void write(int indent, PrintWriter w) {
+	String gap = "";
+	for (int i = 0; i < indent; i++) gap += " ";
+	String increment = "";
+	for (int i = 0; i < IWritable.INDENT; i++) increment += " ";
+		
+		w.print(gap+"<"+SiteParser.FEATURE+" ");
+		// FIXME: feature type to implement
+		// 
+		// feature URL
+		String URLInfoString = null;
+		if(getURL()!=null) {
+			URLInfoString = UpdateManagerUtils.getURLAsString(site.getURL(),getURL());
+			w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+		}
+		w.println(">");
+		
+		Iterator categories = getCategoryString().iterator();
+		while (categories.hasNext()) {
+			String element = (String) categories.next();
+			w.println(gap+increment+"<"+SiteParser.CATEGORY+" name=\""+Writer.xmlSafe(element)+"\"/>");		
+		}
+		w.println("</"+SiteParser.FEATURE+">");
 	}
 
 }
