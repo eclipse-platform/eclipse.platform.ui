@@ -57,14 +57,16 @@ public class VersionedIdentifier {
 	 * @since 2.0
 	 */
 	public VersionedIdentifier(String id, String versionName) {
-		if (id == null
-			|| (id = id.trim()).equals("")
-			|| versionName == null) //$NON-NLS-1$
+		if (id == null	|| (id = id.trim()).equals("")) //$NON-NLS-1$
 			throw new IllegalArgumentException(
 				Policy.bind("VersionedIdentifier.IdOrVersionNull", id, versionName));
 		//$NON-NLS-1$
 		this.id = id;
-		this.version = new PluginVersionIdentifier(versionName);
+		// 15707
+		if (versionName != null)
+			this.version = new PluginVersionIdentifier(versionName);
+		else
+			version = new PluginVersionIdentifier(0, 0, 0);
 	}
 
 	/**
