@@ -2023,9 +2023,21 @@
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+D"
+            string="Esc BACKSPACE"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.deletePreviousWord"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Alt+D"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.deleteNextWord"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Esc D"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.deleteNextWord"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
