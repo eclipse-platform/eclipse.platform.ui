@@ -170,7 +170,11 @@ public void execute() throws BuildException {
  * Initializes the receiver.
  */
 public void init() {
-	p1 = new Project();
+	// This method used to create a Project, not an EclipseProject.
+	// It has been changed so that it is possible to use Eclipse Ant tasks (such as eclipse.refreshLocal)
+	// in Ant scripts called by through an "ant" task. Indeed, only an EclipseProject knows how to find them.
+	// We need to check that it doesn't introduce new bugs.
+	p1 = new EclipseProject(); 
 	p1.setJavaVersionProperty();
 	p1.addTaskDefinition("property", 
 						 (Class)project.getTaskDefinitions().get("property"));
