@@ -175,17 +175,17 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	
 	private void setNoneImage() {
         toolButton.setImage(noneImage);
-        toolButton.setToolTipText(ProgressMessages.format("There are active background tasks", new Object[] { } ));
+        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.tasks", new Object[] { } )); //$NON-NLS-1$
 	}
 
 	private void setErrorImage(Job job) {
         toolButton.setImage(errorImage);		
-        toolButton.setToolTipText(ProgressMessages.format("Task ''{0}'' finished with errors", new Object[] { job.getName() } ));
+        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.error", new Object[] { job.getName() } )); //$NON-NLS-1$
 	}
 
 	private void setOkImage(Job job) {
         toolButton.setImage(okImage);		
-        toolButton.setToolTipText(ProgressMessages.format("Task ''{0}'' returned result", new Object[] { job.getName() } ));
+        toolButton.setToolTipText(ProgressMessages.format("ProgressAnimationItem.ok", new Object[] { job.getName() } )); //$NON-NLS-1$
 	}
 
     public void removed(JobTreeElement info) {
