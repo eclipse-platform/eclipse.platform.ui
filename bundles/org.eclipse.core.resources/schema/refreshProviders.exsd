@@ -77,6 +77,7 @@
       <documentation>
          Following is an example of an adapter declaration.  This example declares that this plug-in will provide an adapter factory that will adapt objects of type IFile to objects of type MyFile.
 &lt;p&gt;
+&lt;pre&gt;
    &lt;extension
          id=&quot;coolProvider&quot;
          point=&quot;org.eclipse.core.resources.refreshProviders&quot;&gt;
@@ -85,6 +86,7 @@
             class=&quot;com.xyz.CoolRefreshProvider&quot;&gt;
       &lt;/refreshProvider&gt;
    &lt;/extension&gt;
+&lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
