@@ -91,8 +91,8 @@ public class AddBookmarkAction extends ResourceSelectionListenerAction {
 	 */
 	void createMarker(String markerType) {
 		IStructuredSelection selection = getStructuredSelection();
-		for (Iterator enum = selection.iterator(); enum.hasNext();) {
-			Object o = enum.next();
+		for (Iterator i = selection.iterator(); i.hasNext();) {
+			Object o = i.next();
 			if (o instanceof IFile) {
 				createMarker((IFile) o, markerType);
 			} else if (o instanceof IAdaptable) {
