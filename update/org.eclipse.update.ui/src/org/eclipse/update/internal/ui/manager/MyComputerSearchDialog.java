@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.Vector;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.configuration.LocalSystemInfo;
 
 /**
  * @version 	1.0
@@ -114,10 +115,13 @@ public class MyComputerSearchDialog extends Dialog {
 	}
 	
 	private void initializeDrives() {
-		File [] drives = File.listRoots();
+		File [] drives = MyComputer.getRoots();
 		for (int i=0; i<drives.length; i++) {
 			// Ensure settings exists
-			settings.getDriveSettings(drives[i].getPath());
+			String label = LocalSystemInfo.getLabel(drives[i]);
+			if (label==null)
+				label = drives[i].getPath();
+			settings.getDriveSettings(label);
 		}
 	}
 	

@@ -15,6 +15,7 @@ import org.eclipse.update.internal.ui.*;
 import java.io.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.update.configuration.LocalSystemInfo;
 
 public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 	private static final String KEY_LABEL = "MyComputer.label";
@@ -43,12 +44,7 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 	public Object[] getChildren(Object parent) {
 		BusyIndicator.showWhile(UpdateUIPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 			public void run() {
-				File[] roots = File.listRoots();
-				if (roots.length == 1) {
-					// just one root - skip it
-					File root = roots[0];
-					roots = root.listFiles();
-				}
+				File [] roots = getRoots();
 				if (roots.length > 0) {
 					children = new MyComputerDirectory[roots.length];
 					for (int i = 0; i < children.length; i++) {
@@ -59,6 +55,27 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 			}
 		});
 		return children;
+	}
+	
+	public static File [] getRoots() {
+		File [] roots;
+		String [] rootPaths = LocalSystemInfo.listMountPoints();
+		if (rootPaths!=null) {
+			roots = new File[rootPaths.length];
+			for (int i=0; i<roots.length; i++) {
+				roots[i] = new File(rootPaths[i]);
+			}
+		}
+		else {
+			// fallback
+			roots = File.listRoots();
+			if (roots.length == 1) {
+				// just one root - skip it
+				File root = roots[0];
+				roots = root.listFiles();
+			}
+		}
+		return roots;
 	}
 
 	/**

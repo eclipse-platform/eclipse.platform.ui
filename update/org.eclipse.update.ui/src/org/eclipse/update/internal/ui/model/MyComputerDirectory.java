@@ -16,6 +16,7 @@ import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.update.configuration.LocalSystemInfo;
 
 public class MyComputerDirectory
 	extends ModelObject
@@ -43,7 +44,15 @@ public class MyComputerDirectory
 	}
 
 	public String getName() {
+		if (root) {
+			String nativeLabel = LocalSystemInfo.getLabel(file);
+			if (nativeLabel!=null) return nativeLabel;
+		}
 		return root ? file.getPath() : file.getName();
+	}
+	
+	public File getFile() {
+		return file;
 	}
 
 	public String toString() {
