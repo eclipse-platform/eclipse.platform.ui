@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 
 /**
  * Visual component to edit the resource type variable
@@ -49,7 +48,7 @@ public class SpecificFileResourceComponent extends ResourceComponent {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(data);
 		label.setFont(mainGroup.getFont());
-		label.setText(ToolMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
+		label.setText(ExternalToolsVariableMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +61,7 @@ public class SpecificFileResourceComponent extends ResourceComponent {
 		IStructuredSelection sel = (IStructuredSelection) resourceList.getSelection();
 		IResource resource = (IResource) sel.getFirstElement();
 		if (resource == null || resource.getType() != IResource.FILE) {
-			getPage().setMessage(ToolMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
+			getPage().setMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
 			setIsValid(false);
 			return false;
 		}

@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.externaltools.group.IGroupDialogPage;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -110,7 +109,7 @@ public class ResourceComponent implements IVariableComponent {
 	 */
 	protected void createSelectedResourceOption() {
 		selectedResourceButton = new Button(mainGroup, SWT.RADIO);
-		selectedResourceButton.setText(ToolMessages.getString("ResourceComponent.selectedResLabel")); //$NON-NLS-1$
+		selectedResourceButton.setText(ExternalToolsVariableMessages.getString("ResourceComponent.selectedResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		selectedResourceButton.setLayoutData(data);
 		selectedResourceButton.setFont(mainGroup.getFont());
@@ -123,7 +122,7 @@ public class ResourceComponent implements IVariableComponent {
 	 */
 	protected void createSpecificResourceOption() {
 		specificResourceButton = new Button(mainGroup, SWT.RADIO);
-		specificResourceButton.setText(ToolMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
+		specificResourceButton.setText(ExternalToolsVariableMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		specificResourceButton.setLayoutData(data);
 		specificResourceButton.setFont(mainGroup.getFont());
@@ -154,12 +153,14 @@ public class ResourceComponent implements IVariableComponent {
 	 * Method declared on IVariableComponent.
 	 */
 	public String getVariableValue() {
-		if (selectedResourceButton != null && selectedResourceButton.getSelection())
+		if (selectedResourceButton != null && selectedResourceButton.getSelection()) {
 			return null;
+		}
 		
 		if (resourceList != null) {
-			if (selectedResource != null)
+			if (selectedResource != null) {
 				return selectedResource.getFullPath().toString();
+			}
 		}
 		
 		return null;
@@ -199,8 +200,9 @@ public class ResourceComponent implements IVariableComponent {
 	 * Updates the enablement of the resource list if needed
 	 */
 	protected void updateResourceListEnablement() {
-		if (specificResourceButton != null && resourceList != null)
+		if (specificResourceButton != null && resourceList != null) {
 			resourceList.getTree().setEnabled(specificResourceButton.getSelection());
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -208,24 +210,30 @@ public class ResourceComponent implements IVariableComponent {
 	 */
 	public void setVariableValue(String varValue) {
 		if (varValue == null || varValue.length() == 0) {
-			if (selectedResourceButton != null)
+			if (selectedResourceButton != null) {
 				selectedResourceButton.setSelection(true);
-			if (specificResourceButton != null)
+			}
+			if (specificResourceButton != null) {
 				specificResourceButton.setSelection(false);
-			if (resourceList != null)
+			}
+			if (resourceList != null) {
 				resourceList.getTree().setEnabled(false);
+			}
 		} else {
-			if (selectedResourceButton != null)
+			if (selectedResourceButton != null) {
 				selectedResourceButton.setSelection(false);
-			if (specificResourceButton != null)
+			}
+			if (specificResourceButton != null) {
 				specificResourceButton.setSelection(true);
+			}
 			if (resourceList != null) {
 				resourceList.getTree().setEnabled(true);
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varValue);
-				if (member != null)
+				if (member != null) {
 					resourceList.setSelection(new StructuredSelection(member), true);
-				else
+				} else {
 					resourceList.setSelection(StructuredSelection.EMPTY);
+				}
 			}
 		}
 	}
@@ -254,7 +262,7 @@ public class ResourceComponent implements IVariableComponent {
 			return true;
 
 		if (resourceList.getSelection().isEmpty()) {
-			getPage().setMessage(ToolMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
+			getPage().setMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
 			setIsValid(false);
 			return false;
 		}
