@@ -1570,7 +1570,7 @@ public class Main {
 		}
 	}
 
-	public void setupVMProperties() {
+	private void setupVMProperties() {
 		if (vm != null)
 			System.getProperties().put(PROP_VM, vm);
 		setMultiValueProperty(PROP_VMARGS, vmargs);
