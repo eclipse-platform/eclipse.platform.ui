@@ -17,6 +17,7 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -71,7 +72,9 @@ public class Connection {
 		try {
 			serverConnection.close();
 		} catch (IOException ex) {
-			throw new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex);//$NON-NLS-1$
+			// It is possible that the stream is being closed because of another exception.
+			// Therefore, the communication exception is logged instead of thrown
+			CVSProviderPlugin.log(new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex));//$NON-NLS-1$
 		} finally {
 			fResponseStream = null;
 			fIsEstablished = false;
