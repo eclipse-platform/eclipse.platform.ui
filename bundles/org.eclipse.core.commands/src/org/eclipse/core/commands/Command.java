@@ -96,7 +96,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * Constructs a new instance of <code>Command</code> based on the given
 	 * identifier. When a command is first constructed, it is undefined.
 	 * Commands should only be constructed by the <code>CommandManager</code>
-	 * to ensure that identifier remain unique.
+	 * to ensure that the identifier remains unique.
 	 * 
 	 * @param id
 	 *            The identifier for the command. This value must not be
