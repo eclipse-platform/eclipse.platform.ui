@@ -10,7 +10,6 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -148,7 +147,11 @@ public abstract class AntPage {
 		if (tableViewer == null || tableViewer.getControl().isDisposed())
 			return null;
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
-		return Arrays.asList(elements);
+		List contents= new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
+			contents.add(elements[i]);
+		}
+		return contents;
 	}
 	
 	/**
@@ -267,5 +270,9 @@ public abstract class AntPage {
 	
 	protected AntPreferencePage getPreferencePage() {
 		return preferencePage;
+	}
+	
+	protected TableViewer getTableViewer() {
+		return tableViewer;
 	}
 }

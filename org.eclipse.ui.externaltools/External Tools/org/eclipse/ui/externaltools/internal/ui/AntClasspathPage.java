@@ -11,6 +11,8 @@ Contributors:
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,7 +33,12 @@ public class AntClasspathPage extends AntPage {
 	private static final int ADD_JAR_BUTTON = IDialogConstants.CLIENT_ID + 1;
 	private static final int ADD_FOLDER_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
+	private static final int UP_BUTTON = IDialogConstants.CLIENT_ID + 4;
+	private static final int DOWN_BUTTON = IDialogConstants.CLIENT_ID + 5;
 
+	private Button upButton;
+	private Button downButton;
+	
 	private final AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider();
 
 	/**
@@ -48,6 +55,8 @@ public class AntClasspathPage extends AntPage {
 		createButton(parent, "AntClasspathPage.addJarButtonTitle", ADD_JAR_BUTTON); //$NON-NLS-1$;
 		createButton(parent, "AntClasspathPage.addFolderButtonTitle", ADD_FOLDER_BUTTON); //$NON-NLS-1$;
 		createSeparator(parent);
+		upButton= createButton(parent, "AntClasspathPage.upButtonTitle", UP_BUTTON); //$NON-NLS-1$;
+		downButton= createButton(parent, "AntClasspathPage.downButtonTitle", DOWN_BUTTON); //$NON-NLS-1$;
 		removeButton= createButton(parent, "AntClasspathPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$;
 	}
 	
@@ -95,6 +104,12 @@ public class AntClasspathPage extends AntPage {
 			case ADD_FOLDER_BUTTON :
 				addFolderButtonPressed();
 				break;
+			case UP_BUTTON :
+				handleMove(-1);
+				break;
+			case DOWN_BUTTON :
+				handleMove(1);
+				break;
 			case REMOVE_BUTTON :
 				removeButtonPressed();
 				break;
@@ -124,7 +139,51 @@ public class AntClasspathPage extends AntPage {
 	 * Method declared on AntPage.
 	 */
 	protected void tableSelectionChanged(IStructuredSelection newSelection) {
-		removeButton.setEnabled(newSelection.size() > 0);
+	
+		IStructuredSelection selection = (IStructuredSelection)getTableViewer().getSelection();
+		List urls = getContents();
+		boolean notEmpty = !selection.isEmpty();
+		Iterator elements= selection.iterator();
+		boolean first= false;
+		boolean last= false;
+		int lastUrl= urls.size() - 1;
+		while (elements.hasNext()) {
+			Object element = (Object) elements.next();
+			if(!first && urls.indexOf(element) == 0) {
+				first= true;
+			}
+			if (!last && urls.indexOf(element) == lastUrl) {
+				last= true;
+			}
+		}
+		
+		removeButton.setEnabled(notEmpty);
+		upButton.setEnabled(notEmpty && !first);
+		downButton.setEnabled(notEmpty && !last);
+	}
+	
+	protected void handleMove(int direction) {
+		IStructuredSelection sel = (IStructuredSelection)getTableViewer().getSelection();
+		List selList= sel.toList();
+		List contents= getContents();
+		Object[] movedURL= new Object[contents.size()];
+		int i;
+		for (Iterator urls = selList.iterator(); urls.hasNext();) {
+			Object config = urls.next();
+			i= contents.indexOf(config);
+			movedURL[i + direction]= config;
+		}
+		
+		contents.removeAll(selList);
+			
+		for (int j = 0; j < movedURL.length; j++) {
+			Object config = movedURL[j];
+			if (config != null) {
+				contents.add(j, config);		
+			}
+		}
+		setInput(contents);
+		getTableViewer().refresh();	
 	}
 
 
