@@ -144,7 +144,7 @@ public class Element extends Atom implements IElement {
 		Nfm nfm = model.toNfm();
 		if (nfm != null) {
 			try {
-				dfm = fNfmParser.parse(nfm, true);
+				dfm = fNfmParser.parse(nfm);
 			} catch (ParseError e) {
 				//??? this would be the place to log the error
 				dfm = Dfm.dfm(false);

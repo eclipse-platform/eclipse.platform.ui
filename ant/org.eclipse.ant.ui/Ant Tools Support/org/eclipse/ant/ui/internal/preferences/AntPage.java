@@ -86,8 +86,7 @@ public abstract class AntPage {
 	/**
 	 * Handles a button pressed event.
 	 */
-	protected void buttonPressed(int buttonId) {
-	}
+	protected abstract void buttonPressed(int buttonId);
 
 	/**
 	 * Creates and returns a button with appropriate size and layout.
@@ -314,8 +313,7 @@ public abstract class AntPage {
 		removeButton.setEnabled(enabled && size > 0);
 	}
 	
-	protected void edit(IStructuredSelection selection) {
-	}
+	protected abstract void edit(IStructuredSelection selection);
 	
 	/**
 	 * Returns this page's help context id, which is hooked

@@ -47,7 +47,7 @@ import org.eclipse.ant.ui.internal.dtd.util.SortedMapFactory;
  */
 public class NfmParser {
 	
-	public Dfm parse(Nfm nfm, boolean optimize) throws ParseError {
+	public Dfm parse(Nfm nfm) throws ParseError {
 		
 		// Parse nfm into dfm
 		
