@@ -1,5 +1,8 @@
 package org.eclipse.ui.internal.registry;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.HashMap;
 
 import org.eclipse.jface.action.Action;
@@ -9,11 +12,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.KeyBindingService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * An accelerator scope is a range in which a given accelerator (a mapping
@@ -33,27 +31,41 @@ public class AcceleratorScope {
 	private static AcceleratorMode currentMode;
 	private static AcceleratorMode defaultMode;
 	private static KeyBindingService currentService;
-	
+	/**
+	 * Create an instance of AcceleratorScope and initializes 
+	 * it with its id, name, description and parent scope.
+	 */			
 	public AcceleratorScope(String id, String name, String description, String parentScope) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		if(parentScope==null) {
+		this.parentScopeString = parentScope;
+		if(parentScope==null)
 			this.parentScopeString = IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;	
-		} else {
-			this.parentScopeString = parentScope;
-		}
 	}
-	
+	/**
+	 * Return this scope's id
+	 */
 	public String getId() {
 		return id;	
 	}
+	/**
+	 * Return this scope's name
+	 */
 	public String getName() {
 		return name;
 	}
+	/**
+	 * Return this scope's description
+	 */
 	public String getDescription() {
 		return description;	
 	}
+	/**
+	 * Register and action with its accelerator. This action is
+	 * used only if there is no other action using this accelerator
+	 * defined in XML.
+	 */
 	public void registerAction(int accelerator,IAction action) {
 		defaultAcceleratorToAction.put(new Integer(accelerator),new DefaultAction(action));
 	}
@@ -73,7 +85,37 @@ public class AcceleratorScope {
 		}
 		return parentScope;
 	}
-	
+	/**
+	 * Reset the current mode
+	 */
+	private static void resetMode() {
+		currentMode = defaultMode;
+	}
+	/**
+	 * Set the current mode and service
+	 */
+	private static void setCurrentMode(KeyBindingService service,AcceleratorMode mode) {
+		if(service == currentService)
+			currentMode = mode;
+		else
+			currentMode = mode;
+	}
+	/**
+	 * Verify if the current mode was set with this service. Reset the mode
+	 * if not.
+	 */
+	private static void verifyService(KeyBindingService service) {
+		if(service == currentService)
+			return;
+		currentService = service;
+		resetMode();
+	}
+	/**
+	 * Initialize this scope with all accelerators defined in the default 
+	 * configuration and then override with the ones defined in the active
+	 * configuration. Fists initialize with the accelerators defined in the
+	 * parent scope and then override with the ones defined in this scope.
+	 */
 	public void initializeAccelerators(AcceleratorConfiguration configuration) {
 		this.configuration = configuration;
 		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
@@ -83,23 +125,10 @@ public class AcceleratorScope {
 		if(!IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID.equals(configuration.getId()))
 			initializeAccelerators(configuration.getId(),defaultMode,registry);
 	}
-	
-	private static void resetMode() {
-		currentMode = defaultMode;
-	}
-	private static void setCurrentMode(KeyBindingService service,AcceleratorMode mode) {
-		if(service == currentService)
-			currentMode = mode;
-		else
-			currentMode = mode;
-	}
-	private static void verifyService(KeyBindingService service) {
-		if(service == currentService)
-			return;
-		currentService = service;
-		resetMode();
-	}
-	
+	/**
+	 * Recurcive initialize this scope. First initialize its parents
+	 * and then override with the accelerators defined in this scope.
+	 */	
 	private void initializeAccelerators(String configId,AcceleratorMode mode,AcceleratorRegistry registry) {
 		//ISSUE: Must resolve conflicts
 		AcceleratorScope parent = getParentScope();
@@ -125,7 +154,10 @@ public class AcceleratorScope {
 			}
 		}
 	}
-	
+	/*
+	 * Returns true if the event has only modifier otherwise return
+	 * false
+	 */
 	private boolean isModifierOnly(KeyEvent event) {
     	if (event.character != 0)
     		return false;
@@ -138,7 +170,9 @@ public class AcceleratorScope {
     	}
     	return false;
     }
-
+	/*
+	 * Convert and event to an Integer.
+	 */
 	private Integer convertEvent(KeyEvent event) {
 		//ISSUE: Must fix the number 64.
     	if(event.stateMask == SWT.CONTROL) {
@@ -148,7 +182,11 @@ public class AcceleratorScope {
     	}
     	return new Integer(event.stateMask | event.character);
     }
-    
+    /**
+     * Process a key event. Find a action associated with the event
+     * and run the action. Returns true if an action was found otherwise
+     * returns false.
+     */ 
 	public boolean processKey(KeyBindingService service, KeyEvent e) {
 		if(isModifierOnly(e))
 			return false;
@@ -166,7 +204,9 @@ public class AcceleratorScope {
 		a.run(service,e);
 		return true;
 	}
-	
+	/**
+	 * Adapter for an IAction with a definition in XML.
+	 */
 	public static class AcceleratorAction {
 		String id;
 		AcceleratorAction(String defId) {
@@ -183,7 +223,9 @@ public class AcceleratorScope {
 			resetMode();
 		}
 	}
-	
+	/**
+	 * Adapter for an IAction without a definition in XML.
+	 */
 	public static class DefaultAction extends AcceleratorAction {
 		IAction action;
 		DefaultAction(IAction action) {
@@ -197,7 +239,22 @@ public class AcceleratorScope {
 			action.run();
 		}
 	}
-	public static class AcceleratorMode extends AcceleratorAction {
+	/**
+	 * Adapter for a Mode.
+	 * 
+	 * A mode represents a particular state of use in which the user has already
+ 	 * pressed a sequence (possibly of length one) of accelerator keys which matches
+	 * the beginning of a valid sequence of accelerator keys which will cause an
+	 * action to occur.
+	 * <p>
+	 * When a mode is active, the next accelerator key to be pressed is processed
+	 * in the context of the active mode. If it matches the next key in any valid
+	 * sequence, a new mode will become the active mode. If the next key presses
+	 * is invalid, the active mode becomes inactive and the user is returned to a 
+	 * modeless (defaultMode) state.
+	 * </p>
+	 */
+	public static class AcceleratorMode extends AcceleratorAction {	
 		private HashMap acceleratorToAction = new HashMap();
 		
 		AcceleratorMode() {

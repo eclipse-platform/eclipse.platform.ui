@@ -1,5 +1,4 @@
 package org.eclipse.ui.internal.registry;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -18,23 +17,37 @@ public class AcceleratorSet {
 	private String pluginId;
 	private String pluginVersion;
 	private HashSet accelerators;
-	
+	/**
+	 * Create an instance of AcceleratorSet and initializes 
+	 * it with its configuration id, scope id and plugin id.
+	 */		
 	public AcceleratorSet(String configurationId, String scopeId, String pluginId) {
 		this.configurationId = configurationId;
 		this.scopeId = scopeId;
 		this.pluginId = pluginId;
 		accelerators = new HashSet();
 	}
-	
+	/**
+	 * Returns this AcceleratorSet's configuration id.
+	 */
 	public String getConfigurationId() {
 		return configurationId;
 	}
+	/**
+	 * Returns this AcceleratorSet's scope id.
+	 */
 	public String getScopeId() {
 		return scopeId;
 	}
+	/**
+	 * Returns this AcceleratorSet's plugin id.
+	 */
 	public String getPluginId() {
 		return pluginId;	
 	}
+	/**
+	 * Returns an array with all accelerators defined in this set.
+	 */
 	public Accelerator[] getAccelerators() {
 		Accelerator[] result = new Accelerator[accelerators.size()];
 		accelerators.toArray(result);

@@ -1,10 +1,8 @@
 package org.eclipse.ui;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.KeyEvent;
 

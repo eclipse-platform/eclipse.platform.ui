@@ -531,6 +531,9 @@ private void updateMenuItem() {
 			menuItem.setEnabled(enabled);
 	}
 }
+/*
+ * Returns whether menus can have accelerators or not.
+ */
 public boolean getAcceleratorsAllowed() {
 	if(menu == null)
 		return true;
@@ -542,6 +545,9 @@ public boolean getAcceleratorsAllowed() {
 		return true;
 	return b.booleanValue();
 }
+/*
+ * Set whether menus can have accelerators or not.
+ */
 public void setAcceleratorsAllowed(boolean b) {
 	menu.getShell().getMenuBar().setData(ACCELERATORS_ALLOWED,new Boolean(b));
 }

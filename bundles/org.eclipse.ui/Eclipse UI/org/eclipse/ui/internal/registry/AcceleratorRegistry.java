@@ -1,5 +1,4 @@
 package org.eclipse.ui.internal.registry;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -15,19 +14,25 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * of accelerator scopes, and a list of accelerator sets.
  */
 public class AcceleratorRegistry {
+	//All registered AcceleratorConfiguration(s).
 	private List configurations;
+	//All registered AcceleratorScope(s).
 	private List scopes;
+	//All registered AcceleratorSet(s).
 	private List sets;
+	//All registered actions without definitions.
 	private List fakeAccelerators;
+	//Maps AcceleratorScope's ids to AcceleratorScope
 	private HashMap idToScope;
-	
+	/**
+	 * Create an instance of AcceleratorRegistry and initializes it.
+	 */		
 	public AcceleratorRegistry() {
 		configurations = new ArrayList();
 		scopes = new ArrayList();
 		sets = new ArrayList();
 		fakeAccelerators = new ArrayList();	
 	}
-
 	/**
 	 * Adds the given accelerator configuration to the registry.
 	 */	
@@ -106,15 +111,20 @@ public class AcceleratorRegistry {
 		accelarators.toArray(result);
 		return result;
 	}
-	
+	/**
+	 * Returns a List with all actions without definition registered
+	 * in this registry.
+	 */	
 	private List getFakeAccelerators() {
 		return fakeAccelerators;
 	}
-	
+	/**
+	 * Add a new accelerator to this registry for a action without
+	 * an action definiton.
+	 */
 	public void addFakeAccelerator(String id,int accelerator) {
 		fakeAccelerators.add(new Accelerator(id,accelerator));
 	}
-	
 	/**
 	 * Returns a list of all the configurations in the registry for which
 	 * there are registered accelerator sets.
@@ -139,7 +149,10 @@ public class AcceleratorRegistry {
 		list.toArray(result);
 		return result;	
 	}
-	
+	/**
+	 * Returns the scope associated to the specified id or null if 
+	 * none is found.
+	 */
 	public AcceleratorScope getScope(String scopeID) {
 		if(idToScope == null) {
 			idToScope = new HashMap();

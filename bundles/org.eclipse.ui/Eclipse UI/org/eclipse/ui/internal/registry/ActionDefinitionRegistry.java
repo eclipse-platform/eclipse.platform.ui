@@ -1,5 +1,4 @@
 package org.eclipse.ui.internal.registry;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -15,11 +14,12 @@ import org.eclipse.core.runtime.Platform;
  */
 public class ActionDefinitionRegistry {
 	private List actionDefinitions;
-	
+	/**
+	 * Create an instance of Accelerator and initializes it.
+	 */
 	public ActionDefinitionRegistry() {
 		actionDefinitions = new ArrayList();		
 	}
-
 	/**
 	 * Adds an action definition to the registry.
 	 */	

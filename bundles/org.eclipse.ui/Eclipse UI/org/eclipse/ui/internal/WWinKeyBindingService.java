@@ -1,9 +1,8 @@
+package org.eclipse.ui.internal;
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.ui.internal;
-
 import java.util.*;
 
 import org.eclipse.jface.action.Action;
@@ -25,18 +24,37 @@ import org.eclipse.ui.internal.registry.IActionSet;
  */
 public class WWinKeyBindingService {
 	
-	//Increased whenever the action mapping changes.
-	//E.g. adding/removing action sets.
+	/* A number increased whenever the action mapping changes so
+	 * its children can keep their mapping in sync with the ones in
+	 * the parent.
+	 */
 	private long updateNumber = 0;
+	/* Maps all global actions definition ids to the action */
 	private HashMap globalActionDefIdToAction = new HashMap();
+	/* Maps all action sets definition ids to the action */
 	private HashMap actionSetDefIdToAction = new HashMap();
+	/* A listener to property changes so the mappings can
+	 * be updated whenever the active configuration changes.
+	 */
 	private IPropertyChangeListener propertyListener;
-	
+	/* A number used to generate definition id for the action
+	 * without one 
+	 */
 	private long fakeDefinitionId = 0;
-		
+	/**
+	 * Create an instance of WWinKeyBindingService and initializes it.
+	 */			
 	public WWinKeyBindingService(final WorkbenchWindow window) {
 		IWorkbenchPage[] pages = window.getPages();
-		final PartListener partListener = new PartListener();
+		final IPartListener partListener = new IPartListener() {
+			public void partActivated(IWorkbenchPart part) {
+				update(part);
+			}
+			public void partBroughtToTop(IWorkbenchPart part) {}
+			public void partClosed(IWorkbenchPart part) {}
+			public void partDeactivated(IWorkbenchPart part) {}
+			public void partOpened(IWorkbenchPart part) {}
+		};
 		for(int i=0; i<pages.length;i++) {
 			pages[i].addPartListener(partListener);
 		}
@@ -65,15 +83,23 @@ public class WWinKeyBindingService {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(propertyListener);
 	}
+	/** 
+	 * Remove the propety change listener when the windows is disposed.
+	 */
 	public void dispose() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(propertyListener);
 	}
-		
+	/**
+	 * Register a global action in this service
+	 */	
 	public void registerGlobalAction(IAction action) {
 		updateNumber++;
 		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
 	}
+	/**
+	 * Register all action from the specifed action set.
+	 */	
 	public void registerActionSets(IActionSet sets[]) {
 		updateNumber++;
 		actionSetDefIdToAction.clear();
@@ -106,16 +132,24 @@ public class WWinKeyBindingService {
 			}
 		}
 	}
+	/**
+	 * Return the update number used to keep children and parent in sync.
+	 */
 	public long getUpdateNumber() {
 		return updateNumber;
 	}
+	/**
+	 * Returns a Map with all action registered in this service.
+	 */
 	public HashMap getMapping() {
 		HashMap result = (HashMap)globalActionDefIdToAction.clone();
 		result.putAll(actionSetDefIdToAction);
 		return result;
 	}
-	
-   	public static void update(IWorkbenchPart part) {
+	/*
+	 * Remove or restore the accelerators in the menus.
+	 */
+   	private static void update(IWorkbenchPart part) {
    		if(part==null)
    			return;
     	IWorkbenchPartSite site = part.getSite();
@@ -134,15 +168,5 @@ public class WWinKeyBindingService {
     		}
     	}
 		menuManager.updateAll(true);
-    }
-	    	
-    private static class PartListener implements IPartListener {
-	    public void partActivated(IWorkbenchPart part) {
-	    	update(part);
-	    }
-	    public void partBroughtToTop(IWorkbenchPart part) {}
-	    public void partClosed(IWorkbenchPart part) {}
-	    public void partDeactivated(IWorkbenchPart part) {}  
-	    public void partOpened(IWorkbenchPart part) {}
     }
 }
