@@ -319,8 +319,6 @@ public void testInvalidProjectDescription1() throws Throwable {
 	ProjectDescriptionReader reader = new ProjectDescriptionReader();
 	// Write out the project description file
 	ensureDoesNotExistInFileSystem(location.toFile());
-	ByteArrayOutputStream fs;
-	fs = new ByteArrayOutputStream();
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
 	ProjectDescription projDesc = reader.read(location);
@@ -340,8 +338,6 @@ public void testInvalidProjectDescription2() throws Throwable {
 	ProjectDescriptionReader reader = new ProjectDescriptionReader();
 	// Write out the project description file
 	ensureDoesNotExistInFileSystem(location.toFile());
-	ByteArrayOutputStream fs;
-	fs = new ByteArrayOutputStream();
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
 	ProjectDescription projDesc = reader.read(location);
@@ -378,8 +374,6 @@ public void testInvalidProjectDescription3() throws Throwable {
 	ProjectDescriptionReader reader = new ProjectDescriptionReader();
 	// Write out the project description file
 	ensureDoesNotExistInFileSystem(location.toFile());
-	ByteArrayOutputStream fs;
-	fs = new ByteArrayOutputStream();
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
 	ProjectDescription projDesc = reader.read(location);
