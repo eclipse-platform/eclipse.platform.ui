@@ -180,7 +180,7 @@ public class TocManager {
 		Collection contributedTocFiles = new ArrayList();
 		// find extension point
 		IExtensionPoint xpt =
-			Platform.getPluginRegistry().getExtensionPoint(
+			Platform.getExtensionRegistry().getExtensionPoint(
 				HelpPlugin.PLUGIN_ID,
 				"toc");
 		if (xpt == null)
