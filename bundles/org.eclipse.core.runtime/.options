@@ -21,6 +21,9 @@ org.eclipse.core.runtime/jobs/errorondeadlock=false
 # Prints time taken by Plugin constructors and startup() and shutdown() methods.
 org.eclipse.core.runtime/timing/startup=false
 
+# Captures performance event information
+org.eclipse.core.runtime/trace=false
+
 # Logs performance events that take longer than specified threshold value
 org.eclipse.core.runtime/trace/logfailure=false
 

@@ -112,13 +112,16 @@ public class EventStats {
 	public static EventStats getStats(String eventName, String blameName, String contextName) {
 		Assert.isNotNull(eventName);
 		Assert.isNotNull(blameName);
-		EventStats newStats = new EventStats(eventName, blameName, contextName);
-		EventStats oldStats = (EventStats) statMap.get(newStats);
-		if (oldStats == null) {
-			statMap.put(newStats, newStats);
-			return newStats;
+		EventStats stats = new EventStats(eventName, blameName, contextName);
+		if (InternalPlatform.DEBUG_TRACE) {
+			//use existing stats object if available
+			EventStats oldStats = (EventStats) statMap.get(stats);
+			if (oldStats == null)
+				statMap.put(stats, stats);
+			else
+				stats = oldStats;
 		}
-		return oldStats;
+		return stats;
 	}
 
 	/**
@@ -177,7 +180,7 @@ public class EventStats {
 		runningTime += elapsed;
 		if (elapsed > getThreshold(event)) {
 			failureCount++;
-			if (InternalPlatform.DEBUG_LOG_PERF_FAILURE) {
+			if (InternalPlatform.DEBUG_TRACE_LOG) {
 				String msg = NLS.bind(Messages.perf_failure, new Object[] {event, blame, context, new Long(elapsed)});
 				IStatus failure = new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, msg, new RuntimeException());
 				InternalPlatform.getDefault().log(failure);
