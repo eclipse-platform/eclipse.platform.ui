@@ -236,6 +236,7 @@ public class SyncSet {
 		IContainer container = (IContainer)resource;
 		IPath path = container.getFullPath();
 		Set children = (Set)parents.get(path);
+		if (children == null) return new SyncInfo[0];
 		SyncInfo[] infos = new SyncInfo[children.size()];
 		int i = 0;
 		for (Iterator iter = children.iterator(); iter.hasNext();) {
