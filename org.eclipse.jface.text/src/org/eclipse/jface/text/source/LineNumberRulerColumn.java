@@ -59,11 +59,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class InternalListener implements IViewportListener, ITextListener {
 		
+		private boolean fCachedRedrawState= true;
+		
 		/*
 		 * @see IViewportListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int verticalPosition) {
-			if (verticalPosition != fScrollPos)
+			if (fCachedRedrawState && verticalPosition != fScrollPos)
 				redraw();
 		}
 		
@@ -72,18 +74,18 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		public void textChanged(TextEvent event) {
 			
+			fCachedRedrawState= event.getViewerRedrawState();
+			if (!fCachedRedrawState)
+				return;
+
 			if (updateNumberOfDigits()) {
 				computeIndentations();
 				layout(event.getViewerRedrawState());
 				return;
 			}
 			
-			if (!event.getViewerRedrawState())
-				return;
-				
 			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
 				postRedraw();
-
 		}
 	}
 	

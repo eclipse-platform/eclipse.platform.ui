@@ -676,17 +676,17 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		if (DEBUG)
 			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
 		
-		try {
-			for (Iterator e= fPendingRequests.iterator(); e.hasNext();) {
-				Request request= (Request) e.next();
-				if (request.isReplaceRequest())
-					replace(request.offset, request.length, request.text);
-				else
-					set(request.text);
-			}
-		} finally {
-			fPendingRequests= null;
-			fActiveRewriteSession= null;
+		Iterator e= fPendingRequests.iterator();
+		
+		fPendingRequests= null;
+		fActiveRewriteSession= null;
+		
+		while (e.hasNext()) {
+			Request request= (Request) e.next();
+			if (request.isReplaceRequest())
+				replace(request.offset, request.length, request.text);
+			else
+				set(request.text);
 		}
 	}
 	
