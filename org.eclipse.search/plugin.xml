@@ -36,6 +36,15 @@
 	<attribute name="line"/>
 </extension>
 
+<extension 
+	point="org.eclipse.ui.markerImageProviders">
+	<imageprovider 
+		id="org.eclipse.ui.searchMarkerProvider"
+		markertype="org.eclipse.search.searchmarker"
+		icon="icons/basic/obj16/searchm_obj.gif">
+	</imageprovider>
+</extension>
+
 <extension point="org.eclipse.ui.actionSets">
 	<actionSet
 		id="org.eclipse.search.searchActionSet"
