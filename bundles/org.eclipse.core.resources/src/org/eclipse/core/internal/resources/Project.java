@@ -354,7 +354,7 @@ public IPath getRawLocation() {
 public IProject[] getReferencedProjects() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
 	checkAccessible(getFlags(info));
-	return ((ProjectDescription) internalGetDescription()).getReferencedProjects(true);
+	return ((ProjectInfo)info).getDescription().getReferencedProjects(true);
 }
 /**
  * @see IProject
