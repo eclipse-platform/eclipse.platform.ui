@@ -134,6 +134,8 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
 	private String categoryId;
 	private String description;
     private String value;
+
+    private boolean isEditable;
 	/**
 	 * For dynamic UI
 	 * 
@@ -163,6 +165,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
 		String defaultsId,
 		String value,
 		String categoryId,
+		boolean isEditable, 
 		String fontDescription) {
 		this.label = fontName;
 		this.id = uniqueId;
@@ -170,6 +173,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
 		this.value = value;
 		this.categoryId = categoryId;
 		this.description = fontDescription;
+		this.isEditable = isEditable;
 	}
 
 	/**
@@ -220,5 +224,12 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
      */
     public String getValue() {
         return value;
+    }
+    
+    /**
+     * @return Returns the isEditable.
+     */
+    public boolean isEditable() {
+        return isEditable;
     }
 }

@@ -37,11 +37,9 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
     public static String ATT_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
-	public static final String ATT_DIRECTION = "direction"; //$NON-NLS-1$
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
-	public static final String ATT_INITIALVALUE = "initialValue"; //$NON-NLS-1$
+	public static final String ATT_IS_EDITABLE = "isEditable"; //$NON-NLS-1$
 	public static final String ATT_LABEL = "label"; //$NON-NLS-1$
-	public static final String ATT_PERCENTAGE = "percentage"; //$NON-NLS-1$
 	public static final String ATT_VALUE = "value"; //$NON-NLS-1$
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$
 	
@@ -65,8 +63,6 @@ public class ThemeRegistryReader extends RegistryReader {
 	private Collection colorDefinitions = new ArrayList();
     
 	private Collection fontDefinitions = new ArrayList();
-    
-	private Collection gradientDefinitions = new ArrayList();
 	
 	private ThemeDescriptor themeDescriptor = null;
 	private ThemeRegistry themeRegistry;
@@ -116,14 +112,6 @@ public class ThemeRegistryReader extends RegistryReader {
         return fontDefinitions;
     }
 
-    /**     
-	 * Returns the gradient definitions.
-     *
-     * @return the gradient definitions
-     */
-    public Collection getGradientDefinitions() {        
-        return gradientDefinitions;
-    }
 	
     /**
      * Read a category.
@@ -183,6 +171,11 @@ public class ThemeRegistryReader extends RegistryReader {
 		String categoryId = element.getAttribute(ATT_CATEGORYID);
 		
 		String description = null;
+		boolean isEditable = true;
+		String isEditableString = element.getAttribute(ATT_IS_EDITABLE);
+		if (isEditableString != null) {
+		    isEditable = Boolean.valueOf(isEditableString).booleanValue();
+		}
 
 		IConfigurationElement[] descriptions =
 			element.getChildren(TAG_DESCRIPTION);
@@ -196,6 +189,7 @@ public class ThemeRegistryReader extends RegistryReader {
 				defaultMapping,
 				value,
 				categoryId,
+				isEditable,
 				description,
 				element
 					.getDeclaringExtension()
@@ -304,6 +298,12 @@ public class ThemeRegistryReader extends RegistryReader {
 		}
 		
 		String categoryId = element.getAttribute(ATT_CATEGORYID);
+
+		boolean isEditable = true;
+		String isEditableString = element.getAttribute(ATT_IS_EDITABLE);
+		if (isEditableString != null) {
+		    isEditable = Boolean.valueOf(isEditableString).booleanValue();
+		}
 		
 		String description = null;
 
@@ -320,6 +320,7 @@ public class ThemeRegistryReader extends RegistryReader {
 				defaultMapping,
 				value,
 				categoryId,
+				isEditable,
 				description);	    
 	}	
 	

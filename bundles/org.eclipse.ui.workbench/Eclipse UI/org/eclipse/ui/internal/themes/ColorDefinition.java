@@ -27,6 +27,7 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	private String pluginId;
 	private String rawValue;
 	private String categoryId;
+	boolean isEditable;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -47,6 +48,7 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 		String defaultsTo,
 		String value,
 		String categoryId,
+		boolean isEditable,
 		String description,
 		String pluginId) {
 
@@ -56,6 +58,7 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 		this.rawValue = value;
 		this.categoryId = categoryId;
 		this.description = description;
+		this.isEditable = isEditable;
 		this.pluginId = pluginId;
 	}
 
@@ -122,4 +125,11 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	public String toString() {
 		return getId();
 	}	
+	
+    /**
+     * @return Returns the isEditable.
+     */
+    public boolean isEditable() {
+        return isEditable;
+    }
 }

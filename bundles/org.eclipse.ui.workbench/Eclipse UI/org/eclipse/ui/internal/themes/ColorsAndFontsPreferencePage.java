@@ -1392,6 +1392,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		    			
 			ColorDefinition[] colorDefinitions = themeRegistry.getColors();
             for (int i = 0; i < colorDefinitions.length; i++) {
+                if (!colorDefinitions[i].isEditable())
+                    continue;
 			    String catId = colorDefinitions[i].getCategoryId();
 			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(colorDefinitions[i]);
@@ -1400,6 +1402,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			
 			FontDefinition[] fontDefinitions = themeRegistry.getFonts();
             for (int i = 0; i < fontDefinitions.length; i++) {
+                if (!fontDefinitions[i].isEditable())
+                    continue;                
 			    String catId = fontDefinitions[i].getCategoryId();
 			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
 			        list.add(fontDefinitions[i]);
