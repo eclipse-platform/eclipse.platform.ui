@@ -11,8 +11,8 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -48,29 +48,56 @@ public class LaunchViewer extends TreeViewer {
 	}
 			
 	/**
-	 * Update the icons for all stack frame children of the given thread.
+	 * Update the images for all stack frame children of the given thread.
+	 * 
+	 * @param parentThread the thread whose frames should be updated
 	 */	
-	protected void updateStackFrameIcons(IThread parentThread) {
+	protected void updateStackFrameImages(IThread parentThread) {
 		Widget parentItem= findItem(parentThread);
 		if (parentItem != null) {
 			Item[] items= getItems((Item)parentItem);
 			for (int i = 0; i < items.length; i++) {
-				TreeItem treeItem = (TreeItem)items[i];
-				updateOneStackFrameIcon(treeItem, (IStackFrame)treeItem.getData());
+				updateTreeItemImage((TreeItem)items[i]);
 			}
 		}
 	}
 	
 	/**
-	 * For the given stack frame and associated TreeItem, update the icon on the
-	 * TreeItem.
+	 * Updates the image of the given tree item.
+	 * 
+	 * @param treeItem the item
 	 */
-	protected void updateOneStackFrameIcon(TreeItem treeItem, IStackFrame stackFrame) {
+	protected void updateTreeItemImage(TreeItem treeItem) {
 		ILabelProvider provider = (ILabelProvider) getLabelProvider();
-		Image image = provider.getImage(stackFrame);
+		Image image = provider.getImage(treeItem.getData());
 		if (image != null) {
 			treeItem.setImage(image);
 		}			
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in AbstractTreeViewer.
+	 */
+	protected void doUpdateItem(Item item, Object element) {
+		// update icon and label
+		ILabelProvider provider= (ILabelProvider) getLabelProvider();
+		String text= provider.getText(element);
+		if ("".equals(item.getText()) || !LaunchView.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
+			// If an element already has a label, don't set the label to
+			// the pending label. This avoids labels flashing when they're
+			// updated.
+			item.setText(text);
+		}
+		Image image = provider.getImage(element);
+		if (item.getImage() != image) {
+			item.setImage(image);
+		}
+		if (provider instanceof IColorProvider) {
+			IColorProvider cp = (IColorProvider) provider;
+			TreeItem treeItem = (TreeItem) item;
+			treeItem.setForeground(cp.getForeground(element));
+			treeItem.setBackground(cp.getBackground(element));
+		}
 	}
 	
 	/**

@@ -114,6 +114,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private IMarker fInstructionPointer;
 	private boolean fShowingEditor = false;
 	
+	public final static String PENDING_LABEL= DebugUIViewsMessages.getString("LaunchView.9"); //$NON-NLS-1$
+	
 	// marker attributes
 	private final static String[] fgStartEnd = 
 		new String[] {IMarker.CHAR_START, IMarker.CHAR_END};
@@ -235,7 +237,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				if (!(element instanceof IDebugElement)) {
 					return presentation.getText(element);
 				}
-				return DebugUIViewsMessages.getString("LaunchView.9"); //$NON-NLS-1$
+				return PENDING_LABEL;
 			}
 		};
 		LaunchViewDecoratingLabelProvider labelProvider= new LaunchViewDecoratingLabelProvider(provider, new LaunchViewLabelDecorator(presentation));

@@ -28,7 +28,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -157,16 +156,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 	
 	/**
-	 * Helper method to update the label of the given element - must be called in UI thread
-	 */
-	protected void labelChanged(Object element) {
-		if (isAvailable()) {
-			getView().showViewer();
-			((LaunchView) getView()).getLabelDecorator().computeText(element);
-		}
-	}
-	
-	/**
 	 * Updates the stack frame icons for a running thread.
 	 * This is useful for the case where a thread is resumed
 	 * temporarily  but the view should keep the stack frame 
@@ -174,7 +163,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	protected void updateRunningThread(IThread thread) {
 		labelChanged(thread);
-		getLaunchViewer().updateStackFrameIcons(thread);
+		getLaunchViewer().updateStackFrameImages(thread);
 		clearSourceSelection(thread);
 	}
 
@@ -216,13 +205,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			IStackFrame frame = thread.getTopStackFrame();
 			if (frame != null && frame.equals(fLastStackFrame)) {
 				if (wasTimedOut) {
-					getLaunchViewer().updateStackFrameIcons(thread);
+					getLaunchViewer().updateStackFrameImages(thread);
 				}
-				// Update the thread and top stack frame text and thread image separately to allow for
-				// background text computation.
-				getLaunchViewer().update(thread, new String[] {IBasicPropertyConstants.P_IMAGE});
-				labelChanged(thread);
-				labelChanged(frame);
+				getLaunchViewer().update(new Object[] {thread, frame}, null);
 				if (!evaluationEvent) {
 					getLaunchViewer().setSelection(new StructuredSelection(frame));
 				} else if (wasTimedOut) {
