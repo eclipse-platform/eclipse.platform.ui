@@ -11,26 +11,16 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.progress.IPendingPlaceholder;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers
@@ -159,33 +149,59 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 		}
 
+		Item[] currentItems = getChildren(widget);
+		if (currentItems.length == 1) {
+			if (currentItems[0].getData() instanceof IPendingPlaceholder)
+				remove(currentItems[0].getData());
+		}
+
 		if (childElements.length > 0) {
-			List children = Arrays.asList(getSortedChildren(parentElement));
-			for (int cc = 0; cc < childElements.length; cc++) {
 
-				int ix = children.indexOf(childElements[cc]);
-				if (ix < 0) // child not found: ignore
-					continue;
-
-				Item[] ch = getChildren(widget);
-				if (ch.length + 1 == children.size()) {
-					createTreeItem(widget, childElements[cc], ix);
-					// insert child at position
-					if (ch.length == 0) {
-						//System.out.println("WORKAROUND setRedraw");
-						tree.setRedraw(false); // WORKAROUND
-						tree.setRedraw(true); // WORKAROUND
-					}
-					continue;
-				}
-
-				// couldn't handle this child:
-				// skip other children and do general case
-				// call refresh rather than internalRefresh to preserve selection
-				refresh(parentElement);
-				return;
+			Object[] filtered = filter(childElements);
+			for (int i = 0; i < filtered.length; i++) {
+				Object element = filtered[i];
+				int index = indexForElement(widget, element);
+				createTreeItem(widget, filtered[i], index);
 			}
 		}
+	}
+
+	/**
+	 * Returns the index where the item should be inserted.
+	 * @param parent The parent widget the element will be inserted into.
+	 * @param element The element to insert.
+	 */
+	protected int indexForElement(Widget parent, Object element) {
+		ViewerSorter sorter = getSorter();
+		Item[] items = getChildren(parent);
+
+		if (sorter == null)
+			return items.length;
+		int count = items.length;
+		int min = 0, max = count - 1;
+
+		while (min <= max) {
+			int mid = (min + max) / 2;
+			Object data = items[mid].getData();
+			int compare = sorter.compare(this, data, element);
+			if (compare == 0) {
+				// find first item > element
+				while (compare == 0) {
+					++mid;
+					if (mid >= count) {
+						break;
+					}
+					data = items[mid].getData();
+					compare = sorter.compare(this, data, element);
+				}
+				return mid;
+			}
+			if (compare < 0)
+				min = mid + 1;
+			else
+				max = mid - 1;
+		}
+		return min;
 	}
 	/**
 	 * Adds the given child element to this viewer as a child of the given parent element.
