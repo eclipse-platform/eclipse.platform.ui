@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -194,6 +196,7 @@ public class RemoteTreeViewer extends TreeViewer {
      */
     public RemoteTreeViewer(Composite parent) {
         super(parent);
+        addDisposeListener();
     }
 
     /**
@@ -205,6 +208,7 @@ public class RemoteTreeViewer extends TreeViewer {
      */
     public RemoteTreeViewer(Composite parent, int style) {
         super(parent, style);
+        addDisposeListener();
     }
 
     /**
@@ -214,6 +218,15 @@ public class RemoteTreeViewer extends TreeViewer {
      */
     public RemoteTreeViewer(Tree tree) {
         super(tree);
+        addDisposeListener();
+    }
+    
+    private void addDisposeListener() {
+        getControl().addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e) {
+                cancelJobs();
+            }
+        });
     }
     
     protected void runDeferredUpdates() {
