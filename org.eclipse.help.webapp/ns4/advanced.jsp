@@ -115,11 +115,11 @@ function doAdvancedSearch()
 		{
 			if (buttons[i].type != "checkbox") continue;
 			if (buttons[i].checked == false) continue;
-			scope += "&scope="+escape(buttons[i].name);
+			scope += "&scopeJS13="+escape(buttons[i].name);
 		}
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
-		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
+		var query = "searchWordJS13="+escape(searchWord)+"&maxHits="+maxHits + scope;
 		window.opener.parent.doSearch(query);
 		window.opener.focus();
 		window.close();

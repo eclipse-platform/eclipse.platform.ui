@@ -55,11 +55,14 @@ TABLE, TD {
 <body >
 
 <%
-if(request.getParameter("searchWord")!=null)
+if(request.getParameter("searchWord")!=null || request.getParameter("searchWordJS13")!=null)
 {
 	// Load the results
 	ContentUtil content = new ContentUtil(application, request);
-	Element resultsElement = content.loadSearchResults(request.getQueryString());
+	String sQuery=request.getQueryString();
+	sQuery=UrlUtil.changeParameterEncoding(sQuery, "searchWordJS13", "searchWord");
+	sQuery=UrlUtil.changeParameterEncoding(sQuery, "scopeJS13", "scope");
+	Element resultsElement = content.loadSearchResults(sQuery);
 	if (resultsElement == null){
 		out.write(WebappResources.getString("Nothing_found", request));
 		return;

@@ -92,7 +92,7 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
+	advancedDialog = window.open("advanced.jsp?searchWordJS13="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 
@@ -113,7 +113,7 @@ function doSearch()
 	if (!searchWord || searchWord == "")
 		return;
 	else
-		parent.doSearch("searchWord="+escape(searchWord)+"&maxHits="+maxHits);
+		parent.doSearch("searchWordJS13="+escape(searchWord)+"&maxHits="+maxHits);
 }
 
 </script>
