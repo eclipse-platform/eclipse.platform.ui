@@ -191,12 +191,12 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 					IValue value = ((IExpression)item).getValue();
 					if (value != null) {
 						buf.append(value.getReferenceTypeName());
-						buf.append(' '); //$NON-NLS-1$
+						buf.append(' ');
 					}
 					buf.append(getDefaultText(item));
 					return buf.toString(); 
 				} else if (item instanceof IVariable) {
-					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
+					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString();
 				}
 			} catch (DebugException de) {
 				DebugUIPlugin.log(de);
@@ -356,4 +356,3 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		fLabelProviders = labelProviders;
 	}
 }
-
