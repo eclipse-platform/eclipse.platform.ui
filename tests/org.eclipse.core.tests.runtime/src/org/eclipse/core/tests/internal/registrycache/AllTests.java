@@ -20,7 +20,7 @@ public AllTests(String name) {
 	super(name);
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite();
+	TestSuite suite = new TestSuite(AllTests.class.getName());
 	suite.addTest(RegistryCacheTest.suite());
 	suite.addTest(LazyRegistryCacheTest.suite());
 	return suite;
