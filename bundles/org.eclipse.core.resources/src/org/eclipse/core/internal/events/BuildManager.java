@@ -207,34 +207,10 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
 			leftover.removeAll(Arrays.asList(ordered));
 			IProject[] unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-			int projectWork = ordered.length + unordered.length;
-			if (projectWork > 0)
-				projectWork = Policy.totalWork / projectWork;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, ICoreConstants.MSG_EVENTS_ERRORS, null);
 
-			//loop the build until no more rebuilds are requested
-			int maxIterations = workspace.getDescription().getMaxBuildIterations();
-			if (maxIterations <= 0)
-				maxIterations = 1;
-			rebuildRequested = true;
-			for (int iter = 0; rebuildRequested && iter < maxIterations; iter++) {
-				rebuildRequested = false;
-				builtProjects.clear();
-				for (int i = 0; i < ordered.length; i++) {
-					if (ordered[i].isAccessible()) {
-						basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
-						builtProjects.add(ordered[i]);
-					}
-				}
-				for (int i = 0; i < unordered.length; i++) {
-					if (unordered[i].isAccessible()) {
-						basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
-						builtProjects.add(unordered[i]);
-					}
-				}
-				//subsequent builds should always be incremental
-				trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
-			}
+			basicBuildLoop(ordered, unordered, trigger, status, monitor);
+
 			// if the status is not ok, throw an exception 
 			if (!status.isOK())
 				throw new ResourceException(status);
@@ -245,6 +221,37 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		}
 	} finally {
 		monitor.done();
+	}
+}
+
+/**
+ * Loop the workspace build until no more builders request a rebuild.
+ */
+protected void basicBuildLoop(IProject[] ordered, IProject[] unordered, int trigger, MultiStatus status, IProgressMonitor monitor) {
+	int projectWork = ordered.length + unordered.length;
+	if (projectWork > 0)
+		projectWork = Policy.totalWork / projectWork;
+	int maxIterations = workspace.getDescription().getMaxBuildIterations();
+	if (maxIterations <= 0)
+		maxIterations = 1;
+	rebuildRequested = true;
+	for (int iter = 0; rebuildRequested && iter < maxIterations; iter++) {
+		rebuildRequested = false;
+		builtProjects.clear();
+		for (int i = 0; i < ordered.length; i++) {
+			if (ordered[i].isAccessible()) {
+				basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
+				builtProjects.add(ordered[i]);
+			}
+		}
+		for (int i = 0; i < unordered.length; i++) {
+			if (unordered[i].isAccessible()) {
+				basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
+				builtProjects.add(unordered[i]);
+			}
+		}
+		//subsequent builds should always be incremental
+		trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
 	}
 }
 
