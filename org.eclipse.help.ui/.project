@@ -3,7 +3,6 @@
 	<name>org.eclipse.help.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.apache.xerces</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
