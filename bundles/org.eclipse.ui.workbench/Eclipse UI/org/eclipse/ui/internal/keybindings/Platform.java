@@ -16,7 +16,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Platform {
 	
-	public final static String TAG = "platform";		
+	public final static String ELEMENT = "platform";		
 
 	public static Platform create() {
 		return new Platform(Path.create());
@@ -32,26 +32,18 @@ public final class Platform {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		return Platform.create(Path.read(memento.getChild(Path.TAG)));
-	}
-
-	public static void write(IMemento memento, Platform platform)
-		throws IllegalArgumentException {
-		if (memento == null || platform == null)
-			throw new IllegalArgumentException();
-		
-		Path.write(memento.createChild(Path.TAG), platform.getPath());
+		return Platform.create(Path.read(memento.getChild(Path.ELEMENT)));
 	}
 
 	public static Platform system() {
-		List elements = new ArrayList();				
+		List pathItems = new ArrayList();				
 		String platform = SWT.getPlatform();
 		
 		if (platform != null) {
-			elements.add(Element.create(platform));
+			pathItems.add(PathItem.create(platform));
 		}
 			
-		return Platform.create(Path.create(elements));
+		return Platform.create(Path.create(pathItems));
 	}	
 	
 	private Path path;
@@ -90,5 +82,13 @@ public final class Platform {
 			return false;
 		
 		return path.equals(((Platform) object).path);		
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+		
+		path.write(memento.createChild(Path.ELEMENT));
 	}
 }

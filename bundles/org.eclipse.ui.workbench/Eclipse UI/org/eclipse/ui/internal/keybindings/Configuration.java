@@ -12,7 +12,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Configuration {
 	
-	public final static String TAG = "configuration";		
+	public final static String ELEMENT = "configuration";		
 	
 	public static Configuration create() {
 		return new Configuration(Path.create());
@@ -28,17 +28,9 @@ public final class Configuration {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		return Configuration.create(Path.read(memento.getChild(Path.TAG)));
+		return Configuration.create(Path.read(memento.getChild(Path.ELEMENT)));
 	}
 
-	public static void write(IMemento memento, Configuration configuration)
-		throws IllegalArgumentException {
-		if (memento == null || configuration == null)
-			throw new IllegalArgumentException();
-		
-		Path.write(memento.createChild(Path.TAG), configuration.getPath());
-	}
-	
 	private Path path;
 	
 	private Configuration(Path path)
@@ -75,5 +67,13 @@ public final class Configuration {
 			return false;
 		
 		return path.equals(((Configuration) object).path);		
+	}
+	
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+		
+		path.write(memento.createChild(Path.ELEMENT));
 	}
 }

@@ -12,7 +12,7 @@ import org.eclipse.ui.IMemento;
 
 public final class KeyStroke implements Comparable {
 
-	public final static String TAG = "keystroke";
+	public final static String ELEMENT = "keystroke";
 	private final static String ATTRIBUTE_ACCELERATOR = "accelerator";
 
 	public static KeyStroke create(int accelerator) {
@@ -45,14 +45,6 @@ public final class KeyStroke implements Comparable {
 		return KeyStroke.create(accelerator.intValue());
 	}
 
-	public static void write(IMemento memento, KeyStroke keyStroke)
-		throws IllegalArgumentException {
-		if (memento == null || keyStroke == null)
-			throw new IllegalArgumentException();
-			
-		memento.putInteger(ATTRIBUTE_ACCELERATOR, keyStroke.getAccelerator());
-	}
-
 	private int accelerator;
 
 	private KeyStroke(int accelerator) {
@@ -74,5 +66,13 @@ public final class KeyStroke implements Comparable {
 	public boolean equals(Object object) {
 		return object instanceof KeyStroke && 
 			accelerator == ((KeyStroke) object).accelerator;	
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		memento.putInteger(ATTRIBUTE_ACCELERATOR, accelerator);
 	}
 }

@@ -12,7 +12,7 @@ import org.eclipse.ui.IMemento;
 
 final class State implements Comparable {
 
-	final static String TAG = "state";
+	final static String ELEMENT = "state";
 
 	static State create(Configuration configuration, Locale locale, 
 		Platform platform, Scope scope)
@@ -26,23 +26,11 @@ final class State implements Comparable {
 			throw new IllegalArgumentException();
 		
 		Configuration configuration = 
-			Configuration.read(memento.getChild(Configuration.TAG));
-		Locale locale = Locale.read(memento.getChild(Locale.TAG));
-		Platform platform = Platform.read(memento.getChild(Platform.TAG));
-		Scope scope = Scope.read(memento.getChild(Scope.TAG));
+			Configuration.read(memento.getChild(Configuration.ELEMENT));
+		Locale locale = Locale.read(memento.getChild(Locale.ELEMENT));
+		Platform platform = Platform.read(memento.getChild(Platform.ELEMENT));
+		Scope scope = Scope.read(memento.getChild(Scope.ELEMENT));
 		return State.create(configuration, locale, platform, scope);
-	}
-
-	static void write(IMemento memento, State state)
-		throws IllegalArgumentException {
-		if (memento == null || state == null)
-			throw new IllegalArgumentException();	
-			
-		Configuration.write(memento.createChild(Configuration.TAG),
-			state.getConfiguration());
-		Locale.write(memento.createChild(Locale.TAG), state.getLocale());
-		Platform.write(memento.createChild(Platform.TAG), state.getPlatform());
-		Scope.write(memento.createChild(Scope.TAG), state.getScope());
 	}
 
 	//private List paths;
@@ -60,8 +48,6 @@ final class State implements Comparable {
 		if (configuration == null || locale == null || platform == null || 
 			scope == null)
 			throw new IllegalArgumentException();
-		
-		
 		
 		this.configuration = configuration;
 		this.locale = locale;
@@ -140,7 +126,15 @@ final class State implements Comparable {
 			locale.equals(state.locale) && platform.equals(state.platform) && 
 			scope.equals(state.scope);
 	}
+
+	void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();	
+			
+		configuration.write(memento.createChild(Configuration.ELEMENT));
+		locale.write(memento.createChild(Locale.ELEMENT));
+		platform.write(memento.createChild(Platform.ELEMENT));
+		scope.write(memento.createChild(Scope.ELEMENT));
+	}
 }
-
-
-

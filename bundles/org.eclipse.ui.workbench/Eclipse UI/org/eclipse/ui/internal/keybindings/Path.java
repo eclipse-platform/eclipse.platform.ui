@@ -19,25 +19,25 @@ import org.eclipse.ui.IMemento;
 public final class Path implements Comparable {
 
 	public final static int MAXIMUM_DEPTH = 16;
-	public final static String TAG = "path";
+	public final static String ELEMENT = "path";
 
 	public static Path create() {
 		return new Path(Collections.EMPTY_LIST);
 	}
 
-	public static Path create(Element element)
+	public static Path create(PathItem pathItem)
 		throws IllegalArgumentException {
-		return new Path(Collections.singletonList(element));
+		return new Path(Collections.singletonList(pathItem));
 	}
 
-	public static Path create(Element[] elements)
+	public static Path create(PathItem[] pathItems)
 		throws IllegalArgumentException {
-		return new Path(Arrays.asList(elements));
+		return new Path(Arrays.asList(pathItems));
 	}
 
-	public static Path create(List elements)
+	public static Path create(List pathItems)
 		throws IllegalArgumentException {
-		return new Path(elements);
+		return new Path(pathItems);
 	}
 
 	public static Path read(IMemento memento)
@@ -45,50 +45,38 @@ public final class Path implements Comparable {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		IMemento[] mementos = memento.getChildren(Element.TAG);
+		IMemento[] mementos = memento.getChildren(PathItem.ELEMENT);
 		
 		if (mementos == null)
 			throw new IllegalArgumentException();
 		
-		List elements = new ArrayList(mementos.length);
+		List pathItems = new ArrayList(mementos.length);
 		
 		for (int i = 0; i < mementos.length; i++)					
-			elements.add(Element.read(mementos[i]));
+			pathItems.add(PathItem.read(mementos[i]));
 		
-		return Path.create(elements);
+		return Path.create(pathItems);
 	}
 
-	public static void write(IMemento memento, Path path)
-		throws IllegalArgumentException {
-		if (memento == null || path == null)
-			throw new IllegalArgumentException();
-			
-		Iterator iterator = path.getElements().iterator();
-		
-		while (iterator.hasNext())
-			Element.write(memento.createChild(Element.TAG), 
-				(Element) iterator.next()); 
-	}
+	private List pathItems;
 
-	private List elements;
-
-	private Path(List elements)
+	private Path(List pathItems)
 		throws IllegalArgumentException {
 		super();
 		
-		if (elements == null || elements.size() >= MAXIMUM_DEPTH)
+		if (pathItems == null || pathItems.size() >= MAXIMUM_DEPTH)
 			throw new IllegalArgumentException();
 		
-		this.elements = Collections.unmodifiableList(new ArrayList(elements));
-		Iterator iterator = this.elements.iterator();
+		this.pathItems = Collections.unmodifiableList(new ArrayList(pathItems));
+		Iterator iterator = this.pathItems.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof Element))
+			if (!(iterator.next() instanceof PathItem))
 				throw new IllegalArgumentException();
 	}
 
-	public List getElements() {
-		return elements;
+	public List getPathItems() {
+		return pathItems;
 	}
 
 	public int match(Path path)
@@ -97,7 +85,7 @@ public final class Path implements Comparable {
 			throw new IllegalArgumentException();
 			
 		if (path.equalsOrIsChildOf(this)) 
-			return path.elements.size() - elements.size();
+			return path.pathItems.size() - pathItems.size();
 		else 
 			return -1;
 	}
@@ -106,22 +94,33 @@ public final class Path implements Comparable {
 		if (!(object instanceof Path))
 			throw new ClassCastException();
 
-		return Util.compare(elements.iterator(), 
-			((Path) object).elements.iterator());
+		return Util.compare(pathItems.iterator(), 
+			((Path) object).pathItems.iterator());
 	}
 	
 	public boolean equals(Object object) {
 		return object instanceof Path && 
-			elements.equals(((Path) object).elements);
+			pathItems.equals(((Path) object).pathItems);
 	}
 
 	public boolean equalsOrIsChildOf(Path path) {
-		return elements.size() >= path.elements.size() && 
-			elements.subList(0, path.elements.size()).equals(path.elements);
+		return pathItems.size() >= path.pathItems.size() && 
+			pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
 	}
 			
 	public boolean isChildOf(Path path) {
-		return elements.size() > path.elements.size() && 
-			elements.subList(0, path.elements.size()).equals(path.elements);
+		return pathItems.size() > path.pathItems.size() && 
+			pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		Iterator iterator = getPathItems().iterator();
+		
+		while (iterator.hasNext())
+			((PathItem) iterator.next()).write(memento.createChild(PathItem.ELEMENT)); 
 	}
 }

@@ -145,19 +145,19 @@ public final class KeyBindingManager {
 				acceleratorConfigurations[i];
 			String id = acceleratorConfiguration.getId();
 			String initialId = id;
-			List elements = new ArrayList();				
+			List pathItems = new ArrayList();				
 			acceleratorConfiguration = 
 				acceleratorConfiguration.getParent();
 				
 			while (acceleratorConfiguration != null) {
-				elements.add(0, Element.create(id));
+				pathItems.add(0, PathItem.create(id));
 				id = acceleratorConfiguration.getId();
 				acceleratorConfiguration = 
 					acceleratorConfiguration.getParent();
 			}
 					
 			configurationMap.put(initialId, 
-				Configuration.create(Path.create(elements)));
+				Configuration.create(Path.create(pathItems)));
 		}		
 	
 		AcceleratorScope[] acceleratorScopes = acceleratorRegistry.getScopes();				
@@ -166,17 +166,17 @@ public final class KeyBindingManager {
 			AcceleratorScope acceleratorScope = acceleratorScopes[i];
 			String id = acceleratorScope.getId();
 			String initialId = id;
-			List elements = new ArrayList();				
+			List pathItems = new ArrayList();				
 			acceleratorScope = acceleratorScope.getParent();
 			
 			while (acceleratorScope != null) {
-				elements.add(0, Element.create(id));
+				pathItems.add(0, PathItem.create(id));
 				id = acceleratorScope.getId();
 				acceleratorScope = acceleratorScope.getParent();
 			}
 						
 			scopeMap.put(initialId, 
-				Scope.create(Path.create(elements)));
+				Scope.create(Path.create(pathItems)));
 		}		
 		
 		List acceleratorSets = acceleratorRegistry.getAcceleratorSets();
@@ -199,30 +199,30 @@ public final class KeyBindingManager {
 					int[][] a = getAccelerators(accelerator.getKey());
 					String id = accelerator.getId();					
 					String localeString = accelerator.getLocale();		
-					List localeElements = new ArrayList();	
+					List localePathItems = new ArrayList();	
 					
 					if (localeString != null) {
 						StringTokenizer st = 
 							new StringTokenizer(localeString, "_");
 						
 						while (st.hasMoreElements()) {
-							String element = ((String) st.nextElement()).trim();
+							String value = ((String) st.nextElement()).trim();
 							
-							if (element.length() > 0) {							
-								localeElements.add(Element.create(element));
+							if (value.length() > 0) {							
+								localePathItems.add(PathItem.create(value));
 							}							
 						}
 					}
 
-					Locale locale = Locale.create(Path.create(localeElements));
+					Locale locale = Locale.create(Path.create(localePathItems));
 					String platformString = accelerator.getPlatform();
-					List platformElements = new ArrayList();	
+					List platformPathItems = new ArrayList();	
 					
 					if (platformString != null)	
-						platformElements.add(platformString);
+						platformPathItems.add(PathItem.create(platformString));
 										
 					Platform platform = 
-						Platform.create(Path.create(platformElements));
+						Platform.create(Path.create(platformPathItems));
 					State state = 
 						State.create(configuration, locale, platform, scope); 			
 					

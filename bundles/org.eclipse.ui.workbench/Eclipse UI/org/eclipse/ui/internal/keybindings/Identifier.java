@@ -10,26 +10,26 @@ package org.eclipse.ui.internal.keybindings;
 
 import org.eclipse.ui.IMemento;
 
-public final class Action implements Comparable {
+final class Identifier implements Comparable {
 	
-	final static String ELEMENT = "action";
+	final static String ELEMENT = "identifier";
 	private final static String ATTRIBUTE_VALUE = "value";	
 	
-	static Action create(String value) {
-		return new Action(value);
+	static Identifier create(String value) {
+		return new Identifier(value);
 	}
 
-	static Action read(IMemento memento)
+	static Identifier read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 		
-		return Action.create(memento.getString(ATTRIBUTE_VALUE));
+		return create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
 	private String value;
 	
-	private Action(String value) {
+	private Identifier(String value) {
 		super();
 		this.value = value;	
 	}
@@ -37,19 +37,19 @@ public final class Action implements Comparable {
 	public String getValue() {
 		return value;	
 	}
-	
+
 	public int compareTo(Object object) {
-		if (!(object instanceof Action))
+		if (!(object instanceof Identifier))
 			throw new ClassCastException();
 			
-		return Util.compare(value, ((Action) object).value);			
+		return Util.compare(value, ((Identifier) object).value);			
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Action))
+		if (!(object instanceof Identifier))
 			return false;
 		
-		String value = ((Action) object).value;		
+		String value = ((Identifier) object).value;		
 		return this.value == null ? value == null : this.value.equals(value);
 	}
 
@@ -61,7 +61,7 @@ public final class Action implements Comparable {
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
-			
+
 		memento.putString(ATTRIBUTE_VALUE, value);
 	}
 }

@@ -18,7 +18,7 @@ import org.eclipse.ui.IMemento;
 
 public final class KeySequence implements Comparable {
 
-	public final static String TAG = "keysequence";
+	public final static String ELEMENT = "keysequence";
 
 	public static KeySequence create() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -44,7 +44,7 @@ public final class KeySequence implements Comparable {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		IMemento[] mementos = memento.getChildren(KeyStroke.TAG);
+		IMemento[] mementos = memento.getChildren(KeyStroke.ELEMENT);
 		
 		if (mementos == null)
 			throw new IllegalArgumentException();
@@ -55,18 +55,6 @@ public final class KeySequence implements Comparable {
 			keyStrokes.add(KeyStroke.read(mementos[i]));
 		
 		return KeySequence.create(keyStrokes);
-	}
-
-	public static void write(IMemento memento, KeySequence sequence)
-		throws IllegalArgumentException {
-		if (memento == null || sequence == null)
-			throw new IllegalArgumentException();
-			
-		Iterator iterator = sequence.getKeyStrokes().iterator();
-		
-		while (iterator.hasNext())
-			KeyStroke.write(memento.createChild(KeyStroke.TAG), 
-				(KeyStroke) iterator.next()); 
 	}
 
 	private List keyStrokes;
@@ -114,5 +102,16 @@ public final class KeySequence implements Comparable {
 		return keyStrokes.size() > keySequence.keyStrokes.size() &&
 			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(
 			keySequence.keyStrokes);
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		Iterator iterator = keyStrokes.iterator();
+		
+		while (iterator.hasNext())
+			((KeyStroke) iterator.next()).write(memento.createChild(KeyStroke.ELEMENT));
 	}
 }

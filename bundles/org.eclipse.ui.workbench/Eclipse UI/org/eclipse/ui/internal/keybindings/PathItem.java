@@ -10,58 +10,63 @@ package org.eclipse.ui.internal.keybindings;
 
 import org.eclipse.ui.IMemento;
 
-public final class Action implements Comparable {
+final class PathItem implements Comparable {
 	
-	final static String ELEMENT = "action";
-	private final static String ATTRIBUTE_VALUE = "value";	
+	final static String ELEMENT = "pathitem";		
+	private final static String ATTRIBUTE_VALUE = "value";
 	
-	static Action create(String value) {
-		return new Action(value);
+	static PathItem create(String value)
+		throws IllegalArgumentException {
+		return new PathItem(value);
 	}
 
-	static Action read(IMemento memento)
+	static PathItem read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 		
-		return Action.create(memento.getString(ATTRIBUTE_VALUE));
+		return PathItem.create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
 	private String value;
 	
-	private Action(String value) {
+	private PathItem(String value)
+		throws IllegalArgumentException {
 		super();
+		
+		if (value == null)
+			throw new IllegalArgumentException();
+		
 		this.value = value;	
 	}
 	
-	public String getValue() {
+	String getValue() {
 		return value;	
 	}
 	
 	public int compareTo(Object object) {
-		if (!(object instanceof Action))
+		if (!(object instanceof PathItem))
 			throw new ClassCastException();
 			
-		return Util.compare(value, ((Action) object).value);			
+		return value.compareTo(((PathItem) object).value); 
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Action))
+		if (!(object instanceof PathItem))
 			return false;
 		
-		String value = ((Action) object).value;		
-		return this.value == null ? value == null : this.value.equals(value);
+		return value.equals(((PathItem) object).value);		
 	}
 
 	public int hashCode() {
-		return value != null ? value.hashCode() : 0;
+		return value.hashCode();
 	}
-
+	
 	void write(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
 		memento.putString(ATTRIBUTE_VALUE, value);
-	}
+	}	
 }

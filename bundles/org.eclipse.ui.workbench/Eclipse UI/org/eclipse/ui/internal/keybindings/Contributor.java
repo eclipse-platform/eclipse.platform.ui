@@ -12,7 +12,7 @@ import org.eclipse.ui.IMemento;
 
 final class Contributor implements Comparable {
 
-	final static String TAG = "contributor";
+	final static String ELEMENT = "contributor";
 	private final static String ATTRIBUTE_VALUE = "value";
 	
 	static Contributor create(String value) {
@@ -27,14 +27,6 @@ final class Contributor implements Comparable {
 		return Contributor.create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
-	static void write(IMemento memento, Contributor contributor)
-		throws IllegalArgumentException {
-		if (memento == null || contributor == null)
-			throw new IllegalArgumentException();
-			
-		memento.putString(ATTRIBUTE_VALUE, contributor.getValue());
-	}	
-	
 	private String value;
 	
 	private Contributor(String value) {
@@ -60,4 +52,16 @@ final class Contributor implements Comparable {
 		String value = ((Contributor) object).value;		
 		return this.value == null ? value == null : this.value.equals(value);
 	}
+	
+	public int hashCode() {
+		return value != null ? value.hashCode() : 0;
+	}
+
+	void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		memento.putString(ATTRIBUTE_VALUE, value);
+	}	
 }

@@ -23,7 +23,7 @@ import org.eclipse.ui.XMLMemento;
 public final class KeyBinding implements Comparable {
 
 	public final static String ROOT = "keybindings";	
-	public final static String TAG = "keybinding";
+	public final static String ELEMENT = "keybinding";
 
 	public static KeyBinding create(KeySequence keySequence, State state, 
 		Contributor contributor, Action action)
@@ -37,25 +37,12 @@ public final class KeyBinding implements Comparable {
 			throw new IllegalArgumentException();
 		
 		KeySequence sequence = 
-			KeySequence.read(memento.getChild(KeySequence.TAG));
-		State state = State.read(memento.getChild(State.TAG));
+			KeySequence.read(memento.getChild(KeySequence.ELEMENT));
+		State state = State.read(memento.getChild(State.ELEMENT));
 		Contributor contributor = 
-			Contributor.read(memento.getChild(Contributor.TAG));
-		Action action = Action.read(memento.getChild(Action.TAG));
+			Contributor.read(memento.getChild(Contributor.ELEMENT));
+		Action action = Action.read(memento.getChild(Action.ELEMENT));
 		return KeyBinding.create(sequence, state, contributor, action);
-	}
-
-	public static void write(IMemento memento, KeyBinding binding)
-		throws IllegalArgumentException {
-		if (memento == null || binding == null)
-			throw new IllegalArgumentException();
-			
-		KeySequence.write(memento.createChild(KeySequence.TAG), 
-			binding.getKeySequence());
-		State.write(memento.createChild(State.TAG), binding.getState());
-		Contributor.write(memento.createChild(Contributor.TAG), 
-			binding.getContributor());
-		Action.write(memento.createChild(Action.TAG), binding.getAction());			
 	}
 
 	public static List readBindingsFromReader(Reader reader)
@@ -81,7 +68,7 @@ public final class KeyBinding implements Comparable {
 		if (memento == null)
 			throw new IllegalArgumentException();			
 		
-		IMemento[] mementos = memento.getChildren(KeyBinding.TAG);
+		IMemento[] mementos = memento.getChildren(KeyBinding.ELEMENT);
 		
 		if (mementos == null)
 			throw new IllegalArgumentException();
@@ -102,8 +89,7 @@ public final class KeyBinding implements Comparable {
 		Iterator iterator = bindings.iterator();
 		
 		while (iterator.hasNext())
-			KeyBinding.write(memento.createChild(KeyBinding.TAG), 
-				(KeyBinding) iterator.next()); 
+			((KeyBinding) iterator.next()).write(memento.createChild(KeyBinding.ELEMENT)); 
 	}
 
 	public static void filterAction(List bindings, Set actions, 
@@ -240,5 +226,16 @@ public final class KeyBinding implements Comparable {
 			state.equals(binding.state) && 
 			contributor.equals(binding.contributor) && 
 			action.equals(binding.action);
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		keySequence.write(memento.createChild(KeySequence.ELEMENT));
+		state.write(memento.createChild(State.ELEMENT));
+		contributor.write(memento.createChild(Contributor.ELEMENT));
+		action.write(memento.createChild(Action.ELEMENT));			
 	}
 }

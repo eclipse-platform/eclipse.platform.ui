@@ -15,7 +15,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Locale {
 	
-	public final static String TAG = "locale";		
+	public final static String ELEMENT = "locale";		
 
 	public static Locale create() {
 		return new Locale(Path.create());
@@ -31,39 +31,31 @@ public final class Locale {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		return Locale.create(Path.read(memento.getChild(Path.TAG)));
-	}
-
-	public static void write(IMemento memento, Locale locale)
-		throws IllegalArgumentException {
-		if (memento == null || locale == null)
-			throw new IllegalArgumentException();
-		
-		Path.write(memento.createChild(Path.TAG), locale.getPath());
+		return Locale.create(Path.read(memento.getChild(Path.ELEMENT)));
 	}
 
 	public static Locale system() {
-		List elements = new ArrayList();
+		List pathItems = new ArrayList();
 		java.util.Locale locale = java.util.Locale.getDefault();
 		
 		if (locale != null) {
 			String language = locale.getLanguage();
 			
 			if (language != null && language.length() > 0) {
-				elements.add(Element.create(language));
+				pathItems.add(PathItem.create(language));
 				String country = locale.getCountry();
 				
 				if (country != null && country.length() > 0) {
-					elements.add(Element.create(country));
+					pathItems.add(PathItem.create(country));
 					String variant = locale.getVariant();
 					
 					if (variant != null && variant.length() > 0)
-						elements.add(Element.create(variant));
+						pathItems.add(PathItem.create(variant));
 				}
 			}
 		}
 	
-		return Locale.create(Path.create(elements));	
+		return Locale.create(Path.create(pathItems));	
 	}
 	
 	private Path path;
@@ -102,5 +94,13 @@ public final class Locale {
 			return false;
 		
 		return path.equals(((Locale) object).path);		
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+		
+		path.write(memento.createChild(Path.ELEMENT));
 	}
 }

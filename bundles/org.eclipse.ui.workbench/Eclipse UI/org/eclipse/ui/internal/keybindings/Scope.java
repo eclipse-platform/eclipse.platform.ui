@@ -12,7 +12,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Scope {
 	
-	public final static String TAG = "scope";		
+	public final static String ELEMENT = "scope";		
 
 	public static Scope create() {
 		return new Scope(Path.create());
@@ -28,17 +28,9 @@ public final class Scope {
 		if (memento == null)
 			throw new IllegalArgumentException();
 			
-		return Scope.create(Path.read(memento.getChild(Path.TAG)));
+		return Scope.create(Path.read(memento.getChild(Path.ELEMENT)));
 	}
 
-	public static void write(IMemento memento, Scope scope)
-		throws IllegalArgumentException {
-		if (memento == null || scope == null)
-			throw new IllegalArgumentException();
-		
-		Path.write(memento.createChild(Path.TAG), scope.getPath());
-	}
-	
 	private Path path;
 	
 	private Scope(Path path)
@@ -75,5 +67,13 @@ public final class Scope {
 			return false;
 		
 		return path.equals(((Scope) object).path);		
+	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+		
+		path.write(memento.createChild(Path.ELEMENT));
 	}
 }
