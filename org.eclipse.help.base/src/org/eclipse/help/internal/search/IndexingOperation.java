@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.protocols.*;
@@ -103,11 +104,26 @@ class IndexingOperation {
 			checkCancelled(pm);
 			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
 			pm.subTask(HelpBaseResources.getString("UpdatingIndex")); //$NON-NLS-1$
+			MultiStatus multiStatus = null;
 			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 				URL doc = (URL) it.next();
-				index.addDocument(getName(doc), doc);
+				IStatus status = index.addDocument(getName(doc), doc);
+				if (status.getCode() != IStatus.OK) {
+					if (multiStatus == null) {
+						multiStatus = new MultiStatus(
+								HelpBasePlugin.PLUGIN_ID,
+								IStatus.ERROR,
+								"Help documentation could not be indexed completely.",
+								null);
+					}
+					multiStatus.add(status);
+				}
 				checkCancelled(pm);
 				pm.worked(WORK_INDEXDOC);
+			}
+			if(multiStatus!=null){
+				HelpPlugin.logError(multiStatus);
+				
 			}
 		} catch (OperationCanceledException oce) {
 			// Need to perform rollback on the index

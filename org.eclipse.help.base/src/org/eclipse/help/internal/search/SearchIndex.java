@@ -55,6 +55,9 @@ public class SearchIndex {
 	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies"; //$NON-NLS-1$
 
 	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene"; //$NON-NLS-1$
+	
+	private static final IStatus OK_STATUS = new Status(IStatus.OK,
+			HelpBasePlugin.PLUGIN_ID, IStatus.OK, "", null);
 
 	private File inconsistencyFile;
 
@@ -117,9 +120,9 @@ public class SearchIndex {
 	 *            the document identifier (could be a URL)
 	 * @param url
 	 *            the URL of the document
-	 * @return true if success
+	 * @return IStatus
 	 */
-	public boolean addDocument(String name, URL url) {
+	public IStatus addDocument(String name, URL url) {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
 			System.out.println("SearchIndex.addDocument(" + name + ", " + url //$NON-NLS-1$ //$NON-NLS-2$
 					+ ")"); //$NON-NLS-1$
@@ -131,13 +134,10 @@ public class SearchIndex {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					HelpBasePlugin
-							.logError(
-									"Help document " //$NON-NLS-1$
-											+ name
-											+ " cannot be opened.  The document will not be indexed.", //$NON-NLS-1$
-									null);
-					return false;
+					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
+							IStatus.ERROR, "Help document " //$NON-NLS-1$
+									+ name + " cannot be opened.", //$NON-NLS-1$
+							null);
 				}
 				ParsedDocument parsed = new ParsedDocument(parser
 						.getContentReader());
@@ -154,13 +154,13 @@ public class SearchIndex {
 				parser.closeDocument();
 			}
 			indexedDocs.put(name, "0"); //$NON-NLS-1$
-			return true;
+			return OK_STATUS;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(
+			return new Status(IStatus.ERROR,
+					HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while adding document " + name //$NON-NLS-1$
 							+ " to index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					e);
-			return false;
 		}
 	}
 

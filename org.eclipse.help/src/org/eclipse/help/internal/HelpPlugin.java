@@ -48,6 +48,14 @@ public class HelpPlugin extends Plugin
 			message = ""; //$NON-NLS-1$
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
 				message, ex);
+		logError(errorStatus);
+	}
+	/**
+	 * Logs an Error message with an exception. Note that the message should
+	 * already be localized to proper locale. ie: Resources.getString() should
+	 * already have been called
+	 */
+	public static synchronized void logError(IStatus errorStatus) {
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
