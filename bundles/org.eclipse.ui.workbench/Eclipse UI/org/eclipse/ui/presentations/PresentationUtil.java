@@ -83,11 +83,7 @@ public class PresentationUtil {
 			Event de = dragEvent;
 			cancelDrag();
 			if (l != null) {
-				c.setCapture(true);
 				l.handleEvent(de);
-				if (!c.isDisposed()) {
-					c.setCapture(false);
-				}
 			}
 		}
 	}	
