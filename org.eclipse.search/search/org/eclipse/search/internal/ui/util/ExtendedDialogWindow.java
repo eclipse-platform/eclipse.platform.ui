@@ -347,6 +347,11 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		}	
 	}	
 
+	protected void handleShellCloseEvent() {
+		if (okToClose())
+			super.handleShellCloseEvent();
+	}
+
 	/**
 	 * The dialog is going to be closed. Check if there is a running
 	 * operation. If so, post an alert saying that the wizard can't
@@ -363,7 +368,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 			}
 			return false;
 		}
-		return performCancel();
+		return true;
 	}
 	
 	private MessageDialog createClosingDialog() {
