@@ -483,7 +483,7 @@
 	        commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
 	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Ctrl+F9">
+	        keySequence="Ctrl+F10">
 	  </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
@@ -677,14 +677,14 @@
             platform="carbon"
 	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Ctrl+F9">
+	        keySequence="Ctrl+F10">
 	  </keyBinding>
 	  <keyBinding
             platform="carbon"
 	        commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
 	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Command+F9">
+	        keySequence="Command+F10">
 	  </keyBinding>
       <keyBinding
             platform="carbon"
