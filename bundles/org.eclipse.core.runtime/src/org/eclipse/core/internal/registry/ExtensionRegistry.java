@@ -307,10 +307,12 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return null;
 	}
+	
 	/*
 	 * Records an extension addition/removal.
 	 */
 	private void recordChange(IExtensionPoint extPoint, IExtension extension, int kind) {
+		// avoid computing deltas when there are no listeners
 		if (listeners.isEmpty())
 			return;
 		ExtensionDelta extensionDelta = new ExtensionDelta();

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 
 /**
  * A registry change event implementation. A filter can be specified. In that case, only 
- * deltas for the selected hosts will be available to clients.
+ * deltas for the selected host will be available to clients.
  */
 public final class RegistryChangeEvent implements IRegistryChangeEvent {
 	private String filter;

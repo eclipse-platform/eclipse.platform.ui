@@ -26,7 +26,6 @@ import org.xml.sax.SAXException;
 // bundle start is called. By listening sync we should be able to ensure that
 // happens.
 public class EclipseBundleListener implements SynchronousBundleListener {
-	private static final String EXTENSIONS_MANIFEST = "extensions.xml"; //$NON-NLS-1$
 	private static final String PLUGIN_MANIFEST = "plugin.xml"; //$NON-NLS-1$
 	private static final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$	
 
@@ -81,7 +80,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	/**
-	 * Tries to create a bundle model from an extensions manifest in the
+	 * Tries to create a bundle model from a plugin/fragment manifest in the
 	 * bundle.
 	 */
 	private BundleModel getBundleModel(Bundle bundle) {
@@ -90,35 +89,22 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			return null;
 		InputStream is = null;
 		String manifestType = null;
+		boolean isFragment = bundle.isFragment();
 		try {
-			URL url = bundle.getEntry(EXTENSIONS_MANIFEST);
+			URL url = bundle.getEntry(isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST);
 			if (url != null) {
 				is = url.openStream();
-				manifestType = ExtensionsParser.BUNDLE;
+				manifestType = isFragment ? ExtensionsParser.FRAGMENT : ExtensionsParser.PLUGIN;
 			}
 		} catch (IOException ex) {
 			is = null;
-		}
-		boolean isFragment = bundle.isFragment();
-		if (is == null) {
-			try {
-				// for backward compatibility sake...
-				URL url = bundle.getEntry(isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST);
-				if (url != null) {
-					is = url.openStream();
-					manifestType = isFragment ? ExtensionsParser.FRAGMENT : ExtensionsParser.PLUGIN;
-				}
-			} catch (IOException ex) {
-				is = null;
-			}
-		}
+		}		
 		if (is == null)
 			return null;
-
 		try {
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry problems", null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
-			BundleModel bundleModel = new ExtensionsParser(factory).parseBundle(new InputSource(is), manifestType);
+			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType);
 			bundleModel.setUniqueIdentifier(bundle.getGlobalName());
 			bundleModel.setId(bundle.getBundleId());
 			if (isFragment)

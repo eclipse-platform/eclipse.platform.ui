@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IExtensionDelta;
 
 /*
  * Basic implementation for now...
+ * Aggregates extension deltas related to extension points declared by a specific host.
  */
 public class RegistryDelta {
 	private Set extensionDeltas = new HashSet();

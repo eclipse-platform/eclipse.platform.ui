@@ -53,7 +53,6 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public static final int PARSE_PROBLEM = 1;
 
-	public static final String BUNDLE = "bundle"; //$NON-NLS-1$
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	public static final String FRAGMENT = "fragment"; //$NON-NLS-1$	
 	public static final String BUNDLE_UID = "id"; //$NON-NLS-1$
@@ -251,17 +250,19 @@ public class ExtensionsParser extends DefaultHandler {
 		parseConfigurationElementAttributes(attributes);
 	}
 	private void handleInitialState(String elementName, Attributes attributes) {
-		if (elementName.equals(manifestType)) {
-			compatibilityMode = !elementName.equals(BUNDLE);
-			stateStack.push(new Integer(BUNDLE_STATE));
-			BundleModel current = factory.createBundle();
-			current.setSchemaVersion(schemaVersion);
-			current.setStartLine(locator.getLineNumber());
-			objectStack.push(current);
-		} else {
+		if (!elementName.equals(manifestType)) {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+			return;
 		}
+		// new manifests should have the plugin/fragment element empty
+		// in compatibility mode, any extraneous elements will be silently ignored
+		compatibilityMode = attributes.getLength() > 0;
+		stateStack.push(new Integer(BUNDLE_STATE));
+		BundleModel current = factory.createBundle();
+		current.setSchemaVersion(schemaVersion);
+		current.setStartLine(locator.getLineNumber());
+		objectStack.push(current);
 	}
 	/**
 	 * convert a list of comma-separated tokens into an array
@@ -328,7 +329,7 @@ public class ExtensionsParser extends DefaultHandler {
 		if (parserReference != null)
 			InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
 	}
-	synchronized public BundleModel parseBundle(InputSource in, String manifestType) throws SAXException, IOException {
+	synchronized public BundleModel parseManifest(InputSource in, String manifestType) throws SAXException, IOException {
 		long start = 0;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
@@ -340,7 +341,7 @@ public class ExtensionsParser extends DefaultHandler {
 		try {
 			if (manifestType == null)
 				throw new NullPointerException();
-			if (!manifestType.equals(BUNDLE) && !manifestType.equals(PLUGIN) && !manifestType.equals(FRAGMENT))
+			if (!(manifestType.equals(PLUGIN) || manifestType.equals(FRAGMENT)))
 				throw new IllegalArgumentException("Invalid manifest type: " + manifestType);
 			this.manifestType = manifestType;
 			locationName = in.getSystemId();
