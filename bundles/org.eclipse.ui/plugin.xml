@@ -311,4 +311,19 @@
 	<filter pattern = ".*" selected = "false"/>
 </extension>
 
+<!-- ************** POPUP ACTIONS ******************* -->
+
+  <extension
+     point = "org.eclipse.ui.popupMenus">
+	<objectContribution
+	   id="org.eclipse.ui.newwizard">
+		<action
+			id="org.eclipse.ui.newwizard.newaction"
+			label="New"
+			menubarPath="additions"
+			class="org.eclipse.ui.actions.NewWizardAction">
+		</action>
+	</objectContribution>
+  </extension>
+
 </plugin>

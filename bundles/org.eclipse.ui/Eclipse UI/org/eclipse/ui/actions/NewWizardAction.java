@@ -5,13 +5,16 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Shell;
@@ -23,7 +26,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class NewWizardAction extends Action {
+public class NewWizardAction extends Action implements IObjectActionDelegate {
 
 	/**
 	 * The wizard dialog width
@@ -73,4 +76,25 @@ public void run() {
 	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_WIZARD});
 	dialog.open();
 }
+	/*
+	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	 */
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		//Do nothing as we are not interested in the part
+	}
+
+	/*
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
+		run();
+	}
+
+	/*
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+			//Do nothing as we are not interested in the selection
+	}
+
 }

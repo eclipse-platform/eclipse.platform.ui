@@ -58,7 +58,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
 	private ResourceNavigatorMoveAction moveResourceAction;
 	private CopyProjectAction copyProjectAction;
 	private MoveProjectAction moveProjectAction;
-	private NewWizardAction newWizardAction;
 	private BackAction backAction;
 	private ForwardAction forwardAction;
 	private GoIntoAction goIntoAction;
@@ -654,7 +653,6 @@ void makeActions() {
 	filterAction = new FilterSelectionAction(shell, this, SELECT_FILTERS_LABEL);
 	addBookmarkAction = new AddBookmarkAction(shell);
 	propertyDialogAction = new PropertyDialogAction(getShell(), getResourceViewer());
-	newWizardAction = new NewWizardAction();
 	goIntoAction = new GoIntoAction(frameList);
 	backAction = new BackAction(frameList);
 	forwardAction = new ForwardAction(frameList);
