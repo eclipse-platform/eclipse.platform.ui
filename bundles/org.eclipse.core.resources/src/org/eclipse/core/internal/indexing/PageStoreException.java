@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.indexing;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000 
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+import org.eclipse.core.internal.utils.Policy;
 
 public class PageStoreException extends Exception {
 	public final static int GenericFailure = 0;
@@ -42,19 +42,19 @@ public class PageStoreException extends Exception {
  * Initialize the messages at class load time.
  */
 private static void initializeMessages() {
-	message[GenericFailure] = "Error occurred during a page store file operation.";
-	message[CreateFailure] = "Error occurred creating page store file.";
-	message[LengthFailure] = "Error occurred determing page store file length.";
-	message[OpenFailure] = "Error occurred opening page store file.";
-	message[ReadFailure] = "Error occurred reading page store file.";
-	message[WriteFailure] = "Error occurred writing page store file.";
-	message[CommitFailure] = "Error occurred during commit processing.";
-	message[MetadataRequestFailure] = "Error occurred during metadata request processing.";
-	message[ConversionFailure] = "Error occurred during conversion of the page store file.";
-	message[IntegrityFailure] = "Error occurred that compromises the integrity of the page store file.";
-	message[LogOpenFailure] = "Error occurred opening transaction log file.";
-	message[LogReadFailure] = "Error occurred reading transaction log file.";
-	message[LogWriteFailure] = "Error occurred writing transaction log file.";
-	message[LogCreateFailure] = "Error occurred creating transaction log file.";
+	message[GenericFailure] = Policy.bind("pageStore.genericFailure");
+	message[CreateFailure] = Policy.bind("pageStore.createFailure");
+	message[LengthFailure] = Policy.bind("pageStore.lengthFailure");
+	message[OpenFailure] = Policy.bind("pageStore.openFailure");
+	message[ReadFailure] = Policy.bind("pageStore.readFailure");
+	message[WriteFailure] = Policy.bind("pageStore.writeFailure");
+	message[CommitFailure] = Policy.bind("pageStore.commitFailure");
+	message[MetadataRequestFailure] = Policy.bind("pageStore.metadataRequestFailure");
+	message[ConversionFailure] = Policy.bind("pageStore.conversionFailure");
+	message[IntegrityFailure] = Policy.bind("pageStore.integrityFailure");
+	message[LogOpenFailure] = Policy.bind("pageStore.logOpenFailure");
+	message[LogReadFailure] = Policy.bind("pageStore.logReadFailure");
+	message[LogWriteFailure] = Policy.bind("pageStore.logWriteFailure");
+	message[LogCreateFailure] = Policy.bind("pageStore.logCreateFailure");
 }
 }

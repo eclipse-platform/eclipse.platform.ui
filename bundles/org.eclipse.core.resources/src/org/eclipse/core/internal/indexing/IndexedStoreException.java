@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.indexing;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+import org.eclipse.core.internal.utils.Policy;
 
 public class IndexedStoreException extends Exception {
 
@@ -87,40 +87,40 @@ public class IndexedStoreException extends Exception {
  * Initializes the messages at class load time.
  */
 private static void initializeMessages() {
-	messages[GenericError] = "An error occurred during an indexed store operation.";
-	messages[EntryKeyLengthError] = "Key length > 1024.";
-	messages[EntryNotRemoved] = "Cannot remove an index entry referenced by other cursors.";
-	messages[EntryValueLengthError] = "Value length > 2048.";
-	messages[EntryValueNotUpdated] = "Error occurred updating value in leaf node.";
-	messages[IndexNodeNotRetrieved] = "Error occurred getting index node.";
-	messages[IndexNodeNotStored] = "Error occurred storing index node.";
-	messages[IndexNodeNotSplit] = "Error occurred spliting an index node.";
-	messages[IndexNodeNotCreated] = "Index node not created.";
-	messages[IndexExists] = "Index already exists.";
-	messages[IndexNotCreated] = "Index was not created.";
-	messages[IndexNotFound] = "Index not found.";
-	messages[IndexNotRemoved] = "Error occurred removing index from the store.";
-	messages[ObjectNotCreated] = "Error occurred creating a new object.";
-	messages[ObjectExists] = "Object already exists.";
-	messages[ObjectNotFound] = "Object not found.";
-	messages[ObjectNotAcquired] = "Object has not been acquired for the intent needed for this operation.";
-	messages[ObjectNotReleased] = "Cannot release an object that has not been acquired.";
-	messages[ObjectNotRemoved] = "Error occurred removing an object from the store.";
-	messages[ObjectTypeError] = "Unexpected object type found.";
-	messages[ObjectNotUpdated] = "Error occurred updating an object.";
-	messages[ObjectNotStored] = "Object was not stored.";
-	messages[StoreNotCreated] = "Store does not exist and cannot be created.";
-	messages[StoreEmpty] = "Could not find root context because store is empty";
-	messages[StoreFormatError] = "Could not find root context because store has invalid format";
-	messages[StoreNotOpen] = "Store has not been opened.";
-	messages[StoreNotReadWrite] = "Attempted to set a Modify intent for an object in a read-only store.";
-	messages[StoreNotOpened] = "Error occurred opening indexed store.";
-	messages[StoreNotClosed] = "Error closing indexed store.";
-	messages[StoreNotFlushed] = "Error flushing indexed store.";
-	messages[ContextNotAvailable] = "Error occurred accessing the indexed store context";
-	messages[ObjectIDInvalid] = "ObjectID format is invalid.";
-	messages[EntryRemoved] = "Element at this cursor has been removed.";
-	messages[StoreNotConverted] = "The indexed store opened is not the current version and no conversion routine exists.";
+	messages[GenericError] = Policy.bind("indexedStore.genericError");
+	messages[EntryKeyLengthError] = Policy.bind("indexedStore.");
+	messages[EntryNotRemoved] = Policy.bind("indexedStore.entryKeyLengthError");
+	messages[EntryValueLengthError] = Policy.bind("indexedStore.entryValueLengthError");
+	messages[EntryValueNotUpdated] = Policy.bind("indexedStore.entryValueNotUpdated");
+	messages[IndexNodeNotRetrieved] = Policy.bind("indexedStore.indexNodeNotRetrieved");
+	messages[IndexNodeNotStored] = Policy.bind("indexedStore.indexNodeNotStored");
+	messages[IndexNodeNotSplit] = Policy.bind("indexedStore.indexNodeNotSplit");
+	messages[IndexNodeNotCreated] = Policy.bind("indexedStore.indexNodeNotCreated");
+	messages[IndexExists] = Policy.bind("indexedStore.indexExists");
+	messages[IndexNotCreated] = Policy.bind("indexedStore.indexNotCreated");
+	messages[IndexNotFound] = Policy.bind("indexedStore.indexNotFound");
+	messages[IndexNotRemoved] = Policy.bind("indexedStore.indexNotRemoved");
+	messages[ObjectNotCreated] = Policy.bind("indexedStore.objectNotCreated");
+	messages[ObjectExists] = Policy.bind("indexedStore.objectExists");
+	messages[ObjectNotFound] = Policy.bind("indexedStore.objectNotFound");
+	messages[ObjectNotAcquired] = Policy.bind("indexedStore.objectNotAcquired");
+	messages[ObjectNotReleased] = Policy.bind("indexedStore.objectNotReleased");
+	messages[ObjectNotRemoved] = Policy.bind("indexedStore.objectNotRemoved");
+	messages[ObjectTypeError] = Policy.bind("indexedStore.objectTypeError");
+	messages[ObjectNotUpdated] = Policy.bind("indexedStore.objectNotUpdated");
+	messages[ObjectNotStored] = Policy.bind("indexedStore.objectNotStored");
+	messages[StoreNotCreated] = Policy.bind("indexedStore.storeNotCreated");
+	messages[StoreEmpty] = Policy.bind("indexedStore.storeEmpty");
+	messages[StoreFormatError] = Policy.bind("indexedStore.storeFormatError");
+	messages[StoreNotOpen] = Policy.bind("indexedStore.storeNotOpen");
+	messages[StoreNotReadWrite] = Policy.bind("indexedStore.storeNotReadWrite");
+	messages[StoreNotOpened] = Policy.bind("indexedStore.storeNotOpened");
+	messages[StoreNotClosed] = Policy.bind("indexedStore.storeNotClosed");
+	messages[StoreNotFlushed] = Policy.bind("indexedStore.storeNotFlushed");
+	messages[ContextNotAvailable] = Policy.bind("indexedStore.contextNotAvailable");
+	messages[ObjectIDInvalid] = Policy.bind("indexedStore.objectIDInvalid");
+	messages[EntryRemoved] = Policy.bind("indexedStore.entryRemoved");
+	messages[StoreNotConverted] = Policy.bind("indexedStore.storeNotConverted");
 }
 	/**
 	 * Creates a printable representation of this exception.

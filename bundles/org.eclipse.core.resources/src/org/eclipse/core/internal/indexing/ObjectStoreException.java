@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.indexing;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 public class ObjectStoreException extends Exception {
@@ -46,23 +45,23 @@ public class ObjectStoreException extends Exception {
  * Initializes the messages at class load time.
  */
 private static void initializeMessages() {
-	message[GenericFailure] = "Error occurred in object store operation.";
-	message[InternalFailure] = "Internal error occurred in object store operation.";
-	message[ObjectSizeFailure] = "Object is too large for page.";
-	message[PageVacancyFailure] = "Object table on page is full.";
-	message[ObjectExistenceFailure] = "Object was not found.";
-	message[ObjectHeaderFailure] = "Object header format is invalid.";
-	message[StoreCloseFailure] = "Error occurred during close of object store.";
-	message[StoreCreateFailure] = "Error creating object store.";
-	message[PageReadFailure] = "Error reading page from object store.";
-	message[StoreOpenFailure] = "Error opening object store";
-	message[ObjectInsertFailure] = "Error occurred writing object into page";
-	message[PageWriteFailure] = "Cannot store page in page store";
-	message[ObjectRemoveFailure] = "Error occurred removing object from page";
-	message[ObjectUpdateFailure] = "Error updating object.";
-	message[StoreConversionFailure] = "Error converting object store.";
-	message[MetadataRequestFailure] = "Error getting or putting metadata.";
-	message[ObjectTypeFailure] = "Type check failed.";
-	message[ObjectIsLocked] = "Operation cannot be performed because the object is being used.";
+	message[GenericFailure] = Policy.bind("objectStore.genericFailure");
+	message[InternalFailure] = Policy.bind("objectStore.internalFailure");
+	message[ObjectSizeFailure] = Policy.bind("objectStore.objectSizeFailure");
+	message[PageVacancyFailure] = Policy.bind("objectStore.pageVacancyFailure");
+	message[ObjectExistenceFailure] = Policy.bind("objectStore.objectExistenceFailure");
+	message[ObjectHeaderFailure] = Policy.bind("objectStore.objectHeaderFailure");
+	message[StoreCloseFailure] = Policy.bind("objectStore.storeCloseFailure");
+	message[StoreCreateFailure] = Policy.bind("objectStore.storeCreateFailure");
+	message[PageReadFailure] = Policy.bind("objectStore.pageReadFailure");
+	message[StoreOpenFailure] = Policy.bind("objectStore.storeOpenFailure");
+	message[ObjectInsertFailure] = Policy.bind("objectStore.objectInsertFailure");
+	message[PageWriteFailure] = Policy.bind("objectStore.pageWriteFailure");
+	message[ObjectRemoveFailure] = Policy.bind("objectStore.objectRemoveFailure");
+	message[ObjectUpdateFailure] = Policy.bind("objectStore.objectUpdateFailure");
+	message[StoreConversionFailure] = Policy.bind("objectStore.storeConversionFailure");
+	message[MetadataRequestFailure] = Policy.bind("objectStore.metadataRequestFailure");
+	message[ObjectTypeFailure] = Policy.bind("objectStore.objectTypeFailure");
+	message[ObjectIsLocked] = Policy.bind("objectStore.objectIsLocked");
 }
 }

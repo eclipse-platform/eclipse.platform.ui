@@ -1,5 +1,10 @@
 package org.eclipse.core.internal.indexing;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.*;
 /**
  * Implements a storage area that is accessible at various offsets and lengths.
