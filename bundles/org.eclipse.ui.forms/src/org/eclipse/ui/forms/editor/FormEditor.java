@@ -113,12 +113,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		addPages();
 	}
 	/**
-	 * Creates the form toolkit. The method can be implemented
-	 * to substitute a subclass of the toolkit that should
-	 * be used for this editor. A typical use of this method
-	 * would be to create the form toolkit using one
-	 * shared <code>FormColors</code> object to share
-	 * resources across the multiple editor instances.
+	 * Creates the form toolkit. The method can be implemented to substitute a
+	 * subclass of the toolkit that should be used for this editor. A typical
+	 * use of this method would be to create the form toolkit using one shared
+	 * <code>FormColors</code> object to share resources across the multiple
+	 * editor instances.
 	 * 
 	 * @param display
 	 *            the display to use when creating the toolkit
@@ -232,6 +231,18 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * @see MultiPageEditorPart#pageChange(int)
 	 */
 	protected void pageChange(int newPageIndex) {
+		// fix for windows handles
+		int oldPage = getCurrentPage();
+		if (oldPage != -1 && pages.size() > oldPage
+				&& pages.get(oldPage) instanceof IFormPage
+				&& oldPage != newPageIndex) {
+			// Check the old page
+			IFormPage oldFormPage = (IFormPage) pages.get(oldPage);
+			if (oldFormPage.canLeaveThePage() == false) {
+				setActivePage(oldPage);
+				return;
+			}
+		}
 		// Now is the absolute last moment to create the page control.
 		IFormPage page = (IFormPage) pages.get(newPageIndex);
 		if (page.getPartControl() == null) {
@@ -239,8 +250,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			setControl(newPageIndex, page.getPartControl());
 			page.getPartControl().setMenu(getContainer().getMenu());
 		}
-		// fix for windows handles
-		int oldPage = getCurrentPage();
 		if (oldPage != -1 && pages.size() > oldPage
 				&& pages.get(oldPage) instanceof IFormPage) {
 			// Commit old page before activating the new one

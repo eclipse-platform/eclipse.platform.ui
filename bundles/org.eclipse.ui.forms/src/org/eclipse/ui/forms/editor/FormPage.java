@@ -279,4 +279,11 @@ public class FormPage extends EditorPart implements IFormPage {
 			return mform.setInput(object);
 		return false;
 	}
+	/**
+	 * By default, editor will be allowed to flip the page.
+	 * @return <code>true</code>
+	 */
+	public boolean canLeaveThePage() {
+		return true;
+	}
 }

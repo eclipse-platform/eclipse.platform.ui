@@ -70,6 +70,15 @@ public interface IFormPage extends IEditorPart {
 	 */
 	boolean isActive();
 	/**
+	 * Tests if the content of the page is in a state that allows the
+	 * editor to flip to another page. Typically, pages that contain
+	 * raw source with syntax errors should not allow editors to 
+	 * leave them until errors are corrected.
+	 * @return <code>true</code> if the editor can flip to another page,
+	 * <code>false</code> otherwise.
+	 */
+	boolean canLeaveThePage();
+	/**
 	 * Returns the control associated with this page.
 	 * 
 	 * @return the control of this page if created or <samp>null </samp> if the
