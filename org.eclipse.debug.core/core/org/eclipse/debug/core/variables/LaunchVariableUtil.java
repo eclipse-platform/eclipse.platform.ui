@@ -78,6 +78,12 @@ public class LaunchVariableUtil {
 	public static final String ATTR_REFRESH_SCOPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
 	/**
+	 * The collection of native environment variables on the user's system. Cached
+	 * after being computed once as the environment cannot change.
+	 */
+	private static HashMap nativeEnv= null;
+	
+	/**
 	 * Structure to represent a variable definition within a
 	 * source string.
 	 */
@@ -446,7 +452,10 @@ public class LaunchVariableUtil {
 	 * @return the native system environment variables
 	 */
 	private static HashMap getNativeEnvironment() {
-		HashMap env= new HashMap();
+		if (nativeEnv != null) {
+			return nativeEnv;
+		}
+		nativeEnv= new HashMap();
 		try {
 			String nativeCommand= null;
 			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
@@ -462,7 +471,7 @@ public class LaunchVariableUtil {
 				nativeCommand= "printenv";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
-				return env;
+				return nativeEnv;
 			}
 			Process process= Runtime.getRuntime().exec(nativeCommand);
 			BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -472,7 +481,7 @@ public class LaunchVariableUtil {
 				if (separator > 0) {
 					String key= line.substring(0, separator).toLowerCase();
 					String value= line.substring(separator + 1);
-					env.put(key, value);
+					nativeEnv.put(key, value);
 				}
 				line= reader.readLine();
 			}
@@ -481,7 +490,7 @@ public class LaunchVariableUtil {
 			// Native environment-fetching code failed.
 			// This can easily happen and is not useful to log.
 		}
-		return env;
+		return nativeEnv;
 	}
 
 	private static IStatus newErrorStatus(String message, Throwable exception) {
