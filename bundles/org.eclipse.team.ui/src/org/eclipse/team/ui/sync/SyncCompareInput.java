@@ -250,7 +250,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	}
 	
 	IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
-		int type = tree.getSyncKind(IRemoteSyncElement.GRANULARITY_TIMESTAMP, new NullProgressMonitor());
+		int type = tree.getSyncKind(getSyncGranularity(), pm);
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
@@ -270,6 +270,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			return file;
 		}
 	}
+	
+	protected abstract int getSyncGranularity();		
 	
 	/**
 	 * Builds a DiffFolder tree under the given root for the given resource.

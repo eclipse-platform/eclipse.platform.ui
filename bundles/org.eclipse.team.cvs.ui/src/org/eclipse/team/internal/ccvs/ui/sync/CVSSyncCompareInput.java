@@ -99,4 +99,12 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			}
 		}
 	}
+	/*
+	 * @see SyncCompareInput#getSyncGranularity()
+	 */
+	protected int getSyncGranularity() {
+		// assuming that sync is always performed relative to the current branch. In
+		// these cases the server will perform the content comparison for us.
+		return IRemoteSyncElement.GRANULARITY_TIMESTAMP;
+	}
 }

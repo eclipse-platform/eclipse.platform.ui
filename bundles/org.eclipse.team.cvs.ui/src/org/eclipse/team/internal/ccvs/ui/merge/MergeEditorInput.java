@@ -67,4 +67,13 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	}
 	protected void contentsChanged(ICompareInput source) {
 	}
+	/*
+	 * @see SyncCompareInput#getSyncGranularity()
+	 */
+	protected int getSyncGranularity() {
+		// we have to perform content comparison since files in different branches
+		// may have different revisions but the same contents. Consider these files
+		// for merge purposes as equal.
+		return IRemoteSyncElement.GRANULARITY_CONTENTS;
+	}
 }

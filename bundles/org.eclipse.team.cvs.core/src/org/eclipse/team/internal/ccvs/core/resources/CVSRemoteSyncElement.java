@@ -301,7 +301,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
 		
-		if(remote instanceof RemoteFile) {
+		int kind = super.getSyncKind(granularity, progress);
+		
+		if(remote instanceof RemoteFile && (kind & IRemoteSyncElement.PSEUDO_CONFLICT) == 0) {
 			int type = ((RemoteFile)remote).getWorkspaceSyncState();
 			switch(type) {
 				case Update.STATE_CONFLICT: 
@@ -315,6 +317,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 							   ILocalSyncElement.AUTOMERGE_CONFLICT;
 			}			
 		}		
-		return super.getSyncKind(granularity, progress);
+		return kind;
 	}
 }
