@@ -183,6 +183,15 @@
             id="org.eclipse.ui.externaltools.launchGroup.builder">
       </launchGroup>
    </extension>
+<!-- Context (String Substitution) Variables -->	
+   <extension
+         point="org.eclipse.debug.core.contextVariables">
+      <variable
+            name="build_type"
+            resolver="org.eclipse.ui.externaltools.internal.variables.BuildTypeResolver"
+            description="%build_type.description">
+      </variable>   
+    </extension>
 <!-- Variable Extensions -->
    <extension
          point="org.eclipse.debug.core.contextLaunchVariables">
