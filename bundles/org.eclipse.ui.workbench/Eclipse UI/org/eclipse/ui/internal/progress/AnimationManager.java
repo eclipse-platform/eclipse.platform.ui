@@ -171,8 +171,10 @@ class AnimationManager {
 			}
 		} else{//Not showing an error if there is no animation
 			showingError = false;
-			//Refresh the progress viewer to clear out any stale remainders
-			ProgressViewUpdater.getSingleton().refreshAll();
+			if(ProgressViewUpdater.hasSingleton()){
+				//Refresh the progress viewer to clear out any stale remainders
+				ProgressViewUpdater.getSingleton().refreshAll();
+			}
 		}
 	}
 

@@ -125,6 +125,15 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			singleton = new ProgressViewUpdater();
 		return singleton;
 	}
+	
+	/**
+	 * Return whether or not there is a singleton for updates
+	 * to avoid creating extra listeners.
+	 * @return
+	 */
+	static boolean hasSingleton(){
+		return singleton != null;
+	}
 
 	static void clearSingleton() {
 		if (singleton != null)
