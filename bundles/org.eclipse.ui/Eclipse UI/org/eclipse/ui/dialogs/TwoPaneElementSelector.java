@@ -109,11 +109,12 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 
 	/**
 	 * Creates a label if name was not <code>null</code>.
+	 * 
 	 * @param  parent the parent composite.
 	 * @param  name   the name of the label.
 	 * @return returns a label if a name was given, <code>null</code> otherwise.
 	 */
-	private Label createLabel(Composite parent, String name) {
+	protected Label createLabel(Composite parent, String name) {
 		if (name == null)
 			return null;
 			
@@ -125,10 +126,11 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 	
 	/**
 	 * Creates the list widget and sets layout data.
+	 * 
 	 * @param parent   the parent composite.
 	 * @return returns the list table widget.
 	 */
-	private Table createLowerList(Composite parent) {
+	protected Table createLowerList(Composite parent) {
 		Table list= new Table(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		list.addListener(SWT.Selection, new Listener() {

@@ -237,12 +237,14 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		Composite composite= (Composite) super.createDialogArea(parent);
 		
 		Label messageLabel= createMessageArea(composite);
-		Control treeWidget= createTreeViewer(composite);
+		CheckboxTreeViewer treeViewer= createTreeViewer(composite);
 		Control buttonComposite= createSelectionButtons(composite);
 
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint= convertWidthInCharsToPixels(fWidth);
 		data.heightHint= convertHeightInCharsToPixels(fHeight);
+		
+		Tree treeWidget = treeViewer.getTree();
 		treeWidget.setLayoutData(data);
 		
 		if (fIsEmpty) {
@@ -254,7 +256,13 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		return composite;
 	}
 	
-	private Tree createTreeViewer(Composite parent) {
+	/**
+	 * Creates the tree viewer.
+	 * 
+	 * @param parent the parent composite
+	 * @return the tree viewer
+	 */
+	protected CheckboxTreeViewer createTreeViewer(Composite parent) {
 		if (fContainerMode) {
 			fViewer= new ContainerCheckedTreeViewer(parent, SWT.BORDER);
 		} else {
@@ -277,14 +285,24 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 				
 		fViewer.setInput(fInput);
 		
-		return fViewer.getTree();	
+		return fViewer;
 	}
-		
+	
 	/**
-	 * Add the selection and deselection buttons to the dialog.
-	 * @param composite org.eclipse.swt.widgets.Composite
+	 * Returns the tree viewer.
+	 * 
+	 * @return the tree viewer
 	 */
-	private Composite createSelectionButtons(Composite composite) {
+	protected CheckboxTreeViewer getTreeViewer() {
+		return fViewer;
+	}
+	
+	/**
+	 * Adds the selection and deselection buttons to the dialog.
+	 * 
+	 * @param composite the parent composite
+	 */
+	protected Composite createSelectionButtons(Composite composite) {
 
 		Composite buttonComposite= new Composite(composite, SWT.RIGHT);
 		GridLayout layout= new GridLayout();

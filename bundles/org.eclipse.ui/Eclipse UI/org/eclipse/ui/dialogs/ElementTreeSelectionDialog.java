@@ -223,11 +223,13 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		Composite composite= (Composite)super.createDialogArea(parent);
 		
 		Label messageLabel= createMessageArea(composite);
-		Control treeWidget= createTreeViewer(composite);
+		TreeViewer treeViewer= createTreeViewer(composite);
 
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint= convertWidthInCharsToPixels(fWidth);
 		data.heightHint= convertHeightInCharsToPixels(fHeight);
+		
+		Tree treeWidget= treeViewer.getTree();
 		treeWidget.setLayoutData(data);
 		
 		if (fIsEmpty) {
@@ -238,7 +240,13 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		return composite;
 	}
 	
-	private Tree createTreeViewer(Composite parent) {
+	/**
+	 * Creates the tree viewer.
+	 * 
+	 * @param parent the parent composite
+	 * @return the tree viewer
+	 */
+	protected TreeViewer createTreeViewer(Composite parent) {
 		int style= SWT.BORDER | (fAllowMultiple ? SWT.MULTI : SWT.SINGLE);
 
 		fViewer= new TreeViewer(new Tree(parent, style));
@@ -270,7 +278,16 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		
 		fViewer.setInput(fInput);
 		
-		return fViewer.getTree();	
+		return fViewer;
+	}
+
+	/**
+	 * Returns the tree viewer.
+	 * 
+	 * @return the tree viewer
+	 */
+	protected TreeViewer getTreeViewer() {
+		return fViewer;
 	}
 	
 	private boolean evaluateIfTreeEmpty(Object input) {
