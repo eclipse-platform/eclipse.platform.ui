@@ -119,7 +119,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	
 	/**
 	 * Creates and returns a new error status based on 
-	 * the given mesasge, code, and exception.
+	 * the given message, code, and exception.
 	 * 
 	 * @param message error message
 	 * @param code error code
