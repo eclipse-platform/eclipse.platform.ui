@@ -56,10 +56,11 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
 
-public class CVSLightweightDecorator
-	extends LabelProvider
-	implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
+public class CVSLightweightDecorator extends LabelProvider implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
 
+	// Decorator id as defined in the decorator extension point
+	public final static String ID = "org.eclipse.team.cvs.ui.decorator";
+	
 	// Images cached for better performance
 	private static ImageDescriptor dirty;
 	private static ImageDescriptor checkedIn;
@@ -70,6 +71,8 @@ public class CVSLightweightDecorator
 	private static ImageDescriptor edited;
 
 	private static ExceptionCollector exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$;
+	
+	
 
 	/*
 	 * Define a cached image descriptor which only creates the image data once
