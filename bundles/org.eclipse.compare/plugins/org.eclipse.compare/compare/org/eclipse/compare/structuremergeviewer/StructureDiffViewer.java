@@ -154,7 +154,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	protected void inputChanged(Object input, Object oldInput) {
 		if (input instanceof ICompareInput) {
 			compareInputChanged((ICompareInput) input);
-			diff();
 			if (input != oldInput)
 				navigate(true);
 		}
@@ -176,8 +175,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	/**
 	 * Recreates the comparable structures for the input sides.
 	 */
-	private void compareInputChanged(ICompareInput input) {
+	protected void compareInputChanged(ICompareInput input) {
 		ITypedElement t= null;
+		boolean changed= false;
 		
 		if (input != null)
 			t= input.getAncestor();
@@ -186,9 +186,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fAncestorInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fAncestorInput).removeContentChangeListener(fContentChangedListener);
 			fAncestorInput= t;
-			if (fAncestorInput != null)
+			if (fAncestorInput != null) {
 				fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
-			else
+				changed= true;
+			} else
 				fAncestorStructure= null;
 			if (fAncestorInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fAncestorInput).addContentChangeListener(fContentChangedListener);
@@ -200,9 +201,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fLeftInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fLeftInput).removeContentChangeListener(fContentChangedListener);
 			fLeftInput= t;
-			if (fLeftInput != null)
+			if (fLeftInput != null) {
 				fLeftStructure= fStructureCreator.getStructure(fLeftInput);
-			else
+				changed= true;
+			} else
 				fLeftStructure= null;
 			if (fLeftInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fLeftInput).addContentChangeListener(fContentChangedListener);
@@ -214,45 +216,55 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fRightInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fRightInput).removeContentChangeListener(fContentChangedListener);
 			fRightInput= t;
-			if (fRightInput != null)
+			if (fRightInput != null) {
 				fRightStructure= fStructureCreator.getStructure(fRightInput);
-			else
+				changed= true;
+			} else
 				fRightStructure= null;
 			if (fRightInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fRightInput).addContentChangeListener(fContentChangedListener);
 		}
+		
+		if (changed)
+			diff();
 	}
 	
 	/**
 	 * Calls <code>diff</code> whenever the byte contents changes.
 	 */
-	private void contentChanged(IContentChangeNotifier changed) {
+	protected void contentChanged(IContentChangeNotifier changed) {
 		
-		if (changed == fAncestorInput) {
-			IStructureComparator drn= fStructureCreator.getStructure(fAncestorInput);
-//			if (drn == null)
-//				return;
-			fAncestorStructure= drn;
-		} else if (changed == fLeftInput) {
-			IStructureComparator drn= fStructureCreator.getStructure(fLeftInput);
-//			if (drn == null)
-//				return;
-			fLeftStructure= drn;
-		} else if (changed == fRightInput) {
-			IStructureComparator drn= fStructureCreator.getStructure(fRightInput);
-//			if (drn == null)
-//				return;
-			fRightStructure= drn;
-		} else
+		if (fStructureCreator == null)
 			return;
+			
+		if (changed != null) {
+			if (changed == fAncestorInput) {
+				fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
+			} else if (changed == fLeftInput) {
+				fLeftStructure= fStructureCreator.getStructure(fLeftInput);
+			} else if (changed == fRightInput) {
+				fRightStructure= fStructureCreator.getStructure(fRightInput);
+			} else
+				return;
+		} else {
+			fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
+			fLeftStructure= fStructureCreator.getStructure(fLeftInput);
+			fRightStructure= fStructureCreator.getStructure(fRightInput);
+		}
 		
 		diff();
 	}
 
+	protected void preDiffHook(IStructureComparator ancestor, IStructureComparator left, IStructureComparator right) {
+		// we do nothing here
+	}
+	
 	/**
 	 * Runs the difference engine and refreshes the tree.
 	 */
 	private void diff() {
+		
+		preDiffHook(fAncestorStructure, fLeftStructure, fRightStructure);
 							
 		if ((fThreeWay && fAncestorStructure == null) || fLeftStructure == null || fRightStructure == null) {
 			// could not get structure of one (or more) of the legs
