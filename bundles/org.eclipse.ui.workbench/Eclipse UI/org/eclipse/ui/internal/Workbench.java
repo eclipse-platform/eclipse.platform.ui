@@ -16,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,26 +26,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
@@ -61,7 +51,15 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -93,13 +91,6 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.IThemeManager;
-
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
@@ -117,6 +108,13 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.framework.Bundle;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1312,17 +1310,17 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns an array of all plugins that extend the <code>org.eclipse.ui.startup</code>
-	 * extension point.
+	 * Returns an array with the ids of all plugins that extend the
+	 * <code>org.eclipse.ui.startup</code> extension point.
 	 */
-	public IPluginDescriptor[] getEarlyActivatedPlugins() {
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		IExtensionPoint point =
-			registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+	public String[] getEarlyActivatedPlugins() {
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint(PlatformUI.PLUGIN_ID,
+						IWorkbenchConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
-		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
+		String[] result = new String[extensions.length];
 		for (int i = 0; i < extensions.length; i++) {
-			result[i] = extensions[i].getDeclaringPluginDescriptor();
+			result[i] = extensions[i].getNamespace();
 		}
 		return result;
 	}
@@ -1334,73 +1332,128 @@ public final class Workbench implements IWorkbench {
 	 */
 	private void startPlugins() {
 		Runnable work = new Runnable() {
-			IPreferenceStore store = getPreferenceStore();
-			final String pref =
-				store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			final String disabledPlugins = getPreferenceStore()
+					.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+
 			public void run() {
-				IPluginRegistry registry = Platform.getPluginRegistry();
-				IExtensionPoint point =
-					registry.getExtensionPoint(
-						PlatformUI.PLUGIN_ID,
-						IWorkbenchConstants.PL_STARTUP);
-				IExtension[] extensions = point.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IExtension extension = extensions[i];
-					// Look for the class attribute in the startup element
-					// first
-					IConfigurationElement[] configElements = extension.getConfigurationElements();
-					// There should only be one configuration element and it
-					// should
-					// be named "startup".
-					IConfigurationElement startupElement = null;
-					for (int j = 0; j < configElements.length && startupElement == null; j++) {
-						if (configElements[j].getName().equals(IWorkbenchConstants.TAG_STARTUP)) {
-							startupElement = configElements[j];
-						}
-					}
-					final IConfigurationElement startElement = startupElement;
-					final String startupName;
-					if (startElement != null) {
-						// This will cause startupName to be null if
-						// the class attribute does not exist.
-						startupName = startElement.getAttribute(IWorkbenchConstants.TAG_CLASS);
-					} else {
-						startupName = null;
-					}
-					// If the startup element doesn't specify a class, use the
-					// plugin class
-					final IPluginDescriptor pluginDescriptor =
-						extension.getDeclaringPluginDescriptor();
-					SafeRunnable code = new SafeRunnable() {
-						public void run() throws Exception {
-							String id =
-								pluginDescriptor.getUniqueIdentifier()
-									+ IPreferenceConstants.SEPARATOR;
-							if (pref.indexOf(id) < 0) {
-								IStartup startup = null;
-								if (startupName == null) {
-									Plugin plugin = pluginDescriptor.getPlugin();
-									startup = (IStartup) plugin;
-								} else {
-									startup =
-										(IStartup) WorkbenchPlugin.createExtension(
-											startElement,
-											IWorkbenchConstants.TAG_CLASS);
-								}
-								startup.earlyStartup();
-							}
-						}
-						public void handleException(Throwable exception) {
-							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, "Unhandled Exception", exception)); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					};
-					Platform.run(code);
+				IExtensionRegistry registry = Platform.getExtensionRegistry();
+				IConfigurationElement[] configElements = registry
+						.getConfigurationElementsFor(PlatformUI.PLUGIN_ID,
+								IWorkbenchConstants.PL_STARTUP);
+
+				for (int i = 0; i < configElements.length; ++i) {
+					IConfigurationElement startElement = configElements[i];
+
+					// if the plugin is not in the set of disabled plugins, then
+					// execute the code to start it
+					String id = startElement.getDeclaringExtension().getNamespace();
+					if (disabledPlugins.indexOf(id) == -1)
+						Platform.run(new EarlyStartupRunnable(startElement));
 				}
 			}
 		};
 
 		Thread thread = new Thread(work);
 		thread.start();
+	}
+
+	/**
+	 * A utility class used to call #earlyStartup on the proper instance for a
+	 * given configuration element. The process is made complicated since
+	 * attributes that were optional in 2.1 are manadatory in 3.0.
+	 */
+	private static class EarlyStartupRunnable extends SafeRunnable {
+		private static final String EXTENSION_CLASS = "org.eclipse.core.internal.registry.Extension"; //$NON-NLS-1$
+		private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.internal.plugins.PluginDescriptor"; //$NON-NLS-1$
+
+		private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
+		private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
+
+		private IConfigurationElement startElement;
+		private String pluginId;
+
+		public EarlyStartupRunnable(IConfigurationElement startElement) {
+			this.startElement = startElement;
+			this.pluginId = startElement.getDeclaringExtension().getNamespace();
+		}
+
+		public void run() throws Exception {
+			Object executableExtension = getExecutableExtension();
+
+			// make sure the extension implements IStartup
+			if (executableExtension != null
+					&& executableExtension instanceof IStartup)
+				((IStartup) executableExtension).earlyStartup();
+			else {
+				IStatus status = new Status(IStatus.ERROR, pluginId, 0,
+						"startup class must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
+						null);
+				WorkbenchPlugin.log("Bad extension specification", status); //$NON-NLS-1$
+			}
+		}
+
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, pluginId, 0,
+					"Unable to execute early startup code for an extension", //$NON-NLS-1$
+					exception);
+			WorkbenchPlugin.log("Unhandled Exception", status); //$NON-NLS-1$
+		}
+
+		/**
+		 * The class attribute of the startup element was optional for pre-3.0
+		 * plugins (the declaring plugin's object would silently be used
+		 * instead). In 3.0 this attribute is mandatory, but 2.1 plugins should
+		 * still be able to run in the compatibility mode. So, if the attribute
+		 * is missing, then reflection is used to see if the compatibility
+		 * bundle can be located and used to access the plugin object.
+		 * 
+		 * @return an executable extension for this startup element or null if
+		 *         an extension (or plugin) could not be found
+		 */
+		private Object getExecutableExtension() throws CoreException {
+			String startupClass = startElement
+					.getAttribute(IWorkbenchConstants.TAG_CLASS);
+
+			if (startupClass != null && startupClass.length() > 0)
+				return WorkbenchPlugin.createExtension(startElement,
+						IWorkbenchConstants.TAG_CLASS);
+
+			// otherwise see if the compat bundle is running
+			Bundle compatBundle = Platform
+					.getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+			if (compatBundle == null)
+				return null;
+
+			// use reflection to try to access the plugin object
+			IExtension extension = startElement.getDeclaringExtension();
+			try {
+				// IPluginDescriptor pluginDesc =
+				// 		extension.getDeclaringPluginDescriptor();
+				Class extensionClass = compatBundle.loadClass(EXTENSION_CLASS);
+				Method getDescMethod = extensionClass.getDeclaredMethod(
+						GET_DESC_METHOD, new Class[0]);
+				Object pluginDesc = getDescMethod.invoke(extension,
+						new Object[0]);
+				if (pluginDesc == null)
+					return null;
+
+				// Plugin plugin = pluginDesc.getPlugin();
+				Class pluginDescClass = compatBundle.loadClass(PLUGIN_DESC_CLASS);
+				Method getPluginMethod = pluginDescClass.getDeclaredMethod(
+						GET_PLUGIN_METHOD, new Class[0]);
+				return getPluginMethod.invoke(pluginDesc, new Object[0]);
+			} catch (ClassNotFoundException e) {
+				handleException(e);
+			} catch (IllegalAccessException e) {
+				handleException(e);
+			} catch (InvocationTargetException e) {
+				handleException(e);
+			} catch (NoSuchMethodException e) {
+				handleException(e);
+			}
+
+			return null;
+		}
 	}
 
 	/**

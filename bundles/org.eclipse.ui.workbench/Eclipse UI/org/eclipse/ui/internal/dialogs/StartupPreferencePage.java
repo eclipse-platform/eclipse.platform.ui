@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.osgi.framework.Constants;
 
 public class StartupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Table pluginsList;
@@ -58,17 +66,17 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		return composite;
 	}
 	private void populatePluginsList() {
-		IPluginDescriptor descriptors[] = workbench.getEarlyActivatedPlugins();
+		String descriptors[] = workbench.getEarlyActivatedPlugins();
 		IPreferenceStore store = workbench.getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		if(pref == null)
 			pref = new String();
 		for (int i = 0; i < descriptors.length; i++) {
-			IPluginDescriptor desc = descriptors[i];
+			String desc = descriptors[i];
 			TableItem item = new TableItem(pluginsList,SWT.NONE);
-			item.setText(desc.getLabel());
+			item.setText((String) Platform.getBundle(desc).getHeaders().get(Constants.BUNDLE_NAME));
 			item.setData(desc);
-			String id = desc.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
+			String id = desc + IPreferenceConstants.SEPARATOR;
 			item.setChecked(pref.indexOf(id) < 0);
 		}
 	}
@@ -95,8 +103,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		TableItem items[] = pluginsList.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if(!items[i].getChecked()) {
-				IPluginDescriptor descriptor = (IPluginDescriptor)items[i].getData();
-				preference.append(descriptor.getUniqueIdentifier());
+				preference.append((String)items[i].getData());
 				preference.append(IPreferenceConstants.SEPARATOR);
 			}
 		}

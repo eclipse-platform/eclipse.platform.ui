@@ -122,10 +122,10 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 		IExtension ext = delta.getExtension();
 		// Get the name of the plugin that is adding this extension.  The
 		// name of the plugin that adds the extension point is us.
-		String pluginId = ext.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		String pluginId = ext.getNamespace();
 		add(buildNewCacheObject(delta), pluginId);
 	}
-	
+
 	public void add(Object element, String pluginId) {
 		if (element == null)
 			// Nothing to add, so just return.

@@ -92,7 +92,7 @@ public void add(IViewDescriptor desc) {
 	dirtyViews = true;
 	ViewRegistryElement element = new ViewRegistryElement();
 	element.addViewDescriptor(desc);
-	add(element, desc.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier());
+	add(element, desc.getConfigurationElement().getDeclaringExtension().getNamespace());
 }
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.registry.aaRegistryCacheaa#buildNewCacheObject(org.eclipse.core.runtime.IExtensionDelta)
