@@ -80,6 +80,10 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
 				"org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
 
+		//Preference for showing system jobs in the jobs view
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS,false);
+
+		
 		//The default character width is undefined (i.e., -1)
 		node
 				.putInt(

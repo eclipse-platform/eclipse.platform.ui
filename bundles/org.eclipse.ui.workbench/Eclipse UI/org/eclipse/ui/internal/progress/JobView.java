@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -22,14 +25,14 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.part.ViewPart;
+
+import org.eclipse.ui.internal.preferences.ViewPreferencesAction;
+import org.eclipse.ui.internal.util.ImageSupport;
 
 /**
  * The ProgressView is the class that shows the details of the current
@@ -103,21 +106,14 @@ public class JobView extends ViewPart implements IViewPart {
     private void initPulldownMenu() {
         IMenuManager menuMgr = getViewSite().getActionBars().getMenuManager();
         menuMgr.add(clearAllAction);
-        menuMgr.add(new Action(ProgressMessages
-                .getString("ProgressView.VerboseAction"), //$NON-NLS-1$
-                IAction.AS_CHECK_BOX) {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.jface.action.Action#run()
-             */
-            public void run() {
-                ProgressViewUpdater updater = ProgressViewUpdater
-                        .getSingleton();
-                updater.debug = !updater.debug;
-                setChecked(updater.debug);
-                updater.refreshAll();
-            }
+        menuMgr.add(new ViewPreferencesAction(){
+        	/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.preferences.ViewPreferencesAction#openViewPreferencesDialog()
+			 */
+			public void openViewPreferencesDialog() {
+				new JobsViewPreferenceDialog(viewer.getControl().getShell()).open();
+
+			}
         });
 
     }

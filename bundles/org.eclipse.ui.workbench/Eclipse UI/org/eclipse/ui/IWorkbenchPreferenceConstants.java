@@ -332,4 +332,10 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 */
 	public static final String RECENT_WORKSPACES_PROTOCOL = "RECENT_WORKSPACES_PROTOCOL"; //$NON-NLS-1$
+	
+	/**
+	 * <p> Stores whether or not system jobs are being
+	 * shown</p>.
+	 */
+	public static final String SHOW_SYSTEM_JOBS = "SHOW_SYSTEM_JOBS";//$NON-NLS-1$
 }

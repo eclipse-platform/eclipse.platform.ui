@@ -18,8 +18,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The ProgressViewUpdater is the singleton that updates viewers.
@@ -36,8 +40,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
     Object updateLock = new Object();
 
-    boolean debug = false;
-
+    boolean debug;
+    
+   
     /**
      * The UpdatesInfo is a private class for keeping track of the updates
      * required.
@@ -133,7 +138,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * 
      * @return ProgressViewUpdater
      */
-    static ProgressViewUpdater getSingleton() {
+   static ProgressViewUpdater getSingleton() {
         if (singleton == null)
             singleton = new ProgressViewUpdater();
         return singleton;
@@ -163,7 +168,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
         createUpdateJob();
         collectors = new IProgressUpdateCollector[0];
         ProgressManager.getInstance().addListener(this);
-
+        debug = 
+        	PrefUtil.getAPIPreferenceStore().
+        		getBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
     }
 
     /**

@@ -17,7 +17,9 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -25,7 +27,9 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -62,12 +66,19 @@ public class PlatformUIPreferenceListener implements
 			return;
 		}
 
-		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID
-				.equals(propertyName)) {
+		if (IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS.equals(propertyName)) {
+			boolean setting = PrefUtil.getAPIPreferenceStore().getBoolean(
+					IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
+
+			ProgressManager.getInstance().setShowSystemJobs(setting);
+		}
+		
+		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID.equals(propertyName)) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
 
 			workbench.getPerspectiveRegistry().setDefaultPerspective(
-					(String) event.getNewValue());
+					PrefUtil.getAPIPreferenceStore().getString(
+							IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID));
 			return;
 		}
 

@@ -1199,4 +1199,16 @@ public class ProgressManager extends ProgressProvider implements
         return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
                 IPreferenceConstants.RUN_IN_BACKGROUND);
     }
+
+	/**
+	 * Set whether or not the ProgressViewUpdater
+	 * should show system jobs.
+	 * @param showSystem
+	 */
+	public void setShowSystemJobs(boolean showSystem) {
+		ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+		updater.debug = showSystem;
+		updater.refreshAll();
+		
+	}
 }
