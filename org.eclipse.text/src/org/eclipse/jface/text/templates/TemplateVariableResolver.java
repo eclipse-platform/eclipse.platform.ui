@@ -98,8 +98,7 @@ public class TemplateVariableResolver {
 		String binding= resolve(context);
 		if (binding == null)
 			return new String[0];
-		else
-			return new String[] { binding };
+		return new String[] { binding };
 	}
 	
 	/**
