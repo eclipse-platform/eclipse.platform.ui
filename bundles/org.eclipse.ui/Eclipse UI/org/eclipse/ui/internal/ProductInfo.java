@@ -43,6 +43,7 @@ import java.util.*;
  */
 public class ProductInfo extends ConfigurationInfo {
 
+
 	// -- variables
 	private String copyright;
 	private String buildID;
@@ -74,61 +75,12 @@ public ProductInfo() {
 	
 	
 /**
- * Returns a new image which can be shown in an "about" dialog for this product.
- * Products designed to run "headless" typically would not have such an image.
- * <p>
- * Clients are responsible for ensuring that the returned image is properly
- * disposed after it has served its purpose.
- * </p>
- * 
- * @return the about image, or <code>null</code> if none
- */
-public Image getAboutImage() {
-	return aboutImage == null ? null : aboutImage.createImage();
-}
-/**
- * Returns the app name or <code>null</code>. 
- * <p>
- * On Motif, for example, this can be used
- * to set the name used for resource lookup.
- * </p>
- *
- * @return the app name
- */
-public String getAppName() {
-	return appName;
-}
-/**
- * Returns the build id for this product.
- * <p>
- * The build id represents any builds or updates made in support of a major
- * release. Development teams typically may produce many builds only a subset
- * of which get shipped to customers.
- * </p>
- *
- * @return the build id
- */
-public String getBuildID() {
-	return (buildID == null ? "" : buildID); //$NON-NLS-1$
-}
-/**
  * Returns the default preferences obtained from the configuration.
  *
  * @return the default preferences obtained from the configuration
  */
 public Hashtable getConfigurationPreferences() {
 	return configurationPreferences;
-}
-/**
- * Returns the copyright notice for this product.
- * <p>
- * The copyright notice is typically shown in the product's "about" dialog.
- * </p>
- *
- * @return the copyright notice
- */
-public String getCopyright() {
-	return (copyright == null ? "" : copyright); //$NON-NLS-1$
 }
 /**
  * Returns the default perpective id.  This value will be used
@@ -140,61 +92,7 @@ public String getCopyright() {
 public String getDefaultPerspective() {
 	return defaultPerspId;
 }
-/**
- * Returns the full name of this product.
- * <p>
- * The full name also includes additional information about the particular
- * variant of the product.
- * </p>
- *
- * @return the full name of this product
- */
-public String getDetailedName() {
-	return (detailedName == null ? "" : detailedName); //$NON-NLS-1$
-}
-/**
- * Returns the base information set identifiers for this product.
- * <p>
- * This value will be used to determine the ordering of the online
- * information sets provided by the product.
- * </p>
- * 
- * @return a comma-separated list of information set identifiers, 
- * or <code>null</code> if none specified
- */
-public String getInformationSetIds() {
-	return baseInfosets;
-}
-/**
- * Returns the name of this product.
- *
- * @return the name of this product
- */
-public String getName() {
-	return (name == null ? "" : name); //$NON-NLS-1$
-}
-/**
- * Returns an image descriptor for this product's icon.
- * Products designed to run "headless" typically would not have such an image.
- * <p>
- * The image is typically used in the top left corner of all windows associated
- * with the product.
- * </p>
- *
- * @return an image descriptor for the product's icon, or <code>null</code> if
- *  none
- */
-public ImageDescriptor getProductImageDescriptor() {
-	return productImage;
-}
-/**
- * Returns the URL for this product's main page on the world wide web.
- *
- * @return the product URL
- */
-public String getProductURL() {
-	return (productURL == null ? "" : productURL); //$NON-NLS-1$
-}
+
 /**
  * Returns a new image like the one that would have been shown in a "splash" 
  * screen when this product starts up. Products designed to run "headless" would
@@ -210,28 +108,7 @@ public String getProductURL() {
 public Image getSplashImage() {
 	return splashImage == null ? null : splashImage.createImage();
 }
-/**
- * Returns the version number of this product.
- * <p>
- * The recommended format is <it>X</it>.<it>Y</it> where <it>X</it> and 
- * <it>Y</it> are the major and minor version numbers, respectively; for
- * example: 5.02. However, arbitrary strings are allowed.
- * </p>
- *
- * @return the product version number
- */
-public String getVersion() {
-	return (version == null ? "" : version); //$NON-NLS-1$
-}
-/**
- * Returns a <code>URL</code> for the welcome page.
- * Products designed to run "headless" typically would not have such an page.
- * 
- * @return the welcome page, or <code>null</code> if none
- */
-public URL getWelcomePageURL() {
-	return welcomePageURL;
-}
+
 private Hashtable readConfigurationPreferences() {
 	Hashtable table= new Hashtable();
 	URL preferenceURL= null;
@@ -323,73 +200,24 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 			} catch (IOException e) {}
 		}
 	}
-	if ((copyright = (String) ini.get("copyright") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'copyright'");//$NON-NLS-2$//$NON-NLS-1$
-	copyright = getResourceString(copyright, bundle);
+		
 
-	if ((name = (String) ini.get("name") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'name'");//$NON-NLS-2$//$NON-NLS-1$
-	name = getResourceString(name, bundle);
-	if ((detailedName = (String) ini.get("detailedName") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'detailedName'");//$NON-NLS-2$//$NON-NLS-1$
-	detailedName = getResourceString(detailedName, bundle);
-			
-	if ((version = (String) ini.get("version") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'version'");//$NON-NLS-2$//$NON-NLS-1$
-		
-	if ((buildID = (String) ini.get("buildID") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'buildID'");//$NON-NLS-2$//$NON-NLS-1$
-				
-	if ((productURL = (String) ini.get("productURL") ) == null)//$NON-NLS-1$
-		reportINIFailure(null, "Product info file "+iniURL+" missing 'productURL'");//$NON-NLS-2$//$NON-NLS-1$
-	productURL = getResourceString(productURL, bundle);
-	appName = (String) ini.get("appName"); //$NON-NLS-1$
-	if (appName != null) {
-		appName = getResourceString(appName, bundle);
+	if ((defaultPerspId = (String) ini.get("defaultPerspectiveId") ) == null) {//$NON-NLS-1$
+		defaultPerspId = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
 	}
 
-	String welcomePageFileName = (String) ini.get("welcomePage"); //$NON-NLS-1$
-	if (welcomePageFileName != null) {
-		welcomePageURL = getDescriptor().find(new Path(welcomePageFileName));
-		if (welcomePageURL == null) {
-			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName); //$NON-NLS-1$
-		}
-	}
-		
 	URL url = null;
-	String fileName = (String) ini.get("image");//$NON-NLS-1$
+	String fileName = (String) ini.get("splashImage");//$NON-NLS-1$
+
 	if (fileName != null) {
-			url = getDescriptor().find(new Path(fileName));
-		if (url == null)
-			reportINIFailure(null, "Cannot access image " + fileName); //$NON-NLS-1$
-		else
-			productImage = ImageDescriptor.createFromURL(url);
-	}
-
-	fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
-	if (fileName != null) {
-		url = getDescriptor().find(new Path(fileName));
-		if (url == null)
-			reportINIFailure(null, "Cannot access about image " + fileName); //$NON-NLS-1$
-		else
-			aboutImage = ImageDescriptor.createFromURL(url);
-	}
-
-	if ((fileName = (String) ini.get("splashImage") ) != null) {//$NON-NLS-1$
 		url = getDescriptor().find(new Path(fileName));
 		if (url == null)
 			reportINIFailure(null, "Cannot access splash image " + fileName); //$NON-NLS-1$
 		else
 			splashImage = ImageDescriptor.createFromURL(url);
 	}
-
-	if ((defaultPerspId = (String) ini.get("defaultPerspectiveId") ) == null) {//$NON-NLS-1$
-		defaultPerspId = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
-	}
 
 
-	baseInfosets = (String) ini.get("baseInfosets"); //$NON-NLS-1$
-
 	configurationPreferences= readConfigurationPreferences();
 }
 }

@@ -68,7 +68,7 @@ public void run() {
 	}
 	
 	// Open shell.
-	SplashWindow splash = new SplashWindow(productInfo.getName(), img);
+	SplashWindow splash = new SplashWindow("", img);
 	splash.open();
 	while (!stop) {
 		display.readAndDispatch();

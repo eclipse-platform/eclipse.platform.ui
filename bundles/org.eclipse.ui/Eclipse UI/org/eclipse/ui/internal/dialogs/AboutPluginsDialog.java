@@ -68,7 +68,6 @@ public class AboutPluginsDialog extends Dialog {
 		info = Platform.getPluginRegistry().getPluginDescriptors();
 		sortByProvider();
 		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
-		productInfo = ((Workbench) PlatformUI.getWorkbench()).getProductInfo();
 	}
 
 	/* (non-Javadoc)
@@ -77,10 +76,6 @@ public class AboutPluginsDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		String title = aboutInfo.getAppName();
-		if (title ==  null) {
-			// backward compatibility
-			title = productInfo.getName();
-		}
 		newShell.setText(
 			WorkbenchMessages.format(
 				"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$

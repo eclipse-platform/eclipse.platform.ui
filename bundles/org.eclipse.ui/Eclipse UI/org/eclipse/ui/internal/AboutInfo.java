@@ -176,7 +176,10 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * @return the product name, or <code>null</code>
 	 */
 	public String getProductName() {
-		return productName;
+		IPluginDescriptor desc = getDescriptor();
+		if (desc == null)
+			return null;
+		return desc.getLabel();
 	}
 
 	/**
@@ -298,9 +301,6 @@ public class AboutInfo extends NewConfigurationInfo {
 			}
 		}
 		String[] mappingsArray = (String[])mappingsList.toArray(new String[mappingsList.size()]);
-
-		productName = (String) ini.get("productName"); //$NON-NLS-1$
-		productName = getResourceString(productName, bundle, mappingsArray);
 
 		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
 

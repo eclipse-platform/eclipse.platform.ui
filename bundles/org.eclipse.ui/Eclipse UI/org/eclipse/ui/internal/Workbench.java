@@ -72,7 +72,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private AboutInfo aboutInfo;
 	private AboutInfo[] featuresInfo;
 	private ProductInfo productInfo;
-	private PlatformInfo platformInfo;
 	private String[] commandLineArgs;
 	private Window.IExceptionHandler handler;
 	private AcceleratorConfiguration acceleratorConfiguration;
@@ -446,14 +445,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return productInfo;
 	}
 	/**
-	 * @return the platform info object
-	 * 
-	 * @deprecated
-	 */
-	public PlatformInfo getPlatformInfo() {
-		return platformInfo;
-	}
-	/**
 	 * Returns the shared images for the workbench.
 	 *
 	 * @return the shared image manager
@@ -706,10 +697,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private void initializeProductImage() {
 		ImageDescriptor descriptor = getAboutInfo().getWindowImage();
-		if (descriptor == null) {
-			// backward compatibility
-			descriptor = getProductInfo().getProductImageDescriptor();
-		}
 		if (descriptor != null) {
 			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
 			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
@@ -834,11 +821,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// See if a welcome page is specified
 		AboutInfo info = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
 		URL url = info.getWelcomePageURL();
-		if (url == null) {
-			// backward compatibility
-			ProductInfo prodInfo = ((Workbench) PlatformUI.getWorkbench()).getProductInfo();
-			url = prodInfo.getWelcomePageURL();
-		}
 		if (url == null)
 			return;
 
@@ -913,7 +895,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			} 
 		}
 		
-		platformInfo = new PlatformInfo();
 		productInfo = new ProductInfo();
 
 		boolean success = true;
@@ -922,13 +903,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			aboutInfo.readINIFile();
 		} catch (CoreException e) {
 			WorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
-			success = false;
-		}
-
-		try {
-			platformInfo.readINIFile();
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error reading platform info file", e.getStatus()); //$NON-NLS-1$
 			success = false;
 		}
 
@@ -1089,9 +1063,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (!readInfo())
 			return null;
 		String appName = getAboutInfo().getAppName();
-		if (appName == null) 
-			// backward compatibility
-			appName = getProductInfo().getAppName();
 		if (appName != null)
 			Display.setAppName(appName);
 		Display display = new Display();

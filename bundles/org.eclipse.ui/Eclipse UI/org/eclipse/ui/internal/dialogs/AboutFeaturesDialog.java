@@ -113,7 +113,6 @@ public class AboutFeaturesDialog extends Dialog {
 		super(parentShell);
 		Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 		aboutInfo = workbench.getAboutInfo();
-		productInfo = workbench.getProductInfo();
 		featuresInfo = workbench.getFeaturesInfo();
 		sortByProvider();
 	}
@@ -124,10 +123,6 @@ public class AboutFeaturesDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		String title = aboutInfo.getAppName();
-		if (title ==  null) {
-			// backward compatibility
-			title = productInfo.getName();
-		}
 		newShell.setText(
 			WorkbenchMessages.format(
 				"AboutFeaturesDialog.shellTitle",	//$NON-NLS-1$

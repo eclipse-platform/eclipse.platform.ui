@@ -43,8 +43,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.AboutItem;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.PlatformInfo;
-import org.eclipse.ui.internal.ProductInfo;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -58,8 +56,6 @@ public class AboutDialog extends Dialog {
 	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 	private	Image 			image;	//image to display on dialog
 	private  	AboutInfo     	aboutInfo;
-	private	PlatformInfo 	platformInfo;	//the platform info
-	private	ProductInfo 	productInfo;	//the product info
 	private 	ArrayList images = new ArrayList();
 	private 	AboutItem item;
 	private	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
@@ -76,8 +72,6 @@ public AboutDialog(Shell parentShell) {
 	super(parentShell);
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	aboutInfo = workbench.getAboutInfo();
-	platformInfo = workbench.getPlatformInfo();
-	productInfo = workbench.getProductInfo();
 }
 /**
  * Adds listeners to the given styled text
@@ -138,12 +132,8 @@ public boolean close() {
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
 	String name = aboutInfo.getProductName();
-	if (name == null) {
-		// backward compatibility
-		name = productInfo.getName();
-	}
 	if (name != null)
-		newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {productInfo.getName()})); //$NON-NLS-1$
+		newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {name})); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
 }
 /**
@@ -179,10 +169,6 @@ protected Control createDialogArea(Composite parent) {
 	ImageDescriptor imageDescriptor =  aboutInfo.getAboutImage();	// may be null
 	if (imageDescriptor != null) 
 		image = imageDescriptor.createImage();
-	if (image == null) {
-		// backward compatibility
-		image =  productInfo.getAboutImage();	// may be null
-	}
 	if (image == null || image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
 		// show text
 		String aboutText = aboutInfo.getAboutText();
@@ -446,15 +432,7 @@ private void openLink(final String href) {
  * Answer the product text to show on the right side of the dialog.
  */ 
 private String getAboutText() {
-	String text = aboutInfo.getAboutText();
-	if (text != null)
-		return text;
-	// backward compatibility	
-	if (productInfo.getBuildID().length() == 0) {
-		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {productInfo.getDetailedName(),productInfo.getVersion(),productInfo.getCopyright()}); //$NON-NLS-1$
-	} else {
-		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {productInfo.getDetailedName(),productInfo.getVersion(),productInfo.getBuildID(),productInfo.getCopyright()}); //$NON-NLS-1$
-	}
+	return aboutInfo.getAboutText();
 }
 
 /**
