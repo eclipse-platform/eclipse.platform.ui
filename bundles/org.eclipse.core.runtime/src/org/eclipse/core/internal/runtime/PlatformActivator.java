@@ -26,7 +26,7 @@ import org.osgi.service.url.URLStreamHandlerService;
 /**
  * Activator for the Eclipse runtime.
  */
-public class PlatformActivator extends Plugin implements BundleActivator, ServiceListener {
+public class PlatformActivator extends Plugin implements BundleActivator {
 	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
@@ -40,8 +40,9 @@ public class PlatformActivator extends Plugin implements BundleActivator, Servic
 
 	public void start(BundleContext context) throws Exception {
 		PlatformActivator.context = context;
-		context.addServiceListener(this);
-		tryToAcquireInfoService();
+		acquireInfoService();
+		startInternalPlatform();
+		startRegistry(context);
 		installPlatformURLSupport();
 		registerApplicationService();
 		InternalPlatform.getDefault().setRuntimeInstance(this);
@@ -146,30 +147,15 @@ public class PlatformActivator extends Plugin implements BundleActivator, Servic
 		}
 	}
 
-	private void tryToAcquireInfoService() {
-		ServiceReference reference = context.getServiceReference(EnvironmentInfo.class.getName());
-		if (reference == null)
+	private void acquireInfoService() throws Exception{
+		environmentServiceReference = context.getServiceReference(EnvironmentInfo.class.getName());
+		if (environmentServiceReference == null)
 			return;
-		environmentInfoServiceAquired(reference);
+		InternalPlatform.infoService  = (EnvironmentInfo) context.getService(environmentServiceReference);
 	}
-
-	private void environmentInfoServiceAquired(ServiceReference reference) {
-		if (environmentServiceReference != null)
-			return;
-		environmentServiceReference = reference;
-		EnvironmentInfo infoService = (EnvironmentInfo) context.getService(environmentServiceReference);
-		InternalPlatform.infoService = infoService;
-		toStart();
-	}
-
-	private void toStart() {
-		try {
-			InternalPlatform.getDefault().start(context);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		startRegistry(context);
+	
+	private void startInternalPlatform() throws Exception {
+		InternalPlatform.getDefault().start(context);	
 	}
 
 	private void environmentInfoServiceReleased(ServiceReference reference) {
@@ -183,26 +169,31 @@ public class PlatformActivator extends Plugin implements BundleActivator, Servic
 		environmentServiceReference = null;
 	}
 
-	public void serviceChanged(ServiceEvent event) {
-		int type = event.getType();
-		ServiceReference reference = event.getServiceReference();
-		switch (type) {
-			case ServiceEvent.REGISTERED :
-				String[] servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
-				for (int i = 0; i < servicesInterfaces.length; i++) {
-					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
-						environmentInfoServiceAquired(reference);
-				}
-				break;
-			case ServiceEvent.UNREGISTERING :
-				servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
-				for (int i = 0; i < servicesInterfaces.length; i++) {
-					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
-						environmentInfoServiceReleased(reference);
-				}
-				break;
-		}
-	}
+//	public void serviceChanged(ServiceEvent event) {
+//		int type = event.getType();
+//		ServiceReference reference = event.getServiceReference();
+//		switch (type) {
+//			case ServiceEvent.REGISTERED :
+//				String[] servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
+//				for (int i = 0; i < servicesInterfaces.length; i++) {
+//					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
+//						try {
+//							environmentInfoServiceAquired(reference);
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//				}
+//				break;
+//			case ServiceEvent.UNREGISTERING :
+//				servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
+//				for (int i = 0; i < servicesInterfaces.length; i++) {
+//					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
+//						environmentInfoServiceReleased(reference);
+//				}
+//				break;
+//		}
+//	}
 	private void registerApplicationService() {
 		Runnable work = new Runnable() {
 			public void run() {
