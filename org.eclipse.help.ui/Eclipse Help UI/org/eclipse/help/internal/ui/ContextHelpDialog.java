@@ -385,15 +385,19 @@ public class ContextHelpDialog implements Runnable {
 			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
 		
 		// group related topics, and far related topics together
-		IHelpTopic allTopics[] =
-			new IHelpTopic[relatedTopics.length + farRelatedTopics.length];
-		System.arraycopy(relatedTopics, 0, allTopics, 0, relatedTopics.length);
-		System.arraycopy(
-			farRelatedTopics,
-			0,
-			allTopics,
-			relatedTopics.length,
-			farRelatedTopics.length);
+		int len1 = relatedTopics==null?0:relatedTopics.length;
+		int len2 = farRelatedTopics==null?0:farRelatedTopics.length;
+		          
+		IHelpTopic allTopics[] = new IHelpTopic[len1+len2];
+		if (len1 > 0) 
+		    System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
+		if (len2 > 0)
+		    System.arraycopy(
+				farRelatedTopics,
+				0,
+				allTopics,
+				len1,
+				len2);
 
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(allTopics, selectedTopic);
