@@ -7,9 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.activities;
 
 /**
  * <p>
@@ -24,12 +24,12 @@ package org.eclipse.ui.internal.csm.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleListener {
+public interface IActivityRegistryListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param roleEvent
+	 * @param activityRegistryEvent
 	 */
-	void roleChanged(IRoleEvent roleEvent);
+	void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent);
 }

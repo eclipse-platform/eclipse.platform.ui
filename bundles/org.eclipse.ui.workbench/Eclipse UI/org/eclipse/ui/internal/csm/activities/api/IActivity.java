@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.activities.api;
 
 import java.util.Set;
 
@@ -26,14 +26,14 @@ import java.util.Set;
  * 
  * @since 3.0
  */
-public interface IRole extends Comparable {
+public interface IActivity extends Comparable {
 
 	/**
-	 * Registers an IRoleListener instance with this role.
+	 * Registers an IActivityListener instance with this activity.
 	 *
-	 * @param roleListener the IRoleListener instance to register.
+	 * @param activityListener the IActivityListener instance to register.
 	 */	
-	void addRoleListener(IRoleListener roleListener);
+	void addActivityListener(IActivityListener activityListener);
 
 	/**
 	 * JAVADOC
@@ -48,7 +48,7 @@ public interface IRole extends Comparable {
 	 * @return
 	 */	
 	String getDescription()
-		throws RoleNotDefinedException;
+		throws ActivityNotDefinedException;
 	
 	/**
 	 * JAVADOC
@@ -63,7 +63,14 @@ public interface IRole extends Comparable {
 	 * @return
 	 */	
 	String getName()
-		throws RoleNotDefinedException;
+		throws ActivityNotDefinedException;
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isActive();
 
 	/**
 	 * JAVADOC
@@ -73,9 +80,9 @@ public interface IRole extends Comparable {
 	boolean isDefined();
 	
 	/**
-	 * Unregisters an IRoleListener instance with this role.
+	 * Unregisters an IActivityListener instance with this activity.
 	 *
-	 * @param roleListener the IRoleListener instance to unregister.
+	 * @param activityListener the IActivityListener instance to unregister.
 	 */
-	void removeRoleListener(IRoleListener roleListener);
+	void removeActivityListener(IActivityListener activityListener);
 }

@@ -9,28 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.eclipse.ui.internal.csm.roles.api.IRole;
-import org.eclipse.ui.internal.csm.roles.api.IRoleEvent;
-import org.eclipse.ui.internal.csm.roles.api.IRoleListener;
-import org.eclipse.ui.internal.csm.roles.api.RoleNotDefinedException;
+import org.eclipse.ui.internal.csm.activities.api.ActivityNotDefinedException;
+import org.eclipse.ui.internal.csm.activities.api.IActivity;
+import org.eclipse.ui.internal.csm.activities.api.IActivityEvent;
+import org.eclipse.ui.internal.csm.activities.api.IActivityListener;
 import org.eclipse.ui.internal.util.Util;
 
-final class Role implements IRole {
+final class Activity implements IActivity {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Role.class.getName().hashCode();
+	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 
 	private boolean active;
 	private SortedSet activityBindings;
-	private IRoleEvent roleEvent;
-	private List roleListeners;
+	private IActivityEvent activityEvent;
+	private List activityListeners;
 	private boolean defined;
 	private String description;
 	private String id;
@@ -40,39 +40,39 @@ final class Role implements IRole {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	Role(String id) {	
+	Activity(String id) {	
 		if (id == null)
 			throw new NullPointerException();
 
 		this.id = id;
 	}
 
-	public void addRoleListener(IRoleListener roleListener) {
-		if (roleListener == null)
+	public void addActivityListener(IActivityListener activityListener) {
+		if (activityListener == null)
 			throw new NullPointerException();
 		
-		if (roleListeners == null)
-			roleListeners = new ArrayList();
+		if (activityListeners == null)
+			activityListeners = new ArrayList();
 		
-		if (!roleListeners.contains(roleListener))
-			roleListeners.add(roleListener);
+		if (!activityListeners.contains(activityListener))
+			activityListeners.add(activityListener);
 	}
 
 	public int compareTo(Object object) {
-		Role role = (Role) object;
-		int compareTo = active == false ? (role.active == true ? -1 : 0) : 1;
+		Activity activity = (Activity) object;
+		int compareTo = active == false ? (activity.active == true ? -1 : 0) : 1;
 
 		if (compareTo == 0) {
-			compareTo = defined == false ? (role.defined == true ? -1 : 0) : 1;
+			compareTo = defined == false ? (activity.defined == true ? -1 : 0) : 1;
 			
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, role.description);
+				compareTo = Util.compare(description, activity.description);
 			
 				if (compareTo == 0) {		
-					compareTo = id.compareTo(role.id);			
+					compareTo = id.compareTo(activity.id);			
 				
 					if (compareTo == 0)
-						compareTo = Util.compare(name, role.name);
+						compareTo = Util.compare(name, activity.name);
 				}
 			}
 		}
@@ -81,16 +81,16 @@ final class Role implements IRole {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Role))
+		if (!(object instanceof Activity))
 			return false;
 
-		Role role = (Role) object;	
+		Activity activity = (Activity) object;	
 		boolean equals = true;
-		equals &= active == role.active;
-		equals &= defined == role.defined;
-		equals &= Util.equals(description, role.description);
-		equals &= id.equals(role.id);
-		equals &= Util.equals(name, role.name);
+		equals &= active == activity.active;
+		equals &= defined == activity.defined;
+		equals &= Util.equals(description, activity.description);
+		equals &= id.equals(activity.id);
+		equals &= Util.equals(name, activity.name);
 		return equals;
 	}
 
@@ -100,9 +100,9 @@ final class Role implements IRole {
 	}
 
 	public String getDescription()
-		throws RoleNotDefinedException {
+		throws ActivityNotDefinedException {
 		if (!defined)
-			throw new RoleNotDefinedException();
+			throw new ActivityNotDefinedException();
 			
 		return description;	
 	}
@@ -112,9 +112,9 @@ final class Role implements IRole {
 	}
 	
 	public String getName()
-		throws RoleNotDefinedException {
+		throws ActivityNotDefinedException {
 		if (!defined)
-			throw new RoleNotDefinedException();
+			throw new ActivityNotDefinedException();
 
 		return name;
 	}	
@@ -141,12 +141,12 @@ final class Role implements IRole {
 		return defined;
 	}
 
-	public void removeRoleListener(IRoleListener roleListener) {
-		if (roleListener == null)
+	public void removeActivityListener(IActivityListener activityListener) {
+		if (activityListener == null)
 			throw new NullPointerException();
 
-		if (roleListeners != null)
-			roleListeners.remove(roleListener);
+		if (activityListeners != null)
+			activityListeners.remove(activityListener);
 	}
 
 	public String toString() {
@@ -169,13 +169,13 @@ final class Role implements IRole {
 		return string;		
 	}
 	
-	void fireRoleChanged() {
-		if (roleListeners != null) {
-			for (int i = 0; i < roleListeners.size(); i++) {
-				if (roleEvent == null)
-					roleEvent = new RoleEvent(this);
+	void fireActivityChanged() {
+		if (activityListeners != null) {
+			for (int i = 0; i < activityListeners.size(); i++) {
+				if (activityEvent == null)
+					activityEvent = new ActivityEvent(this);
 							
-				((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
+				((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
 			}				
 		}			
 	}

@@ -7,9 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities.api;
 
 /**
  * <p>
@@ -24,12 +24,12 @@ package org.eclipse.ui.internal.csm.roles;
  * 
  * @since 3.0
  */
-public interface IRoleActivationServiceEvent {
+public interface IActivityManagerEvent {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IRoleActivationService getRoleActivationService();
+	IActivityManager getActivityManager();
 }

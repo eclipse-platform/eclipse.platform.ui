@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities;
 
 import java.util.SortedSet;
 
@@ -26,40 +26,40 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface IRoleActivationService {
+public interface IActivityActivationService {
 
 	/**
 	 * JAVADOC
 	 *
-	 * @param roleId
+	 * @param activityId
 	 */	
-	void activateRole(String roleId);
+	void activateActivity(String activityId);
 
 	/**
-	 * Registers an IRoleActivationServiceListener instance with this role activation service.
+	 * Registers an IActivationServiceListener instance with this activity activation service.
 	 *
-	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to register.
+	 * @param activityActivationServiceListener the IActivationServiceListener instance to register.
 	 */	
-	void addRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
+	void addActivityActivationServiceListener(IActivityActivationServiceListener activityActivationServiceListener);
 
 	/**
 	 * JAVADOC
 	 *
-	 * @param roleId
+	 * @param activityId
 	 */	
-	void deactivateRole(String roleId);
+	void deactivateActivity(String activityId);
 		
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedSet getActiveRoleIds();
+	SortedSet getActiveActivityIds();
 	
 	/**
-	 * Unregisters an IRoleActivationServiceListener instance with this role activation services.
+	 * Unregisters an IActivationServiceListener instance with this activity activation services.
 	 *
-	 * @param roleActivationServiceListener the IRoleActivationServiceListener instance to unregister.
+	 * @param activityActivationServiceListener the IActivationServiceListener instance to unregister.
 	 */
-	void removeRoleActivationServiceListener(IRoleActivationServiceListener roleActivationServiceListener);
+	void removeActivityActivationServiceListener(IActivityActivationServiceListener activityActivationServiceListener);
 }

@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.csm.roles.api;
 
-import java.util.Set;
-
 /**
  * <p>
  * JAVADOC
@@ -26,56 +24,12 @@ import java.util.Set;
  * 
  * @since 3.0
  */
-public interface IRole extends Comparable {
-
-	/**
-	 * Registers an IRoleListener instance with this role.
-	 *
-	 * @param roleListener the IRoleListener instance to register.
-	 */	
-	void addRoleListener(IRoleListener roleListener);
+public interface IRoleActivityBinding extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	Set getActivityBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getDescription()
-		throws RoleNotDefinedException;
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName()
-		throws RoleNotDefinedException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isDefined();
-	
-	/**
-	 * Unregisters an IRoleListener instance with this role.
-	 *
-	 * @param roleListener the IRoleListener instance to unregister.
-	 */
-	void removeRoleListener(IRoleListener roleListener);
+	String getActivityId();
 }

@@ -9,21 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities;
 
-import org.eclipse.ui.internal.csm.roles.api.IRoleActivityBinding;
+import org.eclipse.ui.internal.csm.activities.api.IActivityPatternBinding;
 
-final class ActivityBinding implements IRoleActivityBinding {
+final class ActivityPatternBinding implements IActivityPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActivityBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActivityPatternBinding.class.getName().hashCode();
 
 	private String activityId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	
-	ActivityBinding(String activityId) {	
+	ActivityPatternBinding(String activityId) {	
 		if (activityId == null)
 			throw new NullPointerException();
 
@@ -31,16 +31,16 @@ final class ActivityBinding implements IRoleActivityBinding {
 	}
 
 	public int compareTo(Object object) {
-		ActivityBinding activityBinding = (ActivityBinding) object;
+		ActivityPatternBinding activityBinding = (ActivityPatternBinding) object;
 		int compareTo = activityId.compareTo(activityBinding.activityId);			
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityBinding))
+		if (!(object instanceof ActivityPatternBinding))
 			return false;
 
-		ActivityBinding activityBinding = (ActivityBinding) object;	
+		ActivityPatternBinding activityBinding = (ActivityPatternBinding) object;	
 		boolean equals = true;
 		equals &= activityId.equals(activityBinding.activityId);
 		return equals;

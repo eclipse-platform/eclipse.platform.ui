@@ -9,21 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities;
 
+import java.util.List;
 
-final class RoleActivationServiceEvent implements IRoleActivationServiceEvent {
+public interface IMutableActivityRegistry extends IActivityRegistry {
 
-	private IRoleActivationService roleActivationService;
-
-	RoleActivationServiceEvent(IRoleActivationService roleActivationService) {
-		if (roleActivationService == null)
-			throw new NullPointerException();
-		
-		this.roleActivationService = roleActivationService;
-	}
-
-	public IRoleActivationService getRoleActivationService() {
-		return roleActivationService;
-	}
+	void setActivityDefinitions(List activityDefinitions);
 }

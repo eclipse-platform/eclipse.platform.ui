@@ -13,8 +13,8 @@ package org.eclipse.ui.keys;
 
 /**
  * <p>
- * This class represents the exception caused due to errors parsing of KeyStroke 
- * and KeySequence objects from strings.
+ * This class represents errors due to attempts to parse KeyStroke and 
+ * KeySequence objects from improperly formatted formal string representations.
  * </p>
  * <p>
  * <code>ParseException</code> objects are immutable. Clients are not permitted 

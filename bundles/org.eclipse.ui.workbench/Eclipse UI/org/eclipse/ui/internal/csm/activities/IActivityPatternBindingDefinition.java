@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.activities;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ package org.eclipse.ui.internal.csm.roles.api;
  * 
  * @since 3.0
  */
-public interface IActivityBinding extends Comparable {
+public interface IActivityPatternBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
@@ -32,4 +32,18 @@ public interface IActivityBinding extends Comparable {
 	 * @return
 	 */	
 	String getActivityId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPattern();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();	
 }

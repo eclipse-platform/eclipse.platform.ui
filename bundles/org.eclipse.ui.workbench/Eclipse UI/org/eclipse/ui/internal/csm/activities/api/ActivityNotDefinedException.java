@@ -9,27 +9,38 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.activities.api;
 
 /**
  * <p>
- * JAVADOC
+ * Signals that an attempt was made to access the attributes of an undefined
+ * activity.
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
- * </p>
+ * Clients are not permitted to extend this class.
+ * </p> 
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
  */
-public interface IRoleListener {
+public class ActivityNotDefinedException extends Exception {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @param roleEvent
-	 */
-	void roleChanged(IRoleEvent roleEvent);
+	 * Constructs a <code>ActivityNotDefinedException</code> with no specified 
+	 * detail message. 
+	 */	
+	public ActivityNotDefinedException() {
+	}
+
+	/**
+	 * Constructs a <code>ActivityNotDefinedException</code> with the specified 
+	 * detail message. 
+	 *
+	 * @param s	the detail message.
+	 */	
+	public ActivityNotDefinedException(String s) {
+		super(s);
+	}
 }

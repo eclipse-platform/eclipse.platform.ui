@@ -7,11 +7,10 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.internal.csm.roles.api;
 
-import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -39,13 +38,6 @@ public interface IRoleManager {
 	/**
 	 * JAVADOC
 	 *
-	 * @return
-	 */
-	Set getActiveRoleIds();
-
-	/**
-	 * JAVADOC
-	 *
 	 * @param roleId
 	 * @return
 	 */	
@@ -64,11 +56,4 @@ public interface IRoleManager {
 	 * @param roleManagerListener the IRoleManagerListener instance to unregister.
 	 */
 	void removeRoleManagerListener(IRoleManagerListener roleManagerListener);
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @param activeRoleIds
-	 */
-	void setActiveRoleIds(Set activeRoleIds);	
 }

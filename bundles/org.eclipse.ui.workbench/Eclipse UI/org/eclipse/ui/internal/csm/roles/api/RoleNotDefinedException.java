@@ -13,23 +13,34 @@ package org.eclipse.ui.internal.csm.roles.api;
 
 /**
  * <p>
- * JAVADOC
+ * Signals that an attempt was made to access the attributes of an undefined
+ * role.
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
- * </p>
+ * Clients are not permitted to extend this class.
+ * </p> 
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
  */
-public interface IRoleListener {
+public final class RoleNotDefinedException extends Exception {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @param roleEvent
-	 */
-	void roleChanged(IRoleEvent roleEvent);
+	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
+	 * detail message. 
+	 */	
+	public RoleNotDefinedException() {
+	}
+
+	/**
+	 * Constructs a <code>RoleNotDefinedException</code> with the specified 
+	 * detail message. 
+	 *
+	 * @param s	the detail message.
+	 */	
+	public RoleNotDefinedException(String s) {
+		super(s);
+	}
 }
