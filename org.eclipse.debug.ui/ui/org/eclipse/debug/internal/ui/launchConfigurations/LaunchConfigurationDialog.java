@@ -2174,7 +2174,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setCancelButtonPressed(false);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().setVisible(true);
-			getProgressMonitorCancelButton().forceFocus();
+			getProgressMonitorCancelButton().setFocus();
 		}
 		return savedState;
 	}
