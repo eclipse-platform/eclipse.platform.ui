@@ -16,7 +16,7 @@ import java.util.*;
  * A marker manager stores and retrieves markers on resources in the workspace.
  */
 public class MarkerManager implements IManager {
-	/**
+/**
  * Returns true if the given marker is persistent, and false
  * otherwise.
  */
