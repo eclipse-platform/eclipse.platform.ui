@@ -192,7 +192,8 @@ public class SiteMapModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */
-	public void markReadOnly() {		
+	public void markReadOnly() {
+		super.markReadOnly();		
 		markReferenceReadOnly(getDescriptionModel());
 		markListReferenceReadOnly(getFeatureReferenceModels());
 		markListReferenceReadOnly(getArchiveReferenceModels());

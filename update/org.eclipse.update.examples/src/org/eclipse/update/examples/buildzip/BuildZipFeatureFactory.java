@@ -5,6 +5,7 @@ package org.eclipse.update.examples.buildzip;
  * All Rights Reserved.
  */ 
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +45,7 @@ public class BuildZipFeatureFactory
 			// initialize feature
 			feature.setFeatureContentProvider(cp);
 			feature.setSite(site);
-			feature.resolve(url, null); 
+			feature.resolve(cp.getFeatureBaseURL(), null); 
 			feature.markReadOnly();
 			return feature;
 		} catch (Exception e) {

@@ -8,6 +8,7 @@ package org.eclipse.update.examples.buildzip;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
@@ -114,6 +115,11 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		} catch(IOException e) {
 			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getVersionIdentifier(),e);
 		}
+	}
+	
+	public URL getFeatureBaseURL() throws IOException {
+		return getWorkingDirectory().toURL();
+			
 	}
 
 	ContentReference getFeatureBuildManifest() throws Exception {

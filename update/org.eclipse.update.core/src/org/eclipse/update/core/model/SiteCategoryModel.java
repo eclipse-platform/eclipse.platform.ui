@@ -97,6 +97,7 @@ public class SiteCategoryModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public void markReadOnly() {		
+		super.markReadOnly();
 		markReferenceReadOnly(getDescriptionModel());
 	}
 	
