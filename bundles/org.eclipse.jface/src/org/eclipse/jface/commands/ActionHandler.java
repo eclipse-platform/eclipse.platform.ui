@@ -56,11 +56,6 @@ public final class ActionHandler extends AbstractHandler {
 		this.action = action;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(IHandlerListener)
-	 */
 	public final void addHandlerListener(final IHandlerListener handlerListener) {
 		if (!hasListeners()) {
 			attachListener();
@@ -110,12 +105,7 @@ public final class ActionHandler extends AbstractHandler {
 			action.removePropertyChangeListener(propertyChangeListener);
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(ExecutionEvent)
-	 */
+	
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if ((action.getStyle() == IAction.AS_CHECK_BOX)
@@ -144,21 +134,15 @@ public final class ActionHandler extends AbstractHandler {
 	public final IAction getAction() {
 		return action;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
-	 */
+	
 	public final boolean isEnabled() {
 		return action.isEnabled();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(IHandlerListener)
-	 */
+	
+	public final boolean isHandled() {
+		return action.isHandled();
+	}
+	
 	public final void removeHandlerListener(
 			final IHandlerListener handlerListener) {
 		super.removeHandlerListener(handlerListener);
@@ -167,12 +151,7 @@ public final class ActionHandler extends AbstractHandler {
 			detachListener();
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -44,14 +45,6 @@ import org.eclipse.ui.internal.PartSite;
  */
 public class RetargetAction extends PartEventAction implements
         ActionFactory.IWorkbenchAction {
-
-    /**
-     * Property name of a retarget action's current handler
-     * (value <code>"handler"</code>).
-     * 
-     * @since 3.1
-     */
-    public static final String HANDLER = "handler"; //$NON-NLS-1$
 
     /**
      * The help listener assigned to this action, or <code>null</code> if none.
@@ -234,7 +227,7 @@ public class RetargetAction extends PartEventAction implements
         return handler;
     }
     
-    public boolean isHandled() {
+    public final boolean isHandled() {
         return (handler != null);
     }
 
@@ -269,7 +262,7 @@ public class RetargetAction extends PartEventAction implements
         }
 		
 		// Notify listeners that the handler has changed.
-        firePropertyChange(HANDLER, oldHandler,
+        firePropertyChange(IHandlerAttributes.ATTRIBUTE_HANDLED, oldHandler,
                 newHandler);
     }
 

@@ -128,7 +128,7 @@ public final class ActionHandler extends AbstractHandler {
                     String property = propertyChangeEvent.getProperty();
                     if (IAction.ENABLED.equals(property)
                             || IAction.CHECKED.equals(property)
-                            || RetargetAction.HANDLER
+                            || IHandlerAttributes.ATTRIBUTE_HANDLED
                                     .equals(property)) {
 
                         Map previousAttributeValuesByName = attributeValuesByName;
