@@ -4,18 +4,19 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.ViewPane;
-import org.eclipse.ui.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.SWT;
-import java.io.*;
-import java.util.List;	// name resolution problem with swt.widgets.*
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.*;
+import java.util.List;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -960,8 +961,20 @@ public IViewPart showView(String viewID)
 	throws PartInitException 
 {
 	ViewPane pane = getViewFactory().createView(viewID);
-	presentation.addPart(pane);
-	return pane.getViewPart();
+	IViewPart part = pane.getViewPart();
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
+	if (presentation.hasPlaceholder(viewID)) {
+		presentation.addPart(pane);
+	} else if (openViewMode == IPreferenceConstants.OVM_FAST) {
+		fastViews.add(part);
+		showFastView(part);
+	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
+		presentation.addDetachedPart(pane);
+	} else {
+		presentation.addPart(pane);
+	}
+	return part;
 }
 /**
  * Toggles the visibility of a fast view.  If the view is active it

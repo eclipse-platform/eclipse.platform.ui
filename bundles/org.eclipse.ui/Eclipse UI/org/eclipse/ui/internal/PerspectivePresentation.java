@@ -486,6 +486,44 @@ private void detach(LayoutPart part, int x, int y) {
 
 }
 /**
+ * Create a detached window containing a part.
+ */
+public void addDetachedPart(LayoutPart part) {
+	// Detaching is disabled on some platforms ..
+	if (!detachable) {
+		addPart(part);
+		return;
+	}
+		
+	// Calculate detached window size.
+	int width = 300;
+	int height = 300;
+	Rectangle bounds = parentWidget.getShell().getBounds();
+	int x = bounds.x + (bounds.width - width) / 2;
+	int y = bounds.y + (bounds.height - height) / 2;
+	
+	// Create detached window.
+	DetachedWindow window = new DetachedWindow(page);
+	detachedWindowList.add(window);
+	window.create();
+
+	// add part to detached window.
+	part.createControl(window.getShell());
+	ViewPane pane = (ViewPane) part;
+	window.getShell().setText(pane.getPart().getTitle());
+	window.add(pane, partDropListener);
+
+	// Open window.
+	window.getShell().setBounds(x, y, width, height);
+	window.open();
+
+	part.setFocus();
+
+	// enable direct manipulation
+	enableDrag(pane);
+	enableDrop(part);
+}
+/**
  * disableDragging.
  */
 private void disableAllDrag() {
@@ -632,6 +670,13 @@ private LayoutPart findPart(String id, LayoutPart[] parts) {
 		}
 	}
 	return null;
+}
+/**
+ * Returns true if a placeholder exists for a given ID.
+ */
+public boolean hasPlaceholder(String id) {
+	LayoutPart testPart = findPart(id);
+	return (testPart != null && testPart instanceof PartPlaceholder);
 }
 /**
  * Returns the layout container.

@@ -29,8 +29,12 @@ public class ViewsPreferencePage
 	private Button editorBottomButton;
 	private Button viewTopButton;
 	private Button viewBottomButton;
+	private Button openEmbedButton;
+	private Button openFastButton;
+	private Button openFloatButton;
 	private int editorAlignment;
 	private int viewAlignment;
+	private int openViewMode;
 
 	private static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
 	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
@@ -38,6 +42,10 @@ public class ViewsPreferencePage
 	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
 	private static final String VIEWS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.views.top"); //$NON-NLS-1$
 	private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
+	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
+	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
+	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
+	private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("ViewsPreference.note"); //$NON-NLS-1$
 	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewsPreference.tabPositions"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
@@ -79,6 +87,8 @@ protected Control createContents(Composite parent) {
 		store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	this.viewAlignment =
 		store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+	openViewMode = 
+		store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
 	Composite composite = new Composite(parent, SWT.NULL);
 	composite.setLayout(new GridLayout());
@@ -120,6 +130,9 @@ protected Control createContents(Composite parent) {
 		}
 	});
 	
+	createSpacer(composite);
+	createOpenViewButtonGroup(composite);
+
 	JFaceResources.getFontRegistry().addListener(fontListener);
 	
 	Label messageLabel = new Label(messageComposite,SWT.NONE);
@@ -156,6 +169,51 @@ private void createEditorTabButtonGroup(Composite composite) {
 	this.editorBottomButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			editorAlignment = SWT.BOTTOM;
+		}
+	});
+
+}
+/**
+ * Create a composite that contains buttons for selecting open view mode.
+ * @param composite Composite
+ */
+private void createOpenViewButtonGroup(Composite composite) {
+
+	Label titleLabel = new Label(composite, SWT.NONE);
+	titleLabel.setText(OVM_TITLE);
+
+	Composite buttonComposite = new Composite(composite, SWT.LEFT);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 1;
+	buttonComposite.setLayout(layout);
+	GridData data =
+		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
+	composite.setData(data);
+
+	openEmbedButton = new Button(buttonComposite, SWT.RADIO);
+	openEmbedButton.setText(OVM_EMBED);
+	openEmbedButton.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
+	openEmbedButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			openViewMode = IPreferenceConstants.OVM_EMBED;
+		}
+	});
+
+	openFastButton = new Button(buttonComposite, SWT.RADIO);
+	openFastButton.setText(OVM_FAST);
+	openFastButton.setSelection(openViewMode == IPreferenceConstants.OVM_FAST);
+	openFastButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			openViewMode = IPreferenceConstants.OVM_FAST;
+		}
+	});
+
+	openFloatButton = new Button(buttonComposite, SWT.RADIO);
+	openFloatButton.setText(OVM_FLOAT);
+	openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
+	openFloatButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			openViewMode = IPreferenceConstants.OVM_FLOAT;
 		}
 	});
 
@@ -259,6 +317,11 @@ protected void performDefaults() {
 	viewTopButton.setSelection(viewTopValue == SWT.TOP);
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 
+	int value = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
+	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
+	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
+	openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
+
 	super.performDefaults();
 }
 /**
@@ -272,6 +335,9 @@ public boolean performOk() {
 
 	// store the view tab value to setting
 	store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
+
+	// store the open view mode to setting
+	store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
 
 	return true;
 }

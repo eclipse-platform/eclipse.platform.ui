@@ -38,4 +38,9 @@ public interface IPreferenceConstants {
 	// if the user opens a new perspective on the same input
 	public static final String REUSE_PERSPECTIVES = "REUSE_PERSPECTIVES"; //$NON-NLS-1$
 
+	// (integer) Mode for opening a view.
+	public static final String OPEN_VIEW_MODE = "OPEN_VIEW_MODE"; //$NON-NLS-1$
+	public static final int OVM_EMBED = 0;
+	public static final int OVM_FAST = 1;
+	public static final int OVM_FLOAT = 2;
 }
