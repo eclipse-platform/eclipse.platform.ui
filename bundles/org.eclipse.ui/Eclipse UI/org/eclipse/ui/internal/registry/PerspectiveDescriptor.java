@@ -148,7 +148,7 @@ public ImageDescriptor getImageDescriptor() {
 public String getLabel() {
 	return label;
 }
-private String getOriginalId() {
+public String getOriginalId() {
 	if(originalId == null)
 		return id;
 	return originalId;

@@ -201,9 +201,11 @@ private void busyResetPerspective() {
 	// Map the current perspective to the original template.
 	// If the original template cannot be found then it has been deleted.  In
 	// that case just return. (PR#1GDSABU).
-	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(oldPersp.getDesc().getId());
-	if (desc == null)
+	IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+	PerspectiveDescriptor desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(oldPersp.getDesc().getId());
+	if(desc == null)
+		desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(((PerspectiveDescriptor)oldPersp.getDesc()).getOriginalId());
+	if (desc == null)		
 		return;
 
 	// Create new persp from original template.
@@ -1365,6 +1367,7 @@ private void setPerspective(Perspective newMgr) {
 	if (activePersp != null)
 		activePersp.onActivate();
 	window.updateActionSets();
+	window.updateTitle();
 }
 /**
  * Sets the perspective.  
