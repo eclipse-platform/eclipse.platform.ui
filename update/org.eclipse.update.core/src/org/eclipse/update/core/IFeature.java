@@ -43,7 +43,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * if all the plug-ins referenced by the feature are installed on the site and no other
 	 * version of any of the plug-ins are installed on any other site of the local site.
 	 * 
-	 * @see IConfiguredSite#getBrokenStatus(IFeature)
+	 * @see org.eclipse.update.configuration.IConfiguredSite#getBrokenStatus(IFeature)
 	 * @since 2.0
 	 */
 	public static final int STATUS_HAPPY = 0;
@@ -54,7 +54,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * if all the plug-ins referenced by the feature are installed on the site and other
 	 * version of any of the plug-ins are installed on any other site of the local site.
 	 * 
-	 * @see IConfiguredSite#getBrokenStatus(IFeature)
+	 * @see org.eclipse.update.configuration.IConfiguredSite#getBrokenStatus(IFeature)
 	 */	
 	public static final int STATUS_AMBIGUOUS = 1;
 	
@@ -63,7 +63,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * A feature is considered to be 'unhappy' in the context of this site,
 	 * if some of the plug-ins referenced by the feature are not installed on this site.
 	 * 
-	 * @see IConfiguredSite#getBrokenStatus(IFeature)
+	 * @see org.eclipse.update.configuration.IConfiguredSite#getBrokenStatus(IFeature)
 	 * @since 2.0
 	 */	
 	public static final int STATUS_UNHAPPY = 2;
@@ -72,7 +72,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	/**
 	 * Indicates a disable feature
 	 * 
-	 * @see IConfiguredSite#getBrokenStatus(IFeature)
+	 * @see org.eclipse.update.configuration.IConfiguredSite#getBrokenStatus(IFeature)
 	 * @since 2.0.2
 	 */	
 	public static final int STATUS_DISABLED = -1;

@@ -21,7 +21,7 @@ import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateCore;
 
 /**
- * Local .jar file content reference
+ * Local .jar file content reference.
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p> 
@@ -29,7 +29,6 @@ import org.eclipse.update.internal.core.UpdateCore;
  * @see org.eclipse.update.core.JarEntryContentReference
  * @since 2.0
  */
-
 public class JarContentReference extends ContentReference {
 
 	private static ArrayList referenceList = new ArrayList();
@@ -331,7 +330,7 @@ public class JarContentReference extends ContentReference {
 	}
 
 	/**
-	 * Closes the jar archive corresponding to this reference
+	 * Closes the jar archive corresponding to this reference.
 	 * 
 	 * @exception IOException
 	 * @since 2.0

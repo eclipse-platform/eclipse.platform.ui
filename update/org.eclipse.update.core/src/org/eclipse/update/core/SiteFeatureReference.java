@@ -23,7 +23,7 @@ import org.eclipse.update.internal.core.UpdateCore;
  * @see org.eclipse.update.core.IFeatureReference
  * @see org.eclipse.update.core.model.FeatureReferenceModel
  * @see org.eclipse.update.core.ISiteFeatureReference
- * @see org.eclipse.update.core.model.SiteFeatureReferenceModel 
+ * @see org.eclipse.update.core.SiteFeatureReferenceModel 
  * @since 2.1
  */
 public class SiteFeatureReference extends SiteFeatureReferenceModel implements ISiteFeatureReference {

@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 
 /**
- * .jar file entry content reference
+ * .jar file entry content reference.
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p> 
@@ -29,7 +29,7 @@ public class JarEntryContentReference extends ContentReference {
 	private JarEntry entry;
 
 	/**
-	 * Create jar entry content reference
+	 * Create jar entry content reference.
 	 * 
 	 * @param id "symbolic" path identifier
 	 * @param jarContentReference jar file content reference

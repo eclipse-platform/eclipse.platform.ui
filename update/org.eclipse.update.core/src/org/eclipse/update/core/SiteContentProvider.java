@@ -45,7 +45,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	/**
 	 * Returns a URL for the identified archive
 	 * 
-	 * @see ISiteContentProvider#getArchivesReference(String)
+	 * @see ISiteContentProvider#getArchiveReference(String)
 	 * @since 2.0
 	 */
 	public URL getArchiveReference(String archiveID) throws CoreException {
