@@ -49,8 +49,6 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 * Creates a new range indicator.
 	 */
 	public DefaultRangeIndicator() {
-		super();
-		setLayer(0);
 	}
 	
 	/*

@@ -208,6 +208,7 @@ public class MarkerAnnotation extends Annotation {
 	 */
 	public int getLayer() {
 		if (fLayerHasBeenSet)
+			// Backward compatibility
 			return super.getLayer();
 		
 		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
@@ -218,6 +219,7 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	/*
+	 * Note: This is only for backward compatibility.
 	 * @see org.eclipse.jface.text.source.Annotation#setLayer(int)
 	 * @since 3.0
 	 */
