@@ -134,7 +134,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the selection listener
 	 */
 
-	private void handleEnter() {
+	protected void handleEnter() {
 		redraw();
 		if (listeners == null)
 			return;
@@ -146,7 +146,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		}
 	}
 
-	private void handleExit() {
+	protected void handleExit() {
 		redraw();
 		if (listeners == null)
 			return;
@@ -158,7 +158,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		}
 	}
 
-	private void handleActivate() {
+	protected void handleActivate() {
 		if (listeners == null)
 			return;
 		int size = listeners.size();

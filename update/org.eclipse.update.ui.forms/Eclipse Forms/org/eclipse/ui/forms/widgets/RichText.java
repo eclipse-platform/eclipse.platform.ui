@@ -776,4 +776,16 @@ public class RichText extends Canvas {
 
 	private void handleDrag(MouseEvent e) {
 	}
+	public Point computeSize (int wHint, int hHint, boolean changed) {
+		checkWidget ();
+		Point size;
+		RichTextLayout layout = (RichTextLayout)getLayout();
+		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
+			size = layout.computeSize (this, wHint, hHint, changed);
+		} else {
+			size = new Point (wHint, hHint);
+		}
+		Rectangle trim = computeTrim (0, 0, size.x, size.y);
+		return new Point (trim.width, trim.height);
+	}
 }

@@ -84,6 +84,13 @@ public class ExpandableComposite extends Composite {
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
 			Point size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
+			if (textLabel instanceof Label) {
+				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				if (defSize.y == size.y) {
+					// One line - pick the smaller of the two widths
+					size.x = Math.min(defSize.x, size.x);
+				}
+			}
 
 			if (toggle != null) {
 				GC gc = new GC(ExpandableComposite.this);
@@ -146,6 +153,13 @@ public class ExpandableComposite extends Composite {
 				innerwHint -= twidth;
 			Point size =
 				textLabel.computeSize(innerwHint, SWT.DEFAULT, changed);
+			if (textLabel instanceof Label) {
+				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				if (defSize.y == size.y) {
+					// One line - pick the smaller of the two widths
+					size.x = Math.min(defSize.x, size.x);
+				}
+			}
 			width = size.x;
 			height = size.y;
 			
@@ -164,16 +178,20 @@ public class ExpandableComposite extends Composite {
 					dsize = getDescriptionControl().computeSize(cwHint, SWT.DEFAULT, changed);
 				Point csize = client.computeSize(FormUtil.getWidthHint(cwHint, client), SWT.DEFAULT, changed);
 				if (dsize!=null) {
+					if ((expansionStyle & CLIENT_INDENT)!=0)
+						dsize.x -= twidth;
 					width = Math.max(width, dsize.x);
 					if (expanded)
 						height += dsize.y+VSPACE;
 				}
+				if ((expansionStyle & CLIENT_INDENT)!=0)
+					csize.x -= twidth;
 				width = Math.max(width, csize.x);
 				if (expanded) height += csize.y;
 			}
 			if (toggle != null) {
 				height = height - size.y + Math.max(size.y, tsize.y);
-				width += tsize.x + GAP;
+				width += twidth;
 			}
 			return new Point(width, height);
 		}
@@ -249,7 +267,7 @@ public class ExpandableComposite extends Composite {
 		int expansionStyle) {
 		super(parent, style);
 		this.expansionStyle = expansionStyle;
-		setLayout(new ExpandableLayout());
+		super.setLayout(new ExpandableLayout());
 		listeners = new Vector();
 
 		if ((expansionStyle & TWISTIE) != 0)
@@ -295,6 +313,10 @@ public class ExpandableComposite extends Composite {
 			}
 			textLabel = label;
 		}
+	}
+	
+	public final void setLayout(Layout layout) {
+		// Section has its own layout - users cannot change it
 	}
 
 	public void setBackground(Color bg) {
@@ -445,5 +467,18 @@ public class ExpandableComposite extends Composite {
 	}
 	protected Control getSeparatorControl() {
 		return null;
+	}
+
+	public Point computeSize (int wHint, int hHint, boolean changed) {
+		checkWidget ();
+		Point size;
+		ExpandableLayout layout = (ExpandableLayout)getLayout();
+		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
+			size = layout.computeSize (this, wHint, hHint, changed);
+		} else {
+			size = new Point (wHint, hHint);
+		}
+		Rectangle trim = computeTrim (0, 0, size.x, size.y);
+		return new Point (trim.width, trim.height);
 	}
 }

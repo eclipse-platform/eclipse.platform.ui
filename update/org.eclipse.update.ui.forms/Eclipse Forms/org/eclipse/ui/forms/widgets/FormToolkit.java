@@ -16,13 +16,13 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 
 public class FormToolkit {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
 	public static final String TREE_BORDER = "treeBorder";
 
+	private int borderStyle = SWT.NULL;
 	private FormColors colors;
 	private KeyListener deleteListener;
 	private BorderPainter borderPainter;
@@ -237,8 +237,11 @@ public class FormToolkit {
 		section.setForeground(colors.getForeground());
 		section.textLabel.addFocusListener(visibilityHandler);
 		section.textLabel.addKeyListener(keyboardHandler);
-		if (section.toggle!=null)
+		if (section.toggle!=null) {
 			section.toggle.addFocusListener(visibilityHandler);
+			section.toggle.setActiveDecorationColor(getHyperlinkGroup().getActiveForeground());
+			section.toggle.setDecorationColor(colors.getColor(FormColors.SEPARATOR));
+		}
 		section.setFont(
 				JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		return section;
@@ -266,7 +269,7 @@ public class FormToolkit {
 	}
 	
 	public Table createTable(Composite parent, int style) {
-		Table table = new Table(parent, style);
+		Table table = new Table(parent, style | borderStyle);
 		table.setBackground(colors.getBackground());
 		table.setForeground(colors.getForeground());
 		hookDeleteListener(table);
@@ -277,7 +280,7 @@ public class FormToolkit {
 	}
 	
 	public Text createText(Composite parent, String value, int style) {
-		Text text = new Text(parent, style);
+		Text text = new Text(parent, borderStyle | style);
 		if (value != null)
 			text.setText(value);
 		text.setBackground(colors.getBackground());
@@ -286,7 +289,7 @@ public class FormToolkit {
 		return text;
 	}
 	public Tree createTree(Composite parent, int style) {
-		Tree tree = new Tree(parent, style);
+		Tree tree = new Tree(parent, borderStyle | style);
 		tree.setBackground(colors.getBackground());
 		tree.setForeground(colors.getForeground());
 		hookDeleteListener(tree);
@@ -341,6 +344,9 @@ public class FormToolkit {
 		control.addKeyListener(deleteListener);
 	}
 	private void initialize() {
+		String osname = System.getProperty("os.name");
+		if (osname.equals("Windows XP"))
+			borderStyle = SWT.BORDER;
 		hyperlinkGroup = new HyperlinkGroup(colors.getDisplay());
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
@@ -352,6 +358,7 @@ public class FormToolkit {
 	}
 
 	public void paintBordersFor(Composite parent) {
+		if (borderStyle==SWT.BORDER) return;
 		if (borderPainter == null)
 			borderPainter = new BorderPainter();
 		parent.addPaintListener(borderPainter);
@@ -359,5 +366,8 @@ public class FormToolkit {
 
 	public FormColors getColors() {
 		return colors;
+	}
+	public int getBorderStyle() {
+		return borderStyle;
 	}
 }

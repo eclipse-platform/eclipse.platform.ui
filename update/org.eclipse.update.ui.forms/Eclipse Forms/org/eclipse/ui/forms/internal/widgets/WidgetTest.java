@@ -187,20 +187,48 @@ public class WidgetTest {
 			setDescription("This is a sample of a form in the wizard");
 		}
 		public void createControl(Composite parent) {
-			Form form = toolkit.createForm(parent);
+			final Form form = toolkit.createForm(parent);
 			TableWrapLayout layout = new TableWrapLayout();
-			//layout.leftMargin = 0;
-			//layout.rightMargin = 0;
+			layout.leftMargin = 10;
+			//layout.rightMargin = 10;
 			//layout.bottomMargin = 0;
 			//layout.topMargin = 0;
 			form.getBody().setLayout(layout);
-			toolkit.createButton(form.getBody(), "An option to select", SWT.CHECK);
-			toolkit.createButton(form.getBody(), "Choice 1", SWT.RADIO);
-			toolkit.createButton(form.getBody(), "Choice 2", SWT.RADIO);
-			createExpandable(form, toolkit);
+			Section sec = toolkit.createSection(form.getBody(), Section.TWISTIE);
+			sec.setSeparatorControl(toolkit.createCompositeSeparator(sec));
+			sec.setText("A section inside a wizard page");
+			sec.addExpansionListener(new ExpansionAdapter() {
+				public void expansionStateChanged(ExpansionEvent e) {
+					form.reflow(false);
+				}
+			});
+			Composite group = toolkit.createComposite(sec);
+			sec.setClient(group);
+			GridLayout glayout = new GridLayout();
+			group.setLayout(glayout);
+			glayout.numColumns = 2;
+			toolkit.createLabel(group, "Some text:");
+			toolkit.createText(group, "");
+			Button b;
+			GridData gd = new GridData();
+			b = toolkit.createButton(group, "An option to select", SWT.CHECK);
+			gd = new GridData();
+			gd.horizontalSpan = 2;
+			b.setLayoutData(gd);
+			b = toolkit.createButton(group, "Choice 1", SWT.RADIO);
+			gd = new GridData();
+			gd.horizontalSpan = 2;
+			b.setLayoutData(gd);
+			b = toolkit.createButton(group, "Choice 2", SWT.RADIO);
+			gd = new GridData();
+			gd.horizontalSpan = 2;
+			b.setLayoutData(gd);
+			TableWrapData td = new TableWrapData();
+			sec.setLayoutData(td);
+			//createExpandable(form, toolkit);
 			RichText rtext = toolkit.createRichText(form.getBody(), false);
 			loadRichText(rtext, toolkit);
-			TableWrapData td = new TableWrapData();
+			td = new TableWrapData();
 			td.align = TableWrapData.FILL;
 			td.grabHorizontal = true;
 			rtext.setLayoutData(td);
@@ -253,6 +281,7 @@ public class WidgetTest {
 		FormWizard wizard = new FormWizard(colors);
 		WizardDialog wd = new ResizableWizardDialog(shell, wizard, colors);
 		wd.create();
+		wd.getShell().setText("Sample Form Wizard");
 		wd.getShell().setSize(600, 500);
 		wd.open();
 	}

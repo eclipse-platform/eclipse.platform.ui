@@ -309,7 +309,7 @@ public class FormUtil {
 			}
 		}
 	}
-	
+
 	static boolean isWrapControl(Control c) {
 		if (c instanceof Composite) {
 			return ((Composite)c).getLayout() instanceof ILayoutExtension;
@@ -323,6 +323,7 @@ public class FormUtil {
 		boolean wrap=isWrapControl(c);
 		return wrap ? wHint : SWT.DEFAULT;
 	}
+
 	static int computeMinimumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite)c).getLayout();
