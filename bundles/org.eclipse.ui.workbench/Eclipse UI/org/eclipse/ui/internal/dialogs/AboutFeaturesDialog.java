@@ -159,7 +159,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 							getShell(), 
 							descriptors,
 							WorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
-							WorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()})); //$NON-NLS-1$
+							WorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()}), //$NON-NLS-1$
+							IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
 					d.open();
 				}				
 				return;

@@ -51,6 +51,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	
 	private String title;
 	private String message;
+	private String helpContextId;
 
 	private String columnTitles[] =
 		{ WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
@@ -75,17 +76,31 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			parentShell, 
 			Platform.getPluginRegistry().getPluginDescriptors(),
 			null,
-			null);
+			null,
+			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
 	}
 
 	/**
 	 * Constructor for AboutPluginsDialog
 	 */
 	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg) {
+		this(
+			parentShell, 
+			descriptors,
+			title,
+			msg,
+			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
+	}
+	
+	/**
+	 * Constructor for AboutPluginsDialog
+	 */
+	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg, String helpContextId) {
 		super(parentShell);
 		info = descriptors;
 		this.title = title;
 		message = msg;
+		this.helpContextId = helpContextId;
 		sortByProvider();
 		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
 	}
@@ -121,7 +136,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
 		WorkbenchHelp.setHelp(
 			newShell,
-			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
+			helpContextId);
 	}
 	/**
 	 * Add buttons to the dialog's button bar.
