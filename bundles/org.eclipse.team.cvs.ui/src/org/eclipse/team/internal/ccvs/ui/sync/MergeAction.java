@@ -43,9 +43,7 @@ abstract class MergeAction extends Action {
 	private CVSSyncCompareInput diffModel;
 	private ISelectionProvider selectionProvider;
 
-	// direction can be INCOMING or OUTGOING
-	private int direction;
-
+	private int syncMode;
 	private Shell shell;
 	
 	/**
@@ -96,9 +94,7 @@ abstract class MergeAction extends Action {
 			return;
 		}
 		final SyncSet set = new SyncSet((IStructuredSelection)s);
-		if (direction != 0) {
-			set.removeNonApplicableNodes(direction);
-		}
+		removeNonApplicableNodes(set, syncMode);
 		final SyncSet[] result = new SyncSet[1];
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -114,6 +110,8 @@ abstract class MergeAction extends Action {
 			diffModel.updateView();
 		}
 	}
+	
+	protected abstract void removeNonApplicableNodes(SyncSet set, int syncMode);
 	
 	/**
 	 * The given nodes have been synchronized.  Remove them from
@@ -153,18 +151,7 @@ abstract class MergeAction extends Action {
 	 * as necessary.
 	 */
 	public void update(int syncMode) {
-		switch (syncMode) {
-			case SyncView.SYNC_INCOMING:
-			case SyncView.SYNC_MERGE:
-				direction = IRemoteSyncElement.INCOMING;
-				break;
-			case SyncView.SYNC_OUTGOING:
-				direction = IRemoteSyncElement.OUTGOING;
-				break;
-			default:
-				direction = 0;
-				break;
-		}
+		this.syncMode = syncMode;
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
 		setEnabled(isEnabled(selection.toArray()));
 	}

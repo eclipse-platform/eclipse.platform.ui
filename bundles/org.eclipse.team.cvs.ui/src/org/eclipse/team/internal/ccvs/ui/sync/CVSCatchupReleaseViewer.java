@@ -48,7 +48,9 @@ import org.eclipse.team.ui.sync.TeamFile;
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
 	private UpdateSyncAction updateAction;
+	private ForceUpdateSyncAction forceUpdateAction;
 	private CommitSyncAction commitAction;
+	private ForceCommitSyncAction forceCommitAction;
 	private UpdateMergeAction updateMergeAction;
 	private UpdateWithForcedJoinAction updateWithJoinAction;
 	private IgnoreAction ignoreAction;
@@ -197,22 +199,27 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			case SyncView.SYNC_INCOMING:
 				updateAction.update(SyncView.SYNC_INCOMING);
 				manager.add(updateAction);
+				forceUpdateAction.update(SyncView.SYNC_INCOMING);
+				manager.add(forceUpdateAction);
 				break;
 			case SyncView.SYNC_OUTGOING:
 				commitAction.update(SyncView.SYNC_OUTGOING);
 				manager.add(commitAction);
+				forceCommitAction.update(SyncView.SYNC_OUTGOING);
+				manager.add(forceCommitAction);
 				ignoreAction.update();
 				manager.add(ignoreAction);
-				manager.add(new Separator());
-				updateAction.update(SyncView.SYNC_OUTGOING);
-				manager.add(updateAction);
 				break;
 			case SyncView.SYNC_BOTH:
 				commitAction.update(SyncView.SYNC_BOTH);
 				manager.add(commitAction);
-				manager.add(new Separator());
 				updateAction.update(SyncView.SYNC_BOTH);
 				manager.add(updateAction);
+				manager.add(new Separator());
+				forceCommitAction.update(SyncView.SYNC_BOTH);
+				manager.add(forceCommitAction);
+				forceUpdateAction.update(SyncView.SYNC_BOTH);
+				manager.add(forceUpdateAction);				
 				break;
 			case SyncView.SYNC_MERGE:
 				updateMergeAction.update(SyncView.SYNC_INCOMING);
@@ -229,7 +236,9 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private void initializeActions(final CVSSyncCompareInput diffModel) {
 		Shell shell = getControl().getShell();
 		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell);
+		forceCommitAction = new ForceCommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceCommit"), shell);
 		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
+		forceUpdateAction = new ForceUpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell);
 		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
 		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell);
 		updateWithJoinAction = new UpdateWithForcedJoinAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.mergeUpdate"), shell);

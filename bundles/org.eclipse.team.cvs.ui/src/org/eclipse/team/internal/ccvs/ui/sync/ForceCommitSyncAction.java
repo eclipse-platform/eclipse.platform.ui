@@ -32,10 +32,11 @@ import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.SyncView;
 import org.eclipse.team.ui.sync.TeamFile;
 
-public class CommitSyncAction extends MergeAction {
-	public CommitSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
+public class ForceCommitSyncAction extends MergeAction {
+	public ForceCommitSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(model, sp, label, shell);
 	}
 
@@ -216,8 +217,9 @@ public class CommitSyncAction extends MergeAction {
 	}
 
 	protected boolean isEnabled(ITeamNode node) {
-		// The commit action is enabled only for non-conflicting outgoing changes
-		return new SyncSet(new StructuredSelection(node)).hasOutgoingChanges();
+		// The force commit action is enabled only for conflicting and incoming changes
+		SyncSet set = new SyncSet(new StructuredSelection(node));
+		return (set.hasIncomingChanges() || set.hasConflicts());
 	}	
 	
 	/**
@@ -250,9 +252,11 @@ public class CommitSyncAction extends MergeAction {
 	protected String promptForComment(RepositoryManager manager) {
 		return manager.promptForComment(getShell());
 	}
-	
+
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		set.removeConflictingNodes();
-		set.removeIncomingNodes();
+		set.removeOutgoingNodes();
+		if (syncMode != SyncView.SYNC_BOTH) {
+			set.removeIncomingNodes();
+		}
 	}
 }

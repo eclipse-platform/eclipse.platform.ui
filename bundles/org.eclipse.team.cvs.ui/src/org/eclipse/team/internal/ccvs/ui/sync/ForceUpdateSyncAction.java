@@ -45,13 +45,14 @@ import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.SyncView;
 import org.eclipse.team.ui.sync.TeamFile;
 
 /**
  * UpdateSyncAction is run on a set of sync nodes when the "Update" menu item is performed
  * in the Synchronize view.
  */
-public class UpdateSyncAction extends MergeAction {
+public class ForceUpdateSyncAction extends MergeAction {
 	public static class ConfirmDialog extends MessageDialog {
 
 		private boolean autoMerge = true;
@@ -103,7 +104,7 @@ public class UpdateSyncAction extends MergeAction {
 		}
 	}
 
-	public UpdateSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
+	public ForceUpdateSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(model, sp, label, shell);
 	}
 
@@ -157,18 +158,17 @@ public class UpdateSyncAction extends MergeAction {
 					parentConflictElements.add(parent);
 				}
 			}
-			ITeamNode changedNode = changed[i];
-			int kind = changedNode.getKind();
-			IResource resource = changedNode.getResource();
+			int kind = changed[i].getKind();
+			IResource resource = changed[i].getResource();
 			switch (kind & Differencer.DIRECTION_MASK) {
 				case ITeamNode.INCOMING:
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
-							updateIgnoreLocalShallow.add(changedNode);
+							updateIgnoreLocalShallow.add(resource);
 							break;
 						case Differencer.DELETION:
 						case Differencer.CHANGE:
-							updateDeep.add(changedNode);
+							updateDeep.add(resource);
 							break;
 					}
 					break;
@@ -176,14 +176,14 @@ public class UpdateSyncAction extends MergeAction {
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
 							// Unmanage the file if necessary and delete it.
-							deletions.add(changedNode);
+							deletions.add(changed[i]);
 							break;
 						case Differencer.DELETION:
-							makeIncoming.add(changedNode);
-							updateDeep.add(changedNode);
+							makeIncoming.add(changed[i]);
+							updateDeep.add(resource);
 							break;
 						case Differencer.CHANGE:
-							updateIgnoreLocalShallow.add(changedNode);
+							updateIgnoreLocalShallow.add(resource);
 							break;
 					}
 					break;
@@ -191,18 +191,18 @@ public class UpdateSyncAction extends MergeAction {
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
 							// To do: conflicting addition: must make incoming first
-							makeIncoming.add(changedNode);
-							updateIgnoreLocalShallow.add(changedNode);
+							makeIncoming.add(changed[i]);
+							updateIgnoreLocalShallow.add(resource);
 							break;
 						case Differencer.DELETION:
 							// Doesn't happen, these nodes don't appear in the tree.
 							break;
 						case Differencer.CHANGE:
 							// Depends on the flag.
-							if (onlyUpdateAutomergeable && (changedNode.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-								updateShallow.add(changedNode);
+							if (onlyUpdateAutomergeable && (changed[i].getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+								updateShallow.add(resource);
 							} else {
-								updateIgnoreLocalShallow.add(changedNode);
+								updateIgnoreLocalShallow.add(resource);
 							}
 							break;
 					}
@@ -235,25 +235,37 @@ public class UpdateSyncAction extends MergeAction {
 			Iterator it = makeIncoming.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
-				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
+				if (node instanceof TeamFile) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+					element.makeIncoming(monitor);
+				} else if (node instanceof ChangedTeamContainer) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
+					element.makeIncoming(monitor);
+				}
 			}
 			// Outgoing additions must be unmanaged (if necessary) and locally deleted.
 			it = deletions.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
-				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
-				element.makeIncoming(monitor);
-				element.getLocal().delete(true, monitor);
+				if (node instanceof TeamFile) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+					element.makeIncoming(monitor);
+					element.getLocal().delete(true, monitor);
+				} else if (node instanceof ChangedTeamContainer) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
+					element.makeIncoming(monitor);
+					element.getLocal().delete(true, monitor);
+				}
 			}
 			
 			if (updateShallow.size() > 0) {
-				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, monitor);
+				manager.update((IResource[])updateShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Command.DO_NOT_RECURSE }), false, monitor);
 			}
 			if (updateIgnoreLocalShallow.size() > 0) {
-				runUpdateIgnoreLocalShallow((ITeamNode[])updateIgnoreLocalShallow.toArray(new ITeamNode[updateIgnoreLocalShallow.size()]), manager, monitor);
+				manager.update((IResource[])updateIgnoreLocalShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }), false, monitor);
 			}
 			if (updateDeep.size() > 0) {
-				runUpdateDeep((ITeamNode[])updateDeep.toArray(new ITeamNode[updateDeep.size()]), manager, monitor);
+				manager.update((IResource[])updateDeep.toArray(new IResource[0]), getLocalOptions(Command.NO_LOCAL_OPTIONS), false, monitor);
 			}
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
@@ -273,17 +285,8 @@ public class UpdateSyncAction extends MergeAction {
 		}
 		return syncSet;
 	}
-	
-	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
-		manager.update(getIResourcesFrom(nodes), Command.NO_LOCAL_OPTIONS, false, monitor);
-	}
-	
-	protected void runUpdateIgnoreLocalShallow(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
-		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }, false, monitor);
-	}
-	
-	protected void runUpdateShallow(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
-		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
+	protected Command.LocalOption[] getLocalOptions(Command.LocalOption[] baseOptions) {
+		return baseOptions;
 	}
 	
 	protected void makeInSync(IDiffElement parentElement) throws TeamException {
@@ -308,18 +311,10 @@ public class UpdateSyncAction extends MergeAction {
 			}
 		}
 	}
-			
-	protected IResource[] getIResourcesFrom(ITeamNode[] nodes) {
-		List resources = new ArrayList(nodes.length);
-		for (int i = 0; i < nodes.length; i++) {
-			resources.add(nodes[i].getResource());
-		}
-		return (IResource[]) resources.toArray(new IResource[resources.size()]);
-	}
-	
 	protected boolean isEnabled(ITeamNode node) {
-		// The update action is enabled only for non-conflicting incoming changes
-		return new SyncSet(new StructuredSelection(node)).hasIncomingChanges();
+		// The force update action is enabled only for conflicting and outgoing changes
+		SyncSet set = new SyncSet(new StructuredSelection(node));
+		return (set.hasOutgoingChanges() || set.hasConflicts());
 	}
 	
 	/**
@@ -355,8 +350,11 @@ public class UpdateSyncAction extends MergeAction {
 		});
 		return result[0];
 	}
+
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		set.removeConflictingNodes();
-		set.removeOutgoingNodes();
+		set.removeIncomingNodes();
+		if (syncMode != SyncView.SYNC_BOTH) {
+			set.removeOutgoingNodes();
+		}
 	}
 }
