@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -92,36 +93,41 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Launches the given Ant node, which can correspond to an Ant
-	 * target or an Ant project node.
-	 * 
-	 * @param node the Ant node to launch
+	 * Launches the given Ant node.
+	 * <ul><li>AntProjectNodes: the default target is executed</li>
+	 * <li>AntTargetNodes: that target is executed</li>
+	 * <li>AntTaskNodes: the owning target is executed</li>
+	 * </ul>
+	 * @param node the Ant node to use as the context for the launch
 	 */
 	public void launch(AntElementNode node) {
-		String selectedTarget= null;
+		String selectedTargetName= null;
 		if (node instanceof AntTargetNode) {
 			AntTargetNode targetNode= (AntTargetNode) node;
 			if (targetNode.isDefaultTarget()) {
-				selectedTarget= ""; //$NON-NLS-1$
+				selectedTargetName= ""; //$NON-NLS-1$
 			} else {
-				selectedTarget= targetNode.getTarget().getName();
+				selectedTargetName= targetNode.getTarget().getName();
 			}
 		} else if (node instanceof AntProjectNode) {
-			selectedTarget = ""; //$NON-NLS-1$
+			selectedTargetName = ""; //$NON-NLS-1$
+		} else if (node instanceof AntTaskNode) {
+		    AntTaskNode taskNode= (AntTaskNode) node;
+		    selectedTargetName= taskNode.getTask().getOwningTarget().getName();
 		}
 	
-		if (selectedTarget == null) {
+		if (selectedTargetName == null) {
 			return;
 		}
 		IFile file= node.getBuildFileResource();
 		if (file != null) {
-			launch(file, ILaunchManager.RUN_MODE, selectedTarget);
+			launch(file, ILaunchManager.RUN_MODE, selectedTargetName);
 			return;
 		} 
 		//external buildfile
 		IPath filePath= getExternalBuildFilePath();
 		if (filePath != null) {
-			launch(filePath, ILaunchManager.RUN_MODE, selectedTarget);
+			launch(filePath, ILaunchManager.RUN_MODE, selectedTargetName);
 			return;
 		}
 		
