@@ -546,13 +546,46 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
+	 * Returns the list of URLs to added to the classpath for a remote
+	 * Ant build
+	 * 
+	 * @return the list of classpath URLs
+	 * @since 3.0
+	 */
+	public URL[] getRemoteAntURLs() {
+		List result = new ArrayList(30);
+		if (antURLs != null) {
+			result.addAll(Arrays.asList(antURLs));
+		}
+		result.add(getRemoteAntURL());
+		return (URL[]) result.toArray(new URL[result.size()]);
+	}
+	
+	/**
+	 * Returns the extra classpath entry URL for the remote JAR to added to the classpath for a remote
+	 * Ant build
+	 * 
+	 * @return the URL of the remoteAnt.jar
+	 * @since 3.0
+	 */
+	public URL getRemoteAntURL() {
+		for (Iterator iter = extraClasspathURLs.iterator(); iter.hasNext();) {
+			URL url = (URL) iter.next();
+			if (url.getFile().endsWith("org.eclipse.ant.ui/lib/remoteAnt.jar")) { //$NON-NLS-1$
+				return url;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the entire set of URLs that define the Ant runtime classpath.
 	 * Includes the Ant URLs, the custom URLs and extra classpath URLs.
 	 * 
 	 * @return the entire runtime classpath of URLs
 	 */
 	public URL[] getURLs() {
-		List result = new ArrayList(20);
+		List result = new ArrayList(50);
 		if (antURLs != null) {
 			result.addAll(Arrays.asList(antURLs));
 		}

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -42,16 +43,29 @@ public class AntClasspathProvider implements IRuntimeClasspathProvider {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		
+		//no need to add Eclipse extension point URLs if going to build
+		//in separate VM..except for the remoteAnt.jar
+		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
 		URL[] antURLs= AntUtil.getCustomClasspath(configuration);
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		if (antURLs == null) {
-			antURLs = prefs.getURLs();
+			if (separateVM) {
+				antURLs= prefs.getRemoteAntURLs();
+			} else {
+				antURLs = prefs.getURLs();
+			}
 		} else {
-			List fullClasspath= new ArrayList();
-			fullClasspath.addAll(Arrays.asList(antURLs));
-			fullClasspath.addAll(Arrays.asList(prefs.getExtraClasspathURLs()));
-			antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
+			if (separateVM) {
+				List fullClasspath= new ArrayList(40);
+				fullClasspath.addAll(Arrays.asList(antURLs));
+				fullClasspath.add(prefs.getRemoteAntURL());
+				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
+			} else {
+				List fullClasspath= new ArrayList(50);
+				fullClasspath.addAll(Arrays.asList(antURLs));
+				fullClasspath.addAll(Arrays.asList(prefs.getExtraClasspathURLs()));
+				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
+			}
 		}
 		
 		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
