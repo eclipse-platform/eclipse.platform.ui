@@ -4,19 +4,9 @@ package org.eclipse.update.internal.ui.win32.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.ole.win32.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.internal.win32.OS;
-import org.eclipse.update.internal.ui.*;
-
-import java.net.URL;
-import org.eclipse.core.runtime.Platform;
-import java.io.IOException;
-import java.util.*;
-import org.eclipse.ui.texteditor.*;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.swt.ole.win32.*;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Needed for the OLE implementation
