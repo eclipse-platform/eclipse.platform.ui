@@ -128,9 +128,13 @@ protected boolean updateSelection(IStructuredSelection selection) {
 
 	// can paste an open project regardless of selection
 	if (resourceData != null 
-		&& resourceData[0].getType() == IResource.PROJECT
-		&& ((IProject)resourceData[0]).isOpen())
-		return true;
+		&& resourceData.length == 1
+		&& resourceData[0].getType() == IResource.PROJECT) {
+		if (((IProject)resourceData[0]).isOpen())
+			return true;
+		else 
+			return false;
+	}
 
 	// can paste files and folders to a single selection (project must be open)
 	// or multiple file selection with the same parent
@@ -153,7 +157,7 @@ protected boolean updateSelection(IStructuredSelection selection) {
 				return false;
 		}
 	}
-	if (targetResource != null) {
+	if (targetResource != null && resourceData != null) {
 		// don't try to copy to self
 		for (int i = 0; i < resourceData.length; i++) {
 			if (targetResource.equals(resourceData[i]))
