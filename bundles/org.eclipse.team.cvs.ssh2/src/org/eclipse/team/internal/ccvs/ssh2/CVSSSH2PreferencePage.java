@@ -806,14 +806,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	private Button removeHostKeyButton;
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object element, int columnIndex) {
-			KnownHosts.HostKey entry = (KnownHosts.HostKey)element;
+			HostKey entry = (HostKey)element;
 			switch (columnIndex) {
 				case 0:
 					return entry.getHost();
 				case 1:
 					return entry.getType();
 				case 2:
-					return entry.getFingerPrint();
+					return entry.getFingerPrint(JSchSession.getJSch());
 				default:
 					return null;
 			}
@@ -930,7 +930,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	Dialog.applyDialogFont(parent);
 	
 	JSchSession.loadKnownHosts();
-	viewer.setInput(JSchSession.getJSch().getHostKeys());
+	HostKeyRepository hkr=JSchSession.getJSch().getHostKeyRepository();
+	viewer.setInput(hkr.getHostKey());
 	handleSelection();
 
     return group;
@@ -943,9 +944,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	private void removeHostKey(){
 		JSch jsch=JSchSession.getJSch();
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		HostKeyRepository hkr=JSchSession.getJSch().getHostKeyRepository();
 		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-			KnownHosts.HostKey hostkey = (KnownHosts.HostKey) iterator.next();
-			jsch.removeHostKey(hostkey.getHost(), hostkey.getType());
+			HostKey hostkey = (HostKey) iterator.next();
+			hkr.remove(hostkey.getHost(), hostkey.getType());
 			viewer.remove(hostkey);
          }		
 	}

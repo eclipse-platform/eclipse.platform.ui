@@ -17,7 +17,7 @@
 	<library name="cvsssh2.jar">
     	<export name="*"/>
 	</library>
-	<library name="jsch-0.1.17.jar">
+	<library name="jsch-0.1.18.jar">
 	</library>
 </runtime>
 
