@@ -55,10 +55,10 @@ public ImportResourcesAction(IWorkbench aWorkbench) {
 public void setSelection(IStructuredSelection selection) {
 	this.selection = selection;
 	
-	// enable only for single folder or open project
+	// enable only for single folder or open project or empty selection
 	
 	if (selection.size() != 1) {
-		setEnabled(false);
+		setEnabled(selection.size() == 0); 
 		return;
 	} 
 	
