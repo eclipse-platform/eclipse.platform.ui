@@ -1126,8 +1126,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * @see ILaunchListener
 	 */
 	public void launchRegistered(final ILaunch launch) {
-		updateHistories(launch);
-		switchToDebugPerspectiveIfPreferred(launch);
+		if (launch.getLaunchConfiguration() != null) {
+			// new launch configuration processing
+			return;
+		} else {		
+			// old launcher processing
+			updateHistories(launch);
+			switchToDebugPerspectiveIfPreferred(launch);
+		}
 		
 		getDisplay().syncExec(new Runnable () {
 			public void run() {

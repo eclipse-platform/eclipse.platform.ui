@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -55,7 +56,16 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	}
 	
 	public static void relaunch(ILaunch launch) {
-		relaunch(launch.getLauncher(), launch.getLaunchMode(), launch.getElement());
+		if (launch.getLaunchConfiguration() == null) {
+			relaunch(launch.getLauncher(), launch.getLaunchMode(), launch.getElement());
+		} else {
+			try {
+				launch.getLaunchConfiguration().launch(launch.getLaunchMode());
+			} catch (CoreException e) {
+				// XXX: error dialog
+				DebugUIPlugin.logError(e);
+			}
+		}
 	}
 	
 	public static void relaunch(ILaunch launch, String mode) {
@@ -77,7 +87,14 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 			launch= ((IProcess)element).getLaunch();
 		}
 
-		return launch != null && DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
+		if (launch.getLaunchConfiguration() == null) {
+			// old launcher support
+			return launch != null && DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
+		} else {
+			// new launch configuration support
+			return true;
+		}
+			
 	}
 	
 	protected String getHelpContextId() {

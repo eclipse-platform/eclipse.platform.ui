@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -471,11 +472,27 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Used to render launch history items in the re-launch drop downs
 	 */
 	protected String getLaunchText(ILaunch launch) {
-		StringBuffer buff= new StringBuffer(getDesktopLabel(launch.getElement()));
-		buff.append(" ["); //$NON-NLS-1$
-		buff.append(getText(launch.getLauncher()));
-		buff.append("]"); //$NON-NLS-1$
-		return buff.toString();
+		if (launch.getLaunchConfiguration() == null) {
+			// old launcher
+			StringBuffer buff= new StringBuffer(getDesktopLabel(launch.getElement()));
+			buff.append(" ["); //$NON-NLS-1$
+			buff.append(getText(launch.getLauncher()));
+			buff.append("]"); //$NON-NLS-1$
+			return buff.toString();
+		} else {
+			// new lanuch configuration
+			ILaunchConfiguration config = launch.getLaunchConfiguration();
+			StringBuffer buff= new StringBuffer(config.getName());
+			buff.append(" ["); //$NON-NLS-1$
+			try {
+				buff.append(getText(config.getType().getName()));
+			} catch (CoreException e) {
+				//XXX: unknown configuration type
+			}
+			buff.append("]"); //$NON-NLS-1$
+			return buff.toString();			
+		}
+
 	}
 	
 	/**
