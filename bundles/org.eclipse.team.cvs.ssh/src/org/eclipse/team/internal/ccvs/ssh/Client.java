@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ * 
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * An SSH 1.5 client..
@@ -169,7 +175,7 @@ public class Client {
 				buffer.close();
 			}
 
-			packet = new ServerPacket(socketIn, cipher);
+			packet = skip_SSH_MSG_DEBUG();
 			int packetType = packet.getType();
 
 			switch (packetType) {
@@ -441,7 +447,7 @@ private void startShell() throws IOException {
 	send_SSH_CMSG_REQUEST_PTY();
 
 	try {
-		packet = new ServerPacket(socketIn, cipher);
+		packet = skip_SSH_MSG_DEBUG();
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
@@ -465,7 +471,7 @@ private void login() throws IOException, CVSAuthenticationException {
 	int packetType;
 
 	try {
-		packet = new ServerPacket(socketIn, cipher);
+		packet = skip_SSH_MSG_DEBUG();
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_PUBLIC_KEY) {
@@ -480,7 +486,7 @@ private void login() throws IOException, CVSAuthenticationException {
 	}
 
 	try {
-		packet = new ServerPacket(socketIn, cipher);
+		packet = skip_SSH_MSG_DEBUG();
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_SUCCESS) {
@@ -495,7 +501,7 @@ private void login() throws IOException, CVSAuthenticationException {
 	send(SSH_CMSG_USER, username);
 
 	try {
-		packet = new ServerPacket(socketIn, cipher);
+		packet = skip_SSH_MSG_DEBUG();
 		packetType = packet.getType();
 
 		if (packetType != SSH_SMSG_FAILURE) {
@@ -510,7 +516,7 @@ private void login() throws IOException, CVSAuthenticationException {
 	send(SSH_CMSG_AUTH_PASSWORD, password);
 
 	try {
-		packet = new ServerPacket(socketIn, cipher);
+		packet = skip_SSH_MSG_DEBUG();
 		packetType = packet.getType();
 
 		if (packetType == SSH_SMSG_FAILURE) {
@@ -676,5 +682,15 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] serve
 	ClientPacket packet = new ClientPacket(packet_type, data, null);
 	socketOut.write(packet.getBytes());
 	socketOut.flush();
+}
+
+private ServerPacket skip_SSH_MSG_DEBUG() throws IOException {
+	ServerPacket packet = new ServerPacket(socketIn, cipher);
+	while (packet.getType() == SSH_MSG_DEBUG) {
+		packet.close(true);
+		packet = new ServerPacket(socketIn, cipher);
+	}
+	
+	return packet;
 }
 }
