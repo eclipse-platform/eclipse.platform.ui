@@ -62,4 +62,12 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 				new FastSyncInfoFilter.SyncInfoChangeTypeFilter(new int[] {SyncInfo.ADDITION})
 			});
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected String getJobName() {
+		SyncInfoSet syncSet = getSyncInfoSet();
+		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+	}
 }
