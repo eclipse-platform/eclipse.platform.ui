@@ -220,7 +220,7 @@ public final class InternalPlatform {
 	public void endSplash() {
 		if (DEBUG) {
 			//This value is only relevant if the workspace chooser is not used.
-			String startString = System.getProperty("eclipse.debug.startupTime"); //$NON-NLS-1$
+			String startString = System.getProperty("eclipse.startTime"); //$NON-NLS-1$
 			if (startString != null)
 				try {
 					long start = Long.parseLong(startString);
