@@ -64,18 +64,23 @@ TD, TR {
 	padding-<%=isRTL?"right":"left"%>:5px;
 	overflow:auto;
 	height:350px;
+<%if (data.isIE()) {%>
+	width:100%;
+<%}%>
 }
 
 .book {
 	margin:0xp;
 	border:0px;
 	padding:0px;
+	white-space: nowrap;
 }
 
 .topic {
 	margin-<%=isRTL?"right":"left"%>:30px;
 	border:0px;
 	padding:0px;
+	white-space: nowrap;
 }
 
 BUTTON {
@@ -346,7 +351,7 @@ function enableOK() {
          <tr><td><div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>
     </table>
- 
+    
 <div id="booksContainer" style="background:<%=prefs.getViewBackground()%>;">
 
 <% 
