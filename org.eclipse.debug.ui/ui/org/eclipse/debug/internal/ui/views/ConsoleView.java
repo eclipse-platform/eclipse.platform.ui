@@ -132,7 +132,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				// update view title
 				String title = null;
 				if (getProcess() == null) {
-					title = "Console";
+					title = DebugUIViewsMessages.getString("ConsoleView.Console_1"); //$NON-NLS-1$
 				} else {
 					// use debug target title if applicable
 					Object obj = getProcess().getAdapter(IDebugTarget.class);
