@@ -9,10 +9,6 @@
 <head>
 	<title>Help</title>
 	<script language="JavaScript">
-
-	// add code to use the input parameters for window size
-	// add code to keep track (cookies?) of the size on closing
-	//window.resizeTo(700, 700);
 	
 	/**
 	 * Parses the parameters passed to the url
@@ -35,6 +31,12 @@
 	    }
 	    return args;
 	}
+	
+	var args = parseQueryString ();
+
+	// add code to use the input parameters for window size
+	// add code to keep track (cookies?) of the size on closing
+	// window.resizeTo(700, 700);
 
 	</script>
 	
