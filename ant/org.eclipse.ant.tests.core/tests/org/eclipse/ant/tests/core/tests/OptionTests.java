@@ -476,7 +476,7 @@ public class OptionTests extends AbstractAntTest {
 	 * bug 25693
 	 */
 	public void testDiagnosticsWithNoAntHome() throws CoreException {
-		
+		AntCorePlugin.getPlugin().getPreferences().setAntHome(null);
 		run("input.xml", new String[]{"-diagnostics"});
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
 		assertTrue("Message incorrect: " + msg, msg.equals("------- Ant diagnostics report -------"));
@@ -487,7 +487,7 @@ public class OptionTests extends AbstractAntTest {
 	 * bug 25693
 	 */
 	public void testDiagnostics() throws CoreException {
-		AntCorePlugin.getPlugin().getPreferences().setAntHome(getAntHome());
+	
 		try {
 			run("input.xml", new String[]{"-diagnostics"});
 		} finally {

@@ -87,7 +87,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		antClasspathBlock.setAntTableInput(Arrays.asList(prefs.getDefaultAntURLs()));
 		antClasspathBlock.setUserTableInput(new ArrayList(0));
-		antClasspathBlock.initializeAntHome(null);
+		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		antClasspathBlock.setEnabled(true);
 		update();
 	}

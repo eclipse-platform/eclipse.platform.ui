@@ -35,7 +35,7 @@
 			 		${basedir}/../org.eclipse.core.runtime/bin;
 			 		${basedir}/../org.eclipse.core.resources/resources.jar;
 			 		${basedir}/../org.eclipse.core.resources/bin;
-			 		${basedir}/../org.apache.ant/ant.jar;
+			 		${basedir}/../org.apache.ant/lib/ant.jar;
 			 		${basedir}/bin;
 			 		${swt.jar};
 					${basedir}/../org.eclipse.swt/bin;

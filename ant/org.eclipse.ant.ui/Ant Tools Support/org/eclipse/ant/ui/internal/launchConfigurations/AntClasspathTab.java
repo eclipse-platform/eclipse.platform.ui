@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
@@ -109,7 +110,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		if (urlStrings == null) {
 			useDefaultButton.setSelection(true);
 			antClasspathBlock.setTablesEnabled(false);
-			antClasspathBlock.initializeAntHome(null);
+			antClasspathBlock.initializeAntHome(AntCorePlugin.getPlugin().getPreferences().getDefaultAntHome());
 		} else {
 			String antHomeString= null;
 			try {
@@ -138,11 +139,14 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antClasspathBlock.getAntHome());
+				
 		if (useDefaultButton.getSelection()) {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 			return;
 		}
+		
 		List antUrls= antClasspathBlock.getAntURLs();
 		List userUrls= antClasspathBlock.getUserURLs();
 		StringBuffer urlString= new StringBuffer();
@@ -174,9 +178,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		} else {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
 		}
-		
-		String antHomeText= antClasspathBlock.getAntHome();
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antHomeText);
 	}
 
 	/**

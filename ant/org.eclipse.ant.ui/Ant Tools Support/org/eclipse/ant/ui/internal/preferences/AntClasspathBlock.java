@@ -642,10 +642,9 @@ public class AntClasspathBlock {
 		if (enable) {
 			antTableViewer.setSelection(antTableViewer.getSelection());
 			userTableViewer.setSelection(userTableViewer.getSelection());
+			antHome.setEnabled(antHomeButton.getSelection());
+			browseAntHomeButton.setEnabled(antHomeButton.getSelection());
 		} else {
-			antHomeButton.setSelection(false);
-			antHome.setEnabled(false);
-			browseAntHomeButton.setEnabled(false);
 			downButton.setEnabled(false);
 			downUserButton.setEnabled(false);
 			removeButton.setEnabled(false);
@@ -655,6 +654,9 @@ public class AntClasspathBlock {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			antTableViewer.setInput(prefs.getAntURLs());
 			userTableViewer.setInput(prefs.getCustomURLs());
+			initializeAntHome(prefs.getDefaultAntHome());
+			antHome.setEnabled(false);
+			browseAntHomeButton.setEnabled(false);
 		}
 	}
 	

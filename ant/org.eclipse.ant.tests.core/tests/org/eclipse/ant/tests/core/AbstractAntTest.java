@@ -198,7 +198,7 @@ public abstract class AbstractAntTest extends TestCase {
 		prefs.setCustomTypes(new Type[]{});
 		prefs.setCustomPropertyFiles(new String[]{});
 		prefs.setCustomProperties(new Property[]{});
-		prefs.setAntHome("");
+		prefs.setAntHome(prefs.getDefaultAntHome());
 	}
 	
 	protected String getAntHome() {

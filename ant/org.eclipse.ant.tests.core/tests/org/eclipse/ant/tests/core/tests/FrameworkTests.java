@@ -151,14 +151,14 @@ public class FrameworkTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests setting ANT_HOME
+	 * Tests that the default ANT_HOME is set and that it can be changed
 	 */
 	public void testSettingAntHome() throws CoreException {
 		try {
-			AntCorePlugin.getPlugin().getPreferences().setAntHome(getAntHome());
+			AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 			run("echoing.xml");
-			assertTrue("ANT_HOME not set correctly", getAntHome().equals(System.getProperty("ant.home")));
-			AntCorePlugin.getPlugin().getPreferences().setAntHome("");
+			assertTrue("ANT_HOME not set correctly", prefs.getDefaultAntHome().equals(System.getProperty("ant.home")));
+			prefs.setAntHome("");
 			run("echoing.xml");
 			assertTrue("ANT_HOME not set correctly", null == System.getProperty("ant.home"));
 		} finally {

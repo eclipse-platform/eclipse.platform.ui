@@ -150,6 +150,28 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreAntHome(Preferences prefs) {
 		antHome= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME);
+		if (antHome == null || antHome.length() == 0) {
+			antHome= getDefaultAntHome();
+		}
+	}
+	
+	/**
+	 * Returns the absolute path of the default ant.home to use for the build.
+	 * The default is the org.apache.ant plugin folder provided with Eclipse.
+	 * 
+	 * @return String absolute path of the default ant.home
+	 * @since 3.0
+	 */
+	public String getDefaultAntHome() {
+		URL[] urls= getDefaultAntURLs();
+		if (urls.length > 0) {
+			URL antjar= urls[0];
+			IPath antHomePath= new Path(antjar.getFile());
+			//parent directory of the lib directory
+			antHomePath= antHomePath.removeLastSegments(2);
+			return antHomePath.toFile().getAbsolutePath();
+		} 
+		return null;
 	}
 	
 	private void restoreCustomProperties(Preferences prefs) {
@@ -264,12 +286,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (antPlugin != null) {
 				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
 				addLibraries(descriptor, result);
-				//if (antHome == null) {
-			//		try {
-			//			antHome= Platform.asLocalURL(descriptor.getInstallURL()).getFile();
-			//		} catch (IOException e) {
-			//		}
-			//	}
 			}
 			
 			URL toolsURL= getToolsJarURL();
@@ -476,6 +492,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * points to a JRE install).
 	 * 
 	 * @return URL tools.jar URL or <code>null</code>
+	 * @since 3.0
 	 */
 	public URL getToolsJarURL(IPath javaHomePath) {
 		if (javaHomePath.lastSegment().equalsIgnoreCase("jre")) { //$NON-NLS-1$
@@ -837,7 +854,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Sets the user defined custom tasks
+	 * Sets the user defined custom tasks.
+	 * To commit the changes, updatePluginPreferences must be
+	 * called.
 	 * @param tasks
 	 */
 	public void setCustomTasks(Task[] tasks) {
@@ -846,7 +865,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Sets the user defined custom types
+	 * Sets the user defined custom types.
+	 * To commit the changes, updatePluginPreferences must be
+	 * called.
 	 * @param tasks
 	 */
 	public void setCustomTypes(Type[] types) {
@@ -942,6 +963,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Returns the default properties defined via the properties extension point
 	 * 
 	 * @return all of the default properties
+	 * @since 3.0
 	 */
 	public List getDefaultProperties() {
 		List result = new ArrayList(10);
@@ -1060,7 +1082,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		
 		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
 		String prefAntHome= ""; //$NON-NLS-1$
-		if (antHome != null) {
+		if (antHome != null && !antHome.equals(getDefaultAntHome())) {
 			prefAntHome= antHome;
 		} 
 		prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME, prefAntHome);
@@ -1115,8 +1137,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the string that defines the Ant home set by the user of the location 
+	 * Returns the string that defines the Ant home set by the user or the location 
 	 * of the Eclipse Ant plugin if Ant home has not been specifically set by the user.
+	 * Can return <code>null</code>
 	 * 
 	 * @return the fully qualified path to Ant home
 	 */
