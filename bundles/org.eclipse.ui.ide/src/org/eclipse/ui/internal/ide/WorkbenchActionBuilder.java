@@ -1026,7 +1026,7 @@ public final class WorkbenchActionBuilder {
             window.removePageListener(pageListener);
             pageListener = null;
         }
-        if (perspectiveListener == null) {
+        if (perspectiveListener != null) {
             window.removePerspectiveListener(perspectiveListener);
             perspectiveListener = null;
         }
