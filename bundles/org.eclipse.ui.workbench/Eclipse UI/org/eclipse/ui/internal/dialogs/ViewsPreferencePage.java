@@ -11,32 +11,20 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.preference.*;
+
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
@@ -59,11 +47,11 @@ public class ViewsPreferencePage
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
 	 */
-	private int editorAlignment;
-	private int viewAlignment;
+	int editorAlignment;
+	int viewAlignment;
 
 	private static final String COLOUR_ICONS_TITLE = WorkbenchMessages.getString("ViewsPreference.colorIcons"); //$NON-NLS-1$
-	private static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
+	static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
 	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
 	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
 	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
@@ -86,7 +74,7 @@ public class ViewsPreferencePage
 	 */
 	private Group createButtonGroup(Composite composite, String title) {
 
-		Group buttonComposite = new Group(composite, SWT.CENTER);
+		Group buttonComposite = new Group(composite, SWT.NONE);
 		buttonComposite.setText(title);
 		buttonComposite.setFont(composite.getFont());
 		FormLayout layout = new FormLayout();
