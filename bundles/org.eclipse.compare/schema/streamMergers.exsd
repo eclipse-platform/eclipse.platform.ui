@@ -8,7 +8,7 @@
       <documentation>
          This extension point allows a plug-in to register a stream merger 
 for specific content types. The stream merger is expected to perform a three-way merge
-on three input streams and write the result to an output stream.
+on three input streams and writes the result to an output stream.
 The extension point must implement the interface &lt;samp&gt;org.eclipse.compare.IStreamMerger&lt;/samp&gt;.
       </documentation>
    </annotation>
@@ -90,6 +90,15 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
