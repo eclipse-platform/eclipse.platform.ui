@@ -52,7 +52,7 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 			return new IRunnableContext() {
 				public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 						throws InvocationTargetException, InterruptedException {
-					IProgressService manager = PlatformUI.getWorkbench().getProgressManager();
+					IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 					manager.busyCursorWhile(runnable);
 				}
 			};

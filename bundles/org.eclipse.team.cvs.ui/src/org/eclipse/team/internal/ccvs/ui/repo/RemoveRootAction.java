@@ -112,7 +112,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 						}
 					});
 				} else {
-					IProgressService manager = PlatformUI.getWorkbench().getProgressManager();
+					IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 					try {
 						manager.busyCursorWhile(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
