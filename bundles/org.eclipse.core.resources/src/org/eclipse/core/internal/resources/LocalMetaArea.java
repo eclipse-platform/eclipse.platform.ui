@@ -181,13 +181,13 @@ public WorkspaceDescription readWorkspace() throws CoreException {
 }
 public void write(IProject target) throws CoreException {
 	IPath path = getDescriptionLocationFor(target);
-	path.toFile().mkdirs();
+	path.removeLastSegments(1).toFile().mkdirs();
 	IPath tempPath = getBackupLocationFor(path);
 	try {
 		IProjectDescription description = ((Project) target).internalGetDescription();
 		new ModelObjectWriter().write(description, path, tempPath);
 	} catch (IOException e) {
-		String message = Policy.bind("resourceswriteMeta", target.getFullPath().toString());
+		String message = Policy.bind("resources.writeMeta", target.getFullPath().toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
 	}
 }
