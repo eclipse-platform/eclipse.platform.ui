@@ -2220,4 +2220,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected ActionPresentation getActionPresentation() {
 		return actionPresentation;
 	}
+	
+	/**
+	 * Toggle the floating window in the receiver.
+	 */
+	public void toggleFloatingWindow(){
+		animationItem.toggleFloatingWindow();
+	}
 }

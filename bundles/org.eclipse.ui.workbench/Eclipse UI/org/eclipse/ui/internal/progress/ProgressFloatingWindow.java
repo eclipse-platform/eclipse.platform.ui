@@ -9,21 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -37,11 +43,13 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param parent
+	 * @param workbenchWindow
 	 * @param associatedControl
 	 */
-	ProgressFloatingWindow(Shell parent, Control associatedControl) {
-		super(parent, associatedControl);
+	ProgressFloatingWindow(WorkbenchWindow workbenchWindow,
+			Control associatedControl) {
+		super(workbenchWindow.getShell(), associatedControl);
+		this.window = workbenchWindow;
 		setShellStyle(SWT.RESIZE);
 	}
 	/*
@@ -50,7 +58,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#getLayout()
 	 */
 	protected Layout getLayout() {
-		GridLayout layout = new GridLayout();
+		FormLayout layout = new FormLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		return layout;
@@ -58,9 +66,20 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.internal.AssociatedWindow#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setLayout(getLayout());
+		setBackground(newShell);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
+		Control buttonBar = createButtons(root);
 		viewer = new TableViewer(root, SWT.MULTI) {
 			/*
 			 * (non-Javadoc)
@@ -76,12 +95,23 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
-		viewer.getControl().setBackground(
-				viewer.getControl().getDisplay().getSystemColor(
-						SWT.COLOR_INFO_BACKGROUND));
-		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		setBackground(viewer.getControl());
+		FormData tableData = new FormData();
+		tableData.left = new FormAttachment(0);
+		tableData.right = new FormAttachment(100);
+		tableData.top = new FormAttachment(0);
+		viewer.getTable().setLayoutData(tableData);
 		initContentProvider();
-		viewer.setLabelProvider(new LabelProvider() {
+		viewer.setLabelProvider(viewerLabelProvider());
+		return viewer.getControl();
+	}
+	/**
+	 * Return the label provider for the viewer.
+	 * 
+	 * @return LabelProvider
+	 */
+	private LabelProvider viewerLabelProvider() {
+		return new LabelProvider() {
 			private String ellipsis = "...";
 			/*
 			 * (non-Javadoc)
@@ -129,14 +159,13 @@ class ProgressFloatingWindow extends AssociatedWindow {
 				gc.dispose();
 				return textValue;
 			}
-		});
-		return viewer.getControl();
+		};
 	}
 	/**
 	 * Adjust the size of the viewer.
 	 */
 	private void adjustSize() {
-		Point size = viewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point size = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += 5;
 		size.y += 5;
 		int maxSize = getMaximumSize(viewer.getTable().getDisplay());
@@ -237,5 +266,56 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	private int getMaximumSize(Display display) {
 		return display.getBounds().width / 5;
+	}
+	/**
+	 * Set the background color of the control to the info background.
+	 * 
+	 * @param control
+	 */
+	private void setBackground(Control control) {
+		control.setBackground(control.getDisplay().getSystemColor(
+				SWT.COLOR_INFO_BACKGROUND));
+	}
+	private Control createButtons(Composite parent) {
+		ToolBar buttonBar = new ToolBar(parent, SWT.HORIZONTAL);
+		setBackground(buttonBar);
+		
+		ToolItem minimize = new ToolItem(buttonBar, SWT.NONE);
+		minimize
+				.setImage(JFaceResources.getImage(ProgressManager.MINIMIZE_KEY));
+		minimize.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				window.toggleFloatingWindow();
+			}
+		});
+		
+		minimize.setToolTipText("Close progress window");
+		
+		ToolItem maximize = new ToolItem(buttonBar, SWT.NONE);
+		maximize
+				.setImage(JFaceResources.getImage(ProgressManager.MAXIMIZE_KEY));
+		maximize.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				ProgressManagerUtil.openProgressView(window);
+			}
+		});
+		
+		maximize.setToolTipText("Open progress view");
+		
+		FormData barData = new FormData();
+		barData.right = new FormAttachment(100);
+		barData.top = new FormAttachment(0);
+		buttonBar.setLayoutData(barData);
+		return buttonBar;
 	}
 }

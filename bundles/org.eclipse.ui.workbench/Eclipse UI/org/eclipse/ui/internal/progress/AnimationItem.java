@@ -95,14 +95,9 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				if (showingDetails)
-					closeFloatingWindow();
-				else
-					openFloatingWindow();
-
-				//Toggle the details flag
-				showingDetails = !showingDetails;
+				toggleFloatingWindow();
 			}
+			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -215,7 +210,7 @@ public class AnimationItem {
 			return;
 		
 		floatingWindow =
-			new ProgressFloatingWindow(window.getShell(), imageCanvas);
+			new ProgressFloatingWindow(window, imageCanvas);
 
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
@@ -282,6 +277,19 @@ public class AnimationItem {
 	 */
 	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
+	}
+	
+	/**
+	 * Toggle the floating window for the receiver.
+	 */
+	public void toggleFloatingWindow() {
+		if (showingDetails)
+			closeFloatingWindow();
+		else
+			openFloatingWindow();
+
+		//Toggle the details flag
+		showingDetails = !showingDetails;
 	}
 
 }

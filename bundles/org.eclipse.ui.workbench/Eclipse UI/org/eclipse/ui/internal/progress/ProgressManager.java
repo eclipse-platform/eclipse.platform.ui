@@ -88,6 +88,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
 
 	private static final String BUSY_OVERLAY = "progressspin.gif"; //$NON-NLS-1$
+	private static final String MAXIMIZE = "maximize.gif"; //$NON-NLS-1$
+	private static final String MINIMIZE = "minimize.gif"; //$NON-NLS-1$
+
 
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
@@ -100,6 +103,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
 	public static final String BUSY_OVERLAY_KEY = "BUSY_OVERLAY"; //$NON-NLS-1$
+	
+	public static final String MINIMIZE_KEY = "MINIMIZE_FLOATING"; //$NON-NLS-1$
+	public static final String MAXIMIZE_KEY = "MAXIMIZE_FLOATING"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
 	static String[] keys =
@@ -299,6 +305,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 
 			setUpImage(iconsRoot, BUSY_OVERLAY, BUSY_OVERLAY_KEY);
+			
+			setUpImage(iconsRoot, MAXIMIZE, MAXIMIZE_KEY);
+			setUpImage(iconsRoot, MINIMIZE, MINIMIZE_KEY);
 
 			//Let the error manager set up its own icons
 			errorManager.setUpImages(iconsRoot);
