@@ -11,9 +11,12 @@ Contributors:
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -42,25 +45,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 		workspace.removeResourceChangeListener(closeProjectAction);
 		super.dispose();
 	}
-
-	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection =
-			(IStructuredSelection) getContext().getSelection();
-		
-		if (!selection.isEmpty()) {
-			// Allow manual incremental build only if auto build is off.
-			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				buildAction.selectionChanged(selection);
-				menu.add(buildAction);
-			}
-			rebuildAction.selectionChanged(selection);
-			menu.add(rebuildAction);
-		}
-		menu.add(new Separator());
-		
-		refreshAction.selectionChanged(selection);
-		menu.add(refreshAction);
-	}
 	
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
@@ -79,6 +63,100 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			IWorkbenchActionConstants.CLOSE_PROJECT,
 			closeProjectAction);
 	}
+	/**
+	 * Adds the build, open project, close project and refresh resource
+	 * actions to the context menu.
+	 * <p>
+	 * The following conditions apply: 
+	 * 	build-only projects selected, auto build disabled, at least one 
+	 * 		builder present
+	 * 	open project-only projects selected, at least one closed project
+	 * 	close project-only projects selected, at least one open project
+	 * 	refresh-no closed project selected
+	 * </p>
+	 * <p>
+	 * Both the open project and close project action may be on the menu
+	 * at the same time.
+	 * </p>
+	 * <p>
+	 * No disabled action should be on the context menu.
+	 * </p>
+	 * 
+	 * @param menu context menu to add actions to
+	 */
+	public void fillContextMenu(IMenuManager menu) {
+		IStructuredSelection selection =
+			(IStructuredSelection) getContext().getSelection();
+		boolean isProjectSelection = true; 
+		boolean hasOpenProjects = false;
+		boolean hasClosedProjects = false;
+		boolean hasBuilder = true;	// false if any project is closed or does not have builder 
+		Iterator resources = selection.iterator();
+
+		while (resources.hasNext() &&
+				(!hasOpenProjects || !hasClosedProjects || 
+				 hasBuilder || isProjectSelection)) {
+			Object next = resources.next();
+			IProject project = null;
+			
+			if (next instanceof IProject)
+				project = (IProject) next;
+			else if (next instanceof IAdaptable)
+				project = (IProject) ((IAdaptable) next).getAdapter(IProject.class);
+			
+			if (project == null) {
+				isProjectSelection = false;
+				continue;
+			}
+			if (project.isOpen()) {
+				hasOpenProjects = true;
+				if (hasBuilder && !hasBuilder(project))
+					hasBuilder = false;					
+			} else {
+				hasClosedProjects = true;
+				hasBuilder = false;
+			}
+		}	
+		if (!selection.isEmpty() && isProjectSelection && 
+			!ResourcesPlugin.getWorkspace().isAutoBuilding() && hasBuilder) {
+			// Allow manual incremental build only if auto build is off.
+			buildAction.selectionChanged(selection);
+			menu.add(buildAction);
+		}
+		if (!hasClosedProjects) {
+			refreshAction.selectionChanged(selection);
+			menu.add(refreshAction);
+		}
+		if (isProjectSelection) {
+			if (hasClosedProjects) {
+				openProjectAction.selectionChanged(selection);
+				menu.add(openProjectAction);				
+			}
+			if (hasOpenProjects) {
+				closeProjectAction.selectionChanged(selection);
+				menu.add(closeProjectAction);
+			}
+		}					
+	}
+
+	/**
+	 * Returns whether there are builders configured on the given project.
+	 *
+	 * @return <code>true</code> if it has builders,
+	 *   <code>false</code> if not, or if this could not be determined
+	 */
+	boolean hasBuilder(IProject project) {
+		try {
+			ICommand[] commands = project.getDescription().getBuildSpec();
+			if (commands.length > 0)
+				return true;
+		}
+		catch (CoreException e) {
+			// Cannot determine if project has builders. Project is closed 
+			// or does not exist. Fall through to return false.
+		}
+		return false;
+	}
 	
 	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
@@ -96,7 +174,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 	}
-	
+
 	public void updateActionBars() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
