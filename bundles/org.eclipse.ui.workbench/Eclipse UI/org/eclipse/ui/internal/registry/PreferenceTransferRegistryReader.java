@@ -41,11 +41,6 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
     public final static String ATT_NAME = "name";//$NON-NLS-1$
 
     /**
-     * <code>ATT_CLASS</code> an optional class for the transfer, must implement <code>IPreferenceTransfer</code>
-     */
-    public final static String ATT_CLASS = "class";//$NON-NLS-1$
-
-    /**
      * <code>ATT_ICON</code> an optional icon used when displaying the transfer
      */
     public final static String ATT_ICON = "icon";//$NON-NLS-1$
@@ -96,8 +91,8 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
             return null;
         }
         
-        // must specifiy a mapping OR class
-        if (element.getChildren(TAG_MAPPING) == null && element.getAttribute(ATT_CLASS) == null) {
+        // must specifiy a mapping
+        if (element.getChildren(TAG_MAPPING) == null) {
             logMissingElement(element, TAG_MAPPING);
             return null;
         }

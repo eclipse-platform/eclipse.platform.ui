@@ -536,7 +536,6 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         saveWidgetValues();
 
         IPreferenceFilter[] transfers = null;
-        PreferenceTransferElement[] transferElements = null;
 
         if (getTransferAll()) {
             // export all
@@ -611,7 +610,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
 
     /**
      * @param transfers
-     * @return
+     * @return boolean
      */
     protected abstract boolean transfer(IPreferenceFilter[] transfers);
     

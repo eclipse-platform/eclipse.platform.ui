@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PreferenceTransferRegistryReader;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -50,21 +49,6 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
     }
 
     /**
-     * Create an the instance of the object described by the configuration
-     * element. That is, create the instance of the class the isv supplied in
-     * the extension point.
-     * 
-     * @return Object  the instance of the class to create
-     * @throws CoreException a <code>CoreException</code>
-     * 
-     * 
-     */
-    private Object createExecutableExtension() throws CoreException {
-        return WorkbenchPlugin.createExtension(configurationElement,
-                PreferenceTransferRegistryReader.ATT_CLASS);
-    }
-
-    /**
      * @return IConfigurationElement
      */
     public IConfigurationElement getConfigurationElement() {
@@ -81,18 +65,14 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
     public IPreferenceFilter getFilter() throws CoreException {
         if (filter == null) {
             IConfigurationElement[] mappings = PreferenceTransferRegistryReader.getMappings(configurationElement);
-            if (mappings == null){
-                filter = (IPreferenceFilter)createExecutableExtension();
-            } else {
-                PreferenceFilter prefFilter = new PreferenceFilter();
-                prefFilter.scopes = new String[mappings.length];
-                prefFilter.maps = new Map[mappings.length];
-                for (int i = 0; i < mappings.length; i++) {
-                    prefFilter.scopes[i] = PreferenceTransferRegistryReader.getScope(mappings[i]);
-                    prefFilter.maps[i] = PreferenceTransferRegistryReader.getEntry(mappings[i]);
-                } 
-                filter = (IPreferenceFilter)prefFilter;
-            }
+            PreferenceFilter prefFilter = new PreferenceFilter();
+            prefFilter.scopes = new String[mappings.length];
+            prefFilter.maps = new Map[mappings.length];
+            for (int i = 0; i < mappings.length; i++) {
+                prefFilter.scopes[i] = PreferenceTransferRegistryReader.getScope(mappings[i]);
+                prefFilter.maps[i] = PreferenceTransferRegistryReader.getEntry(mappings[i]);
+            } 
+            filter = (IPreferenceFilter)prefFilter;
         }
         return filter;
     }
