@@ -26,6 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
@@ -256,7 +257,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 	}
 	
-	private abstract class TextField extends Field {
+	private abstract class TextField extends Field implements ModifyListener {
 		protected final Text fText;
 		
 		public TextField(Composite composite, String key, String text, String helpID) {
@@ -267,8 +268,10 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 			
 			fText= SWTUtils.createText(composite);
+            fText.addModifyListener(this);
 			
-			WorkbenchHelp.setHelp(fText, helpID);
+            if (helpID != null)
+                WorkbenchHelp.setHelp(fText, helpID);
 		}
 		
 		public Text getControl() {
@@ -284,6 +287,10 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			store.setValue(fKey, fText.getText());
 		}
 		
+        public void modifyText(ModifyEvent e) {
+            modifyText(fText);
+        }
+        
 		protected abstract void modifyText(Text text);
 	}
 	
@@ -383,6 +390,31 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, Policy.bind("CVSPreferencesPage.16"), IHelpContextIds.PREF_CONFIRM_MOVE_TAG); //$NON-NLS-1$
 		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, Policy.bind("CVSPreferencesPage.17"), IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
 		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, Policy.bind("CVSPreferencesPage.18"), IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
+        
+        final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
+        new TextField(
+                textComposite, 
+                ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD, 
+                Policy.bind("CVSPreferencesPage.20"), //$NON-NLS-1$
+                null) {
+            protected void modifyText(Text text) {
+                // Parse the timeout value
+                try {
+                    final int x = Integer.parseInt(text.getText());
+                    if (x >= 0) {
+                        setErrorMessage(null);
+                        setValid(true);
+                    } else {
+                        setErrorMessage(Policy.bind("CVSPreferencesPage.21")); //$NON-NLS-1$
+                        setValid(false);
+                    }
+                } catch (NumberFormatException ex) {
+                    setErrorMessage(Policy.bind("CVSPreferencesPage.22")); //$NON-NLS-1$
+                    setValid(false);
+                }
+            }
+        };
+        
 		return composite;
 	}
 	

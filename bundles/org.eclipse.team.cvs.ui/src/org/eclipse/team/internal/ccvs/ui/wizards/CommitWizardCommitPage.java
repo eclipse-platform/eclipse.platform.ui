@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.subscribers.ChangeSet;
@@ -34,6 +36,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.part.PageBook;
 
 /**
  * This wizard page shows a preview of the commit operation and allows entering
@@ -89,6 +92,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     protected final CommitWizard fWizard;
     
 	private ParticipantPagePane fPagePane;
+    private PageBook bottomChild;
     
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
         
@@ -124,7 +128,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         createCommentArea(fSashForm, converter);
         createChangesArea(fSashForm, converter);
                 
-        fSashForm.setWeights(fSettingsSaver.loadWeights());
+        int[] weights = fSettingsSaver.loadWeights();
+        if (fConfiguration == null) {
+            weights = new int[] { 90, 10};
+        }
+        fSashForm.setWeights(weights);
         setControl(composite);
         
         fCommentArea.setFocus();
@@ -151,14 +159,49 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         
         createPlaceholder(composite);
         
-        final CommitWizardParticipant participant= fWizard.getParticipant();
+        CommitWizardParticipant participant= fWizard.getParticipant();
+        int size = participant.getSyncInfoSet().size();
+        if (size > getFileDisplayThreshold()) {
+            // Create a page book to allow eventual inclusion of changes
+            bottomChild = new PageBook(composite, SWT.NONE);
+            bottomChild.setLayoutData(SWTUtils.createHVFillGridData());
+            // Create composite for showing the reason for not showing the changes and a button to show them
+            Composite changeDesc = new Composite(bottomChild, SWT.NONE);
+            changeDesc.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
+            SWTUtils.createLabel(changeDesc, Policy.bind("CommitWizardCommitPage.1", Integer.toString(size), Integer.toString(getFileDisplayThreshold()))); //$NON-NLS-1$
+            Button showChanges = new Button(changeDesc, SWT.PUSH);
+            showChanges.setText(Policy.bind("CommitWizardCommitPage.5")); //$NON-NLS-1$
+            showChanges.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    showChangesPane();
+                }
+            });
+            bottomChild.showPage(changeDesc);
+        } else {
+            Control c = createChangesPage(composite, participant);
+            c.setLayoutData(SWTUtils.createHVFillGridData());
+        }
+    }
+
+    protected void showChangesPane() {
+        Control c = createChangesPage(bottomChild, fWizard.getParticipant());
+        bottomChild.showPage(c);
+        fSashForm.setWeights(fSettingsSaver.loadWeights());
+        fSashForm.layout();
+    }
+
+    private Control createChangesPage(final Composite composite, CommitWizardParticipant participant) {
         fConfiguration= participant.createPageConfiguration();
         fPagePane= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, participant);
         Control control = fPagePane.createPartControl(composite);
-        control.setLayoutData(SWTUtils.createHVFillGridData());
+        return control;
     }
 
-	/* (non-Javadoc)
+	private int getFileDisplayThreshold() {
+        return CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
 	public void dispose() {
@@ -193,14 +236,16 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     }
     
     protected void expand() {
-        final Viewer viewer= fConfiguration.getPage().getViewer();
-        if (viewer instanceof TreeViewer) {
-        	try {
-	        	viewer.getControl().setRedraw(false);
-	            ((TreeViewer)viewer).expandAll();
-        	} finally {
-        		viewer.getControl().setRedraw(true);
-        	}
+        if (fConfiguration != null) {
+            final Viewer viewer= fConfiguration.getPage().getViewer();
+            if (viewer instanceof TreeViewer) {
+            	try {
+    	        	viewer.getControl().setRedraw(false);
+    	            ((TreeViewer)viewer).expandAll();
+            	} finally {
+            		viewer.getControl().setRedraw(true);
+            	}
+            }
         }
     }
     
@@ -215,18 +260,20 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 	}
 	
 	public void updateEnablements() {
-		SyncInfoSet set = fConfiguration.getSyncInfoSet();
-		if (set.hasConflicts()) {
-			setErrorMessage(Policy.bind("CommitWizardCommitPage.4")); //$NON-NLS-1$
-			setPageComplete(false);
-			return;
-		}
-		if (set.isEmpty()) {
-			// No need for a message as it should be obvious that there are no resources to commit
-			setErrorMessage(null);
-			setPageComplete(false);
-			return;
-		}
+        if (fConfiguration != null) {
+    		SyncInfoSet set = fConfiguration.getSyncInfoSet();
+    		if (set.hasConflicts()) {
+    			setErrorMessage(Policy.bind("CommitWizardCommitPage.4")); //$NON-NLS-1$
+    			setPageComplete(false);
+    			return;
+    		}
+    		if (set.isEmpty()) {
+    			// No need for a message as it should be obvious that there are no resources to commit
+    			setErrorMessage(null);
+    			setPageComplete(false);
+    			return;
+    		}
+        }
 		setErrorMessage(null);
 		setPageComplete(true);
 	}
@@ -259,8 +306,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     public SyncInfoSet getInfosToCommit() {
 
         final SyncInfoSet infos= new SyncInfoSet();
-        if (fConfiguration == null)
-            return infos;
+        if (fConfiguration == null) {
+            return fWizard.getParticipant().getSyncInfoSet();
+        }
         
         final IDiffElement root = (ISynchronizeModelElement)fConfiguration.getProperty(SynchronizePageConfiguration.P_MODEL);
         final IDiffElement [] elements= Utils.getDiffNodes(new IDiffElement [] { root });
