@@ -29,10 +29,9 @@ class ImplicitJobs {
 	protected JobManager manager;
 
 	/**
-	 * Maps (Rule ->ThreadJob), suspended scheduling rule to the thread job
-	 * that represents that suspended rule
+	 * Set of suspended scheduling rules.
 	 */
-	private final Map suspendedJobs = new HashMap(20);
+	private final Set suspendedRules = new HashSet(20);
 
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
@@ -53,7 +52,7 @@ class ImplicitJobs {
 		final Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob;
 		synchronized (this) {
-			threadJob = findThreadJob(currentThread, rule);
+			threadJob = 	(ThreadJob) threadJobs.get(currentThread);
 			if (threadJob != null) {
 				//nested rule, just push on stack and return
 				threadJob.push(rule);
@@ -70,6 +69,9 @@ class ImplicitJobs {
 				threadJob = newThreadJob(rule);
 				threadJob.acquireRule = true;
 			}
+			//don't acquire rule if it is a suspended rule
+			if (rule != null && isSuspended(rule))
+				threadJob.acquireRule = false;
 			//indicate if it is a system job to ensure isBlocking works correctly
 			threadJob.setRealJob(realJob);
 			threadJob.setThread(currentThread);
@@ -89,54 +91,39 @@ class ImplicitJobs {
 			//after the rule is acquired because it is ok for this thread to acquire
 			//and release other rules while waiting.
 			synchronized (this) {
-				if (suspend) 
-					suspendedJobs.put(rule, threadJob);
-				else
-					threadJobs.put(currentThread, threadJob);
+				threadJobs.put(currentThread, threadJob);
+				if (suspend && rule != null) 
+					suspendedRules.add(rule);
 			}
 		}
 	}
-
 	/**
-	 * Finds and returns the ThreadJob associated with this thread and rule. Returns
-	 * <code>null</code> if no related ThreadJob can be found
-	 * 
-	 * Note: Callers of this method must synchronize on the receiver while invoking
-	 * this method.
-	 * 
-	 * @param thread The thread to find a ThreadJob for
-	 * @param rule The rule associated with the ThreadJob
-	 * @return The ThreadJob for the given thread and rule, or <code>null</code>
+	 * Returns true if this rule has been suspended, and false otherwise.
 	 */
-	private ThreadJob findThreadJob(final Thread thread, ISchedulingRule rule) {
-		//first check for a suspended job rule that contains the rule to begin
-		if (suspendedJobs.size() > 0) {
-			for (Iterator it = suspendedJobs.keySet().iterator(); it.hasNext();) {
-				ISchedulingRule suspendedRule = (ISchedulingRule)it.next();
-				if (suspendedRule.contains(rule))
-					return (ThreadJob) suspendedJobs.get(suspendedRule);
-			}
-		}
-		//next check for a thread job for this thread
-		return (ThreadJob) threadJobs.get(thread);
+	private boolean isSuspended(ISchedulingRule rule) {
+		if (suspendedRules.size() == 0)
+			return false;
+		for (Iterator it = suspendedRules.iterator(); it.hasNext();)
+			if (((ISchedulingRule)it.next()).contains(rule))
+				return true;
+		return false;
 	}
 
 	/* (Non-javadoc) 
 	 * @see IJobManager#endRule 
 	 */
-	synchronized void end(ISchedulingRule rule) {
+	synchronized void end(ISchedulingRule rule, boolean resume) {
 		if (JobManager.DEBUG_BEGIN_END)
 			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
 		final Thread currentThread = Thread.currentThread();
-		ThreadJob threadJob = findThreadJob(currentThread, rule);
+		ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
 		if (threadJob == null)
 			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
-			if (suspendedJobs.remove(rule) == null)
-				threadJobs.remove(currentThread);
-			else if (JobManager.DEBUG_BEGIN_END)
-				JobManager.debug("Resume rule: " + rule); //$NON-NLS-1$
+			threadJobs.remove(currentThread);
+			if (resume && rule != null)
+				suspendedRules.remove(rule);
 			//if this job had a rule, then we are essentially releasing a lock
 			//note it is safe to do this even if the acquire was aborted
 			if (threadJob.acquireRule)
@@ -185,7 +172,9 @@ class ImplicitJobs {
 	 */
 	void resume(ISchedulingRule rule) {
 		//resume happens as a consequence of freeing the last rule in the stack
-		end(rule);
+		end(rule, true);
+		if (JobManager.DEBUG_BEGIN_END)
+			JobManager.debug("Resume rule: " + rule); //$NON-NLS-1$
 	}
 
 	/**

@@ -427,7 +427,7 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#endRule(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
 	public void endRule(ISchedulingRule rule) {
-		implicitJobs.end(rule);
+		implicitJobs.end(rule, false);
 	}
 
 	/* (non-Javadoc)

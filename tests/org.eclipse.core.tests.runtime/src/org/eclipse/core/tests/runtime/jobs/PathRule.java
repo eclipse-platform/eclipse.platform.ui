@@ -47,4 +47,10 @@ public class PathRule implements ISchedulingRule {
 	public IPath getFullPath() {
 		return path;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "PathRule(" + path + ")";
+	}
 }

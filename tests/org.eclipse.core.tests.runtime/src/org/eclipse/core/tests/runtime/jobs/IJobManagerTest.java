@@ -1284,7 +1284,37 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCompletion(job);
 
 	}
+	/**
+	 * Tests the following sequence:
+	 * [Thread[main,6,main]]Suspend rule: R/
+	 * [Thread[main,6,main]]Begin rule: R/
+	 * [Thread[Worker-3,5,main]]Begin rule: L/JUnit/junit/tests/framework/Failure.java
+	 * [Thread[main,6,main]]End rule: R/
+	 * [Thread[main,6,main]]Resume rule: R/
+	 * [Thread[Worker-3,5,main]]End rule: L/JUnit/junit/tests/framework/Failure.java
+	 */
+	public void testSuspendMismatchedBegins() {
+		PathRule rule1 = new PathRule("/TestSuspendMismatchedBegins");
+		PathRule rule2 = new PathRule("/TestSuspendMismatchedBegins/Child");
+		manager.suspend(rule1, null);
+		
+		//start a job that acquires a child rule
+		final int[] status = new int[1];
+		JobRuleRunner runner = new JobRuleRunner("TestSuspendJob", rule2, status, 0, 1, true);
+		runner.schedule();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		//let the job start the rule
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+		
+		//now try to resume the rule in this thread
+		manager.resume(rule1);
+		
+		//finally let the test runner resume the rule
+		status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 
+	}
 	/**
 	 * Tests a batch of jobs that use two mutually exclusive rules.
 	 */
