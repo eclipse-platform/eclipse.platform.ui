@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build Ant support JAR" default="main" basedir="..">
+<project name="Build Ant support JAR" default="build" basedir="..">
 
 	<property name="bootclasspath" value=""/>
 
-	<target name="main">
-		<condition property="fullBuild">
-			<equals arg1="${buildType}" arg2="full"/>
-		</condition>
-		<antcall target="build"/>
-	</target>
-
-	<target name="build" if="fullBuild">
+	<target name="build" description="Cleans, builds and refreshes the impacted resources">
 		<antcall target="clean"/>
 		<antcall target="lib/antsupportlib.jar"/>
 		<antcall target="refresh"/>
@@ -29,23 +22,20 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="lib/antsupportlib.jar" depends="init">
+	<target name="lib/antsupportlib.jar" depends="init" description="Creates the lib/antsupportlib.jar">
 		<property name="destdir" value="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<delete dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<!-- compile the source code -->
 		<javac target="1.3" source="1.3" destdir="${temp.folder}/lib/antsupportlib.jar.bin"
-			failonerror="false"
+			failonerror="true"
 			verbose="false"
 			debug="on"
 			includeAntRuntime="no"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;
-			${basedir}/../org.apache.ant/ant.jar;
-			${basedir}/../org.apache.xerces/xercesImpl.jar;
-			${basedir}/../org.apache.xerces/xmlParserAPIs.jar;
-			${basedir}/bin;
-			${basedir}/../org.eclipse.core.boot/boot.jar">
+					${basedir}/../org.apache.ant/ant.jar;
+					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
 		<!-- copy necessary resources -->
