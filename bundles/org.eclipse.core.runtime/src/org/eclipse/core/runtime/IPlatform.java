@@ -369,6 +369,19 @@ public interface IPlatform {
 	public IPath getConfigurationLocation();
 	
 	/**
+	 * Returns the location in the filesystem of the configuration information 
+	 * used to run this instance of Eclipse.  The configuration area typically
+	 * contains the list of plug-ins available for use, various user setttings
+	 * (those shared across different instances of the same configuration)
+	 * and any other such data needed by plug-ins.
+	 * 
+	 * @return the path indicating the directory containing the configuration 
+	 * information for this running Eclipse.
+	 * @deprecated see getConfigurationLocation This method will be removed by M8
+	 */
+	public IPath getConfigurationMetadataLocation();
+	
+	/**
 	 * Takes down the splash screen if one was put up.
 	 */
 	public void endSplash();
