@@ -129,7 +129,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 		menu.add(new Separator());
 
-		if (propertyDialogAction.isApplicableForSelection(selection)) {
+		if (selection.size() == 1) {
 			propertyDialogAction.selectionChanged(selection);
 			menu.add(propertyDialogAction);
 		}
@@ -160,8 +160,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	public void updateActionBars() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
-		propertyDialogAction.setEnabled(
-			propertyDialogAction.isApplicableForSelection(selection));
+		propertyDialogAction.setEnabled(selection.size() == 1);
 		addBookmarkAction.selectionChanged(selection);
 		
 		gotoGroup.updateActionBars();
