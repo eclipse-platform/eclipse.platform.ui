@@ -67,7 +67,7 @@ run multiple applications.
             <annotation>
                <documentation>
                   the fully-qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.boot.IPlatformRunnable&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.boot.IPlatformRunnable"/>
@@ -106,7 +106,7 @@ run multiple applications.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a builder configuration: 
+         Following is an example of an application declaration: 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension id="coolApplication" point="org.eclipse.core.runtime.applications"&gt; 
@@ -128,7 +128,7 @@ run multiple applications.
       <documentation>
          The value of the class attribute must represent an 
 implementor of 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.boot.IPlatformRunnable&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -137,7 +137,7 @@ implementor of
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform itself supplies a number of applications including the platform workbench itself.
+         The platform supplies a number of applications including the platform workbench itself.
       </documentation>
    </annotation>
 
@@ -147,7 +147,7 @@ implementor of
       </appInfo>
       <documentation>
          &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href="http://www.eclipse.org/legal/cpl-v10.html"&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
