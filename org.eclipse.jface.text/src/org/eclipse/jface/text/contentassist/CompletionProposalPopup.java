@@ -417,7 +417,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 				}
 				
 				fContentAssistant.showContextInformation(info, position);
-			}
+			} else
+				fContentAssistant.showContextInformation(null, -1);
+			
 		
 		} finally {
 			if (target != null)

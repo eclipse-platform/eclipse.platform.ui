@@ -234,12 +234,16 @@ class ContextInformationPopup implements IContentAssistListener {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
-				ContextFrame frame= createContextFrame(info, position);
-				if (isDuplicate(frame))
+				if (info == null)
 					validateContextInformation();
-				else
-					internalShowContextInfo(frame);
-				hideContextSelector();
+				else {
+					ContextFrame frame= createContextFrame(info, position);
+					if (isDuplicate(frame))
+						validateContextInformation();
+					else
+						internalShowContextInfo(frame);
+					hideContextSelector();
+				}
 			}
 		});
 	}
@@ -256,6 +260,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			if (fContextFrameStack.size() == 1)
 				fLastContext= null;
 			internalShowContextFrame(frame, fContextFrameStack.size() == 1);
+			validateContextInformation();
 		}
 	}
 	
