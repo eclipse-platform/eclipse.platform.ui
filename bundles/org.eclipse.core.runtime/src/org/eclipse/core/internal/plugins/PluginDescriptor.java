@@ -392,7 +392,7 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 			if (resolved.getProtocol().equals(PlatformURLHandler.FILE))
 				add = new File(resolved.getFile()).exists();
 			if (add) {
-				codePath.add(resolved);
+				codePath.add(entry);
 				codeFilters.add(new URLContentFilter(filter));
 			}
 		} catch (IOException e) {
