@@ -1065,9 +1065,14 @@ public final class Workbench implements IWorkbench {
 		thread.start();
 	}
 
-	/* (non javadoc)
-	 * @see IWorkbench#runUI
+	/**
+	 * Internal method for running the workbench UI. This entails processing
+	 * and dispatching events until the workbench is closed or restarted.
+	 * 
+	 * @return <code>true</code> if the workbench was terminated with a call
+	 * to <code>restart</code>, and <code>false</code> otherwise
 	 * @since 3.0
+	 * @issue consider returning an int or Object rather than a boolean
 	 */
 	public boolean runUI() {
 		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$

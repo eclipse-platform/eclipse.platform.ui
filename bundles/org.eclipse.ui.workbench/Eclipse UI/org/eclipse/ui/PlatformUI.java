@@ -41,31 +41,26 @@ public final class PlatformUI {
 	}
 	
 	/**
-	 * Returns the workbench. Fails if the workbench has not been
-	 * created yet.
+	 * Returns the workbench. Fails if the workbench has not been created yet.
 	 * 
 	 * @return the workbench
-	 * @throws IllegalStateException If <code>createWorkbench</code> not called once beforehand
 	 */
 	public static IWorkbench getWorkbench() {
 		if (Workbench.getInstance() == null) {
-			// app forgot to call createWorkbench beforehand
+			// app forgot to call createAndRunWorkbench beforehand
 			throw new IllegalStateException(WorkbenchMessages.getString("PlatformUI.NoWorkbench")); //$NON-NLS-1$
 		}
 		return Workbench.getInstance();
 	}
 
 	/**
-	 * Returns whether the workbench has been created.
-	 * 
-	 * @return <code>true</code> if workbench created, <code>false</code> otherwise
-	 */
-	public static boolean isWorkbenchCreated() {
-		return Workbench.getInstance() != null;
-	}
-	
-	/**
-	 * Creates the workbench and associates it with the given workbench adviser.
+	 * Creates the workbench and associates it with the given workbench adviser,
+	 * and runs the workbench UI. This entails processing and dispatching
+	 * events until the workbench is closed or restarted.
+	 * <p>
+	 * This method is intended to be called by the main class (the "application").
+	 * Fails if the workbench UI has already been created.
+	 * </p>
 	 * <p>
 	 * Note that this method is intended to be called by the application
 	 * (<code>org.eclipse.core.boot.IPlatformRunnable</code>). It must be
@@ -75,13 +70,19 @@ public final class PlatformUI {
 	 * 
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes the workbench
-	 * @return the created workbench
-	 * @throws IllegalArgumentException If adviser is invalid
-	 * @throws IllegalStateException If <code>createWorkbench</code> has been called before
+	 * @return <code>true</code> if the workbench was terminated with a call
+	 * to <code>restart</code>, and <code>false</code> otherwise
 	 * @since 3.0
+	 * @issue consider returning an int or Object rather than a boolean
 	 */
-	public static IWorkbench createWorkbench(WorkbenchAdviser adviser) {
-		// create the workbench instance (but do not run the UI, the app will do that)
-		return new Workbench(adviser);
+	public static boolean createAndRunWorkbench(WorkbenchAdviser adviser) {
+		if (Workbench.getInstance() != null) {
+			// app already created a workbench
+			throw new IllegalStateException();
+		}
+		// create the workbench instance
+		Workbench workbench = new Workbench(adviser);
+		// run the workbench event loop
+		return workbench.runUI();
 	}
 }

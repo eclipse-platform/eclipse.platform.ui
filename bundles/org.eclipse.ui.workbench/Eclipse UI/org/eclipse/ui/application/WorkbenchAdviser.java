@@ -20,15 +20,14 @@ package org.eclipse.ui.application;
  * properly initialized.
  * </p>
  * <p>
- * Example of creating, configuring, and running a workbench (in an
+ * Example of creating and running a workbench (in an
  * <code>IPlatformRunnable</code>):
  * <pre>
  * <code>
  * public class MyApplication implements IPlatformRunnable {
  *   public Object run(Object args) {
  *     WorkbenchAdviser workbenchAdviser = new MyWorkbenchAdviser();
- *     IWorkbench workbench = PlatformUI.createWorkbench(workbenchAdviser);
- *     boolean restart = workbench.runUI();
+ *     boolean restart = PlatformUI.createAndRunWorkbench(workbenchAdviser);
  *     return (restart ? IPlatformRunnable.EXIT_RESTART : IPlatformRunnable.EXIT_OK);
  *   }
  * }
@@ -43,7 +42,7 @@ package org.eclipse.ui.application;
  * <p>
  * The following advisor methods are called at strategic points in the
  * workbench's lifecycle (all occur within the dynamic scope of the call
- * to {@link IWorkbench#runUI IWorkbench.runUI}):
+ * to {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
  * <ul>
  * <li><code>initialize</code> - called first; before any windows; use to
  * register things; IWorkench.close not an option</li>

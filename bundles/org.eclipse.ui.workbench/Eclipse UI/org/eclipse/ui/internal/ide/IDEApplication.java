@@ -15,7 +15,6 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -43,15 +42,11 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		IDEWorkbenchAdviser workbenchAdviser
 			= new IDEWorkbenchAdviser(commandLineArgs);
 		
-		// create the workbench with this adviser
-		IWorkbench workbench = PlatformUI.createWorkbench(workbenchAdviser);
-		
+		// create the workbench with this adviser and run it until it exits
 		// N.B. createWorkbench remembers the adviser, and also registers the
 		// workbench globally so that all UI plug-ins can find it using
 		// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-		
-		// run the workbench until it exits
-		boolean restart = workbench.runUI();
+		boolean restart = PlatformUI.createAndRunWorkbench(workbenchAdviser);
 		
 		// exit the application with an appropriate return code
 		if (restart) {

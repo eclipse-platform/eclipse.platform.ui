@@ -559,7 +559,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * @deprecated Use <code>PlatformUI.createWorkbench</code> instead.
+	 * @deprecated Use <code>PlatformUI.createAndRunWorkbench</code>.
 	 */
 	public void setWorkbench(IWorkbench aWorkbench) {
 		// Do nothing
