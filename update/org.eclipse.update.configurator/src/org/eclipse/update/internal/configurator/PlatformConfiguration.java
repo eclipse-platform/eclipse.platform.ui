@@ -409,6 +409,30 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 		return (URL[]) path.toArray(new URL[0]);
 	}
+	
+
+	/*
+	 * A variation of the getPluginPath, but it returns the actual plugin entries
+	 */
+	public PluginEntry[] getPlugins() {
+		ArrayList allPlugins = new ArrayList();
+		Utils.debug("computed plug-ins:"); //$NON-NLS-1$
+
+		ISiteEntry[] sites = getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			if (!(sites[i] instanceof SiteEntry)) {
+				Utils.debug("Site " + sites[i].getURL() + " is not a SiteEntry");
+				continue;
+			}
+			PluginEntry[] plugins = ((SiteEntry)sites[i]).getPluginEntries();
+			for (int j = 0; j < plugins.length; j++) {
+				allPlugins.add(plugins[j]);
+				Utils.debug("   " + plugins[j].getURL()); //$NON-NLS-1$
+			}
+		}
+		return (PluginEntry[]) allPlugins.toArray(new PluginEntry[0]);
+	}
+	
 
 	/*
 	 * @see IPlatformConfiguration#getBootstrapPluginIdentifiers()

@@ -138,6 +138,25 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		return new String[0];
 	}
 
+	public PluginEntry[] getPluginEntries() {
+		String[] pluginURLs = getPlugins();
+		// hash the array, for faster lookups
+		HashMap map = new HashMap(pluginURLs.length);
+		for (int i=0; i<pluginURLs.length; i++)
+			map.put(pluginURLs[i], pluginURLs[i]);
+		
+		if (pluginEntries == null)
+				detectPlugins();
+		
+		ArrayList plugins = new ArrayList(pluginURLs.length);
+		for (int i=0; i<pluginEntries.size(); i++) {
+			PluginEntry p = (PluginEntry)pluginEntries.get(i);
+			if (map.containsKey(p.getURL()))
+				plugins.add(p);
+		}
+		return (PluginEntry[])plugins.toArray(new PluginEntry[plugins.size()]);
+	}
+	
 	/*
 	 * @see ISiteEntry#getChangeStamp()
 	 */
@@ -558,7 +577,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		pluginEntries.add(plugin);
 	}
 	
-	public PluginEntry[] getPluginEntries() {
+	public PluginEntry[] getAllPluginEntries() {
 		if (pluginEntries == null)
 			detectPlugins();
 		return (PluginEntry[])pluginEntries.toArray(new PluginEntry[pluginEntries.size()]);
@@ -573,7 +592,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	
 	/**
 	 * Saves state as xml content in a given parent element
-	 * @param parent
+	 * @param doc
 	 */
 	public Element toXML(Document doc) {
 

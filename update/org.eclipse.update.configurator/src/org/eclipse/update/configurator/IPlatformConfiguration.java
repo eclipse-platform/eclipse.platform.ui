@@ -17,9 +17,14 @@ import java.net.URL;
  * Platform configuration interface. Represents the runtime
  * configuration used by the Eclipse platform. Any configuration
  * changes do not take effect until next startup of the Eclipse
- * platform
+ * platform.
+ * <p>
+ * Do not provide implementations of this interface or its nested interfaces. Use the factory methods 
+ * on IPlatformConfigurationFactory to create a IPlatformConfiguration, then use the factory methods
+ * on the IPlatformConfiguration to create instances of ISiteEntry,IFeatureEntry and ISitePolicy.
+ * </p>
  * 
- * @since 2.0
+ * @since 3.0
  */
 public interface IPlatformConfiguration {
 
@@ -93,6 +98,7 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @return site features change stamp 
 		 * @since 2.0
+		 * @deprecated
 		 */
 		public long getFeaturesChangeStamp();
 
@@ -103,6 +109,7 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @return site plug-ins change stamp 
 		 * @since 2.0
+		 * @deprecated
 		 */
 		public long getPluginsChangeStamp();
 
@@ -315,7 +322,7 @@ public interface IPlatformConfiguration {
 	 * If specified, the identifier must represent a valid extension 
 	 * registered in the <code>org.eclipse.core.runtime.applications</code>
 	 * extension point.
-	 * @param an array of URLs to feature root directories.
+	 * @param root an array of URLs to feature root directories.
 	 * These are URLs to install locations for the feature plugin
 	 * and its fragments. Can be <code>null</code>.
 	 * @return create feature entry
@@ -338,7 +345,7 @@ public interface IPlatformConfiguration {
 	 * If specified, the identifier must represent a valid extension
 	 * registered in the <code>org.eclipse.core.runtime.applications</code>
 	 * extension point.
-	 * @param an array of URLs to feature root directories.
+	 * @param root an array of URLs to feature root directories.
 	 * These are URLs to install locations for the feature plugin
 	 * and its fragments. Can be <code>null</code>.
 	 * @return create feature entry
@@ -361,7 +368,7 @@ public interface IPlatformConfiguration {
 	 * the entry can be specified.
 	 * 
 	 * @param entry site entry 
-	 * @param  flag indicating whether an existing configured entry with
+	 * @param  replace indicating whether an existing configured entry with
 	 * the same URL should be replaced (<code>true</code>) or not (<code>false</code>).
 	 * @since 2.0
 	 */
@@ -533,7 +540,6 @@ public interface IPlatformConfiguration {
 	 * guaranteed to be valid on subsequent instantiations. This method has
 	 * no effect if called on the current platform configuration.
 	 * 
-	 * @see BootLoader#getCurrentPlatformConfiguration()
 	 * @param value <code>true</code> if configuration is transient, <code>false</code> 
 	 * otherwise
 	 * @since 2.0
