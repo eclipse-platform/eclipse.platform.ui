@@ -94,21 +94,24 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	}
 
 	private void cacheClassLookup(IAdapterFactory factory, Class clazz) {
-		if (classLookup == null) {
-			classLookup = new HashMap(4);
-		}
-		HashMap classes = (HashMap) classLookup.get(factory);
+		//cache reference to lookup to protect against concurrent flush
+		HashMap lookup = classLookup;
+		if (lookup == null) 
+			classLookup = lookup = new HashMap(4);
+		HashMap classes = (HashMap) lookup.get(factory);
 		if (classes == null) {
 			classes = new HashMap(4);
-			classLookup.put(factory, classes);
+			lookup.put(factory, classes);
 		}
 		classes.put(clazz.getName(), clazz);
 	}
 
 	private Class cachedClassForName(IAdapterFactory factory, String typeName) {
 		Class clazz = null;
-		if (classLookup != null) {
-			HashMap classes = (HashMap) classLookup.get(factory);
+		//cache reference to lookup to protect against concurrent flush
+		HashMap lookup = classLookup;
+		if (lookup != null) {
+			HashMap classes = (HashMap) lookup.get(factory);
 			if (classes != null) {
 				clazz = (Class) classes.get(typeName);
 			}
@@ -152,9 +155,11 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 * @param adaptable
 	 */
 	private Map getFactories(Class adaptable) {
-		if (adapterLookup == null)
-			adapterLookup = new HashMap(30);
-		Map table = (Map) adapterLookup.get(adaptable.getName());
+		//cache reference to lookup to protect against concurrent flush
+		HashMap lookup = adapterLookup;
+		if (lookup == null)
+			adapterLookup = lookup = new HashMap(30);
+		Map table = (Map) lookup.get(adaptable.getName());
 		if (table == null) {
 			// calculate adapters for the class
 			table = new HashMap(4);
@@ -162,22 +167,24 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			for (int i = 0; i < classes.length; i++)
 				addFactoriesFor(classes[i].getName(), table);
 			// cache the table
-			adapterLookup.put(adaptable.getName(), table);
+			lookup.put(adaptable.getName(), table);
 		}
 		return table;
 	}
 
 	public Class[] computeClassOrder(Class adaptable) {
 		List classes = null;
-		if (classSearchOrderLookup != null)
-			classes = (List) classSearchOrderLookup.get(adaptable);
+		//cache reference to lookup to protect against concurrent flush
+		HashMap lookup = classSearchOrderLookup;
+		if (lookup != null)
+			classes = (List) lookup.get(adaptable);
 		// compute class order only if it hasn't been cached before
 		if (classes == null) {
 			classes = new ArrayList();
 			computeClassOrder(adaptable, classes);
-			if (classSearchOrderLookup == null)
-				classSearchOrderLookup = new HashMap();
-			classSearchOrderLookup.put(adaptable, classes);
+			if (lookup == null)
+				classSearchOrderLookup =  lookup = new HashMap();
+			lookup.put(adaptable, classes);
 		}
 		return (Class[]) classes.toArray(new Class[classes.size()]);
 	}
