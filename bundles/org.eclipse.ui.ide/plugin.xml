@@ -327,7 +327,7 @@
       <page
             name="%PreferencePages.Startup"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.StartupPreferencePage"
+            class="org.eclipse.ui.internal.ide.dialogs.IDEStartupPreferencePage"
             id="org.eclipse.ui.preferencePages.Startup">
       </page>
       <page

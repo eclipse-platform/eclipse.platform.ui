@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,6 +30,9 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.framework.Constants;
 
+/**
+ * The Startup preference page.
+ */
 public class StartupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Table pluginsList;
 	private Workbench workbench;
@@ -39,32 +41,44 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.STARTUP_PREFERENCE_PAGE);
-		
-		Font font = parent.getFont();
-		
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
-		composite.setLayoutData(data);
-		composite.setFont(font);
+        WorkbenchHelp.setHelp(parent, IHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
-		Label label = new Label(composite,SWT.NONE);
-		label.setText(WorkbenchMessages.getString("StartupPreferencePage.label")); //$NON-NLS-1$
-		label.setFont(font);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);		
-		pluginsList = new Table(composite,SWT.BORDER | SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
-		data = new GridData(GridData.FILL_BOTH);
-		pluginsList.setFont(font)	;
-		pluginsList.setLayoutData(data);
-		populatePluginsList();
+        Composite composite = createComposite(parent);
 
-		return composite;
-	}
+        createEarlyStartupSelection(composite);
+
+        return composite;
+    }
+
+	protected Composite createComposite(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        composite.setLayout(layout);
+        GridData data = new GridData(GridData.FILL_BOTH
+                | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
+        composite.setLayoutData(data);
+        composite.setFont(parent.getFont());
+
+        return composite;
+    }
+
+	protected void createEarlyStartupSelection(Composite parent) {
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(WorkbenchMessages
+                .getString("StartupPreferencePage.label")); //$NON-NLS-1$
+        label.setFont(parent.getFont());
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        label.setLayoutData(data);
+        pluginsList = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.H_SCROLL
+                | SWT.V_SCROLL);
+        data = new GridData(GridData.FILL_BOTH);
+        pluginsList.setFont(parent.getFont());
+        pluginsList.setLayoutData(data);
+        populatePluginsList();
+    }
+	
 	private void populatePluginsList() {
 		String descriptors[] = workbench.getEarlyActivatedPlugins();
 		IPreferenceStore store = workbench.getPreferenceStore();
@@ -84,7 +98,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see IWorkbenchPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
-		this.workbench = (Workbench)workbench;
+		this.workbench = (Workbench) workbench;
 	}
 	/**
 	 * @see PreferencePage
