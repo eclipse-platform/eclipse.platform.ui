@@ -11,7 +11,9 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutAction;
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
@@ -24,6 +26,7 @@ import org.eclipse.ui.internal.CyclePartAction;
 import org.eclipse.ui.internal.CyclePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.LockToolBarAction;
 import org.eclipse.ui.internal.MaximizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
@@ -39,8 +42,8 @@ import org.eclipse.ui.internal.ShowPartPaneMenuAction;
 import org.eclipse.ui.internal.ShowViewMenuAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchEditorsAction;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -670,6 +673,13 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.undo.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 			return action;
 		}
 	};
@@ -689,6 +699,13 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.redo.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 			return action;
 		}
 	};
@@ -708,6 +725,13 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.cut.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 			return action;
 		}
 	};
@@ -727,6 +751,13 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.copy.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 			return action;
 		}
 	};
@@ -746,6 +777,13 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.paste.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 			return action;
 		}
 	};
@@ -765,6 +803,7 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.selectAll.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
@@ -784,6 +823,7 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.move.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.move"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
@@ -803,6 +843,7 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.rename.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.rename"); //$NON-NLS-1$
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			return action;
 		}
 	};
@@ -822,6 +863,15 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.print.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.file.print"); //$NON-NLS-1$
+			action.setImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
+			action.setHoverImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
+			action.setDisabledImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
 			return action;
 		}
 	};
@@ -842,6 +892,11 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.findReplace.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.findReplace"); //$NON-NLS-1$
+			// Find's images are commented out due to a conflict with Search.
+			// See bug 16412.
+			//		action.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
+			//		action.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
+			//		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
 			return action;
 		}
 	};
@@ -922,6 +977,13 @@ public abstract class ActionFactory {
 			WorkbenchHelp.setHelp(
 				action,
 				IHelpContextIds.DELETE_RETARGET_ACTION);
+			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+			action.setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+			action.setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+			action.setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 			return action;
 		}
 	};

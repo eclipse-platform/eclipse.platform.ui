@@ -35,6 +35,7 @@ public ActivateEditorAction(IWorkbenchWindow window) {
 	// @issue missing action id
 	updateState();
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ACTIVATE_EDITOR_ACTION);
+	setActionDefinitionId("org.eclipse.ui.window.activateEditor"); //$NON-NLS-1$
 }
 
 public void pageActivated(IWorkbenchPage page) {

@@ -51,7 +51,7 @@ public class CyclePartAction extends PageEventAction {
 	private String commandForward = null;
 	private String commandBackward = null;
 	
-	private boolean forward;
+	protected boolean forward;
 	
 	private Object selection;
 	
@@ -75,11 +75,13 @@ public class CyclePartAction extends PageEventAction {
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
 			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_FORWARD_ACTION);
+			setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
 		} else {
 			setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
 			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
+			setActionDefinitionId("org.eclipse.ui.window.previousView"); //$NON-NLS-1$
 		}
 	}
 	

@@ -32,6 +32,16 @@ public class SaveAction extends BaseSaveAction {
 		setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.SAVE);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
+		setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

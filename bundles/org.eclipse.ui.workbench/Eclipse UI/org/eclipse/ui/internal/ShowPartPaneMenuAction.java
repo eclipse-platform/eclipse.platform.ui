@@ -46,8 +46,9 @@ public ShowPartPaneMenuAction(IWorkbenchWindow window) {
 	this.workbenchWindow = window;
 	// @issue missing action id
 	initText();
-	this.workbenchWindow.getPartService().addPartListener(this);
+	workbenchWindow.getPartService().addPartListener(this);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
+	setActionDefinitionId("org.eclipse.ui.window.showSystemMenu"); //$NON-NLS-1$
 }
 /**
  * Initialize the menu text and tooltip.

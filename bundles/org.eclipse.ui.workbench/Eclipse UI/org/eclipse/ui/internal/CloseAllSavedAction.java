@@ -43,6 +43,7 @@ public CloseAllSavedAction(IWorkbenchWindow window) {
 	setId("closeAllSaved"); //$NON-NLS-1$
 	updateState();
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
+	setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on PageEventAction.

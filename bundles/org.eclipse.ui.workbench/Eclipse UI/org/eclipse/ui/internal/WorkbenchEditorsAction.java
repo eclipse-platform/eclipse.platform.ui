@@ -43,6 +43,7 @@ public class WorkbenchEditorsAction
 		this.workbenchWindow = window;
 		// @issue missing action id
 		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
+		setActionDefinitionId("org.eclipse.ui.window.switchToEditor"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

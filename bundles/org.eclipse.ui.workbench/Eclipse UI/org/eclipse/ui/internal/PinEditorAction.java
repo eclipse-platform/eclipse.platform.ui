@@ -26,6 +26,15 @@ public PinEditorAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
 	setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
 //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
+	setImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
+	setHoverImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
+	setDisabledImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
 }
 /**
  * Returns true if the action should be visible in the toolbar or menu.

@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
@@ -45,16 +46,31 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 	 */
 	public NavigationHistoryAction(IWorkbenchWindow window,boolean forward) {
 		super("",window); //$NON-NLS-1$
+		ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 		if (forward) {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
 			// @issue missing action id
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_FORWARD);
+			setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+			setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+			setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
 		} else {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
 			// @issue missing action id
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
+			setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+			setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+			setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
 		}
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
 		setEnabled(false);

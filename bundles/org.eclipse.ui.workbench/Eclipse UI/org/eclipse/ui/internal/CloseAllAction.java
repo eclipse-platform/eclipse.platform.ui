@@ -31,6 +31,7 @@ public CloseAllAction(IWorkbenchWindow window) {
 	setId(IWorkbenchActionConstants.CLOSE_ALL);
 	updateState();
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
+	setActionDefinitionId("org.eclipse.ui.file.closeAll"); //$NON-NLS-1$
 }
 
 /* (non-Javadoc)

@@ -45,12 +45,14 @@ protected void setText() {
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
 		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
+		setActionDefinitionId("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
 	}
 	else {
 		setText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
 		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
+		setActionDefinitionId("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
 	}
 }
 	/* (non-Javadoc)

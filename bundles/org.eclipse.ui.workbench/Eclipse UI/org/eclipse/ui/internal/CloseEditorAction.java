@@ -25,6 +25,7 @@ public CloseEditorAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("CloseEditorAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.CLOSE);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PART_ACTION);
+	setActionDefinitionId("org.eclipse.ui.file.close"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IAction.

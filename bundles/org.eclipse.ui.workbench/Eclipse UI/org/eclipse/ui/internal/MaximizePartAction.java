@@ -29,6 +29,7 @@ public class MaximizePartAction extends PageEventAction {
 		// @issue missing action id
 		updateState();
 		WorkbenchHelp.setHelp(this, IHelpContextIds.MAXIMIZE_PART_ACTION);
+		setActionDefinitionId("org.eclipse.ui.window.maximizePart"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -30,6 +30,15 @@ public class SaveAsAction extends BaseSaveAction {
 		setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.SAVE_AS);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_AS_ACTION);
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 	}
 	
 	/* (non-Javadoc)
