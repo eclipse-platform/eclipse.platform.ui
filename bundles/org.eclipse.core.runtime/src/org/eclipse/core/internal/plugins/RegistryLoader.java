@@ -43,6 +43,14 @@ private String[] getPathMembers(URL path) {
 	}
 	return list == null ? new String[0] : list;
 }
+/**
+ * Reports an error and returns true.
+ */
+private boolean parseProblem(String message) {
+	factory.error(new Status(
+		IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
+	return true;
+}
 private PluginRegistryModel parseRegistry(URL[] pluginPath) {
 	long startTick = System.currentTimeMillis();
 	PluginRegistryModel result = processManifestFiles(pluginPath);
@@ -109,34 +117,34 @@ private void processPluginPathEntry(PluginRegistryModel registry, URL location) 
 			debug(found ? "Processed - " : "Processed (not found) - " + location);
 	}
 }
+/**
+ * @return true if a file was found at the given location, and false otherwise.
+ */
 private boolean processPluginPathFile(PluginRegistryModel registry, URL location) {
 	PluginModel entry = processManifestFile(location);
 	if (entry == null)
 		return false;
-
-	String url = location.toString();
-	url = url.substring(0, 1 + url.lastIndexOf('/'));
 	if (entry instanceof PluginDescriptorModel) {
+		if (entry.getId() == null || entry.getVersion() == null) {
+			return parseProblem(Policy.bind("parse.nullPluginIdentifier", location.toString()));
+		}
 		//skip duplicate entries
 		if (registry.getPlugin(entry.getId(), entry.getVersion()) != null) {
-			factory.error(new Status(
-				IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.duplicatePlugin", entry.getId()), null));
-		} else
-			registry.addPlugin((PluginDescriptorModel) entry);
+			return parseProblem(Policy.bind("parse.duplicatePlugin", entry.getId()));
+		}
+		registry.addPlugin((PluginDescriptorModel) entry);
 	} else {
+		if (entry.getId() == null || entry.getVersion() == null) {
+			return parseProblem(Policy.bind("parse.nullFragmentIdentifier", location.toString()));
+		}
 		if (entry instanceof PluginFragmentModel) {
-			//XXX should we skip duplicate entries?
-//			if (registry.getFragment(entry.getId(), entry.getVersion()) != null) {
-//				factory.error(new Status(
-//					IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.duplicateFragment", entry.getId()), null));
-//			} else
 			registry.addFragment((PluginFragmentModel) entry);
 		} else {
-			factory.error(new Status(
-				IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.unknownEntry", entry.getLocation()), null));
-			return false;
+			return parseProblem(Policy.bind("parse.unknownEntry", location.toString()));
 		}
 	}
+	String url = location.toString();
+	url = url.substring(0, 1 + url.lastIndexOf('/'));
 	entry.setRegistry(registry);
 	entry.setLocation(url);
 	((PluginRegistry)registry).addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
