@@ -1565,7 +1565,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 				// Win32 vars are case insensitive. Lowercase everything so
 				// that (for example) "pAtH" will correctly replace "PATH"
-				key= key.toLowerCase();
+				key= key.toUpperCase();
 			}
 			String value = (String) entry.getValue();
 			// translate any string substitution variables
@@ -1586,7 +1586,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	
 	/**
-	 * Returns the native system environment variables.
+	 * Returns the native system environment variables. On WIN32,
+	 * all keys (variable names) are returned in uppercase. Note
+	 * that WIN32's environment is not case sensitive.
 	 * 
 	 * @return the native system environment variables
 	 */
@@ -1625,7 +1627,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						// Win32's environment vars are case insensitive. Put everything
 						// to lowercase so that (for example) the "PATH" variable will match
 						// "pAtH" correctly on Windows.
-						key= key.toLowerCase();
+						key= key.toUpperCase();
 					}
 					String value= line.substring(separator + 1);
 					fgNativeEnv.put(key, value);
