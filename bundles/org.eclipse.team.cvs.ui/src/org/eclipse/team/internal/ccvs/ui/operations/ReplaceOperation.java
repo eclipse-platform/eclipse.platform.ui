@@ -119,4 +119,11 @@ public class ReplaceOperation extends UpdateOperation {
 		return (ICVSResource[]) managedResources.toArray(new ICVSResource[managedResources.size()]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation#getUpdateCommand()
+	 */
+	protected Update getUpdateCommand() {
+		return Command.REPLACE;
+	}
+
 }

@@ -9,34 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.IFileTypeInfo;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -524,6 +509,43 @@ public class CVSProviderTest extends EclipseTest {
 		tagProject(project, tag, true /* force */);
 		IProject copy = checkoutCopy(project, tag);
 		assertEquals(project, copy);
+	}
+	
+	public void testUpdateWithOverwrite() throws TeamException, CoreException {
+		// Create a project and ad an unmanaged resource
+		IProject project = createProject(new String[] { "a.txt", "b.txt" });
+		buildResources(project, new String[] { "new.txt" }, false);
+		// Checkout a copy and commit the same resource
+		IProject copy = checkoutCopy(project, "-copy");
+		addResources(copy, new String[] { "new.txt" }, true);
+		IStatus status;
+		try {
+			// Use the regular update and ensure that it fails
+			status = executeCommand(project, Command.UPDATE, Command.NO_LOCAL_OPTIONS);
+			fail();
+		} catch (CVSException e) {
+			// This is expected as the creation of the file failed;
+		}
+		// Use the update and overwrite and ensure that it works
+		status = executeCommand(project, Command.REPLACE, Command.NO_LOCAL_OPTIONS);
+		assertTrue(status.isOK());
+	}
+
+	private IStatus executeCommand(IProject project, Update update, LocalOption[] options) throws CVSException {
+		Session session = new Session(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project));
+		session.open(DEFAULT_MONITOR);
+		try {
+			return update.execute(
+					session,
+					Command.NO_GLOBAL_OPTIONS, 
+					options, 
+					new String[] { "." },
+					null,
+					DEFAULT_MONITOR);
+		} finally {
+			session.close();
+		}
+		
 	}
 }
 

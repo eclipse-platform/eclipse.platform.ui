@@ -74,13 +74,17 @@ public class UpdateOperation extends SingleCommandOperation {
 			localOptions.addAll(Arrays.asList(getLocalOptions()));
 			LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 
-			return Command.UPDATE.execute(
+			return getUpdateCommand().execute(
 				session,
 				Command.NO_GLOBAL_OPTIONS, 
 				commandOptions, 
 				resources,
 				getCommandOutputListener(),
 				monitor);
+	}
+
+	protected Update getUpdateCommand() {
+		return Command.UPDATE;
 	}
 
 	/* (non-Javadoc)
