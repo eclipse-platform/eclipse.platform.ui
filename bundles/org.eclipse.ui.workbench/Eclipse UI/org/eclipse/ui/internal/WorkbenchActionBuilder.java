@@ -23,6 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
  * Adds actions to a workbench window.
@@ -77,6 +78,9 @@ public class WorkbenchActionBuilder {
 		}
 	};
 
+	// contribution items
+	private StatusLineContributionItem statusLineItem;
+	
 	// actions
 	private NewWizardAction newWizardAction;
 	private NewWizardDropDownAction newWizardDropDownAction;
@@ -280,6 +284,7 @@ public class WorkbenchActionBuilder {
 	 * Fills the given action bars with the workbench actions.
 	 */
 	/* package */ void fillActionBars(WWinActionBars bars) {
+		fillStatusLine(bars.getStatusLineManager());
 		fillMenuBar(bars.getMenuManager());
 		fillCoolBar(bars.getCoolBarManager());
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
@@ -347,6 +352,14 @@ public class WorkbenchActionBuilder {
 		menubar.add(createWindowMenu());
 		menubar.add(createHelpMenu());
 	}
+	
+	/**
+	 * Fills the status line with the workbench contributions.
+	 */
+	private void fillStatusLine(IStatusLineManager statusLine) {
+		statusLine.add(statusLineItem);
+	}
+	
 	/**
 	 * Creates and returns the File menu.
 	 */
@@ -626,6 +639,11 @@ public class WorkbenchActionBuilder {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(propertyChangeListener);
+		window.getStatusLineManager().remove(statusLineItem);
+	}
+	
+	void updateModeLine(final String text) {
+		statusLineItem.setText(text);
 	}
 
 	/**
@@ -655,10 +673,13 @@ public class WorkbenchActionBuilder {
 	}
 
 	/**
-	 * Create actions for the menu bar and toolbar
+	 * Create actions (and other contribution items) for the menu bar, 
+	 * toolbar and status line.
 	 */
 	private void makeActions() {
 
+		statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
+		
 		// The actions in jface do not have menu vs. enable, vs. disable vs. color
 		// There are actions in here being passed the workbench - problem 
 
@@ -1038,6 +1059,7 @@ public class WorkbenchActionBuilder {
 		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
 		partService.addPartListener(projectPropertyDialogAction);
 		getWindow().registerGlobalAction(projectPropertyDialogAction);
+				
 	}
 
 	/**

@@ -197,6 +197,15 @@ public class Workbench
 	}
 
 	/* begin command and context support */
+	
+	private final Listener modeCleaner = new Listener() {
+		public void handleEvent(Event event) {
+			CommandManager manager = (CommandManager) getCommandManager();
+			manager.setMode(KeySequence.getInstance()); // clear the mode
+			// TODO Remove this when mode listener updating becomes available.
+			updateModeLines(manager.getMode());
+		}
+	};
 
 	private final Listener listener = new Listener() {
 		public void handleEvent(Event event) {
@@ -347,7 +356,6 @@ public class Workbench
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-	private Map modeContributionItems = new HashMap(11);
 
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
@@ -530,20 +538,23 @@ public class Workbench
 	}	
 	
 	/**
-	 * Updates the text of the mode lines with the current mode.  Synchronized
-	 * over the collection of mode lines.
+	 * Updates the text of the mode lines with the current mode.
 	 * @param mode The mode which should be used to update the status line;
 	 * must not be <code>null</code>.
 	 */
-	private final void updateModeLines(final KeySequence mode) {
-		synchronized (modeContributionItems) {
-			final Iterator modeLineItr = modeContributionItems.values().iterator();
-			while (modeLineItr.hasNext()) {
-				final StatusLineContributionItem modeLine = (StatusLineContributionItem) modeLineItr.next();
-				modeLine.setText(mode.format()); //$NON-NLS-1$
-			}
-		}
-	}
+	private void updateModeLines(KeySequence mode) {
+		// Format the mode into text.
+		String text = mode.format();
+		
+		// Update each open window's status line.
+		IWorkbenchWindow[] windows = getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchWindow window = windows[i];
+			if (window instanceof WorkbenchWindow) {
+				((WorkbenchWindow) window).getActionBuilder().updateModeLine(text);
+ 			}
+ 		}
+ 	}
 
 	public void updateActiveContextIds() {
 		commandManager.setActiveContextIds(
@@ -775,6 +786,7 @@ public class Workbench
 		updateActiveContextIds();
 		display.addFilter(SWT.Traverse, listener);
 		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.FocusOut, modeCleaner);
 		addWindowListener(windowListener);
 		updateActiveCommandIdsAndActiveContextIds();
 	}
@@ -880,13 +892,6 @@ public class Workbench
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
-		synchronized (modeContributionItems) {
-			final StatusLineContributionItem modeLine = (StatusLineContributionItem) modeContributionItems.remove(window);
-			if (modeLine != null && (window instanceof WorkbenchWindow)) {
-				((WorkbenchWindow) window).getStatusLineManager().remove(modeLine);
-			}
-		}
-
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -1726,19 +1731,7 @@ public class Workbench
 	 * @return the new workbench window
 	*/
 	protected WorkbenchWindow newWorkbenchWindow() {
-		final WorkbenchWindow window = new WorkbenchWindow(this, getNewWindowNumber());
-		
-		// Add a mode line to the window.
-		final StatusLineManager manager = window.getStatusLineManager();
-		if (manager != null) {
-			final StatusLineContributionItem modeLine = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
-			synchronized (modeContributionItems) {
-				modeContributionItems.put(window, modeLine);
-			}
-			manager.add(modeLine);
-		}
-		
-		return window; 
+		return new WorkbenchWindow(this, getNewWindowNumber());
 	}
 
 	/**
