@@ -42,20 +42,17 @@ public class BrowsersPreferencePage extends PreferencePage
 	 *            the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
-		Font font = parent.getFont();
 		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		mainComposite.setLayoutData(data);
-		mainComposite.setFont(font);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
-		description.setFont(font);
 		description.setText(HelpUIResources.getString("select_browser"));
 		createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
@@ -69,7 +66,6 @@ public class BrowsersPreferencePage extends PreferencePage
 			createSpacer(mainComposite);
 		}
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
-		tableDescription.setFont(font);
 		tableDescription.setText(HelpUIResources.getString("current_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
@@ -82,7 +78,6 @@ public class BrowsersPreferencePage extends PreferencePage
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = convertHeightInCharsToPixels(2);
 		externalBrowsersScrollable.setLayoutData(gd);
-		externalBrowsersScrollable.setFont(font);
 		externalBrowsersScrollable.setBackground(bgColor);
 		externalBrowsersScrollable.setForeground(fgColor);
 		Composite externalBrowsersComposite = new Composite(
@@ -97,6 +92,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		externalBrowsers = new Button[descriptors.length];
 		for (int i = 0; i < descriptors.length; i++) {
 			Button radio = new Button(externalBrowsersComposite, SWT.RADIO);
+			org.eclipse.jface.dialogs.Dialog.applyDialogFont(radio);
 			radio.setBackground(bgColor);
 			radio.setForeground(fgColor);
 			radio.setText(descriptors[i].getLabel());
@@ -122,6 +118,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		externalBrowsersComposite.setSize(externalBrowsersComposite
 				.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		createCustomBrowserPathPart(mainComposite);
+		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
 	}
 	private void createCustomBrowserPathPart(Composite mainComposite) {
