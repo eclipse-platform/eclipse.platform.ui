@@ -56,10 +56,11 @@ import org.eclipse.search.internal.ui.SearchPluginImages;
  *
  */
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener, ISearchQueryListener {
+	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
 	private HashMap fPartsToPages;
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
-	private ExtensionService fSearchViewPageService;
+	private SearchPageRegistry fSearchViewPageService;
 	private SearchDropDownAction fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
 	private DummyPart fDefaultPart;
@@ -99,6 +100,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 	class EmptySearchView extends Page implements ISearchResultPage {
 		Control fControl;
+		private String fId;
 
 		public void createControl(Composite parent) {
 			fControl= new Tree(parent, SWT.NONE);
@@ -156,6 +158,20 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public void restoreState(IMemento memento) {
 			// do nothing
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.ui.ISearchResultPage#setID(java.lang.String)
+		 */
+		public void setID(String id) {
+			fId= id;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.ui.ISearchResultPage#getID()
+		 */
+		public String getID() {
+			return fId;
+		}
 	}
 
 	public SearchView() {
@@ -163,7 +179,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fPartsToPages= new HashMap();
 		fPagesToParts= new HashMap();
 		setTitleImage(SearchPluginImages.get(SearchPluginImages.T_VIEW));
-		fSearchViewPageService= new ExtensionService("org.eclipse.search.searchResultViewPages", "targetClass"); //$NON-NLS-1$ //$NON-NLS-2$
+		fSearchViewPageService= new SearchPageRegistry("org.eclipse.search.searchResultViewPages", "targetClass", "id"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		fSearchViewStates= new HashMap();
 		InternalSearchUI.getInstance().addSearchQueryListener(this);
 	}
@@ -207,7 +223,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void showSearchResult(ISearchResult search) {
 		ISearchResultPage page= null;
 		if (search != null) {
-			page= (ISearchResultPage) fSearchViewPageService.getExtensionObject(search, ISearchResultPage.class);
+			page= fSearchViewPageService.getExtensionObject(search, ISearchResultPage.class);
 			if (page == null)
 				return;
 		}
@@ -352,7 +368,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void saveState(IMemento memento) {
 		for (Iterator pages = fPagesToParts.keySet().iterator(); pages.hasNext(); ) {
 			ISearchResultPage page = (ISearchResultPage) pages.next();
-			page.saveState(memento);
+			IMemento child= memento.createChild(MEMENTO_TYPE, page.getID()); //$NON-NLS-1$
+			page.saveState(child);
 		}
 	}
 	
@@ -369,7 +386,18 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 */
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
-		((ISearchResultPage)page).restoreState(fPageState);
+		ISearchResultPage srPage= (ISearchResultPage) page;
+		IMemento memento= null;
+		if (fPageState != null) {
+			IMemento[] mementos= fPageState.getChildren(MEMENTO_TYPE);
+			for (int i= 0; i < mementos.length; i++) {
+				if (mementos[i].getID().equals(srPage.getID())) {
+					memento= mementos[i];
+					break;
+				}
+			}
+		}
+		srPage.restoreState(memento);
 	}
 	
 	/*

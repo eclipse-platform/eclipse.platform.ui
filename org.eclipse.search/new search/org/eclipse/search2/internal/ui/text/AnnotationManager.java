@@ -109,7 +109,8 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 
 	public synchronized void partActivated(IWorkbenchPart part) {
 		if (part instanceof ITextEditor && part != fEditor) {
-			removeAnnotations();
+			if (fResult != null)
+				removeAnnotations();
 			fEditor= (ITextEditor) part;
 			addAnnotations();
 		}

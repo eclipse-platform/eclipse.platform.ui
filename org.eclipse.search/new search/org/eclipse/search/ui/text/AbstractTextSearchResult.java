@@ -24,6 +24,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.ISearchResult;
@@ -86,7 +87,10 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (!(editor instanceof ITextEditor))
 			return;
 		ITextEditor textEditor= (ITextEditor) editor;
-		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
+		IDocumentProvider dp= textEditor.getDocumentProvider();
+		if (dp == null)
+			return;
+		IAnnotationModel model= dp.getAnnotationModel(textEditor.getEditorInput());
 		if (model == null)
 			return;
 		if (model instanceof IAnnotationModelExtension) {

@@ -50,21 +50,34 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	void setViewPart(ISearchResultViewPart part);
 	
 	/**
-	 * Restores the page state from a memento. Note that this applies to state to be saved across
-	 * sessions.
+	 * Restores the page state. Note that this applies to state that is saved
+	 * across sessions.
+	 * 
 	 * @see #setInput(ISearchResult, Object)
-	 *
-	 * @param memento a memento to restore the page state from or <code>null</code> if not
-	 * 		previous state exists
+	 * 
+	 * @param memento a memento to restore the page state from or <code>null</code>
+	 *                if no previous state was saved.
 	 */
-	public void restoreState(IMemento memento);
+	void restoreState(IMemento memento);
 	
 	/**
-	 * Saves the page state within a memento. Note that this applies to state to be saved across
-	 * sessions.
+	 * Saves the page state in a memento. Note that this applies to state that
+	 * should persist across sessions.
+	 * 
 	 * @see #getUIState()
-	 *
+	 * 
 	 * @param memento a memento to receive the object state
 	 */
-	public void saveState(IMemento memento);
+	void saveState(IMemento memento);
+	
+	/**
+	 *  Sets the id for this page. This method will be called before any other initialization is done. 
+	 * @param id
+	 */
+	void setID(String id);
+	/**
+	 * Returns the id set via <code>setID</code>.
+	 * @return the id of this page
+	 */
+	String getID();
 }

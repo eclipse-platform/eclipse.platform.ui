@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -51,6 +52,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -66,7 +68,8 @@ import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
 
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
-	private static final boolean INITIALLY_FLAT= false;
+	private static final String KEY_LAYOUT= "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
+	
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
 	private ISearchResultViewPart fViewPart;
@@ -83,8 +86,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private Action fShowPreviousAction;
 	private Action fFlatAction;
 	private Action fHierarchicalAction;
+	
+	private boolean fIsInitiallyFlat;
 
 	private int fCurrentMatchIndex= 0;
+	private String fId;
 
 	protected AbstractTextSearchViewPage() {
 		fRemoveAllResultsAction= new RemoveAllResultsAction(this);
@@ -99,9 +105,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
 		SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
 		
-		fFlatAction.setChecked(INITIALLY_FLAT);
-		fHierarchicalAction.setChecked(!INITIALLY_FLAT);
-
 		fBatchedUpdates= new HashSet();
 		fListener= new ISearchResultListener() {
 			public void searchResultChanged(SearchResultEvent e) {
@@ -110,6 +113,33 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		};
 	}
 	
+	/**
+	 * Gets a dialog settings object for this search result page. There will be one dialog settings object
+	 * per search result page id.
+	 * @see #getID()
+	 * @return The dialog settings for this search result page.
+	 */
+	protected IDialogSettings getSettings() {
+		IDialogSettings parent= SearchPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings= parent.getSection(getID());
+		if (settings == null)
+			settings= parent.addNewSection(getID());
+		return settings;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setID(String id) {
+		fId= id;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getID() {
+		return fId;
+	}
 	/**
 	 * Opens an editor on the given element and selects the given range
 	 * of text.
@@ -205,7 +235,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewerContainer.setLayout(new FillLayout());
-		createViewer(fViewerContainer, INITIALLY_FLAT);
+		createViewer(fViewerContainer, fIsInitiallyFlat);
 	}
 	
 	/**
@@ -222,6 +252,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.layout(true);
 		connectViewer(result);
 		fViewer.setSelection(selection, true);
+		getSettings().put(KEY_LAYOUT, on);
+	}
+
+	private void updateLayoutActions() {
 		fFlatAction.setChecked(isFlatLayout());
 		fHierarchicalAction.setChecked(!isFlatLayout());
 	}
@@ -281,6 +315,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		getSite().setSelectionProvider(fViewer);
 		// Register menu
 		getSite().registerContextMenu(fViewPart.getViewSite().getId(), fMenu, fViewer);
+		updateLayoutActions();
 	}
 
 	/** 
@@ -457,7 +492,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-		
 		addLayoutMenu(pageSite.getActionBars().getMenuManager());
 	}
 
@@ -552,18 +586,27 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * Default implementation that doesn't restore any state. Subclasses may override.
+	 * Subclasses may override.
 	 * { @inheritDoc }
 	 */
 	public void restoreState(IMemento memento) {
-		// do nothing by default.
+		fIsInitiallyFlat= getSettings().getBoolean(KEY_LAYOUT);
+		if (memento != null) {
+			Integer isFlat= memento.getInteger(KEY_LAYOUT);
+			if (isFlat != null) {
+				fIsInitiallyFlat= isFlat.intValue() == 1;
+			} 
+		}
 	}
 	
 	/**
-	 * Default implementation that doesn't rememgber any state. Subclasses my override.
+	 * Subclasses my override.
 	 * { @inheritDoc }
 	 */
 	public void saveState(IMemento memento) {
-		// do nothing by default.
+		if (isFlatLayout()) 
+			memento.putInteger(KEY_LAYOUT, 1);
+		else
+			memento.putInteger(KEY_LAYOUT, 0);
 	}
 }

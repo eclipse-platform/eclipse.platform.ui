@@ -17,68 +17,74 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.search.ui.ISearchResultPage;
+
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 /**
  * @author Thomas Mäder
  *
  */
-public class ExtensionService {
+public class SearchPageRegistry {
 	private Map fClassToInstance;
-	private Map fAttributeToExtension;
+	private Map fTargetClassNameToExtension;
 	private Map fExtensionToInstance;
+	private String fIdAttribute;
 	
-	public ExtensionService(String extensionPoint, String targetClassAttribute) {
+	public SearchPageRegistry(String extensionPoint, String targetClassAttribute, String idAttribute) {
 		super();
 		fExtensionToInstance= new HashMap();
 		fClassToInstance= new HashMap();
 		initializeExtensionCache(extensionPoint, targetClassAttribute);
+		fIdAttribute= idAttribute;
 	}
 
 	private void initializeExtensionCache(String extensionPoint, String targetClassAttribute) {
-		fAttributeToExtension= new HashMap();
+		fTargetClassNameToExtension= new HashMap();
 		IConfigurationElement[] extensions=
 			Platform.getPluginRegistry().getConfigurationElementsFor(
 				extensionPoint);
 		for (int i= 0; i < extensions.length; i++) {
-			fAttributeToExtension.put(extensions[i].getAttribute(targetClassAttribute), extensions[i]);
+			fTargetClassNameToExtension.put(extensions[i].getAttribute(targetClassAttribute), extensions[i]);
 		}
 
 	}
 
-	public Object getExtensionObject(Object element, Class expectedType) {
-		Object obj= fClassToInstance.get(element.getClass());
-		if (obj != null)
-			return obj;
+	public ISearchResultPage getExtensionObject(Object element, Class expectedType) {
+		ISearchResultPage page= (ISearchResultPage) fClassToInstance.get(element.getClass());
+		if (page != null)
+			return page;
 		if (fClassToInstance.containsKey(element.getClass()))
 			return null;
-		obj= internalGetExtensionObject(element, expectedType);
-		if (obj != null)
-		fClassToInstance.put(element.getClass(), obj);
-		return obj;
+		page= internalGetExtensionObject(element, expectedType);
+		if (page != null)
+		fClassToInstance.put(element.getClass(), page);
+		return page;
 	}
-
-	private Object internalGetExtensionObject(Object element, Class expectedType) {
-		IConfigurationElement configElement= (IConfigurationElement) fAttributeToExtension.get(element.getClass().getName());
+	
+	private ISearchResultPage internalGetExtensionObject(Object element, Class expectedType) {
+		IConfigurationElement configElement= (IConfigurationElement) fTargetClassNameToExtension.get(element.getClass().getName());
 		if (configElement == null) {
-			if (fAttributeToExtension.containsKey(element.getClass().getName()))
+			if (fTargetClassNameToExtension.containsKey(element.getClass().getName()))
 				return null;
 			configElement= getConfigElement(element.getClass());
 			if (configElement != null)
-			fAttributeToExtension.put(element.getClass().getName(), configElement);
+			fTargetClassNameToExtension.put(element.getClass().getName(), configElement);
 		}
 		
 		if (configElement != null) {
-			Object lp= fExtensionToInstance.get(configElement);
+			ISearchResultPage lp= (ISearchResultPage) fExtensionToInstance.get(configElement);
 			if (lp == null) {
 				if (fExtensionToInstance.containsKey(configElement))
 					return null;
-				Object extension;
+				ISearchResultPage instance;
 				try {
-					extension= configElement.createExecutableExtension("class"); //$NON-NLS-1$
-					if (expectedType.isAssignableFrom(extension.getClass())) {
-						fExtensionToInstance.put(configElement, extension);
-						return extension;
+					instance= (ISearchResultPage) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+					String id= configElement.getAttribute(fIdAttribute);
+					instance.setID(id);
+					if (expectedType.isAssignableFrom(instance.getClass())) {
+						fExtensionToInstance.put(configElement, instance);
+						return instance;
 					}
 				} catch (CoreException e) {
 					// programming error. Log it.
@@ -99,12 +105,12 @@ public class ExtensionService {
 		IConfigurationElement foundExtension= null;
 		Class superclass= clazz.getSuperclass();
 		if (superclass != null)
-			foundExtension= (IConfigurationElement) fAttributeToExtension.get(superclass.getName());
+			foundExtension= (IConfigurationElement) fTargetClassNameToExtension.get(superclass.getName());
 		if (foundExtension != null)
 			return foundExtension;
 		Class[] interfaces= clazz.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
-			foundExtension= (IConfigurationElement) fAttributeToExtension.get(interfaces[i].getName());
+			foundExtension= (IConfigurationElement) fTargetClassNameToExtension.get(interfaces[i].getName());
 			if (foundExtension != null)
 				return foundExtension;
 		}
