@@ -180,8 +180,10 @@ public class ConfigurationActivator implements BundleActivator {
 							start.setBundleStartLevel(target, 4);
 					}
 				} catch (Exception e) {
-					System.err.println("Ignoring bundle at: " + location);
-					System.err.println(e.getMessage());
+					if ((location.indexOf("org.eclipse.core.boot") == -1) && (location.indexOf("org.eclipse.osgi") == -1)) {
+						System.err.println("Ignoring bundle at: " + location);
+						System.err.println(e.getMessage());
+					}
 				}
 			}
 			context.ungetService(reference);
