@@ -535,10 +535,21 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.file.close"
+            keySequence="M1+W"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.file.closeAll"
             keySequence="Ctrl+Shift+F4"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <!-- TODO Waiting for "switch to editor" to move -- also change carbon
+      <keyBinding
+            commandId="org.eclipse.ui.file.closeAll"
+            keySequence="M1+M2+W"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding> -->
       <keyBinding
             commandId="org.eclipse.ui.file.save"
             keySequence="Ctrl+S"
@@ -794,12 +805,7 @@
             keySequence="Ctrl+Shift+F8"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
-      <keyBinding
-            platform="carbon"
-            commandId="org.eclipse.ui.file.close"
-            keySequence="Command+W"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+      <!-- TODO Waiting for M1+M2+W to be bound by default -->
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.file.closeAll"
