@@ -21,7 +21,7 @@ public class ExecutionPathNode extends AntNode {
 	 * Creates a new execution path node
 	 */
 	public ExecutionPathNode(TargetNode parent) {
-		super(parent, "Execution Order");
+		super(parent, AntViewElementsMessages.getString("ExecutionPathNode.Execution_Order_1")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -43,7 +43,6 @@ public class ExecutionPathNode extends AntNode {
 		if (targets.size() > 0) {
 			return (String[]) targets.toArray(new String[targets.size()]);
 		}
-		return new String[] {"<none>"};
+		return new String[] {AntViewElementsMessages.getString("ExecutionPathNode.<none>_2")}; //$NON-NLS-1$
 	} 
-
 }

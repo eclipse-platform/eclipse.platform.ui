@@ -19,7 +19,7 @@ public class DependencyNode extends AntNode {
 	 * @param dependencies the dependencies in this node or <code>null</code>
 	 */
 	public DependencyNode(AntNode parent) {
-		super(parent, "Dependencies");
+		super(parent, AntViewElementsMessages.getString("DependencyNode.Dependencies_1")); //$NON-NLS-1$
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class DependencyNode extends AntNode {
 		if (dependencies.size() > 0) {
 			return (String[])dependencies.toArray(new String[dependencies.size()]);
 		}
-		return new String[] {"<none>"};
+		return new String[] {AntViewElementsMessages.getString("DependencyNode.<none>_2")}; //$NON-NLS-1$
 	}
 	
 	/**
