@@ -5,13 +5,16 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -21,6 +24,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -33,12 +38,12 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
 
 /**
  * This wizard helps the user to import a new project in their workspace
@@ -315,13 +320,48 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	private boolean doesCVSDirectoryExist() {
 		// Determine if there is an existing CVS/ directory from which configuration
 		// information can be retrieved.
-		try {
-			ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
-			FolderSyncInfo info = folder.getFolderSyncInfo();
-			return info != null;
-		} catch (TeamException e) {
-			ErrorDialog.openError(getContainer().getShell(), null, null, e.getStatus());
-			return false;
+		Shell shell = null;
+		if (getContainer() != null) {
+			shell = getContainer().getShell();
 		}
+		final boolean[] isCVSFolder = new boolean[] { false };
+		try {
+			CVSUIPlugin.runWithRefresh(shell, project, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
+						FolderSyncInfo info = folder.getFolderSyncInfo();
+						isCVSFolder[0] = info != null;
+					} catch (final TeamException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			}, null);
+		} catch (InvocationTargetException e) {
+			final IStatus[] status = new IStatus[] { null };
+			if (e.getTargetException() instanceof CoreException) {
+				status[0] = ((CoreException)e.getTargetException()).getStatus();
+			} else if (e.getTargetException() instanceof TeamException) {
+				status[0] = ((TeamException)e.getTargetException()).getStatus();
+			} else {
+				status[0] = new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, e.getTargetException().getMessage(), e.getTargetException());
+			}
+			Runnable runnable = new Runnable() {
+				public void run() {
+					Shell shell = null;
+					if (getContainer() != null) {
+						shell = getContainer().getShell();
+					}
+					ErrorDialog.openError(shell, null, null, status[0]);
+				}
+			};
+			if (shell == null) {
+				Display.getDefault().syncExec(runnable);
+			} else {
+				runnable.run();
+			}
+		} catch (InterruptedException e) {
+		}
+		return isCVSFolder[0];
 	}
 }

@@ -11,16 +11,20 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.Hashtable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Hashtable;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -33,19 +37,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AddMarkerAction;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -122,6 +124,72 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		IWorkbenchWindow window = getPlugin().getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) return null;
 		return window.getActivePage();
+	}
+	
+	/**
+	 * Run an operation involving the given resource. If an exception is thrown
+	 * and the code on the status is IResourceStatus.OUT_OF_SYNC_LOCAL then
+	 * the user will be prompted to refresh and try again. If they agree, then the
+	 * supplied operation will be run again.
+	 */
+	public static void runWithRefresh(Shell parent, IResource resource, 
+		IRunnableWithProgress runnable, IProgressMonitor monitor) 
+		throws InvocationTargetException, InterruptedException {
+		boolean firstTime = true;
+		while(true) {
+			try {
+				runnable.run(monitor);
+				return;
+			} catch (InvocationTargetException e) {
+				if (! firstTime) throw e;
+				IStatus status = null;
+				if (e.getTargetException() instanceof CoreException) {
+					status = ((CoreException)e.getTargetException()).getStatus();
+				} else if (e.getTargetException() instanceof TeamException) {
+					status = ((TeamException)e.getTargetException()).getStatus();
+				} else {
+					throw e;
+				}
+				if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+					if (promptToRefresh(parent, resource, status)) {
+						try {
+							resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+						} catch (CoreException coreEx) {
+							// Throw the original exception to the caller
+							log(coreEx.getStatus());
+							throw e;
+						}
+						firstTime = false;
+						// Fall through and the operation will be tried again
+					} else {
+						// User chose not to continue. Treat it as a cancel.
+						throw new InterruptedException();
+					}
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+	
+	private static boolean promptToRefresh(final Shell shell, final IResource resource, final IStatus status) {
+		final boolean[] result = new boolean[] { false};
+		Runnable runnable = new Runnable() {
+			public void run() {
+				Shell shellToUse = shell;
+				if (shell == null) {
+					shellToUse = new Shell(Display.getCurrent());
+				}
+				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), 
+					Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resource.getFullPath().toString()));
+			}
+		};
+		if (shell == null) {
+			Display.getDefault().syncExec(runnable);
+		} else {
+			runnable.run();
+		}
+		return result[0];
 	}
 	
 	/**
