@@ -144,6 +144,13 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 */
 	private final ContextManager contextManager;
 
+	/**
+	 * The set of handlers defined in XML. This set is never <code>null</code>.
+	 * It may be empty if there are either no handler submissions defined in XML
+	 * or if the method <code>readRegistry</code> has not yet been called.
+	 */
+	private final Set definedHandlers = new HashSet();
+
 	private IMutableCommandRegistry mutableCommandRegistry;
 
 	/**
@@ -253,8 +260,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
 	public void bindingManagerChanged(BindingManagerEvent event) {
-		// TODO Auto-generated method stub
-
+		// TODO Fire a command manager event.
 	}
 
 	/*
@@ -264,8 +270,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 */
 	public void commandManagerChanged(
 			org.eclipse.core.commands.CommandManagerEvent commandManagerEvent) {
-		// TODO Auto-generated method stub
-
+		// TODO Fire a command manager event.
 	}
 
 	private void fireCommandManagerChanged(
@@ -304,6 +309,8 @@ public final class CommandManagerWrapper implements ICommandManager,
 	}
 
 	public ICategory getCategory(String categoryId) {
+		// TODO Provide access to the categories.
+		//return new CategoryWrapper(commandManager.getCategory(categoryId));
 		return null;
 	}
 
@@ -327,8 +334,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * @see org.eclipse.ui.commands.ICommandManager#getDefinedCategoryIds()
 	 */
 	public Set getDefinedCategoryIds() {
-		// TODO Auto-generated method stub
-		return null;
+		return commandManager.getDefinedCategoryIds();
 	}
 
 	public Set getDefinedCommandIds() {
@@ -342,31 +348,11 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 *         be empty.
 	 */
 	public Set getDefinedHandlers() {
-		// TODO What to do here?
-		// return commandManager.getDefinedHandlers();
-		return null;
+		return definedHandlers;
 	}
 
 	public Set getDefinedKeyConfigurationIds() {
 		return bindingManager.getDefinedSchemeIds();
-	}
-
-	/**
-	 * Builds the collection of key binding definitions that are relevant for
-	 * the current locale, platform and key configuration. This set is further
-	 * reduced based on cancelling definitions (i.e., definitions with the same
-	 * key sequence and context as another definition). Key binding definitions
-	 * with no category name or no command name are also removed from the set.
-	 * 
-	 * @return The collection of key binding definitions for the current
-	 *         environment (disregarding context). The collection may be empty,
-	 *         but is never <code>null</code>. It contains only instances of
-	 *         <code>KeySequenceBindingDefinition</code>.
-	 * @since 3.1
-	 */
-	final Collection getKeyBindings() {
-		// TODO What to do here?
-		return null;
 	}
 
 	public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {
@@ -516,6 +502,11 @@ public final class CommandManagerWrapper implements ICommandManager,
 			scheme.define(schemeDefinition.getName(), schemeDefinition
 					.getDescription(), schemeDefinition.getParentId());
 		}
+
+		// Copy in the handler submissions
+		definedHandlers.clear();
+		definedHandlers.addAll(commandRegistry.getHandlers());
+		definedHandlers.addAll(mutableCommandRegistry.getHandlers());
 
 		// Set up the active scheme.
 		try {

@@ -1761,6 +1761,11 @@
          	name="Test Scope 2"
          	description="A test for the deprecated command scope support"
          	parent="org.eclipse.ui.tests.commands.scope1" />
+         <command
+            name="Category-Less Command"
+            description="A command with no category"
+            id="org.eclipse.ui.tests.commands.categoryLessCommand">
+      </command>
    </extension>
 
 

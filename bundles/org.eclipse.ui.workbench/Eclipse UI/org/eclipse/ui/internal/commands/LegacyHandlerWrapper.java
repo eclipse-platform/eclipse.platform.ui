@@ -82,8 +82,13 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * @see org.eclipse.core.commands.IHandler#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return ((Boolean) handler.getAttributeValuesByName().get(
-				ILegacyAttributeNames.ENABLED)).booleanValue();
+		final Object enabled = handler.getAttributeValuesByName().get(
+				ILegacyAttributeNames.ENABLED);
+		if (enabled instanceof Boolean) {
+			return ((Boolean) enabled).booleanValue();
+		}
+
+		return true;
 	}
 
 	/*
@@ -92,8 +97,13 @@ public final class LegacyHandlerWrapper implements IHandler {
 	 * @see org.eclipse.core.commands.IHandler#isHandled()
 	 */
 	public boolean isHandled() {
-		return ((Boolean) handler.getAttributeValuesByName().get(
-				ILegacyAttributeNames.HANDLED)).booleanValue();
+		final Object handled = handler.getAttributeValuesByName().get(
+				ILegacyAttributeNames.HANDLED);
+		if (handled instanceof Boolean) {
+			return ((Boolean) handled).booleanValue();
+		}
+
+		return true;
 	}
 
 	/*

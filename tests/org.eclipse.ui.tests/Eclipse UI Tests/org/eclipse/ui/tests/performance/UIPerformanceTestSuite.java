@@ -32,5 +32,6 @@ public class UIPerformanceTestSuite extends TestSuite {
         addTest(new WorkbenchPerformanceSuite());
         addTest(new ViewPerformanceSuite());
         addTest(new EditorPerformanceSuite());
+        addTest(new TestSuite(CommandsPerformanceTest.class));
     }
 }

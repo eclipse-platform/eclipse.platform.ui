@@ -274,12 +274,14 @@ public final class BindingManagerTest extends UITestCase {
 		assertEquals("There should be one binding", 1, bindings.size());
 		assertSame("The binding should be the same", binding, bindings
 				.iterator().next());
-		try {
-			bindings.clear();
-			fail("The API should not expose internal collections");
-		} catch (final UnsupportedOperationException e) {
-			// Success
-		}
+
+		/*
+		 * Check that modifying this set does not modify the internal data
+		 * structures.
+		 */
+		bindings.clear();
+		assertEquals("There should still be one binding", 1, bindingManager
+				.getBindings().size());
 	}
 
 	/**
@@ -634,6 +636,9 @@ public final class BindingManagerTest extends UITestCase {
 		final Binding binding4 = new TestBinding("command4", "na", "na", null,
 				"gtk", Binding.USER);
 		bindingManager.addBinding(binding4);
+		final Binding binding5 = new TestBinding("command5", "na", "na", "zh",
+				"gtk", Binding.USER);
+		bindingManager.addBinding(binding5);
 		assertNotNull("There should be three active bindings", bindingManager
 				.getActiveBindingsFor("command1"));
 		assertNotNull("There should be three active bindings", bindingManager
@@ -643,15 +648,17 @@ public final class BindingManagerTest extends UITestCase {
 
 		// REMOVE SOME BINDINGS
 		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
-				null, "gtk", null, Binding.USER);
-		assertEquals("There should be three bindings left", 3, bindingManager
+				"zh", "gtk", null, Binding.USER);
+		assertEquals("There should be four bindings left", 4, bindingManager
 				.getBindings().size());
-		assertNotNull("There should be three active bindings", bindingManager
+		assertNotNull("There should be four active bindings", bindingManager
 				.getActiveBindingsFor("command1"));
-		assertNotNull("There should be three active bindings", bindingManager
+		assertNotNull("There should be four active bindings", bindingManager
 				.getActiveBindingsFor("command2"));
-		assertNotNull("There should be three active bindings", bindingManager
+		assertNotNull("There should be four active bindings", bindingManager
 				.getActiveBindingsFor("command3"));
+		assertNotNull("There should be four active bindings", bindingManager
+				.getActiveBindingsFor("command4"));
 	}
 
 	/**

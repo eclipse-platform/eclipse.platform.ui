@@ -140,11 +140,17 @@ public final class BindingManager implements IContextManagerListener,
 	private String[] activeSchemeIds = null;
 
 	/**
-	 * The set of all bindings currently handled by this manager. This set has
-	 * all duplicates removed, and also has deletion removed. This value may be
-	 * <code>null</code> if there are no bindings.
+	 * The array of all bindings currently handled by this manager. This array
+	 * is the raw list of bindings, as provided to this manager. This value may
+	 * be <code>null</code> if there are no bindings. The size of this array
+	 * is not necessarily the number of bindings.
 	 */
-	private Set bindings = null;
+	private Binding[] bindings = null;
+
+	/**
+	 * The number of bindings in the <code>bindings</code> array.
+	 */
+	private int bindingCount = 0;
 
 	/**
 	 * A cache of the bindings previously computed by this manager. This value
@@ -238,9 +244,9 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Adds a single new binding to the exist set of bindings. If the set is
-	 * currently <code>null</code>, then a new set is created and this
-	 * binding is added to it.
+	 * Adds a single new binding to the exist array of bindings. If the array is
+	 * currently <code>null</code>, then a new array is created and this
+	 * binding is added to it. This method does not detect duplicates.
 	 * </p>
 	 * <p>
 	 * This method completes in amortized <code>O(1)</code>.
@@ -255,9 +261,13 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		if (bindings == null) {
-			bindings = new HashSet();
+			bindings = new Binding[1];
+		} else if (bindingCount >= bindings.length) {
+			final Binding[] oldBindings = bindings;
+			bindings = new Binding[oldBindings.length * 2];
+			System.arraycopy(oldBindings, 0, bindings, 0, oldBindings.length);
 		}
-		bindings.add(binding);
+		bindings[bindingCount++] = binding;
 		clearCache();
 	}
 
@@ -408,16 +418,16 @@ public final class BindingManager implements IContextManagerListener,
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
 		 */
-		final Set trimmedBindings = removeDeletions(bindings);
+		final Binding[] trimmedBindings = removeDeletions(bindings);
 
 		/*
 		 * SECOND PASS: Just throw in bindings that match the current state. If
 		 * there is more than one match for a binding, then create a list.
 		 */
 		final Map possibleBindings = new HashMap();
-		final Iterator bindingItr = trimmedBindings.iterator();
-		while (bindingItr.hasNext()) {
-			final Binding binding = (Binding) bindingItr.next();
+		final int length = trimmedBindings.length;
+		for (int i = 0; i < length; i++) {
+			final Binding binding = trimmedBindings[i];
 			boolean found;
 
 			// Check the context.
@@ -440,8 +450,8 @@ public final class BindingManager implements IContextManagerListener,
 			// Check the scheme ids.
 			final String schemeId = binding.getSchemeId();
 			found = false;
-			for (int i = 0; i < activeSchemeIds.length; i++) {
-				if (Util.equals(schemeId, activeSchemeIds[i])) {
+			for (int j = 0; j < activeSchemeIds.length; j++) {
+				if (Util.equals(schemeId, activeSchemeIds[j])) {
 					found = true;
 					break;
 				}
@@ -868,7 +878,12 @@ public final class BindingManager implements IContextManagerListener,
 			return null;
 		}
 
-		return Collections.unmodifiableSet(bindings);
+		final HashSet returnValue = new HashSet();
+		for (int i = 0; i < bindingCount; i++) {
+			returnValue.add(bindings[i]);
+		}
+
+		return returnValue;
 	}
 
 	/**
@@ -1283,14 +1298,15 @@ public final class BindingManager implements IContextManagerListener,
 	public final void removeBindings(final TriggerSequence sequence,
 			final String schemeId, final String contextId, final String locale,
 			final String platform, final String windowManager, final int type) {
-		if ((bindings == null) || (bindings.isEmpty())) {
+		if ((bindings == null) || (bindingCount < 1)) {
 			return;
 		}
 
-		final Iterator bindingItr = bindings.iterator();
+		final Binding[] newBindings = new Binding[bindings.length];
 		boolean bindingsChanged = false;
-		while (bindingItr.hasNext()) {
-			final Binding binding = (Binding) bindingItr.next();
+		int index = 0;
+		for (int i = 0; i < bindingCount; i++) {
+			final Binding binding = bindings[i];
 			boolean equals = true;
 			equals &= Util.equals(sequence, binding.getTriggerSequence());
 			equals &= Util.equals(schemeId, binding.getSchemeId());
@@ -1299,12 +1315,15 @@ public final class BindingManager implements IContextManagerListener,
 			equals &= Util.equals(platform, binding.getPlatform());
 			equals &= (type == binding.getType());
 			if (equals) {
-				bindingItr.remove();
 				bindingsChanged = true;
+			} else {
+				newBindings[index++] = binding;
 			}
 		}
 
 		if (bindingsChanged) {
+			this.bindings = newBindings;
+			bindingCount = index;
 			clearCache();
 		}
 	}
@@ -1325,39 +1344,59 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @param bindings
 	 *            The bindings from which the deleted items should be removed.
-	 *            This collection should not be <code>null</code>, but may be
-	 *            empty. It should only contains instance of
-	 *            <code>Binding</code>.
-	 * @return The set of bindings with the deletions removed; never
+	 *            This array should not be <code>null</code>, but may be
+	 *            empty.
+	 * @return The array of bindings with the deletions removed; never
 	 *         <code>null</code>, but may be empty. Contains only instances
 	 *         of <code>Binding</code>.
 	 */
-	private final Set removeDeletions(final Collection bindings) {
-		final Collection deletions = new ArrayList();
-		final Set bindingsCopy = new HashSet(bindings);
-		Iterator bindingItr = bindingsCopy.iterator();
-		while (bindingItr.hasNext()) {
-			final Binding binding = (Binding) bindingItr.next();
+	private final Binding[] removeDeletions(final Binding[] bindings) {
+		final Map deletions = new HashMap();
+		final Binding[] bindingsCopy = new Binding[bindingCount];
+		System.arraycopy(bindings, 0, bindingsCopy, 0, bindingCount);
+		int deletedCount = 0;
+
+		// Extract the deletions.
+		for (int i = 0; i < bindingCount; i++) {
+			final Binding binding = bindingsCopy[i];
 			if ((binding.getCommandId() == null) && (localeMatches(binding))
 					&& (platformMatches(binding))) {
-				deletions.add(binding);
-				bindingItr.remove();
+				deletions.put(binding.getTriggerSequence(), binding);
+				bindingsCopy[i] = null;
+				deletedCount++;
 			}
 		}
 
-		final Iterator deletionItr = deletions.iterator();
-		while (deletionItr.hasNext()) {
-			final Binding deletion = (Binding) deletionItr.next();
-			bindingItr = bindingsCopy.iterator();
-			while (bindingItr.hasNext()) {
-				final Binding binding = (Binding) bindingItr.next();
-				if (deletion.deletes(binding)) {
-					bindingItr.remove();
+		if (DEBUG) {
+			System.out
+					.println("BINDINGS >> There are " + deletions.size() + " deletion markers"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+
+		// Remove the deleted items.
+		for (int i = 0; i < bindingCount; i++) {
+			final Binding binding = bindingsCopy[i];
+			if (binding != null) {
+				final Object deletion = deletions.get(binding
+						.getTriggerSequence());
+				if ((deletion != null)
+						&& (((Binding) deletion).deletes(binding))) {
+					bindingsCopy[i] = null;
+					deletedCount++;
 				}
 			}
 		}
 
-		return bindingsCopy;
+		// Compact the array.
+		final Binding[] returnValue = new Binding[bindingCount - deletedCount];
+		int index = 0;
+		for (int i = 0; i < bindingCount; i++) {
+			final Binding binding = bindingsCopy[i];
+			if (binding != null) {
+				returnValue[index++] = binding;
+			}
+		}
+
+		return returnValue;
 	}
 
 	/**
@@ -1689,9 +1728,11 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
-	 * Changes the set of bindings for this binding manager. The whole set is
-	 * required so that internal consistency can be maintained and so that
-	 * excessive recomputations do nothing occur.
+	 * Changes the set of bindings for this binding manager. Changing the set of
+	 * bindings all at once ensures that: (1) duplicates are removed; and (2)
+	 * avoids the possibility of unnecessary intermediate computations. This
+	 * method clears the existing solution, but does not trigger a recomputation
+	 * (other method calls are required to do that).
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(n)</code>, where <code>n</code> is
@@ -1700,7 +1741,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @param bindings
 	 *            The new set of bindings; may be <code>null</code>. This set
-	 *            of bindings might be modified in place.
+	 *            is copied into a local data structure.
 	 */
 	public final void setBindings(final Set bindings) {
 		if (Util.equals(this.bindings, bindings)) {
@@ -1709,8 +1750,11 @@ public final class BindingManager implements IContextManagerListener,
 
 		if ((bindings == null) || (bindings.isEmpty())) {
 			this.bindings = null;
+			bindingCount = 0;
 		} else {
-			this.bindings = new HashSet(bindings); // copied for my protection
+			this.bindings = (Binding[]) bindings.toArray(new Binding[bindings
+					.size()]);
+			bindingCount = bindings.size();
 		}
 		clearCache();
 	}

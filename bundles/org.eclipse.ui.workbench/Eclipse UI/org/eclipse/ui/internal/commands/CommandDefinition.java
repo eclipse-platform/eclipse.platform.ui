@@ -140,7 +140,11 @@ public final class CommandDefinition implements Comparable {
     }
 
     public String getCategoryId() {
-        return categoryId;
+    	/*
+		 * TODO What should it mean to the keys preference page when there is no
+		 * category?
+		 */
+        return categoryId == null ? Util.ZERO_LENGTH_STRING : categoryId;
     }
 
     public String getDescription() {

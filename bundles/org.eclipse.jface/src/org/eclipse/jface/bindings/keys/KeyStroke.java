@@ -110,7 +110,6 @@ public final class KeyStroke extends Trigger implements Comparable {
      */
     public static final KeyStroke getInstance(final ModifierKey[] modifierKeys,
             final NaturalKey naturalKey) {
-        Util.assertInstance(modifierKeys, ModifierKey.class);
         return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)),
                 naturalKey);
     }

@@ -31,7 +31,6 @@
 - Themes [switching theme]
 	- two themes that support the default workbench presentation items
 
--	Context/Key binding resolving
 -	Shutdown
 -	Action Factory (brings in all classes)
 -	Leak tests
