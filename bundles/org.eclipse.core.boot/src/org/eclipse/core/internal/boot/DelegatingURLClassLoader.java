@@ -517,10 +517,6 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
 		return false;
 	}
 
-System.out.println ("looking up: " + lib.toString());
-for (Iterator i = filterTable.keySet().iterator(); i.hasNext();)
-	System.out.println ("    " + i.next().toString());
-	
 	URLContentFilter filter = (URLContentFilter) filterTable.get(lib);
 	if (filter == null) {
 		if (DEBUG)
