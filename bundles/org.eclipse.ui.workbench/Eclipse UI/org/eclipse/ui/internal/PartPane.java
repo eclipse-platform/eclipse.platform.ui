@@ -318,18 +318,56 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 }
 
 /**
+ * Returns the PartStack that contains this PartPane, or null if none.
+ * 
+ * @return
+ */
+public PartStack getStack() {
+	ILayoutContainer container = getContainer();
+	if (container instanceof PartStack) {
+		return (PartStack) container;
+	}
+	
+	return null;
+}
+
+/**
  * Show a title label menu for this pane.
  */
-public abstract void showPaneMenu();
+public void showPaneMenu() {
+	PartStack folder = getStack();
+	
+	if (folder != null) {
+		folder.showSystemMenu();
+	}
+}
 /**
  * Show the context menu for this part.
  */
-public abstract void showViewMenu();
+public void showViewMenu() {
+	PartStack folder = getStack();
+	
+	if (folder != null) {
+		folder.showPaneMenu();
+	}
+}
 
 /**
- * Return the sashes around this part.
+ * Finds and return the sashes around this part.
  */
-protected abstract Sashes findSashes();
+protected Sashes findSashes() {
+	Sashes result = new Sashes();
+	
+	ILayoutContainer container = getContainer();
+	
+	if (container == null) {
+		return result;
+	} 
+	
+	container.findSashes(this, result);
+	return result;
+}
+
 /**
  * Enable the user to resize this part using
  * the keyboard to move the specified sash

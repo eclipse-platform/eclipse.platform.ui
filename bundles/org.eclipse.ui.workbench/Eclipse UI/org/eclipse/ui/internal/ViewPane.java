@@ -14,7 +14,12 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -26,25 +31,17 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.SafeRunnable;
-
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.presentations.PresentableViewPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
-
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.PresentableViewPart;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Provides support for a title bar where the
@@ -441,8 +438,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	void setActive(boolean active){
 		hasFocus = active;
 		
-		if(getContainer() instanceof ViewStack){
-			((ViewStack) getContainer()).setActive(active);
+		if(getContainer() instanceof PartStack){
+			((PartStack) getContainer()).setActive(active ? StackPresentation.AS_ACTIVE_FOCUS : StackPresentation.AS_INACTIVE);
 		}
 	}
 	
@@ -453,18 +450,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		setActive(inFocus);
 	}
 
-	/**
-	 * Shows the pane menu (system menu) for this pane.
-	 */
-	public void showPaneMenu() {
-		ILayoutContainer container = getContainer();
-		
-		if (container instanceof ViewStack) {
-			ViewStack folder = (ViewStack) container;
-			
-			folder.showSystemMenu();
-		}		
-	}
 	/**
 	 * Return true if this view is a fast view.
 	 */
@@ -477,21 +462,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	boolean isMoveable() {
 		return !page.isFixedLayout();
-	}
-	/**
-	 * Finds and return the sashes around this part.
-	 */
-	protected Sashes findSashes() {
-		Sashes result = new Sashes();
-		
-		ILayoutContainer container = getContainer();
-		
-		if (container == null) {
-			return result;
-		} 
-		
-		container.findSashes(this, result);
-		return result;
 	}
 
 	/**
@@ -507,19 +477,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		}
 		
 		return false;		
-	}
-
-	/**
-	 * Show the view menu for this window.
-	 */
-	public void showViewMenu() {
-		ILayoutContainer container = getContainer();
-		
-		if (container instanceof ViewStack) {
-			ViewStack folder = (ViewStack) container;
-			
-			folder.showPaneMenu();
-		}		
 	}
 	
 	public void showViewMenu(Point location) {
@@ -579,12 +536,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void setContainer(ILayoutContainer container) {
 		ILayoutContainer oldContainer = getContainer();
 		if (hasFocus) {
-			if (oldContainer != null && oldContainer instanceof ViewStack) {
-				((ViewStack)oldContainer).setActive(false);
+			if (oldContainer != null && oldContainer instanceof PartStack) {
+				((PartStack)oldContainer).setActive(StackPresentation.AS_INACTIVE);
 			}
 			
 			if (container != null && container instanceof ViewStack) {
-				((ViewStack)container).setActive(true);
+				((PartStack)container).setActive(StackPresentation.AS_ACTIVE_FOCUS);
 			}
 		}
 

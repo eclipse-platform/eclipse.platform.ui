@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Represents the area set aside for editor workbooks.
@@ -300,11 +301,17 @@ public void setActiveWorkbook(EditorStack newWorkbook, boolean hasFocus) {
 	EditorStack oldWorkbook = activeEditorWorkbook;
 	activeEditorWorkbook = newWorkbook;
 	
-	if (oldWorkbook != null && oldWorkbook != newWorkbook)
-		oldWorkbook.tabFocusHide();
+	if (oldWorkbook != null && oldWorkbook != newWorkbook) {
+		oldWorkbook.setActive(StackPresentation.AS_INACTIVE);
+	}
 
-	if (newWorkbook != null)
-		newWorkbook.tabFocusShow(hasFocus);
+	if (newWorkbook != null) {
+		if (hasFocus) {
+			newWorkbook.setActive(StackPresentation.AS_ACTIVE_FOCUS);
+		} else {
+			newWorkbook.setActive(StackPresentation.AS_ACTIVE_NOFOCUS);
+		}
+	}
 		
 	updateTabList();
 }

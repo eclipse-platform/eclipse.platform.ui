@@ -324,8 +324,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         if (isDisposed()) return;
 
-        StackPresentation presentation = presentationSite.getPresentation();
-
         presentationSite.dispose();
 
         Iterator iter = children.iterator();
@@ -657,14 +655,15 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * 
      * @param active
      */
-    public void setActive(boolean activeState) {
-        if (activeState) {
+    public void setActive(int activeState) {
+    	
+        if (activeState != StackPresentation.AS_INACTIVE) {
             if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
                 setState(IStackPresentationSite.STATE_RESTORED);
             }            
         }
 
-        getPresentation().setActive(activeState ? StackPresentation.AS_ACTIVE_FOCUS : StackPresentation.AS_INACTIVE);
+        presentationSite.setActive(activeState);
     }
 
     /**

@@ -23,6 +23,7 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 	
 	private StackPresentation presentation;
 	private int state = IStackPresentationSite.STATE_RESTORED;
+	private int activeState = StackPresentation.AS_INACTIVE;
 	
 	public DefaultStackPresentationSite() {
 		
@@ -32,6 +33,7 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 		presentation = newPresentation;
 		if (presentation != null) {
 			presentation.setState(state);
+			presentation.setActive(activeState);
 		}
 	}
 	
@@ -41,6 +43,15 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 	
 	public int getState() {
 		return state;
+	}
+	
+	public void setActive(int activeState) {
+		if (activeState != this.activeState) {
+			this.activeState = activeState;
+			if (presentation != null) {
+				presentation.setActive(activeState);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

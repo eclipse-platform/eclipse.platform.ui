@@ -27,7 +27,6 @@ import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
-import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Represents a tab folder of editors. This layout part container only accepts
@@ -182,18 +181,6 @@ public class EditorStack extends PartStack {
 
         if (area != null) area.setActiveWorkbook(this, hasFocus);
     }
-
-    public void tabFocusHide() {
-        if (getControl() == null) return;
-
-        setActive(false /*isActiveWorkbook()*/);
-    }
-
-    public void tabFocusShow(boolean hasFocus) {
-        if (getControl() == null) return;
-
-        setActive(hasFocus);
-    }
 	
     public EditorPane[] getEditors() {
     	LayoutPart[] children = getChildren();
@@ -240,20 +227,6 @@ public class EditorStack extends PartStack {
 	 */
 	protected boolean allowsDrop(PartPane part) {
 		return part instanceof EditorPane;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#setActive(boolean)
-	 */
-	public void setActive(boolean activeState) {
-		int state = StackPresentation.AS_INACTIVE;
-		if (activeState) {
-			state = StackPresentation.AS_ACTIVE_FOCUS;
-		} else if (isActiveWorkbook()){
-			state = StackPresentation.AS_ACTIVE_NOFOCUS;
-		}
-		
-		getPresentation().setActive(state);
 	}
 	
 	public void setFocus() {

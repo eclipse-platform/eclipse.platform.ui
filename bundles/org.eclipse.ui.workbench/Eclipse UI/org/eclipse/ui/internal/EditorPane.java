@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.presentations.PresentableEditorPart;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * An EditorPane is a subclass of PartPane offering extended
@@ -154,7 +155,7 @@ public void showFocus(boolean inFocus) {
 	if (inFocus)
 		this.workbook.becomeActiveWorkbook(true);
 	else
-		this.workbook.tabFocusHide();
+		this.workbook.setActive(this.workbook.isActiveWorkbook() ? StackPresentation.AS_ACTIVE_NOFOCUS : StackPresentation.AS_INACTIVE);
 }
 
 /**
@@ -190,37 +191,12 @@ protected void addPinEditorItem(Menu parent) {
 }
 
 /**
- * Return the sashes around this part.
- */
-protected Sashes findSashes() {
-	Sashes result = new Sashes();
-	workbook.getEditorArea().findSashes(workbook,result);
-	return result;
-}
-/**
  * Update the title attributes for the pane.
  */
 public void updateTitles() {
 //	  TODO commented during presentation refactor 	workbook.updateEditorTab(getEditorReference());
 }
-/**
- * Show a title label menu for this pane.
- */
-public void showPaneMenu() {
-	ILayoutContainer container = getContainer();
-	
-	if (container instanceof EditorStack) {
-		EditorStack folder = (EditorStack) container;
-		
-		folder.showSystemMenu();
-	}
-}
-/**
- * Show the context menu for this part.
- */
-public void showViewMenu(){
-	//Do nothing. Editors do not have menus
-}
+
 
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
