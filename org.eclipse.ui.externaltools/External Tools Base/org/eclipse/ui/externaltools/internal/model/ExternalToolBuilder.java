@@ -76,7 +76,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 				launchBuild(kind, config, monitor);
 			}
-			forgetLastBuiltState();
+			//forgetLastBuiltState();
 			return getProjectsWithinScope();
 		}
 		//need to build all external tools from one builder (see bug 39713)
