@@ -62,165 +62,9 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * <p>This class is not supposed to be subclassed.</p>
  * 
  * @since 3.0
- * @see IAnnotationModelExtension
- * @see DiffInitializer
  */
 public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel {
 
-	/**
-	 * The local implementation of <code>ILineDiffInfo</code>. As instances are also <code>Annotation</code>s,
-	 * they can be used in <code>DocumentLineDiffer</code>s <code>IAnnotationModel</code> protocol.
-	 */
-	private final class DiffRegion extends Annotation implements ILineDiffInfo {
-
-		private RangeDifference fDifference;
-		private int fOffset;
-
-		DiffRegion(RangeDifference difference, int offset) {
-			super("org.eclipse.ui.workbench.texteditor.quickdiffChange", false, null); //$NON-NLS-1$
-			fOffset= offset;
-			fDifference= difference;
-		}
-		
-		/*
-		 * @see org.eclipse.jface.text.source.Annotation#getType()
-		 */
-		public String getType() {
-			// we return unknown for unchanged regions to avoid 
-			// them getting displayed.
-			switch (getChangeType()) {
-				case CHANGED:
-					return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
-				case ADDED:
-					return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
-				default: // and UNCHANGED
-					return TYPE_UNKNOWN;
-			}
-		}
-		
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesBelow()
-		 */
-		public int getRemovedLinesBelow() {
-			if (fOffset == fDifference.rightLength() - 1) {
-				if (getChangeType() != UNCHANGED) {
-					return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
-				} else {
-					for (ListIterator it= fDifferences.listIterator(); it.hasNext();) {
-						if (fDifference.equals(it.next())) {
-							if (it.hasNext()) {
-								RangeDifference next= (RangeDifference) it.next();
-								if (next.rightLength() == 0)
-									return Math.max(next.leftLength() - next.rightLength(), 0);
-							} 
-							return 0;
-						}
-					}
-					return 0;				
-				}
-			} else 
-				return 0;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getChangeType()
-		 */
-		public int getChangeType() {
-			if (fDifference.kind() == RangeDifference.NOCHANGE)
-				return UNCHANGED;
-			else {
-				if (fOffset >= fDifference.leftLength())
-					return ADDED;
-				else
-					return CHANGED;
-			}
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
-		 */
-		public int getRemovedLinesAbove() {
-			if (getChangeType() != UNCHANGED || fOffset != 0)
-				return 0;
-			else {
-				for (ListIterator it= fDifferences.listIterator(fDifferences.size()); it.hasPrevious();) {
-					if (fDifference.equals(it.previous())) {
-						if (it.hasPrevious()) {
-							RangeDifference previous= (RangeDifference) it.previous();					
-							return Math.max(previous.leftLength() - previous.rightLength(), 0);
-						} else
-							return 0;
-					}
-				}
-				return 0;
-			}
-		}
-		
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#hasChanges()
-		 */
-		public boolean hasChanges() {
-			return getChangeType() != UNCHANGED || getRemovedLinesAbove() > 0 || getRemovedLinesBelow() > 0;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getOriginalText()
-		 */
-		public String[] getOriginalText() {
-			IDocument doc= fLeftDocument;
-			if (doc != null) {
-				int startLine= fDifference.leftStart() + fOffset;
-				
-				if (startLine >= fDifference.leftEnd())
-					return new String[0]; // original text of an added line is empty
-				
-				int endLine= startLine + getRemovedLinesBelow();
-				
-				if (getChangeType() == UNCHANGED)
-					startLine++;
-				
-				String[] ret= new String[endLine - startLine + 1];
-				
-				for (int i= 0; i < ret.length; i++) {
-					try {
-						ret[i]= doc.get(doc.getLineOffset(startLine + i), doc.getLineLength(startLine + i));
-					} catch (BadLocationException e) {
-						ret[i]= new String();
-					}
-				}
-				
-				return ret;
-			}
-			
-			// in initialization phase?
-			return new String[0];
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.Annotation#getText()
-		 */
-		public String getText() {
-			int r= fDifference.rightLength();
-			int l= fDifference.leftLength();
-			int c= Math.min(r, l);
-			int a= r - l;
-			String changed= c > 0 ? QuickDiffMessages.getFormattedString("quickdiff.annotation.changed", new Integer(c)) : null; //$NON-NLS-1$
-			String added;
-			if (a > 0) 
-				added= QuickDiffMessages.getFormattedString("quickdiff.annotation.added", new Integer(a));   //$NON-NLS-1$
-			else if (a < 0)
-				added= QuickDiffMessages.getFormattedString("quickdiff.annotation.deleted", new Integer(-a));   //$NON-NLS-1$
-			else
-				added= null;
-			
-			String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.getString("quickdiff.annotation.line_plural") : QuickDiffMessages.getString("quickdiff.annotation.line_singular");  //$NON-NLS-1$//$NON-NLS-2$
-			
-			String ret= (changed != null ? changed : "") + (changed != null ? " " + line : "") + (changed != null && added != null ? ", " : " ") + (added != null ? added : "") + (added != null && changed == null ? " " + line : "");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-			return ret;
-			
-		}
-	}
-	
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
 	/** Whether this differ is in sync with the model. */
@@ -242,8 +86,26 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private Job fInitializationJob;
 	/** Stores <code>DocumentEvents</code> while an initialization is going on. */
 	private List fStoredEvents= new ArrayList();
-	/** The differences between <code>fLeftDocument</code> and <code>fRightDocument</code>. */
+	/**
+	 * The differences between <code>fLeftDocument</code> and <code>fRightDocument</code>. 
+	 * This is the model we work on.
+	 */
 	private List fDifferences= new ArrayList();
+	/**
+	 * The differences removed in one iteration. Stored to be able to send out differentiated
+	 * annotation events. 
+	 */
+	private List fRemoved= new ArrayList();
+	/**
+	 * The differences added in one iteration. Stored to be able to send out differentiated
+	 * annotation events. 
+	 */
+	private List fAdded= new ArrayList();
+	/**
+	 * The differences changed in one iteration. Stored to be able to send out differentiated
+	 * annotation events. 
+	 */
+	private List fChanged= new ArrayList();
 	/** The first line affected by a document event. */
 	private int fFirstLine;
 	/** The number of lines affected by a document event. */
@@ -264,14 +126,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public ILineDiffInfo getLineInfo(int line) {
 		
+		// try cache first / speeds up linear search
 		RangeDifference last= fLastDifference;
 		if (last != null && last.rightStart() <= line && last.rightEnd() > line)
-			return new DiffRegion(last, line - last.rightStart());
+			return new DiffRegion(last, line - last.rightStart(), fDifferences, fLeftDocument);
 		
 		fLastDifference= getRangeDifferenceForRightLine(line);
 		last= fLastDifference;
 		if (last != null)
-			return new DiffRegion(last, line - last.rightStart());
+			return new DiffRegion(last, line - last.rightStart(), fDifferences, fLeftDocument);
 		else
 			return null;
 	}
@@ -287,10 +150,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (region == null || fRightDocument == null || fLeftDocument == null)
 			return;
 		
-		RangeDifference diff= region.fDifference;
+		RangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(line);
 		int rLength= fRightDocument.getLineLength(line);
-		int leftLine= diff.leftStart() + region.fOffset;
+		int leftLine= diff.leftStart() + region.getOffset();
 		String replacement;
 		if (leftLine >= diff.leftEnd()) // restoring a deleted line?
 			replacement= new String();
@@ -313,7 +176,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (region == null || fRightDocument == null || fLeftDocument == null)
 			return;
 		
-		RangeDifference diff= region.fDifference;
+		RangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(diff.rightStart());
 		int rLength= fRightDocument.getLineOffset(diff.rightEnd() - 1) + fRightDocument.getLineLength(diff.rightEnd() - 1) - rOffset;
 		int lOffset= fLeftDocument.getLineOffset(diff.leftStart());
@@ -715,7 +578,20 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		
 		// inform listeners about change
 		if (fUpdateNeeded) {
-			fireModelChanged();
+			AnnotationModelEvent ame= new AnnotationModelEvent(this, false);
+			for (Iterator it= fAdded.iterator(); it.hasNext(); ) {
+				RangeDifference rd= (RangeDifference) it.next();
+				ame.annotationAdded(rd.getDiffRegion(fDifferences, fLeftDocument));
+			}
+			for (Iterator it= fRemoved.iterator(); it.hasNext(); ) {
+				RangeDifference rd= (RangeDifference) it.next();
+				ame.annotationRemoved(rd.getDiffRegion(fDifferences, fLeftDocument));
+			}
+			for (Iterator it= fChanged.iterator(); it.hasNext(); ) {
+				RangeDifference rd= (RangeDifference) it.next();
+				ame.annotationChanged(rd.getDiffRegion(fDifferences, fLeftDocument));
+			}
+			fireModelChanged(ame);
 			fUpdateNeeded= false;
 		}
 	}
@@ -877,15 +753,22 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		} while (current != consistentBefore);
 		Assert.isTrue(current == consistentBefore);
 
+		fChanged.clear();
+		fRemoved.clear();
+		fAdded.clear();
+		
 		// replace until consistentAfter
 		while (current != consistentAfter) {
 			if (newIt.hasNext()) {
 				Object o= newIt.next();
 				if (!current.equals(o)) {
+					fRemoved.add(current);
+					fAdded.add(o);
 					changed= true;
 					it.set(o);
 				}
 			} else {
+				fRemoved.add(current);
 				it.remove();
 				fUpdateNeeded= true;
 			}
@@ -898,17 +781,22 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (newIt.hasNext()) {
 			Object o= newIt.next();
 			if (!current.equals(o)) {
+				fRemoved.add(current);
+				fAdded.add(o);
 				changed= true;
 				it.set(o);
 			}
 		} else {
+			fRemoved.add(current);
 			it.remove();
 			fUpdateNeeded= true;
 		}
 
 		// add remaining new diffs
 		while (newIt.hasNext()) {
-			it.add(newIt.next());
+			Object next= newIt.next();
+			fAdded.add(next);
+			it.add(next);
 			changed= true;
 		}
 
@@ -925,6 +813,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				else
 					break;
 			}
+//			fChanged.add(current); // not needed since positional shifting is not handled by an annotation model
 			current.shiftLeft(leftShift);
 			current.shiftRight(rightShift);
 		}
@@ -1255,7 +1144,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
-		List copy= new ArrayList(fDifferences);
+		final List copy= new ArrayList(fDifferences);
 		final Iterator iter= copy.iterator();
 		return new Iterator() {
 
@@ -1269,7 +1158,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			public Object next() {
 				RangeDifference diff= (RangeDifference) iter.next();
-				return new DiffRegion(diff, 0);
+				return diff.getDiffRegion(copy, fLeftDocument);
 			}
 			
 		};
@@ -1280,7 +1169,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public Position getPosition(Annotation annotation) {
 		if (fRightDocument != null && annotation instanceof DiffRegion) {
-			RangeDifference difference= ((DiffRegion)annotation).fDifference;
+			RangeDifference difference= ((DiffRegion)annotation).getDifference();
 			try {
 				int offset= fRightDocument.getLineOffset(difference.rightStart());
 				return new Position(offset, fRightDocument.getLineOffset(difference.rightEnd() - 1) + fRightDocument.getLineLength(difference.rightEnd() - 1) - offset);

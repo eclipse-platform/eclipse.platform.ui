@@ -127,24 +127,24 @@ public final class DocLineComparator implements IRangeComparator {
 	 * @param otherIndex the number of the line within the other comparator
 	 * @return <code>true</code> if the lines are equal
 	 */
-	public boolean rangesEqual(int thisIndex, IRangeComparator other0, int otherIndex) {
+	public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
 
-		if (other0 != null && other0.getClass() == getClass()) {
-			DocLineComparator other= (DocLineComparator) other0;
+		if (other != null && other.getClass() == getClass()) {
+			DocLineComparator dlc= (DocLineComparator) other;
 
 			if (fIgnoreWhiteSpace) {
 			
 				CharSequence s1= extract(thisIndex);
-				CharSequence s2= other.extract(otherIndex);
+				CharSequence s2= dlc.extract(otherIndex);
 				return compare(s1, s2);
 			
 			} else {
 				
 				int tlen= getLineLength(thisIndex);
-				int olen= other.getLineLength(otherIndex);
+				int olen= dlc.getLineLength(otherIndex);
 				if (tlen == olen) {
 					CharSequence s1= extract(thisIndex);
-					CharSequence s2= other.extract(otherIndex);
+					CharSequence s2= dlc.extract(otherIndex);
 					return s1.equals(s2);
 				}
 			}

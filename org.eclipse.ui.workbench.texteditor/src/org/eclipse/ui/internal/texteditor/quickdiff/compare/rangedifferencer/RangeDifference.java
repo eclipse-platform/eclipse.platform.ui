@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
+import java.util.List;
+
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.IDocument;
+
+import org.eclipse.ui.internal.texteditor.quickdiff.DiffRegion;
 
 /**
  * Description of a change between two or three ranges of comparable entities.
@@ -59,6 +64,7 @@ public class RangeDifference {
 	int fRightLength;
 	int lAncestorStart;
 	int lAncestorLength;
+	private DiffRegion fRegion;
 	
 	/**
 	 * Creates a new range difference with the given change kind.
@@ -73,7 +79,7 @@ public class RangeDifference {
 	 * Creates a new <code>RangeDifference</code> with the given change kind
 	 * and left and right ranges.
 	 *
-	 * @param changeKind the kind of change
+	 * @param kind the kind of change
 	 * @param rightStart start index of entity on right side
 	 * @param rightLength number of entities on right side
 	 * @param leftStart start index of entity on left side
@@ -91,7 +97,7 @@ public class RangeDifference {
 	 * Creates a new <code>RangeDifference</code> with the given change kind
 	 * and left, right, and ancestor ranges.
 	 *
-	 * @param changeKind the kind of change
+	 * @param kind the kind of change
 	 * @param rightStart start index of entity on right side
 	 * @param rightLength number of entities on right side
 	 * @param leftStart start index of entity on left side
@@ -210,7 +216,7 @@ public class RangeDifference {
 	/**
 	 * Shifts the offset into the left document of the receiver. 
 	 * 
-	 * @param leftShift the number of elements to shift
+	 * @param shift the number of elements to shift
 	 */
 	public void shiftLeft(int shift) {
 		Assert.isTrue(shift + fLeftStart >= 0);
@@ -220,7 +226,7 @@ public class RangeDifference {
 	/**
 	 * Shifts the offset into the right document of the receiver. 
 	 * 
-	 * @param rightShift the number of elements to shift
+	 * @param shift the number of elements to shift
 	 */
 	public void shiftRight(int shift) {
 		Assert.isTrue(shift + fRightStart >= 0);
@@ -264,6 +270,19 @@ public class RangeDifference {
 			return fKind == d.fKind && fRightStart == d.fRightStart && fRightLength == d.fRightLength && fLeftStart == d.fLeftStart && fLeftLength == d.fLeftLength;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the diff region corresponding to this range difference.
+	 * 
+	 * @param differences the list of differences around this one difference
+	 * @param source the original document (left document) that this difference refers to
+	 * @return a <code>DiffRegion</code> corresponding to this difference
+	 */
+	public DiffRegion getDiffRegion(List differences, IDocument source) {
+		if (fRegion == null)
+			fRegion= new DiffRegion(this, 0, differences, source);
+		return fRegion;
 	}
 }
 
