@@ -253,17 +253,18 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				IPath filePath = file.getLocation();
 				if (filePath == null) {
 					reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.12"), new String[] { file.getName() }), null); //$NON-NLS-1$
-				}
-				for (int i = 0; i < configs.length; i++) {
-					ILaunchConfiguration configuration = configs[i];
-					IPath location;
-					try {
-						location = ExternalToolsUtil.getLocation(configuration);
-						if (filePath.equals(location)) {
-							validConfigs.add(configuration);
+				} else {
+					for (int i = 0; i < configs.length; i++) {
+						ILaunchConfiguration configuration = configs[i];
+						IPath location;
+						try {
+							location = ExternalToolsUtil.getLocation(configuration);
+							if (filePath.equals(location)) {
+								validConfigs.add(configuration);
+							}
+						} catch (CoreException e) {
+							// error occurred in variable expand - ignore
 						}
-					} catch (CoreException e) {
-						// error occurred in variable expand - ignore
 					}
 				}
 			}
