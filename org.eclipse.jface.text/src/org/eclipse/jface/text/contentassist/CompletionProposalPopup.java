@@ -751,12 +751,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void filterProposals() {
 		++ fInvocationCounter;
-		Control control= fContentAssistSubjectAdapter.getControl();
+		final Control control= fContentAssistSubjectAdapter.getControl();
 		control.getDisplay().asyncExec(new Runnable() {
 			long fCounter= fInvocationCounter;
 			public void run() {
 				
-				if (fCounter != fInvocationCounter) return;
+				if (fCounter != fInvocationCounter)
+					return;
+				
+				if (control.isDisposed())
+					return;
 				
 				int offset= fContentAssistSubjectAdapter.getSelectedRange().x;
 				ICompletionProposal[] proposals= null;
@@ -780,7 +784,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	/**
-	 * Computes the subset of already computed propsals that are still valid for
+	 * Computes the subset of already computed proposals that are still valid for
 	 * the given offset.
 	 * 
 	 * @param offset the offset
