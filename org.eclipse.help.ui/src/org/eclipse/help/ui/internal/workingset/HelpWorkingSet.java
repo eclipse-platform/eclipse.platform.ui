@@ -4,7 +4,7 @@ package org.eclipse.help.ui.internal.workingset;
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
- 
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
@@ -15,38 +15,47 @@ import org.eclipse.ui.*;
  * A working set for help elements. 
  * NOTE: The only reason we inherit from ui's working set is because there is a
  * cast in the wizard, when getting the page id...
- * TODO: open bug on the ui component to fix the page id..
  */
-public class HelpWorkingSet{
+public class HelpWorkingSet {
 
 	private WorkingSet workingSet;
 	private IWorkingSet iworkingSet;
-	
+
 	/**
 	 * Constructor for HelpWorkingSet.
 	 * @param name
 	 * @param elements
 	 */
 	public HelpWorkingSet(String name, IAdaptable[] elements) {
-		this(HelpSystem.getWorkingSetManager().createWorkingSet(name, (AdaptableHelpResource[])elements));
+		this(
+			HelpSystem.getWorkingSetManager().createWorkingSet(
+				name,
+				(AdaptableHelpResource[]) elements));
 	}
 
 	public HelpWorkingSet(WorkingSet ws) {
 		this.workingSet = ws;
-		this.iworkingSet = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(ws.getName(), ws.getElements());
-		// TODO: change this when API available
+		this.iworkingSet =
+			PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(
+				ws.getName(),
+				ws.getElements());
+
 		iworkingSet.setId(HelpWorkingSetPage.PAGE_ID);
-		
+
 		//HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
 		//PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(iworkingSet);
 	}
-	
+
 	public HelpWorkingSet(IWorkingSet iws) {
 		this.iworkingSet = iws;
-		AdaptableHelpResource[] elements = new AdaptableHelpResource[iws.getElements().length];
-		System.arraycopy(iws.getElements(),0,elements,0,elements.length);
-		this.workingSet = HelpSystem.getWorkingSetManager().createWorkingSet(iws.getName(), elements);
-		
+		AdaptableHelpResource[] elements =
+			new AdaptableHelpResource[iws.getElements().length];
+		System.arraycopy(iws.getElements(), 0, elements, 0, elements.length);
+		this.workingSet =
+			HelpSystem.getWorkingSetManager().createWorkingSet(
+				iws.getName(),
+				elements);
+
 		//HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
 		//PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(iworkingSet);
 	}
@@ -59,11 +68,11 @@ public class HelpWorkingSet{
 	public IWorkingSet getIWorkingSet() {
 		return iworkingSet;
 	}
-	
+
 	public WorkingSet getWorkingSet() {
 		return workingSet;
 	}
-	
+
 	/**
 	 * Tests the receiver and the object for equality
 	 *
@@ -76,34 +85,36 @@ public class HelpWorkingSet{
 			return true;
 		}
 		if (object instanceof HelpWorkingSet) {
-			HelpWorkingSet ws = (HelpWorkingSet)object;
+			HelpWorkingSet ws = (HelpWorkingSet) object;
 			return this.workingSet == ws.workingSet;
 		} else
 			return false;
 	}
-
 
 	/**
 	 * @see org.eclipse.ui.IPersistableElement#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		HelpSystem.getWorkingSetManager().saveState();
-		
+
 		memento.putString("workingSet", workingSet.getName());
 		//memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
 
-		for (int i=0; i<workingSet.getElements().length; i++){
-			saveState((AdaptableHelpResource)workingSet.getElements()[i], memento);
+		for (int i = 0; i < workingSet.getElements().length; i++) {
+			saveState(
+				(AdaptableHelpResource) workingSet.getElements()[i],
+				memento);
 		}
 	}
-	
+
 	private void saveState(AdaptableHelpResource element, IMemento memento) {
-		IToc toc = (IToc)element.getAdapter(IToc.class);
-		ITopic topic = (ITopic)element.getAdapter(ITopic.class);
+		IToc toc = (IToc) element.getAdapter(IToc.class);
+		ITopic topic = (ITopic) element.getAdapter(ITopic.class);
 		if (toc != null)
 			memento.putString("toc", toc.getHref());
 		else if (topic != null) {
-			AdaptableHelpResource parent = (AdaptableHelpResource)element.getParent();
+			AdaptableHelpResource parent =
+				(AdaptableHelpResource) element.getParent();
 			memento.putString("toc", parent.getHref());
 			// get the index of this topic
 			IAdaptable[] topics = parent.getChildren();
