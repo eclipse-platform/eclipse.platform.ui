@@ -1068,7 +1068,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		
 		// Take care of any unsaved changes.  If the user aborts, reset selection
 		// to whatever it was previously selected
-		boolean canReplaceConfig = canReplaceWorkingCopy();
+		boolean canReplaceConfig = confirmWorkingCopyNotDirty();
  		if (!canReplaceConfig) {
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
@@ -1481,9 +1481,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return whether the current working copy can be replaced with a new working copy.
+	 * Return whether the current working copy exists and isn't dirty.  If it is dirty,
+	 * ask the user whether to save changes.
 	 */
-	protected boolean canReplaceWorkingCopy() {
+	protected boolean confirmWorkingCopyNotDirty() {
 		
 		// If there is no working copy, there's no problem, return true
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
@@ -1491,20 +1492,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return true;
 		}
 		
-		// If the working copy doesn't verify, show user dialog asking if they wish
-		// to discard their changes.  Otherwise, if the working copy is dirty,
-		// show a slightly different 'save changes' dialog.
-		if (!canLaunch()) {
-			StringBuffer buffer = new StringBuffer("The configuration \"");
-			buffer.append(getLaunchConfiguration().getName());
-			buffer.append("\" CANNOT be saved.  Do you wish to discard changes?");
-			return MessageDialog.openQuestion(getShell(), "Discard changes?", buffer.toString());
+		if (isWorkingCopyDirty()) {
+			return showSaveChangesDialog();
 		} else {
-			if (isWorkingCopyDirty()) {
-				return showSaveChangesDialog();
-			} else {
-				return true;
-			}
+			return true;
 		}
 	}
 	
@@ -1544,7 +1535,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void handleNewPressed() {
 		
 		// Take care of any unsaved changes
-		if (!canReplaceWorkingCopy()) {
+		if (!confirmWorkingCopyNotDirty()) {
 			return;
 		}
 		
