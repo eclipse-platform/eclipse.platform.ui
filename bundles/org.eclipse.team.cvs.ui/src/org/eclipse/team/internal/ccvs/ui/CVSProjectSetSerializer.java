@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -95,7 +97,7 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 				return null;
 			}
 			String repo = tokenizer.nextToken();
-			locations[i] = CVSRepositoryLocation.fromString(repo);
+			locations[i] = getLocationFromString(repo);
 			modules[i] = tokenizer.nextToken();
 			String projectName = tokenizer.nextToken();
 			projects[i] = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -173,6 +175,25 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 		}
 		return (IProject[])result.toArray(new IProject[result.size()]);
 	}
+
+	private ICVSRepositoryLocation getLocationFromString(String repo) throws CVSException {
+		// create the new location
+		ICVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(repo);
+		if (newLocation.getUsername() == null || newLocation.getUsername().length() == 0) {
+			// look for an existing location that matched
+			ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
+			for (int i = 0; i < locations.length; i++) {
+				ICVSRepositoryLocation location = locations[i];
+				if (location.getMethod() == newLocation.getMethod()
+					&& location.getHost().equals(newLocation.getHost())
+					&& location.getPort() == newLocation.getPort()
+					&& location.getRootDirectory().equals(newLocation.getRootDirectory()))
+						return location;
+			}
+		}
+		return newLocation;
+	}
+	
 	private int confirmOverwrite(IProject project, boolean yesToAll, Shell shell) {
 		if (yesToAll) return 2;
 		if (!project.exists()) return 0;
