@@ -31,6 +31,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.internal.ui.launchConfigurations.NewEnvironmentVariableDialog;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
@@ -353,17 +354,17 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.10"), new String[] {NAME_LABEL, VALUE_LABEL}, null); //$NON-NLS-1$
-		dialog.disallowEmpty(NAME_LABEL);
+		NewEnvironmentVariableDialog dialog= new NewEnvironmentVariableDialog(getShell(), new String[] {NAME_LABEL, VALUE_LABEL});
+		
 		if (dialog.open() != Window.OK) {
 			return;
 		}
-		String name= dialog.getValue(NAME_LABEL).trim();
-		if (name.length() < 1) {
+		
+		EnvironmentVariable newVariable = dialog.getEnviromentVariable();
+		if (newVariable == null) {
 			return;
 		}
-		String value= dialog.getValue(VALUE_LABEL);
-		EnvironmentVariable newVariable = new EnvironmentVariable(name, value);
+		
 		addVariable(newVariable);
 		updateAppendReplace();
 	}
@@ -413,7 +414,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		dialog.setTitle(LaunchConfigurationsMessages.getString("EnvironmentTab.20")); //$NON-NLS-1$
 		
 		int button = dialog.open();
-		if (button == Dialog.OK) {
+		if (button == Window.OK) {
 			Object[] selected = dialog.getResult();		
 			for (int i = 0; i < selected.length; i++) {
 				environmentTable.add(selected[i]);				
@@ -535,7 +536,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.getControl().setRedraw(false);
 		for (Iterator i = sel.iterator(); i.hasNext(); ) {
 			EnvironmentVariable var = (EnvironmentVariable) i.next();	
-			environmentTable.remove(var);
+		environmentTable.remove(var);
 		}
 		environmentTable.getControl().setRedraw(true);
 		updateAppendReplace();
@@ -630,7 +631,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		public NativeEnvironmentDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
 			super(parentShell, input, contentProvider, labelProvider, message);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-		}
+}
 		protected IDialogSettings getDialogSettings() {
 			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
