@@ -12,13 +12,18 @@ package org.eclipse.ui.console;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -64,8 +69,9 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
 
     private int consoleWidth = -1;
 
-
     private TextConsole console;
+    
+    private IPropertyChangeListener propertyChangeListener;
 
     public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -80,6 +86,10 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         setFont(console.getFont());
         styledText.addMouseTrackListener(this);
         styledText.addPaintListener(this);
+        
+        ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+        propertyChangeListener = new HyperlinkColorChangeListener();
+        colorRegistry.addListener(propertyChangeListener);
     }
 
     public void setTabWidth(int tabWidth) {
@@ -500,5 +510,17 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         textCursor = null;
         hyperlink = null;
         console = null;
+        
+        ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+        colorRegistry.removeListener(propertyChangeListener);
+    }
+    
+    class HyperlinkColorChangeListener implements IPropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(JFacePreferences.ACTIVE_HYPERLINK_COLOR) || event.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)) {
+				getTextWidget().redraw();
+			}
+		}
+    	
     }
 }
