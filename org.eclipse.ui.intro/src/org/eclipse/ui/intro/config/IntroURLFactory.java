@@ -17,9 +17,13 @@ import org.eclipse.ui.internal.intro.impl.model.*;
  * Factory class used to create instances of an Intro URL. Instances of intro
  * URLs need to be created if you need to programatically construct and execute
  * a valid Intro URL.
+ * <p>
+ * This class provides all its functionality via static members.
+ * It is not intended to be instantiated.
+ * </p>
  * 
- * @see org.eclipse.ui.intro.config.IIntroURL
- *  
+ * @see IIntroURL
+ * @since 3.0
  */
 public final class IntroURLFactory {
 

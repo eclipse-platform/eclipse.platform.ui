@@ -36,9 +36,12 @@ import org.eclipse.ui.part.*;
  * is to degrade to UI forms prsentation. Content displayed in this intro part
  * can be static or dynamic. Static is html files, dynamic is markup in content
  * files. Again, both of whch can be specified using the above extension point.
- * 
+ * <p>
  * Note: This class was made public on for re-use as-is as a valid class for the
- * org.eclipse.ui.intro extension point.
+ * <code>org.eclipse.ui.intro</code> extension point.
+ * </p>
+ * 
+ * @since 3.0
  */
 public final class CustomizableIntroPart extends IntroPart {
 

@@ -20,9 +20,9 @@ import org.eclipse.ui.intro.*;
  * value for the "class" parameter for the following intro url:
  * <p>
  * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&class=x.y.z.someClass
+ * </p>
  * 
- * TODO: should be renamed to IIntroCommand
- * 
+ * @since 3.0
  */
 public interface IIntroAction {
 

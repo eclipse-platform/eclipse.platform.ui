@@ -18,9 +18,8 @@ import org.eclipse.ui.intro.*;
  * An Intro standby part. It is a UI component that represents some standby
  * content. Standby parts can be contributed to the Eclipse intro using the
  * following extension point:
- * 
- * <pre>
  * <p>
+ * <pre>
  *      &lt;extension
  *             point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
  *          &lt;standbyPart
@@ -30,9 +29,6 @@ import org.eclipse.ui.intro.*;
  *          &lt;/standbyPart&gt; 
  *       &lt;/extension&gt;
  * </pre>
- * 
- * TODO: should be renamed to IStandbyPart.
- * 
  * </p>
  * 
  * @since 3.0
