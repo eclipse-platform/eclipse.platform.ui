@@ -11,44 +11,34 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.team.internal.ui.OverlayIcon;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE.SharedImages;
 
 public class CVSDecoratorPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -58,18 +48,172 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Button imageShowNewResource;
 	
 	private Text fileTextFormat;
-	private Text fileTextFormatExample;
-	
-	private Text folderTextFormat;
-	private Text folderTextFormatExample;
-	
+	private Text folderTextFormat;	
 	private Text projectTextFormat;
-	private Text projectTextFormatExample;
 	
 	private Text dirtyFlag;
 	private Text addedFlag;
 	
 	private Button showDirty;
+	
+	//	Cache for folder images that have been overlayed with sample CVS icons
+	private Map fgImageCache;
+
+	// Tree that provides a preview of the decorations
+	private TreeViewer previewTree;
+	
+	/**
+	 * Update the preview tree when a theme changes.
+	 */
+	private IPropertyChangeListener themeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			previewTree.refresh(true /* update labels */);
+		}
+	};
+	
+	/**
+	 * Label provider creates a dummy CVSDecoration using the preferences set
+	 * in this page. The decoration properties are assigned to the different named
+	 * resources in the preview tree so that most of the decoration options
+	 * are shown
+	 */
+	private class PreviewLabelProvider extends LabelProvider implements IFontProvider, IColorProvider {
+		
+		public Color getBackground(Object element) {
+			CVSDecoration decoration = getDecoration(element);
+			return decoration.getBackgroundColor();
+		}
+		
+		public Color getForeground(Object element) {
+			CVSDecoration decoration = getDecoration(element);
+			return decoration.getForegroundColor();
+		}
+			
+		public Font getFont(Object element) {
+			CVSDecoration decoration = getDecoration(element);
+			return decoration.getFont();
+		}
+		
+		public String getText(Object element) {
+			CVSDecoration decoration = getDecoration(element);
+			StringBuffer buffer = new StringBuffer();
+			String prefix = decoration.getPrefix();
+			if(prefix != null)
+				buffer.append(prefix);
+			buffer.append((String)element);
+			String suffix = decoration.getSuffix();
+			if(suffix != null)
+				buffer.append(suffix);
+			return buffer.toString();
+		}
+		
+		public CVSDecoration getDecoration(Object element) {
+			CVSDecoration decoration = buildDecoration((String)element);
+			if(element.equals("ignored.txt")) { //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setIgnored(true);
+			} else if(element.equals("Project")) { //$NON-NLS-1$
+				decoration.setResourceType(IResource.PROJECT);
+				decoration.setHasRemote(true);
+			} else if(element.equals("Folder")) { //$NON-NLS-1$
+				decoration.setHasRemote(true);
+				decoration.setResourceType(IResource.FOLDER);
+				decoration.setDirty(true);
+				decoration.setHasRemote(true);
+			} else if(element.equals("dirty.cpp")){ //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setDirty(true);
+				decoration.setHasRemote(true);
+			} else if(element.equals("added.java")){ //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setAdded(true);
+				decoration.setHasRemote(false);
+			} else if(element.equals("todo.txt")){ //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setNewResource(true);
+			} else if(element.equals("bugs.txt")){ //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setDirty(false);
+				decoration.setHasRemote(true);
+			}
+			decoration.compute();
+			return decoration;
+		}
+		
+		public Image getImage(Object element) {
+			Image baseImage;
+			if(element.equals("Project")) { //$NON-NLS-1$
+				baseImage= PlatformUI.getWorkbench().
+				getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
+			} else if(element.equals("Folder")) { //$NON-NLS-1$
+				baseImage= PlatformUI.getWorkbench().
+				getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+			} else {
+				baseImage= PlatformUI.getWorkbench().
+				getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+			}
+			CVSDecoration decoration = getDecoration(element);
+			ImageDescriptor overlay = decoration.getOverlay();
+			if(overlay == null) 
+				return baseImage;
+			
+			// Otherwise
+			ImageDescriptor resultImageDescriptor = new OverlayIcon(baseImage, new ImageDescriptor[] {overlay}, new int[] {OverlayIcon.BOTTOM_RIGHT}, new Point(baseImage.getBounds().width, baseImage.getBounds().height));
+			if (fgImageCache == null) {
+				fgImageCache = new HashMap(10);
+			}
+			Image image = (Image) fgImageCache.get(overlay);
+			if (image == null) {
+				image = resultImageDescriptor.createImage();
+				fgImageCache.put(resultImageDescriptor, image);
+			}
+			return image;
+		}
+	};
+	
+	/**
+	 * Provides a fixed mock resource tree for showing the preview.
+	 */
+	private IContentProvider previewContentProvider = new ITreeContentProvider() {
+		public Object[] getChildren(Object parentElement) {
+			if(parentElement == ResourcesPlugin.getWorkspace().getRoot()) {
+				return new String[] {
+						"Project"}; //$NON-NLS-1$
+			} else if(parentElement.equals("Project")) { //$NON-NLS-1$
+				return new String[] {
+						"ignored.txt", //$NON-NLS-1$
+						"dirty.cpp", //$NON-NLS-1$
+						"added.java", //$NON-NLS-1$
+						"todo.txt", //$NON-NLS-1$
+						"bugs.txt", //$NON-NLS-1$
+						"Folder" //$NON-NLS-1$
+				};
+			} else {
+				return new Object[0];
+			}
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			if(element.equals("Project") || element == ResourcesPlugin.getWorkspace().getRoot())  //$NON-NLS-1$
+				return true;
+			else
+				return false;
+		}
+
+		public Object[] getElements(Object inputElement) {
+			return getChildren(inputElement);
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	};
 	
 	class StringPair {
 		String s1;
@@ -98,7 +242,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		format.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		format.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {				
-				updateExamples();
+				previewTree.refresh(true);
 			}
 		});
 		Button b = new Button(composite, SWT.NONE);
@@ -115,41 +259,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				addVariables(formatToInsert, supportedBindings);
 			}			
 		});
-		
-		createLabel(composite, Policy.bind("Example__1"), 1); //$NON-NLS-1$
-		Text example = new Text(composite, SWT.BORDER);
-		example.setEditable(false);
-		example.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createLabel(composite, "", 1); // spacer //$NON-NLS-1$
-		return new TextPair(format, example);
-	}
-	
-	protected void updateExamples() {
-		Map bindings = new HashMap();
-		try {
-			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				 //$NON-NLS-1$
-			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0"); //$NON-NLS-1$
-			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD,
-				Command.KSUBST_TEXT.getShortDisplayText()); //$NON-NLS-1$
-			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34"); //$NON-NLS-1$
-			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
-			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
-			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, "org.eclipse.project1"); //$NON-NLS-1$
-		} catch(CVSException e) {
-			// Ignore
-		}
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "file.txt"); //$NON-NLS-1$
-		setTextFormatExample(bindings);
-		bindings.remove(CVSDecoratorConfiguration.RESOURCE_NAME);
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "folder"); //$NON-NLS-1$
-		setFolderFormatExample(bindings);
-		bindings.remove(CVSDecoratorConfiguration.RESOURCE_NAME);
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, "Project"); //$NON-NLS-1$
-		setProjectFormatExample(bindings);
+		return new TextPair(format, null);
 	}
 	
 	/**
@@ -168,9 +278,9 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		tabItem.setControl(createTextDecoratorPage(tabFolder));
 		
 		// image decoration options
-		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(Policy.bind("Icon_Overlays_24"));//$NON-NLS-1$		
-		tabItem.setControl(createIconDecoratorPage(tabFolder));
+		//tabItem = new TabItem(tabFolder, SWT.NONE);
+		//tabItem.setText(Policy.bind("Icon_Overlays_24"));//$NON-NLS-1$		
+		//tabItem.setControl(createIconDecoratorPage(tabFolder));
 		
 		// general decoration options
 		tabItem = new TabItem(tabFolder, SWT.NONE);
@@ -180,36 +290,47 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		initializeValues();
 		WorkbenchHelp.setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
+		
+		previewTree.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		previewTree.expandAll();
+		
+		PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener);
+		
 		return tabFolder;
 	}
 	
+	public void dispose() {
+		PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(themeListener);
+	}
+	
 	private Control createTextDecoratorPage(Composite parent) {
-		Composite fileTextGroup = new Composite(parent, SWT.NULL);
+		Composite top = new Composite(parent, SWT.NULL);
 		GridLayout	layout = new GridLayout();
+		top.setLayout(layout);
+		GridData data = new GridData(GridData.FILL, GridData.FILL, true, true);
+		top.setLayoutData(data);
+		
+		Group fileTextGroup = new Group(top, SWT.SHADOW_IN);
+		fileTextGroup.setText(Policy.bind("CVSDecoratorPreferencePage.1")); //$NON-NLS-1$
+		layout = new GridLayout();
 		layout.numColumns = 3;
 		fileTextGroup.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
+		data = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
 		fileTextGroup.setLayoutData(data);
-
-		createLabel(fileTextGroup, Policy.bind("Select_the_format_for_file,_folders,_and_project_text_labels__13"), 3); //$NON-NLS-1$
 
 		TextPair format = createFormatEditorControl(fileTextGroup, Policy.bind("&File_Format__14"), Policy.bind("Add_&Variables_15"), getFileBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		fileTextFormat = format.t1;
-		fileTextFormatExample = format.t2;
 		format = createFormatEditorControl(fileTextGroup, Policy.bind("F&older_Format__16"), Policy.bind("Add_Varia&bles_17"), getFolderBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		folderTextFormat = format.t1;
-		folderTextFormatExample = format.t2;
 		format = createFormatEditorControl(fileTextGroup, Policy.bind("&Project_Format__18"), Policy.bind("Add_Variable&s_19"), getFolderBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		projectTextFormat = format.t1;
-		projectTextFormatExample = format.t2;
 
 		createLabel(fileTextGroup, Policy.bind("&Label_decoration_for_outgoing__20"), 1); //$NON-NLS-1$
 		dirtyFlag = new Text(fileTextGroup, SWT.BORDER);
 		dirtyFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		dirtyFlag.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateExamples();
+				previewTree.refresh(true);
 			}
 		});
 		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
@@ -219,11 +340,45 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		addedFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addedFlag.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateExamples();
+				previewTree.refresh(true);
 			}
 		});
+		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
 
-		return fileTextGroup;	
+		// **********
+		// ICONS
+		// **********
+		
+		Group iconGroup = new Group(top, SWT.SHADOW_IN);
+		iconGroup.setText(Policy.bind("Icon_Overlays_24")); //$NON-NLS-1$
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		iconGroup.setLayout(layout);
+		data = data = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
+		iconGroup.setLayoutData(data);
+		
+		createIconDecoratorPage(iconGroup);
+		
+		// **********
+		// PREVIEW
+		// **********
+		
+		Group previewGroup = new Group(top, SWT.SHADOW_IN);
+		previewGroup.setText(Policy.bind("Example__1")); //$NON-NLS-1$
+		layout = new GridLayout();
+		previewGroup.setLayout(layout);
+		data = new GridData(GridData.FILL, GridData.FILL, true, true);
+		previewGroup.setLayoutData(data);
+		
+		// Preview Pane
+		previewTree = new TreeViewer(previewGroup);
+		data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		data.horizontalSpan = 2;
+		data.heightHint = 100;
+		previewTree.getTree().setLayoutData(data);
+		previewTree.setContentProvider(previewContentProvider);
+		previewTree.setLabelProvider(new PreviewLabelProvider());
+		return top;	
 	}
 	
 	private Control createIconDecoratorPage(Composite parent) {
@@ -233,8 +388,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
-
-		createLabel(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.iconDescription"), 1); //$NON-NLS-1$
 		
 		imageShowDirty = createCheckBox(imageGroup, Policy.bind("Sho&w_outgoing_25")); //$NON-NLS-1$
 		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
@@ -261,6 +414,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		GridData data = new GridData();
 		data.horizontalSpan = span;
 		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.BEGINNING;
 		label.setLayoutData(data);
 		return label;
 	}
@@ -268,22 +422,12 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Button createCheckBox(Composite group, String label) {
 		Button button = new Button(group, SWT.CHECK);
 		button.setText(label);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				previewTree.refresh(true);
+			}
+		});
 		return button;
-	}
-	
-	protected void setTextFormatExample(Map bindings) {
-		String example = CVSDecoratorConfiguration.bind(fileTextFormat.getText(), bindings);				
-		fileTextFormatExample.setText(example);
-	}
-	
-	protected void setFolderFormatExample(Map bindings) {
-		String example = CVSDecoratorConfiguration.bind(folderTextFormat.getText(), bindings);				
-		folderTextFormatExample.setText(example);
-	}
-	
-	protected void setProjectFormatExample(Map bindings) {
-		String example = CVSDecoratorConfiguration.bind(projectTextFormat.getText(), bindings);					
-		projectTextFormatExample.setText(example);
 	}
 
 	/**
@@ -418,6 +562,31 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		for (int i = 0; i < result.length; i++) {
 			target.insert("{"+((StringPair)result[i]).s1 +"}"); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
+	}
+	
+	protected CVSDecoration buildDecoration(String name) {
+		Preferences prefs = new Preferences();
+		
+		prefs.setDefault(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, imageShowDirty.getSelection());
+		prefs.setDefault(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, imageShowAdded.getSelection());
+		prefs.setDefault(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, imageShowHasRemote.getSelection());
+		prefs.setDefault(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, imageShowNewResource.getSelection());
+		prefs.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);
+		prefs.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, dirtyFlag.getText());
+		prefs.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, addedFlag.getText());
+		
+		CVSDecoration decoration = 
+			new CVSDecoration(name, prefs, fileTextFormat.getText(), folderTextFormat.getText(), projectTextFormat.getText());
+		
+		decoration.setTag("v1_0"); //$NON-NLS-1$
+		decoration.setKeywordSubstitution(Command.KSUBST_TEXT.getShortDisplayText()); //$NON-NLS-1$
+		decoration.setRevision("1.45"); //$NON-NLS-1$
+		try {
+			decoration.setLocation(CVSRepositoryLocation.fromString(":pserver:alize@cvs.site.org:/home/cvsroot")); //$NON-NLS-1$
+		} catch (CVSException e) {
+			// continue without a location, since the location is hard coded an exception should never occur
+		}
+		return decoration;
 	}
 	
 	private Map getFolderBindingDescriptions() {

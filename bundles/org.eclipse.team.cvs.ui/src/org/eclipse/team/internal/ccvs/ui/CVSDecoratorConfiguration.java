@@ -13,8 +13,6 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Map;
 
-import org.eclipse.jface.viewers.IDecoration;
-
 public class CVSDecoratorConfiguration {
 
 	// bindings for 
@@ -44,8 +42,16 @@ public class CVSDecoratorConfiguration {
 	// prefix characters that can be removed if the following binding is not found
 	private static final char KEYWORD_SEPCOLON = ':';
 	private static final char KEYWORD_SEPAT = '@';
-		
-	public static void decorate(IDecoration decoration, String format, Map bindings) {
+	
+	// font and color definition ids
+	public static final String OUTGOING_CHANGE_FOREGROUND_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_foreground_color"; //$NON-NLS-1$
+	public static final String OUTGOING_CHANGE_BACKGROUND_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_background_color"; //$NON-NLS-1$
+	public static final String OUTGOING_CHANGE_FONT = "org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_font"; //$NON-NLS-1$
+	public static final String IGNORED_FOREGROUND_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_foreground_color"; //$NON-NLS-1$
+	public static final String IGNORED_BACKGROUND_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_background_color"; //$NON-NLS-1$
+	public static final String IGNORED_FONT = "org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_font"; //$NON-NLS-1$
+	
+	public static void decorate(CVSDecoration decoration, String format, Map bindings) {
 		StringBuffer prefix = new StringBuffer(80);
 		StringBuffer suffix = new StringBuffer(80);
 		StringBuffer output = prefix;

@@ -13,20 +13,20 @@ package org.eclipse.team.internal.ccvs.ui.console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.*;
 
 /**
@@ -137,7 +137,8 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
 				errorStream.setColor(errorColor);
 				// install font
-				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+				Font f = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT);
+				setFont(f);
 				initialized = true;
 			}
 		}
@@ -309,7 +310,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				errorColor = newColor;
 				// font
 			} else if (property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+				setFont(((FontRegistry)event.getSource()).get(ICVSUIConstants.PREF_CONSOLE_FONT));
 			}
 		}
 		// show preferences

@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;

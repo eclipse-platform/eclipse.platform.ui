@@ -933,18 +933,75 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-<!-- ********** Font Definitions ************** -->
-   <extension
-         point="org.eclipse.ui.fontDefinitions">
-      <fontDefinition
+   
+<!-- ********** Color and Font Definitions ************** -->   
+   <extension point="org.eclipse.ui.themes">
+	<themeElementCategory
+    	id="org.eclipse.team.cvs.ui.fontsandcolors"
+       	label="%CVS"/>
+    <fontDefinition
             label="%CVSConsoleFont.label"
+            categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
             defaultsTo="org.eclipse.jface.textfont"
             id="pref_console_font">
          <description>
             %CVSConsoleFont.description
          </description>
+    </fontDefinition>   	
+	<colorDefinition 
+        id="org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_foreground_color"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
+        label="Outgoing Change (Foreground)"
+        value="COLOR_LIST_FOREGROUND">
+        <description>
+        This color is used for the foreground color for resources that have outgoing changes.
+        </description>
+      </colorDefinition>
+      <colorDefinition 
+        id="org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_background_color"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
+        label="Outgoing Change (Background)"
+        value="COLOR_LIST_BACKGROUND">
+        <description>
+        This color is used for the background color for resources that have outgoing changes.
+        </description>
+      </colorDefinition>  
+      <fontDefinition
+        id="org.eclipse.team.cvs.ui.fontsandcolors.outgoing_change_font"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"      
+        label="Outgoing Change Font">
+        <description>
+        The font used to display outgoing changes.
+        </description>
       </fontDefinition>
-   </extension>
+      <colorDefinition 
+        id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_foreground_color"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
+        label="Ignored Resource (Foreground)"
+        value="COLOR_LIST_FOREGROUND">
+        <description>
+        This color is used for the foreground color for resources that are ignored from CVS.
+        </description>
+      </colorDefinition>
+      <colorDefinition 
+        id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_background_color"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
+        label="Ignored Resource (Background)"
+        value="COLOR_LIST_BACKGROUND">
+        <description>
+        This color is used for the background color for resources that are ignored from CVS.
+        </description>
+      </colorDefinition>  
+      <fontDefinition
+        id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_font"
+        categoryId="org.eclipse.team.cvs.ui.fontsandcolors"      
+        label="Ignored Resource Font">
+        <description>
+        The font used to display resources that are ignored from CVS.
+        </description>
+      </fontDefinition>    
+</extension>
+   
 <!-- ********** QuickDiff text editor support ************** -->
    <extension
          point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
