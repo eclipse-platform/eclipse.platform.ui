@@ -5,35 +5,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
-
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-import org.eclipse.search.ui.IQueryListener;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
-import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class InternalSearchUI {
 	//The shared instance.
@@ -47,22 +40,12 @@ public class InternalSearchUI {
 
 	public static final Object FAMILY_SEARCH = new Object();
 	
-	// TODO revisit once new Jobs view is finalized
-	private final class ShowJobResultAction extends Action {
-		public ShowJobResultAction() {
-			setToolTipText("Show the Search Results");
-		}
-		public void run() {
-			activateSearchView();
-		}
-	}
 
 	private class SearchJobRecord {
 		public ISearchQuery fQuery;
 		public Job fJob;
 		public boolean fBackground;
 		public boolean fIsRunning;
-		public ProgressMonitorWrapper fProgressMonitor;
 
 		SearchJobRecord(ISearchQuery job, boolean bg) {
 			fQuery= job;
@@ -71,50 +54,7 @@ public class InternalSearchUI {
 		}
 	}
 	
-	private class ProgressMonitorWrapper implements IProgressMonitor {
-		private IProgressMonitor fMonitor;
-		public int fTotalWork;
-		public double fWorked;
-		
-		public ProgressMonitorWrapper(IProgressMonitor pm) {
-			fMonitor= pm;
-		}
 
-		public void beginTask(String name, int totalWork) {
-			fTotalWork= totalWork;
-			fMonitor.beginTask(name, totalWork);
-		}
-
-		public void done() {
-			fMonitor.done();
-		}
-
-		public void internalWorked(double work) {
-			fWorked+= work; 
-			fMonitor.internalWorked(work);
-		}
-
-		public boolean isCanceled() {
-			return fMonitor.isCanceled();
-		}
-
-		public void setCanceled(boolean value) {
-			fMonitor.setCanceled(value);
-		}
-
-		public void setTaskName(String name) {
-			fMonitor.setTaskName(name);
-		}
-
-		public void subTask(String name) {
-			fMonitor.subTask(name);
-		}
-
-		public void worked(int work) {
-			fMonitor.worked(work);
-		}
-		
-	}
 	private class InternalSearchJob extends Job {
 		SearchJobRecord fSearchJobRecord;
 		public InternalSearchJob(SearchJobRecord sjr) {
@@ -124,11 +64,10 @@ public class InternalSearchUI {
 		
 		protected IStatus run(IProgressMonitor monitor) {
 			fSearchJobRecord.fJob= this;
-			fSearchJobRecord.fProgressMonitor= new ProgressMonitorWrapper(monitor); 
 			searchJobStarted(fSearchJobRecord);
 			IStatus status= null;
 			try{
-				status= fSearchJobRecord.fQuery.run(fSearchJobRecord.fProgressMonitor); 
+				status= fSearchJobRecord.fQuery.run(monitor); 
 			} finally {
 				searchJobFinished(fSearchJobRecord);
 			}
@@ -212,6 +151,7 @@ public class InternalSearchUI {
 	}
 
 	private void configureJob(Job job) {
+		job.setUser(true);
 		try {
 			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
 			URL icon;
@@ -288,20 +228,6 @@ public class InternalSearchUI {
 		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
 		if (rec != null && rec.fJob != null)
 			rec.fJob.cancel();
-	}
-
-	public int getAmountOfWork(ISearchQuery job) {
-		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
-		if (rec != null && rec.fJob != null)
-			return rec.fProgressMonitor.fTotalWork; 
-		return 0;
-	}
-
-	public double getCurrentAmountOfWork(ISearchQuery job) {
-		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
-		if (rec != null && rec.fJob != null)
-			return rec.fProgressMonitor.fWorked;  
-		return 1;
 	}
 
 	public ISearchResultViewPart activateSearchView() {

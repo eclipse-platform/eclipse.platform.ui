@@ -2,9 +2,6 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,11 +18,8 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
@@ -41,7 +35,6 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.UIJob;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -68,9 +61,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private CancelSearchAction fCancelAction;
 	
 	private IMemento fPageState;
-	private ProgressBar fBar;
-	private UpdateUIJob fUpdateJob;
-	private Composite fParent;
 
 	
 	private static void createStandardGroups(IContributionManager menu) {
@@ -177,28 +167,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 	}
 
-	class UpdateUIJob extends UIJob {
-		private boolean fRunning= true; 
-		
-		public UpdateUIJob(String name) {
-			super(name);
-			setSystem(true);
-		}
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			refreshProgress();
-			schedule(200);
-			return Status.OK_STATUS;
-		}
-		
-		public void stop() {
-			fRunning= false;
-		}
-		public boolean shouldSchedule() {
-			return fRunning;
-		}
-		
-		
-	}
 	public SearchView() {
 		super();
 		fPartsToPages= new HashMap();
@@ -302,70 +270,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			});
 		}
 	}
-
-	protected void refreshProgress() {
-		ISearchResult currentResult= getCurrentSearchResult();
-		double current= 0;
-		boolean queryRunning= false;
-		if (currentResult != null) {
-			ISearchQuery query= currentResult.getQuery();
-			current= InternalSearchUI.getInstance().getCurrentAmountOfWork(query); 
-			queryRunning= InternalSearchUI.getInstance().isQueryRunning(query);
-		}
-		if (fBar != null) {
-			if (queryRunning) {
-				fBar.setSelection((int)current);  
-			} else {
-				hideProgressBar();
-			}
-		}
-	}
 	
 	public ISearchResult getCurrentSearchResult() {
 		return fCurrentSearch;
 	}
 
 	public void createPartControl(Composite parent) {
-		fParent= parent;
-		GridLayout gridLayout= new GridLayout();
-		gridLayout.numColumns= 1;
-		gridLayout.horizontalSpacing= 0;
-		gridLayout.marginHeight= 0;
-		gridLayout.marginWidth= 0;
-		gridLayout.verticalSpacing= 0;
-		gridLayout.horizontalSpacing= 0;
-		parent.setLayout(gridLayout);
-		
 		super.createPartControl(parent);
-		
-		Composite book= getPageBook();
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.FILL;
-		gd.verticalAlignment= GridData.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.grabExcessVerticalSpace= true;
-		book.setLayoutData(gd);
 	
 		createActions();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
-	}
-
-	private void showProgressBar() {
-		fBar= new ProgressBar(fParent, SWT.HORIZONTAL);
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.heightHint= 12; 
-		fBar.setLayoutData(gd);
-		fBar.setVisible(true);
-		fParent.layout(true);
-	}
-
-	private void hideProgressBar() {
-		fBar.dispose(); 
-		fBar= null;
-		fParent.layout(true);
 	}
 
 	private void initializeToolBar() {
@@ -428,31 +343,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void queryStarting(ISearchQuery query) {
 		updateTitle();
-		if (getPageBook() != null && !getPageBook().isDisposed()) {
-			getPageBook().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					ISearchResult result= getCurrentSearchResult();
-					showProgressBar();
-					int max= InternalSearchUI.getInstance().getAmountOfWork(result.getQuery()); 
-					fBar.setMaximum(max); 
-				}
-			});
-		}
-		fUpdateJob= new UpdateUIJob(SearchMessages.getString("SearchView.refresh_progress_job.label"));   //$NON-NLS-1$
-		fUpdateJob.schedule(200);
 	}
 
 	public void queryFinished(ISearchQuery query) {
 		updateTitle(); 
-		if (getPageBook() != null && !getPageBook().isDisposed()) {
-			getPageBook().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (fBar != null)
-						hideProgressBar();
-				}
-			});
-		}
-		fUpdateJob.stop();
 	}
 	
 	// Methods related to saving page state. -------------------------------------------
