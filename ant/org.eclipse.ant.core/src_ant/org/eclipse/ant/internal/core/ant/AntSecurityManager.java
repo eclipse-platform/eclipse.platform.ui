@@ -153,10 +153,10 @@ public class AntSecurityManager extends SecurityManager {
 	public void checkMulticast(InetAddress maddr, byte ttl) {
 		if (securityManager != null) {
 			String host = maddr.getHostAddress();
-			if (!host.startsWith("[") && host.indexOf(':') != -1) {
-	   			host = "[" + host + "]";
+			if (!host.startsWith("[") && host.indexOf(':') != -1) { //$NON-NLS-1$
+	   			host = "[" + host + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-	    	checkPermission(new SocketPermission(host, "accept,connect"));
+	    	checkPermission(new SocketPermission(host, "accept,connect")); //$NON-NLS-1$
 		}
 	}
 
