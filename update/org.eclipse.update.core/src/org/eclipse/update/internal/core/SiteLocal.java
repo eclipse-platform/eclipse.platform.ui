@@ -156,6 +156,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				getCurrentConfigurationModel().setCurrent(false);
 			config.setCurrent(true);
 			setCurrentConfigurationModel((InstallConfigurationModel) config);
+			((InstallConfigurationModel) config).markReadOnly();
 
 			// notify listeners
 			Object[] siteLocalListeners = listeners.getListeners();

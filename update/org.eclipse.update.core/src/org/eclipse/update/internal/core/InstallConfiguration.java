@@ -85,8 +85,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @see IInstallConfiguration#addConfigurationSite(IConfigurationSite)
 	 */
 	public void addConfigurationSite(IConfigurationSite site) {
-		if (!isCurrent())
+		if (!isCurrent() || isReadOnly() )
 			return;
+			
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
