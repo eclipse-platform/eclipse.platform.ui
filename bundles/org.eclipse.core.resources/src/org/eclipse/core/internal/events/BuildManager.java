@@ -281,12 +281,7 @@ protected Hashtable getBuilderMap(IProject project) throws CoreException {
 private Hashtable getBuilders(IProject project) {
 	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
 	Assert.isNotNull(info, Policy.bind("noProject", new String[] {project.getName()}));
-	Hashtable builders = info.getBuilders();
-	if (builders == null) {
-		builders = new Hashtable(5);
-		info.setBuilders(builders);
-	}
-	return builders;
+	return info.getBuilders();
 }
 public IResourceDelta getDelta(IProject project) {
 	if (currentTree == null)
@@ -343,6 +338,19 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 	}
 }
 public void opening(IProject project) {
+}
+/**
+ * We have renamed this project in the workspace so the build manager
+ * must fix the project reference inside each of its builders.
+ */
+public void renamedProject(IProject project) {
+	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, true);
+	Hashtable builders = info.getBuilders();
+	for (Enumeration e = builders.keys(); e.hasMoreElements(); ) {
+		Object key = e.nextElement();
+		InternalBuilder builder = (InternalBuilder) builders.get(key);
+		builder.setProject(project);
+	}
 }
 /**
  * Sets the builder map for the given project.  The builder map is

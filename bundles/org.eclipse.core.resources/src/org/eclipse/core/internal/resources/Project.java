@@ -684,11 +684,11 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 				getPropertyManager().closePropertyStore(this);
 
 				// rename the meta area
-				renameMetaArea(this, destProject);
+				renameMetaArea(this, destProject, force, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 				rollbackLevel++; // 1
 
 				// copy just the project and not its children (copies project tree node, properties)
-				internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+				internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 				rollbackLevel++; // 2
 
 				// set the description
@@ -702,17 +702,18 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 				info.clearNatures();
 
 				// Workaround for 1FW1IFY: ITPCORE:ALL - Builders not fixed up on project rename
-				info.setBuilders(null);
+				workspace.getBuildManager().renamedProject(destProject);
+				rollbackLevel++; // 3
 
 				// call super.move for each child
 				IResource[] children = members();
 				for (int i = 0; i < children.length; i++)
 					children[i].move(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 3
+				rollbackLevel++; // 4
 
 				// delete the source
 				delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				rollbackLevel++; // 4
+				rollbackLevel++; // 5
 
 				// tell the marker manager that we moved so the marker deltas are ok
 				monitor.subTask("Creating marker deltas.");
@@ -721,13 +722,20 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 
 			} catch (CoreException e) {
 				switch (rollbackLevel) {
-					case 4 :
+					case 5 :
 						// try and move everything back to the source
-					case 3 :
+					case 4 :
 						// project member deletion should be taken care of by super.move
+					case 3:
+						// ensure the builders reference the correct projects
+						workspace.getBuildManager().renamedProject(this);
 					case 2 :
 						// rename the meta area back to the original
-						renameMetaArea(destProject, this);
+						try {
+							renameMetaArea(destProject, this, force, null);
+						} catch (CoreException e2) {
+							// ignore this exception and rethrow the one that got us here
+						}
 					case 1 :
 						// delete the destination
 						try {
@@ -969,12 +977,15 @@ private void pseudoOpen() throws CoreException {
 	getResourceInfo(false, true).set(M_OPEN);
 	workspace.getSaveManager().restore(this, null);
 }
-protected void renameMetaArea(IProject source, IProject destination) throws CoreException {
+
+protected void renameMetaArea(IProject source, IProject destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().getLocationFor(source).toFile();
 	java.io.File newMetaArea = workspace.getMetaArea().getLocationFor(destination).toFile();
-	if (!oldMetaArea.renameTo(newMetaArea)) {
+	try {
+		((Project) source).getLocalManager().getStore().move(oldMetaArea, newMetaArea, force, monitor);
+	} catch (CoreException e) {
 		String message = Policy.bind("renameMeta", new String[] { getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, getFullPath(), message, null);
+		throw new ResourceException(IResourceStatus.ERROR, getFullPath(), message, e);
 	}
 }
 /**

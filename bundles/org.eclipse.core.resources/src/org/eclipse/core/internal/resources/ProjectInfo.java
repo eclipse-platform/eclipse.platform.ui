@@ -26,6 +26,8 @@ public synchronized void clearNatures() {
 	natures = null;
 }
 public Hashtable getBuilders() {
+	if (builders == null)
+		builders = new Hashtable(5);
 	return builders;
 }
 /**

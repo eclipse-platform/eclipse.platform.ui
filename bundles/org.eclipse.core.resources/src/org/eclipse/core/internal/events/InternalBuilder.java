@@ -65,9 +65,7 @@ protected IProject getProject() {
 	pluginDescriptor = value;
 }
 /**
- * Sets the project for which this builder operates.  This value can only
- * be set once and it typically called by the platform infrastructure.
- * Subsequent calls will have no effect.
+ * Sets the project for which this builder operates.  
  *
  * @see #getProject
  */
