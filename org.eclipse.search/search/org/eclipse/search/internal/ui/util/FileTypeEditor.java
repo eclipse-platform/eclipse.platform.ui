@@ -81,7 +81,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	}
 	protected void handleBrowseButton() {
 		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), getFileTypes());
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == TypeFilteringDialog.OK) {
 			setFileTypes(new HashSet(Arrays.asList(dialog.getResult())));
 		}
 	}

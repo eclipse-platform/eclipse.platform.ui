@@ -88,7 +88,7 @@ class ShowSearchesAction extends Action {
 			selected[0]= selectedAction;
 			dlg.setInitialSelections(selected);
 		}
-		if (dlg.open() == dlg.OK) {
+		if (dlg.open() == ListDialog.OK) {
 			List result= Arrays.asList(dlg.getResult());
 			if (result != null && result.size() == 1) {
 				((ShowSearchAction)result.get(0)).run();
