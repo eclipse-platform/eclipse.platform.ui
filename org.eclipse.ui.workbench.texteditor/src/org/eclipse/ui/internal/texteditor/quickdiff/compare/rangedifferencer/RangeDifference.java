@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
+import org.eclipse.jface.text.Assert;
+
 /**
  * Description of a change between two or three ranges of comparable entities.
  * <p>
@@ -63,7 +65,7 @@ public class RangeDifference {
 	 *
 	 * @param changeKind the kind of change
 	 */
-	/* package */ RangeDifference(int changeKind) {
+	public RangeDifference(int changeKind) {
 		fKind= changeKind;
 	}
 
@@ -77,7 +79,7 @@ public class RangeDifference {
 	 * @param leftStart start index of entity on left side
 	 * @param leftLength number of entities on left side
 	 */
-	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
+	public RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
 		fKind= kind;
 		fRightStart= rightStart;
 		fRightLength= rightLength;
@@ -97,7 +99,7 @@ public class RangeDifference {
 	 * @param ancestorStart start index of entity on ancestor side
 	 * @param ancestorLength number of entities on ancestor side
 	 */
-	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
+	public RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
 									int ancestorStart, int ancestorLength) {
 		this(kind, rightStart, rightLength, leftStart, leftLength);
 		lAncestorStart= ancestorStart;
@@ -203,6 +205,65 @@ public class RangeDifference {
 	 */
 	public int maxLength() {
 		return Math.max(fRightLength, Math.max(fLeftLength, lAncestorLength));
+	}
+
+	/**
+	 * Shifts the offset into the left document of the receiver. 
+	 * 
+	 * @param leftShift the number of elements to shift
+	 */
+	public void shiftLeft(int shift) {
+		Assert.isTrue(shift + fLeftStart >= 0);
+		fLeftStart += shift;
+	}
+
+	/**
+	 * Shifts the offset into the right document of the receiver. 
+	 * 
+	 * @param rightShift the number of elements to shift
+	 */
+	public void shiftRight(int shift) {
+		Assert.isTrue(shift + fRightStart >= 0);
+		fRightStart += shift;
+	}
+
+	/**
+	 * Resizes the receiver <code>shift</code> units, on both sides, by
+	 * moving the start of the difference.
+	 * 
+	 * @param shift the number of elements to shift
+	 */
+	public void extendStart(int shift) {
+		Assert.isTrue(shift + fRightStart >= 0);
+		Assert.isTrue(shift + fLeftStart >= 0);
+		fRightStart += shift;
+		fRightLength -= shift;
+		fLeftStart += shift;
+		fLeftLength -= shift;
+	}
+
+	/**
+	 * Resizes the receiver <code>shift</code> units, on both sides, by
+	 * moving the end of the difference.
+	 * 
+	 * @param shift the number of elements to shift
+	 */
+	public void extendEnd(int shift) {
+		Assert.isTrue(shift + fRightLength >= 0);
+		Assert.isTrue(shift + fLeftLength >= 0);
+		fRightLength += shift;
+		fLeftLength += shift;
+	}
+	
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof RangeDifference) {
+			RangeDifference d= (RangeDifference) obj;
+			return fKind == d.fKind && fRightStart == d.fRightStart && fRightLength == d.fRightLength && fLeftStart == d.fLeftStart && fLeftLength == d.fLeftLength;
+		}
+		return false;
 	}
 }
 

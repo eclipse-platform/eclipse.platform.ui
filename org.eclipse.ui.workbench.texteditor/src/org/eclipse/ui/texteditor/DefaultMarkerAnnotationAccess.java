@@ -97,7 +97,8 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		} else if (annotation instanceof IAnnotationExtension) {
 			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
 			AnnotationPreference preference= getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
-			return preference.getAnnotationType();
+			if (preference != null)
+				return preference.getAnnotationType();
 		}
 		return UNKNOWN;
 	}

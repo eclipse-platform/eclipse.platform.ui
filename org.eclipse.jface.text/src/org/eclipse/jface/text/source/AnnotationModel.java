@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -51,6 +52,15 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	private Map fAttachments= new HashMap();
+	/**
+	 * The annotation model listener on attached submodels.
+	 * @since 3.0
+	 */
+	private IAnnotationModelListener fModelListener= new IAnnotationModelListener() {
+		public void modelChanged(IAnnotationModel model) {
+			AnnotationModel.this.fireModelChanged();
+		}
+	};
 
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
@@ -275,7 +285,61 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see IAnnotationModel#getAnnotationsIterator()
 	 */
 	public Iterator getAnnotationIterator() {
-		return getAnnotationIterator(true);
+		return getAnnotationIterator(true, true);
+	}
+	
+	/**
+	 * Returns all annotations managed by this model. <code>cleanup</code>
+	 * indicates whether all annotations whose associated positions are 
+	 * deleted should previously be removed from the model. <code>recurse</code> indicates
+	 * whether annotations of attached submodels should also be returned.
+	 * 
+	 * @param cleanup indicates whether annotations with deleted associated positions are removed
+	 * @param recurse whether to return annotations managed by submodels.
+	 * @return all annotations managed by this model
+	 * @since 3.0
+	 */
+	private Iterator getAnnotationIterator(boolean cleanup, boolean recurse) {
+		
+		if (!recurse)
+			return getAnnotationIterator(cleanup);
+		
+		List iterators= new ArrayList(fAttachments.size() + 1);
+		iterators.add(getAnnotationIterator(cleanup));
+		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
+			iterators.add(((IAnnotationModel)fAttachments.get(it.next())).getAnnotationIterator());
+		}
+		
+		final Iterator iter= iterators.iterator();
+		
+		// Meta iterator...
+		return new Iterator() {
+
+			/** The current iterator. */
+			private Iterator fCurrent= (Iterator) iter.next(); // there is at least one.
+			
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+
+			public boolean hasNext() {
+				if (fCurrent.hasNext())
+					return true;
+				else if (iter.hasNext()) {
+					fCurrent= (Iterator) iter.next();
+					return hasNext();
+				} else
+					return false;
+			}
+
+			public Object next() {
+				if (!hasNext())
+					throw new NoSuchElementException();
+				else
+					return fCurrent.next();
+			}
+			
+		};
 	}
 	
 	/**
@@ -299,7 +363,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see IAnnotationModel#getPosition(Annotation)
 	 */
 	public Position getPosition(Annotation annotation) {
-		return (Position) fAnnotations.get(annotation);
+		Position position= (Position) fAnnotations.get(annotation);
+		Iterator it= fAttachments.values().iterator();
+		while (position == null && it.hasNext())
+			position= ((IAnnotationModel)it.next()).getPosition(annotation);
+			
+		return position;
 	}
 	
 	/**
@@ -378,6 +447,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fAttachments.put(key, attachment);
 			for (int i= 0; i < fOpenConnections; i++)
 				attachment.connect(fDocument);
+			attachment.addAnnotationModelListener(fModelListener);
 		}
 	}
 
@@ -398,6 +468,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (ret != null) {
 			for (int i= 0; i < fOpenConnections; i++)
 				ret.disconnect(fDocument);
+			ret.removeAnnotationModelListener(fModelListener);
 		}
 		return ret;
 	}

@@ -299,6 +299,13 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		IChangeRulerColumn column= getChangeColumn();
 		if (column != null)
 			column.setModel(getOrCreateDiffer());
+		IOverviewRuler ruler= getOverviewRuler();
+		if (ruler != null) {
+			ruler.addAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
+			ruler.addAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffAddition"); //$NON-NLS-1$
+			ruler.addAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
+			ruler.update();
+		}
 	}
 
 	/**
@@ -308,6 +315,13 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		IChangeRulerColumn column= getChangeColumn();
 		if (column != null)
 			column.setModel(null);
+		IOverviewRuler ruler= getOverviewRuler();
+		if (ruler != null) {
+			ruler.removeAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
+			ruler.removeAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffAddition"); //$NON-NLS-1$
+			ruler.removeAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
+			ruler.update();
+		}
 	}
 
 	/**
@@ -573,7 +587,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
 		if (isPrefQuickDiffAlwaysOn() || isChangeInformationShowing()) {
-			LineNumberChangeRulerColumn column= new LineNumberChangeRulerColumn();
+			LineNumberChangeRulerColumn column= new LineNumberChangeRulerColumn(getSharedColors());
 			column.setHover(createChangeHover());
 			initializeChangeRulerColumn(column);
 			fLineNumberRulerColumn= column;
@@ -709,6 +723,12 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		}
 	}
 
+	/**
+	 * Returns the <code>AnnotationPreference</code> corresponding to <code>colorKey</code>.
+	 * 
+	 * @param colorKey the color key.
+	 * @return the corresponding <code>AnnotationPreference</code>
+	 */
 	private AnnotationPreference getAnnotationPreference(String colorKey) {
 		for (Iterator iter= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter.hasNext();) {
 			AnnotationPreference pref= (AnnotationPreference) iter.next();
@@ -718,6 +738,9 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		return null;
 	}
 
+	/**
+	 * Shows the overview ruler.
+	 */
 	protected void showOverviewRuler() {
 		if (fOverviewRuler != null) {
 			if (getSourceViewer() instanceof ISourceViewerExtension) {
@@ -727,16 +750,20 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		}
 	}
 
+	/**
+	 * Hides the overview ruler.
+	 */
 	protected void hideOverviewRuler() {
 		if (getSourceViewer() instanceof ISourceViewerExtension) {
 			fSourceViewerDecorationSupport.hideAnnotationOverview();
 			((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(false);
 		}
 	}
+	
 	/**
+	 * Returns the annotation access. 
 	 * 
-	 * 
-	 * @return
+	 * @return the annotation access
 	 */
 	protected IAnnotationAccess getAnnotationAccess() {
 		if (fAnnotationAccess == null)
@@ -745,9 +772,9 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Returns the overview ruler.
 	 * 
-	 * 
-	 * @return
+	 * @return the overview ruler
 	 */
 	protected IOverviewRuler getOverviewRuler() {
 		if (fOverviewRuler == null)
@@ -756,9 +783,9 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Returns the source viewer decoration support.
 	 * 
-	 * 
-	 * @return
+	 * @return the source viewer decoration support
 	 */
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
 		if (fSourceViewerDecorationSupport == null) {
@@ -769,9 +796,9 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Returns the annotation preferences.
 	 * 
-	 * 
-	 * @return
+	 * @return the annotation preferences
 	 */
 	protected MarkerAnnotationPreferences getAnnotationPreferences() {
 		return fAnnotationPreferences;

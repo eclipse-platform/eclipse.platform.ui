@@ -400,7 +400,7 @@
             presentationLayer="2"
             contributesToHeader="false"
             showInNextPrevDropdownToolbarActionKey="showChangeInNextPrevDropdownToolbarAction"
-            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarAction="true"
             isGoToNextNavigationTargetKey="isChangeGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isChangeGoToPreviousNavigationTarget"

@@ -212,7 +212,7 @@ public class OverviewRuler implements IOverviewRuler {
 		
 	private static final int INSET= 2;
 	private static final int ANNOTATION_HEIGHT= 4;
-	private static boolean ANNOTATION_HEIGHT_SCALABLE= false;
+	private static boolean ANNOTATION_HEIGHT_SCALABLE= true;
 	
 	
 	/** The model of the overview ruler */
@@ -447,7 +447,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= writable;
+			size.y= writable - fHeader.getSize().y;
 		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -477,6 +477,10 @@ public class OverviewRuler implements IOverviewRuler {
 					try {
 						if (ANNOTATION_HEIGHT_SCALABLE) {
 							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
+							// don't count empty trailing lines
+							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
+							if (lastLine.getOffset() == annotationOffset + annotationLength)
+								numbersOfLines--;
 							hh= (numbersOfLines * size.y) / maxLines;
 							if (hh < ANNOTATION_HEIGHT)
 								hh= ANNOTATION_HEIGHT;
@@ -529,7 +533,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= writable;
+			size.y= writable - fHeader.getSize().y;
 			
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -559,14 +563,14 @@ public class OverviewRuler implements IOverviewRuler {
 					try {
 						if (ANNOTATION_HEIGHT_SCALABLE) {
 							int numbersOfLines= document.getNumberOfLines(p.getOffset(), p.getLength());
-							hh= (numbersOfLines * size.y) / maxLines;
+							hh= numbersOfLines * (size.y / maxLines);
 							if (hh < ANNOTATION_HEIGHT)
 								hh= ANNOTATION_HEIGHT;
 						}
 						fAnnotationHeight= hh;
 
 						int startLine= textWidget.getLineAtOffset(widgetRegion.getOffset());						
-						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
+						yy= Math.min(startLine * (size.y / maxLines), size.y - hh);
 
 						if (fill != null) {
 							gc.setBackground(fill);
@@ -635,7 +639,7 @@ public class OverviewRuler implements IOverviewRuler {
 		int writable= maxLines * textWidget.getLineHeight();
 
 		if (rulerLength > writable)
-			rulerLength= writable;
+			rulerLength= writable - fHeader.getSize().y;
 
 		if (y_coordinate >= writable)
 			return new int[] {-1, -1};
@@ -669,6 +673,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Returns the position of the first annotation found in the given line range.
 	 * 
 	 * @param lineNumbers the line range
+	 * @param ignoreSelectedAnnotation whether to ignore the current selection
 	 * @return the position of the first found annotation
 	 */
 	private Position getAnnotationPosition(int[] lineNumbers, boolean ignoreSelectedAnnotation) {
@@ -700,8 +705,20 @@ public class OverviewRuler implements IOverviewRuler {
 						continue;
 					
 					Position p= fModel.getPosition(a);
-					if (start <= p.getOffset() && p.getOffset() < end) {
-						if ((found == null || p.getOffset() < found.getOffset()) && (ignoreSelectedAnnotation || currentSelection.x != p.getOffset() || currentSelection.y != p.getLength()))
+					if (p == null)
+						continue;
+					
+					int posOffset= p.getOffset();
+					int posEnd= posOffset + p.getLength();
+					IRegion region= d.getLineInformationOfOffset(posEnd);
+					// trailing empty lines don't count
+					if (posEnd > posOffset && region.getOffset() == posEnd) {
+						posEnd--;
+						region= d.getLineInformationOfOffset(posEnd);
+					}
+					
+					if (posOffset <= end && posEnd >= start) {
+						if ((found == null || posOffset < found.getOffset()) && (ignoreSelectedAnnotation || currentSelection.x != posOffset || currentSelection.y != p.getLength()))
 							found= p;
 					}
 				}

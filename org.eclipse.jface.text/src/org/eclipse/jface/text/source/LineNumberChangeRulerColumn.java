@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.Assert;
@@ -40,7 +41,46 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			postRedraw();
 		}
 	}
-
+	
+	/**
+	 * Returns a specification of a color that lies between the given
+	 * foreground and background color using the given scale factor.
+	 * 
+	 * @param fg the foreground color
+	 * @param bg the background color
+	 * @param scale the scale factor
+	 * @return the interpolated color
+	 */
+	private static RGB interpolate(RGB fg, RGB bg, double scale) {
+		return new RGB(
+			(int) ((1.0-scale) * fg.red + scale * bg.red),
+			(int) ((1.0-scale) * fg.green + scale * bg.green),
+			(int) ((1.0-scale) * fg.blue + scale * bg.blue)
+		);
+	}
+	
+	/**
+	 * Returns the grey value in which the given color would be drawn in grey-scale.
+	 * 
+	 * @param rgb the color
+	 * @return the grey-scale value
+	 */
+	private static double greyLevel(RGB rgb) {
+		if (rgb.red == rgb.green && rgb.green == rgb.blue)
+			return rgb.red;
+		return  (0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue + 0.5);
+	}
+	
+	/**
+	 * Returns whether the given color is dark or light depending on the colors grey-scale level.
+	 * 
+	 * @param rgb the color
+	 * @return <code>true</code> if the color is dark, <code>false</code> if it is light
+	 */
+	private static boolean isDark(RGB rgb) {
+		return greyLevel(rgb) > 128;
+	}
+	
 	/** Color for changed lines. */
 	private Color fAddedColor;
 	/** Color for added lines. */
@@ -55,6 +95,13 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	private AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */ 
 	private boolean fCharacterDisplay;
+	/** The shared text colors. */
+	private ISharedTextColors fSharedColors;
+	
+	public LineNumberChangeRulerColumn(ISharedTextColors sharedColors) {
+		Assert.isNotNull(sharedColors);
+		fSharedColors= sharedColors;
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#handleDispose()
@@ -156,7 +203,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	private ILineDiffInfo getDiffInfo(int line) {
 		if (fAnnotationModel == null)
 			return null;
-
+		
 		// assume direct access
 		if (fAnnotationModel instanceof ILineDiffer) {
 			ILineDiffer differ= (ILineDiffer)fAnnotationModel;
@@ -188,10 +235,10 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		Color ret= null;
 		switch (info.getType()) {
 			case ILineDiffInfo.CHANGED :
-				ret= fChangedColor;
+				ret= getShadedColor(fChangedColor, display);
 				break;
 			case ILineDiffInfo.ADDED :
-				ret= fAddedColor;
+				ret= getShadedColor(fAddedColor, display);
 				break;
 		}
 		return ret == null ? getBackground(display) : ret;
@@ -265,6 +312,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			updateNumberOfDigits();
 			computeIndentations();
 			layout(true);
+			postRedraw();
 		}
 	}
 
@@ -286,6 +334,29 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public void setChangedColor(Color changedColor) {
 		fChangedColor= changedColor;
+	}
+
+	/**
+	 * Sets the background color for changed lines. The color has to be disposed of by the caller when
+	 * the receiver is no longer used.
+	 * 
+	 * @param changedColor the new color to be used for the changed lines background
+	 */
+	private Color getShadedColor(Color color, Display display) {
+		if (color == null)
+			return null;
+			
+		RGB baseRGB= color.getRGB();
+		RGB background= getBackground(display).getRGB();
+		
+		boolean darkBase= isDark(baseRGB);
+		boolean darkBackground= isDark(background);
+		if (darkBase && darkBackground)
+			background= new RGB(255, 255, 255);
+		else if (!darkBase && !darkBackground)
+			background= new RGB(0, 0, 0);
+		
+		return fSharedColors.getColor(interpolate(baseRGB, background, 0.6));
 	}
 
 	/**

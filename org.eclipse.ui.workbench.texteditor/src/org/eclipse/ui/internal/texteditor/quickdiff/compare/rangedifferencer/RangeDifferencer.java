@@ -272,7 +272,7 @@ public final class RangeDifferencer {
 	 * @param right the right range comparator
 	 * @return an array of range differences
 	 */
-	public static RangeDifference[] findRanges(IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IRangeComparator left, IRangeComparator right) {
 		return findRanges((IProgressMonitor)null, left, right);
 	}
 	
@@ -287,7 +287,7 @@ public final class RangeDifferencer {
 	 * @return an array of range differences
 	 * @since 2.0
 	 */
-	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeDifference[] in= findDifferences(pm, left, right);
 		List out= new ArrayList();
 
@@ -312,7 +312,7 @@ public final class RangeDifferencer {
 		if (rd.maxLength() > 0)
 			out.add(rd);
 
-		return (RangeDifference[]) out.toArray(EMPTY_RESULT);
+		return out;
 	}
 
 	/**
@@ -328,7 +328,7 @@ public final class RangeDifferencer {
 	 * @param right the right range comparator
 	 * @return an array of range differences
 	 */
-	public static RangeDifference[] findRanges(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 		return findRanges(null, ancestor, left, right);
 	}
 	
@@ -346,7 +346,7 @@ public final class RangeDifferencer {
 	 * @return an array of range differences
 	 * @since 2.0
 	 */
-	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 
 		if (ancestor == null)
 			return findRanges(pm, left, right);
@@ -377,7 +377,7 @@ public final class RangeDifferencer {
 		if (rd.maxLength() > 0)
 			out.add(rd);
 
-		return (RangeDifference[]) out.toArray(EMPTY_RESULT);
+		return out;
 	}
 
 	//---- private methods

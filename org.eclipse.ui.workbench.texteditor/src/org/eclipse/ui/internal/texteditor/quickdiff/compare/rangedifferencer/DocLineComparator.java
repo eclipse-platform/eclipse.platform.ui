@@ -20,14 +20,21 @@ import org.eclipse.jface.text.*;
  * A <code>DocLineComparator</code> doesn't know anything about line separators because
  * its notion of lines is solely defined in the underlying <code>IDocument</code>.
  */
-public class DocLineComparator implements ITokenComparator {
+public final class DocLineComparator implements IRangeComparator {
 
-	private IDocument fDocument;
-	private int fLineOffset;
-	private int fLineCount;
-	private int fLength;
-	private boolean fIgnoreWhiteSpace;
-
+	private final IDocument fDocument;
+	private final int fLineOffset;
+	private final int fLineCount;
+	private final int fLength;
+	private final boolean fIgnoreWhiteSpace;
+	private final int fMaxOffset;
+	
+	
+	private boolean fSkip= false;
+	private int fLastOffset;
+	private int fLastLength;
+	
+	
 	/**
 	 * Creates a <code>DocLineComparator</code> for the given document range.
 	 * ignoreWhiteSpace controls whether comparing lines (in method
@@ -42,14 +49,17 @@ public class DocLineComparator implements ITokenComparator {
 		fDocument= document;
 		fIgnoreWhiteSpace= ignoreWhiteSpace;
 
-		fLineOffset= 0;
 		if (region != null) {
 			fLength= region.getLength();
 			int start= region.getOffset();
+			int lineOffset= 0;
 			try {
-				fLineOffset= fDocument.getLineOfOffset(start);
+				lineOffset= fDocument.getLineOfOffset(start);
 			} catch (BadLocationException ex) {
 			}
+			fLineOffset= lineOffset;
+			
+			fMaxOffset= start + fLength;
 
 			if (fLength == 0)
 				fLineCount= 0;
@@ -63,8 +73,10 @@ public class DocLineComparator implements ITokenComparator {
 			}
 
 		} else {
+			fLineOffset= 0;
 			fLength= document.getLength();
 			fLineCount= fDocument.getNumberOfLines();
+			fMaxOffset= fDocument.getLength();
 		}
 	}
 
@@ -76,25 +88,34 @@ public class DocLineComparator implements ITokenComparator {
 	public int getRangeCount() {
 		return fLineCount;
 	}
-
-	/* (non Javadoc)
-	 * see ITokenComparator.getTokenStart
+	
+	/**
+	 * Computes the length of line <code>line</code>.
+	 * 
+	 * @param line the line requested
+	 * @return the line length or <code>0</code> if <code>line</code> is not a valid line in the document
 	 */
-	public int getTokenStart(int line) {
+	private int getLineLength(int line) {
+		if (line >= fLineCount)
+			return 0;
 		try {
-			IRegion r= fDocument.getLineInformation(fLineOffset + line);
-			return r.getOffset();
-		} catch (BadLocationException ex) {
-			return fDocument.getLength();
+			int docLine= fLineOffset + line;
+			String delim= fDocument.getLineDelimiter(docLine);
+			int length= fDocument.getLineLength(docLine) - (delim == null ? 0 : delim.length());
+			if (line == fLineCount - 1) {
+				fLastOffset= fDocument.getLineOffset(docLine);
+				fLastLength= Math.min(length, fMaxOffset - fLastOffset);
+			} else {
+				fLastOffset= -1;
+				fLastLength= length;
+			}
+			return fLastLength;
+		} catch (BadLocationException e) {
+			fLastOffset= 0;
+			fLastLength= 0;
+			fSkip= true;
+			return 0;
 		}
-	}
-
-	/* (non Javadoc)
-	 * Returns the length of the given line.
-	 * see ITokenComparator.getTokenLength
-	 */
-	public int getTokenLength(int line) {
-		return getTokenStart(line+1) - getTokenStart(line);
 	}
 
 	/**
@@ -112,17 +133,20 @@ public class DocLineComparator implements ITokenComparator {
 			DocLineComparator other= (DocLineComparator) other0;
 
 			if (fIgnoreWhiteSpace) {
-				String s1= extract(thisIndex);
-				String s2= other.extract(otherIndex);
+			
+				CharSequence s1= extract(thisIndex);
+				CharSequence s2= other.extract(otherIndex);
 				return compare(s1, s2);
-			}
-
-			int tlen= getTokenLength(thisIndex);
-			int olen= other.getTokenLength(otherIndex);
-			if (tlen == olen) {
-				String s1= extract(thisIndex);
-				String s2= other.extract(otherIndex);
-				return s1.equals(s2);
+			
+			} else {
+				
+				int tlen= getLineLength(thisIndex);
+				int olen= other.getLineLength(otherIndex);
+				if (tlen == olen) {
+					CharSequence s1= extract(thisIndex);
+					CharSequence s2= other.extract(otherIndex);
+					return s1.equals(s2);
+				}
 			}
 		}
 		return false;
@@ -134,7 +158,7 @@ public class DocLineComparator implements ITokenComparator {
 	 * @return <code>true</code> to abort a token comparison
 	 */
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
-		return false;
+		return fSkip;
 	}
 		
 	//---- private methods
@@ -145,18 +169,23 @@ public class DocLineComparator implements ITokenComparator {
 	 * @param line the number of the line to extract
 	 * @return the contents of the line as a String
 	 */
-	private String extract(int line) {
+	private CharSequence extract(int line) {
 		if (line < fLineCount) {
 			try {
-				IRegion r= fDocument.getLineInformation(fLineOffset + line);
-				return fDocument.get(r.getOffset(), r.getLength());
+				int docLine= fLineOffset + line;
+				if (fLastOffset == -1)
+					fLastOffset= fDocument.getLineOffset(docLine);
+				
+				return fDocument.get(fLastOffset, fLastLength);
+//				return new DocumentCharSequence(fDocument, offset, length);
 			} catch(BadLocationException e) {
+				fSkip= true;
 			}
 		}
 		return ""; //$NON-NLS-1$
 	}
 	
-	private boolean compare(String s1, String s2) {
+	private boolean compare(CharSequence s1, CharSequence s2) {
 		int l1= s1.length();
 		int l2= s2.length();
 		int c1= 0, c2= 0;
