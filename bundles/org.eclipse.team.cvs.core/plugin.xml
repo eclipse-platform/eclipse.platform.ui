@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.team.cvs.core"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.team.internal.ccvs.core.CVSProviderPlugin">
+<plugin>
 
-   <runtime>
-      <library name="cvs.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/> 
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.team.core"/>
-   </requires>
-
-
+    
 <!-- *************** Extension Points **************** -->
    <extension-point id="authenticator" name="Authenticator" schema="schema/authenticator.exsd"/>
    <extension-point id="connectionmethods" name="ConnectionMethods" schema="schema/connectionmethods.exsd"/>

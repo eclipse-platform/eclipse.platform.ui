@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.team.core; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-Activator: org.eclipse.team.internal.core.TeamPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.team.core,
+ org.eclipse.team.core.subscribers,
+ org.eclipse.team.core.synchronize,
+ org.eclipse.team.core.variants,
+ org.eclipse.team.internal.core,
+ org.eclipse.team.internal.core.streams,
+ org.eclipse.team.internal.core.subscribers
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true

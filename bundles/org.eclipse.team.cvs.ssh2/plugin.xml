@@ -3,36 +3,15 @@
 <!-- =================================================================================== -->
 <!-- SSH2 Plug-in Manifest 					                                             -->
 <!-- =================================================================================== -->
-<plugin
-   id="org.eclipse.team.cvs.ssh2"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin">
+<plugin>
 
 <!-- =================================================================================== -->
 <!-- Runtime Libraries                                                                   -->
 <!-- =================================================================================== -->
-<runtime>
-	<library name="cvsssh2.jar">
-    	<export name="*"/>
-	</library>
-	<library name="jsch-0.1.18.jar">
-	</library>
-</runtime>
 
 <!-- =================================================================================== -->
 <!-- Prerequisite Plug-ins                                                               -->
 <!-- =================================================================================== -->
-<requires>
-	<import plugin="org.eclipse.core.boot"/>
-	<import plugin="org.eclipse.core.runtime"/>
-	<import plugin="org.eclipse.core.resources"/>
-	<import plugin="org.eclipse.team.cvs.core"/>
-	<import plugin="org.eclipse.team.core"/>
-	<import plugin="org.eclipse.ui"/>
-	<import plugin="org.eclipse.team.cvs.ssh"/>
-</requires>
 
 <!-- =================================================================================== -->
 <!-- Extension Point: CVS connection method                                              -->
