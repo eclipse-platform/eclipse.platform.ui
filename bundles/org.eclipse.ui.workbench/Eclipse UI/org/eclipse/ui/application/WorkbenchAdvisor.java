@@ -96,9 +96,8 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * <li><code>eventLoopIdle</code> - called when there are currently no more
  * events to be processed; use to perform other work or to yield until new
  * events enter the queue</li>
- * <li><code>preShutdown</code> - called just after event loop has terminated
- * but before any windows have been closed; use to deregister things registered
- * during initialize</li>
+ * <li><code>preShutdown</code> - called immediately prior to workbench shutdown 
+ * before any windows have been closed; allows the advisor to veto the shutdown</li>
  * <li><code>postShutdown</code> - called last; after event loop has terminated
  * and all windows have been closed; use to deregister things registered during
  * initialize</li>
