@@ -141,19 +141,22 @@ public class EditionAction extends BaseCompareAction {
 			
 			if (ti instanceof IStreamContentAccessor) {
 				IStreamContentAccessor sa= (IStreamContentAccessor)ti;
-				try {
-
-					if (document != null)
-						updateDocument(document, sa);	
-					else
-						updateWorkspace(bundle, parentShell, sa, file);
+				
+				if (Utilities.validateResource(file, parentShell, title)) {
+					try {
+	
+						if (document != null)
+							updateDocument(document, sa);	
+						else
+							updateWorkspace(bundle, parentShell, sa, file);
+							
+					} catch (InterruptedException x) {
+						// Do nothing. Operation has been canceled by user.
 						
-				} catch (InterruptedException x) {
-					// Do nothing. Operation has been canceled by user.
-					
-				} catch (InvocationTargetException x) {
-					String reason= x.getTargetException().getMessage();
-					MessageDialog.openError(parentShell, title, Utilities.getFormattedString(bundle, "replaceError", reason));	//$NON-NLS-1$
+					} catch (InvocationTargetException x) {
+						String reason= x.getTargetException().getMessage();
+						MessageDialog.openError(parentShell, title, Utilities.getFormattedString(bundle, "replaceError", reason));	//$NON-NLS-1$
+					}
 				}
 			}
 		} else {
@@ -165,8 +168,7 @@ public class EditionAction extends BaseCompareAction {
 	
 	private void updateWorkspace(final ResourceBundle bundle, Shell shell,
 						final IStreamContentAccessor sa, final IFile file)
-									throws InvocationTargetException, InterruptedException {
-		
+									throws InvocationTargetException, InterruptedException {	
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws InvocationTargetException {
 				try {

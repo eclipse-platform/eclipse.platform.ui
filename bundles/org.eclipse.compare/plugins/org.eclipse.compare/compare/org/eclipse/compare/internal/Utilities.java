@@ -13,6 +13,7 @@ package org.eclipse.compare.internal;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.swt.widgets.*;
 
@@ -23,9 +24,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ui.*;
 
@@ -407,7 +412,14 @@ public class Utilities {
 	}
 	*/
 	
-	/* validate edit stuff */
+	/* validate edit utilities */
+	
+	/**
+	 * Status constant indicating that an validateEdit call has changed the
+	 * content of a file on disk.
+	 */
+	private static final int VALIDATE_EDIT_PROBLEM= 10004;
+	
 	
 	/**
 	 * Makes the given resources committable. Committable means that all
@@ -416,40 +428,124 @@ public class Utilities {
 	 * <tt>IWorkspace</tt>.
 	 * 
 	 * @param resources the resources to be checked
-	 * @param context the context passed to <code>validateEdit</code> 
-	 * @return IStatus status describing the method's result. If <code>status.
-	 * isOK()</code> returns <code>true</code> then the add resources are
-	 * committable
+	 * @param shell the Shell passed to <code>validateEdit</code> as a context
+	 * @return returns <code>true</code> if all resources are committable, <code>false</code> otherwise
 	 * 
 	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
-	/*
-	public static IStatus makeCommittable(IResource[] resources, Object context) {
+	public static boolean validateResource(IResource resource, Shell shell, String title) {
+		return validateResources(new IResource[] { resource }, shell, title);
+	}
+	
+	/**
+	 * Makes the given resources committable. Committable means that all
+	 * resources are writeable and that the content of the resources hasn't
+	 * changed by calling <code>validateEdit</code> for a given file on
+	 * <tt>IWorkspace</tt>.
+	 * 
+	 * @param resources the resources to be checked
+	 * @param shell the Shell passed to <code>validateEdit</code> as a context
+	 * @return returns <code>true</code> if all resources are committable, <code>false</code> otherwise
+	 * 
+	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+	 */
+	public static boolean validateResources(List resources, Shell shell, String title) {
+		IResource r[]= (IResource[]) resources.toArray(new IResource[resources.size()]);
+		return validateResources(r, shell, title);
+	}
+	
+	/**
+	 * Makes the given resources committable. Committable means that all
+	 * resources are writeable and that the content of the resources hasn't
+	 * changed by calling <code>validateEdit</code> for a given file on
+	 * <tt>IWorkspace</tt>.
+	 * 
+	 * @param resources the resources to be checked
+	 * @param shell the Shell passed to <code>validateEdit</code> as a context
+	 * @return returns <code>true</code> if all resources are committable, <code>false</code> otherwise
+	 * 
+	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+	 */
+	public static boolean validateResources(IResource[] resources, Shell shell, String title) {
+		
+		// get all readonly files
+		List readOnlyFiles= getReadonlyFiles(resources);
+		if (readOnlyFiles.size() == 0)
+			return true;
+		
+		// get timestamps of readonly files before validateEdit
+		Map oldTimeStamps= createModificationStampMap(readOnlyFiles);
+		
+		IFile[] files= (IFile[]) readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]);
+		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(files, shell);
+		if (! status.isOK()) {
+			String message= getString("ValidateEdit.error.unable_to_perform"); //$NON-NLS-1$
+			ErrorDialog.openError(shell, title, message, status); //$NON-NLS-1$
+			return false;
+		}
+			
+		IStatus modified= null;
+		Map newTimeStamps= createModificationStampMap(readOnlyFiles);
+		for (Iterator iter= oldTimeStamps.keySet().iterator(); iter.hasNext();) {
+			IFile file= (IFile) iter.next();
+			if (file.isReadOnly()) {
+				IStatus entry= new Status(IStatus.ERROR,
+								CompareUIPlugin.getPluginId(),
+								VALIDATE_EDIT_PROBLEM,
+								getFormattedString("ValidateEdit.error.stillReadonly", file.getFullPath().toString()), //$NON-NLS-1$
+								null);
+				modified= addStatus(modified, entry);
+			} else if (! oldTimeStamps.get(file).equals(newTimeStamps.get(file))) {
+				IStatus entry= new Status(IStatus.ERROR,
+								CompareUIPlugin.getPluginId(),
+								VALIDATE_EDIT_PROBLEM,
+								getFormattedString("ValidateEdit.error.fileModified", file.getFullPath().toString()), //$NON-NLS-1$
+								null);
+				modified= addStatus(modified, entry);
+			}
+		}
+		if (modified != null) {
+			String message= getString("ValidateEdit.error.unable_to_perform"); //$NON-NLS-1$
+			ErrorDialog.openError(shell, title, message, modified);
+			return false;
+		}
+		return true;
+	}
+	
+	private static List getReadonlyFiles(IResource[] resources) {
 		List readOnlyFiles= new ArrayList();
 		for (int i= 0; i < resources.length; i++) {
 			IResource resource= resources[i];
 			if (resource.getType() == IResource.FILE && resource.isReadOnly())	
 				readOnlyFiles.add(resource);
 		}
-		if (readOnlyFiles.size() == 0)
-			return new Status(IStatus.OK, JavaPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-			
-		Map oldTimeStamps= createModificationStampMap(readOnlyFiles);
-		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(
-			(IFile[]) readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]), context);
-		if (!status.isOK())
-			return status;
-			
-		IStatus modified= null;
-		Map newTimeStamps= createModificationStampMap(readOnlyFiles);
-		for (Iterator iter= oldTimeStamps.keySet().iterator(); iter.hasNext();) {
-			IFile file= (IFile) iter.next();
-			if (!oldTimeStamps.get(file).equals(newTimeStamps.get(file)))
-				modified= addModified(modified, file);
-		}
-		if (modified != null)	
-			return modified;
-		return new Status(IStatus.OK, JavaPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		return readOnlyFiles;
 	}
-	*/
+
+	private static Map createModificationStampMap(List files) {
+		Map map= new HashMap();
+		for (Iterator iter= files.iterator(); iter.hasNext(); ) {
+			IFile file= (IFile)iter.next();
+			map.put(file, new Long(file.getModificationStamp()));
+		}
+		return map;
+	}
+	
+	private static IStatus addStatus(IStatus status, IStatus entry) {
+		
+		if (status == null)
+			return entry;
+			
+		if (status.isMultiStatus()) {
+			((MultiStatus)status).add(entry);
+			return status;
+		}
+
+		MultiStatus result= new MultiStatus(CompareUIPlugin.getPluginId(),
+			VALIDATE_EDIT_PROBLEM,
+			getString("ValidateEdit.error.unable_to_perform"), null); //$NON-NLS-1$ 
+		result.add(status);
+		result.add(entry);
+		return result;
+	}	
 }

@@ -15,12 +15,14 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 /**
@@ -735,10 +737,12 @@ public class Patcher {
 		return hunk.fNewLength - hunk.fOldLength;
 	}
 
-	public void applyAll(IResource target, IProgressMonitor pm) throws CoreException {
+	public void applyAll(IResource target, IProgressMonitor pm, Shell shell, String title) throws CoreException {
 		
 		final int WORK_UNIT= 10;
-				
+		
+		int i;
+		
 		IFile singleFile= null;	// file to be patched
 		IContainer container= null;
 		if (target instanceof IContainer)
@@ -750,12 +754,31 @@ public class Patcher {
 			Assert.isTrue(false);
 		}
 		
+		// get all files to be modified in order to call validateEdit
+		List list= new ArrayList();
+		if (singleFile != null)
+			list.add(singleFile);
+		else {
+			for (i= 0; i < fDiffs.length; i++) {
+				Diff diff= fDiffs[i];
+				if (diff.isEnabled()) {
+					switch (diff.getType()) {
+					case Differencer.CHANGE:
+						list.add(createPath(container, getPath(diff)));
+						break;
+					}
+				}
+			}
+		}
+		if (! Utilities.validateResources(list, shell, title))
+			return;
+		
 		if (pm != null) {
 			String message= PatchMessages.getString("Patcher.Task.message");	//$NON-NLS-1$
 			pm.beginTask(message, fDiffs.length*WORK_UNIT);
 		}
 		
-		for (int i= 0; i < fDiffs.length; i++) {
+		for (i= 0; i < fDiffs.length; i++) {
 			
 			int workTicks= WORK_UNIT;
 			
