@@ -23,6 +23,7 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.ide.IDEApplication;
+import org.eclipse.ui.internal.ide.dialogs.*;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
