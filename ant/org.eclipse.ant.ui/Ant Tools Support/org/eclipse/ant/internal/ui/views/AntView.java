@@ -71,6 +71,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -87,6 +88,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private RootNode restoredRoot = null;
 	private boolean restoredFilterInternalTargets= false;
+	/**
+	 * This memento allows the Ant view to save and restore state
+	 * when it is closed and opened within a session. A different
+	 * memento is supplied by the platform for persistance at
+	 * workbench shutdown.
+	 */
+	private static IMemento tempMemento = null;
 
 	/**
 	 * XML tag used to identify an ant project in storage
@@ -285,6 +293,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectContentProvider.setFilterInternalTargets(restoredFilterInternalTargets);
 		filterInternalTargetsAction.setChecked(restoredFilterInternalTargets);
 		projectViewer.setLabelProvider(new AntViewLabelProvider());
+		if (tempMemento != null) {
+			restoreRoot(tempMemento);
+		}
 		projectViewer.setInput(restoredRoot);
 		projectViewer.setSorter(new ViewerSorter() {
 			/**
@@ -602,6 +613,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		tempMemento= XMLMemento.createWriteRoot("AntViewMemento"); //$NON-NLS-1$
+		saveState(tempMemento);
 		super.dispose();
 		if (openWithMenu != null) {
 			openWithMenu.dispose();
