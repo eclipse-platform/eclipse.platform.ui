@@ -85,11 +85,10 @@ public class FileLabelProvider extends LabelProvider {
 		}
 		
 		int matchCount= fPage.getInput().getMatchCount(element);
-		if (matchCount == 0)
+		if (matchCount <= 1)
 			return text;
-		if (matchCount == 1)
-			return text+ " (" + 1 + " match)"; //$NON-NLS-1$ //$NON-NLS-2$
-		return text + " (" + matchCount + " matches)"; //$NON-NLS-1$ //$NON-NLS-2$
+		String format= SearchMessages.getString("FileLabelProvider.count.format"); //$NON-NLS-1$
+		return MessageFormat.format(format, new Object[] { text, new Integer(matchCount) });
 	}
 
 	public Image getImage(Object element) {
