@@ -16,7 +16,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -41,10 +44,21 @@ import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
 public class NewFolderDialog extends SelectionStatusDialog {
 	// widgets
 	private Text folderNameField;
+	private Button advancedButton;
 	private CreateLinkedResourceGroup linkedResourceGroup;
 
 	private IContainer container;
 	private boolean firstLinkCheck = true;
+	/**
+	 * Parent composite of the advanced widget group for creating 
+	 * linked resources.
+	 */
+	private Composite linkedResourceComposite;
+	/**
+	 * Height of the dialog without the "advanced" linked resource group. 
+	 * Set when the advanced group is first made visible. 
+	 */
+	private int basicShellHeight;
 	
 /**
  * Creates a NewFolderDialog
@@ -55,17 +69,22 @@ public class NewFolderDialog extends SelectionStatusDialog {
 public NewFolderDialog(Shell parentShell, IContainer container) {
 	super(parentShell);
 	this.container = container;
-	linkedResourceGroup = new CreateLinkedResourceGroup(
-		IResource.FOLDER,
-		new Listener() {
-			public void handleEvent(Event e) {
-				validateLinkedResource();
-				firstLinkCheck = false;
-			}
-		});
 	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 	setStatusLineAboveButtons(true);
+}
+/**
+ * Creates the folder using the name and link target entered
+ * by the user.
+ * Sets the dialog result to the created folder.  
+ */
+protected void computeResult() {
+	String linkTarget = linkedResourceGroup.getLinkTarget();
+	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
+	if(folder == null)
+		return;
+			
+	setSelectionResult(new IFolder[] {folder});
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -83,6 +102,33 @@ public void create() {
 	// folder name field
 	getButton(IDialogConstants.OK_ID).setEnabled(false);
 }
+/**
+ * Creates the widget for advanced options.
+ *  
+ * @param parent the parent composite
+ */
+protected void createAdvancedControls(Composite parent) {
+	advancedButton = new Button(parent, SWT.PUSH);
+	advancedButton.setFont(parent.getFont());
+	advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed"));
+	setButtonLayoutData(advancedButton);
+	GridData data = (GridData) advancedButton.getLayoutData();
+	data.horizontalAlignment = GridData.BEGINNING;
+	advancedButton.setLayoutData(data);
+	advancedButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleAdvancedButtonSelect();
+		}
+	});
+	linkedResourceGroup = new CreateLinkedResourceGroup(
+		IResource.FOLDER,
+		new Listener() {
+			public void handleEvent(Event e) {
+				validateLinkedResource();
+				firstLinkCheck = false;
+			}
+		});
+}
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
@@ -93,7 +139,7 @@ protected Control createDialogArea(Composite parent) {
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	createFolderNameGroup(composite);
-	linkedResourceGroup.createContents(composite);
+	createAdvancedControls(composite);
 	return composite;
 }
 /**
@@ -199,17 +245,30 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 	return folderHandle;
 }
 /**
- * Creates the folder using the name and link target entered
- * by the user.
- * Sets the dialog result to the created folder.  
+ * Shows/hides the advanced option widgets. 
  */
-protected void computeResult() {
-	String linkTarget = linkedResourceGroup.getLinkTarget();
-	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
-	if(folder == null)
-		return;
-			
-	setSelectionResult(new IFolder[] {folder});
+protected void handleAdvancedButtonSelect() {
+	Shell shell = getShell();
+	Point shellSize = shell.getSize();
+						
+	if (linkedResourceComposite == null) {
+		basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+
+		Composite composite = (Composite) getDialogArea();
+		linkedResourceComposite = linkedResourceGroup.createContents(composite);
+		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		shell.setSize(shellSize);
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded"));
+	} else if (linkedResourceComposite.getVisible()) {
+		linkedResourceComposite.setVisible(false);
+		shell.setSize(shellSize.x, basicShellHeight);
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed"));
+	} else {
+		linkedResourceComposite.setVisible(true);
+		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		shell.setSize(shellSize);
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded"));
+	}
 }
 /**
  * Update the dialog's status line to reflect the given status. It is safe to call
