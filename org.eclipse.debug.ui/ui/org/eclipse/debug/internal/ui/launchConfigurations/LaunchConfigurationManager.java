@@ -827,9 +827,15 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * of the lists. 
 	 */
 	protected void shortenHistoryLists(int newLength) {		
-		setRunHistoryVector(new Vector(getRunHistoryVector().subList(0, newLength)));
-		setDebugHistoryVector(new Vector(getDebugHistoryVector().subList(0, newLength)));
-		fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));		
+		if (newLength < getRunHistoryVector().size()) {
+			setRunHistoryVector(new Vector(getRunHistoryVector().subList(0, newLength)));
+		}
+		if (newLength < getDebugHistoryVector().size()) {
+			setDebugHistoryVector(new Vector(getDebugHistoryVector().subList(0, newLength)));
+		}
+		if (newLength < fLastLaunchList.size()) {
+			fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));		
+		}
 	}
 
 	/**
