@@ -177,9 +177,9 @@ public class ImageRegistry {
     /**
      * Hook a dispose listener on the SWT display.
      *
-     * @param display the Display
+     * @param hookDisplay the Display
      */
-    private void hookDisplayDispose(Display display) {
+    private void hookDisplayDispose(Display hookDisplay) {
         display.disposeExec(new Runnable() {
             public void run() {
                 handleDisplayDispose();
