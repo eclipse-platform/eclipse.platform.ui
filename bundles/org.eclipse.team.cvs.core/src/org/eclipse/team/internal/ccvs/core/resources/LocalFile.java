@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,15 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
@@ -73,17 +69,17 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		
 		try {		
 
-			out = new FileOutputStream(ioResource);
+			out = new BufferedOutputStream(new FileOutputStream(ioResource));
 			
-			if (binary) {
-				// System.out.println("BinaryReciving: " + getName() + "(" + size + ")");
-				transferWithProgress(in,out,size,monitor,title);
-			} else {
-				// System.out.println("TextReciving: " + getName() + "(" + size + ")");
-				transferText(in,out,size,monitor,title,false);
+			try {
+				if (binary) {
+					transferWithProgress(in,out,size,monitor,title);
+				} else {
+					transferText(in,out,size,monitor,title,false);
+				}
+			} finally {
+				out.close();
 			}
-			
-			out.close();
 			
 			if (readOnly) {
 				ioResource.setReadOnly();
