@@ -42,6 +42,10 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	private ProgressTreeViewer viewer;
 	/**
+	 * The name of the task that is being blocked.
+	 */
+	private String blockedTaskName = null;
+	/**
 	 * The Cancel button control.
 	 */
 	private Button cancelSelected;
@@ -74,8 +78,10 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 		 */
 		String getDisplayString() {
-			return ProgressMessages
-					.getString("BlockedJobsDialog.UserInterfaceTreeElement"); //$NON-NLS-1$
+			if (blockedTaskName == null)
+				return ProgressMessages.getString("BlockedJobsDialog.UserInterfaceTreeElement"); //$NON-NLS-1$
+			else
+				return blockedTaskName;
 		}
 		/*
 		 * (non-Javadoc)
@@ -144,15 +150,14 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @param blocking
 	 *            The monitor that is blocking the job
 	 */
-	public BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
-			IStatus blockingStatus) {
+	public BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking, IStatus blockingStatus) {
 		super(parentShell);
 		blockingMonitor = blocking;
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
 		setBlockOnOpen(false);
-		setMessage(ProgressMessages.format("BlockedJobsDialog.BlockedMessage",//$NON-NLS-1$
-				new Object[]{blockingStatus.getMessage()})); 
+		setMessage(ProgressMessages.format("BlockedJobsDialog.BlockedMessage", //$NON-NLS-1$
+				new Object[]{blockingStatus.getMessage()}));
 	}
 	/**
 	 * This method creates the dialog area under the parent composite.
@@ -184,16 +189,15 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The parent Composite.
 	 */
 	void showJobDetails(Composite parent) {
-		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.BORDER) {
+		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.BORDER) {
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
 			 *      org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
-			protected void updateColors(TreeItem treeItem,
-					JobTreeElement element) {
+			protected void updateColors(TreeItem treeItem, JobTreeElement element) {
 				super.updateColors(treeItem, element);
 				//Color the blocked element the not running color.
 				if (element == blockedElement)
@@ -254,8 +258,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return parent The parent Composite.
 	 */
 	protected Control createButtonBar(Composite parent) {
-		cancelSelected = createButton(parent, ProgressMessages
-				.getString("CancelJobsButton.title"), //$NON-NLS-1$
+		cancelSelected = createButton(parent, ProgressMessages.getString("CancelJobsButton.title"), //$NON-NLS-1$
 				(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e) {
 						viewer.cancelSelection();
@@ -274,8 +277,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @param listener
 	 * @return
 	 */
-	private Button createButton(Composite parent, String text,
-			SelectionListener listener) {
+	private Button createButton(Composite parent, String text, SelectionListener listener) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(text); //$NON-NLS-1$
 		button.addSelectionListener(listener);
@@ -319,8 +321,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(ProgressMessages
-				.getString("BlockedJobsDialog.BlockedTitle")); //$NON-NLS-1$
+		shell.setText(ProgressMessages.getString("BlockedJobsDialog.BlockedTitle")); //$NON-NLS-1$
 		if (waitCursor == null)
 			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
 		shell.setCursor(waitCursor);
@@ -349,5 +350,13 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	public boolean close() {
 		clearCursors();
 		return super.close();
+	}
+	/**
+	 * Set the name of the task being blocked. If this value is
+	 * not set then the default blocked name will be used.
+	 * @param taskName
+	 */
+	public void setBlockedTaskName(String taskName) {
+		blockedTaskName = taskName;
 	}
 }

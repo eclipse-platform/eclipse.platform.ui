@@ -11,16 +11,19 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-// @issue illegal reference to org.eclipse.ui.internal.dialogs.NewWizard
 import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -100,7 +103,7 @@ public void run() {
 
 	// Create wizard dialog.
 	Shell parent = window.getShell();
-	WizardDialog dialog = new WizardDialog(parent, wizard);
+	WizardDialog dialog = new WorkbenchWizardDialog(parent, wizard);
 	dialog.create();
 	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
 	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);
