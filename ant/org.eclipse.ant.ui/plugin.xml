@@ -119,7 +119,7 @@ M4 = Platform-specific fourth key -->
       <command
             name="%ViewCommand.antView.name"
             description="%ViewCommand.antView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ant.ui.views.AntView">
       </command>
       <keyBinding
@@ -131,38 +131,38 @@ M4 = Platform-specific fourth key -->
       <command
             name="%ActionDefinition.format.name"
             description="%ActionDefinition.format.description"
-            category="org.eclipse.jdt.ui.category.source"
+            categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.format">
       </command>
       <keyBinding
             keySequence="M1+SHIFT+F"
-            scope="org.eclipse.ant.ui.AntEditorScope"
-            command="org.eclipse.ant.ui.format"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.format"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.showTooltip.name"
             description="%ActionDefinition.showTooltip.description"
-            category="org.eclipse.jdt.ui.category.source"
+            categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.showTooltip">
       </command>
       <keyBinding
             keySequence="F2"
-            scope="org.eclipse.ant.ui.AntEditorScope"
-            command="org.eclipse.ant.ui.showTooltip"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.showTooltip"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openExternalDoc.name"
             description="%ActionDefinition.openExternalDoc.description"
-            category="org.eclipse.jdt.ui.category.source"
+            categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.openExternalDoc">
       </command>
       <keyBinding
             keySequence="SHIFT+F2"
-            scope="org.eclipse.ant.ui.AntEditorScope"
-            command="org.eclipse.ant.ui.openExternalDoc"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.openExternalDoc"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%AntShortcut.description.run"
@@ -333,7 +333,7 @@ M4 = Platform-specific fourth key -->
                id="org.eclipse.ant.ui.folding.toggle">
          </action>
          <action
-               label="%quickdiff.toggle.enable"
+               label="%Dummy.label"
                style="push"
                definitionId="org.eclipse.quickdiff.toggle"
                helpContextId="quickdiff.toggle"
@@ -350,7 +350,7 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.quickdiff.editoractions.antEditor">
          <action
                definitionId="org.eclipse.quickdiff.toggle"
-               label="%quickdiff.toggle.enable"
+               label="%Dummy.label"
                class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
                id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
          </action>
