@@ -334,7 +334,7 @@ public final class Platform {
 	/**
 	 * Returns the content type manager.
 	 * <p>
-	 *  <b>Note</b>: This method is part of early access API that may well 
+	 * <b>Note</b>: This method is part of early access API that may well 
 	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>
 	 * 
@@ -565,18 +565,12 @@ public final class Platform {
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @param bundle the bundle in which to search
 	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>.  The actual form
 	 * of the returned URL is not specified.
+	 * @see #find(Bundle, IPath, Map)
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
@@ -588,43 +582,39 @@ public final class Platform {
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
-	 * 
-	 * find will look for this path under the directory structure for this plugin
-	 * and any of its fragments.  If this path will yield a result outside the
-	 * scope of this plugin, <code>null</code> will be returned.  Note that
+	 * <p>
+	 * find looks for this path in given bundle and any attached fragments.  
+	 * <code>null</code> is returned if no such entry is found.  Note that
 	 * there is no specific order to the fragments.
-	 * 
+	 * </p><p>
 	 * The following arguments may also be used
-	 * 
-	 *  $nl$ - for language specific information
-	 *  $os$ - for operating system specific information
-	 *  $ws$ - for windowing system specific information
-	 * 
+	 * <pre>
+	 *     $nl$ - for language specific information
+	 *     $os$ - for operating system specific information
+	 *     $ws$ - for windowing system specific information
+	 * </pre>
+	 * </p><p>
 	 * A path of $nl$/about.properties in an environment with a default 
 	 * locale of en_CA will return a URL corresponding to the first place
 	 * about.properties is found according to the following order:
-	 *   plugin root/nl/en/CA/about.properties
-	 *   fragment1 root/nl/en/CA/about.properties
-	 *   fragment2 root/nl/en/CA/about.properties
-	 *   ...
-	 *   plugin root/nl/en/about.properties
-	 *   fragment1 root/nl/en/about.properties
-	 *   fragment2 root/nl/en/about.properties
-	 *   ...
-	 *   plugin root/about.properties
-	 *   fragment1 root/about.properties
-	 *   fragment2 root/about.properties
-	 *   ...
-	 * 
-	 * If a locale other than the default locale is desired, use an
-	 * override map.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
+	 * <pre>
+	 *     plugin root/nl/en/CA/about.properties
+	 *     fragment1 root/nl/en/CA/about.properties
+	 *     fragment2 root/nl/en/CA/about.properties
+	 *     ...
+	 *     plugin root/nl/en/about.properties
+	 *     fragment1 root/nl/en/about.properties
+	 *     fragment2 root/nl/en/about.properties
+	 *     ...
+	 *     plugin root/about.properties
+	 *     fragment1 root/about.properties
+	 *     fragment2 root/about.properties
+	 *     ...
+	 * </pre>
+	 * </p><p>
+	 * The current environment variable values can be overridden using 
+	 * the override map argument.
+	 * </p>
 	 * 
 	 * @param bundle the bundle in which to search
 	 * @param path file path relative to plug-in installation location
@@ -657,13 +647,6 @@ public final class Platform {
 	 * it puts there. It is recommended for plug-in preference settings and 
 	 * other configuration parameters.
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose state location if returned
 	 * @return a local file system path
@@ -675,13 +658,6 @@ public final class Platform {
 
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose log is returned
 	 * @return the log for the given bundle
@@ -694,25 +670,17 @@ public final class Platform {
 	/**
 	 * Returns the given bundle's resource bundle for the current locale. 
 	 * <p>
-	 * The resource bundle is stored as the <code>plugin.properties</code> file 
-	 * in the plug-in install directory, and contains any translatable
+	 * The resource bundle is typcially stored as the <code>plugin.properties</code> file 
+	 * in the plug-in itself, and contains any translatable
 	 * strings used in the plug-in manifest file (<code>plugin.xml</code>)
 	 * along with other resource strings used by the plug-in implementation.
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose resource bundle is being queried
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
 	 */
-	//TODO Need to change the java doc
 	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
 		return InternalPlatform.getDefault().getResourceBundle(bundle);
 	}
@@ -733,13 +701,6 @@ public final class Platform {
 	 * <p>
 	 * Equivalent to <code>getResourceString(bundle, value, getResourceBundle())</code>
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose resource bundle is being queried
 	 * @param value the value to look for
@@ -777,13 +738,6 @@ public final class Platform {
 	 *     getResourceString("%%name") returns "%name"</li>
 	 * </pre>
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
 	 * @param bundle the bundle whose resource bundle is being queried
 	 * @param value the value
@@ -851,13 +805,6 @@ public final class Platform {
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
 	 * for use by the application.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @return the array of command line arguments not consumed by the framework.
 	 * @since 3.0
