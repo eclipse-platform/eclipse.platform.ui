@@ -147,7 +147,7 @@ public class HistoryView extends ViewPart {
 			}
 		});
 
-		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				monitor.beginTask(null, 100);
@@ -165,7 +165,7 @@ public class HistoryView extends ViewPart {
 		});
 		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
 
-		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				try {
@@ -219,11 +219,13 @@ public class HistoryView extends ViewPart {
 				return resources;
 			}
 		};
-		tagWithExistingAction = getContextMenuAction(Policy.bind("HistoryView.tagWithExistingAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+		tagWithExistingAction = getContextMenuAction(Policy.bind("HistoryView.tagWithExistingAction"), false /* no progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
-				refresh();
+				if( ! ((MoveRemoteTagAction)tagActionDelegate).wasCancelled()) {
+					refresh();
+				}
 			}
 		});
 		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
@@ -577,7 +579,7 @@ public class HistoryView extends ViewPart {
 		}
 	}
 	
-	private Action getContextMenuAction(String title, final IWorkspaceRunnable action) {
+	private Action getContextMenuAction(String title, final boolean needsProgressDialog, final IWorkspaceRunnable action) {
 			return new Action(title) {
 			public void run() {
 				try {
@@ -587,15 +589,23 @@ public class HistoryView extends ViewPart {
 					IStructuredSelection ss = (IStructuredSelection)selection;
 					Object o = ss.getFirstElement();
 					currentSelection = (ILogEntry)o;
-					new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {				
-								action.run(monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
+					if(needsProgressDialog) {
+						new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
+							protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {				
+									action.run(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
 							}
+						});
+					}	else {
+						try {				
+							action.run(null);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
 						}
-					});
+					}							
 				} catch (InvocationTargetException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 				} catch (InterruptedException e) {
@@ -645,6 +655,18 @@ public class HistoryView extends ViewPart {
 		entries = null;
 		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
+				// if a local file was fed to the history view then we will have to refetch the handle
+				// to properly display the current revision marker. 
+				if(file != null) {
+					 ICVSRemoteFile remoteFile;
+					try {
+						remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
+						historyTableProvider.setFile(remoteFile);
+					} catch (CVSException e) {
+						// use previously fetched remote file, but log error
+						CVSUIPlugin.log(e);
+					}
+				}
 				tableViewer.refresh();
 			}
 		});

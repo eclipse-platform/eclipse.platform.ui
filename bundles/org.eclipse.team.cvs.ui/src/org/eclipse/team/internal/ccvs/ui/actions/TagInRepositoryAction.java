@@ -60,21 +60,22 @@ public class TagInRepositoryAction extends TagAction {
 		// Prompt for the tag
 		final ICVSResource[] resources = getSelectedCVSResources();
 		final CVSTag[] tag = new CVSTag[] { null };
-		getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				// Collect the parent folders from which to determine the tags to show
-				ICVSFolder[] folders = new ICVSFolder[resources.length];
-				for (int i = 0; i < resources.length; i++) {
-					if (resources[i].isFolder()) {
-						folders[i] = (ICVSFolder)resources[i];
-					} else {
-						folders[i] = resources[i].getParent();
-					}
-				}
-				tag[0] = promptForTag(folders);
+
+		// Collect the parent folders from which to determine the tags to show
+		ICVSFolder[] folders = new ICVSFolder[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].isFolder()) {
+				folders[i] = (ICVSFolder)resources[i];
+			} else {
+				folders[i] = resources[i].getParent();
 			}
-		});
-		if (tag[0] == null) return;
+		}
+		tag[0] = promptForTag(folders);
+
+		if (tag[0] == null) {
+			setWasCancelled(true);
+			return;
+		} 
 					
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {

@@ -41,6 +41,10 @@ import org.eclipse.team.internal.ui.PromptingDialog;
  * TagAction tags the selected resources with a version tag specified by the user.
  */
 public class TagAction extends WorkspaceAction {
+	
+	// remember if the execute action was cancelled
+	private boolean wasCancelled = false;
+
 	// The previously remembered tag
 	protected static String previousTag = ""; //$NON-NLS-1$
 	
@@ -71,7 +75,10 @@ public class TagAction extends WorkspaceAction {
 				result[0] = promptForTag(folder);
 			}
 		});
-		if (result[0] == null) return;
+		if (result[0] == null) {
+			setWasCancelled(true);
+			return;
+		} 
 		
 		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 		
@@ -171,5 +178,12 @@ public class TagAction extends WorkspaceAction {
 		return false;
 	}
 
+	public boolean wasCancelled() {
+		return wasCancelled;
+	}
+
+	public void setWasCancelled(boolean b) {
+		wasCancelled = b;
+	}
 }
 
