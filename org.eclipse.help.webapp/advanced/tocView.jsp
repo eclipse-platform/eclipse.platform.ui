@@ -177,7 +177,7 @@ if (data.isIE()){
 
 
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
-	<ul class='expanded' id='root'>
+	<ul dir="<%=direction%>" class='expanded' id='root'>
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {
 		boolean isSelected =data.getSelectedToc() != -1 &&
