@@ -121,6 +121,7 @@ class ImplicitJobs {
 							try {
 								wait(250);
 							} catch (InterruptedException e) {
+								//ignore
 							}
 						}
 					}

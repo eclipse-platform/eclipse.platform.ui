@@ -56,6 +56,7 @@ public class LockManager {
 					if (lock.acquire(Long.MAX_VALUE))
 						break;
 				} catch (InterruptedException e) {
+					//ignore and loop
 				}
 			}
 			lock.setDepth(depth);

@@ -71,11 +71,15 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * @see Locks.ILock#acquire()
 	 */
 	public void acquire() {
+		//spin until the lock is successfully acquired
+		//NOTE: spinning here allows the UI thread to service pending syncExecs
+		//if the UI thread is waiting to acquire a lock.
 		while (true) {
 			try {
 				if (acquire(Long.MAX_VALUE))
 					return;
 			} catch (InterruptedException e) {
+				//ignore and loop
 			}
 		}
 	}

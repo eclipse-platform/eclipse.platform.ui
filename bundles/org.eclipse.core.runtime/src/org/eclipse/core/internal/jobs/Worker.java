@@ -68,7 +68,7 @@ public class Worker extends Thread {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
 					result = handleException(currentJob, e);
-				} catch (LinkageError e) {
+				} catch (Error e) {
 					result = handleException(currentJob, e);
 				} finally {
 					//clear interrupted state for this thread
