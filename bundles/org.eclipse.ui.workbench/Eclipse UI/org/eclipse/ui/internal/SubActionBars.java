@@ -255,6 +255,10 @@ public void setGlobalActionHandler(String actionID, IAction handler) {
  * menu, status line, or toolbar.
  */
 public void updateActionBars() {
+	IToolBarManager mgr = getToolBarManager();
+	if (mgr instanceof CoolItemToolBarManager) {
+		mgr.update(false);
+	} 
 	parent.updateActionBars();
 	fireActionHandlersChanged();
 }
