@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.help.internal.browser.BrowserManager;
 
 /**
  * Preference page for selecting default web browser.
