@@ -46,12 +46,12 @@ public interface IJobManager {
 	 * Begins applying this rule in the calling thread.  If the rule conficts with another
 	 * rule currently running in another thread, this method blocks until there are
 	 * no conflicting rules.  Calls to <tt>beginRule</tt> must eventually be followed
-	 * by a matching call to <tt>endRule</tt> in the same thread and with the same
-	 * rule instance.
+	 * by a matching call to <tt>endRule</tt> in the same thread and with the identical
+	 * rule instance. 
 	 * <p>
 	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
 	 * is contained within the rule for the outer <tt>beginRule</tt>.  Rule containment
-	 * is tested with the API method <tt>ISchedulingRule#contains</tt>.  Also, begin/end
+	 * is tested with the API method <tt>ISchedulingRule.contains</tt>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
 	 * <p>
@@ -62,6 +62,17 @@ public interface IJobManager {
 	 * If this method is called from within a job that has a scheduling rule, the
 	 * given rule must also be contained within the rule for the running job.
 	 * <p>
+	 * Note that <tt>endRule</tt> must be called even if <tt>beginRule</tt> fails.
+	 * The recommended usage is:
+	 * <pre>
+	 * final ISchedulingRule rule = ...;
+	 * try {
+	 * 	manager.beginRule(rule, monitor);
+	 * } finally {
+	 * 	manager.endRule(rule);
+	 * }
+	 * </pre>
+	 * <p>
 	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
 	 * @param rule the rule to begin applying in this thread, or <code>null</code>
@@ -71,6 +82,7 @@ public interface IJobManager {
 	 * all other rules currently active for this thread.
 	 * @throws OperationCanceledException if the supplied monitor reports cancelation
 	 * 	before the rule becomes available.
+	 * @see ISchedulingRule.contains
 	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor);
 	/**
