@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
@@ -33,8 +34,8 @@ public class AntJRETab extends JavaJRETab {
 
 	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"; //$NON-NLS-1$
 	
-	protected VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
-	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
+	private VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
+	private AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -91,14 +92,44 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
+			configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
 		} else {
 			super.performApply(configuration);
+			
+			if (useDefaultSeparateJRE(configuration)) {
+				configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
+			} else {
+				configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			}
+			
 			applySeparateVMAttributes(configuration);
 			fVMArgumentsBlock.performApply(configuration);
 			fWorkingDirectoryBlock.performApply(configuration);
 		}
 		setLaunchConfigurationWorkingCopy(configuration);
+	}
+	
+	private boolean useDefaultSeparateJRE(ILaunchConfigurationWorkingCopy configuration) {
+		boolean deflt= false;
+		String vmInstallType= null;
+		try {
+			vmInstallType= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		} catch (CoreException e) {
+		}
+		if (vmInstallType != null) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		}
+		IVMInstall defaultVMInstall= getDefaultVMInstall(configuration);
+		if (defaultVMInstall != null) {
+			IVMInstall vm= fJREBlock.getJRE();
+			deflt= defaultVMInstall.equals(vm);
+		}
+		
+		if (vmInstallType != null) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstallType);
+		}
+		return deflt;
 	}
 	
 	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
@@ -110,6 +141,22 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			 boolean isDefaultVMInstall= configuration.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			 if (isDefaultVMInstall) {
+			 	IVMInstall defaultVMInstall= getDefaultVMInstall(configuration);
+			 	ILaunchConfigurationWorkingCopy copy;
+			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
+			 		copy= (ILaunchConfigurationWorkingCopy) configuration;
+			 	} else {
+			 		copy= configuration.getWorkingCopy();
+			 	}
+			 	//update if required
+				setDefaultVMInstallAttributes(defaultVMInstall, copy);
+			 }
+        } catch (CoreException ce) {
+        	AntUIPlugin.log(ce);
+        }
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
@@ -168,22 +215,32 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
-		//by default set an Ant build to occur in a separate VM
-		IVMInstall defaultInstall= null;
+		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
+		if (defaultVMInstall != null) {
+			config.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
+			setDefaultVMInstallAttributes(defaultVMInstall, config);
+			applySeparateVMAttributes(config);
+		} 
+	}
+
+	private IVMInstall getDefaultVMInstall(ILaunchConfiguration config) {
+		IVMInstall defaultVMInstall;
 		try {
-			defaultInstall = JavaRuntime.computeVMInstall(config);
+			defaultVMInstall = JavaRuntime.computeVMInstall(config);
 		} catch (CoreException e) {
 			//core exception thrown for non-Java project
-			defaultInstall= JavaRuntime.getDefaultVMInstall();
+			defaultVMInstall= JavaRuntime.getDefaultVMInstall();
 		}
-		if (defaultInstall != null) {
-			String vmName = defaultInstall.getName();
-			String vmTypeID = defaultInstall.getVMInstallType().getId();					
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-			applySeparateVMAttributes(config);
-		}
+		return defaultVMInstall;
 	}
+
+	private void setDefaultVMInstallAttributes(IVMInstall defaultVMInstall, ILaunchConfigurationWorkingCopy config) {
+		String vmName = defaultVMInstall.getName();
+		String vmTypeID = defaultVMInstall.getVMInstallType().getId();
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */

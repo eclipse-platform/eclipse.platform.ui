@@ -54,6 +54,8 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -92,13 +94,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		// migrate the config to the new classpath format if required
 		AntUtil.migrateToNewClasspathFormat(configuration);
 		
-		String vmTypeID= null;
-		try {
-			//check if set to run in a separate VM
-			vmTypeID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		} catch (CoreException ce) {
-			AntUIPlugin.log(ce);			
-		}
+		boolean isSeparateJRE= AntUtil.isSeparateJREAntBuild(configuration);
 		
 		if (CommonTab.isLaunchInBackground(configuration)) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
@@ -114,7 +110,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			return;
 		}
 		
-		if (vmTypeID == null && AntRunner.isBuildRunning()) {
+		if (!isSeparateJRE && AntRunner.isBuildRunning()) {
 			IStatus status= new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Build_In_Progress"), new String[]{location.toOSString()}), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}		
@@ -160,7 +156,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		AntRunner runner= null;
-		if (vmTypeID == null) {
+		if (!isSeparateJRE) {
 			runner = configureAntRunner(configuration, location, basedir, idProperty, arguments, userProperties, propertyFiles, targets, customClasspath, antHome, setInputHandler);
 		}
 		 
@@ -172,7 +168,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
 		int port= -1;
 		int requestPort= -1;
-		if (vmTypeID != null && captureOutput) {
+		if (isSeparateJRE && captureOutput) {
 			if (userProperties == null) {
 				userProperties= new HashMap();
 			}
@@ -185,9 +181,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			}
 		}
 		
-		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null, captureOutput, setInputHandler);
+		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, isSeparateJRE, captureOutput, setInputHandler);
 		
-		if (vmTypeID != null) {
+		if (isSeparateJRE) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 			runInSeparateVM(configuration, launch, monitor, idStamp, port, requestPort, commandLine, captureOutput, setInputHandler);
 		} else {
@@ -490,6 +486,10 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
         copy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
+        if (copy.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false)) {
+        	setDefaultVM(configuration, copy);
+        }
+
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
 		AntJavaLaunchDelegate delegate= new AntJavaLaunchDelegate();
@@ -535,6 +535,20 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				// refresh resources
 				RefreshTab.refreshResources(configuration, monitor);
 			}
+		}
+	}
+
+	private void setDefaultVM(ILaunchConfiguration configuration, ILaunchConfigurationWorkingCopy copy) {
+		try {
+			JavaRuntime.getJavaProject(configuration);
+			//remove the vm name and install type for the Java launching concept of default VM
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		} catch (CoreException ce) {
+			//not in a Java project
+			IVMInstall defaultVMInstall= JavaRuntime.getDefaultVMInstall();
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, defaultVMInstall.getName());
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, defaultVMInstall.getVMInstallType().getId());
 		}
 	}
 	

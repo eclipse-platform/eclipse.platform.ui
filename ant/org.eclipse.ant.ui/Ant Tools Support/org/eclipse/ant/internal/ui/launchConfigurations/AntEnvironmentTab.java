@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.EnvironmentTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -61,23 +60,16 @@ public class AntEnvironmentTab extends EnvironmentTab {
 		if (wrappingComposite == null) {
 			return;
 		}
-		String vmName= null;
-		try {
-			vmName= workingCopy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String) null);
-		} catch (CoreException e) {
-		}
-		boolean enabled= true;
-		if (vmName == null) {
-			enabled= false;			
-		}
-		Color tableColor= enabled ? null : Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		Color labelColor= enabled ? null : Display.getDefault().getSystemColor(SWT.COLOR_RED);
+		boolean isSeparateJREBuild= AntUtil.isSeparateJREAntBuild(workingCopy);
+		
+		Color tableColor= isSeparateJREBuild ? null : Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		Color labelColor= isSeparateJREBuild ? null : Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		Table table = environmentTable.getTable();
-		table.setEnabled(enabled);
+		table.setEnabled(isSeparateJREBuild);
 		table.setBackground(tableColor);
 		warningLabel.setForeground(labelColor);
-		envAddButton.setEnabled(enabled);
-		envSelectButton.setEnabled(enabled);
+		envAddButton.setEnabled(isSeparateJREBuild);
+		envSelectButton.setEnabled(isSeparateJREBuild);
 		updateAppendReplace();
 		//update the enabled state of the edit and remove buttons
 		environmentTable.setSelection(environmentTable.getSelection());

@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -29,7 +28,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -111,7 +109,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-        fSeparateJRE= isSeparateJRE(configuration);
+        fSeparateJRE= AntUtil.isSeparateJREAntBuild(configuration);
 		setErrorMessage(null);
 		setMessage(null);
 		Map properties= null;
@@ -153,16 +151,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
         fAntPropertiesBlock.setPropertyFilesInput(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles(false));
         fAntPropertiesBlock.setTablesEnabled(false);
         fUseDefaultButton.setSelection(true);
-    }
-
-    private boolean isSeparateJRE(ILaunchConfiguration configuration) {
-        boolean separateVM= true;
-        try {
-            separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
-        } catch (CoreException ce) {
-            AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
-        }
-        return separateVM;
     }
 	
 	/**
@@ -254,7 +242,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-        if (fSeparateJRE != isSeparateJRE(workingCopy)) {
+        if (fSeparateJRE != AntUtil.isSeparateJREAntBuild(workingCopy)) {
             //update the properties if changed whether build is in separate JRE
             initializeFrom(workingCopy);
         }

@@ -117,4 +117,12 @@ public interface IAntUIConstants {
 	 * Default value is <code>true</code>.
 	 */
 	public static final String SET_INPUTHANDLER= PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating if the default VM install should be used for the separate JRE build
+	 * Default value is <code>false</code> for backwards compatibility
+	 * 
+	 * @since 3.1
+	 */
+	public static final String ATTR_DEFAULT_VM_INSTALL= PLUGIN_ID + ".DEFAULT_VM_INSTALL"; //$NON-NLS-1$
 }

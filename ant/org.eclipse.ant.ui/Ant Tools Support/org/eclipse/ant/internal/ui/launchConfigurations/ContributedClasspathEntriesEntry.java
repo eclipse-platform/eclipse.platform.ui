@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -70,7 +71,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
-		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
+		boolean separateVM= AntUtil.isSeparateJREAntBuild(configuration);
 		boolean setInputHandler= configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();

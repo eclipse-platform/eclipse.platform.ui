@@ -692,4 +692,16 @@ public final class AntUtil {
     		}
     	});
 	}
+    
+    public static boolean isSeparateJREAntBuild(ILaunchConfiguration configuration) {
+    	boolean separateJRE= true;
+		try {
+			//always null for same JRE
+			separateJRE = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null) != null;
+		} catch (CoreException e) {
+			AntUIPlugin.log(AntUIModelMessages.getString("AntUtil.2"), e); //$NON-NLS-1$
+		}
+    	
+		return separateJRE;
+    }
 }
