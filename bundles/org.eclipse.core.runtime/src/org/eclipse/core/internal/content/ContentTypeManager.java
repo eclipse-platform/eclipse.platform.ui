@@ -369,13 +369,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		return (ContentType) catalog.get(contentTypeIdentifier);
 	}
 
-	private boolean isBaseTypeOf(IContentType base, IContentType target) {
-		IContentType targetBase = target.getBaseType();
-		if (targetBase == null)
-			return false;
-		return targetBase == base ? true : isBaseTypeOf(base, targetBase);
-	}
-
 	private void makeAliases(Map fileSpecs) {
 		// process all content types per file specs
 		// marking conflicting content types as aliases 

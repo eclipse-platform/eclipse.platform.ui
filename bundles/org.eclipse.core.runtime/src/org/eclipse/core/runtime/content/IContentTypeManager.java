@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
+import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see IPlatform#getContentTypeManager()
  * @since 3.0
  */
 public interface IContentTypeManager {

@@ -44,7 +44,6 @@ public class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation;
-	private boolean text;
 
 	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(manager);
@@ -181,7 +180,7 @@ public class ContentType implements IContentType {
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		if (!failedDescriberCreation && contentTypeElement.getChildren("describer").length > 0)
+		if (!failedDescriberCreation && contentTypeElement.getChildren("describer").length > 0) //$NON-NLS-1$
 			try {
 				return (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
 			} catch (CoreException ce) {
