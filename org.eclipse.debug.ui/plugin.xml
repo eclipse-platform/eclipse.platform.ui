@@ -691,4 +691,10 @@
    </persistent>
 </extension>
 
+<extension point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation 
+            targetID="org.eclipse.debug.ui.debugActionSet">
+            <part id="org.eclipse.debug.ui.DebugView"/>
+      </actionSetPartAssociation>
+</extension>
 </plugin>
