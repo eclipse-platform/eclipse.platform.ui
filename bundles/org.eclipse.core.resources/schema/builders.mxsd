@@ -21,42 +21,13 @@ number of resources in the project.  This typically
 implies that builders are able to incrementally update 
 their "built state". 
 &lt;p&gt;
-The markers extension-point allows builder writers 
+The builders extension-point allows builder writers 
 to register their builder implementation under a 
 symbolic name that is then used from within the 
 workspace to find and run builders. The symbolic 
-name it the id of the builder extension.
+name is the id of the builder extension. When defining a builder extension, users are encouraged to include a human-readable value for the "name" attribute which identifies their builder and potentially may be presented to users.
    </documentation>
 </annotation>
-
-   <element name="extension">
-      <complexType>
-         <sequence>
-            <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="point" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
 
    <element name="builder">
       <complexType>
@@ -66,10 +37,10 @@ name it the id of the builder extension.
          <attribute name="hasNature" type="boolean">
             <annotation>
                <documentation>
-                  "true" or "false" indicating whether the builder is owned by
-a project nature.  If "true" and no corresponding nature is
+                  "&lt;tt&gt;true&lt;/tt&gt;" or "&lt;tt&gt;false&lt;/tt&gt;" indicating whether the builder is owned by
+a project nature.  If "&lt;tt&gt;true&lt;/tt&gt;" and no corresponding nature is
 found, this builder will not run but will remain in the project's
-build spec.  If the attribute is not specified, it is assumed to be false.
+build spec.  If the attribute is not specified, it is assumed to be "&lt;tt&gt;false&lt;/tt&gt;".
                </documentation>
             </annotation>
          </attribute>
@@ -141,6 +112,8 @@ specified builder class
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
+
+If this extension was defined in a plug-in with id "com.xyz.coolplugin", the fully qualified name of this builder would be "com.xyz.coolplugin.coolbuilder".
       </documentation>
    </annotation>
 

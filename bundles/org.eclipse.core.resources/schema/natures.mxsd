@@ -41,7 +41,7 @@ Natures cannot be added to or removed from a project if that change would
 violate any constraints that were previously satisfied.  If a nature is
 configured on a project, but later finds that its constraints are not 
 satisfied, that nature and all natures that require it are marked as
-&lt;i&gt;disabled&lt;i&gt;, but remain on the project.  This can happen, for example,
+&lt;i&gt;disabled&lt;/i&gt;, but remain on the project.  This can happen, for example,
 when a required nature goes missing from the install.  Natures that are 
 missing from the install, and natures involved in dependency cycles are 
 also marked as disabled.
@@ -57,35 +57,11 @@ in their markup.
    </documentation>
 </annotation>
 
-   <element name="extension">
+   <element name="runtime">
       <complexType>
          <sequence>
-            <element ref="runtime" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="one-of-nature" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="requires-nature" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="run" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="point" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -134,14 +110,6 @@ in their markup.
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="runtime">
-      <complexType>
-         <sequence>
-            <element ref="run" minOccurs="0" maxOccurs="1"/>
-         </sequence>
       </complexType>
    </element>
 
