@@ -58,6 +58,7 @@ class FastViewPane {
 	
 	// Counts how many times we've scheduled a redraw... use this to avoid resizing
 	// the widgetry when we're getting resize requests faster than we can process them.
+	// This is needed for GTK, which resizes slowly (bug 54517)
 	private int redrawCounter = 0;
 	
 	private DefaultStackPresentationSite site = new DefaultStackPresentationSite() {
@@ -183,6 +184,7 @@ class FastViewPane {
 		// Do the rest of this method inside an asyncExec. This allows the method 
 		// to return quickly (without resizing). This way, if we recieve a lot of 
 		// resize requests in a row, we only need to process the last one.
+		// This is needed for GTK, which resizes slowly (bug 54517)
 		redrawCounter++;
 		getPresentation().getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
