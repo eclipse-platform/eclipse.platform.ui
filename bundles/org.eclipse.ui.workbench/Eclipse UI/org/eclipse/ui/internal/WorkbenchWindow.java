@@ -1079,7 +1079,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					// Prevent duplicate items from being read back in.
 					if ((id != null) && (coolBarMgr.find(id) != null)) {
 					    if (Policy.DEBUG_TOOLBAR_DISPOSAL) {
-					        System.out.println("Not loading duplicate cool bar item."); //$NON-NLS-1$
+					        System.out.println("Not loading duplicate cool bar item: " + id); //$NON-NLS-1$
 					    }
 					    continue;
 					}
