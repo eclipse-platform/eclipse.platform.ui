@@ -16,9 +16,11 @@ import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -36,11 +38,12 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	private static final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$	
 
 	private ExtensionRegistry registry;
-	private ExtensionsParser parser;
+	private ServiceTracker xmlTracker;
 
 	public EclipseBundleListener(ExtensionRegistry registry) {
 		this.registry = registry;
-		this.parser = new ExtensionsParser();
+		xmlTracker = new ServiceTracker(InternalPlatform.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+		xmlTracker.open();
 	}
 
 	public void bundleChanged(BundleEvent event) {
@@ -137,7 +140,8 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			} catch (MissingResourceException e) {
 				//Ignore the exception
 			}
-			Namespace bundleModel = parser.parseManifest(problems, new InputSource(is), manifestType, manifestName, b);
+			ExtensionsParser parser = new ExtensionsParser(problems);
+			Namespace bundleModel = parser.parseManifest(xmlTracker, new InputSource(is), manifestType, manifestName, b);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {

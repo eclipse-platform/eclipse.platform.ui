@@ -12,11 +12,14 @@ package org.eclipse.core.tests.internal.registrycache;
 
 import java.io.*;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.registry.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -78,9 +81,10 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	}
 
 	private Namespace parseManifest(String symbolicName, Reader input) throws IOException, SAXException, ParserConfigurationException {
-		ExtensionsParser parser = new ExtensionsParser();
-		MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, 0, "", null);
-		Namespace result = parser.parseManifest(problems, new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml", null);
+		ExtensionsParser parser = new ExtensionsParser(new MultiStatus(Platform.PI_RUNTIME, 0, "", null));
+		ServiceTracker xmlTracker = new ServiceTracker(InternalPlatform.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+		xmlTracker.open();
+		Namespace result = parser.parseManifest(xmlTracker, new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml", null);
 		result.setUniqueIdentifier(symbolicName);
 		return result;
 	}

@@ -21,15 +21,11 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-/*
- * This class is NOT thread safe. Clients must ensure at most one thread
- * operates on instances of this class at a time. 
- */
 public class ExtensionsParser extends DefaultHandler {
 	// Introduced for backward compatibility
 	private final static String NO_EXTENSION_MUNGING = "eclipse.noExtensionMunging"; //$NON-NLS-1$ //System property
 	private static Map extensionPointMap;
-	private static ServiceTracker parserFactoryTracker;
+
 	static {
 		initializeExtensionPointMap();
 	}
@@ -130,9 +126,9 @@ public class ExtensionsParser extends DefaultHandler {
 
 	private Locator locator = null;
 
-	public ExtensionsParser() {
-		parserFactoryTracker = new ServiceTracker(InternalPlatform.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
-		parserFactoryTracker.open();
+	public ExtensionsParser(MultiStatus status) {
+		super();
+		this.status = status;
 	}
 
 	/**
@@ -350,14 +346,13 @@ public class ExtensionsParser extends DefaultHandler {
 		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
-	public Namespace parseManifest(MultiStatus status, InputSource in, String manifestType, String manifestName, ResourceBundle bundle) throws ParserConfigurationException, SAXException, IOException {
-		this.status = status;
+	public Namespace parseManifest(ServiceTracker factoryTracker, InputSource in, String manifestType, String manifestName, ResourceBundle bundle) throws ParserConfigurationException, SAXException, IOException {
 		long start = 0;
 		this.resources = bundle;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
-
-		SAXParserFactory factory = (SAXParserFactory) parserFactoryTracker.getService();
+		
+		SAXParserFactory factory = (SAXParserFactory) factoryTracker.getService(); 
 
 		if (factory == null)
 			throw new SAXException(Policy.bind("parse.xmlParserNotAvailable")); //$NON-NLS-1$
