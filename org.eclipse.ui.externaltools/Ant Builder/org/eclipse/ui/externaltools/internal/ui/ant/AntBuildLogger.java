@@ -1,27 +1,32 @@
 package org.eclipse.ui.externaltools.internal.ui.ant;
 
 /**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
+
 import java.io.PrintStream;
 
-import org.apache.tools.ant.*;
-import org.eclipse.core.runtime.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.Project;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.core.*;
-import org.eclipse.ui.externaltools.internal.ui.*;
+import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
+import org.eclipse.ui.externaltools.internal.ui.OutputStructureElement;
 
 public class AntBuildLogger implements BuildLogger {
 
 	protected int priorityFilter = LogConsoleDocument.MSG_INFO;
 	private int logLength = 0;
 	private int lastTargetEndIndex = 0;
+	
+	private PrintStream fErr= null;
+	private PrintStream fOut= null;
 
 	public AntBuildLogger() {
 	}
@@ -137,8 +142,23 @@ public class AntBuildLogger implements BuildLogger {
 	}
 
 	protected void logMessage(String message, int priority) {
-		if (priority > priorityFilter)
+		if (priority > priorityFilter) {
 			return;
+		}
+		
+		if (priority == LogConsoleDocument.MSG_ERR) {
+			if (fErr != null && fErr != System.err) {
+				//user has designated to log to a logfile
+				fErr.println(message);
+				return;
+			}
+		} else {
+			if (fOut != null && fOut != System.out) {
+				//user has designated to log to a logfile
+				fOut.println(message);
+				return;
+			} 
+		}
 		message += '\n';
 		LogConsoleDocument doc = LogConsoleDocument.getInstance();
 		doc.append(message, priority);
@@ -158,21 +178,37 @@ public class AntBuildLogger implements BuildLogger {
 		createNewOutputStructureElement(name, logLength);
 	}
 
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
+	 */
 	public void setMessageOutputLevel(int level) {
 		this.priorityFilter = toConsolePriority(level);
 	}
 
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
+	 */
 	public void setEmacsMode(boolean emacsMode) {
 	}
 
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
+	 */
 	public void setErrorPrintStream(PrintStream err) {
+		fErr= err;
 	}
 
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
+	 */
 	public void setOutputPrintStream(PrintStream output) {
+		fOut= output;
 	}
+	
 	private IProgressMonitor monitorFor(IProgressMonitor monitor) {
-		if (monitor == null)
+		if (monitor == null) {
 			return new NullProgressMonitor();
+		}
 		return monitor;
 	}
 }
