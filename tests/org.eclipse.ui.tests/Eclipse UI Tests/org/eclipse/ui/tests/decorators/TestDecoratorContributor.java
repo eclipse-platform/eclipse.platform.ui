@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,38 +8,46 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.tests.TestPlugin;
 
-public class TestLightweightDecoratorContributor implements
-        ILightweightLabelDecorator {
+public class TestDecoratorContributor implements ILabelDecorator {
 
-    public static TestLightweightDecoratorContributor contributor;
+    public static TestDecoratorContributor contributor;
 
     private Set listeners = new HashSet();
 
     public static String DECORATOR_SUFFIX = "_SUFFIX";
 
-    public static String DECORATOR_PREFIX = "PREFIX_";
-
-    private ImageDescriptor descriptor;
-
-    public TestLightweightDecoratorContributor() {
+    public TestDecoratorContributor() {
         contributor = this;
+    }
+
+    /*
+     * @see ILabelDecorator#decorateText(String, Object)
+     */
+    public String decorateText(String text, Object element) {
+        //Check that the element is adapted to IResource
+        Assert.isTrue(element instanceof IResource);
+        return text + DECORATOR_SUFFIX;
+    }
+
+    /*
+     * @see ILabelDecorator#decorateImage(Image, Object)
+     */
+    public Image decorateImage(Image image, Object element) {
+        Assert.isTrue(element instanceof IResource);
+        return image;
     }
 
     /*
@@ -84,34 +92,6 @@ public class TestLightweightDecoratorContributor implements
             ((ILabelProviderListener) iterator.next())
                     .labelProviderChanged(event);
         }
-    }
-
-    /**
-     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
-     */
-    public ImageDescriptor getOverlay(Object element) {
-        Assert.isTrue(element instanceof IResource);
-        if (descriptor == null) {
-            URL source = TestPlugin.getDefault().getDescriptor()
-                    .getInstallURL();
-            try {
-                descriptor = ImageDescriptor.createFromURL(new URL(source,
-                        "icons/binary_co.gif"));
-            } catch (MalformedURLException exception) {
-                return null;
-            }
-        }
-        return descriptor;
-
-    }
-
-    /**
-     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
-     */
-    public void decorate(Object element, IDecoration decoration) {
-        decoration.addOverlay(getOverlay(element));
-        decoration.addPrefix(DECORATOR_PREFIX);
-        decoration.addSuffix(DECORATOR_SUFFIX);
     }
 
 }

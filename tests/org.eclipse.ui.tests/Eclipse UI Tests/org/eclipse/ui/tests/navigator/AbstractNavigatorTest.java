@@ -27,7 +27,7 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  * The AbstractNavigatorTest is the abstract superclass
  * of tests that use a populated Resource Navigator.
  */
-abstract class AbstractNavigatorTest extends UITestCase {
+public abstract class AbstractNavigatorTest extends UITestCase {
 
     private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
 

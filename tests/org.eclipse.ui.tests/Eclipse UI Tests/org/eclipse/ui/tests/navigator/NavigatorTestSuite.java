@@ -27,12 +27,8 @@ public class NavigatorTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public NavigatorTestSuite() {
-        addTest(new TestSuite(ExceptionDecoratorTestCase.class));
         addTest(new TestSuite(ResourceNavigatorTest.class));
         addTest(new TestSuite(NavigatorTest.class));
-        addTest(new TestSuite(DecoratorTestCase.class));
-        addTest(new TestSuite(LightweightDecoratorTestCase.class));
-        addTest(new TestSuite(DuplicateMenuItemTest.class));
     }
 
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.tests.decorators.BackgroundColorDecorator;
 import org.eclipse.ui.tests.dynamicplugins.TestInstallUtil;
 import org.osgi.framework.BundleContext;
 
@@ -130,5 +131,6 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     public void stop(BundleContext context) throws Exception {
         TestInstallUtil.setContext(null);
         super.stop(context);
+        BackgroundColorDecorator.color = null;
     }
 }

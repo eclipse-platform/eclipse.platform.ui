@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
 import java.util.ArrayList;
 import java.util.Collection;

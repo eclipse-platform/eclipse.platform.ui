@@ -75,7 +75,7 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
                     "org.eclipse.ui.tests.adaptable.decorator"))
                 fullDefinition = definitions[i];
             if (definitions[i].getId().equals(
-                    "org.eclipse.ui.tests.navigator.lightweightdecorator"))
+                    "org.eclipse.ui.tests.decorators.lightweightdecorator"))
                 lightDefinition = definitions[i];
         }
     }

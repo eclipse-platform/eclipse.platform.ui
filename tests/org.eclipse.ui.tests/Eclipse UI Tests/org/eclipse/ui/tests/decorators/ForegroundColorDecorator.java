@@ -8,19 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The FontDecorator is for testing the font enablement.
+ * The ForegroundColorDecorator is for testing the foreground enablement.
  */
-public class FontDecorator implements ILightweightLabelDecorator {
+public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 
+	
+	public static final String ID = "org.eclipse.ui.tests.foregroundDecorator";
+	
+	public static Color color;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -28,18 +35,22 @@ public class FontDecorator implements ILightweightLabelDecorator {
 	 *      org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
-		final IDecoration finalDecoration = decoration;
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				finalDecoration.setFont(JFaceResources
-						.getFont(JFaceResources.HEADER_FONT));
-			}
-		});
+
+		if(color == null){
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					setUpColor();
+
+				}
+			});
+
+		}
+		decoration.setForegroundColor(color);
 
 	}
 
@@ -83,5 +94,10 @@ public class FontDecorator implements ILightweightLabelDecorator {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public static void setUpColor(){
+		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GREEN);
+	}
+
 
 }

@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -21,6 +23,11 @@ import org.eclipse.ui.PlatformUI;
  * navigator.
  */
 public class BackgroundColorDecorator implements ILightweightLabelDecorator {
+
+	public static final String ID = "org.eclipse.ui.tests.backgroundDecorator";
+
+	public static Color color;
+
 
 	/*
 	 * (non-Javadoc)
@@ -30,20 +37,21 @@ public class BackgroundColorDecorator implements ILightweightLabelDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 
-		final IDecoration finalDecoration = decoration;
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				finalDecoration.setBackgroundColor(PlatformUI.getWorkbench()
-						.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-				
+		if(color == null){
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					setUpColor();
 
-			}
-		});
+				}
+			});
+
+		}
+		decoration.setBackgroundColor(color);
 
 	}
 
@@ -63,7 +71,6 @@ public class BackgroundColorDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -87,5 +94,9 @@ public class BackgroundColorDecorator implements ILightweightLabelDecorator {
 		// TODO Auto-generated method stub
 
 	}
+	public static void setUpColor(){
+		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_CYAN);
+	}
 
+	
 }

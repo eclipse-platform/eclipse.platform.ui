@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+
+import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -21,18 +24,18 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 /**
  * @version 	1.0
  */
-public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
-        implements ILabelProviderListener {
+public class DecoratorTestCase extends AbstractNavigatorTest implements
+        ILabelProviderListener {
 
-    protected DecoratorDefinition definition;
+    private DecoratorDefinition definition;
 
-    protected boolean updated = false;
+    private boolean updated = false;
 
     /**
      * Constructor for DecoratorTestCase.
      * @param testName
      */
-    public DecoratorEnablementTestCase(String testName) {
+    public DecoratorTestCase(String testName) {
         super(testName);
     }
 
@@ -50,12 +53,12 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
                 .getDecoratorManager().getAllDecoratorDefinitions();
         for (int i = 0; i < definitions.length; i++) {
             if (definitions[i].getId().equals(
-                    "org.eclipse.ui.tests.navigator.lightweightdecorator"))
+                    "org.eclipse.ui.tests.adaptable.decorator"))
                 definition = definitions[i];
         }
     }
 
-    protected DecoratorManager getDecoratorManager() {
+    private DecoratorManager getDecoratorManager() {
         return WorkbenchPlugin.getDefault().getDecoratorManager();
     }
 
@@ -91,6 +94,21 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
         getDecoratorManager().clearCaches();
         definition.setEnabled(false);
         getDecoratorManager().updateForEnablementChange();
+    }
+
+    /**
+     * Refresh the test decorator.
+     */
+    public void testRefreshContributor() throws CoreException {
+
+        updated = false;
+        getDecoratorManager().clearCaches();
+        definition.setEnabled(true);
+        getDecoratorManager().updateForEnablementChange();
+
+        assertTrue("Got an update", updated);
+        updated = false;
+
     }
 
     /*

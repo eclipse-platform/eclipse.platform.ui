@@ -297,7 +297,25 @@
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewBottom2"
             location="BOTTOM">
-      </stickyView>      
+      </stickyView>
+      <category
+            name="Decorator Tests"
+            id="org.eclipse.ui.tests.decoratorCategory"/>
+      <view
+            class="org.eclipse.ui.tests.decorators.DecoratorTreeView"
+            category="org.eclipse.ui.tests.decoratorCategory"
+            name="Tree View Test"
+            id="org.eclipse.ui.tests.decorators.TreeViewTest"/>
+      <view
+            class="org.eclipse.ui.tests.decorators.DecoratorTableView"
+            category="org.eclipse.ui.tests.decoratorCategory"
+            name="Table View Test"
+            id="org.eclipse.ui.tests.decorator.TableViewTest"/>
+      <view
+            class="org.eclipse.ui.tests.decorators.DecoratorTableTreeView"
+            category="org.eclipse.ui.tests.decoratorCategory"
+            name="Table Tree Test"
+            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>      
             
    </extension>
    <extension
@@ -1044,7 +1062,7 @@
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             label="Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
+            class="org.eclipse.ui.tests.decorators.TestDecoratorContributor"
             state="false"
             id="org.eclipse.ui.tests.adaptable.decorator">
          <description>
@@ -1066,9 +1084,9 @@
             lightweight="true"
             adaptable="true"
             label="Lightweight Test Decorator"
-            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
+            class="org.eclipse.ui.tests.decorators.TestLightweightDecoratorContributor"
             state="false"
-            id="org.eclipse.ui.tests.navigator.lightweightdecorator">
+            id="org.eclipse.ui.tests.decorators.lightweightdecorator">
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
@@ -1085,7 +1103,7 @@
             label="Declarative Test Decorator"
             icon="icons/binary_co.gif"
             state="false"
-            id="org.eclipse.ui.tests.navigator.declareddecorator">
+            id="org.eclipse.ui.tests.decorators.declareddecorator">
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
@@ -1099,21 +1117,21 @@
             lightweight="true"
             objectClass="org.eclipse.core.resources.IResource"
             label="Bug 41545 Lightweight"
-            class="org.eclipse.ui.tests.navigator.NullImageDecorator"
+            class="org.eclipse.ui.tests.decorators.NullImageDecorator"
             id="org.eclipse.ui.tests.lightNullImageDecorator">
       </decorator>
       <decorator
             lightweight="false"
             objectClass="org.eclipse.core.resources.IResource"
             label="Bug 41545 Heavy Image"
-            class="org.eclipse.ui.tests.navigator.HeavyNullImageDecorator"
+            class="org.eclipse.ui.tests.decorators.HeavyNullImageDecorator"
             id="org.eclipse.ui.tests.heavyNullImageDecorator">
       </decorator>
       <decorator
             lightweight="false"
             objectClass="org.eclipse.core.resources.IResource"
             label="Bug 41545 Heavy Text"
-            class="org.eclipse.ui.tests.navigator.HeavyNullTextDecorator"
+            class="org.eclipse.ui.tests.decorators.HeavyNullTextDecorator"
             id="org.eclipse.ui.tests.heavyNullTextDecorator">
       </decorator>
       <decorator
@@ -1121,8 +1139,8 @@
             adaptable="true"
             label="Lightweight Test Decorator Multiple Quadrant"
             state="false"
-            class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorMultipleQuadrantContributor"
-            id="org.eclipse.ui.tests.navigator.lightweightdecorator2">
+            class="org.eclipse.ui.tests.decorators.TestLightweightDecoratorMultipleQuadrantContributor"
+            id="org.eclipse.ui.tests.decorators.lightweightdecorator2">
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
@@ -1135,23 +1153,23 @@
       <decorator
             lightweight="true"
             adaptable="true"
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="java.lang.Object"
             label="Background Decorator"
-            class="org.eclipse.ui.tests.navigator.BackgroundColorDecorator"
+            class="org.eclipse.ui.tests.decorators.BackgroundColorDecorator"
             id="org.eclipse.ui.tests.backgroundDecorator"/>
       <decorator
             lightweight="true"
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="java.lang.Object"
             adaptable="true"
             label="Foreground Decorator"
-            class="org.eclipse.ui.tests.navigator.ForegroundColorDecorator"
+            class="org.eclipse.ui.tests.decorators.ForegroundColorDecorator"
             id="org.eclipse.ui.tests.foregroundDecorator"/>
       <decorator
             lightweight="true"
             adaptable="true"
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="java.lang.Object"
             label="Font Decorator"
-            class="org.eclipse.ui.tests.navigator.FontDecorator"
+            class="org.eclipse.ui.tests.decorators.FontDecorator"
             id="org.eclipse.ui.tests.fontDecorator"/>
    </extension>
 <!-- Working set tests -->

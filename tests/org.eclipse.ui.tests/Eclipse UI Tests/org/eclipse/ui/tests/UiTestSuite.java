@@ -19,6 +19,7 @@ import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
+import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.dnd.DragTestSuite;
 import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
@@ -60,6 +61,7 @@ public class UiTestSuite extends TestSuite {
         addTest(new PropertySheetTestSuite());
         addTest(new InternalTestSuite());
         addTest(new NavigatorTestSuite());
+        addTest(new DecoratorsTestSuite());
         addTest(new AdaptableTestSuite());
         addTest(new ZoomTestSuite());
         addTest(new DataTransferTestSuite());
@@ -75,5 +77,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new IntroTestSuite());
         addTest(new MenusTestSuite());
         addTest(new PresentationsTestSuite());
+        
     }
 }

@@ -8,18 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.swt.graphics.Font;
+
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.swt.SWT;
+
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The ForegroundColorDecorator is for testing the foreground enablement.
+ * The FontDecorator is for testing the font enablement.
  */
-public class ForegroundColorDecorator implements ILightweightLabelDecorator {
+public class FontDecorator implements ILightweightLabelDecorator {
+
+	public static final String ID = "org.eclipse.ui.tests.fontDecorator";
+
+	public static Font font;
 
 	/*
 	 * (non-Javadoc)
@@ -28,21 +35,21 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 *      org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
-
 		final IDecoration finalDecoration = decoration;
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				finalDecoration.setForegroundColor(PlatformUI.getWorkbench()
-						.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+		if (font == null) {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-			}
-		});
-
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					setUpFont();
+				}
+			});
+		}
+		decoration.setFont(font);
 	}
 
 	/*
@@ -82,8 +89,14 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Setup the font used by this decorator.
+	 */
+	public static void setUpFont() {
+		font = JFaceResources.getFont(JFaceResources.HEADER_FONT);
 	}
 
 }
