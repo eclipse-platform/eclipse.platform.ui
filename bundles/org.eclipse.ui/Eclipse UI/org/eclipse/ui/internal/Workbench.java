@@ -942,9 +942,19 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		for (int i = 0; i < featuresInfo.length; i++) {
 			try {
 				featuresInfo[i].readINIFile();
+				// Exclude any feature for which their is no corresponding plug-in
+				if (featuresInfo[i].getDescriptor() == null) {
+					aboutInfos.remove(featuresInfo[i]);
+				}
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
+				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+					WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
 			}
+		}
+		
+		if (aboutInfos.size() < featuresInfo.length) {
+			featuresInfo = new AboutInfo[aboutInfos.size()];
+			aboutInfos.toArray(featuresInfo);
 		}
 	}
 

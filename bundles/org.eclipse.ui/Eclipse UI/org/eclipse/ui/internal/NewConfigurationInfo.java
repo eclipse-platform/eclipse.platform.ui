@@ -114,7 +114,7 @@ public abstract class NewConfigurationInfo {
 	 * Gets the descriptor
 	 * @return Returns a IPluginDescriptor
 	 */
-	protected IPluginDescriptor getDescriptor() {
+	public IPluginDescriptor getDescriptor() {
 		return desc;
 	}
 	/**
