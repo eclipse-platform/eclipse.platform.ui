@@ -542,7 +542,7 @@ protected void update(boolean force, boolean recursive) {
 				if (recursive) {
 					IContributionItem item = src;
 					if (item instanceof SubContributionItem) 
-						item = ((SubContributionItem)src).getInnerItem();
+						item = ((SubContributionItem)item).getInnerItem();
 					if (item instanceof IMenuManager) 
 						((IMenuManager)item).updateAll(force);
 				}
