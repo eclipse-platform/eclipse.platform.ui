@@ -14,10 +14,10 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
@@ -162,31 +162,39 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	protected void save() throws BackingStoreException {
-		IFile fileInWorkspace = getFile();
+		final IFile fileInWorkspace = getFile();
 		if (fileInWorkspace == null) {
 			if (Policy.DEBUG_PREFERENCES)
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		Properties table = convertToProperties(new SortedProperties(), ""); //$NON-NLS-1$
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IResourceRuleFactory factory = workspace.getRuleFactory();
 		try {
 			if (table.isEmpty()) {
-				// nothing to save. delete existing file if one exists.
-				if (fileInWorkspace.exists()) {
-					if (Policy.DEBUG_PREFERENCES)
-						Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
-					if (fileInWorkspace.isReadOnly()) {
-						IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
-						if (!status.isOK())
-							throw new CoreException(status);
+				IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						// nothing to save. delete existing file if one exists.
+						if (fileInWorkspace.exists()) {
+							if (Policy.DEBUG_PREFERENCES)
+								Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+							if (fileInWorkspace.isReadOnly()) {
+								IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+								if (!status.isOK())
+									throw new CoreException(status);
+							}
+							try {
+								fileInWorkspace.delete(true, null);
+							} catch (CoreException e) {
+								String message = NLS.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
+								log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
+							}
+						}
 					}
-					try {
-						fileInWorkspace.delete(true, null);
-					} catch (CoreException e) {
-						String message = NLS.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
-						log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
-					}
-				}
+				};
+				ISchedulingRule rule = factory.deleteRule(fileInWorkspace);
+				ResourcesPlugin.getWorkspace().run(operation, rule, IResource.NONE, null);
 				return;
 			}
 			table.put(VERSION_KEY, VERSION_VALUE);
@@ -204,29 +212,36 @@ public class ProjectPreferences extends EclipsePreferences {
 					// ignore
 				}
 			}
-			InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
-			if (fileInWorkspace.exists()) {
-				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
-				if (fileInWorkspace.isReadOnly()) {
-					IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
-					if (!status.isOK())
-						throw new CoreException(status);
+			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					if (fileInWorkspace.exists()) {
+						if (Policy.DEBUG_PREFERENCES)
+							Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+						if (fileInWorkspace.isReadOnly()) {
+							IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+							if (!status.isOK())
+								throw new CoreException(status);
+						}
+						// set the contents
+						fileInWorkspace.setContents(input, IResource.KEEP_HISTORY, null);
+					} else {
+						// create the file
+						IFolder folder = (IFolder) fileInWorkspace.getParent();
+						if (!folder.exists()) {
+							if (Policy.DEBUG_PREFERENCES)
+								Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
+							folder.create(IResource.NONE, true, null);
+						}
+						if (Policy.DEBUG_PREFERENCES)
+							Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
+						fileInWorkspace.create(input, IResource.NONE, null);
+					}
 				}
-				// set the contents
-				fileInWorkspace.setContents(input, IResource.KEEP_HISTORY, null);
-			} else {
-				// create the file
-				IFolder folder = (IFolder) fileInWorkspace.getParent();
-				if (!folder.exists()) {
-					if (Policy.DEBUG_PREFERENCES)
-						Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
-					folder.create(IResource.NONE, true, null);
-				}
-				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
-				fileInWorkspace.create(input, IResource.NONE, null);
-			}
+			};
+			// we might: create the .settings folder, create the file, or modify the file.
+			ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
+			workspace.run(operation, rule, IResource.NONE, null);
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
