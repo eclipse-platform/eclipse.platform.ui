@@ -20,7 +20,7 @@ class VariableSelectionDialog extends SelectionDialog {
 	private ExternalToolVariableForm form;
 	public VariableSelectionDialog(ExternalToolsMainTab externalToolsMainTab, Shell parent) {
 		super(parent);
-		setShellStyle(SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.externalToolsMainTab = externalToolsMainTab;
 		setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_variable_10")); //$NON-NLS-1$
 	}
