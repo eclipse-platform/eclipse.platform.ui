@@ -417,17 +417,20 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDown(MouseEvent e) {
-		if (fHyperLink != null) {
-			if (e.button == 1) {
-				fHyperLink.linkActivated();
-			}
-		}
 	}
 
 	/**
 	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseUp(MouseEvent e) {
+		if (fHyperLink != null) {
+			String selection = getTextWidget().getSelectionText();
+			if (selection.length() <= 0) {
+				if (e.button == 1) {
+					fHyperLink.linkActivated();
+				}
+			}
+		}
 	}
 
 	protected void setVisible(boolean visible) {
