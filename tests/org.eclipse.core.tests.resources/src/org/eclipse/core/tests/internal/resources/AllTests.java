@@ -23,10 +23,10 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(ModelObjectReaderWriterTest.suite());
-		suite.addTest(ResourceInfoTest.suite());
-		suite.addTest(WorkspacePreferencesTest.suite());
 		suite.addTest(ProjectPreferencesTest.suite());
+		suite.addTest(ResourceInfoTest.suite());
 		suite.addTest(WorkspaceConcurrencyTest.suite());
+		suite.addTest(WorkspacePreferencesTest.suite());
 		return suite;
 	}
 

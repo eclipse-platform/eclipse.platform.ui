@@ -26,6 +26,9 @@ public class AutomatedTests extends TestCase {
 		super(name);
 	}
 
+	/**
+	 * Call each AllTests class from each of the test packages.
+	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(org.eclipse.core.tests.internal.alias.AllTests.suite());

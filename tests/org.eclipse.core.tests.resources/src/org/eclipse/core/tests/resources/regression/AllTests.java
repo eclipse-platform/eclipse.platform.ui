@@ -31,6 +31,15 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
+		suite.addTest(Bug_25457.suite());
+		suite.addTest(Bug_26294.suite());
+		suite.addTest(Bug_27271.suite());
+		suite.addTest(Bug_28981.suite());
+		suite.addTest(Bug_29116.suite());
+		suite.addTest(Bug_29671.suite());
+		suite.addTest(Bug_29851.suite());
+		suite.addTest(Bug_32076.suite());
+		suite.addTest(Bug_44106.suite());
 		suite.addTest(Bug_6708.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
@@ -42,15 +51,6 @@ public class AllTests extends TestCase {
 		suite.addTest(PR_1GEAB3C_Test.suite());
 		suite.addTest(PR_1GH2B0N_Test.suite());
 		suite.addTest(PR_1GHOM0N_Test.suite());
-		suite.addTest(Bug_25457.suite());
-		suite.addTest(Bug_26294.suite());
-		suite.addTest(Bug_27271.suite());
-		suite.addTest(Bug_28981.suite());
-		suite.addTest(Bug_29116.suite());
-		suite.addTest(Bug_29671.suite());
-		suite.addTest(Bug_29851.suite());
-		suite.addTest(Bug_32076.suite());
-		suite.addTest(Bug_44106.suite());
 		return suite;
 	}
 }
