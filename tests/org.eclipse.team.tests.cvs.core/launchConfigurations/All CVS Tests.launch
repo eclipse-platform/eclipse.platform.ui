@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
+    <stringAttribute key="vmargs" value="-Declipse.cvs.properties=c:\eclipse\repository.properties -Declipse.cvs.testName2=testFileConflict"/>
+    <booleanAttribute key="askclear" value="false"/>
+    <booleanAttribute key="default" value="true"/>
+    <booleanAttribute key="clearws" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
+    <stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.eclipse.jdt.debug.ui.javaSourceLocator"/>
+    <stringAttribute key="location0" value="C:\Eclipse\Latest-Eclipse-Drop\eclipse\runtime-test-workspace"/>
+    <stringAttribute
+        key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+    <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+    <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+    <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.AllTests"/>
+    <stringAttribute key="progargs" value="-os win32 -ws win32 -arch x86 -nl en_CA"/>
+</launchConfiguration>
