@@ -189,21 +189,38 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The parent Composite.
 	 */
 	void showJobDetails(Composite parent) {
-		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-				| SWT.BORDER) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
-			 *      org.eclipse.ui.internal.progress.JobTreeElement)
-			 */
-			protected void updateColors(TreeItem treeItem, JobTreeElement element) {
-				super.updateColors(treeItem, element);
-				//Color the blocked element the not running color.
-				if (element == blockedElement)
-					setNotRunningColor(treeItem);
-			}
-		};
+		if (ProgressManagerUtil.useNewProgress())
+			viewer = new NewProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
+					| SWT.BORDER) {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
+				 *      org.eclipse.ui.internal.progress.JobTreeElement)
+				 */
+				protected void updateColors(TreeItem treeItem, JobTreeElement element) {
+					super.updateColors(treeItem, element);
+					//Color the blocked element the not running color.
+					if (element == blockedElement)
+						setNotRunningColor(treeItem);
+				}
+			};
+		else
+			viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
+					| SWT.BORDER) {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
+				 *      org.eclipse.ui.internal.progress.JobTreeElement)
+				 */
+				protected void updateColors(TreeItem treeItem, JobTreeElement element) {
+					super.updateColors(treeItem, element);
+					//Color the blocked element the not running color.
+					if (element == blockedElement)
+						setNotRunningColor(treeItem);
+				}
+			};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
