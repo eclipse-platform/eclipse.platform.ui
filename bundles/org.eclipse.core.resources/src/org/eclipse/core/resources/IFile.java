@@ -439,8 +439,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
@@ -479,8 +477,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
@@ -509,8 +505,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul> 

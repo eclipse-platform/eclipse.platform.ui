@@ -51,7 +51,7 @@ public class ContentDescriptionManager implements IManager {
 	private IContentDescription readDescription(IFile file) throws CoreException {
 		// tries to obtain a description for this file contents
 		IContentTypeManager contentTypeManager = org.eclipse.core.runtime.Platform.getContentTypeManager();
-		InputStream contents = file.getContents();
+		InputStream contents = file.getContents(true);
 		boolean failed = false;
 		try {
 			IContentDescription newDescription = contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
