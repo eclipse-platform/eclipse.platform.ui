@@ -144,17 +144,24 @@ public interface IDebugPreferenceConstants {
 	public static final int PREF_COLUMN_SIZE_DEFAULT = 4;
 		
 	/**
-	 * Padded string preference for renderings
-	 * @since 3.1
-	 */
-	public static final String PREF_PADDED_STR = "org.eclipse.debug.ui.memory.abstractTableRendering.paddedStr"; //$NON-NLS-1$
-	
-	/**
 	 * Default padded string for renderings
 	 * 
 	 * @since 3.1
 	 */
 	public static final String PREF_PADDED_STR_DEFAULT = "??"; //$NON-NLS-1$
+	
+	/**
+	 * Default ASCII code page if ASCII code page preference is not set.
+	 * @since 3.1
+	 */
+	public static final String DEFAULT_ASCII_CP = "windows-1252"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Default EBCDIC code page if EBCDIC code page preference is not set.
+	 * @since 3.1
+	 */
+	public static final String DEFAULT_EBCDIC_CP = "IBM-1047"; //$NON-NLS-1$
 }
 
 

@@ -270,7 +270,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			return;
 		}
 		
-		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_PADDED_STR))
+		if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR))
 		{
 			if (!fIsDisposed)
 			{
@@ -2443,7 +2443,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	public void becomesHidden() {
 		
 		if (isVisible() == false)
+		{
+			// super should always be called
+			super.becomesHidden();
 			return;
+		}
 
 		super.becomesHidden();
 		
@@ -2466,7 +2470,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		// do not do anything if already visible
 		if (isVisible() == true)
+		{
+			// super should always be called
+			super.becomesVisible();
 			return;
+		}
 		
 		super.becomesVisible();
 

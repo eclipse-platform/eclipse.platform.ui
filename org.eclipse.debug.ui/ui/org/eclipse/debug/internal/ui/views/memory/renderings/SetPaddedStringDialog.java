@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -61,7 +60,7 @@ public class SetPaddedStringDialog extends Dialog {
 		GridData textLayout = new GridData();
 		textLabel.setLayoutData(textLayout);
 		
-		fPaddedString = new StringFieldEditor(IDebugPreferenceConstants.PREF_PADDED_STR, "",content ); //$NON-NLS-1$
+		fPaddedString = new StringFieldEditor(IDebugUIConstants.PREF_PADDED_STR, "",content ); //$NON-NLS-1$
 		fPaddedString.fillIntoGrid(content, 2);
 		fPaddedString.setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 		fPaddedString.load();

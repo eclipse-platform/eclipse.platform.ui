@@ -982,4 +982,23 @@ public interface IDebugUIConstants {
      * @since 3.1
      */
     public static final String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$    
+
+	/**
+	 * Padded string preference for renderings.  Padded string is the string to be used in place of 
+	 * of a memory byte if a rendering cannot render the data properly.
+	 * @since 3.1
+	 */
+	public static final String PREF_PADDED_STR = PLUGIN_ID + ".memory.paddedStr"; //$NON-NLS-1$
+
+	/**
+	 * ASCII code page for rendering memory to ASCII strings.
+	 * @since 3.1
+	 */
+	public static final String PREF_DEFAULT_ASCII_CODE_PAGE = PLUGIN_ID + ".defaultAsciiCodePage"; //$NON-NLS-1$
+
+	/**
+	 * EBCDIC code page for rendering memory to EBCDIC strings.
+	 * @since 3.1
+	 */
+	public static final String PREF_DEFAULT_EBCDIC_CODE_PAGE = PLUGIN_ID + ".defaultEbcdicCodePage"; //$NON-NLS-1$
 }

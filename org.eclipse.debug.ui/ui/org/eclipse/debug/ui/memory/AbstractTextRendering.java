@@ -15,7 +15,7 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Abstract implementation of a rendering that translates memory into 
@@ -29,6 +29,16 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 abstract public class AbstractTextRendering extends AbstractTableRendering { 	
 	
 	private String fCodePage;
+
+	/**
+	 * Constructs a text rendering of the specified type.
+	 * 
+	 * @param renderingId memory rendering type identifier
+	 */
+	public AbstractTextRendering(String renderingId)
+	{
+		super(renderingId);
+	}
 	
 	/**
 	 * Constructs a text rendering of the specified type on the given
@@ -45,12 +55,37 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 		fCodePage = codePage;
 	}
 	
+	/**
+	 * Sets the code page for this rendering.  This does not cause
+	 * the rendering to be updated with the new code page.  Clients need
+	 * to update the rendering manually when the code page is changed.
+	 * 
+	 * @param codePage the name of a supported
+	 * {@link java.nio.charset.Charset </code>charset<code>}, for
+     *  example <code>CP1252</code>
+	 */
+	public void setCodePage(String codePage)
+	{
+		fCodePage = codePage;
+	}
+	
+	/**
+	 * Returns the current code page used by this rendering.  Returns null
+	 * if not set.
+	 * @return  Returns the current code page used by this rendering.  Returns null
+	 * if not set.
+	 */
+	public String getCodePage()
+	{
+		return fCodePage;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
 	 */
 	public String getString(String dataType, BigInteger address,  MemoryByte[] data) {
 		try {
-			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.PREF_PADDED_STR);
+			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 			if(fCodePage == null)
 				return ""; //$NON-NLS-1$
 			

@@ -13,7 +13,10 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTextRendering;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 
@@ -24,13 +27,22 @@ import org.eclipse.debug.ui.memory.AbstractTextRendering;
  */
 public class ASCIIRendering extends AbstractTextRendering{
 	
-	private final static String ASCII_CODE_PAGE = "CP1252"; //$NON-NLS-1$
 	private final int numCharsPerByte = 1;
 	
 
 	public ASCIIRendering(String renderingId)
 	{
-		super(renderingId, ASCII_CODE_PAGE);
+		super(renderingId);
+		String codepage = DebugUITools.getPreferenceStore().getString(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE);
+		setCodePage(codepage);
+		
+		// add as preference store listener
+		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
+	}
+	
+	public void dispose() {
+		DebugUITools.getPreferenceStore().removePropertyChangeListener(this);
+		super.dispose();
 	}
 	
 	/* (non-Javadoc)
@@ -92,5 +104,24 @@ public class ASCIIRendering extends AbstractTextRendering{
 		}
 		
 		return super.getString(renderingId, address, copy);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		
+		// handle code page changed event
+		if (event.getProperty().equals(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE))
+		{
+			String codePage = (String)event.getNewValue();
+			setCodePage(codePage);
+			
+			if (isVisible())
+				// just update labels, don't need to reget memory
+				updateLabels();
+		}
+		
+		super.propertyChange(event);
 	}
 }

@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Represent unsigned integer rendering
@@ -124,7 +124,7 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 	 */
 	public String getString(String dataType, BigInteger address, MemoryByte[] data) {
 		
-		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.PREF_PADDED_STR);
+		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 		boolean invalid = false;
 		for (int i=0; i<data.length; i++)
 		{

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -167,7 +166,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			if (newInput != fDebugTarget && newInput instanceof IDebugTarget)
 			{
 				fDebugTarget = (IDebugTarget)newInput;
-				maintainMemoryBlocksReference(false);
 				fMemoryBlocks.clear();
 				getMemoryBlocks();
 				updateActionsEnablement();
@@ -191,9 +189,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 				if (!fMemoryBlocks.contains(memoryBlocks[i]))
 				{
 					fMemoryBlocks.add(memoryBlocks[i]);
-					
-					if (memoryBlocks[i] instanceof IMemoryBlockExtension && fVisible)
-						((IMemoryBlockExtension)memoryBlocks[i]).connect(getInstance());
 				}
 			}
 		}
@@ -236,9 +231,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 				if (!fMemoryBlocks.contains(memoryBlocks[i]))
 				{
 					fMemoryBlocks.add(memoryBlocks[i]);
-					
-					if (memoryBlocks[i] instanceof IMemoryBlockExtension && fVisible)
-						((IMemoryBlockExtension)memoryBlocks[i]).connect(getInstance());
 				}
 			}
 			
@@ -258,8 +250,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 				public void run() {
 					for (int i=0; i<memory.length; i++)
 					{
-						if (memory[i] instanceof IMemoryBlockExtension)
-							((IMemoryBlockExtension)memory[i]).disconnect(getInstance());
 						fMemoryBlocks.remove(memory[i]);
 					}
 					
@@ -364,19 +354,11 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			String memoryBlockLabel = " "; //$NON-NLS-1$
 			if (memoryBlock instanceof IMemoryBlockExtension)
 			{
+				// simply return the expression without the address
+				// do not want to keep track of changes in the address
 				if (((IMemoryBlockExtension)memoryBlock).getExpression() != null)
 				{
 					memoryBlockLabel += ((IMemoryBlockExtension)memoryBlock).getExpression();
-				}
-				
-				try {
-					if (((IMemoryBlockExtension)memoryBlock).getBigBaseAddress() != null)
-					{
-						memoryBlockLabel += " = 0x" + ((IMemoryBlockExtension)memoryBlock).getBigBaseAddress().toString(16); //$NON-NLS-1$
-					}
-				} catch (DebugException e) {
-					// return whatever we have for label
-					return memoryBlockLabel;
 				}
 			}
 			else
@@ -432,35 +414,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
 		}
 		
-		maintainMemoryBlocksReference(fVisible);
-		
 		return fTreeViewer.getControl();
-	}
-	
-	private void maintainMemoryBlocksReference(boolean add)
-	{
-		if (fMemoryBlocks == null)
-			return;
-		IMemoryBlock[] memoryBlocks = (IMemoryBlock[])fMemoryBlocks.toArray(new IMemoryBlock[fMemoryBlocks.size()]);	
-		
-		if (add){
-			for (int i=0; i<memoryBlocks.length; i++)
-			{
-				if (memoryBlocks[i] instanceof IMemoryBlockExtension)
-				{
-					((IMemoryBlockExtension)memoryBlocks[i]).connect(this);
-				}
-			}
-		}
-		else {
-			for (int i=0; i<memoryBlocks.length; i++)
-			{
-				if (memoryBlocks[i] instanceof IMemoryBlockExtension)
-				{
-					((IMemoryBlockExtension)memoryBlocks[i]).disconnect(this);
-				}
-			}			
-		}
 	}
 	
 	
@@ -496,7 +450,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	
 	public void dispose()
 	{
-		maintainMemoryBlocksReference(false);
 		fMemoryBlocks.clear();
 		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this); //$NON-NLS-1$
 		fContentProvider.dispose();
@@ -590,11 +543,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;
 	}
-	
-	private IMemoryViewPane getInstance()
-	{
-		return this;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#restoreViewPane()
@@ -621,8 +569,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			
 			if(fVisible)
 				fTreeViewer.refresh();
-			
-			maintainMemoryBlocksReference(fVisible);
 		}
 	}
 

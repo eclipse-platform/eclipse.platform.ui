@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 
 /**
@@ -34,7 +34,7 @@ public class HexRendering extends AbstractTableRendering {
 			MemoryByte[] data) {
 		StringBuffer strBuffer = new StringBuffer();
 
-		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.PREF_PADDED_STR);
+		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 		
 		for (int i=0; i<data.length; i++)
 		{

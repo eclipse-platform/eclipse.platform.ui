@@ -93,7 +93,13 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
 		
 		// set default padded string
-		prefs.setDefault(IDebugPreferenceConstants.PREF_PADDED_STR, 
+		prefs.setDefault(IDebugUIConstants.PREF_PADDED_STR, 
 				IDebugPreferenceConstants.PREF_PADDED_STR_DEFAULT);
+		
+		// set default code page for ascii and ebcdic 
+		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_ASCII_CODE_PAGE, 
+				IDebugPreferenceConstants.DEFAULT_ASCII_CP);
+		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_EBCDIC_CODE_PAGE, 
+				IDebugPreferenceConstants.DEFAULT_EBCDIC_CP);
 	}
 }
