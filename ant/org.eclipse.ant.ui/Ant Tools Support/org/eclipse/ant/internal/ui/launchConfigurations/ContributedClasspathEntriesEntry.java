@@ -100,8 +100,17 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		IRuntimeClasspathEntry tools = getToolsJar(configuration);
 		if (tools == null) {
 			if (path != null) {
-				// use the global entry
+				//use the global entry
 				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
+			} else {
+				//use the default vm install to try to find a tools.jar
+				IVMInstall install= JavaRuntime.getDefaultVMInstall();
+				if (install != null) {
+					IAntClasspathEntry entry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry(new Path(install.getInstallLocation().getAbsolutePath()));
+					if (entry != null) {
+						rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
+					}
+				}
 			}
 		} else {
 			rtes.add(tools);
@@ -125,7 +134,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 				}
 			}
 		} catch (CoreException ce) {
-			//likely dealing with a non-j=Java project
+			//likely dealing with a non-Java project
 		}
 			
 		return null;
