@@ -273,7 +273,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		DebugUIPlugin.getDefault().getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				IProcess debugViewProcess= getDebugViewProcess();
-				if (debugViewProcess != null && !getConsoleDocument(debugViewProcess).equals(doc)) {
+				if (doc != null && debugViewProcess != null && !doc.equals(getConsoleDocument(debugViewProcess))) {
 					return;
 				}
 				IWorkbenchWindow window= DebugUIPlugin.getDefault().getActiveWorkbenchWindow();
