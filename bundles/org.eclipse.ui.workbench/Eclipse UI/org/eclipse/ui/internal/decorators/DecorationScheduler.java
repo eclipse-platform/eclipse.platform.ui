@@ -41,7 +41,6 @@ public class DecorationScheduler {
 	DecoratorManager decoratorManager;
 
 	boolean shutdown = false;
-	boolean updateWaiting = false;
 
 	Job decorationJob;
 	UIJob updateJob;
@@ -159,9 +158,7 @@ public class DecorationScheduler {
 			updateJob = getUpdateJob();
 			updateJob.setPriority(Job.DECORATE);
 		}
-		synchronized(resultLock){
-			updateWaiting = true;
-		}
+	
 		updateJob.schedule();
 	}
 
@@ -317,7 +314,6 @@ public class DecorationScheduler {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//Check again in case someone has already cleared it out.
 				synchronized (resultLock) {
-					updateWaiting = false;
 					if (pendingUpdate.isEmpty())
 						return Status.OK_STATUS;
 				
@@ -350,7 +346,7 @@ public class DecorationScheduler {
 			 */
 			public void done(IJobChangeEvent event) {
 				//Reschedule if another update came in while we were working
-				if(updateWaiting)
+				if(!pendingUpdate.isEmpty())
 					decorated();
 			}
 		});
