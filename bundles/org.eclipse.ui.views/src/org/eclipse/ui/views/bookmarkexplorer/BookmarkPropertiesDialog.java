@@ -65,11 +65,6 @@ public class BookmarkPropertiesDialog extends Dialog {
 	private Label creationTime;
 
 	/**
-	 * The control for the Severity field.
-	 */
-	private Label severityLabel;
-
-	/**
 	 * The text control for the Resource field.
 	 */
 	private Text resourceText;
@@ -84,10 +79,6 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 */
 	private Text locationText;
 
-	/**
-	 * Dirty flag.  True if any changes have been made.
-	 */
-	private boolean dirty;
 
 	private String title;
 
@@ -326,14 +317,6 @@ public class BookmarkPropertiesDialog extends Dialog {
 	protected void okPressed() {
 		saveChanges();
 		super.okPressed();
-	}
-
-	private void markDirty() {
-		dirty = true;
-	}
-
-	private boolean isDirty() {
-		return dirty;
 	}
 
 	/**

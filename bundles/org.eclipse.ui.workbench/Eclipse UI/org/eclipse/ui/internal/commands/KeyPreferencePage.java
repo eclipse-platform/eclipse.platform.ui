@@ -267,11 +267,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private ActiveKeyConfiguration activeKeyConfiguration;	
 	private List activeKeyConfigurations;
-	private List keyBindings;
 	private List keyConfigurations;
 	private SortedMap keyConfigurationsById;
-	private SortedMap keyConfigurationsByName;		
-	private List regionalKeyBindings;
+	private SortedMap keyConfigurationsByName;	
 	private SortedMap tree;
 	private List commandRecords = new ArrayList();	
 	private List keySequenceRecords = new ArrayList();
@@ -1534,14 +1532,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			return null;
 	}
 
-	private KeySequenceRecord getSelectedKeySequenceRecord() {		
-		int selection = tableCommandsForKeySequence.getSelectionIndex();
-		
-		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForKeySequence.getSelectionCount() == 1)
-			return (KeySequenceRecord) keySequenceRecords.get(selection);
-		else
-			return null;
-	}
+
 
 	private KeySequence getKeySequence() {
 		KeySequence keySequence = null;
@@ -1622,11 +1613,5 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		return string != null ? '[' + string + ']' : "[]"; //$NON-NLS-1$	
 	}
 	
-	private String doubleQuote(String string) {
-		return string != null ? '\"' + string + '\"' : "\"\""; //$NON-NLS-1$	
-	}
-
-	private String singleQuote(String string) {
-		return string != null ? '\'' + string + '\'' : "\'\'"; //$NON-NLS-1$	
-	}
+	
 }
