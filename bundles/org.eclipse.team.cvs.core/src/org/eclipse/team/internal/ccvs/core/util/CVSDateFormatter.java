@@ -45,10 +45,14 @@ public class CVSDateFormatter {
 	}	
 	
 	static public Date entryLineToDate(String text) throws ParseException {
-		if (text.charAt(ENTRYLINE_TENS_DAY_OFFSET) == ' ') {
-			StringBuffer buf = new StringBuffer(text);
-			buf.setCharAt(ENTRYLINE_TENS_DAY_OFFSET, '0');
-			text = buf.toString();
+		try {
+			if (text.charAt(ENTRYLINE_TENS_DAY_OFFSET) == ' ') {
+				StringBuffer buf = new StringBuffer(text);
+				buf.setCharAt(ENTRYLINE_TENS_DAY_OFFSET, '0');
+				text = buf.toString();
+			}
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new ParseException(e.getMessage(), ENTRYLINE_TENS_DAY_OFFSET);
 		}
 		return entryLineFormat.parse(text);
 	}
