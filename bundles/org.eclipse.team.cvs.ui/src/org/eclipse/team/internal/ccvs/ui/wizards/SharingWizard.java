@@ -109,6 +109,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] { true };
 		try {
+			final boolean[] doSync = new boolean[] { false };
 			getContainer().run(false, true, new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 					try {
@@ -150,7 +151,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							CVSProvider.getInstance().setSharing(project, location, properties.getProperty("module"), tag, monitor);
 						} else {
 							// Import
-							
+							doSync[0] = true;
 							// Make sure the directory does not already exist on the server.
 							// If it does, return false.
 							ICVSRepositoryLocation location = getLocation();
@@ -184,18 +185,20 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					}
 				}
 			});
-			// Sync of the project
-			SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-			if (view == null) {
-				view = SyncView.findInActivePerspective();
-			}
-			if (view != null) {
-				try {
-					CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-				} catch (PartInitException e) {
-					CVSUIPlugin.log(e.getStatus());
+			if (doSync[0]) {
+				// Sync of the project
+				SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+				if (view == null) {
+					view = SyncView.findInActivePerspective();
 				}
-				view.showSync(new CVSSyncCompareInput(new IResource[] {project}));
+				if (view != null) {
+					try {
+						CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
+					} catch (PartInitException e) {
+						CVSUIPlugin.log(e.getStatus());
+					}
+					view.showSync(new CVSSyncCompareInput(new IResource[] {project}));
+				}
 			}
 		} catch (InterruptedException e) {
 			return true;
