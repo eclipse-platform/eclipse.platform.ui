@@ -76,7 +76,7 @@ public class PerformanceStatsProcessor extends Job {
 		String pluginId = platform.getBundleId(stats.getBlame());
 		if (pluginId == null)
 			pluginId = Platform.PI_RUNTIME;
-		String msg = "Performance event failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		platform.log(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()));
 	}
 
