@@ -5,25 +5,9 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
+import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.FindReplaceAction;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.ViewPart;import org.eclipse.ui.texteditor.*;
 
 public class ConsoleView extends ViewPart {
 	
@@ -33,8 +17,7 @@ public class ConsoleView extends ViewPart {
 	protected ClearOutputAction fClearOutputAction= null;
 
 	protected Map fGlobalActions= new HashMap(10);
-	protected List fSelectionActions = new ArrayList(7);
-
+	protected List fSelectionActions = new ArrayList(3);
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
@@ -57,10 +40,11 @@ public class ConsoleView extends ViewPart {
 		getSite().registerContextMenu(menuMgr.getId(), menuMgr, fConsoleViewer);
 		
 		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
+		fConsoleViewer.addTextInputListener(getTextInputListener());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
 		setTitleToolTip(DebugUIUtils.getResourceString(PREFIX + AbstractDebugView.TITLE_TOOLTIPTEXT));
 	}
-
+
 	/**
 	 * @see IWorkbenchPart
 	 */
@@ -123,17 +107,12 @@ public class ConsoleView extends ViewPart {
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
+		updateAction(ITextEditorActionConstants.FIND);
 	}
 
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
 		fGlobalActions.put(actionID, action); 
 		actionBars.setGlobalActionHandler(actionID, action);
-	}
-	
-	public void markAsSelectionDependentAction(String actionId) {
-		if (!fSelectionActions.contains(actionId)) {
-				fSelectionActions.add(actionId);
-		}
 	}
 	
 	/**
@@ -143,8 +122,7 @@ public class ConsoleView extends ViewPart {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		tbm.add(fClearOutputAction);
 		getViewSite().getActionBars().updateActionBars();
-	}
-
+	}
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
 	 */
@@ -163,15 +141,15 @@ public class ConsoleView extends ViewPart {
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.PASTE));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
 		}
-
+
 		menu.add(new Separator("FIND"));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
-
+
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-
+
 	/**
 	 * @see WorkbenchPart#getAdapter(Class)
 	 */
@@ -181,7 +159,7 @@ public class ConsoleView extends ViewPart {
 		}
 		return super.getAdapter(required);
 	}
-
+
 	protected final ISelectionChangedListener getSelectionChangedListener() {
 		return new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
@@ -189,13 +167,23 @@ public class ConsoleView extends ViewPart {
 				}
 			};
 	}
-
+	
+	protected final ITextInputListener getTextInputListener() {
+		return new ITextInputListener() {
+				public void inputDocumentAboutToBeChanged(IDocument doc, IDocument doc2) {
+				}
+				public void inputDocumentChanged(IDocument doc, IDocument doc2) {
+					updateAction(ITextEditorActionConstants.FIND);
+				}
+			};
+	}
+
 	protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
 			updateAction((String)iterator.next());		
 	}
-
+
 	protected void updateAction(String actionId) {
 		IAction action= (IAction)fGlobalActions.get(actionId);
 		if (action instanceof IUpdate)
@@ -210,4 +198,4 @@ public class ConsoleView extends ViewPart {
 		super.dispose();
 	}
 }
-
+
