@@ -839,14 +839,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		
  		if (!isEqual(input, newInput)) {
  			ILaunchConfigurationTabGroup group = getTabGroup();
- 			if (fTabViewer.isDirty() && fTabViewer.getOriginal().exists()) {
- 				boolean canReplace = showSaveChangesDialog();
- 				if (!canReplace) {
- 					// restore the original selection
- 					IStructuredSelection sel = new StructuredSelection(fTabViewer.getOriginal());
- 					fLaunchConfigurationView.getViewer().setSelection(sel);
- 					return;
+ 			ILaunchConfiguration original = fTabViewer.getOriginal();
+ 			if (original != null) {
+ 				boolean deleted = !original.exists();
+ 				boolean renamed = false;
+ 				if (newInput instanceof ILaunchConfiguration) {
+ 					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
+ 					renamed = fTabViewer.getWorkingCopy().getName().equals(lc.getName());
  				}
+	 			if (fTabViewer.isDirty() && !deleted && !renamed) {
+	 				boolean canReplace = showSaveChangesDialog();
+	 				if (!canReplace) {
+	 					// restore the original selection
+	 					IStructuredSelection sel = new StructuredSelection(fTabViewer.getOriginal());
+	 					fLaunchConfigurationView.getViewer().setSelection(sel);
+	 					return;
+	 				}
+	 			}
  			}
  			setInitializingTabs(true);
  			fTabViewer.setInput(newInput);
