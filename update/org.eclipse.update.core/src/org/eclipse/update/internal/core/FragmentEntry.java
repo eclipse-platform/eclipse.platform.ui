@@ -15,8 +15,6 @@ package org.eclipse.update.internal.core;
  * This class is used to retrieve the fragments associated with a plugin.
  */
 public class FragmentEntry {
-
-	private static FragmentEntry[] noFragments = new FragmentEntry[0];
 	
 	private String pluginId;
 	private String pluginVersion;

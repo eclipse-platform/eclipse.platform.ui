@@ -40,10 +40,32 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
+	 * Copy constructor 
+	 * @since 3.0
+	 */
+	public InstallConfiguration(IInstallConfiguration config) throws MalformedURLException, CoreException {
+		this(config, null, null);
+	}
+	
+	/*
 	 * copy constructor
 	 */
-	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
+	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws CoreException, MalformedURLException {
+		// set current date and timeline as caller can call setDate if the
+		// date on the URL string has to be the same
+		Date now = new Date();
+		setCreationDate(now);
+		setTimeline(now.getTime());
+		setCurrent(false);
+		
+		if (newLocation == null) {
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(SiteLocal.CONFIG_FILE, now);
+			newLocation = UpdateManagerUtils.getURL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(), newFileName, null);
+		}
 		setLocationURLString(newLocation.toExternalForm());
+		
+		if (label == null)
+			label = Utilities.format(now);
 		setLabel(label);
 
 		// do not copy list of listeners nor activities
@@ -58,16 +80,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 
-		// set dummy date and timeline as caller can call set date if the
-		// date on the URL string has to be the same
-		Date now = new Date();
-		setCreationDate(now);
-		setTimeline(now.getTime());
-		setCurrent(false);
 		resolve(newLocation, null);
 		// no need to parse file, all data are initialized
 		initialized = true;
 	}
+	
 
 	/*
 	 * Returns the list of configured sites or an empty array

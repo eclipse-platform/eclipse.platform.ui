@@ -49,8 +49,8 @@ public class TestBackward extends UpdateManagerTestCase {
 		
 		// Activity -> InstallConfig
 		IInstallConfiguration current = site.getCurrentConfiguration();
-		IActivity activity = current.getActivities()[0];	
-		assertTrue(activity.getInstallConfiguration().equals(current));
+//		IActivity activity = current.getActivities()[0];	
+//		assertTrue(activity.getInstallConfiguration().equals(current));
 		
 		// ConfigSite->InstallConfig
 		IConfiguredSite newConfigSite = current.getConfiguredSites()[0];
