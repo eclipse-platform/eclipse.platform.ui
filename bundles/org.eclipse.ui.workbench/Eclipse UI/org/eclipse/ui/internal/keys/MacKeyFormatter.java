@@ -85,16 +85,21 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
 	}
 
 	protected String getKeyDelimiter() {
-		return Util.ZERO_LENGTH_STRING;
+		return Util.translateString(
+				RESOURCE_BUNDLE,
+				KEY_DELIMITER_KEY,
+				Util.ZERO_LENGTH_STRING,
+				false,
+				false);
 	}
 
 	protected String getKeyStrokeDelimiter() {
 		return Util.translateString(
-			RESOURCE_BUNDLE,
-			KEY_STROKE_DELIMITER_KEY,
-			KEY_STROKE_DELIMITER,
-			false,
-			false);
+				RESOURCE_BUNDLE,
+				KEY_STROKE_DELIMITER_KEY,
+				KEY_STROKE_DELIMITER,
+				false,
+				false);
 	}
 
 	protected Comparator getModifierKeyComparator() {
