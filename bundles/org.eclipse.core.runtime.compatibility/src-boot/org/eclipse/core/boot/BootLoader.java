@@ -58,7 +58,8 @@ public final class BootLoader implements Constants {
 		ARCH_PA_RISC, //
 		ARCH_PPC, //
 		ARCH_SPARC, //
-		ARCH_X86 //
+		ARCH_X86, //
+		ARCH_AMD64
 	};
 	private static final String[] OS_LIST = { //
 		OS_AIX, //
