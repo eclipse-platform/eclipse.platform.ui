@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 
 public class OperationsManager implements IAdaptable {
+	private static final String KEY_INSTALLING = "OperationsManager.installing";
 
 	private Vector pendingChanges = new Vector();
 	private Vector listeners = new Vector();
@@ -182,7 +185,6 @@ public class OperationsManager implements IAdaptable {
 			new PendingOperation[list.size()]);
 	}
 
-
 	public void ensureUnique(
 		IInstallConfiguration config,
 		IFeature feature,
@@ -334,54 +336,6 @@ public class OperationsManager implements IAdaptable {
 		}
 	}
 
-	/**
-	 * Returns true if a restart is needed
-	 * @param site
-	 * @param feature
-	 * @param isConfigured
-	 * @return
-	 * @throws CoreException
-	 */
-	public boolean installFeature(
-		PendingOperation job,
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeatureReference[] optionalFeatures,
-		FeatureHierarchyElement2[] optionalElements,
-		IVerificationListener verificationListener,
-		IProgressMonitor monitor)
-		throws CoreException {
-
-		if (!(job instanceof InstallOperation))
-			return false;
-
-		InstallOperation installJob = (InstallOperation) job;
-		installJob.setInstallConfiguration(config);
-		installJob.setTargetSite(targetSite);
-		installJob.setOptionalFeatures(optionalFeatures);
-		installJob.setVerificationListener(verificationListener);
-
-		boolean needsRestart = installJob.execute(monitor);
-
-		installJob.markProcessed();
-		UpdateManager.getOperationsManager().fireObjectChanged(
-			installJob,
-			null);
-
-		IFeature oldFeature = job.getOldFeature();
-		if (oldFeature != null
-			&& !job.isOptionalDelta()
-			&& optionalElements != null) {
-			preserveOptionalState(
-				config,
-				targetSite,
-				UpdateManager.isPatch(job.getFeature()),
-				optionalElements);
-		}
-
-		return needsRestart;
-	}
-
 	private void preserveOptionalState(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -399,9 +353,66 @@ public class OperationsManager implements IAdaptable {
 					if (localFeature != null)
 						targetSite.unconfigure(localFeature);
 				} catch (CoreException e) {
-					// Eat this - we will leave with it
+					// Ignore this - we will leave with it
 				}
 			}
 		}
 	}
+
+	public boolean installFeatures(
+		PendingOperation[] selectedJobs,
+		IUpdateModelChangedListener listener,
+		IProgressMonitor monitor)
+		throws InvocationTargetException, CoreException {
+		int installCount = 0;
+
+		try {
+			if (selectedJobs == null || selectedJobs.length == 0)
+				return false;
+			UpdateManager.makeConfigurationCurrent(
+				selectedJobs[0].getInstallConfiguration(),
+				null);
+			monitor.beginTask(
+				UpdateManager.getString(KEY_INSTALLING),
+				selectedJobs.length);
+			for (int i = 0; i < selectedJobs.length; i++) {
+				InstallOperation installJob =
+					(InstallOperation) selectedJobs[i];
+				SubProgressMonitor subMonitor =
+					new SubProgressMonitor(
+						monitor,
+						1,
+						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+
+				boolean needsRestart = installJob.execute(subMonitor);
+
+				installJob.markProcessed();
+				//may need to fire with a different parent
+				fireObjectsAdded(installJob, null);
+
+				IFeature oldFeature = installJob.getOldFeature();
+				if (oldFeature != null
+					&& !installJob.isOptionalDelta()
+					&& installJob.getOptionalElements() != null) {
+					preserveOptionalState(
+						installJob.getInstallConfiguration(),
+						installJob.getTargetSite(),
+						UpdateManager.isPatch(installJob.getFeature()),
+						installJob.getOptionalElements());
+				}
+
+				//monitor.worked(1);
+				UpdateManager.saveLocalSite();
+				installCount++;
+			}
+		} catch (InstallAbortedException e) {
+			throw new InvocationTargetException(e);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} finally {
+			monitor.done();
+			return installCount == selectedJobs.length;
+		}
+	}
+
 }

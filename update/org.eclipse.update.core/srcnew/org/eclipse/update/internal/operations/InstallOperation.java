@@ -21,6 +21,7 @@ public class InstallOperation extends PendingOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private IFeatureReference[] optionalFeatures;
+	private FeatureHierarchyElement2[] optionalElements;
 	private IVerificationListener verifier;
 
 	public InstallOperation(IFeature feature) {
@@ -31,10 +32,22 @@ public class InstallOperation extends PendingOperation {
 			this.oldFeature = installed[0];
 	}
 
+	public FeatureHierarchyElement2[] getOptionalElements() {
+		return optionalElements;
+	}
+	
+	public IFeatureReference[] getOptionalFeatures() {
+		return optionalFeatures;
+	}
+	
 	public void setOptionalFeatures(IFeatureReference[] optionalFeatures) {
 		this.optionalFeatures = optionalFeatures;
 	}
 
+	public void setOptionalElements(FeatureHierarchyElement2[] optionalElements) {
+		this.optionalElements = optionalElements;
+	}
+	
 	public void setVerificationListener(IVerificationListener verifier) {
 		this.verifier = verifier;
 	}

@@ -23,7 +23,9 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
 
-public class UnifiedInstallWizard extends Wizard {
+public class UnifiedInstallWizard
+	extends Wizard
+	implements IUpdateModelChangedListener {
 	private static final String KEY_INSTALLING =
 		"MultiInstallWizard.installing";
 	private UnifiedModeSelectionPage modePage;
@@ -42,6 +44,9 @@ public class UnifiedInstallWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUI.getString("MultiInstallWizard.wtitle"));
+
+		UpdateManager.getOperationsManager().addUpdateModelChangedListener(
+			this);
 	}
 
 	public boolean isSuccessfulInstall() {
@@ -75,15 +80,33 @@ public class UnifiedInstallWizard extends Wizard {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
+				// setup jobs with the correct environment
+				for (int i = 0; i < selectedJobs.length; i++) {
+					InstallOperation installJob =
+						(InstallOperation) selectedJobs[i];
+					installJob.setInstallConfiguration(config);
+					installJob.setTargetSite(
+						targetPage.getTargetSite(installJob));
+					installJob.setVerificationListener(
+						getVerificationListener());
+
+					if (optionalFeaturesPage != null) {
+						installJob.setOptionalElements(
+							optionalFeaturesPage.getOptionalElements(
+								installJob));
+						installJob.setOptionalFeatures(
+							optionalFeaturesPage.getCheckedOptionalFeatures(
+								installJob));
+					}
+				}
 				try {
-					UpdateManager.makeConfigurationCurrent(config, null);
-					execute(selectedJobs, monitor);
-				} catch (InstallAbortedException e) {
-					throw new InvocationTargetException(e);
+
+					UpdateManager.getOperationsManager().installFeatures(
+						selectedJobs,
+						UnifiedInstallWizard.this,
+						monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
 				}
 			}
 		};
@@ -101,30 +124,6 @@ public class UnifiedInstallWizard extends Wizard {
 			return false;
 		}
 		return true;
-	}
-
-	/*
-	 * When we are uninstalling, there is not targetSite
-	 */
-	private void execute(
-		PendingOperation[] selectedJobs,
-		IProgressMonitor monitor)
-		throws InstallAbortedException, CoreException {
-		monitor.beginTask(
-			UpdateUI.getString(KEY_INSTALLING),
-			selectedJobs.length);
-		for (int i = 0; i < selectedJobs.length; i++) {
-			PendingOperation job = selectedJobs[i];
-			SubProgressMonitor subMonitor =
-				new SubProgressMonitor(
-					monitor,
-					1,
-					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-			executeOneJob(job, subMonitor);
-			//monitor.worked(1);
-			UpdateManager.saveLocalSite();
-			installCount++;
-		}
 	}
 
 	public void addPages() {
@@ -228,29 +227,6 @@ public class UnifiedInstallWizard extends Wizard {
 		return page.getNextPage() == null && super.canFinish();
 	}
 
-	private void executeOneJob(PendingOperation job, IProgressMonitor monitor)
-		throws CoreException {
-		IConfiguredSite targetSite = null;
-		FeatureHierarchyElement2[] optionalElements = null;
-		IFeatureReference[] optionalFeatures = null;
-
-		if (optionalFeaturesPage != null) {
-			optionalElements = optionalFeaturesPage.getOptionalElements(job);
-			optionalFeatures =
-				optionalFeaturesPage.getCheckedOptionalFeatures(job);
-		}
-		if (targetPage != null) {
-			targetSite = targetPage.getTargetSite(job);
-		}
-
-		UpdateManager.getOperationsManager().installFeature(job, config, targetSite, optionalFeatures, optionalElements, getVerificationListener(), monitor);
-
-		IFeature oldFeature = job.getOldFeature();
-		if (oldFeature == null && optionalFeatures != null) {
-			preserveOriginatingURLs(job.getFeature(), optionalFeatures);
-		}
-	}
-
 	private void preserveOriginatingURLs(
 		IFeature feature,
 		IFeatureReference[] optionalFeatures) {
@@ -301,4 +277,34 @@ public class UnifiedInstallWizard extends Wizard {
 	private IVerificationListener getVerificationListener() {
 		return new JarVerificationService(this.getShell());
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
+	 */
+	public void objectChanged(Object object, String property) {
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsAdded(java.lang.Object, java.lang.Object[])
+	 */
+	public void objectsAdded(Object parent, Object[] children) {
+		// TODO Auto-generated method stub
+		System.out.println(parent);
+		InstallOperation job = (InstallOperation)parent;
+		IFeature oldFeature = job.getOldFeature();
+		if (oldFeature == null && job.getOptionalFeatures() != null) 
+			preserveOriginatingURLs(job.getFeature(), job.getOptionalFeatures());
+			
+		installCount++; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsRemoved(java.lang.Object, java.lang.Object[])
+	 */
+	public void objectsRemoved(Object parent, Object[] children) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
