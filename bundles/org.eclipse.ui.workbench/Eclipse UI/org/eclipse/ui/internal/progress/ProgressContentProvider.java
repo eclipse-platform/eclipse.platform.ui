@@ -72,7 +72,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	TreeViewer viewer;
 	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
-	Object updateLock;
+	Object updateLock = new Object();
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		viewer = mainViewer;
