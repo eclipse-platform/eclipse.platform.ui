@@ -13,34 +13,52 @@ package org.eclipse.debug.internal.ui.actions;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 
 
 public class ExpressionInformationControlAdapter implements IPopupInformationControlAdapter {
-	IWorkbenchPage page;
-	IExpression exp;
-	VariablesViewer viewer;
-	IDebugModelPresentation modelPresentation;
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {90, 10};
+	private static final String SASH_KEY = "SASH_WEIGHT";  //$NON-NLS-1$
 	
+	private IWorkbenchPage page;
+	private IExpression exp;
+	private VariablesViewer viewer;
+	private IDebugModelPresentation modelPresentation;
+	private StyledText valueDisplay;
+	private SashForm sashForm;
+	
+
 	public ExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
 		this.page = page;
 		this.exp = exp;
@@ -98,24 +116,105 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		sashForm = new SashForm(composite, parent.getStyle());
+		sashForm.setOrientation(SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		viewer = new VariablesViewer(composite, SWT.NO_TRIM);
+		viewer = new VariablesViewer(sashForm, SWT.NO_TRIM);
 		viewer.setContentProvider(new ExpressionPopupContentProvider());
 		modelPresentation = DebugUITools.newDebugModelPresentation();
 		viewer.setLabelProvider(modelPresentation);
-		gd.heightHint = 100;
-		viewer.getControl().setLayoutData(gd);
+		
+		valueDisplay = new StyledText(sashForm, SWT.NO_TRIM);
+		valueDisplay.setEditable(false);
+		
+		final Tree tree = viewer.getTree();
+		tree.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					TreeItem[] selections = tree.getSelection();
+					Object data = selections[selections.length-1].getData();
+					
+					IValue val = null;
+					if (data instanceof IndexedVariablePartition) {
+						// no details for parititions
+						return;
+					}
+					if (data instanceof IVariable) {						
+						val = ((IVariable)data).getValue();
+					} else if (data instanceof IExpression) {
+						val = ((IExpression)data).getValue();
+					}
+					if (val == null) {
+						return;
+					}			
+					
+					updateValueDisplay(val);
+				} catch (DebugException ex) {
+					DebugUIPlugin.log(ex);
+				}
+				
+			}
 
-		Tree tree = viewer.getTree();
-		tree.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		tree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		composite.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}			
+		});
+		
+		Color background = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		Color foreground = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		tree.setForeground(foreground);
+		tree.setBackground(background);
+		composite.setForeground(foreground);
+		composite.setBackground(background);
+		valueDisplay.setForeground(foreground);
+		valueDisplay.setBackground(background);
+		
+//		sashForm.setWeights(getInitialSashWeights());
+		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 		
 		return composite;
 	}
 
+
+	/*
+	 * TODO: This method not used yet
+	 */
+	protected int[] getInitialSashWeights() {
+		IDialogSettings settings = getDialogSettings();
+		int[] sashes = new int[2];
+		try {
+			sashes[0] = settings.getInt(SASH_KEY+"_ONE");  //$NON-NLS-1$
+			sashes[1] = settings.getInt(SASH_KEY+"_TWO");  //$NON-NLS-1$
+			return sashes;
+		} catch (NumberFormatException nfe) {
+		} 
+		
+		return DEFAULT_SASH_WEIGHTS;
+	}
+	
+	/*
+	 * TODO: This method not used yet
+	 */	
+	protected void persistSashWeights() {
+		IDialogSettings settings = getDialogSettings();
+		int[] sashes = sashForm.getWeights();
+		settings.put(SASH_KEY+"_ONE", sashes[0]); //$NON-NLS-1$
+		settings.put(SASH_KEY+"_TWO", sashes[1]); //$NON-NLS-1$
+	}
+
+	private void updateValueDisplay(IValue val) {
+		IValueDetailListener valueDetailListener = new IValueDetailListener() {
+			public void detailComputed(IValue value, final String result) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						valueDisplay.setText(result);
+					}
+				});
+			}
+		};
+		modelPresentation.computeDetail(val, valueDetailListener);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getDialogSettings()
 	 */
@@ -123,5 +222,4 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		return DebugUIPlugin.getDefault().getDialogSettings();
 	}
 
-	
 }
