@@ -39,5 +39,15 @@ public interface ICVSRemoteResource extends IRemoteResource {
 	 * Answers the repository relative path of this remote folder.
 	 */
 	public String getRelativePath();
+	
+	/**
+	 * Compares two objects for equality; for cvs remote resources, equality is defined in 
+	 * terms of their handles: same cvs resource type, equal relative paths, and
+	 * for files, identical revision numbers. Remote resources are not equal to objects other 
+	 * than cvs remote resources.
+	 *
+	 * @param other the other object
+	 * @return an indication of whether the objects are equals
+	 */
+	public boolean equals(Object other);
 }
-

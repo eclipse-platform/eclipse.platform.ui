@@ -54,28 +54,7 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 	/*
 	 * @see ILocalSyncElement#getBase()
 	 */
-	public IRemoteResource getBase() {
-		try {
-			if(base == null && cvsResource.isManaged()) {
-				if(cvsResource.isFolder()) {
-					FolderSyncInfo syncInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
-					// We need to create an untraversable remote resource for the base
-					base = new RemoteFolderTree(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
-					((RemoteFolderTree)base).setChildren(new ICVSRemoteResource[0]);		
-				} else {
-					ResourceSyncInfo info = cvsResource.getSyncInfo();
-					if(!info.isDeleted() || !info.isAdded()) {
-						ICVSFolder parentFolder = cvsResource.getParent();
-						FolderSyncInfo syncInfo = parentFolder.getFolderSyncInfo();
-						RemoteFolder parent =  new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
-						base = RemoteFile.getBase(parent, (ICVSFile)cvsResource);
-					}
-				}
-			}
-		} catch(CVSException e) {
-			TeamPlugin.log(IStatus.ERROR, "CVS error creating the base resource", e);
-			return null;
-		}
+	public IRemoteResource getBase() {		
 		return base;
 	}
 
@@ -90,8 +69,15 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 				return false;
 			} else {
 				try {
-					if(cvsResource.getSyncInfo()==null) {
+					ResourceSyncInfo info = cvsResource.getSyncInfo();
+					if(info==null) {
 						return false;
+					}
+					if(base!=null) {
+						boolean sameRevisions = ((RemoteFile)base).getRevision().equals(info.getRevision());
+						if(!sameRevisions) {
+							return true;
+						}
 					}
 					return ((ICVSFile)cvsResource).isDirty();
 				} catch(CVSException e) {

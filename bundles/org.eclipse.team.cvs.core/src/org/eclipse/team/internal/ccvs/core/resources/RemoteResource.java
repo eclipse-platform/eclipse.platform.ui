@@ -110,4 +110,13 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		// ensure that clients are not trying to set sync info on remote handles.
 		Assert.isTrue(false);
 	}
+	
+	public boolean equals(Object target) {
+		if (this == target)
+			return true;
+		if (!(target instanceof RemoteResource))
+			return false;
+		RemoteResource remote = (RemoteResource) target;
+		return remote.isContainer() == isContainer() && remote.getRelativePath().equals(getRelativePath());
+	}
 }

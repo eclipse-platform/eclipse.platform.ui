@@ -7,16 +7,15 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class CVSRemoteSyncElement extends RemoteSyncElement {
@@ -49,41 +48,12 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 * @see IRemoteSyncElement#isOutOfDate()
 	 */
 	public boolean isOutOfDate() {
-				
-		// XXX gender changes?
-		if(isContainer()) {
-			return false;
-		}
-				
-		boolean hasBase = false;
-
-		ICVSResource cvsResource = localSync.getCVSResource();
-		if(cvsResource != null && !cvsResource.isFolder()) {
-			try {
-				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if ((info != null) && !info.isAdded()) {
-					hasBase = true;
-				}
-			} catch(CVSException e) {
-				return true;
-			}
-		}
-		boolean hasRemote = remote != null;
-		
-		if(hasBase && hasRemote) {
-			ICVSFile file = (ICVSFile)localSync.getCVSResource();
-			try {
-				// at this point remote and file can't be null
-				Assert.isNotNull(remote);
-				Assert.isNotNull(file);
-				ResourceSyncInfo info = file.getSyncInfo();
-				return ! ((ICVSRemoteFile)remote).getRevision().equalsIgnoreCase(info.getRevision());
-			} catch(CVSException e) {
-				return true;
-			} catch(TeamException e) {
-				return true;
-			}
-		} else if(hasBase && !hasRemote) {
+		IRemoteResource base = getBase();
+		if(base!=null && remote!=null) {
+			ICVSRemoteResource remoteCvs = (ICVSRemoteResource)remote;
+			ICVSRemoteResource baseCvs = (ICVSRemoteResource)base;
+			return ! remoteCvs.equals(baseCvs);
+		} else if(base!=null && remote==null) {
 			return true;
 		} else {
 			return false;

@@ -625,7 +625,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
 			}
 		}
-		return new CVSRemoteSyncElement(baseTree==null, resource, baseTree, remote);
+		return new CVSRemoteSyncElement(false, resource, baseTree, remote);
 	}
 	
 	public ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {

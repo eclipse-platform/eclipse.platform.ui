@@ -360,5 +360,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public boolean updateRevision(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return parent.updateRevision(this, tag, monitor);
 	}
+	
+	public boolean equals(Object target) {
+		if (this == target)
+			return true;
+		if (!(target instanceof RemoteFile))
+			return false;
+		RemoteFile remote = (RemoteFile) target;
+		return super.equals(target) && remote.getRevision().equals(getRevision());
+	}
 }
-
