@@ -37,30 +37,32 @@ class ProjectionSummary {
 	
 	private class Summarizer extends Thread {
 		
+		private boolean fReset= true;
+		
 		public Summarizer(IProgressMonitor monitor) {
 			fProgressMonitor= monitor;
-			
 			setDaemon(true);
 			start();
-			synchronized (fLock) {
-				fHasStarted= false;
-			}
 		}
 		
+		public void reset() {
+			fReset= true;
+		}
+				
 		/*
 		 * @see java.lang.Thread#run()
 		 */
 		public void run() {
-			
-			synchronized (fLock) {
-				fHasStarted= true;
+			while (true) {
+				synchronized (fLock) {
+					if(!fReset) break;
+					fReset= false;
+				}
+				internalUpdateSummaries(fProgressMonitor);
 			}
 			
-			internalUpdateSummaries(fProgressMonitor);
-			
 			synchronized (fLock) {
-				if (fSummarizer == this)
-					fSummarizer= null;
+				fSummarizer= null;
 			}
 		}
 	}
@@ -74,7 +76,6 @@ class ProjectionSummary {
 	private Object fLock= new Object();
 	private IProgressMonitor fProgressMonitor;
 	private volatile Summarizer fSummarizer;
-	private volatile boolean fHasStarted= false;
 
 	
 	public ProjectionSummary(ProjectionViewer projectionViewer, IAnnotationAccess annotationAccess) {
@@ -101,8 +102,9 @@ class ProjectionSummary {
 	
 	public void updateSummaries(IProgressMonitor monitor) {
 		synchronized (fLock) {
-			if (fSummarizer == null || fHasStarted)
+			if (fSummarizer == null)
 				fSummarizer= new Summarizer(monitor);
+			fSummarizer.reset();
 		}
 	}
 	
