@@ -79,6 +79,8 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 
 			while (tokenizer.hasMoreTokens()) {
 				String currentExtension= tokenizer.nextToken().trim();
+				if (currentExtension.startsWith("*.")) //$NON-NLS-1$
+					currentExtension= currentExtension.substring(2);
 				if (!currentExtension.equals("")) //$NON-NLS-1$
 					result.add(currentExtension);
 			}
@@ -115,6 +117,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 				result.append(" "); //$NON-NLS-1$
 			} else
 				first= false;
+			result.append("*."); //$NON-NLS-1$
 			result.append(typesIter.next());
 		}
 		fTextField.setText(result.toString());
