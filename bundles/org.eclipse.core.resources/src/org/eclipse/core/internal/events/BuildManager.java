@@ -578,9 +578,8 @@ protected boolean needsBuild(InternalBuilder builder) {
 	ElementTree newTree = workspace.getElementTree();
 	long start = System.currentTimeMillis();
 	if (Policy.DEBUG_NEEDS_BUILD) {
-		Policy.debug(true, "Checking if need to build. Starting delta computation...");  //$NON-NLS-1$
-		Policy.debug(false, "\told tree: " + oldTree.toString()); //$NON-NLS-1$
-		Policy.debug(false, "\tnew tree: " + newTree.toString()); //$NON-NLS-1$
+		String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		Policy.debug(true, message);
 	}
 	currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
 	if (Policy.DEBUG_NEEDS_BUILD)
