@@ -59,6 +59,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 																	IResourceDelta.REPLACED |
 																	IResourceDelta.TYPE;
 	
+	protected boolean isProjectOpening = false;								
+	
 	/*
 	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
 	 * by a 3rd party. For example, if the command line tool was run and then the user refreshed from local. To
@@ -70,6 +72,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			final Set changedContainers = new HashSet();
+			setProjectOpening(false);
+			
 			event.getDelta().accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					IResource resource = delta.getResource();
@@ -82,7 +86,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					if (resource.getType() == IResource.PROJECT) {
 						// If the project is not accessible, don't process it
 						if (!resource.isAccessible()) return false;
-						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) return false;
+						setProjectOpening((delta.getFlags() & IResourceDelta.OPEN) != 0);
 					}
 															
 					String name = resource.getName();
@@ -96,11 +100,15 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					}
 					
 					IResource[] toBeNotified = new IResource[0];
-					
+										
 					if(name.equals(SyncFileWriter.CVS_DIRNAME)) {
 						handleCVSDir((IContainer)resource, kind);
+						// if the project is opening there is no need to notify about chagned CVs/ meta files
+						// they will all be read from disk.
+						if(isProjectOpening()) return false;
 					} else {
 						// Inform the synchronizer about folder creations
+						if(isProjectOpening()) return true;
 						if (kind == IResourceDelta.ADDED) {
 							try {
 								EclipseSynchronizer.getInstance().created(resource);
@@ -115,7 +123,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					} else if(name.equals(SyncFileWriter.IGNORE_FILE)) {
 						toBeNotified = handleChangedIgnoreFile(resource, kind);
 					}
-					
+										
 					if(toBeNotified.length>0 && isModifiedBy3rdParty(resource)) {
 						for (int i = 0; i < toBeNotified.length; i++) {
 							changedContainers.add(toBeNotified[i]);							
@@ -217,5 +225,20 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		} else {
 			return new IContainer[0];
 		}
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public boolean isProjectOpening() {
+		return isProjectOpening;
+	}
+
+	/**
+	 * Sets the isProjectOpening.
+	 * @param isProjectOpening The isProjectOpening to set
+	 */
+	public void setProjectOpening(boolean isProjectOpening) {
+		this.isProjectOpening = isProjectOpening;
 	}
 }
