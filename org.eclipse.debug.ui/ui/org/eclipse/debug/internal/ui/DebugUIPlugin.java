@@ -98,7 +98,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 															   IPropertyChangeListener, 
 															   ILaunchConfigurationListener {															   
 															   	
-										   
 
 	/**
 	 * The singleton debug plugin instance
