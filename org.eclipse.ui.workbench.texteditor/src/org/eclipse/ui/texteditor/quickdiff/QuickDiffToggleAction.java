@@ -124,7 +124,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			}
 		}
 	};
-
+	
 	/*
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
@@ -138,6 +138,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		for (int i= 0; i < fRestoreActions.length; i++) {
 			fRestoreActions[i].setEditor(fEditor);
 		}
+		action.setActionDefinitionId("org.eclipse.quickdiff.toggle"); //$NON-NLS-1$
 		setPopupMenu();
 	}
 
