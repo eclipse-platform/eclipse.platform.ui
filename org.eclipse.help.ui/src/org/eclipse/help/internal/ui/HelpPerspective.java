@@ -4,7 +4,6 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.search.ui.SearchUI;
 
 /**
  * Perspective for holding the help view

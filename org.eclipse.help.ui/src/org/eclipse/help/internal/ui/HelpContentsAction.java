@@ -4,14 +4,12 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.action.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
 import org.eclipse.help.internal.Help;
-
-//import org.eclipse.help.internal.contributions.InfoSet;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.*;
 
 /**
  * ShowHelp
