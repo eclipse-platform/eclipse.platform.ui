@@ -209,9 +209,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	public void create() {
 		super.create();
 
-		List initialSelections= getInitialSelections();
-		if (initialSelections != null)
-			fViewer.setSelection(new StructuredSelection(initialSelections), true);
+		fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
 
 		updateOKStatus();
 	}		

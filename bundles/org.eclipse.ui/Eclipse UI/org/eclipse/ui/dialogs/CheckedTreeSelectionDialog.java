@@ -218,10 +218,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	public void create() {
 		super.create();
 
-		List initialSelections= getInitialSelections();
-		if (initialSelections != null) {
-			fViewer.setCheckedElements(initialSelections.toArray());			
-		}
+		fViewer.setCheckedElements(getInitialElementSelections().toArray());			
 			
 		if (fExpandedElements != null) {
 			fViewer.setExpandedElements(fExpandedElements);

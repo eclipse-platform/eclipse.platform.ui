@@ -126,7 +126,7 @@ private void addSelectionButtons(Composite composite) {
  * viewer.
  */
 private void checkInitialSelections() {
-	Iterator itemsToCheck = getInitialSelections().iterator();
+	Iterator itemsToCheck = getInitialElementSelections().iterator();
 	
 	while (itemsToCheck.hasNext())
 		listViewer.setChecked(itemsToCheck.next(),true);
@@ -166,7 +166,7 @@ protected Control createDialogArea(Composite parent) {
 	initializeViewer();
 
 	// initialize page
-	if (getInitialSelections() != null && !getInitialSelections().isEmpty())
+	if (!getInitialElementSelections().isEmpty())
 		checkInitialSelections();
 
 	return composite;

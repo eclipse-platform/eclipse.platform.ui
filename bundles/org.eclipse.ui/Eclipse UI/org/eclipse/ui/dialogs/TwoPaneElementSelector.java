@@ -96,8 +96,8 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 
 		setListElements(fElements);
 		
-		List initialSelections= getInitialSelections();
-		if (initialSelections != null && initialSelections.size() != 0) {
+		List initialSelections= getInitialElementSelections();
+		if (!initialSelections.isEmpty()) {
 			Object element= initialSelections.get(0);
 
 			setSelection(new Object[] {element});

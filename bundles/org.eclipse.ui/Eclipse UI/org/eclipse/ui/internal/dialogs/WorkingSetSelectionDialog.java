@@ -215,8 +215,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 */
 	protected Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
-		if (getInitialSelections() != null && !getInitialSelections().isEmpty()) {
-			listViewer.setSelection(new StructuredSelection(getInitialSelections()), true);
+		List selections = getInitialElementSelections();
+		if (!selections.isEmpty()) {
+			listViewer.setSelection(new StructuredSelection(selections), true);
 		}
 		updateButtonAvailability();
 

@@ -58,9 +58,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 
 		setListElements(fElements);
 
-		List initialSelections= getInitialSelections();
-		if (initialSelections != null)
-			setSelection(initialSelections.toArray());
+		setSelection(getInitialElementSelections().toArray());
 					
 		return contents;
 	}

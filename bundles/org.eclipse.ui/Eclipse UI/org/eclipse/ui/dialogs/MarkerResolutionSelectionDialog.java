@@ -103,7 +103,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 		listViewer.setInput(new Object()); // it is ignored but must be non-null
 		
 		// Set the initial selection
-		listViewer.setSelection(new StructuredSelection(getInitialSelections()), true);	
+		listViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);	
 		
 		// Add a selection change listener
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {

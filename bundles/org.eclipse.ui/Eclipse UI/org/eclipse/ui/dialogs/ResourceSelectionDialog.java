@@ -69,7 +69,7 @@ public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement, String
  * portion of this dialog's resource selection viewer.
  */
 private void checkInitialSelections() {
-	Iterator itemsToCheck = getInitialSelections().iterator();
+	Iterator itemsToCheck = getInitialElementSelections().iterator();
 	
 	while (itemsToCheck.hasNext()) {
 		IResource currentElement = (IResource)itemsToCheck.next();
@@ -184,7 +184,7 @@ private void initializeDialog() {
 		}
 	});
 		
-	if (getInitialSelections() == null || getInitialSelections().isEmpty())
+	if (getInitialElementSelections().isEmpty())
 		getOkButton().setEnabled(false);
 	else
 		checkInitialSelections();

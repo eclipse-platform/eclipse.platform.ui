@@ -106,8 +106,7 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 		listViewer.setInput(new Object()); // it is ignored but must be non-null
 		
 		// Set the initial selection
-		if (getInitialSelections() != null)
-			listViewer.setSelection(new StructuredSelection(getInitialSelections()), true);	
+		listViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);	
 		
 		// Add a selection change listener
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
