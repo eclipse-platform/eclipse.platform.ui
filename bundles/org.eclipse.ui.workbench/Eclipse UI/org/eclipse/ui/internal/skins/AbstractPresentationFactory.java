@@ -48,22 +48,8 @@ public abstract class AbstractPresentationFactory {
 	 * @param flags any combination of SWT.MIN, SWT.MAX, and SWT.CLOSE
 	 * @return a newly created part stack
 	 */
-	public Presentation createFastViewPresentation(Composite parent, 
+	public StackPresentation createFastViewPresentation(Composite parent, 
 			IPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}
-	
-	/**
-	 * Creates a skin for a detached window. Returns null iff this skin
-	 * does not support detached windows.
-	 * 
-	 * TODO: javadoc
-	 * 
-	 * @since 3.0
-	 */
-	public Presentation createDetachedViewPresentation(Composite parent, 
-			IPresentationSite container, IPresentablePart thePart, int flags) {
-		return null;
-	}
-	
 }
