@@ -37,7 +37,7 @@ BODY {
 }
 
 TABLE {
-	font:icon;
+	font:<%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 

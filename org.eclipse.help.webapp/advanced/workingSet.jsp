@@ -36,7 +36,7 @@ BODY {
 }
 
 TABLE {
-	font:<%=prefs.getToolbarFont()%>;
+	font:<%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 
@@ -49,13 +49,14 @@ TD, TR {
 
 #workingSet {
 	width:100%;
-	font:icon;
+	font:<%=prefs.getViewFont()%>;
 }
 
 #booksContainer {
 	background:Window;
 	border:	2px inset <%=prefs.getViewBackground()%>;;
 	margin:10px;
+	margin-top:2px;
 	padding-left:5px;
 	overflow:auto;
 	height:350px;
@@ -74,7 +75,7 @@ TD, TR {
 }
 
 INPUT {
-	font:<%=prefs.getToolbarFont()%>;
+	font:<%=prefs.getViewFont()%>;
 }
 
 .expanded {
@@ -315,7 +316,7 @@ function keyDownHandler(folderId, key, target)
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>'>
         </td></tr>
-        <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=ServletResources.getString("Select", request)%></div>
+        <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>
     </table>
  
