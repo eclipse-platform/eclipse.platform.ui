@@ -1319,60 +1319,56 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;			
 	}
 	
-	private int findInsertionPosition(char type) {
-		Object in= getInput();
-		if (in instanceof ICompareInput) {
+	protected int findInsertionPosition(char type, ICompareInput input) {
 			
-			ITypedElement other= null;
-			ICompareInput input= (ICompareInput) in;
-			char otherType= 0;
-			
-			switch (type) {
-			case 'A':
-				other= input.getLeft();
-				otherType= 'L';
-				if (other == null) {
-					other= input.getRight();
-					otherType= 'R';
-				}
-				break;
-			case 'L':
+		ITypedElement other= null;
+		char otherType= 0;
+		
+		switch (type) {
+		case 'A':
+			other= input.getLeft();
+			otherType= 'L';
+			if (other == null) {
 				other= input.getRight();
 				otherType= 'R';
-				if (other == null) {
-					other= input.getAncestor();
-					otherType= 'A';
-				}
-				break;
-			case 'R':
-				other= input.getLeft();
-				otherType= 'L';
-				if (other == null) {
-					other= input.getAncestor();
-					otherType= 'A';
-				}
-				break;
 			}
-			
-			if (other instanceof IDocumentRange) {
-				IDocumentRange dr= (IDocumentRange) other;
-				Position p= dr.getRange();	
-				Diff diff= findDiff(otherType, p.offset);
-				if (diff != null) {
-					switch (type) {
-					case 'A':
-						if (diff.fAncestorPos != null)
-							return diff.fAncestorPos.offset;
-						break;
-					case 'L':
-						if (diff.fLeftPos != null)
-							return diff.fLeftPos.offset;
-						break;
-					case 'R':
-						if (diff.fRightPos != null)
-							return diff.fRightPos.offset;
-						break;
-					}
+			break;
+		case 'L':
+			other= input.getRight();
+			otherType= 'R';
+			if (other == null) {
+				other= input.getAncestor();
+				otherType= 'A';
+			}
+			break;
+		case 'R':
+			other= input.getLeft();
+			otherType= 'L';
+			if (other == null) {
+				other= input.getAncestor();
+				otherType= 'A';
+			}
+			break;
+		}
+		
+		if (other instanceof IDocumentRange) {
+			IDocumentRange dr= (IDocumentRange) other;
+			Position p= dr.getRange();	
+			Diff diff= findDiff(otherType, p.offset);
+			if (diff != null) {
+				switch (type) {
+				case 'A':
+					if (diff.fAncestorPos != null)
+						return diff.fAncestorPos.offset;
+					break;
+				case 'L':
+					if (diff.fLeftPos != null)
+						return diff.fLeftPos.offset;
+					break;
+				case 'R':
+					if (diff.fRightPos != null)
+						return diff.fRightPos.offset;
+					break;
 				}
 			}
 		}
@@ -1417,15 +1413,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					partitioner.connect(newDoc);
 				}
 			}
-		} else if (o == null) {
-			ITypedElement parent= getParent(type);
+		} else if (o == null) {	// deletion on one side
+			
+			ITypedElement parent= getParent(type);	// we try to find an insertion position within the deletion's parent
+			
 			if (parent instanceof IDocumentRange) {
 				newDoc= ((IDocumentRange)parent).getDocument();
 				newDoc.addPositionCategory(IDocumentRange.RANGE_CATEGORY);
 				Object input= getInput();
 				range= getNewRange(type, input);
 				if (range == null) {
-					range= new Position(findInsertionPosition(type), 0);
+					int pos= 0;
+					if (input instanceof ICompareInput)
+						pos= findInsertionPosition(type, (ICompareInput)input);
+					range= new Position(pos, 0);
 					try {
 						newDoc.addPosition(IDocumentRange.RANGE_CATEGORY, range);
 					} catch (BadPositionCategoryException ex) {
