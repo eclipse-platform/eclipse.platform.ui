@@ -155,6 +155,34 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	protected Menu createMenu(Menu menu) {	
 		LaunchConfigurationHistoryElement[] historyList= getHistory();
 		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();		
+		
+		// Add any favorites
+		int total = 0;
+		for (int i = 0; i < favoriteList.length; i++) {
+			LaunchConfigurationHistoryElement launch= favoriteList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total + 1);
+			total++;
+		}		
+		
+		// Separator between favorites and history
+		if (favoriteList.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}		
+		
+		// Add history launches next
+		for (int i = 0; i < historyList.length; i++) {
+			LaunchConfigurationHistoryElement launch= historyList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total+1);
+			total++;
+		}
+		
+		// Separator between history and common actions
+		if (historyList.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}
+
 		// Add the actions to bring up the dialog 
 		if (getLaunchAction() != null) {
 			// Cascading menu for config type 'shortcuts'
@@ -173,33 +201,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			}
 			createMenuForAction(menu, action, -1);
 		}
-		
-		if (favoriteList.length > 0 || historyList.length > 0) {
-			createTopSeparator(menu);
-		}
-		
-		// Add any favorites
-		int total = 0;
-		for (int i = 0; i < favoriteList.length; i++) {
-			LaunchConfigurationHistoryElement launch= favoriteList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total + 1);
-			total++;
-		}		
-		
-		// Separator between favorites and history
-		if (favoriteList.length > 0 && historyList.length > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}		
-		
-		// Add history launches next
-		for (int i = 0; i < historyList.length; i++) {
-			LaunchConfigurationHistoryElement launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total+1);
-			total++;
-		}
-
 		return menu;		
 	}
 	
