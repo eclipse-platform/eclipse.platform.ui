@@ -7,8 +7,10 @@ Bundle-ClassPath: runtime.jar
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: 
+ org.osgi.service.prefs; specification-version=1.0,
  org.eclipse.core.runtime.preferences
 Provide-Package: 
+ org.osgi.service.prefs,
  org.eclipse.core.internal.registry,
  org.eclipse.core.internal.runtime,
  org.eclipse.core.internal.preferences,
@@ -21,5 +23,4 @@ Provide-Package:
  org.eclipse.core.runtime,
  org.eclipse.core.boot
 Require-Bundle: 
- org.eclipse.osgi; reprovide=true,
- org.eclipse.osgi.services; reprovide=true
+ org.eclipse.osgi; reprovide=true
