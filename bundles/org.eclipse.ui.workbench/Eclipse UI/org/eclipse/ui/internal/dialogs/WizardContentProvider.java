@@ -26,6 +26,7 @@ public class WizardContentProvider
 	extends FilterableObject
 	implements ITreeContentProvider {
     
+    private AdaptableList input;
     private Viewer viewer;
 
 	/**
@@ -105,8 +106,14 @@ public class WizardContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof WizardCollectionElement)
+		if (element instanceof WizardCollectionElement) {		    
+		    Object[] children = input.getChildren();
+            for (int i = 0; i < children.length; i++) {
+		        if (children[i].equals(element))
+		            return input;
+		    }
 			return ((WizardCollectionElement) element).getParent(element);
+		}
 		else
 			return null;
 	}
@@ -151,6 +158,7 @@ public class WizardContentProvider
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	    this.viewer = viewer;
+	    input = (AdaptableList) newInput;	   
 	}
 	
     /* (non-Javadoc)

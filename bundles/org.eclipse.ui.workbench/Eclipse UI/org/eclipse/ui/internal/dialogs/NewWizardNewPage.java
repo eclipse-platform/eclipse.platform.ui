@@ -461,7 +461,7 @@ class NewWizardNewPage
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer = new TreeViewer(tree);
 		
-		contentProvider = new WizardContentProvider(true);
+		contentProvider = new WizardContentProvider(false);
         viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setSorter(NewWizardCollectionSorter.INSTANCE);
@@ -474,6 +474,8 @@ class NewWizardNewPage
             inputArray.add(primaryWizards[i]);
         }
 		
+		boolean expandTop = false;
+		
 		if (wizardCategories != null) {
 			if (wizardCategories.getParent(wizardCategories) == null) {
 			    Object [] children = wizardCategories.getChildren();
@@ -481,14 +483,20 @@ class NewWizardNewPage
 		            inputArray.add(children[i]);
 		        }
 			} else {
-				//inputArray.add(new RootElementProxy(wizardCategories));
+			    expandTop = true;
 			    inputArray.add(wizardCategories);
 			}
 		}
+
+		// ensure the category is expanded.  If there is a remembered expansion it will be set later.
+		if (expandTop)
+		    viewer.setAutoExpandLevel(2);	
+		
 		
 		AdaptableList input = new AdaptableList(inputArray);
 		
 		viewer.setInput(input);
+		
 		tree.setFont(parent.getFont());
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -509,7 +517,7 @@ class NewWizardNewPage
 		});
 		
 		data = new GridData(GridData.FILL_BOTH);
-		tree.setLayoutData(data);
+		tree.setLayoutData(data);		
 	}
 	
 	/**
@@ -535,10 +543,7 @@ class NewWizardNewPage
 	    if (showAllCheck != null) {
 	        showAllCheck.setSelection(showAll);
 	        contentProvider.setFiltering(!showAll);
-	    }
-	    else {
-	        contentProvider.setFiltering(false);
-	    }	    
+	    }    
 	    
 		String[] expandedCategoryPaths = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
 		if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0)
@@ -631,7 +636,7 @@ class NewWizardNewPage
 				return;
 		}
 		StructuredSelection selection = new StructuredSelection(selected);
-		viewer.setSelection(selection);	    
+		viewer.setSelection(selection);
 	}
 
 	/**
