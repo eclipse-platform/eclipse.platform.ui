@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>
+	<classpathentry kind="src" path="/org.eclipse.jface.text"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

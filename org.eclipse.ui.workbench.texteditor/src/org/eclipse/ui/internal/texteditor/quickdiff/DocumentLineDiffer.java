@@ -521,12 +521,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				DocLineComparator ref= new DocLineComparator(reference, null, false);
 				DocLineComparator act= new DocLineComparator(actual, null, false);
 				List diffs;
-				try {
-					diffs= RangeDifferencer.findRanges(monitor, ref, act);
-				} catch (LowMemoryException e) {
-					handleLowMemory(e);
-					return Status.CANCEL_STATUS;
-				}
+				diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
