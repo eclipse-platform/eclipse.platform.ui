@@ -15,12 +15,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,7 +35,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -47,13 +44,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -63,7 +58,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
-
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -366,21 +360,11 @@ public class EditTemplateDialog extends StatusDialog {
 			}
 		});
 
-		if (viewer instanceof ITextViewerExtension) {
-			 ((ITextViewerExtension) viewer).prependVerifyKeyListener(new VerifyKeyListener() {
-				public void verifyKey(VerifyEvent event) {
-					handleVerifyKeyPressed(event);
-				}
-			});
-		} else {			
-			viewer.getTextWidget().addKeyListener(new KeyListener() {
-				public void keyPressed(KeyEvent e) {
-					handleKeyPressed(e);
-				}
-	
-				public void keyReleased(KeyEvent e) {}
-			});
+	 	viewer.prependVerifyKeyListener(new VerifyKeyListener() {
+		public void verifyKey(VerifyEvent event) {
+			handleVerifyKeyPressed(event);
 		}
+		});
 		
 		return viewer;
 	}
