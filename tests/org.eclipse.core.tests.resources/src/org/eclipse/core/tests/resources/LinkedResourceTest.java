@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -136,12 +137,15 @@ public void testAllowMissingLocal() {
 	}
 	assertEquals("2.3", location, folder.getLocation());
 	assertTrue("2.4", !location.toFile().exists());
-	//creating child should fail
+	// creating child should fail when the OS is Windows
 	try {
 		folder.getFile("abc.txt").create(getRandomContents(), IResource.NONE, getMonitor());
-		fail("2.5");
+		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+			fail("2.5");
 	} catch (CoreException e) {
-		//should fail
+		// catch this failure for non-Windows OSes
+		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+			fail("2.6");
 	}
 }
 /**
