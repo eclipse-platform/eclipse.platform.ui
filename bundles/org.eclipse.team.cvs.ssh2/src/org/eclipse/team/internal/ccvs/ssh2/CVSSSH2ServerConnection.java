@@ -104,7 +104,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
             boolean tryAgain = false;
 			while (firstTime || tryAgain) {
                 tryAgain = false; // reset the try again flag
-				session = JSchSession.getSession(location, location.getUsername(), password, location.getHost(), location.getPort(), new JSchSession.ResponsiveSocketFacory(monitor));
+				session = JSchSession.getSession(location, location.getUsername(), password, location.getHost(), location.getPort(), monitor);
 				channel = session.getSession().openChannel("exec"); //$NON-NLS-1$
 				((ChannelExec) channel).setCommand(COMMAND);
 				channel_out = channel.getOutputStream();

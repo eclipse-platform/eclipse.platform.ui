@@ -181,6 +181,7 @@ class JSchSession {
 		private IUserAuthenticator authenticator;
         private int attemptCount;
         private boolean passwordChanged;
+        private boolean purgeHostKey;
 		
 		MyUserInfo(String username, String password, ICVSRepositoryLocation location) {
 			this.location = location;
@@ -266,16 +267,26 @@ class JSchSession {
 			}
 		}
 		public void showMessage(String message) {
-			authenticator.prompt(
-					location,
-					IUserAuthenticator.INFORMATION,
-					Policy.bind("JSchSession.5"), //$NON-NLS-1$
-					message,
-					new int[] {IUserAuthenticator.OK_ID},
-					IUserAuthenticator.OK_ID
-					);
+            if (isHostKeyChangeWarning(message)) {
+                handleHostKeyChange();
+            } else {
+    			authenticator.prompt(
+    					location,
+    					IUserAuthenticator.INFORMATION,
+    					Policy.bind("JSchSession.5"), //$NON-NLS-1$
+    					message,
+    					new int[] {IUserAuthenticator.OK_ID},
+    					IUserAuthenticator.OK_ID
+    					);
+            }
 		}
-		public String[] promptKeyboardInteractive(String destination,   
+		private void handleHostKeyChange() {
+            purgeHostKey = authenticator.promptForHostKeyChange(location);
+        }
+        private boolean isHostKeyChangeWarning(String message) {
+            return message.indexOf("WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED") != -1; //$NON-NLS-1$
+        }
+        public String[] promptKeyboardInteractive(String destination,   
 				String name,   
 				String instruction,   
 				String[] prompt,   
@@ -329,6 +340,9 @@ class JSchSession {
                 // We were prompted for and returned a password so record it with the location
                 location.setPassword(password);
             }
+        }
+        public boolean isPurgeHostKey() {
+            return purgeHostKey;
         }		
 	}
 
@@ -336,7 +350,7 @@ class JSchSession {
         return ee.getMessage().equals("Auth fail"); //$NON-NLS-1$
     }
     
-    static JSchSession getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, SocketFactory socketFactory) throws JSchException {
+    static JSchSession getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, IProgressMonitor monitor) throws JSchException {
 
         if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
             port = getPort(location);
@@ -416,11 +430,23 @@ class JSchSession {
                 
                 Session session = null;
                 try {
-                    session = createSession(username, password, hostname, port, socketFactory, proxy, wrapperUI);
+                    session = createSession(username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor), proxy, wrapperUI);
                 } catch (JSchException e) {
                     if (isAuthenticationFailure(e) && wrapperUI.hasPromptExceededTimeout()) {
                         // Try again since the previous prompt may have obtained the proper credentials from the user
-                        session = createSession(username, password, hostname, port, socketFactory, proxy, wrapperUI);
+                        session = createSession(username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor), proxy, wrapperUI);
+                    } else if (isHostKeyChangeError(e) && ui.isPurgeHostKey()) {
+                        // Remove the host keys
+                        HostKeyRepository hkr =JSchSession.getJSch().getHostKeyRepository();
+                        HostKey[] keys = hkr.getHostKey();
+                        for (int i = 0; i < keys.length; i++) {
+                            HostKey hostKey = keys[i];
+                            if (hostKey.getHost().equals(hostname)) {
+                                hkr.remove(hostKey.getHost(), hostKey.getType());
+                            }
+                        }
+                        // Retry the connection
+                        session = createSession(username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor), proxy, wrapperUI);
                     } else {
                         throw e;
                     }
@@ -441,6 +467,15 @@ class JSchSession {
 		}
 	}
 
+    private static boolean isHostKeyPurged(String hostname) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    private static boolean isHostKeyChangeError(JSchException e) {
+        return e.getMessage().equals("HostKey has been changed"); //$NON-NLS-1$
+    }
+
     private static Session createSession(String username, String password, String hostname, int port, SocketFactory socketFactory, Proxy proxy, UserInfo wrapperUI) throws JSchException {
         Session session = jsch.getSession(username, hostname, port);
         if (proxy != null) {
@@ -450,7 +485,13 @@ class JSchSession {
         session.setUserInfo(wrapperUI);
         session.setSocketFactory(socketFactory);
         // This is where the server is contacted and authentication occurs
-        session.connect();
+        try {
+            session.connect();
+        } catch (JSchException e) {
+            if (session.isConnected())
+                session.disconnect();
+            throw e;
+        }
         return session;
     }
 

@@ -36,4 +36,8 @@ public class TestsUserAuthenticator implements IUserAuthenticator {
 	public String[] promptForKeyboradInteractive(ICVSRepositoryLocation location, String destination, String name, String instruction, String[] prompt, boolean[] echo) throws CVSException {
 		return prompt;
 	}
+
+    public boolean promptForHostKeyChange(ICVSRepositoryLocation location) {
+        return false;
+    }
 }

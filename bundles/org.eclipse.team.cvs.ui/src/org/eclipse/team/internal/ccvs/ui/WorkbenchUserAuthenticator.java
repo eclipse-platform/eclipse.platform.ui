@@ -242,4 +242,18 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		});
 		return retval[0];
 	}
+    
+    public boolean promptForHostKeyChange(final ICVSRepositoryLocation location) {
+        final boolean[] openConfirm = new boolean[] { false };
+        final Display display = CVSUIPlugin.getStandardDisplay();
+        display.syncExec(new Runnable() {
+            public void run() {
+                openConfirm[0] = MessageDialog.openConfirm(null, Policy.bind("WorkbenchUserAuthenticator.1"), Policy.bind("WorkbenchUserAuthenticator.2", location.getHost())); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        });
+        if (!openConfirm[0]) {
+            throw new OperationCanceledException();
+        }
+        return openConfirm[0];
+    }
 }

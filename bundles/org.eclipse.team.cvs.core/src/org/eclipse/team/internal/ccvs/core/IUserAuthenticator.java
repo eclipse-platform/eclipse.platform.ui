@@ -123,4 +123,11 @@ public interface IUserAuthenticator {
 	 * @since 3.0
 	 */
 	public int prompt(ICVSRepositoryLocation location, int promptType, String title, String message, int[] promptResponses, int defaultResponseIndex);
+
+    /**
+     * The host key for the given location has changed.
+     * @param location
+     * @return true if new host key should be accepted
+     */
+    public boolean promptForHostKeyChange(ICVSRepositoryLocation location);
 }
