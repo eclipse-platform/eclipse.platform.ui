@@ -23,6 +23,100 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <pre>
 - removed last dependency on compatibility plug-in
 - bug fixing
+
+The infrastructure for collapsing and expanding ranges of lines in editors (referred to as folding)
+is now officially available. The effected plug-ins are org.eclipse.text and org.eclipse.jface.text.
+
+The org.eclipse.text plug-in contains the package org.eclipse.jface.text.projection. This package
+defines the UI independent document infrastructure needed for folding. The center piece is the
+ProjectionDocument. The content of a projection document is a projection of the content of a master
+document. In other words fragments of the master document constitute the segments of the projection
+document. The mapping is enacted by the ProjectionMapping implementing IDocumentInformationMapping.
+After an instance of ProjectionDocument has been created it is initially empty. The content is defined
+by calling addMasterDocumentRange(offsetInMasterDocument, lengthInMasterDocument) and
+removeMasterDocumentRange(offsetInMasterDocument, lengthInMasterDocument). The projection document
+and its master document are causally connected. Thus, any manipulation of the projection document also
+causes master document changes. Any manipulation effecting ranges in the master document that have been
+added to the projection document also cause projection document changes.
+
+The org.eclipse.jface.text plug-in contains the package org.eclipse.jface.text.source.projection.
+This package defines the UI needed for folding based on the projection document infrastructure. The
+center piece is the ProjectionViewer and the ProjectionSupport. A projection support can be installed on
+projection viewer. It controls the existence of a vertical ruler column for collapsing/expanding ranges
+of lines, the hover behavior, and the presentation of collapsed regions in the viewer. The projection viewer
+defines a set of text operations for managing the expansion state of collapsable regions. Collapsable regions
+can be defined by requesting the ProjectionSupport to provide an adapter for ProjectionAnnotationModel.class
+for the viewer it is installed on. The ProjectionAnnotations managed by this projection annotation model
+define the collapsable regions.
+
+ITextViewer defines the concept of a visible region. This concepts is incompatible with folding. Several
+assumptions that were safe to make in the world of visible regions are no longer valid in the presence of folding.
+For example, in order to determine the document line number of the fifth line in the viewer's widget it was
+good enough to determine the start line of the viewer's visible region and to take the fifth line after that.
+When folding is enabled, any number of lines can be between two visible lines. Thus, in order to convert between
+widget and model coordinates, the methods provided by ITextViewerExtension5 should be used.
+
+Editor implementers (based on AbstractTextEditor) who want to support folding have to do the following:
+- override createSourceViewer and return a ProjectionViewer
+- override createPartControl resembling:
+
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+
+		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error");
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning");
+		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				return new CustomSourceInformationControl(shell, IDocument.DEFAULT_CONTENT_TYPE);
+			}
+		});
+		fProjectionSupport.install();
+
+		...
+		
+		if (isFoldingEnabled())
+			projectionViewer.doOperation(ProjectionViewer.TOOGLE);
+	}
+
+- extend getAdapter with 
+
+	public Object getAdapter(Class required) {
+		...	
+		if (fProjectionSupport != null) {
+			Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
+			if (adapter != null)
+				return adapter;
+		}
+		
+		return super.getAdapter(required);
+	}
+	
+- provide a way to allow the definition of collpsable regions such as:
+
+		ITextEditor editor= getTextEditor();
+		ISelection selection= editor.getSelectionProvider().getSelection();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection) selection;
+			if (!textSelection.isEmpty()) {
+				IAnnotationModel model= (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
+				if (model != null) {
+					int start= textSelection.getStartLine();
+					int end= textSelection.getEndLine();
+					try {
+						IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+						int offset= document.getLineOffset(start);
+						int endOffset= document.getLineOffset(end + 1);
+						Position position= new Position(offset, endOffset - offset);
+						model.addAnnotation(new ProjectionAnnotation(), position);
+					} catch (BadLocationException x) {
+					}
+				}
+			}
+		}
+
 </pre>
 ========== Eclipse Build Input May 11th 2004 ==========<br>
 <pre>
