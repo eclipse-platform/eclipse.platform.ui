@@ -447,6 +447,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * Returns whether the given project is shared or not. This is a lightweight
 	 * method in that it will not instantiate a provider instance (as
 	 * <code>getProvider</code> would) if one is not already instantiated.
+	 * 
+	 * Note that IProject.touch() generates a project description delta.  This, in combination
+	 * with isShared() can be used to be notified of sharing/unsharing of projects.
+	 * 
 	 * @param project the project being tested.
 	 * @return boolean
 	 * 
