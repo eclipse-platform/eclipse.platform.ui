@@ -5,12 +5,19 @@
 function liveAction(pluginId, className, argument)
 {
 		var url=""+location;
-		var i=url.indexOf("content/help:");
-		if(i<0)
+		var i=url.indexOf("ns4/content/help:");
+		if(i<0){
+			i=url.indexOf("content/help:");
+		}
+		if(i<0){
 			return;
+		}
 		var url=url.substring(0, i);
 		url=url+"livehelp/?pluginID="+pluginId+"&class="+className+"&arg="+escape(argument)+"&nocaching="+Math.random();
-		if(parent && parent.ToolbarFrame && parent.ToolbarFrame.liveHelpFrame)
+		if(parent && parent.ToolbarFrame && parent.ToolbarFrame.liveHelpFrame){
 			parent.ToolbarFrame.liveHelpFrame.location=url;
+		} else if(parent && parent.ToolbarFrame && parent.ToolbarFrame.document && parent.ToolbarFrame.document.liveHelpFrame){
+			parent.ToolbarFrame.document.liveHelpFrame.src=url;
+		}
 }
 
