@@ -9,10 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
-
 import java.io.InputStream;
 import java.util.*;
-
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -25,82 +23,81 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.*;
-
 /**
- * This class is a read-only text control that is capable of rendering
- * wrapped text. Text can be rendered as-is or by parsing the formatting
- * XML tags. Independently, words that start with http:// can
- * be converted into hyperlinks on the fly.
+ * This class is a read-only text control that is capable of rendering wrapped
+ * text. Text can be rendered as-is or by parsing the formatting XML tags.
+ * Independently, words that start with http:// can be converted into
+ * hyperlinks on the fly.
  * <p>
- * When configured to use formatting XML, the control requires the
- * root element <code>form</code> to be used. The following tags
- * can be children of the <code>form</code> element:
- * </p> 
- * <ul>
- * <li><b>p</b> - for defining paragraphs. The following attributes are allowed:
- * 		<ul>
- * 		  <li><b>vspace</b> - if set to 'false', no vertical space will be added
- *        (default is 'true')</li>
- *      </ul>
- * </li>
- * <li><b>li</b> - for defining list items. The following attributes are allowed:
- *    	<ul>
- * 		   <li><b>vspace</b> - the same as with the <b>p</b> tag</li>
- * 		   <li><b>style</b> - could be 'bullet' (default), 'text' and 'image'</li>
- *     	   <li><b>value</b> - not used for 'bullet'. For text, it is the value of
- * the text to rendered as a bullet. For image, it is the href of the
- * image to be rendered as a bullet.</li>
- * 		   <li><b>indent</b> - the number of pixels to indent the text in the list item</li>
- * 		   <li><b>bindent</b> - the number of pixels to indent the bullet itself</li>
- *      </ul>
- * </li>
- * </ul>
- * <p>Text in paragraphs and list items will be wrapped according to the
- * width of the control. The following tags can appear as children of
- * either <b>p</b> or <b>li</b> elements:
- * <ul>
- * <li><b>img</b> - to render an image. Element accepts attribute 'href'
- * that is a key to the Image set using 'setImage' method.
- * </li>
- * <li><b>a</b> - to render a hyperlink. Element accepts attribute 'href'
- * that will be provided to the hyperlink listeners via HyperlinkEvent
- * object. The element also accepts 'nowrap' attribute (default is false).
- * When set to 'true', the hyperlink will not be wrapped.
- * </li>
- * <li><b>b</b> - the enclosed text will use bold font.
- * </li>
- * <li><b>br</b> - forced line break (no attributes).
- * </li>
- * <li><b>span</b> - the enclosed text will have the color and font
- * specified in the element attributes. Color is provided using 'color'
- * attribute and is a key to the Color object set by 'setColor' method.
- * Font is provided using 'font' attribute and is a key to the Font
- * object set by 'setFont' method.
- * </li>
- * </ul>
- * <p>None of the elements can nest. For example, you cannot have <b>b</b> 
- * inside a <b>span</b>. This was done to keep everything simple and
- * transparent.</p>
- * <p>Care should be taken when using this control. Form text is
- * not an HTML browser and should not be treated as such. If you
- * need complex formatting capabilities, use Browser widget. If you
- * need editing capabilities and font/color styles of text segments
- * is all you need, use StyleText widget. Finally, if all you need
- * is to wrap text, use SWT Label widget and create it with SWT.WRAP
- * style.
- * <p>
- * <p>You should be careful not to
- * ask the control to render large quantities of text. It does not
- * have advanced support for dirty regions and will repaint fully
- * each time. Instead, combine the control in a composite with 
- * other controls and let SWT take care of the dirty regions.
+ * When configured to use formatting XML, the control requires the root element
+ * <code>form</code> to be used. The following tags can be children of the
+ * <code>form</code> element:
  * </p>
+ * <ul>
+ * <li><b>p </b>- for defining paragraphs. The following attributes are
+ * allowed:
+ * <ul>
+ * <li><b>vspace </b>- if set to 'false', no vertical space will be added
+ * (default is 'true')</li>
+ * </ul>
+ * </li>
+ * <li><b>li </b>- for defining list items. The following attributes are
+ * allowed:
+ * <ul>
+ * <li><b>vspace </b>- the same as with the <b>p </b> tag</li>
+ * <li><b>style </b>- could be 'bullet' (default), 'text' and 'image'</li>
+ * <li><b>value </b>- not used for 'bullet'. For text, it is the value of the
+ * text to rendered as a bullet. For image, it is the href of the image to be
+ * rendered as a bullet.</li>
+ * <li><b>indent </b>- the number of pixels to indent the text in the list
+ * item</li>
+ * <li><b>bindent </b>- the number of pixels to indent the bullet itself
+ * </li>
+ * </ul>
+ * </li>
+ * </ul>
+ * <p>
+ * Text in paragraphs and list items will be wrapped according to the width of
+ * the control. The following tags can appear as children of either <b>p </b>
+ * or <b>li </b> elements:
+ * <ul>
+ * <li><b>img </b>- to render an image. Element accepts attribute 'href' that
+ * is a key to the Image set using 'setImage' method.</li>
+ * <li><b>a </b>- to render a hyperlink. Element accepts attribute 'href'
+ * that will be provided to the hyperlink listeners via HyperlinkEvent object.
+ * The element also accepts 'nowrap' attribute (default is false). When set to
+ * 'true', the hyperlink will not be wrapped.</li>
+ * <li><b>b </b>- the enclosed text will use bold font.</li>
+ * <li><b>br </b>- forced line break (no attributes).</li>
+ * <li><b>span </b>- the enclosed text will have the color and font specified
+ * in the element attributes. Color is provided using 'color' attribute and is
+ * a key to the Color object set by 'setColor' method. Font is provided using
+ * 'font' attribute and is a key to the Font object set by 'setFont' method.
+ * </li>
+ * </ul>
+ * <p>
+ * None of the elements can nest. For example, you cannot have <b>b </b> inside
+ * a <b>span </b>. This was done to keep everything simple and transparent.
+ * </p>
+ * <p>
+ * Care should be taken when using this control. Form text is not an HTML
+ * browser and should not be treated as such. If you need complex formatting
+ * capabilities, use Browser widget. If you need editing capabilities and
+ * font/color styles of text segments is all you need, use StyleText widget.
+ * Finally, if all you need is to wrap text, use SWT Label widget and create it
+ * with SWT.WRAP style.
+ * <p>
+ * <p>
+ * You should be careful not to ask the control to render large quantities of
+ * text. It does not have advanced support for dirty regions and will repaint
+ * fully each time. Instead, combine the control in a composite with other
+ * controls and let SWT take care of the dirty regions.
+ * </p>
+ * 
  * @since 3.0
  * @see FormToolkit
  * @see TableWrapLayout
  */
-
-
 public class FormText extends Canvas {
 	/**
 	 * The object ID to be used when registering action to handle URL
@@ -122,7 +119,6 @@ public class FormText extends Canvas {
 	private FormTextModel model;
 	private Vector listeners;
 	private Hashtable resourceTable = new Hashtable();
-
 	private HyperlinkSegment entered;
 	private boolean mouseDown = false;
 	//private Point dragOrigin;
@@ -131,28 +127,20 @@ public class FormText extends Canvas {
 	private boolean loading = true;
 	//TODO translate this text
 	private String loadingText = "Loading...";
-
 	private class FormTextLayout extends Layout implements ILayoutExtension {
 		public FormTextLayout() {
 		}
-
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
-
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, 5, SWT.DEFAULT, true).x;
 		}
-
 		/*
 		 * @see Layout#computeSize(Composite, int, int, boolean)
 		 */
-
-		public Point computeSize(
-			Composite composite,
-			int wHint,
-			int hHint,
-			boolean changed) {
+		public Point computeSize(Composite composite, int wHint, int hHint,
+				boolean changed) {
 			int innerWidth = wHint;
 			if (isLoading()) {
 				return computeLoading();
@@ -165,7 +153,6 @@ public class FormText extends Canvas {
 			Point result = new Point(textWidth, textHeight);
 			return result;
 		}
-
 		private Point computeLoading() {
 			GC gc = new GC(FormText.this);
 			gc.setFont(getFont());
@@ -176,37 +163,28 @@ public class FormText extends Canvas {
 			size.y += 2 * marginHeight;
 			return size;
 		}
-
 		private Point computeTextSize(int wHint) {
 			Paragraph[] paragraphs = model.getParagraphs();
-
 			GC gc = new GC(FormText.this);
 			gc.setFont(getFont());
-
 			Locator loc = new Locator();
-
 			int width = wHint != SWT.DEFAULT ? wHint : 0;
-
 			FontMetrics fm = gc.getFontMetrics();
 			int lineHeight = fm.getHeight();
-
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
-
-				if (i > 0
-					&& getParagraphsSeparated()
-					&& p.getAddVerticalSpace())
+				if (i > 0 && getParagraphsSeparated()
+						&& p.getAddVerticalSpace())
 					loc.y += getParagraphSpacing(lineHeight);
-
 				loc.rowHeight = 0;
 				loc.indent = p.getIndent();
 				loc.x = p.getIndent();
-
 				ParagraphSegment[] segments = p.getSegments();
 				if (segments.length > 0) {
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
-						segment.advanceLocator(gc, wHint, loc, resourceTable, false);
+						segment.advanceLocator(gc, wHint, loc, resourceTable,
+								false);
 						width = Math.max(width, loc.width);
 					}
 					loc.y += loc.rowHeight;
@@ -231,10 +209,9 @@ public class FormText extends Canvas {
 	 *            the widget style
 	 */
 	public FormText(Composite parent, int style) {
-		super(parent, SWT.WRAP | style);
+		super(parent, SWT.NO_BACKGROUND | SWT.WRAP | style);
 		setLayout(new FormTextLayout());
 		model = new FormTextModel();
-
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				model.dispose();
@@ -324,13 +301,13 @@ public class FormText extends Canvas {
 		});
 		initAccessible();
 		makeActions();
-		resourceTable.put(FormTextModel.BOLD_FONT_ID, JFaceResources.getBannerFont());
+		resourceTable.put(FormTextModel.BOLD_FONT_ID, JFaceResources
+				.getBannerFont());
 	}
-	
 	/**
 	 * Test for focus.
 	 * 
-	 * @return <samp>true</samp> if the widget has focus.
+	 * @return <samp>true </samp> if the widget has focus.
 	 */
 	public boolean getFocus() {
 		return hasFocus;
@@ -339,8 +316,8 @@ public class FormText extends Canvas {
 	 * Test if the widget is currently processing the text it is about to
 	 * render.
 	 * 
-	 * @return <samp>true</samp> if the widget is still loading the text,
-	 *         <samp>false</samp> otherwise.
+	 * @return <samp>true </samp> if the widget is still loading the text,
+	 *         <samp>false </samp> otherwise.
 	 */
 	public boolean isLoading() {
 		return loading;
@@ -351,158 +328,149 @@ public class FormText extends Canvas {
 	 * 
 	 * @return loading text message
 	 */
-
 	public String getLoadingText() {
 		return loadingText;
 	}
 	/**
 	 * Sets the text that will be shown in the control while the real content
 	 * is loading. This is significant when content to render is loaded from
-	 * the input stream that was created from a remote URL, and the time
-	 * to load the entire content is nontrivial.
+	 * the input stream that was created from a remote URL, and the time to
+	 * load the entire content is nontrivial.
 	 * 
 	 * @param loadingText
 	 *            loading text message
 	 */
-
 	public void setLoadingText(String loadingText) {
 		this.loadingText = loadingText;
 	}
-
 	/**
 	 * If paragraphs are separated, spacing will be added between them.
 	 * Otherwise, new paragraphs will simply start on a new line with no
 	 * spacing.
 	 * 
 	 * @param value
-	 *            <samp>true</samp> if paragraphs are separated,</samp>
-	 *            false</samp> otherwise.
+	 *            <samp>true </samp> if paragraphs are separated, </samp> false
+	 *            </samp> otherwise.
 	 */
-
 	public void setParagraphsSeparated(boolean value) {
 		paragraphsSeparated = value;
 	}
-
 	/**
 	 * Tests if there is some inter-paragraph spacing.
 	 * 
-	 * @return <samp>true</samp> if paragraphs are separated, <samp>false
+	 * @return <samp>true </samp> if paragraphs are separated, <samp>false
 	 *         </samp> otherwise.
 	 */
-
 	public boolean getParagraphsSeparated() {
 		return paragraphsSeparated;
 	}
-	
-	
 	/**
-	 * Registers the image referenced by the provided key. 
+	 * Registers the image referenced by the provided key.
 	 * <p>
-	 * For <samp>img</samp> tags, an object of a type <samp>Image</samp>
-	 * must be registered using the key equivalent to the value of the <samp>
-	 * href</samp> attribute used in the tag.
+	 * For <samp>img </samp> tags, an object of a type <samp>Image </samp> must
+	 * be registered using the key equivalent to the value of the <samp>href
+	 * </samp> attribute used in the tag.
+	 * 
 	 * @param key
-	 *            unique key that matches the value of the <samp>href</samp>
+	 *            unique key that matches the value of the <samp>href </samp>
 	 *            attribute.
 	 * @param image
-	 *            an object of a type <samp>Image</samp>.
+	 *            an object of a type <samp>Image </samp>.
 	 */
 	public void setImage(String key, Image image) {
-		resourceTable.put("i."+key, image);
+		resourceTable.put("i." + key, image);
 	}
 	/**
-	 * Registers the color referenced by the provided key. 
+	 * Registers the color referenced by the provided key.
 	 * <p>
-	 * For <samp>span</samp> tags, an object of a type <samp>Color</samp>
+	 * For <samp>span </samp> tags, an object of a type <samp>Color </samp>
 	 * must be registered using the key equivalent to the value of the <samp>
-	 * color</samp> attribute.
+	 * color </samp> attribute.
+	 * 
 	 * @param key
-	 *            unique key that matches the value of the <samp>color</samp>
+	 *            unique key that matches the value of the <samp>color </samp>
 	 *            attribute.
 	 * @param color
-	 *            an object of a type <samp>Color</samp>.
+	 *            an object of a type <samp>Color </samp>.
 	 */
 	public void setColor(String key, Color color) {
-		resourceTable.put("c."+key, color);
+		resourceTable.put("c." + key, color);
 	}
 	/**
-	 * Registers the font referenced by the provided key. 
+	 * Registers the font referenced by the provided key.
 	 * <p>
-	 * For <samp>span</samp> tags, an object of a type <samp>Font</samp>
-	 * must be registered using the key equivalent to the value of the <samp>
-	 * font</samp> attribute.
+	 * For <samp>span </samp> tags, an object of a type <samp>Font </samp> must
+	 * be registered using the key equivalent to the value of the <samp>font
+	 * </samp> attribute.
+	 * 
 	 * @param key
-	 *            unique key that matches the value of the <samp>font</samp>
+	 *            unique key that matches the value of the <samp>font </samp>
 	 *            attribute.
 	 * @param font
- 	 *            an object of a type <samp>Font</samp>.
+	 *            an object of a type <samp>Font </samp>.
 	 */
 	public void setFont(String key, Font font) {
-		resourceTable.put("f."+key, font);
+		resourceTable.put("f." + key, font);
 	}
 	/**
 	 * Sets the provided text. Text can be rendered as-is, or by parsing the
-	 * formatting tags. Optionally, sections of text starting with http://
-	 * will be converted to hyperlinks.
+	 * formatting tags. Optionally, sections of text starting with http:// will
+	 * be converted to hyperlinks.
 	 * 
 	 * @param text
 	 *            the text to render
 	 * @param parseTags
-	 *            if <samp>true</samp>, formatting tags will be parsed.
+	 *            if <samp>true </samp>, formatting tags will be parsed.
 	 *            Otherwise, text will be rendered as-is.
 	 * @param expandURLs
-	 *            if <samp>true</samp>, URLs found in the untagged text will
+	 *            if <samp>true </samp>, URLs found in the untagged text will
 	 *            be converted into hyperlinks.
 	 */
 	public void setText(String text, boolean parseTags, boolean expandURLs) {
-			if (parseTags)
-				model.parseTaggedText(text, expandURLs);
-			else
-				model.parseRegularText(text, expandURLs);
-			loading = false;
-			layout();
+		if (parseTags)
+			model.parseTaggedText(text, expandURLs);
+		else
+			model.parseRegularText(text, expandURLs);
+		loading = false;
+		layout();
 	}
 	/**
-	 * Sets the contents of the stream. Optionally, URLs in untagged text
-	 * can be converted into hyperlinks. The caller is responsible
-	 * for closing the stream.
+	 * Sets the contents of the stream. Optionally, URLs in untagged text can
+	 * be converted into hyperlinks. The caller is responsible for closing the
+	 * stream.
 	 * 
 	 * @param is
 	 *            stream to render
 	 * @param expandURLs
-	 *            if <samp>true</samp>, URLs found in untagged text will be
+	 *            if <samp>true </samp>, URLs found in untagged text will be
 	 *            converted into hyperlinks.
 	 */
 	public void setContents(InputStream is, boolean expandURLs) {
-			model.parseInputStream(is, expandURLs);
-			loading = false;
-			layout();
+		model.parseInputStream(is, expandURLs);
+		loading = false;
+		layout();
 	}
 	/**
 	 * Sets the focus to the first hyperlink, or the widget itself if there are
 	 * no hyperlinks.
 	 * 
-	 * @return <samp>true</samp> if the control got focus, <samp>false
-	 *         </samp> otherwise.
+	 * @return <samp>true </samp> if the control got focus, <samp>false </samp>
+	 *         otherwise.
 	 */
-
 	public boolean setFocus() {
 		/*
 		 * if (!model.hasFocusSegments()) return false;
 		 */
 		return super.setFocus();
 	}
-	
 	/**
 	 * Returns the hyperlink settings that are in effect for this control.
 	 * 
 	 * @return current hyperlinks settings
 	 */
-
 	public HyperlinkSettings getHyperlinkSettings() {
 		return model.getHyperlinkSettings();
 	}
-
 	/**
 	 * Sets the hyperlink settings to be used for this control. Settings will
 	 * affect things like hyperlink color, rendering style, cursor etc.
@@ -513,10 +481,11 @@ public class FormText extends Canvas {
 	public void setHyperlinkSettings(HyperlinkSettings settings) {
 		model.setHyperlinkSettings(settings);
 	}
-	
 	/**
 	 * Adds a listener that will handle hyperlink events.
-	 * @param listener the listener to add
+	 * 
+	 * @param listener
+	 *            the listener to add
 	 */
 	public void addHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
@@ -526,14 +495,15 @@ public class FormText extends Canvas {
 	}
 	/**
 	 * Removes the hyperlink listener.
-	 * @param listener the listener to remove
+	 * 
+	 * @param listener
+	 *            the listener to remove
 	 */
 	public void removeHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
 			return;
 		listeners.remove(listener);
 	}
-	
 	/**
 	 * Context menu is about to show - override to add actions to the menu
 	 * manager. Subclasses are required to call 'super' when overriding.
@@ -546,53 +516,37 @@ public class FormText extends Canvas {
 		if (link != null)
 			contributeLinkActions(manager, link);
 	}
-	
-
 	private void makeActions() {
 		/*
-		openAction = new Action() {
-			public void run() {
-				activateSelectedLink();
-			}
-		};
-		openAction.setText(
-			FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
-		copyShortcutAction = new Action() {
-			public void run() {
-				copyShortcut(model.getSelectedLink());
-			}
-		};
-		copyShortcutAction.setText(
-			FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
-		*/
+		 * openAction = new Action() { public void run() {
+		 * activateSelectedLink(); } }; openAction.setText(
+		 * FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
+		 * copyShortcutAction = new Action() { public void run() {
+		 * copyShortcut(model.getSelectedLink()); } };
+		 * copyShortcutAction.setText(
+		 * FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
+		 */
 	}
-
 	private String getAcessibleText() {
 		return model.getAccessibleText();
 	}
-
 	private void initAccessible() {
 		Accessible accessible = getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = getAcessibleText();
 			}
-
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
 		});
-
-		accessible
-			.addAccessibleControlListener(new AccessibleControlAdapter() {
+		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = toControl(new Point(e.x, e.y));
-				e.childID =
-					(getBounds().contains(pt))
+				e.childID = (getBounds().contains(pt))
 						? ACC.CHILDID_SELF
 						: ACC.CHILDID_NONE;
 			}
-
 			public void getLocation(AccessibleControlEvent e) {
 				Rectangle location = getBounds();
 				Point pt = toDisplay(new Point(location.x, location.y));
@@ -601,21 +555,17 @@ public class FormText extends Canvas {
 				e.width = location.width;
 				e.height = location.height;
 			}
-
 			public void getChildCount(AccessibleControlEvent e) {
 				e.detail = 0;
 			}
-
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_TEXT;
 			}
-
 			public void getState(AccessibleControlEvent e) {
 				e.detail = ACC.STATE_READONLY;
 			}
 		});
 	}
-
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
 			// select a hyperlink
@@ -646,7 +596,6 @@ public class FormText extends Canvas {
 			return;
 		}
 		TextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
-
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered);
@@ -661,8 +610,7 @@ public class FormText extends Canvas {
 					entered = linkUnder;
 					enterLink(linkUnder);
 					paintLinkHover(entered, true);
-					setCursor(
-						model.getHyperlinkSettings().getHyperlinkCursor());
+					setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 				}
 			} else {
 				if (entered != null) {
@@ -674,16 +622,12 @@ public class FormText extends Canvas {
 			}
 		}
 	}
-
 	private boolean advance(boolean next) {
 		HyperlinkSegment current = model.getSelectedLink();
 		if (current != null)
 			exitLink(current);
-
 		boolean valid = model.traverseLinks(next);
-
 		HyperlinkSegment newLink = model.getSelectedLink();
-
 		if (valid)
 			enterLink(newLink);
 		paintFocusTransfer(current, newLink);
@@ -691,7 +635,6 @@ public class FormText extends Canvas {
 			ensureVisible(newLink);
 		return !valid;
 	}
-
 	private void handleFocusChange() {
 		if (hasFocus) {
 			model.traverseLinks(true);
@@ -703,36 +646,33 @@ public class FormText extends Canvas {
 			model.selectLink(null);
 		}
 	}
-
 	private void enterLink(HyperlinkSegment link) {
-		if (link == null || listeners==null)
+		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
+				.getText());
 		for (int i = 0; i < size; i++) {
 			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
 			listener.linkEntered(e);
 		}
 	}
-
 	private void exitLink(HyperlinkSegment link) {
-		if (link == null || listeners==null)
+		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
+				.getText());
 		for (int i = 0; i < size; i++) {
 			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
 			listener.linkExited(e);
 		}
 	}
-
 	private void paintLinkHover(HyperlinkSegment link, boolean hover) {
 		GC gc = new GC(this);
-
 		HyperlinkSettings settings = getHyperlinkSettings();
-
-		gc.setForeground(
-			hover ? settings.getActiveForeground() : settings.getForeground());
+		gc.setForeground(hover ? settings.getActiveForeground() : settings
+				.getForeground());
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == model.getSelectedLink());
@@ -743,82 +683,78 @@ public class FormText extends Canvas {
 		}
 		gc.dispose();
 	}
-
 	private void activateSelectedLink() {
 		HyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
 			activateLink(link);
 	}
-
 	private void activateLink(HyperlinkSegment link) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
-		if (listeners!=null) {
+		if (listeners != null) {
 			int size = listeners.size();
-			HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+			HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
+					.getText());
 			for (int i = 0; i < size; i++) {
-				HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
+				HyperlinkListener listener = (HyperlinkListener) listeners
+						.get(i);
 				listener.linkActivated(e);
 			}
 		}
 		if (!isDisposed())
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
-
 	private void paint(PaintEvent e) {
-		int width = getClientArea().width;
-
+		Rectangle carea = getClientArea();
 		GC gc = e.gc;
 		gc.setFont(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
-
+		
 		Locator loc = new Locator();
 		loc.marginWidth = marginWidth;
 		loc.marginHeight = marginHeight;
 		loc.x = marginWidth;
 		loc.y = marginHeight;
-
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
-
+		// Use double-buffering to reduce flicker
+		Image textBuffer = new Image(getDisplay(), carea.width, carea.height);
+		GC textGC = new GC(textBuffer, gc.getStyle());
+		textGC.setForeground(getForeground());
+		textGC.setBackground(getBackground());
+		textGC.setFont(getFont());
+		
 		if (loading) {
 			int textWidth = gc.textExtent(loadingText).x;
-			gc.drawText(
-				loadingText,
-				width / 2 - textWidth / 2,
-				getClientArea().height / 2 - lineHeight / 2);
-			return;
+			textGC.drawText(loadingText, carea.width / 2 - textWidth / 2,
+					getClientArea().height / 2 - lineHeight / 2);
+		} else {
+			Paragraph[] paragraphs = model.getParagraphs();
+			HyperlinkSegment selectedLink = model.getSelectedLink();
+			for (int i = 0; i < paragraphs.length; i++) {
+				Paragraph p = paragraphs[i];
+				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
+					loc.y += getParagraphSpacing(lineHeight);
+				loc.indent = p.getIndent();
+				loc.resetCaret();
+				loc.rowHeight = 0;
+				p.paint(textGC, carea.width, loc, lineHeight, resourceTable,
+						selectedLink);
+			}
 		}
-
-		Paragraph[] paragraphs = model.getParagraphs();
-
-		HyperlinkSegment selectedLink = model.getSelectedLink();
-
-		for (int i = 0; i < paragraphs.length; i++) {
-			Paragraph p = paragraphs[i];
-
-			if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
-				loc.y += getParagraphSpacing(lineHeight);
-
-			loc.indent = p.getIndent();
-			loc.resetCaret();
-			loc.rowHeight = 0;
-			p.paint(gc, width, loc, lineHeight, resourceTable, selectedLink);
-		}
+		gc.drawImage(textBuffer, 0, 0);
+		textGC.dispose();
+		textBuffer.dispose();
 	}
 	private int getParagraphSpacing(int lineHeight) {
 		return lineHeight / 2;
 	}
-	
-	private void paintFocusTransfer(
-			HyperlinkSegment oldLink,
+	private void paintFocusTransfer(HyperlinkSegment oldLink,
 			HyperlinkSegment newLink) {
 		GC gc = new GC(this);
 		Color bg = getBackground();
 		Color fg = getForeground();
-
 		gc.setFont(getFont());
-
 		if (oldLink != null) {
 			gc.setBackground(bg);
 			gc.setForeground(fg);
@@ -832,25 +768,21 @@ public class FormText extends Canvas {
 		}
 		gc.dispose();
 	}
-
-	private void contributeLinkActions(
-		IMenuManager manager,
-		HyperlinkSegment link) {
+	private void contributeLinkActions(IMenuManager manager,
+			HyperlinkSegment link) {
 		manager.add(openAction);
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
 	}
-
 	private void copyShortcut(HyperlinkSegment link) {
 		String text = link.getText();
 		Clipboard clipboard = new Clipboard(getDisplay());
-		clipboard.setContents(
-			new Object[] { text },
-			new Transfer[] { TextTransfer.getInstance()});
+		clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
+				.getInstance()});
 	}
-
 	private void ensureVisible(HyperlinkSegment segment) {
-		if (segment==null) return;
+		if (segment == null)
+			return;
 		Rectangle bounds = segment.getBounds();
 		ScrolledComposite scomp = getScrolledComposite();
 		if (scomp == null)
@@ -858,10 +790,8 @@ public class FormText extends Canvas {
 		Point origin = FormUtil.getControlLocation(scomp, this);
 		origin.x += bounds.x;
 		origin.y += bounds.y;
-		FormUtil.ensureVisible(
-			scomp,
-			origin,
-			new Point(bounds.width, bounds.height));
+		FormUtil.ensureVisible(scomp, origin, new Point(bounds.width,
+				bounds.height));
 	}
 	private ScrolledComposite getScrolledComposite() {
 		Composite parent = getParent();
@@ -872,24 +802,22 @@ public class FormText extends Canvas {
 		}
 		return null;
 	}
-
 	private void handleDrag(MouseEvent e) {
 	}
 	/**
-	 * Overrides the method by fully trusting the layout manager
-	 * (computed width or height may be larger than the 
-	 * provider width or height hints).
+	 * Overrides the method by fully trusting the layout manager (computed
+	 * width or height may be larger than the provider width or height hints).
 	 */
-	public Point computeSize (int wHint, int hHint, boolean changed) {
-		checkWidget ();
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
 		Point size;
-		FormTextLayout layout = (FormTextLayout)getLayout();
+		FormTextLayout layout = (FormTextLayout) getLayout();
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
-			size = layout.computeSize (this, wHint, hHint, changed);
+			size = layout.computeSize(this, wHint, hHint, changed);
 		} else {
-			size = new Point (wHint, hHint);
+			size = new Point(wHint, hHint);
 		}
-		Rectangle trim = computeTrim (0, 0, size.x, size.y);
-		return new Point (trim.width, trim.height);
+		Rectangle trim = computeTrim(0, 0, size.x, size.y);
+		return new Point(trim.width, trim.height);
 	}
 }

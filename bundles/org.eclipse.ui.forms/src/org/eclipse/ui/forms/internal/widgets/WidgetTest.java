@@ -399,8 +399,11 @@ public class WidgetTest {
 		});
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		URL i1URL = WidgetTest.class.getResource("image1.gif");
+		URL i2URL = WidgetTest.class.getResource("test.gif");
 		ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
 		rtext.setImage("image1", id1.createImage());
+		ImageDescriptor id2 = ImageDescriptor.createFromURL(i2URL);
+		rtext.setImage("test", id2.createImage());
 		InputStream is = WidgetTest.class.getResourceAsStream("index.xml");
 		rtext.setContents(is, true);
 	}

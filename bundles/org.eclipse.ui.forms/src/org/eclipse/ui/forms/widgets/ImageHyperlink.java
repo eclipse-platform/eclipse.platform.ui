@@ -52,9 +52,8 @@ public class ImageHyperlink extends Hyperlink {
 	 * 
 	 * @see org.eclipse.ui.forms.widgets.AbstractHyperlink#paintHyperlink(org.eclipse.swt.events.PaintEvent)
 	 */
-	protected void paintHyperlink(PaintEvent e) {
+	protected void paintHyperlink(GC gc) {
 		Rectangle clientArea = getClientArea();
-		GC gc = e.gc;
 		Image image = null;
 		if ((state & ACTIVE) != 0)
 			image = activeImage;

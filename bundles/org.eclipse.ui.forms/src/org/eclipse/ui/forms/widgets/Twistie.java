@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
-import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 /**
@@ -35,15 +35,14 @@ public class Twistie extends ToggleHyperlink {
 	 *            the style
 	 */
 	public Twistie(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NO_BACKGROUND | style);
 		innerWidth = 9;
 		innerHeight = 9;
 	}
 	/*
 	 * @see SelectableControl#paint(GC)
 	 */
-	protected void paintHyperlink(PaintEvent e) {
-		GC gc = e.gc;
+	protected void paintHyperlink(GC gc) {
 		if (hover && geHoverDecorationColor() != null)
 			gc.setBackground(geHoverDecorationColor());
 		else if (getDecorationColor() != null)

@@ -149,7 +149,7 @@ public class Form extends Composite {
 	 *            the parent widget
 	 */
 	public Form(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NO_BACKGROUND|style);
 		addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
 				onPaint(e.gc);
@@ -274,22 +274,28 @@ public class Form extends Composite {
 		return body;
 	}
 	private void onPaint(GC gc) {
+		if (text==null) return;
 		Rectangle carea = getClientArea();
-		Point textSize=null;
 
-		if (text != null) {
-			gc.setFont(getFont());
-			textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
-		}
+		gc.setFont(getFont());
+		Point textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
+		int theight = TITLE_HMARGIN + textSize.y + TITLE_HMARGIN + TITLE_GAP;
+		Image buffer= new Image(getDisplay(), carea.width, theight);
+		GC bufferGC = new GC(buffer, gc.getStyle());
+		bufferGC.setBackground(getBackground());
+		bufferGC.setForeground(getForeground());
+		bufferGC.setFont(getFont());
+		Rectangle tbounds = new Rectangle(TITLE_VMARGIN, 
+				TITLE_HMARGIN,
+				carea.width-TITLE_HMARGIN-TITLE_HMARGIN, 
+				textSize.y);
 		if (backgroundImage != null) {
-			drawBackgroundImage(gc, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
+			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
 		}
-		if (text != null) {
-			gc.setBackground(getBackground());
-			gc.setForeground(getForeground());
-			Rectangle tbounds = new Rectangle(TITLE_VMARGIN, TITLE_HMARGIN,carea.width-TITLE_HMARGIN-TITLE_HMARGIN, carea.height-TITLE_VMARGIN-TITLE_VMARGIN);
-			FormUtil.paintWrapText(gc, text, tbounds);
-		}
+		FormUtil.paintWrapText(bufferGC, text, tbounds);
+		gc.drawImage(buffer, 0, 0);
+		bufferGC.dispose();
+		buffer.dispose();
 	}
 	private void drawBackgroundImage(GC gc, int width, int height) {
 		if (backgroundImageTiled) {

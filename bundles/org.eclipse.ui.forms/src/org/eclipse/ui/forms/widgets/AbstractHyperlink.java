@@ -220,7 +220,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * @param e
 	 *            the paint event
 	 */
-	protected abstract void paintHyperlink(PaintEvent e);
+	protected abstract void paintHyperlink(GC gc);
 	/**
 	 * Paints the control as a reaction to the provided paint event.
 	 * 
@@ -228,13 +228,19 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the paint event
 	 */
 	protected void paint(PaintEvent e) {
-		paintHyperlink(e);
+		GC gc = e.gc;
+		Rectangle clientArea = getClientArea();
+		Image buffer = new Image(getDisplay(), clientArea.width, clientArea.height);
+		GC bufferGC = new GC(buffer, gc.getStyle());
+		paintHyperlink(bufferGC);
 		if (hasFocus) {
-			GC gc = e.gc;
 			Rectangle carea = getClientArea();
-			gc.setForeground(getForeground());
-			gc.drawFocus(0, 0, carea.width, carea.height);
+			bufferGC.setForeground(getForeground());
+			bufferGC.drawFocus(0, 0, carea.width, carea.height);
 		}
+		gc.drawImage(buffer, 0, 0);
+		bufferGC.dispose();
+		buffer.dispose();
 	}
 	private void handleMouseUp(Event e) {
 		if (e.button != 1)

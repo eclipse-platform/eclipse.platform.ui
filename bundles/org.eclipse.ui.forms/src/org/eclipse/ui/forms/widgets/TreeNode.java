@@ -41,10 +41,9 @@ public class TreeNode extends ToggleHyperlink {
 		innerHeight = 10;
 	}
 	protected void paint(PaintEvent e) {
-		paintHyperlink(e);
+		paintHyperlink(e.gc);
 	}
-	protected void paintHyperlink(PaintEvent e) {
-		GC gc = e.gc;
+	protected void paintHyperlink(GC gc) {
 		Rectangle box = getBoxBounds(gc);
 		gc.setForeground(getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_NORMAL_SHADOW));

@@ -31,7 +31,7 @@ public class Hyperlink extends AbstractHyperlink {
 	 *            the widget style
 	 */
 	public Hyperlink(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NO_BACKGROUND | style);
 		initAccessible();
 	}
 	protected void initAccessible() {
@@ -134,8 +134,7 @@ public class Hyperlink extends AbstractHyperlink {
 	 * @param e
 	 *            the paint event
 	 */
-	protected void paintHyperlink(PaintEvent e) {
-		GC gc = e.gc;
+	protected void paintHyperlink(GC gc) {
 		Rectangle carea = getClientArea();
 		Rectangle bounds = new Rectangle(marginWidth, marginHeight, carea.width
 				- marginWidth - marginWidth, carea.height - marginHeight
