@@ -150,7 +150,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 			case S_PROJECT_NAME :
 				if (elementName.equals(NAME)) {
-					projectDescription.setName(charBuffer.toString());
+					// Project names cannot have leading/trailing whitespace
+					// as they are IResource names.
+					projectDescription.setName(charBuffer.toString().trim());
 					state = S_PROJECT_DESC;
 				}
 				break;
@@ -199,14 +201,19 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_REFERENCED_PROJECT_NAME :
 				if (elementName.equals(PROJECT)) {
 					//top of stack is list of project references
-					 ((ArrayList) objectStack.peek()).add(charBuffer.toString());
+					// Referenced projects are just project names and, therefore,
+					// are also IResource names and cannot have leading/trailing 
+					// whitespace.
+					 ((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_PROJECTS;
 				}
 				break;
 			case S_BUILD_COMMAND_NAME :
 				if (elementName.equals(NAME)) {
 					//top of stack is the build command
-					 ((BuildCommand) objectStack.peek()).setName(charBuffer.toString());
+					// A build command name is an extension id and
+					// cannot have leading/trailing whitespace.
+					 ((BuildCommand) objectStack.peek()).setName(charBuffer.toString().trim());
 					state = S_BUILD_COMMAND;
 				}
 				break;
@@ -219,7 +226,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_NATURE_NAME :
 				if (elementName.equals(NATURE)) {
 					//top of stack is list of nature names
-					 ((ArrayList) objectStack.peek()).add(charBuffer.toString());
+					// A nature name is an extension id and cannot
+					// have leading/trailing whitespace.
+					 ((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_NATURES;
 				}
 				break;
@@ -278,7 +287,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 	private void endLinkLocation(String elementName) {
 		if (elementName.equals(LOCATION)) {
-			String newLocation = charBuffer.toString();
+			// A link location is an IPath.  IPath segments cannot have
+			// leading/trailing whitespace
+			String newLocation = charBuffer.toString().trim();
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
 			IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
 			if (!oldLocation.isEmpty()) {
@@ -291,7 +302,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 	private void endLinkName(String elementName) {
 		if (elementName.equals(NAME)) {
-			String newName = charBuffer.toString();
+			// A link name is an IResource name.  IResource names
+			// cannot have leading/trailing whitespace.
+			String newName = charBuffer.toString().trim();
 			// objectStack has a LinkDescription on it. Set the name
 			// on this LinkDescription.
 			String oldName = ((LinkDescription) objectStack.peek()).getName();
@@ -309,7 +322,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			//for now we default to a file link
 			int newType = IResource.FILE;
 			try {
-				newType = Integer.parseInt(charBuffer.toString());
+				// parseInt expects a string containing only numerics
+				// or a leading '-'.  Ensure there is no leading/trailing
+				// whitespace.
+				newType = Integer.parseInt(charBuffer.toString().trim());
 			} catch (NumberFormatException e) {
 				log(e);
 			}

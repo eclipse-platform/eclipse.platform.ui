@@ -48,7 +48,7 @@ protected String getInvalidWorkspaceDescription() {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new ModelObjectReaderWriterTest("testMultipleProjectDescriptions"));
+//	suite.addTest(new ModelObjectReaderWriterTest("testMultiLineCharFields"));
 //	return suite;
 	return new TestSuite(ModelObjectReaderWriterTest.class);
 }
@@ -298,19 +298,22 @@ public void testInvalidProjectDescription4() throws Throwable {
 	ensureDoesNotExistInFileSystem(location.toFile());
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
-	ProjectDescription projDesc = reader.read(location);
-	ensureDoesNotExistInFileSystem(location.toFile());
-	
-	assertNotNull ("3.0", projDesc);
-	assertTrue("3.1", projDesc.getName().equals("abc"));
-	assertEquals("3.2", 0, projDesc.getComment().length());
-	assertNull("3.3", projDesc.getLocation());
-	assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
-	assertEquals("3.5", new String[0], projDesc.getNatureIds());
-	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
-	LinkDescription link = (LinkDescription)projDesc.getLinks().values().iterator().next();
-	assertEquals("3.7", "newLink", link.getName());
-	assertEquals("3.8", "d:/abc/def", link.getLocation().toString());
+	try {
+		ProjectDescription projDesc = reader.read(location);
+		
+		assertNotNull ("3.0", projDesc);
+		assertTrue("3.1", projDesc.getName().equals("abc"));
+		assertEquals("3.2", 0, projDesc.getComment().length());
+		assertNull("3.3", projDesc.getLocation());
+		assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
+		assertEquals("3.5", new String[0], projDesc.getNatureIds());
+		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
+		LinkDescription link = (LinkDescription)projDesc.getLinks().values().iterator().next();
+		assertEquals("3.7", "newLink", link.getName());
+		assertEquals("3.8", "d:/abc/def", link.getLocation().toString());
+	} finally {
+		Workspace.clear(location.toFile());
+	}
 }
 private void compareLinks (int errorTag, HashMap links, HashMap links2) {
 	if (links == null) {
@@ -363,10 +366,13 @@ public void testInvalidProjectDescription1() throws Throwable {
 	ensureDoesNotExistInFileSystem(location.toFile());
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
-	ProjectDescription projDesc = reader.read(location);
-	ensureDoesNotExistInFileSystem(location.toFile());
+	try {
+		ProjectDescription projDesc = reader.read(location);
 	
-	assertNull ("1.0", projDesc);		
+		assertNull ("1.0", projDesc);		
+	} finally {
+		Workspace.clear(location.toFile());
+	}
 }
 public void testInvalidProjectDescription2() throws Throwable {
 	String invalidProjectDescription = 
@@ -382,17 +388,20 @@ public void testInvalidProjectDescription2() throws Throwable {
 	ensureDoesNotExistInFileSystem(location.toFile());
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
-	ProjectDescription projDesc = reader.read(location);
-	ensureDoesNotExistInFileSystem(location.toFile());
-	
-	assertNotNull ("2.0", projDesc);
-	assertNull("2.1", projDesc.getName());
-	assertEquals("2.2", 0, projDesc.getComment().length());
-	assertNull("2.3", projDesc.getLocation());
-	assertEquals("2.4", new IProject[0], projDesc.getReferencedProjects());
-	assertEquals("2.5", new String[0], projDesc.getNatureIds());
-	assertEquals("2.6", new ICommand[0], projDesc.getBuildSpec());
-	assertNull("2.7", projDesc.getLinks());
+	try {
+		ProjectDescription projDesc = reader.read(location);
+		
+		assertNotNull ("2.0", projDesc);
+		assertNull("2.1", projDesc.getName());
+		assertEquals("2.2", 0, projDesc.getComment().length());
+		assertNull("2.3", projDesc.getLocation());
+		assertEquals("2.4", new IProject[0], projDesc.getReferencedProjects());
+		assertEquals("2.5", new String[0], projDesc.getNatureIds());
+		assertEquals("2.6", new ICommand[0], projDesc.getBuildSpec());
+		assertNull("2.7", projDesc.getLinks());
+	} finally {
+		Workspace.clear(location.toFile());
+	}
 }
 public void testInvalidProjectDescription3() throws Throwable {
 	String invalidProjectDescription = 
@@ -418,17 +427,20 @@ public void testInvalidProjectDescription3() throws Throwable {
 	ensureDoesNotExistInFileSystem(location.toFile());
 	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
 	createFileInFileSystem(location, stream);
-	ProjectDescription projDesc = reader.read(location);
-	ensureDoesNotExistInFileSystem(location.toFile());
-	
-	assertNotNull ("3.0", projDesc);
-	assertTrue("3.1", projDesc.getName().equals("abc"));
-	assertEquals("3.2", 0, projDesc.getComment().length());
-	assertNull("3.3", projDesc.getLocation());
-	assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
-	assertEquals("3.5", new String[0], projDesc.getNatureIds());
-	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
-	assertNull("3.7", projDesc.getLinks());
+	try {
+		ProjectDescription projDesc = reader.read(location);
+		
+		assertNotNull ("3.0", projDesc);
+		assertTrue("3.1", projDesc.getName().equals("abc"));
+		assertEquals("3.2", 0, projDesc.getComment().length());
+		assertNull("3.3", projDesc.getLocation());
+		assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
+		assertEquals("3.5", new String[0], projDesc.getNatureIds());
+		assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
+		assertNull("3.7", projDesc.getLinks());
+	} finally {
+		Workspace.clear(location.toFile());
+	}
 }
 private String getLongDescription() {
 	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
@@ -608,6 +620,99 @@ public void testWorkspaceDescription() throws Throwable {
 	} finally {
 		/* remove trash */
 		Workspace.clear(location.toFile());
+	}
+}
+public void testMultiLineCharFields() throws Throwable {
+	String multiLineProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<name>\n" +
+		"      abc\n" +
+		"   </name>\n" +
+		"	<comment>This is the comment.</comment>\n" +
+		"	<projects>\n" +
+		"	   <project>\n" +
+		"         org.eclipse.core.boot\n" +
+		"      </project>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"		<buildCommand>\n" +
+		"			<name>\n" +
+		"              org.eclipse.jdt.core.javabuilder\n" +
+		"           </name>\n" +
+		"			<arguments>\n" +
+		"              <key>thisIsTheKey</key>\n" +
+		"              <value>thisIsTheValue</value>\n" +
+		"			</arguments>\n" +
+		"		</buildCommand>\n" +
+		"	</buildSpec>\n" +
+		"	<natures>\n" +
+		"	   <nature>\n" +
+		"         org.eclipse.jdt.core.javanature\n" +
+		"      </nature>\n" +
+		"	</natures>\n" +
+		"	<linkedResources>\n" +
+		"		<link>\n" +
+		"			<name>\n" +
+		"              newLink\n" +
+		"           </name>\n" +
+		"			<type>\n" +
+		"              2\n" +
+		"           </type>\n" +
+		"			<location>\n" +
+		"              d:/abc/def\n" +
+		"           </location>\n" +
+		"		</link>\n" +
+		"	</linkedResources>\n" +
+		"</projectDescription>";
+
+	String singleLineProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<name>abc</name>\n" +
+		"	<comment>This is the comment.</comment>\n" +
+		"	<projects>\n" +
+		"	   <project>org.eclipse.core.boot</project>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"		<buildCommand>\n" +
+		"			<name>org.eclipse.jdt.core.javabuilder</name>\n" +
+		"			<arguments>\n" +
+		"              <key>thisIsTheKey</key>\n" +
+		"              <value>thisIsTheValue</value>\n" +
+		"			</arguments>\n" +
+		"		</buildCommand>\n" +
+		"	</buildSpec>\n" +
+		"	<natures>\n" +
+		"	   <nature>org.eclipse.jdt.core.javanature</nature>\n" +
+		"	</natures>\n" +
+		"	<linkedResources>\n" +
+		"		<link>\n" +
+		"			<name>newLink</name>\n" +
+		"			<type>2</type>\n" +
+		"			<location>d:/abc/def</location>\n" +
+		"		</link>\n" +
+		"	</linkedResources>\n" +
+		"</projectDescription>";
+
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath multiLocation = root.append("multiLineTest.txt");
+	IPath singleLocation = root.append("singleLineTest.txt");
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
+	// Write out the project description file
+	ensureDoesNotExistInFileSystem(multiLocation.toFile());
+	ensureDoesNotExistInFileSystem(singleLocation.toFile());
+	InputStream multiStream = new ByteArrayInputStream(multiLineProjectDescription.getBytes());
+	InputStream singleStream = new ByteArrayInputStream(singleLineProjectDescription.getBytes());
+	try {
+		createFileInFileSystem(multiLocation, multiStream);
+		createFileInFileSystem(singleLocation, singleStream);
+		ProjectDescription multiDesc = reader.read(multiLocation);
+		ProjectDescription singleDesc = reader.read(singleLocation);
+		compareProjectDescriptions(1, multiDesc, singleDesc);
+	} finally {
+		Workspace.clear(multiLocation.toFile());
+		Workspace.clear(singleLocation.toFile());
 	}
 }
 }
