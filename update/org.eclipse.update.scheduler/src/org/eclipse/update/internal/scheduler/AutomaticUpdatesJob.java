@@ -75,23 +75,32 @@ public class AutomaticUpdatesJob
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {
-		System.out.println("Automatic update search started.");
+		if (UpdateCore.DEBUG) {
+			UpdateCore.debug("Automatic update search started.");
+		}
 		searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 		try {
 			searchRequest.performSearch(this, monitor);
-			System.out.println(
-				"Automatic update search finished - "
-					+ updates.size()
-					+ " results.");
+			if (UpdateCore.DEBUG) {
+				UpdateCore.debug("Automatic update search finished - "
+				+ updates.size()
+				+ " results.");
+			}
 			if (updates.size() > 0) {
 				boolean download = UpdateCore.getPlugin().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD);
 				// silently download if download enabled 
 				if (download)
 				{
+					if (UpdateCore.DEBUG) {
+						UpdateCore.debug("Automatic download of updates started.");
+					}
 					for (int i=0; i<updates.size(); i++) {
 						IInstallFeatureOperation op = (IInstallFeatureOperation)updates.get(i);
 						IFeature feature = op.getFeature();
 						UpdateUtils.downloadFeatureContent(feature, monitor);
+					}
+					if (UpdateCore.DEBUG) {
+						UpdateCore.debug("Automatic download of updates finished.");
 					}
 				}
 				// prompt the user
