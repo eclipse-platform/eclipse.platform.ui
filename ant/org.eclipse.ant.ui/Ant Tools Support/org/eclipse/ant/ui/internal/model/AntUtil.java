@@ -14,6 +14,7 @@ package org.eclipse.ant.ui.internal.model;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,12 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -132,7 +137,13 @@ public final class AntUtil {
 		if (attribute == null) {
 			return null;
 		} else {
-			return AntUtil.parseString(attribute, ","); //$NON-NLS-1$
+			String[] propertyFiles= AntUtil.parseString(attribute, ","); //$NON-NLS-1$
+			for (int i = 0; i < propertyFiles.length; i++) {
+				String propertyFile = propertyFiles[i];
+				propertyFile= expandVariableString(propertyFile, "Could not resolve property file entry", "Invalid property file entry: {0}");
+				propertyFiles[i]= propertyFile;
+			}
+			return propertyFiles;
 		}
 	}
 	
@@ -183,7 +194,7 @@ public final class AntUtil {
 	
 	/**
 	 * Returns the list of urls that define the custom classpath for the Ant
-	 * build , or <code>null</code> if the global classpath is to be used.
+	 * build, or <code>null</code> if the global classpath is to be used.
 	 *
 	 * @param configuration launch configuration
 	 * @return a list of <code>URL</code>
@@ -197,14 +208,14 @@ public final class AntUtil {
 		}
 		List antURLs= new ArrayList();
 		List userURLs= new ArrayList();
-		getCustomClasspaths(config, antURLs, userURLs);
+		getCustomClasspaths(config, antURLs, userURLs, true);
 		URL[] custom= new URL[antURLs.size() + userURLs.size()];
 		antURLs.addAll(userURLs);
 		return (URL[])antURLs.toArray(custom);
 	}
 	
 	/**
-	 * Adds the ant URLs and user URLS to the provided lists.
+	 * Adds the Ant URLs and user URLS to the provided lists.
 	 * If no custom classpath is set, no URLs are added to the lists.
 	 *
 	 * @param configuration launch configuration
@@ -212,7 +223,22 @@ public final class AntUtil {
      * @param list to add the user URLs to
 	 *
 	 */
-	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) {
+	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) throws CoreException {
+		getCustomClasspaths(config, antURLs, userURLs, false);
+	}
+	
+	/**
+	 * Adds the Ant URLs and user URLS to the provided lists.
+	 * If no custom classpath is set, no URLs are added to the lists.
+	 * Launch variables are expanded based on the value of the expandVariables parameter
+	 *
+	 * @param configuration launch configuration
+	 * @param list to add the Ant URLs to
+	 * @param list to add the user URLs to
+	 * @param expandVariables indicates whether to expand launch variables contained in the classpath entries
+	 *
+	 */
+	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs, boolean expandVariables) throws CoreException {
 		String classpathString= null;
 		try {
 			classpathString = config.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
@@ -232,27 +258,46 @@ public final class AntUtil {
 			userString= classpathString.substring(delim+1);
 		}
 
-		String[] antStrings= AntUtil.parseString(antString, AntUtil.ATTRIBUTE_SEPARATOR);
-		for (int i = 0; i < antStrings.length; i++) {
-			String string = antStrings[i];
-			try {
-				antURLs.add(new URL("file:" + string)); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-			}
-		}
+		getURLs(antURLs, antString, expandVariables);
+		
 		if (userString != null) {
-			String[] userStrings=AntUtil.parseString(userString, AntUtil.ATTRIBUTE_SEPARATOR);
-			for (int i = 0; i < userStrings.length; i++) {
-				String string = userStrings[i];
-				try {
-					userURLs.add(new URL("file:" + string)); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-				}
-			}
-
+			getURLs(userURLs, userString, expandVariables);
 		}
 	}
 	
+	private static void getURLs(List URLs, String urlString, boolean expandVariables) throws CoreException {
+		String[] URLStrings= AntUtil.parseString(urlString, AntUtil.ATTRIBUTE_SEPARATOR);
+		for (int i = 0; i < URLStrings.length; i++) {
+			String string = URLStrings[i];
+			if (expandVariables) {
+				string= expandVariableString(string, "Could not resolve classpath entry", "Invalid classpath entry: {0}");
+			}
+			try {
+				URLs.add(new URL("file:" + string)); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				if (!expandVariables) {
+					URLs.add(string);
+				}
+			}
+		}
+	}
+
+	private static String expandVariableString(String variableString, String statusMessage, String invalidMessage) throws CoreException {
+		MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, statusMessage, null);
+		String expandedString = LaunchVariableUtil.expandVariables(variableString, status, null);
+		if (status.isOK()) {
+			if (expandedString == null || expandedString.length() == 0) {
+				String msg = MessageFormat.format(invalidMessage, new String[] { variableString});
+				throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
+			} else {
+				variableString= expandedString;
+			}
+		} else {
+			throw new CoreException(status);
+		}
+		return variableString;
+	}
+
 	/**
 	 * Returns the currently displayed Ant View if it is open.
 	 * 

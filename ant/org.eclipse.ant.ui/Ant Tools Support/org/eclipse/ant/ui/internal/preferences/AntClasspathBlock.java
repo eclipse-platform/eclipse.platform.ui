@@ -25,15 +25,23 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -50,8 +58,12 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.MessageDialogWithToggle;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class AntClasspathBlock {
 
@@ -72,10 +84,14 @@ public class AntClasspathBlock {
 	private Button removeUserButton;
 
 	private final AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider();
+	private Button addUserExternalJarButton;
 	private Button addUserJarButton;
-	private Button addUserFolderButtton;
-	private Button addFolderButtton;
-	private Button addJarButton;
+	private Button addUserFolderButton;
+	private Button addFolderButton;
+	private Button addJARButton;
+	private Button addExternalJARButton;
+	
+	private boolean showExternalJARButton= false;
 	
 	private Button antHomeButton;
 	private Text antHome;
@@ -91,21 +107,45 @@ public class AntClasspathBlock {
 	
 	private int validated= 3;
 	
+	public AntClasspathBlock() {
+		super();
+	}
+	
+	public AntClasspathBlock(boolean showExternalJARButton) {
+		super();
+		this.showExternalJARButton= showExternalJARButton; 
+	}
+
 	public void setContainer(IAntBlockContainer container) {
 		this.container= container; 
 	}
 	
 	private void addButtonsToButtonGroup(Composite parent) {
-		if (addJarButton == null) {
-			addJarButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle")); //$NON-NLS-1$;
-			addJarButton.addSelectionListener(new SelectionAdapter() {
+		if (addExternalJARButton == null) {
+			if (showExternalJARButton) {
+				addJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle")); //$NON-NLS-1$;
+				addJARButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						addJars(antTableViewer);
+					}
+				});
+			}
+		
+			String label;
+			if (showExternalJARButton) {
+				label= "Add E&xternal JARs...";
+			} else {
+				label= AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle");	 //$NON-NLS-1$
+			}
+			addExternalJARButton = container.createPushButton(parent, label);
+			addExternalJARButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
-					addJars(antTableViewer);
+					addExternalJars(antTableViewer);
 				
 				}
 			});
-			addFolderButtton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
-			addFolderButtton.addSelectionListener(new SelectionAdapter() {
+			addFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
+			addFolderButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					addFolder(antTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				}
@@ -131,14 +171,29 @@ public class AntClasspathBlock {
 			});
 
 		} else {
-			addUserJarButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle2")); //$NON-NLS-1$;
-			addUserJarButton.addSelectionListener(new SelectionAdapter() {
+			if (showExternalJARButton) {
+				addUserJarButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle2")); //$NON-NLS-1$;
+				addUserJarButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						addJars(userTableViewer);
+					}
+				});
+			} 
+			String label;
+			if (showExternalJARButton) {
+				label= "Add Externa&l JARs...";
+			} else {
+				label= AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle2");	 //$NON-NLS-1$
+			}
+			addUserExternalJarButton = container.createPushButton(parent, label);
+			addUserExternalJarButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
-					addJars(userTableViewer);
+					addExternalJars(userTableViewer);
 				}
 			});
-			addUserFolderButtton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle2")); //$NON-NLS-1$;
-			addUserFolderButtton.addSelectionListener(new SelectionAdapter() {
+			
+			addUserFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle2")); //$NON-NLS-1$;
+			addUserFolderButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				}
@@ -227,7 +282,7 @@ public class AntClasspathBlock {
 		updateContainer();
 	}
 
-	private void addJars(TableViewer viewer) {
+	private void addExternalJars(TableViewer viewer) {
 		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
@@ -255,6 +310,33 @@ public class AntClasspathBlock {
 		viewer.setSelection(viewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
 		updateContainer();
+	}
+	
+	private void addJars(TableViewer viewer) {
+		List allURLs= new ArrayList();
+		allURLs.addAll(getAntURLs());
+		allURLs.addAll(getUserURLs());
+		ViewerFilter filter= new ArchiveFilter(allURLs);
+		
+		ILabelProvider lp= new WorkbenchLabelProvider();
+		ITreeContentProvider cp= new WorkbenchContentProvider();
+
+		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(viewer.getControl().getShell(), lp, cp);
+		dialog.setTitle("JAR Selection"); 
+		dialog.setMessage("&Choose JARs and ZIPs to add:");
+		dialog.addFilter(filter);
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+
+		if (dialog.open() == Window.OK) {
+			Object[] elements= dialog.getResult();
+			for (int i = 0; i < elements.length; i++) {
+				IFile file = (IFile)elements[i];
+				String varExpression= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString());
+				((ExternalToolsContentProvider)viewer.getContentProvider()).add(varExpression);
+			}
+			updateContainer();
+		}
 	}
 		
 	private void updateContainer() {
@@ -547,10 +629,16 @@ public class AntClasspathBlock {
 		validated= 0;
 		setTablesEnabled(enable);
 		antHomeButton.setEnabled(enable);
-		addFolderButtton.setEnabled(enable);
-		addJarButton.setEnabled(enable);
-		addUserJarButton.setEnabled(enable);
-		addUserFolderButtton.setEnabled(enable);
+		addFolderButton.setEnabled(enable);
+		if (addJARButton != null) {
+			addJARButton.setEnabled(enable);
+		}
+		addExternalJARButton.setEnabled(enable);
+		if (addUserJarButton != null) {
+			addUserJarButton.setEnabled(enable);
+		}
+		addUserExternalJarButton.setEnabled(enable);
+		addUserFolderButton.setEnabled(enable);
 		if (enable) {
 			antTableViewer.setSelection(antTableViewer.getSelection());
 			userTableViewer.setSelection(userTableViewer.getSelection());
@@ -656,10 +744,16 @@ public class AntClasspathBlock {
 	private String JARPresent(List URLs, String[] suffixes) {
 		
 		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
-			URL url = (URL) iter.next();
+			String file;
+			Object entry = iter.next();
+			if (entry instanceof URL) {
+				file= ((URL)entry).getFile();
+			} else {
+				file= entry.toString();
+			}
 			for (int i = 0; i < suffixes.length; i++) {
 				String suffix = suffixes[i];
-				if (url.getFile().endsWith(suffix)) {
+				if (file.endsWith(suffix)) {
 					return suffix;
 				}
 			}

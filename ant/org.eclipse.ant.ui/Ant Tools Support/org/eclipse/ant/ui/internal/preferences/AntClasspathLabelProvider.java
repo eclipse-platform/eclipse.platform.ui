@@ -29,8 +29,15 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 	 * Method declared on ITableLabelProvider.
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
-		URL url = (URL) element;
-		if (url.getFile().endsWith("/")) { //$NON-NLS-1$
+		String file;
+		if (element instanceof URL) {
+			URL url = (URL) element;
+			file= url.getFile();
+		} else {
+			file= element.toString();
+		}
+		
+		if (file.endsWith("/")) { //$NON-NLS-1$
 			return getFolderImage();
 		} else {
 			return getJarImage();
@@ -41,7 +48,11 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 	 * Method declared on ITableLabelProvider.
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		return ((URL) element).getFile();
+		if (element instanceof URL) {
+			return ((URL) element).getFile();
+		} else {
+			return super.getText(element);
+		}
 	}
 
 	private Image getFolderImage() {

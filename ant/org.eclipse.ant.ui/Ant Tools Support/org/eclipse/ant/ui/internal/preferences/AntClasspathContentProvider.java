@@ -29,19 +29,23 @@ public class AntClasspathContentProvider extends ExternalToolsContentProvider {
 	 * @see org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider#add(java.lang.Object)
 	 */
 	public void add(Object o) {
-		URL newURL = (URL) o;
-		File newFile= new File(newURL.getFile());
-		Iterator itr = elements.iterator();
-		File existingFile;
-		while (itr.hasNext()) {
-			URL url = (URL) itr.next();
-			existingFile= new File(url.getFile());
-			if (existingFile.equals(newFile)) {
-				return;
+		if (o instanceof URL) {
+			URL newURL = (URL) o;
+			File newFile= new File(newURL.getFile());
+			Iterator itr = elements.iterator();
+			File existingFile;
+			while (itr.hasNext()) {
+				URL url = (URL) itr.next();
+				existingFile= new File(url.getFile());
+				if (existingFile.equals(newFile)) {
+					return;
+				}
 			}
+			elements.add(o);
+			tableViewer.add(o);
+		} else {
+			super.add(o);
 		}
-		elements.add(o);
-		tableViewer.add(o);
 	}
 
 	public void removeAll() {

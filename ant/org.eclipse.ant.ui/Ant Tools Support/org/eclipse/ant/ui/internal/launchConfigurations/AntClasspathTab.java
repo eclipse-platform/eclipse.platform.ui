@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntClasspathBlock;
@@ -39,7 +40,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class AntClasspathTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
 
 	private Button useDefaultButton;
-	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock();
+	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock(true);
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -120,7 +121,11 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 
 			List userURLs= new ArrayList();
 			List antURLs= new ArrayList();
-			AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
+			try {
+				AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
+			} catch (CoreException e) {
+				AntUIPlugin.log(e);
+			}
 			antClasspathBlock.setUserTableInput(userURLs);
 			antClasspathBlock.setAntTableInput(antURLs);
 			antClasspathBlock.setTablesEnabled(true);
@@ -143,8 +148,12 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		StringBuffer urlString= new StringBuffer();
 		Iterator antUrlsItr= antUrls.iterator();
 		while (antUrlsItr.hasNext()) {
-			URL url = (URL) antUrlsItr.next();
-			urlString.append(url.getFile());
+			Object entry = antUrlsItr.next();
+			if (entry instanceof URL) {
+				urlString.append(((URL)entry).getFile());
+			} else {
+				urlString.append(entry);
+			}
 			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
 		if (userUrls.size() > 0) {
@@ -152,8 +161,12 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		}
 		Iterator userUrlsItr= userUrls.iterator();
 		while (userUrlsItr.hasNext()) {
-			URL url = (URL) userUrlsItr.next();
-			urlString.append(url.getFile());
+			Object entry = userUrlsItr.next();
+			if (entry instanceof URL) {
+				urlString.append(((URL)entry).getFile());
+			} else {
+				urlString.append(entry);
+			}
 			urlString.append(',');
 		}
 		if (urlString.length() > 0) {

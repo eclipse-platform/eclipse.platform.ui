@@ -11,22 +11,30 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +47,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class AntPropertiesBlock {
 	
@@ -48,7 +60,9 @@ public class AntPropertiesBlock {
 	private Button editButton;
 	private Button removeButton;
 	private Button addButton;
+	
 	private Button addFileButton;
+	private Button addExternalFileButton;
 	private Button removeFileButton;
 
 	private TableViewer propertyTableViewer;
@@ -57,6 +71,8 @@ public class AntPropertiesBlock {
 	private final AntPropertiesLabelProvider labelProvider = new AntPropertiesLabelProvider();
 
 	private IDialogSettings dialogSettings;
+	
+	private boolean showExternal= false;
 	
 	/**
 	 * Button listener that delegates for widget selection events.
@@ -70,11 +86,12 @@ public class AntPropertiesBlock {
 			} else if (event.widget == removeButton) {
 				remove(propertyTableViewer);
 			} else if (event.widget == addFileButton) {
-				addPropertyFile();
+				addPropertyFile();		
+			} else if (event.widget == addExternalFileButton) {
+				addExternalPropertyFile();
 			} else if (event.widget == removeFileButton) {
 				remove(fileTableViewer);
-			} else if (event.widget == removeButton) {
-			}
+			} 
 		}
 	};
 	
@@ -93,6 +110,36 @@ public class AntPropertiesBlock {
 	
 	public AntPropertiesBlock(IAntBlockContainer container) {
 		this.container= container; 
+	}
+
+	private void addPropertyFile() {
+		
+		ViewerFilter filter= new PropertyFileFilter(Arrays.asList(getPropertyFiles()));
+		ILabelProvider lp= new WorkbenchLabelProvider();
+		ITreeContentProvider cp= new WorkbenchContentProvider();
+
+		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(propertyTableViewer.getControl().getShell(), lp, cp);
+		dialog.setTitle("Property File Selection"); 
+		dialog.setMessage("&Choose the property files add:");
+		dialog.addFilter(filter);
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+
+		if (dialog.open() == Window.OK) {
+			Object[] elements= dialog.getResult();
+			for (int i = 0; i < elements.length; i++) {
+				IFile file = (IFile)elements[i];
+				String varExpression= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString());
+				((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).add(varExpression);
+			}
+			container.update();
+		}
+		
+	}
+
+	public AntPropertiesBlock(IAntBlockContainer container, boolean showExternal) {
+		this.container= container; 
+		this.showExternal= showExternal;
 	}
 	
 	public void createControl(Composite top, String propertyLabel, String propertyFileLabel) {
@@ -179,7 +226,16 @@ public class AntPropertiesBlock {
 			editButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.editButton"));  //$NON-NLS-1$
 			removeButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeButton"));  //$NON-NLS-1$
 		} else {
-			addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton")); //$NON-NLS-1$
+			if (showExternal) {
+				addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton")); //$NON-NLS-1$
+			}
+			String label;
+			if (showExternal) {
+				label= "Add E&xternal...";
+			} else {
+				label= AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton"); //$NON-NLS-1$
+			}
+			addExternalFileButton= createPushButton(parent, label);
 			removeFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeFileButton")); //$NON-NLS-1$
 		}
 	}
@@ -196,15 +252,15 @@ public class AntPropertiesBlock {
 	}
 	
 	/**
-	 * Allows the user to enter property files
+	 * Allows the user to enter external property files
 	 */
-	private void addPropertyFile() {
+	private void addExternalPropertyFile() {
 		String lastUsedPath;
 		lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
-		FileDialog dialog = new FileDialog(propertyTableViewer.getControl().getShell(), SWT.MULTI);
+		FileDialog dialog = new FileDialog(fileTableViewer.getControl().getShell(), SWT.MULTI);
 		dialog.setFilterExtensions(new String[] { "*.properties" }); //$NON-NLS-1$;
 		dialog.setFilterPath(lastUsedPath);
 

@@ -40,7 +40,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
 	
-	private AntPropertiesBlock antPropertiesBlock= new AntPropertiesBlock(this);
+	private AntPropertiesBlock antPropertiesBlock= new AntPropertiesBlock(this, true);
 	
 	public void createControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);

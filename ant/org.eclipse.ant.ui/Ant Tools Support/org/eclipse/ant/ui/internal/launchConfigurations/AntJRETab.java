@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILibrary;
@@ -187,13 +188,18 @@ public class AntJRETab extends JavaJRETab {
 		try {
 			urlStrings = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
+			AntUIPlugin.log(e);
 		}
 		if (urlStrings == null) {
 			//the global settings
 			antURLs.addAll(Arrays.asList(prefs.getAntURLs()));
 			userURLs.addAll(Arrays.asList(prefs.getCustomURLs()));
 		} else {
-			AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
+			try {
+				AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
+			} catch (CoreException e) {
+				AntUIPlugin.log(e);
+			}
 		}
 	}
 
