@@ -688,7 +688,8 @@ public class EditorManager {
 					errorWorkbooks.add(editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK));
 				}
 			} else {
-				String editorName = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
+				String editorTitle = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
+				String editorName = editorMem.getString(IWorkbenchConstants.TAG_NAME);
 				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
 				boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED));
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
@@ -696,7 +697,7 @@ public class EditorManager {
 				if (factoryID == null)
 					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
 					
-				if(editorName == null) { //backward compatible format of workbench.xml
+				if(editorTitle == null) { //backward compatible format of workbench.xml
 					Editor e = new Editor();
 					restoreEditor(e,editorMem,errors);
 					page.addPart(e);
@@ -719,7 +720,7 @@ public class EditorManager {
 					String tooltip = editorMem.getString(IWorkbenchConstants.TAG_TOOLTIP);
 					if(tooltip == null) tooltip = "";
 										
-					Editor e = new Editor(editorID,editorMem,editorName,tooltip,iDesc,factoryID,pinned);
+					Editor e = new Editor(editorID,editorMem,editorName,editorTitle,tooltip,iDesc,factoryID,pinned);
 					page.addPart(e);
 					try {
 						createEditorTab(e,null,null,false);
@@ -1026,7 +1027,8 @@ public class EditorManager {
 
 					// Save editor.
 					IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
-					editorMem.putString(IWorkbenchConstants.TAG_TITLE,input.getName());
+					editorMem.putString(IWorkbenchConstants.TAG_TITLE,editor.getTitle());
+					editorMem.putString(IWorkbenchConstants.TAG_NAME,input.getName());
 					editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
 					editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
 
@@ -1092,6 +1094,7 @@ public class EditorManager {
 		private IEditorPart part;
 		private IMemento editorMemento;
 		private String name;
+		private String title;
 		private String factoryId;
 		private boolean pinned = false;
 		private String editorId;
@@ -1100,13 +1103,17 @@ public class EditorManager {
 		private String tooltip;
 		private Image image;
 		
-		Editor(String editorId,IMemento memento,String name,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
+		Editor(String editorId,IMemento memento,String name,String title,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
 			this.editorMemento = memento;
 			this.name = name;
 			this.factoryId = factoryId;
 			this.editorId = editorId;
 			this.imageDescritor = desc;
 			this.tooltip = tooltip;
+			this.title = title;
+			//make it backward compatible.
+			if(name == null)
+				name = title;
 		}
 		Editor() {
 		}
@@ -1191,11 +1198,9 @@ public class EditorManager {
 			return pinned;
 		}
 		public String getTitle() {
-			String result;
+			String result = title;
 			if(part != null)
 				result = part.getTitle();
-			else
-				result = getName();
 			if(result == null)
 				result = new String();
 			return result;
