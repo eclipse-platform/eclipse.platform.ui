@@ -271,11 +271,11 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				columnWidths = assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
-		int y = topMargin;
+		int y = topMargin+clientArea.y;
 		int[] rowHeights = computeRowHeights(children, columnWidths, changed);
 		for (int i = 0; i < grid.size(); i++) {
 			int rowHeight = rowHeights[i];
-			int x = leftMargin;
+			int x = leftMargin+clientArea.x;
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
