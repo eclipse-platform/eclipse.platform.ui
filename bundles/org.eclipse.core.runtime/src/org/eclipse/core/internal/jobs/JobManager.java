@@ -13,8 +13,8 @@ package org.eclipse.core.internal.jobs;
 import java.text.*;
 import java.util.*;
 
+import org.eclipse.core.internal.jobs.ImplicitJobs.ThreadJob;
 import org.eclipse.core.internal.runtime.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -387,22 +387,7 @@ public class JobManager implements IJobManager {
 		List members = select(family);
 		return (Job[]) members.toArray(new Job[members.size()]);
 	}
-	/**
-	 * Locates a waiting or running job that is somehow blocked by
-	 * the given job. Returns the blocked job, or <code>null</code>
-	 * if no blocked job could be found.
-	 *
-	 */
-	protected Job findBlockedJob(InternalJob job) {
-		//TODO This method is experimental
-		synchronized (lock) {
-			//if this job isn't running, it can't be blocking anyone
-			if (job.getState() != Job.RUNNING) 
-				return null;
-			//if any job is queued behind this one, it is blocked by it
-			return (Job)job.previous();
-		}
-	}
+
 	/**
 	 * Returns a running or blocked job whose scheduling rule conflicts with the 
 	 * scheduling rule of the given waiting job.  Returns null if there are no 
@@ -413,13 +398,21 @@ public class JobManager implements IJobManager {
 		if (waiting.getRule() == null)
 			return null;
 		synchronized (lock) {
+			//check the running job and all blocked jobs
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
-				//check the running job and all blocked jobs
-				while (job != null) {
+				if (waiting.isConflicting(job))
+					return job;
+			}
+			//next check all jobs blocked by running jobs
+			for (Iterator it = running.iterator(); it.hasNext();) {
+				InternalJob job = (InternalJob) it.next();
+				while (true) {
+					job = job.previous();
+					if (job == null)
+						break;
 					if (waiting.isConflicting(job))
 						return job;
-					job = job.previous();
 				}
 			}
 		}
@@ -491,6 +484,27 @@ public class JobManager implements IJobManager {
 		} finally {
 			lockManager.aboutToRelease();
 			job.removeJobChangeListener(listener);
+		}
+	}
+	/**
+	 * Returns true if the given job is blocking the execution of a non-system
+	 * job.
+	 */
+	protected boolean isBlocking(InternalJob running) {
+		//TODO This method is experimental
+		synchronized (lock) {
+			//if this job isn't running, it can't be blocking anyone
+			if (running.getState() != Job.RUNNING) 
+				return false;
+			//if any job is queued behind this one, it is blocked by it
+			InternalJob previous = running.previous();
+			while (previous != null) {
+				if (!previous.isSystem() && !(previous instanceof ThreadJob))
+					return true;
+				previous = previous.previous();
+			}
+			//none found
+			return false;
 		}
 	}
 	/* (non-Javadoc)

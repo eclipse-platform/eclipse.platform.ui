@@ -203,6 +203,12 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void internalSetState(int i) {
 		flags = (flags & ~M_STATE) | i;
 	}
+	/* (non-Javadoc)
+	 * @see Job#isBlocking
+	 */
+	protected boolean isBlocking() {
+		return manager.isBlocking(this);
+	}
 	/**
 	 * Returns true if this job conflicts with the given job, and false otherwise.
 	 */

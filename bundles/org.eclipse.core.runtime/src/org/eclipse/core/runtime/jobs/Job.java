@@ -241,6 +241,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @return the scheduling rule for this job, or <code>null</code>.
 	 * @see ISchedulingRule
+	 * @see #setRule
 	 */
 	public final ISchedulingRule getRule() {
 		return super.getRule();
@@ -273,6 +274,18 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final Thread getThread() {
 		return super.getThread();
+	}
+	/**
+	 * Returns whether this job is blocking another non-system job from 
+	 * starting due to a conflicting scheduling rule.  Returns <code>false</code> 
+	 * if this job is not running, or is not blocking any other job.
+	 * @return <code>true</code> if this job is blocking a waiting non-system
+	 * job, and <code>false</code> otherwise.
+	 * @see #getRule
+	 * @see #isSystem
+	 */
+	public final boolean isBlocking() {
+		return super.isBlocking();
 	}
 	/**
 	 * Returns whether this job is a system job.  System jobs are typically not 
@@ -451,6 +464,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param rule the new scheduling rule, or <code>null</code> if the job
 	 * should have no scheduling rule
+	 * @see #getRule
 	 */
 	public final void setRule(ISchedulingRule rule) {
 		super.setRule(rule);
