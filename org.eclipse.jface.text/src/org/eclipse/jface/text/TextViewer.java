@@ -3218,6 +3218,8 @@ public class TextViewer extends Viewer implements
 		if (fTextWidget == null || !redraws())
 			return;
 
+		Point selection= null;
+		
 		switch (operation) {
 
 			case UNDO:
@@ -3239,6 +3241,10 @@ public class TextViewer extends Viewer implements
 					copyMarkedRegion(true);
 				else
 					fTextWidget.cut();
+
+				selection= fTextWidget.getSelectionRange();
+				fireSelectionChanged(selection.x, selection.y);
+
 				break;
 			case COPY:
 				if (fTextWidget.getSelectionCount() == 0)
@@ -3249,10 +3255,14 @@ public class TextViewer extends Viewer implements
 			case PASTE:
 //				ignoreAutoEditStrategies(true);
 				fTextWidget.paste();
+				selection= fTextWidget.getSelectionRange();
+				fireSelectionChanged(selection.x, selection.y);
 //				ignoreAutoEditStrategies(false);
 				break;
 			case DELETE:
 				deleteText();
+				selection= fTextWidget.getSelectionRange();
+				fireSelectionChanged(selection.x, selection.y);
 				break;
 			case SELECT_ALL: {
 				if (getDocument() != null)
