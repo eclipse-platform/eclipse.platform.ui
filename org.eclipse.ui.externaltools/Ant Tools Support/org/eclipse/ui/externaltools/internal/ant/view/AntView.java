@@ -198,7 +198,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
 					IProject project = resource.getProject();
 					if (!project.isOpen()) {
-						handleProjectClosed(project);
+						handleProjectClosed();
 						return false;
 					}
 				}
@@ -268,10 +268,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 
 	/**
-	 * The given project has been closed. If any files present in the view are
-	 * contained in that project, remove them from the view.
+	 * If any files present in the view no longer exist, remove them from the
+	 * view.
 	 */
-	private void handleProjectClosed(IProject project) {
+	private void handleProjectClosed() {
 		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
 		final List projectsToRemove = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
