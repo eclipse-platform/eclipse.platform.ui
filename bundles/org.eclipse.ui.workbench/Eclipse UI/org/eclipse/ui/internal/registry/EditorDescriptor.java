@@ -448,13 +448,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return configurationElement != null;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
