@@ -48,19 +48,15 @@ public class CompareWithVersionAction extends TeamAction {
 				cvsResource = new LocalFolder(resource.getLocation().toFile());
 			}
 
-			if (resource.getType() == IResource.FILE) {
-				System.out.println("Compare with version not implemented for resources yet");
-			} else {
-				VersionSelectionDialog dialog = new VersionSelectionDialog(getShell(), resource);
-				dialog.setBlockOnOpen(true);
-				int result = dialog.open();
-				if (result == Dialog.CANCEL || dialog.getResult() == null) {
-					return;
-				}
-				CVSTag tag = dialog.getResult();
-				ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
-				CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
+			VersionSelectionDialog dialog = new VersionSelectionDialog(getShell(), resource);
+			dialog.setBlockOnOpen(true);
+			int result = dialog.open();
+			if (result == Dialog.CANCEL || dialog.getResult() == null) {
+				return;
 			}
+			CVSTag tag = dialog.getResult();
+			ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
+			CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource)));
 		} catch (TeamException e) {
 			ErrorDialog.openError(getShell(), title, null, e.getStatus());
 		}
