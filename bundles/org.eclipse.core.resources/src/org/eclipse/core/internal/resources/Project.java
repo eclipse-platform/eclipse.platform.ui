@@ -389,11 +389,8 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 				try {
 					if (force)
 						getLocalManager().getStore().delete(getLocation().toFile(), status);
-					else {
-						deleteWithoutForce(status, Policy.monitorFor(null));
-						if (!status.isOK())
-							throw new ResourceException(status);
-					}
+					else
+						getLocalManager().delete(this, force, false, false, Policy.monitorFor(null));
 				} catch (CoreException e) {
 					if (info != null) {
 						getPropertyManager().closePropertyStore(this);
@@ -422,17 +419,6 @@ protected void deleteMetaArea(IProject project) throws CoreException {
 	getPropertyManager().closePropertyStore(project);
 	java.io.File location = workspace.getMetaArea().getLocationFor(project).toFile();
 	getLocalManager().getStore().delete(location);
-}
-private void deleteWithoutForce(MultiStatus status, IProgressMonitor monitor) throws CoreException {
-	IResource[] members = members();
-	for (int i = 0; i < members.length; i++) {
-		IResource child = (IResource) members[i];
-		try {
-			getLocalManager().delete(child, false, true, false, Policy.monitorFor(null));
-		} catch (CoreException e) {
-			status.add(e.getStatus());
-		}
-	}
 }
 /**
  * @see IProject

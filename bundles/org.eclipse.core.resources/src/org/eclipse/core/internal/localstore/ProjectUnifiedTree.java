@@ -16,7 +16,7 @@ import java.util.*;
  * UnifiedTree for each of the project existing (in workspace) or inexisting (in file system)
  * members. If you call the accept method with D_ZERO as the depth nothing happens.
  */
-public class ProjectUnifiedTree {
+public class ProjectUnifiedTree extends UnifiedTree {
 	protected IProject project;
 public ProjectUnifiedTree(IProject project) {
 	this.project = project;

@@ -68,7 +68,11 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		monitor.beginTask(title, totalWork);
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
 		List skipList = null;
-		UnifiedTree tree = new UnifiedTree(target);
+		UnifiedTree tree = null;
+		if (target.getType() == IResource.PROJECT)
+			tree = new ProjectUnifiedTree((IProject) target);
+		else
+			tree = new UnifiedTree(target);
 		if (!force) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
 			sub.beginTask("", 10000);
