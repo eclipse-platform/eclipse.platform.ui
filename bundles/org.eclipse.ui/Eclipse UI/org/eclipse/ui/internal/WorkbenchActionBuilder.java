@@ -239,7 +239,7 @@ private void createMenuBar() {
 	popup.add(new OpenPagesMenu(window, false));
 
 	// Workbench menu
-	popup = new MenuManager(WorkbenchMessages.getString("Workbench.workspace"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
 	menubar.add(popup);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 	// Only add the manual incremental build if auto build off
