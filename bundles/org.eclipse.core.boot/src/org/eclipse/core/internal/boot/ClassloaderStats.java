@@ -90,7 +90,7 @@ public class ClassloaderStats {
 		findLoader(id).startLoadClass(className);
 	}
 	// get and create if does not exist
-	public static ClassloaderStats findLoader(String id) {
+	private static ClassloaderStats findLoader(String id) {
 		ClassloaderStats result = (ClassloaderStats) loaders.get(id);
 		if (result == null) {
 			result = new ClassloaderStats(id);
