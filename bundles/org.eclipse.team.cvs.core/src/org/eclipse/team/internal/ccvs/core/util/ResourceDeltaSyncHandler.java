@@ -140,6 +140,9 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 				ResourceSyncInfo info = mFile.getSyncInfo();
 				if (info.isDeleted()) {
 					mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+				} else if (info.isDirectory()) {
+					// XXX This is a gender change against the server! We should prevent this creation.
+					mFile.unmanage();
 				}
 			}
 		} catch (CVSException e) {
