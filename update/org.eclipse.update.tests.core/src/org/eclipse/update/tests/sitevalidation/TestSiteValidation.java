@@ -14,7 +14,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.core.internal.boot.PlatformConfiguration;
+import org.eclipse.core.internal.boot.OldPlatformConfiguration;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.SiteManager;
@@ -33,7 +33,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 	private void removeConfigSite(URL url) throws Exception {
 		// get new config object
-		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Unable to find site entry:"+url,s1);
 		cfig.unconfigureSite(s1);
@@ -131,7 +131,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		
 			// get new config object
 		URL url = configuredSite.getSite().getURL();
-		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Site entry not found:"+url,s1);
 		cfig.unconfigureSite(s1);

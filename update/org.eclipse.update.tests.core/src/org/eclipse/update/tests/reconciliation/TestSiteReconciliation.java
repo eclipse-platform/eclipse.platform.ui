@@ -13,9 +13,9 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.update.configurator.IPlatformConfiguration.ISitePolicy;
-import org.eclipse.update.configurator.PlatformConfiguration;
+import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
+import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
+import org.eclipse.core.internal.boot.OldPlatformConfiguration;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.IFeatureReference;
@@ -40,7 +40,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(new File(xmlFile));		
 		InternalSiteManager.localSite=null;
 		// get new config object
-		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISitePolicy p1 = cfig.createSitePolicy(policy, listOfPlugins);	
 		ISiteEntry s1 = cfig.createSiteEntry(url,p1);
 		cfig.configureSite(s1);	
@@ -48,7 +48,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 	
 	private void removeConfigSite(URL url) throws Exception {
 		// get new config object
-		PlatformConfiguration cfig = (PlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Unable to find site entry:"+url,s1);
 		cfig.unconfigureSite(s1);
