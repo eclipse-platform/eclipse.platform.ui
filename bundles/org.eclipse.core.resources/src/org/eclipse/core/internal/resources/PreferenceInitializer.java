@@ -35,7 +35,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	// save manager
 	public final static long PREF_SNAPSHOT_INTERVAL_DEFAULT = 5 * 60 * 1000l; // 5 min
-	public final static long PREF_MAX_NOTIFICATION_DELAY = 10000l; // 10 seconds
 
 	// history store
 	public static final long PREF_FILE_STATE_LONGEVITY_DEFAULT = 7 * 24 * 3600 * 1000l; // 7 days
@@ -71,7 +70,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// save manager defaults
 		//		node.putLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PREF_SNAPSHOT_INTERVAL_DEFAULT);
-		//		node.putLong(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY, PREF_MAX_NOTIFICATION_DELAY_DEFAULT);
 
 		// encoding defaults
 		node.put(ResourcesPlugin.PREF_ENCODING, PREF_ENCODING_DEFAULT);
