@@ -31,8 +31,8 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 
 	private static final String PREFIX= "launch_wizard_project_page.";
 	private static final String LAUNCHER= PREFIX + "launcher";
-	private static final String SELECT_ELEMENTS= PREFIX + "select_elements";
-	private static final String SELECT_ERROR_ELEMENTS= PREFIX + "select_error_elements";
+	private static final String SELECT_ELEMENT= PREFIX + "select_element";
+	private static final String SELECT_ERROR_ELEMENT= PREFIX + "select_error_element";
 	private static final String PATTERN_LABEL= PREFIX + "pattern_label";
 
 	/**
@@ -160,7 +160,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		fPatternText= new Text(root, SWT.BORDER);
 		fPatternText.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-		fElementsList= new TableViewer(root) {
+		fElementsList= new TableViewer(root, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER) {
 			protected void handleDoubleSelect(SelectionEvent event) {
 				getContainer().showPage(getNextPage());
 			}
@@ -185,15 +185,15 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 				fElementsList.refresh();
 				if (fFilteredElements.length == 1) {
 					fElementsList.setSelection(new StructuredSelection(fFilteredElements[0]), true);
-					setMessage(null);
+					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
 					setPageComplete(true);
 				} else {
 					fElementsList.setSelection(null);
 					// this should get done in the selection changed callback -  but it does not work
 					if (fFilteredElements.length == 0) {
-						setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
+						setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
 					} else {
-						setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
+						setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
 					}
 
 					setPageComplete(false);
@@ -203,14 +203,13 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 
 		fElementsList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
+				setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
 				if (e.getSelection().isEmpty()) {
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
 					setPageComplete(false);
 				} else if (e.getSelection() instanceof IStructuredSelection) {
 					IStructuredSelection ss= (IStructuredSelection) e.getSelection();
 					if (!ss.isEmpty()) {
 						((LaunchWizard)getWizard()).setProjectSelection(ss);
-						setMessage(null);
 						setPageComplete(true);
 					}
 				}
@@ -263,15 +262,18 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		
 		Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (children.length == 1) {
-			fElementsList.setSelection(new StructuredSelection(children[0]), true);
-			setMessage(null);
+			fElementsList.setSelection(new StructuredSelection(children[0]));
+			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
 			setPageComplete(true);
 		} else if (children.length > 0) {
-			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
-			setPageComplete(false);
+			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
+			if (fElementsList.getSelection().isEmpty()) {
+				fElementsList.setSelection(new StructuredSelection(children[0]));
+			}
+			setPageComplete(true);
 		} else {
 			// no elements to select
-			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
+			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
 			setPageComplete(false);
 		}
 		fPatternText.setFocus();
