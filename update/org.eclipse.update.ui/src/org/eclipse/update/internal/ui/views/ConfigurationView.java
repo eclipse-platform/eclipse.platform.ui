@@ -1032,19 +1032,9 @@ public class ConfigurationView
 		key = ILocalSite.class;
 		array.add(
 			new PreviewTask(
-				UpdateUI.getString("ConfigurationView.revertPreviousLabel"), //$NON-NLS-1$
-				UpdateUI.getString("ConfigurationView.revertPreviousDesc"), //$NON-NLS-1$
-				revertAction));
-		array.add(
-			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.updateLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.updateDesc"), //$NON-NLS-1$
 				findUpdatesAction));
-		array.add(
-			new PreviewTask(
-				UpdateUI.getString("ConfigurationView.extLocLabel"), //$NON-NLS-1$
-				UpdateUI.getString("ConfigurationView.extLocDesc"), //$NON-NLS-1$
-				newExtensionLocationAction));
 		array.add(
 			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.installHistLabel"), //$NON-NLS-1$
@@ -1055,6 +1045,16 @@ public class ConfigurationView
 				UpdateUI.getString("ConfigurationView.activitiesLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.activitiesDesc"), //$NON-NLS-1$
 				showActivitiesAction));
+		array.add(
+				new PreviewTask(
+					UpdateUI.getString("ConfigurationView.extLocLabel"), //$NON-NLS-1$
+					UpdateUI.getString("ConfigurationView.extLocDesc"), //$NON-NLS-1$
+					newExtensionLocationAction));
+		array.add(
+				new PreviewTask(
+					UpdateUI.getString("ConfigurationView.revertPreviousLabel"), //$NON-NLS-1$
+					UpdateUI.getString("ConfigurationView.revertPreviousDesc"), //$NON-NLS-1$
+					revertAction));
 
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
@@ -1082,6 +1082,11 @@ public class ConfigurationView
 		array.clear();
 		key = IFeatureAdapter.class;
 		array.add(
+				new PreviewTask(
+					UpdateUI.getString("ConfigurationView.scanLabel"), //$NON-NLS-1$
+					UpdateUI.getString("ConfigurationView.scanDesc"), //$NON-NLS-1$
+					findUpdatesAction));
+		array.add(
 			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.replaceVersionLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.replaceVersionDesc"), //$NON-NLS-1$
@@ -1101,11 +1106,6 @@ public class ConfigurationView
 				UpdateUI.getString("ConfigurationView.uninstallLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.uninstallDesc"), //$NON-NLS-1$
 				uninstallFeatureAction));
-		array.add(
-			new PreviewTask(
-				UpdateUI.getString("ConfigurationView.scanLabel"), //$NON-NLS-1$
-				UpdateUI.getString("ConfigurationView.scanDesc"), //$NON-NLS-1$
-				findUpdatesAction));
 		array.add(
 			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.featurePropLabel"), //$NON-NLS-1$
