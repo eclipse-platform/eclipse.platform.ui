@@ -62,6 +62,7 @@ public class WelcomeEditor extends EditorPart {
 	private boolean dragEvent = false;
 	
 	private StyledText firstText, lastText;
+	private StyledText lastNavigatedText;
 	private boolean nextTabAbortTraversal, previousTabAbortTraversal = false;
 	
 	
@@ -156,6 +157,23 @@ private StyleRange findPreviousLink(StyledText text) {
 	}
 	return null;
 }
+
+/**
+ * Find the current link of the current selection.
+ */
+protected StyleRange getCurrentLink(StyledText text){
+	StyleRange[] ranges = text.getStyleRanges();
+	int currentSelectionEnd = text.getSelection().y;
+	int currentSelectionStart = text.getSelection().x;
+	
+	for (int i = 0; i < ranges.length; i++) {
+		if((currentSelectionStart >= ranges[i].start) && 
+			(currentSelectionEnd <= (ranges[i].start + ranges[i].length))) {
+			return ranges[i];
+		}
+	}
+	return null;
+}
 /**
  * Adds listeners to the given styled text
  */
@@ -180,6 +198,8 @@ private void addListeners(StyledText styledText) {
 			} else if (item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
 				item.triggerLinkAt(offset);
+				StyleRange selectionRange = getCurrentLink(text);
+				text.setSelectionRange(selectionRange.start, selectionRange.length);
 				text.setCursor(null);
 			}
 		}
@@ -321,6 +341,8 @@ private void addListeners(StyledText styledText) {
 					if (item.isLinkAt(offset)) {	
 						text.setCursor(busyCursor);
 						item.triggerLinkAt(offset);
+						StyleRange selectionRange = getCurrentLink(text);
+						text.setSelectionRange(selectionRange.start, selectionRange.length);
 						text.setCursor(null);
 					}
 				}
@@ -350,6 +372,7 @@ private void addListeners(StyledText styledText) {
 		public void focusLost(FocusEvent e) {
 			StyledText text = (StyledText)e.widget;
 			text.setSelection(text.getSelection().x);
+			lastNavigatedText = text;
 		}
 });
 	
@@ -781,6 +804,15 @@ private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
 public void setFocus() {
 	if (editorComposite != null) {
 		editorComposite.setFocus();
+		
+		if (lastNavigatedText != null) {
+			StyleRange selectionRange = getCurrentLink(lastNavigatedText);
+			if (selectionRange != null)
+				lastNavigatedText.setSelectionRange(selectionRange.start, selectionRange.length);
+			else
+				lastNavigatedText.setSelection(lastNavigatedText.getSelection().x);
+			focusOn(lastNavigatedText, lastNavigatedText.getCaretOffset());
+		}
 	}
 }
 /**
