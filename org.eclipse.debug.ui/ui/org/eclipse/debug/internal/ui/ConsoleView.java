@@ -76,7 +76,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 * Sets the input of the viewer of this view in the
 	 * UI thread.
 	 */
-	protected void setViewerInput(final IAdaptable element) {
+	protected void setViewerInput(IAdaptable element) {
 		setViewerInput(element, true);
 	}
 	
