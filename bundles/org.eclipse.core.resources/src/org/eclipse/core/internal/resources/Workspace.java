@@ -583,6 +583,19 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 	// preserve local sync info
 	ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 	newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
+	
+	// update link locations in project descriptions
+	if (source.isLinked()) {
+		newInfo.set(ICoreConstants.M_LINK);
+		//create new link location
+		Project project = (Project)destinationResource.getProject();
+		project.internalGetDescription().setLinkLocation(destinationResource.getName(), new LinkDescription(destinationResource, source.getLocation()));
+		project.writeDescription(IResource.NONE);
+		//remove old link location
+		project = (Project)source.getProject();
+		project.internalGetDescription().setLinkLocation(source.getName(), null);
+		project.writeDescription(IResource.NONE);
+	}
 
 	// do the recursion. if we have a file then it has no members so return. otherwise
 	// recursively call this method on the container's members if the depth tells us to
@@ -945,6 +958,7 @@ public IProject[] getBuildOrder() {
 		List projectList = new ArrayList(order.length);
 		for (int i = 0; i < order.length; i++) {
 			IProject project = getRoot().getProject(order[i]);
+			//FIXME should non-accessible projects be removed?
 			if (project.isAccessible()) {
 				projectList.add(project);
 			}

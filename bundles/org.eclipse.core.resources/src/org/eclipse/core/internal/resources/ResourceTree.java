@@ -774,6 +774,12 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		if (keepHistory)
 			addToLocalHistory(source);
 		monitor.worked(Policy.totalWork/4);
+		
+		//for linked resources, nothing needs to be moved in the file system
+		if (source.isLinked()) {
+			movedFile(source, destination);
+			return;
+		}
 
 		java.io.File sourceFile = source.getLocation().toFile();
 		java.io.File destFile = destination.getLocation().toFile();
@@ -824,6 +830,12 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		if (keepHistory) 
 			addToLocalHistory(source, IResource.DEPTH_INFINITE);
+			
+		//for linked resources, nothing needs to be moved in the file system
+		if (source.isLinked()) {
+			movedFolderSubtree(source, destination);
+			return;
+		}
 
 		// Move the resources in the file system. Only the FORCE flag is valid here so don't
 		// have to worry about clearing the KEEP_HISTORY flag.

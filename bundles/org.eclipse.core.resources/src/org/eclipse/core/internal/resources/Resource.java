@@ -159,8 +159,15 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 	dest.checkDoesNotExist();
 
 	// ensure we aren't trying to copy a file to a project
-	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
+	if (getType() == IResource.FILE && destinationType == IResource.PROJECT) {
 		message = Policy.bind("resources.fileToProj"); //$NON-NLS-1$
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
+	
+	// ensure we aren't trying to copy a linked resource into a folder
+	Container parent = (Container)dest.getParent();
+	if (isLinked() && (parent == null || parent.getType() != IResource.PROJECT)) {
+		message = Policy.bind("links.copyNotProject", getFullPath().toString(), destination.toString()); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
 
@@ -170,7 +177,6 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 		info = project.getResourceInfo(false, false);
 		project.checkAccessible(getFlags(info));
 
-		Container parent = (Container) dest.getParent();
 		if (!parent.equals(project)) {
 			info = parent.getResourceInfo(false, false);
 			parent.checkExists(getFlags(info), true);
@@ -282,6 +288,13 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 		message = Policy.bind("resources.fileToProj"); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
+	
+	// ensure we aren't trying to move a linked resource into a folder
+	Container parent = (Container)dest.getParent();
+	if (isLinked() && (parent == null || parent.getType() != IResource.PROJECT)) {
+		message = Policy.bind("links.moveNotProject", getFullPath().toString(), destination.toString()); //$NON-NLS-1$
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
 
 	// we can't move into a closed project
 	if (destinationType != IResource.PROJECT) {
@@ -289,7 +302,6 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 		info = project.getResourceInfo(false, false);
 		project.checkAccessible(getFlags(info));
 
-		Container parent = (Container) dest.getParent();
 		if (!parent.equals(project)) {
 			info = parent.getResourceInfo(false, false);
 			parent.checkExists(getFlags(info), true);

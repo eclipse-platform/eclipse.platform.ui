@@ -457,6 +457,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed project.</li>
+ * <li> The source is a linked resource, but the destination is not a project.
+ * </li>
  * <li> A resource at destination path does exist.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>FORCE</code> is not specified.</li>
@@ -1388,14 +1390,16 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed 
  *      project.</li>
+ * <li> The source is a linked resource, but the destination is not a project.
+ * </li>
  * <li> A resource at destination path does exist.</li>
  * <li> A resource of a different type exists at the destination path.</li>
  * <li> This resource or one of its descendents is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> Resource changes are disallowed during certain types of resource change
+ * event notification. See IResourceChangeEvent for more details.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
