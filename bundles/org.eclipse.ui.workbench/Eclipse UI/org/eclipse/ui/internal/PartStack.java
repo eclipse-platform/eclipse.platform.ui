@@ -138,6 +138,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void add(LayoutPart child) {
         children.add(child);
         showPart(child, null);
+        
+        if (children.size() == 1 && child instanceof PartPane) {
+        	setSelection(child);
+        }
     }
     
     /**
@@ -764,9 +768,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	                }
 	            }
 	        }
-	
-	        setSelection(selPart);
+	        
         }
+        
+        if (selPart == null) {
+        	List presentableParts = getPresentableParts();
+        	if (presentableParts.size() != 0) {
+	        	IPresentablePart part = (IPresentablePart)getPresentableParts().get(0);
+	        	
+	        	selPart = (PartPane)getPaneFor(part);
+        	}
+        }
+        
+        setSelection(selPart);
     }
 
     private void updateControlBounds() {

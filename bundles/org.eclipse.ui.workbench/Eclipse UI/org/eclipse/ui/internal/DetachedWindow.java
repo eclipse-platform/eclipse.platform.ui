@@ -16,10 +16,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -99,15 +97,7 @@ public class DetachedWindow extends Window   {
 		shell.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
 				Shell shell = (Shell) event.widget;
-				Control[] children = shell.getChildren();
-				if (children != null) {
-					for (int i = 0, length = children.length; i < length; i++) {
-						if (children[i] instanceof CTabFolder) {
-							children[i].setBounds(shell.getClientArea());
-							break;
-						}
-					}
-				}
+				folder.setBounds(shell.getClientArea());
 			}
 		});
 
