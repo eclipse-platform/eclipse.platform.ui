@@ -235,8 +235,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 						replace(pm, replaceText);
 					}
 				});
-					if (hasNextMarker())
-						gotoCurrentMarker();
+					gotoCurrentMarker();
 					break;
 				case REPLACE_ALL_IN_FILE :
 					run(false, true, new ReplaceOperation((IResource) getCurrentMarker().getElement()) {
@@ -245,8 +244,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 						
 					}
 				});
-					if (hasNextFile())
-						gotoCurrentMarker();
+					gotoCurrentMarker();
 					break;
 				case REPLACE_ALL :
 					run(false, true, new ReplaceOperation() {
@@ -254,8 +252,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 						replaceAll(pm, replaceText);
 					}
 				});
-					if (hasNextFile())
-						gotoCurrentMarker();
+					gotoCurrentMarker();
 					break;
 				default :
 					{
@@ -404,8 +401,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		IResource currentFile= (IResource) currentMarker.getElement();
 		while (fMarkers.size() > 0 && getCurrentMarker().getElement().equals(currentFile))
 			fMarkers.remove(0);
-		if (fMarkers.size() > 0)
-			gotoCurrentMarker();
+		gotoCurrentMarker();
 	}
 	
 	private void gotoCurrentMarker() {

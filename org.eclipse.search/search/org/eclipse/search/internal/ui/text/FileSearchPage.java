@@ -36,6 +36,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 
@@ -52,8 +53,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private ReplaceAction2 fReplaceAction;
 	
 	public FileSearchPage() {
-		fSortByNameAction= new SortAction("Name", this, FileLabelProvider.SHOW_LABEL_PATH);
-		fSortByPathAction= new SortAction("Path", this, FileLabelProvider.SHOW_PATH_LABEL);
+		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
+		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
 		fCurrentSortAction= fSortByNameAction;
 	}
 	
@@ -83,7 +84,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 			textEditor.selectAndReveal(offset, length);
 		}
 	}
-	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) {
+	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
 		try {
 			IMarker marker= file.createMarker(SearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
@@ -93,8 +94,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 			IDE.gotoMarker(editor, marker);
 			marker.delete();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PartInitException(SearchMessages.getString("FileSearchPage.error.marker"), e); //$NON-NLS-1$
 		}
 	}
 
@@ -110,7 +110,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private void addSortActions(IMenuManager mgr) {
 		if (!isFlatLayout())
 			return;
-		MenuManager sortMenu= new MenuManager("Sort By");
+		MenuManager sortMenu= new MenuManager(SearchMessages.getString("FileSearchPage.sort_by.label")); //$NON-NLS-1$
 		sortMenu.add(fSortByNameAction);
 		sortMenu.add(fSortByPathAction);
 		

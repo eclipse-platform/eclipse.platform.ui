@@ -24,6 +24,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import org.eclipse.search.internal.ui.SearchMessages;
+
 
 public class FileLabelProvider extends LabelProvider {
 		
@@ -62,7 +64,7 @@ public class FileLabelProvider extends LabelProvider {
 		String text= null;
 
 		if (!resource.exists())
-			text= "<removed resource>";
+			text= SearchMessages.getString("FileLabelProvider.removed_resource.label"); //$NON-NLS-1$
 		
 		else {
 			IPath path= resource.getFullPath().removeLastSegments(1);

@@ -604,7 +604,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 			}
 		});
-		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan= 2;
 		fExtensions.setLayoutData(gd);
 		
