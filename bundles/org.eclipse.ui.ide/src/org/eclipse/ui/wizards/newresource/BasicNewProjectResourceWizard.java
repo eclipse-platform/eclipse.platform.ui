@@ -17,21 +17,41 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * Standard workbench wizard that creates a new project resource in
@@ -53,9 +73,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * name is created, the dialog closes, and the call to <code>open</code> returns.
  * </p>
  */
-public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
-	implements IExecutableExtension
-{
+public class BasicNewProjectResourceWizard extends BasicNewResourceWizard implements IExecutableExtension {
 	private WizardNewProjectCreationPage mainPage;
 	private WizardNewProjectReferencePage referencePage;
 	
@@ -83,10 +101,9 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
  * Creates a wizard for creating a new project resource in the workspace.
  */
 public BasicNewProjectResourceWizard() {
-	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-	IDialogSettings workbenchSettings = plugin.getDialogSettings();
+	IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 	IDialogSettings section = workbenchSettings.getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
-	if(section == null)
+	if (section == null)
 		section = workbenchSettings.addNewSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
 	setDialogSettings(section);
 }
@@ -158,11 +175,9 @@ private IProject createNewProject() {
 	// run the new project creation operation
 	try {
 		getContainer().run(true, true, op);
-	}
-	catch (InterruptedException e) {
+	} catch (InterruptedException e) {
 		return null;
-	}
-	catch (InvocationTargetException e) {
+	} catch (InvocationTargetException e) {
 		// ie.- one of the steps resulted in a core exception	
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {
@@ -181,10 +196,10 @@ private IProject createNewProject() {
 			}
 		} else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+			IDEWorkbenchPlugin.getDefault().getLog().log(
 				new Status(
 					Status.ERROR, 
-					PlatformUI.PLUGIN_ID, 
+					IDEWorkbenchPlugin.IDE_WORKBENCH, 
 					0, 
 					t.toString(),
 					t));
@@ -210,7 +225,7 @@ private IProject createNewProject() {
  * @exception CoreException if the operation fails
  * @exception OperationCanceledException if the operation is canceled
  */
-private void createProject(IProjectDescription description, IProject projectHandle, IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+void createProject(IProjectDescription description, IProject projectHandle, IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 	try {
 		monitor.beginTask("",2000);//$NON-NLS-1$
 
@@ -248,7 +263,7 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 protected void initializeDefaultPageImageDescriptor() {
 	String iconPath = "icons/full/";//$NON-NLS-1$		
 	try {
-		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
+		URL installURL = IDEWorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
 		URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		setDefaultPageImageDescriptor(desc);
@@ -360,11 +375,18 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
 	if (finalPersp == null) {
-		IDEWorkbenchPlugin.log(
-			"Unable to find persective " //$NON-NLS-1$
-				+ finalPerspId
-				+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
-		return;
+		//Enable the role if required.
+		if (RoleManager.getInstance().isFiltering()) {
+			RoleManager.getInstance().enableActivities(finalPerspId);
+			finalPersp = reg.findPerspectiveWithId(finalPerspId);
+		}
+		if (finalPersp == null) {
+			IDEWorkbenchPlugin.log(
+				"Unable to find persective " //$NON-NLS-1$
+					+ finalPerspId
+					+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
+			return;
+		}
 	}
 
 	// gather the preferred perspectives
@@ -435,8 +457,7 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 			// User chose Yes/Don't ask again, so always switch
 			store.setValue(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_ALWAYS);
 			// leave PROJECT_OPEN_NEW_PERSPECTIVE as is
-		}
-		else {
+		} else {
 			// User chose No/Don't ask again, so never switch
 			store.setValue(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_NEVER);
 			// update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
