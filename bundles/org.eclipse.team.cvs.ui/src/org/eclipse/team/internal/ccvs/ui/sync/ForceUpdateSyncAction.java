@@ -199,7 +199,7 @@ public class ForceUpdateSyncAction extends MergeAction {
 							} else {
 								makeIncoming.add(changed[i]);
 								deletions.add(changed[i]);
-								updateIgnoreLocalShallow.add(changed[i]);
+								updateIgnoreLocalShallow.add(changed[i].getResource());
 							}
 							break;
 						case Differencer.DELETION:
