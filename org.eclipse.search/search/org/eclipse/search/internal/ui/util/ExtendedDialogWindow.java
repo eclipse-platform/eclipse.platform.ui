@@ -136,8 +136,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		applyDialogFont(result);
 		return result;
 	}
-	
-	
+
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case IDialogConstants.CANCEL_ID:

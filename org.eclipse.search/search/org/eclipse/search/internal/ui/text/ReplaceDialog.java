@@ -43,8 +43,6 @@ import org.eclipse.search.internal.ui.SearchResultViewer;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -149,12 +147,10 @@ class ReplaceDialog extends ExtendedDialogWindow {
 	private Button fReplaceAllButton;
 	private Button fSkipButton;
 	private Button fSkipFileButton;
-	private Label fFileLabel;
 	
 	private List fMarkers;
 	private TextSearchOperation fOperation;
 	private boolean fSkipReadonly= false;
-	private int fInitialFileCount;
 	
 	// reuse editors stuff
 	private IReusableEditor fEditor;
@@ -163,7 +159,6 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		super(parentShell);
 		Assert.isNotNull(entries);
 		Assert.isNotNull(operation);
-		fInitialFileCount= entries.size();
 		fMarkers= new ArrayList();
 		initializeMarkers(entries);
 		fOperation= operation;
@@ -187,28 +182,22 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		shell.setText(getDialogTitle());
 		gotoCurrentMarker();
 		enableButtons();
-		updateProgressLabel();
 	}
-	
-	/**
-	 * 
-	 */
-	private void updateProgressLabel() {
-		if (fMarkers.size() == 0) {
-			fFileLabel.setText(""); //$NON-NLS-1$
-			return;
-		}
-		ReplaceMarker firstMarker= getCurrentMarker();
-		int resourceCount= countResources();
-		String message= SearchMessages.getFormattedString("ReplaceDialog.progress.message", new Object[] {firstMarker.getFile().getName(), new Integer(fInitialFileCount-resourceCount +1), new Integer(fInitialFileCount)}); //$NON-NLS-1$
-		fFileLabel.setText(message);
-	}
-
+		
 	protected Control createPageArea(Composite parent) {
 		Composite result= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		result.setLayout(layout);
-		layout.numColumns= 3;
+		layout.numColumns= 2;
+		
+		layout.marginHeight =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		
 		initializeDialogUnits(result);
 		
@@ -221,12 +210,6 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		clabel.setLayoutData(gd);
 		
-	
-		Button replaceWithRegex= new Button(result, SWT.CHECK);
-		replaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label")); //$NON-NLS-1$
-		replaceWithRegex.setEnabled(false);
-		replaceWithRegex.setSelection(fOperation.isRegexSearch());
-		
 		
 		label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
@@ -237,66 +220,31 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		fTextField.setFocus();
 		
 		
-		replaceWithRegex= new Button(result, SWT.CHECK);
+		new Label(result, SWT.NONE);
+		Button replaceWithRegex= new Button(result, SWT.CHECK);
 		replaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label")); //$NON-NLS-1$
 		replaceWithRegex.setEnabled(false);
 		replaceWithRegex.setSelection(false);
-		
-		new Label(result, SWT.NONE);
-		
-		Composite actionButtons= createActionButtons(result);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		actionButtons.setLayoutData(gd);
-		
-		fFileLabel= new Label(result, SWT.NONE);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		fFileLabel.setLayoutData(gd);
 		
 		applyDialogFont(result);
 		return result;
 	}
 	
-	protected Button createActionButton(Composite parent, int id, String label, boolean defaultButton) {
+	protected void createButtonsForButtonBar(Composite parent) {
+		fReplaceButton= createButton(parent, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
+		fReplaceAllInFileButton= createButton(parent, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
+
+		Label filler= new Label(parent, SWT.NONE);
+		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		
-		Button button= new Button(parent, SWT.PUSH);
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		button.setText(label);
-		
-		button.setData(new Integer(id));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				buttonPressed(((Integer)event.widget.getData()).intValue());
-			}
-		});
-		if (defaultButton) {
-			Shell shell= parent.getShell();
-			if (shell != null) {
-				shell.setDefaultButton(button);
-			}
-		}
-		
-		return button;
-	}
-	
-	protected Composite createActionButtons(Composite parent) {
-		Composite buttonContainer= new Composite(parent, SWT.NONE);
-		GridLayout gl= new GridLayout();
-		gl.numColumns= 2;
-		gl.makeColumnsEqualWidth= true;
-		gl.marginHeight= 0;
-		gl.marginWidth= 0;
-		buttonContainer.setLayout(gl);
-		
-		fReplaceButton= createActionButton(buttonContainer, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
-		fSkipButton= createActionButton(buttonContainer, SKIP, SearchMessages.getString("ReplaceDialog.skip"), //$NON-NLS-1$
-				false); //$NON-NLS-1$
-		fReplaceAllInFileButton= createActionButton(buttonContainer, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
-		fSkipFileButton= createActionButton(buttonContainer, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
-		fReplaceAllButton= createActionButton(buttonContainer, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
-		return buttonContainer;
+		fReplaceAllButton= createButton(parent, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
+		fSkipButton= createButton(parent, SKIP, SearchMessages.getString("ReplaceDialog.skip"), false); //$NON-NLS-1$
+		fSkipFileButton= createButton(parent, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
+
+		filler= new Label(parent, SWT.NONE);
+		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+		super.createButtonsForButtonBar(parent);
+		((GridLayout)parent.getLayout()).numColumns= 4;
 	}
 	
 	protected Point getInitialLocation(Point initialSize) {
@@ -375,7 +323,6 @@ class ReplaceDialog extends ExtendedDialogWindow {
 			close();
 		else {
 			enableButtons();
-			updateProgressLabel();
 		}
 	}
 	
@@ -564,6 +511,8 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		if (table == null || table.isDisposed())
 			return;
 		int selectionIndex= table.getSelectionIndex();
+		if (selectionIndex < 0)
+			selectionIndex= 0;
 		for (int i= 0; i < table.getItemCount(); i++) {
 			int currentTableIndex= (selectionIndex+i) % table.getItemCount();
 			SearchResultViewEntry entry= (SearchResultViewEntry) viewer.getElementAt(currentTableIndex);
