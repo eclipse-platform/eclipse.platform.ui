@@ -182,8 +182,8 @@ public class ActivityEnabler {
 		label.setText(ActivityMessages.getString("ActivityEnabler.description")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		descriptionText = new Text(c, SWT.READ_ONLY);
-		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP);
+		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		setInitialStates();
 
 		dualViewer.addCheckStateListener(checkListener);
