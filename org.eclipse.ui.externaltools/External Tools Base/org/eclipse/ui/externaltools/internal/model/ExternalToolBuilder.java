@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -35,6 +38,22 @@ import org.osgi.framework.Bundle;
  * build process. 
  */
 public final class ExternalToolBuilder extends IncrementalProjectBuilder {
+	private final class IgnoreTeamPrivateChanges implements IResourceDeltaVisitor {
+		private boolean[] fTrueChange;
+		private IgnoreTeamPrivateChanges(boolean[] trueChange) {
+			super();
+			fTrueChange= trueChange;
+		}
+		public boolean visit(IResourceDelta visitDelta) throws CoreException {
+			IResource resource= visitDelta.getResource();
+			if (resource instanceof IFile) {
+				fTrueChange[0]= true;
+				return false;
+			}
+			return true;
+		}
+	}
+
 	public static final String ID = "org.eclipse.ui.externaltools.ExternalToolBuilder"; //$NON-NLS-1$;
 
 	private static final String BUILD_TYPE_SEPARATOR = ","; //$NON-NLS-1$
@@ -187,7 +206,15 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			IPath path= resources[i].getProjectRelativePath();
 			IResourceDelta change= delta.findMember(path);
 			if (change != null) {
-				return true;
+				final boolean[] trueChange= new boolean[1];
+				trueChange[0]= false;
+				try {
+					change.accept(new IgnoreTeamPrivateChanges(trueChange));
+				} catch (CoreException e) {
+					ExternalToolsPlugin.getDefault().log("Internal error resolving changed resources during build", e); //$NON-NLS-1$
+				}
+				
+				return trueChange[0]; //filtered out team private changes
 			}
 		}
 		return false;
