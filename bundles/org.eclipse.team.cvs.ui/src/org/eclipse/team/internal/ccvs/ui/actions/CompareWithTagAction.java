@@ -65,8 +65,9 @@ public class CompareWithTagAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					// This is the only use of the monitor so no submonitor is created
-					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], monitor);
+					monitor.beginTask(Policy.bind("CompareWithTagAction.fetching", tag[0].getName()), 100);
+					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], Policy.subMonitorFor(monitor, 100));
+					monitor.done();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

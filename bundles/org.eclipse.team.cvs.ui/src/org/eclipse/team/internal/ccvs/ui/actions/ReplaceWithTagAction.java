@@ -69,7 +69,10 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource[0].getProject());
-					provider.get(resource, IResource.DEPTH_INFINITE, tag[0], monitor);
+					monitor.beginTask(null, 100);
+					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName()));
+					provider.get(resource, IResource.DEPTH_INFINITE, tag[0], Policy.subMonitorFor(monitor, 100));
+					monitor.done();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

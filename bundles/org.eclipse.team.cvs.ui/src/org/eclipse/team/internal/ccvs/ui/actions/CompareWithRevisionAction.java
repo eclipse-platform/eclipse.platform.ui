@@ -69,7 +69,9 @@ public class CompareWithRevisionAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					entries[0] = file[0].getLogEntries(monitor);
+					monitor.beginTask(Policy.bind("CompareWithRevisionAction.fetching"), 100);
+					entries[0] = file[0].getLogEntries(Policy.subMonitorFor(monitor, 100));
+					monitor.done();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

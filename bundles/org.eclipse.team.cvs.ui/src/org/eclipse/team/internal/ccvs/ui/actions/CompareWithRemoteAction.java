@@ -76,8 +76,10 @@ public class CompareWithRemoteAction extends TeamAction {
 						}
 					}
 					
-					// This is the only use of the monitor so no submonitor is created
-					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], monitor);
+					monitor.beginTask(Policy.bind("CompareWithRemoteAction.fetching"), 100);
+					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], Policy.subMonitorFor(monitor, 100));
+					monitor.done();
+					
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
