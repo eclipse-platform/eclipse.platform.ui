@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
 
 import java.util.*;
@@ -30,7 +31,8 @@ public void run() {
 	for (Iterator i = getStructuredSelection().iterator(); i.hasNext();) {
 		IMarker marker = (IMarker) i.next();
 		try {
-			page.openEditor(marker);
+			boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
+			page.openEditor(marker,activate);
 		} catch (PartInitException e) {
 			// Open an error style dialog for PartInitException by
 			// including any extra information from the nested

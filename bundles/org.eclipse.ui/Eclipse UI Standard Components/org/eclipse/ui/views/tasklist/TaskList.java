@@ -331,8 +331,8 @@ public void createPartControl(Composite parent) {
 			TaskList.this.selectionChanged(event);
 		}
 	});
-	viewer.addDoubleClickListener(new IDoubleClickListener() {
-		public void doubleClick(DoubleClickEvent event) {
+	viewer.addOpenListener(new IOpenListener() {
+		public void open(OpenEvent event) {
 			gotoTaskAction.run();
 		}
 	});

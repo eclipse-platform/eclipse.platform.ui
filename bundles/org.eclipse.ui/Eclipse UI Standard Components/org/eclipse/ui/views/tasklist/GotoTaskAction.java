@@ -10,6 +10,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -38,7 +39,8 @@ public void run() {
 	if (marker.exists() && resource instanceof IFile) {
 		IWorkbenchPage page = getTaskList().getSite().getPage();
 		try {
-			page.openEditor(marker);
+			boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
+			page.openEditor(marker,activate);
 		} catch (PartInitException e) {
 			DialogUtil.openError(
 				page.getWorkbenchWindow().getShell(),

@@ -112,8 +112,8 @@ void addContributions() {
 	actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
 	
 	// Set the double click action.
-	viewer.addDoubleClickListener(new IDoubleClickListener() {
-		public void doubleClick(DoubleClickEvent event) {
+	viewer.addOpenListener(new IOpenListener() {
+		public void open(OpenEvent event) {
 			openAction.run();
 		}
 	});

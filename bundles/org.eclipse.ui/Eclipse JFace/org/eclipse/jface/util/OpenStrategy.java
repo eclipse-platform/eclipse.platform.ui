@@ -6,6 +6,8 @@ package org.eclipse.jface.util;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -121,6 +123,7 @@ public class OpenStrategy {
 		c.addListener(SWT.MouseExit,wrapper);
 		c.addListener(SWT.MouseMove,wrapper);
 		c.addListener(SWT.MouseDown, wrapper);
+		c.addListener(SWT.MouseUp, wrapper);
 		c.addListener(SWT.KeyDown, wrapper);
 		c.addListener(SWT.Selection, wrapper);
 		c.addListener(SWT.DefaultSelection, wrapper);
@@ -137,26 +140,26 @@ public class OpenStrategy {
 	//Initialize no timer handler.
 	private void initializeNoTimerHandler() {
 		noTimerHandler = new Listener() {
-			Event mouseDownEvent = null;
+			Event mouseUpEvent = null;
 			boolean selectionPendent = false;
 			
 			public void handleEvent(Event e) {
 				switch (e.type) {
 					case SWT.MouseEnter:
 					case SWT.MouseExit:
-						mouseDownEvent = null;
+						mouseUpEvent = null;
 						selectionPendent = false;
 						break;
-					case SWT.MouseDown:
-						if(e.button != 1 || e.stateMask != 0)
+					case SWT.MouseUp:
+						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
 							return;
 						if(selectionPendent)
 							mouseSelectItem(e);
 						else
-							mouseDownEvent = e;
+							mouseUpEvent = e;
 						break;
 					case SWT.Selection:
-						if (mouseDownEvent != null)
+						if (mouseUpEvent != null)
 							mouseSelectItem(e);
 						else
 							selectionPendent = true;
@@ -168,7 +171,7 @@ public class OpenStrategy {
 			}
 			void mouseSelectItem(Event e) {
 				handleOpen(new SelectionEvent(e));
-				mouseDownEvent = null;
+				mouseUpEvent = null;
 				selectionPendent = false;
 			}
 		};
@@ -213,7 +216,7 @@ public class OpenStrategy {
 	private void initializeActiveDesktopHandler(final Display display) {
 		activeDesktopHandler = new Listener() {
 			boolean timerStarted = false;
-			Event mouseDownEvent = null;
+			Event mouseUpEvent = null;
 			Event mouseMoveEvent = null;
 			boolean selectionPendent = false;
 			
@@ -224,12 +227,15 @@ public class OpenStrategy {
 				switch (e.type) {
 					case SWT.MouseEnter:
 					case SWT.MouseExit:
-						mouseDownEvent = null;
+						mouseUpEvent = null;
+						mouseMoveEvent = null;
 						selectionPendent = false;
 						break;
 					case SWT.MouseMove:
 						if(e.stateMask != 0)
 							return;
+						if(e.widget.getDisplay().getFocusControl() != e.widget)
+							return;							
 						mouseMoveEvent = e;
 						final Runnable runnable[] = new Runnable[1];
 						runnable[0] = new Runnable() {
@@ -240,7 +246,7 @@ public class OpenStrategy {
 									display.timerExec(diff * 2 / 3,runnable[0]);
 								} else {
 									timerStarted = false;
-									setSelection(mouseMoveEvent,mouseMoveEvent.widget);
+									setSelection(mouseMoveEvent);
 								}
 							}
 						};
@@ -250,24 +256,28 @@ public class OpenStrategy {
 							display.timerExec(TIME * 2 / 3,runnable[0]);
 						}
 						break;
-					case SWT.MouseDown:
-						if(e.button != 1 || e.stateMask != 0)
+					case SWT.MouseUp:
+						mouseMoveEvent = null;
+						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
 							return;
 						if(selectionPendent)
 							mouseSelectItem(e);
 						else
-							mouseDownEvent = e;
+							mouseUpEvent = e;
 						break;
 					case SWT.KeyDown:
-						mouseDownEvent = null;
+						mouseMoveEvent = null;
+						mouseUpEvent = null;
 						break;
 					case SWT.Selection:
-						if (mouseDownEvent != null)
+						mouseMoveEvent = null;
+						if (mouseUpEvent != null)
 							mouseSelectItem(e);
 						else
 							selectionPendent = true;
 						break;
 					case SWT.DefaultSelection:
+						mouseMoveEvent = null;
 						handleOpen(new SelectionEvent(e));
 						break;
 				}
@@ -275,18 +285,34 @@ public class OpenStrategy {
 
 			void mouseSelectItem(Event e) {
 				handleOpen(new SelectionEvent(e));
-				mouseDownEvent = null;
+				mouseUpEvent = null;
 				selectionPendent = false;
 			}
-			void setSelection(Event e,Widget w) {
+			void setSelection(Event e) {
+				if(e == null)
+					return;				
+				Widget w = e.widget;
 				if(w.isDisposed())
 					return;
+				/*ISSUE: May have to create a interface with method:
+				setSelection(Point p) so that user's custom widgets 
+				can use this class. If we keep this option. */
 				if(w instanceof Tree) {
 					Tree tree = (Tree)w;
 					TreeItem item = tree.getItem(new Point(e.x,e.y));
 					if(item != null)
 						tree.setSelection(new TreeItem[]{item});
-				}
+				} if(w instanceof Table) {
+					Table table = (Table)w;
+					TableItem item = table.getItem(new Point(e.x,e.y));
+					if(item != null)
+						table.setSelection(new TableItem[]{item});
+				} if(w instanceof TableTree) {
+					TableTree table = (TableTree)w;
+					TableTreeItem item = table.getItem(new Point(e.x,e.y));
+					if(item != null)
+						table.setSelection(new TableTreeItem[]{item});
+				} 
 			}
 		};
 	}
