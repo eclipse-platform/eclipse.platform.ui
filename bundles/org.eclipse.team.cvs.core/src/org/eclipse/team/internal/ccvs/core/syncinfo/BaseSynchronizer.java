@@ -12,7 +12,9 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
@@ -43,6 +45,13 @@ public class BaseSynchronizer extends ResourceSynchronizer {
 			if (info == null) return null;
 			return info.getBytes();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#getSyncName()
+	 */
+	protected QualifiedName getSyncName() {
+		return new QualifiedName(CVSProviderPlugin.ID, "workspace"); // $NON-NLS-1$
 	}
 
 }

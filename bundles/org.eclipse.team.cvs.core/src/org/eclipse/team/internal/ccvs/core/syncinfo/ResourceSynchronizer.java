@@ -13,9 +13,14 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 
@@ -24,6 +29,8 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
  * CVS resources.
  */
 public abstract class ResourceSynchronizer {
+	
+	protected abstract QualifiedName getSyncName();
 	
 	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		byte[] remoteBytes = getSyncBytes(resource);
@@ -35,7 +42,13 @@ public abstract class ResourceSynchronizer {
 			// matches that of the local resource. This may not be true.
 			// TODO: This is rather complicated. There must be a better way!
 			if (resource.getType() == IResource.FILE) {
-				return RemoteFile.fromBytes(resource, remoteBytes, getSyncBytes(resource.getParent()));
+				byte[] parentBytes = getSyncBytes(resource.getParent());
+				if (parentBytes == null) {
+					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
+						Policy.bind("ResourceSynchronizer.missingBytes", getSyncName().toString(), resource.getParent().getFullPath().toString())));
+					throw new TeamException(Policy.bind("internal"));
+				}
+				return RemoteFile.fromBytes(resource, remoteBytes, parentBytes);
 			} else {
 				return RemoteFolder.fromBytes((IContainer)resource, remoteBytes);
 			}
