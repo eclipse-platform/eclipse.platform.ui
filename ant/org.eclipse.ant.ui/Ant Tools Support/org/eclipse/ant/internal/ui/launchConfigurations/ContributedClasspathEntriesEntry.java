@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +22,15 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.swt.SWT;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -131,29 +133,22 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	}
 	
 	private void addSWTJars(List rtes) {
-		IPath swtPath= AntLaunchDelegate.getSWTPath();
-		swtPath= swtPath.append("ws"); //$NON-NLS-1$
-		swtPath= swtPath.append(SWT.getPlatform());
-		File swtLibFolder= swtPath.toFile();
-		String[] libPaths= null;
-		if (swtLibFolder.isDirectory()) {
-		    libPaths= swtLibFolder.list(new FilenameFilter() {
-		        /* (non-Javadoc)
-		         * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
-		         */
-		        public boolean accept(File dir, String name) {
-		            return name.endsWith(".jar"); //$NON-NLS-1$
-		        }    
-		    });
-		}
-		if (libPaths != null) {
-		    for (int i = 0; i < libPaths.length; i++) {
-                String path = libPaths[i];
-                rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(swtPath.append(path)));        
-            }
-		}
+        Location eclipseHome= Platform.getInstallLocation();
+        if (eclipseHome == null) {
+            return;
+        }
+        Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
+        BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
+        BundleDescription[] fragments= description.getFragments();
+        String eclipseVersion = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+        IPath startingPath= new Path(new File(eclipseHome.getURL().getPath()).getAbsolutePath());
+        startingPath= startingPath.append("plugins"); //$NON-NLS-1$
+        for (int i = 0; i < fragments.length; i++) {
+            IPath path= startingPath.append(fragments[i].getSymbolicName() + "_" + eclipseVersion + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+            rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));    
+        }
 	}
-	
+    
 	/**
 	 * Returns the tools.jar to use for this launch configuration, or <code>null</code>
 	 * if none.

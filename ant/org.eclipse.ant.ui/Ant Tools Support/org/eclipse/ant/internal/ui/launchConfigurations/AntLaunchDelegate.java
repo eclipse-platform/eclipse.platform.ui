@@ -12,12 +12,14 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -60,8 +62,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.swt.SWT;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.osgi.framework.Bundle;
@@ -614,32 +615,24 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	}
 
 	private String getSWTLibraryLocation() {
-		IPath path= getSWTPath();
-		if (path == null) {
-			return null;
-		}
-		
-		path= path.append("os"); //$NON-NLS-1$
-		path= path.append(Platform.getOS());
-		path= path.append(Platform.getOSArch());
-		return path.toOSString();
-	}
-	
-	protected static IPath getSWTPath() {
-		Location eclipseHome= Platform.getInstallLocation();
-		if (eclipseHome == null) {
-			return null;
-		}
-		
-		Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
-		String eclipseVersion = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-		
-		String platform= SWT.getPlatform();
-
-		IPath path= new Path(new File(eclipseHome.getURL().getPath()).getAbsolutePath());
-		path= path.append("plugins"); //$NON-NLS-1$
-		path= path.append("org.eclipse.swt." + platform + '_' + eclipseVersion); //$NON-NLS-1$
-		return path;
+        Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
+        BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
+        BundleDescription[] fragments= description.getFragments();
+        if (fragments == null || fragments.length == 0) {
+            return null;
+        }
+        Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName()); //$NON-NLS-1$
+        try {
+            URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
+            IPath path= new Path(url.getPath());
+            path= path.append("os"); //$NON-NLS-1$
+            path= path.append(Platform.getOS());
+            path= path.append(Platform.getOSArch());
+            return path.toOSString();
+        } catch (IOException e) {
+        }
+        
+        return null;
 	}
     
      /* (non-Javadoc)
