@@ -449,7 +449,10 @@ public class Preferences {
 	 * non-default-valued preferences for all plugins with the values from this file.
 	 * <p>
 	 * If the file contains preferences for plug-ins that don't exist in the current
-	 * install, they are ignored.
+	 * install, they are ignored.  This method does not validate if the plug-in
+	 * versions in the preference file match the currently installed plug-ins.
+	 * Clients should first call validatePreferenceVersions on the file to ensure
+	 * that the versions are compatible.
 	 * </p>
 	 * <p>
 	 * The file must have been written by the exportPreferences method.
@@ -466,7 +469,13 @@ public class Preferences {
 	 * Validates that the preference versions in the given file match the versions
 	 * of the currently installed plugins.  Returns an OK status if all preferences match 
 	 * the currently installed plugins, otherwise a MultiStatus describing what 
-	 * plugins have preferences that don't match.
+	 * plugins have preferences that don't match.  
+	 * <p>
+	 * If the returned status has a <code>IStatus.WARNING</code> severity, 
+	 * it means that some preferences may not be applicable but for the most 
+	 * part they will be compatible.  If the returned status has a 
+	 * <code>IStatus.ERROR</code> severity, it means that the preferences 
+	 * will probably not be compatible.
 	 * <p>
 	 * If the file contains preferences for plug-ins that don't exist in the current
 	 * install, they are ignored.
