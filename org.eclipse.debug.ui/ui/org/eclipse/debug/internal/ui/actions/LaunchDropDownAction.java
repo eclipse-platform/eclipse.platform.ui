@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -36,6 +35,11 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 														  ILaunchHistoryChangedListener {
 	
 	private ExecutionAction fLaunchAction;
+	
+	private Menu fCreatedMenu;
+	
+	private DebugWithConfigurationAction fDebugWithAction;
+	private RunWithConfigurationAction fRunWithAction;
 	
 	/**
 	 * This action delegate's proxy.
@@ -110,6 +114,9 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
 		DebugUIPlugin.getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 	}
 	
@@ -124,59 +131,37 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IWorkbenchWindowPulldownDelegate#getMenu(Control)
 	 */
 	public Menu getMenu(Control parent) {
-		Menu menu= new Menu(parent);
-		return createMenu(menu);
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
+		setCreatedMenu(new Menu(parent));
+		return createMenu(getCreatedMenu());
 	}
 	
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		Menu menu= new Menu(parent);
-		return createMenu(menu);
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
+		setCreatedMenu(new Menu(parent));
+		return createMenu(getCreatedMenu());
 	}
 
 	/**
 	 * Create the drop-down menu based on whether the config style pref is set
 	 */
-	protected Menu createMenu(Menu menu) {			
-		
-		// Add any favorites at the top of the menu
-		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();
-		int total = 0;
-		for (int i = 0; i < favoriteList.length; i++) {
-			LaunchConfigurationHistoryElement launch= favoriteList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total + 1);
-			total++;
-		}		
-		
-		// Separator between favorites and history
+	protected Menu createMenu(Menu menu) {	
 		LaunchConfigurationHistoryElement[] historyList= getHistory();
-		if (favoriteList.length > 0 && historyList.length > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}		
-		
-		// Add history launches next
-		for (int i = 0; i < historyList.length; i++) {
-			LaunchConfigurationHistoryElement launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total+1);
-			total++;
-		}
-		
+		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();		
 		// Add the actions to bring up the dialog 
 		if (getLaunchAction() != null) {
-			//used in the tool bar drop down for the cascade launch with menu
-			if (historyList.length > 0 || (historyList.length == 0 && (total > 0))) {
-				new MenuItem(menu, SWT.SEPARATOR);
-			}
-		
 			// Cascading menu for config type 'shortcuts'
 			if (getMode() == ILaunchManager.DEBUG_MODE) {
-				createMenuForAction(menu, new DebugWithConfigurationAction(), -1);
+				createMenuForAction(menu, getDebugWithAction(), -1);
 			} else {
-				createMenuForAction(menu, new RunWithConfigurationAction(), -1);				
+				createMenuForAction(menu, getRunWithAction(), -1);				
 			}
 			
 			// Add non-shortcutted access to the launch configuration dialog
@@ -187,6 +172,32 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 				action = new OpenRunConfigurations();
 			}
 			createMenuForAction(menu, action, -1);
+		}
+		
+		if (favoriteList.length > 0 || historyList.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}
+		
+		// Add any favorites
+		int total = 0;
+		for (int i = 0; i < favoriteList.length; i++) {
+			LaunchConfigurationHistoryElement launch= favoriteList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total + 1);
+			total++;
+		}		
+		
+		// Separator between favorites and history
+		if (favoriteList.length > 0 && historyList.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}		
+		
+		// Add history launches next
+		for (int i = 0; i < historyList.length; i++) {
+			LaunchConfigurationHistoryElement launch= historyList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total+1);
+			total++;
 		}
 
 		return menu;		
@@ -260,11 +271,12 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * A menu listener that is used to constantly flag the debug
 	 * action set menu as dirty so that any underlying changes to the
 	 * contributions will be shown.
+	 * As well, if there are no history items, disable the action.
 	 */
-	protected MenuListener getDebugActionSetMenuListener(final IAction action) {
+	protected MenuListener getDebugActionSetMenuListener() {
 		return new MenuListener() {
 			public void menuShown(MenuEvent e) {
-				action.setEnabled(getHistory().length > 0 || getFavorites().length > 0);
+				getActionProxy().setEnabled(getHistory().length > 0 || getFavorites().length > 0);
 				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 				if (window instanceof ApplicationWindow) {
 					ApplicationWindow appWindow= (ApplicationWindow)window;
@@ -281,5 +293,31 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			public void menuHidden(MenuEvent e) {
 			}
 		};
+	}
+	
+	protected Menu getCreatedMenu() {
+		return fCreatedMenu;
+	}
+
+	protected void setCreatedMenu(Menu createdMenu) {
+		fCreatedMenu = createdMenu;
+	}
+		
+	protected IAction getDebugWithAction() {
+		if (fDebugWithAction == null) {
+			fDebugWithAction= new DebugWithConfigurationAction();
+		} else {
+			fDebugWithAction.dispose();
+		}
+		return fDebugWithAction;
+	}
+
+	protected IAction getRunWithAction() {
+		if (fRunWithAction == null) {
+			fRunWithAction= new RunWithConfigurationAction();
+		} else {
+			fRunWithAction.dispose();
+		}
+		return fRunWithAction;
 	}
 }
