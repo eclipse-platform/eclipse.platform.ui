@@ -88,13 +88,12 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testAddStateAndPolicies"));
+//	suite.addTest(new HistoryStoreTest("testCopyHistoryFile"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
 protected void tearDown() throws Exception {
-	IProject[] projects = getWorkspace().getRoot().getProjects();
-	getWorkspace().delete(projects, true, null);
+	super.tearDown();
 	wipeHistoryStore();
 }
 private int numBytes (InputStream input) {
@@ -1733,8 +1732,7 @@ public void testCopyHistoryFile() {
 	// As a result of the above, there should be 2 history store states for
 	// file1.txt (one with "contents1" and the other with "contents2".
 	
-	String[] contents = {"content1", "content2", "content3", "content4",
-						 "content5"};
+	String[] contents = {"content0", "content1", "content2", "content3", "content4"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
 	try {
@@ -1821,16 +1819,15 @@ public void testCopyHistoryFile() {
 	}
 	assertEquals("2.4", 3, states.length);
 	try {
-		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
-		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
-		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[2].getContents()));
 	} catch (CoreException e) {
 		fail("2.8");
 	}
 }
 public void testCopyHistoryFolder() {
-	String[] contents = {"content1", "content2", "content3", "content4",
-						 "content5"};
+	String[] contents = {"content0", "content1", "content2", "content3", "content4"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
 	try {
@@ -1872,16 +1869,15 @@ public void testCopyHistoryFolder() {
 	}
 	assertEquals("2.4", 3, states.length);
 	try {
-		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
-		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
-		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[2].getContents()));
 	} catch (CoreException e) {
 		fail("2.8");
 	}
 }
 public void testCopyHistoryProject() {
-	String[] contents = {"content1", "content2", "content3", "content4",
-						 "content5"};
+	String[] contents = {"content0", "content1", "content2", "content3", "content4"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
 	IProject project2 = getWorkspace().getRoot().getProject("TestCopyHistoryProject2");
@@ -1926,9 +1922,9 @@ public void testCopyHistoryProject() {
 	}
 	assertEquals("2.4", 3, states.length);
 	try {
-		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
-		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
-		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[2].getContents()));
 	} catch (CoreException e) {
 		fail("2.8");
 	}
