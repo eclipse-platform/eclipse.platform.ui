@@ -42,9 +42,6 @@ public class TextSearchScope extends SearchScope {
 			// do nothing
 		}
 		
-		/**
-		 * @see ISearchScope#encloses(Object)
-		 */
 		public boolean encloses(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE && skipFile(proxy))
 				return false;

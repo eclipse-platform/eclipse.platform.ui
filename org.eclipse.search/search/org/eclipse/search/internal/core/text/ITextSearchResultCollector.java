@@ -28,9 +28,9 @@ public interface ITextSearchResultCollector {
 	 
 	/**
 	 * Accepts the given search result.
-	 * @param resource proxy the resource proxy in which the match has been found.
+	 * @param proxy proxy the resource proxy in which the match has been found.
 	 * @param line the line containing the match
-	 * @param int start position from the beginning of the file. Start position
+	 * @param start position from the beginning of the file. Start position
 	 *  is zero based.
 	 * @param length the length of the match.
 	 * @param lineNumber the line number of the match.
