@@ -124,11 +124,11 @@ public class EmbeddedBrowser {
 			// first launch, use default size
 			w = 1024;
 			h = 768;
-		} else {
-			// do not set location to 0,0 the first time
-			shell.setLocation(x, y);
+			x = shell.getLocation().x;
+			y = shell.getLocation().y;
 		}
-		shell.setSize(w, h);
+		setSize(w, h);
+		setLocation(x, y);
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
 		webBrowser.addOpenWindowListener(new OpenWindowListener() {
@@ -146,10 +146,23 @@ public class EmbeddedBrowser {
 		shell.open();
 	}
 	public void setLocation(int x, int y) {
+		Rectangle clientArea = shell.getDisplay().getClientArea();
+		Point shellSize = shell.getSize();
+		x = Math.min(x + shellSize.x, clientArea.x + clientArea.width)
+				- shellSize.x;
+		y = Math.min(y + shellSize.y, clientArea.y + clientArea.height)
+				- shellSize.y;
+		x = Math.max(x, clientArea.x);
+		y = Math.max(y, clientArea.y);
+		this.x = x;
+		this.y = y;
 		shell.setLocation(x, y);
 	}
 	public void setSize(int width, int height) {
-		shell.setSize(width, height);
+		Rectangle clientArea = shell.getDisplay().getClientArea();
+		w = Math.min(clientArea.width, width);
+		h = Math.min(clientArea.height, height);
+		shell.setSize(w, h);
 	}
 	/**
 	 * Closes the browser.
