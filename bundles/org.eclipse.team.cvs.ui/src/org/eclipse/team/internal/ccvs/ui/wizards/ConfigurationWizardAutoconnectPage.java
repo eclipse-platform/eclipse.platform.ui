@@ -121,9 +121,8 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			properties.setProperty("root", location.getRootDirectory());
 			
 			String repository = info.getRepository();
-			if (!repository.equals(project.getName())) {
-				properties.setProperty("module", repository);
-			}
+			properties.setProperty("module", repository);
+
 			CVSEntryLineTag tag = info.getTag();
 			if (tag != null) {
 				properties.setProperty("tag", tag.getName());
