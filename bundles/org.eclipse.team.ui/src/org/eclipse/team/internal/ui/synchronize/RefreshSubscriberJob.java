@@ -255,6 +255,7 @@ public final class RefreshSubscriberJob extends Job {
 			SubscriberSyncInfoCollector collector = getCollector();
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
 			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
+			IStatus status = null;
 			try {
 				event.setStartTime(System.currentTimeMillis());
 				if(monitor.isCanceled()) {
@@ -271,17 +272,16 @@ public final class RefreshSubscriberJob extends Job {
 				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
 				// Prepare the results
 				setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(! isJobModal()));
-				event.setStatus(calculateStatus(event));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
 					// The refresh was cancelled by the user
-					event.setStatus(Status.CANCEL_STATUS);
+					status = Status.CANCEL_STATUS;
 				} else {
 					// The refresh was cancelled due to a blockage
-					event.setStatus(POSTPONED);
+					status = POSTPONED;
 				}
 			} catch(TeamException e) {
-				event.setStatus(e.getStatus());
+				status = e.getStatus();
 			} finally {
 				event.setStopTime(System.currentTimeMillis());
 				subscriber.removeListener(changeListener);
@@ -290,6 +290,10 @@ public final class RefreshSubscriberJob extends Job {
 			
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
+			if (status == null) {
+				status = calculateStatus(event);
+			}
+			event.setStatus(status);
 			notifyListeners(DONE, event);
 			return event.getStatus();
 		} finally {
