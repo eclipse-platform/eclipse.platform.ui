@@ -33,35 +33,39 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 */
 	private Map buildMarkerDeltas;
 
-	// if there are no changes between the current tree and the last delta
-	// state then we
-	// can reuse the lastDelta (if any). If the lastMarkerChangeId is different
-	// then the current
+	// if there are no changes between the current tree and the last delta state then we
+	// can reuse the lastDelta (if any). If the lastMarkerChangeId is different then the current
 	// one then we have to update that delta with new marker change info
-	private ResourceDelta lastDelta; // last delta we broadcast
-	private ElementTree lastDeltaState; // tree the last time
-														  // we computed a
-														  // delta
-	private long lastDeltaId; //the marker change Id the last time
-										// we computed a delta
-
+	/**
+	 * last delta we broadcast
+	 */
+	private ResourceDelta lastDelta;
+	/**
+	 * tree the last time we computed a delta
+	 */
+	private ElementTree lastDeltaState;
+	/**
+	 * the marker change Id the last time we computed a delta
+	 */
+	private long lastDeltaId; 
 	/**
 	 * The state of the workspace at the end of the last POST_BUILD
 	 * notification
 	 */
 	private ElementTree lastPostBuildTree;
-	private long lastPostBuildId = 0; // the marker change id at
-													// the end of the last
-													// POST_AUTO_BUILD
+	/**
+	 * the marker change id at the end of the last POST_AUTO_BUILD
+	 */
+	private long lastPostBuildId = 0;
 	/**
 	 * The state of the workspace at the end of the last POST_CHANGE
 	 * notification
 	 */
 	private ElementTree lastPostChangeTree;
-	private long lastPostChangeId = 0; // the marker change
-														 // id at the end of
-														 // the last
-														 // POST_CHANGE
+	/**
+	 * the marker change id at the end of the last POST_CHANGE
+	 */
+	private long lastPostChangeId = 0;
 
 	private ResourceChangeListenerList listeners;
 	private Workspace workspace;
@@ -69,6 +73,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	protected boolean notificationRequested = false;
 	private Job notifyJob;
 	protected long lastNotifyDuration = 0L;
+	protected boolean isNotifying;
 
 	public NotificationManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -102,6 +107,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// Update the state regardless of whether people are listening.
 		ResourceDelta delta = null;
 		try {
+			isNotifying = true;
 			if (listeners.hasListenerFor(type))
 				delta = getDelta(lastState, type);
 			// if the delta is empty the root's change is undefined, there is
@@ -114,6 +120,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		} finally {
 			// Remember the current state as the last notified state if requested.
 			// Be sure to clear out the old delta
+			isNotifying = false;
 			boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
 			if (postChange || type == IResourceChangeEvent.POST_AUTO_BUILD) {
 				long id = workspace.getMarkerManager().getChangeId();
@@ -234,7 +241,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		EventStats.listenerRemoved(listener);
 	}
 	public boolean shouldNotify() {
-		return notificationRequested;
+		return !isNotifying && notificationRequested;
 	}
 	public void shutdown(IProgressMonitor monitor) {
 	}
