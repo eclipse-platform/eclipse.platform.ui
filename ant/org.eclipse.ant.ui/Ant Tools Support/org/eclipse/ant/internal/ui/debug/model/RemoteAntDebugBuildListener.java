@@ -170,7 +170,10 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		if (fDebug) {
 			System.out.println("shutdown " + fRequestPort); //$NON-NLS-1$
 		}
-		fTarget.terminated();
+        if (fTarget != null) {
+            fTarget.terminated();
+            fTarget= null;
+        }
 		fLaunch= null;
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		try {
