@@ -423,24 +423,28 @@
 	
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.delete.line"
+	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Ctrl+E">
+	        keySequence="Ctrl+D">
 	  </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Ctrl+Shift+E">
+	        keySequence="Ctrl+Shift+Delete">
 	  </keyBinding>
       <keyBinding
             platform="gtk"
+	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+Shift+E">
+            keySequence="Ctrl+Shift+Delete">
       </keyBinding>
       <keyBinding
             platform="gtk"
 	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+ 	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Esc Ctrl+E">
+            keySequence="Esc Ctrl+Delete">
       </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.findNext"
@@ -604,13 +608,11 @@
 	  </keyBinding>
       <keyBinding
             locale="zh"
-            contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Ctrl+Space">
       </keyBinding>
       <keyBinding
             locale="zh"
-            contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Ctrl+Shift+Space">
       </keyBinding>
@@ -634,13 +636,15 @@
       </keyBinding>
       <keyBinding
             platform="carbon"
+	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+E">
+            keySequence="Ctrl+D">
       </keyBinding>
       <keyBinding
             platform="carbon"
+	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+Shift+E">
+            keySequence="Ctrl+Shift+Delete">
       </keyBinding>
       <keyBinding
             platform="carbon"
@@ -702,14 +706,14 @@
             commandId="org.eclipse.ui.edit.text.delete.line"
             contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Command+E">
+            keySequence="Command+D">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.edit.text.delete.line.to.end"
             contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Command+Shift+E">
+            keySequence="Command+Shift+Delete">
       </keyBinding>
       <keyBinding
             platform="carbon"
