@@ -66,6 +66,8 @@ public abstract class ViewItem {
 	private Composite titleComposite;
 	protected Color white;
 	protected ScrolledForm form;
+
+	private boolean bold = false;
 	private Font boldFont;
 	private Font regularFont;
 
@@ -221,9 +223,8 @@ public abstract class ViewItem {
 
 		setButtonsCollapsed();
 		setCollapsed();
-		
-		regularFont = mainItemComposite.getFont();	
 
+		regularFont = mainItemComposite.getFont();
 		FontData[] fontDatas = regularFont.getFontData();
 		for (int i = 0; i < fontDatas.length; i++) {
 			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
@@ -232,8 +233,21 @@ public abstract class ViewItem {
 	}
 
 	/*package*/
-	void boldTitle() {
-		mainItemComposite.setFont(boldFont);
+	void setBold(boolean value) {
+		if(value && !bold) {
+			mainItemComposite.setFont(boldFont);
+			mainItemComposite.layout();
+			parent.layout();
+		} else if(!value && bold) {
+			mainItemComposite.setFont(regularFont);
+			mainItemComposite.layout();
+			parent.layout();
+		}
+		bold = value;
+	}
+	
+	boolean isBold() {
+		return bold;
 	}
 
 	public void dispose() {
@@ -386,23 +400,23 @@ public abstract class ViewItem {
 		if (!buttonExpanded)
 			setButtonsExpanded();
 		setExpanded();
-		boldTitle();
+		setBold(true);
 		mainItemComposite.setFocus();
 //		getExpandToggle().setFocus();
 	}
 
 	/*package*/
 	void setAsNormalCollapsed() {
+		setBold(false);
 		setColorAsCurrent(false);
 		if (mainItemComposite.isExpanded())
 			setCollapsed();
-		unboldTitle();
 	}
 
 	/*package*/
 	void setAsNormalNonCollapsed() {
 		setColorAsCurrent(false);
-		unboldTitle();
+		setBold(false);
 	}
 
 	private void setBodyColor(Color color) {
@@ -567,10 +581,4 @@ public abstract class ViewItem {
 			titlechildren[i].setBackground(color);
 		}
 	}
-
-	/*package*/
-	void unboldTitle() {
-		mainItemComposite.setFont(regularFont);
-	}
-
 }

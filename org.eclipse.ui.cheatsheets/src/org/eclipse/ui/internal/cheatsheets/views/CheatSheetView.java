@@ -532,8 +532,8 @@ public class CheatSheetView extends ViewPart {
 
 	private void clearBackgrounds(ViewItem[] myview) {
 		for (int i = 0; i < myview.length; i++) {
+			myview[i].setBold(false);
 			myview[i].setOriginalColor();
-			myview[i].unboldTitle();
 		}
 	}
 

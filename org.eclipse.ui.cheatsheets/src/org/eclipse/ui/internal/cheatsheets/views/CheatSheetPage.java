@@ -57,7 +57,7 @@ public class CheatSheetPage extends Page {
 		IntroItem myintro = new IntroItem(form, form.getBody(), parser.getIntroItem(), darkGrey, cheatSheetView);
 	
 		myintro.setItemColor(myintro.lightGrey);
-		myintro.boldTitle();
+		myintro.setBold(true);
 		viewItemList.add(myintro);
 			
 		//Get the content info from the parser.  This makes up all items except the intro item.
