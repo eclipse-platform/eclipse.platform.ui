@@ -370,6 +370,11 @@ void createTable(Composite parent) {
 public void dispose() {
 	super.dispose();
 	getSite().getPage().removePartListener(partListener);
+	if (focusSelectionProvider != null) {
+		focusSelectionProvider.removeSelectionChangedListener(focusSelectionChangedListener);
+		focusSelectionProvider = null;
+	}
+	focusPart = null;	
 	if (editorActionHandler != null) {
 		editorActionHandler.dispose();
 		editorActionHandler = null;
