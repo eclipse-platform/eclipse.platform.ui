@@ -137,7 +137,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, the
+            This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, <samp>org.eclipse.ui.IActionFilter</samp>.
          </documentation>
       </annotation>
       <complexType>
