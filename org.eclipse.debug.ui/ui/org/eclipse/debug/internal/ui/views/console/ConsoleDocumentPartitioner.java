@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -110,6 +111,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		public void connect() {
 			fStreamMonitor.addListener(this);
 			String contents= fStreamMonitor.getContents();
+			if (fStreamMonitor instanceof IFlushableStreamMonitor) {
+				// flush the underlying buffer and do not duplicate storage
+				IFlushableStreamMonitor flushableStreamMonitor = (IFlushableStreamMonitor)fStreamMonitor;
+				flushableStreamMonitor.flushContents();
+				flushableStreamMonitor.setBuffered(false);
+			}
 			if (contents.length() > 0) {
 				streamAppended(contents, fStreamMonitor);
 			}

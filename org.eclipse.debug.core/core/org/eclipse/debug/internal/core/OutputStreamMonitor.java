@@ -1,16 +1,18 @@
 package org.eclipse.debug.internal.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 
 /**
  * Monitors the output stream of a system process and notifies 
@@ -19,7 +21,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
  * The output stream monitor reads system out (or err) via
  * and input stream.
  */
-public class OutputStreamMonitor implements IStreamMonitor {
+public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * The stream being monitored (connected system out or err).
 	 */
@@ -29,6 +31,11 @@ public class OutputStreamMonitor implements IStreamMonitor {
 	 * A collection of listeners
 	 */
 	private ListenerList fListeners= new ListenerList(1);
+	
+	/**
+	 * Whether content is being buffered
+	 */
+	private boolean fBuffered = true;
 
 	/**
 	 * The local copy of the stream contents
@@ -123,7 +130,9 @@ public class OutputStreamMonitor implements IStreamMonitor {
 				read= fStream.read(bytes);
 				if (read > 0) {
 					String text= new String(bytes, 0, read);
-					fContents.append(text);
+					if (isBuffered()) {
+						fContents.append(text);
+					}
 					fireStreamAppended(text);
 				}
 			} catch (IOException ioe) {
@@ -169,4 +178,26 @@ public class OutputStreamMonitor implements IStreamMonitor {
 			fThread.start();
 		}
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
+	 */
+	public void setBuffered(boolean buffer) {
+		fBuffered = buffer;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
+	 */
+	public void flushContents() {
+		fContents.setLength(0);
+	}
+	
+	/**
+	 * @see IFlushableStreamMonitor#isBuffered()
+	 */
+	public boolean isBuffered() {
+		return fBuffered;
+	}
+
 }

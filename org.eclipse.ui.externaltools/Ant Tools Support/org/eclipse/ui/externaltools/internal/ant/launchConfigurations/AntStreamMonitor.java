@@ -8,16 +8,18 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.internal.core.ListenerList;
 
 /**
- *
+ * Stream monitor implementation for an ant build process.
  */
-public class AntStreamMonitor implements IStreamMonitor {
+public class AntStreamMonitor implements IFlushableStreamMonitor {
 
 	private StringBuffer fContents = new StringBuffer();
 	private ListenerList fListeners = new ListenerList(1);
+	private boolean fBuffered = true;
+	
 	/**
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
 	 */
@@ -45,12 +47,35 @@ public class AntStreamMonitor implements IStreamMonitor {
 	 * @param message
 	 */
 	public void append(String message) {
-		fContents.append(message);
+		if (isBuffered()) {
+			fContents.append(message);
+		}
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IStreamListener listener = (IStreamListener)listeners[i];
 			listener.streamAppended(message, this);
 		}
 	}
+	/**
+	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
+	 */
+	public void flushContents() {
+		fContents.setLength(0);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#isBuffered()
+	 */
+	public boolean isBuffered() {
+		return fBuffered;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
+	 */
+	public void setBuffered(boolean buffer) {
+		fBuffered = buffer;
+	}
+
 }
 
