@@ -56,7 +56,7 @@ public class InstallationHistoryAction extends Action {
 	private void openLog() throws CoreException {
 		try {
 			buffRead = new BufferedReader(new FileReader(path.toOSString()));
-			htmlLog = new PrintWriter(new FileOutputStream(getTempFile()));
+			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()))));
 		} catch (FileNotFoundException e) {
 			throwCoreException(e);
 		}
@@ -85,6 +85,7 @@ public class InstallationHistoryAction extends Action {
 
 			htmlLog.println("<html>"); //$NON-NLS-1$
 			htmlLog.println("<head>"); //$NON-NLS-1$
+			htmlLog.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
 			htmlLog.println("<title>Install-Log</title>"); //$NON-NLS-1$
 			addCSS();
 			htmlLog.println("</head>"); //$NON-NLS-1$
