@@ -440,4 +440,11 @@ private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
 	newPart.reparent(refPart.getParent());
 	refPart.add(newPart);
 }
+/**
+ * Method getWorkbooks.
+ * @return ArrayList
+ */
+public ArrayList getWorkbooks() {
+	return editorArea.getEditorWorkbooks();
+}
 }

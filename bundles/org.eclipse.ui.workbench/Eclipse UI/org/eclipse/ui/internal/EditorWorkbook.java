@@ -906,4 +906,14 @@ public void zoomOut() {
 	while (iterator.hasNext())
 		((EditorPane) iterator.next()).setZoomed(false);
 }
+/**
+ * Method getEditors.
+ * @return EditorPane
+ */
+public EditorPane [] getEditors() {
+	int nSize = editors.size();
+	EditorPane [] children = new EditorPane[nSize];
+	editors.toArray(children);
+	return children;
+}
 }

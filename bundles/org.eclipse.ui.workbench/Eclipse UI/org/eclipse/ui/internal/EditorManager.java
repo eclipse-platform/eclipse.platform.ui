@@ -723,6 +723,10 @@ public class EditorManager {
 					result.add(restoreEditor(e,editorMem));
 					page.addPart(e);
 				} else {
+					//if the editor is not visible, ensure it is put in the correct workbook. PR 24091
+					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
+					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
+					
 					// Get the editor descriptor.
 					EditorDescriptor desc = null;
 					if (editorID != null) {
@@ -1032,67 +1036,76 @@ public class EditorManager {
 		// Save the active workbook id
 		editorAreaMem.putString(IWorkbenchConstants.TAG_ACTIVE_WORKBOOK, editorPresentation.getActiveEditorWorkbookID());
 
-		// Save each open editor.
-		IEditorReference editors[] = editorPresentation.getEditors();
-		for (int i = 0; i < editors.length; i++) {
-			IEditorReference editorReference = (IEditorReference)editors[i];
-			final IEditorPart editor = editorReference.getEditor(false);
-			if(editor == null) {
-				Editor e = (Editor)editorReference;
-				if(e.getMemento() != null) {
-					IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
-					editorMem.putMemento(e.getMemento());
-				}
-				continue;
-			}
-			final EditorSite site = (EditorSite)editor.getEditorSite();
-			if(site.getPane() instanceof MultiEditorInnerPane)
-				continue;
-				
-			Platform.run(new SafeRunnable() {
-				public void run() {
-					// Get the input.
-					IEditorInput input = editor.getEditorInput();
-					IPersistableElement persistable = input.getPersistable();
-					if (persistable == null)
-						return;
-
-					// Save editor.
-					IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
-					editorMem.putString(IWorkbenchConstants.TAG_TITLE,editor.getTitle());
-					editorMem.putString(IWorkbenchConstants.TAG_NAME,input.getName());
-					editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
-					editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
-
-					if(!site.getReuseEditor())
-						editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true");
-
-					EditorPane editorPane = (EditorPane) ((EditorSite) editor.getEditorSite()).getPane();
-					editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK, editorPane.getWorkbook().getID());
-
-					if (editor == page.getActivePart())
-						editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART, "true"); //$NON-NLS-1$
-
-					if (editorPane == editorPane.getWorkbook().getVisibleEditor())
-						editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
-						
-					if (input instanceof IFileEditorInput) {
-						IFile file = ((IFileEditorInput)input).getFile();
-						editorMem.putString(IWorkbenchConstants.TAG_PATH,file.getFullPath().toString());
-					}
+		// Get each workbook
+		ArrayList workbooks = editorPresentation.getWorkbooks();
+		
+		for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
+			EditorWorkbook workbook = (EditorWorkbook) iter.next();
 			
-					// Save input.
-					IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
-					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-					persistable.saveState(inputMem);
+			// Use the list of editors found in EditorWorkbook; fix for 24091
+			EditorPane editorPanes[] = workbook.getEditors();
+			
+			for (int i = 0; i < editorPanes.length; i++) {
+				// Save each open editor.
+				IEditorReference editorReference = editorPanes[i].getEditorReference();
+				final IEditorPart editor = editorReference.getEditor(false);
+				if(editor == null) {
+					Editor e = (Editor)editorReference;
+					if(e.getMemento() != null) {
+						IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
+						editorMem.putMemento(e.getMemento());
+					}
+					continue;
 				}
-				public void handleException(Throwable e) {
-					result.add(new Status(
-						IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-						WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}),
-						e));
-				}
-			});
+				final EditorSite site = (EditorSite)editor.getEditorSite();
+				if(site.getPane() instanceof MultiEditorInnerPane)
+					continue;
+					
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						// Get the input.
+						IEditorInput input = editor.getEditorInput();
+						IPersistableElement persistable = input.getPersistable();
+						if (persistable == null)
+							return;
+	
+						// Save editor.
+						IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
+						editorMem.putString(IWorkbenchConstants.TAG_TITLE,editor.getTitle());
+						editorMem.putString(IWorkbenchConstants.TAG_NAME,input.getName());
+						editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
+						editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
+	
+						if(!site.getReuseEditor())
+							editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true");
+	
+						EditorPane editorPane = (EditorPane) ((EditorSite) editor.getEditorSite()).getPane();
+						editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK, editorPane.getWorkbook().getID());
+	
+						if (editor == page.getActivePart())
+							editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART, "true"); //$NON-NLS-1$
+	
+						if (editorPane == editorPane.getWorkbook().getVisibleEditor())
+							editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
+							
+						if (input instanceof IFileEditorInput) {
+							IFile file = ((IFileEditorInput)input).getFile();
+							editorMem.putString(IWorkbenchConstants.TAG_PATH,file.getFullPath().toString());
+						}
+				
+						// Save input.
+						IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
+						inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+						persistable.saveState(inputMem);
+					}
+					public void handleException(Throwable e) {
+						result.add(new Status(
+							IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+							WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}),
+							e));
+					}
+				});
+			}
 		}
 		return result;
 	}
