@@ -43,6 +43,8 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	private Action synchronizeAction;
 	private IWorkbenchWindow window;
 	private IAction actionProxy;
+	private HandlerSubmission syncAll;
+	private HandlerSubmission syncLatest;
 
 	class RefreshParticipantAction extends Action {
 		private ISynchronizeParticipantReference participant;
@@ -72,14 +74,14 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		
 		// hook up actions to the commands
 		IHandler handler = new ActionHandler(synchronizeAction);
-        HandlerSubmission handlerSubmission = new HandlerSubmission(null,
+        syncAll = new HandlerSubmission(null,
                 null, null, "org.eclipse.team.ui.synchronizeAll", handler, Priority.MEDIUM);	 //$NON-NLS-1$
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(syncAll);
 				
 		handler = new ActionHandler(this);
-        handlerSubmission = new HandlerSubmission(null,
+        syncLatest = new HandlerSubmission(null,
                 null, null, "org.eclipse.team.ui.synchronizeLast", handler, Priority.MEDIUM);	 //$NON-NLS-1$
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(syncLatest);
 		
 		setMenuCreator(this);
 		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
@@ -94,6 +96,10 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			fMenu.dispose();
 		}
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
+		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncAll);
+		syncAll.getHandler().dispose();
+		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncLatest);
+		syncLatest.getHandler().dispose();
 	}
 
 	/*
