@@ -126,7 +126,11 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	public Point getLocationAtOffset(int offset) {
 //		return fText.getCaretLocation();
 
-		// FIXME: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50256
+		/*
+		 * 
+		 * FIXME: All code below is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50256
+		 * 		  It can be replaced by above return statement.
+		 */
 		String comboString= fText.getText();
 		GC gc = new GC(fText);
 		gc.setFont(fText.getFont());
