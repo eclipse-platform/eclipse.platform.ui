@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 public interface IHelpContextIds {
 	public static final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
-	
+
 	// Dialogs
 	public static final String TAG_CONFIGURATION_OVERVIEW = PREFIX + "tag_configuration_overview"; //$NON-NLS-1$
 	public static final String TAG_CONFIGURATION_REFRESHLIST = PREFIX + "tag_configuration_refreshlist"; //$NON-NLS-1$
@@ -21,19 +21,19 @@ public interface IHelpContextIds {
 	public static final String RELEASE_COMMENT_DIALOG = PREFIX + "release_comment_dialog_context"; //$NON-NLS-1$
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
 
-	// Different uses of the TagSelectionDialog (not done in xml)
+	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
 	public static final String COMPARE_TAG_SELECTION_DIALOG = PREFIX + "compare_tag_selection_dialog_context"; //$NON-NLS-1$
 	public static final String TAG_REMOTE_WITH_EXISTING_DIALOG = PREFIX + "tag_remote_with_existing_dialog_context"; //$NON-NLS-1$
 	public static final String SHARE_WITH_EXISTING_TAG_SELETION_DIALOG = PREFIX + "share_with_existing_tag_selection_dialog_context"; //$NON-NLS-1$
 
-	// Different uses of the TagAsVersionDialog (not done in xml)
+	// Different uses of the TagAsVersionDialog
 	public static final String TAG_AS_VERSION_DIALOG = PREFIX + "tag_as_version_dialog_context"; //$NON-NLS-1$
-	
+
 	// Different uses of InputDialog from actions (not done)
 	public static final String DEFINE_BRANCH_DIALOG = PREFIX + "define_branch_dialog_context"; //$NON-NLS-1$
 	public static final String DEFINE_VERSION_DIALOG = PREFIX + "define_version_dialog_context"; //$NON-NLS-1$
-	
+
 	// Wizards (no one seems to add wizard help, only wizard page help)
 	// (not done)
 	public static final String SHARING_WIZARD = PREFIX + "sharing_wizard_context"; //$NON-NLS-1$
@@ -41,7 +41,7 @@ public interface IHelpContextIds {
 	public static final String NEW_LOCATION_WIZARD = PREFIX + "new_location_wizard_context"; //$NON-NLS-1$
 	public static final String PATCH_WIZARD = PREFIX + "patch_wizard_context"; //$NON-NLS-1$
 
-	// Wizard Pages (not done in xml)
+	// Wizard Pages
 	public static final String SHARING_AUTOCONNECT_PAGE = PREFIX + "sharing_autoconnect_page_context"; //$NON-NLS-1$
 	public static final String SHARING_SELECT_REPOSITORY_PAGE = PREFIX + "sharing_select_repository_page_context"; //$NON-NLS-1$
 	public static final String SHARING_NEW_REPOSITORY_PAGE = PREFIX + "sharing_new_repository_page_context"; //$NON-NLS-1$
@@ -53,7 +53,7 @@ public interface IHelpContextIds {
 	public static final String KEYWORD_SUBSTITUTION_SUMMARY_PAGE = PREFIX + "keyword_substituton_summary_page_context"; //$NON-NLS-1$
 	public static final String KEYWORD_SUBSTITUTION_SHARED_PAGE = PREFIX + "keyword_substituton_shared_page_context"; //$NON-NLS-1$
 	public static final String KEYWORD_SUBSTITUTION_CHANGED_PAGE = PREFIX + "keyword_substituton_changed_page_context"; //$NON-NLS-1$
-	
+
 	// Preference Pages
 	public static final String PREF_REPOSITORIES_ARE_BINARY = PREFIX + "repositories_are_binary_pref"; //$NON-NLS-1$
 	public static final String PREF_PRUNE = PREFIX + "prune_empty_directories_pref"; //$NON-NLS-1$
@@ -64,19 +64,19 @@ public interface IHelpContextIds {
 	public static final String PREF_CONSIDER_CONTENT = PREFIX + "consider_content_pref"; //$NON-NLS-1$
 	public static final String PREF_MARKERS_ENABLED = PREFIX + "markers_enabled_pref"; //$NON-NLS-1$
 	public static final String PREF_REPLACE_DELETE_UNMANAGED = PREFIX + "replace_deletion_of_unmanaged_pref"; //$NON-NLS-1$
-	
+
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
 	public static final String REPOSITORIES_VIEW = PREFIX + "repositories_view_context"; //$NON-NLS-1$
 	public static final String RESOURCE_HISTORY_VIEW = PREFIX + "resource_history_view_context"; //$NON-NLS-1$
 	public static final String COMPARE_REVISIONS_VIEW = PREFIX + "compare_revision_view_context"; //$NON-NLS-1$
-	
+
 	// Viewers
 	public static final String CATCHUP_RELEASE_VIEWER = PREFIX + "catchup_release_viewer_context"; //$NON-NLS-1$
-	
+
 	// Add to .cvsignor dialog
 	public static final String ADD_TO_CVSIGNORE = PREFIX + "add_to_cvsignore_context"; //$NON-NLS-1$
-	
+
 	// Actions
 	public static final String GET_FILE_REVISION_ACTION = PREFIX + "get_file_revision_action_context"; //$NON-NLS-1$
 	public static final String GET_FILE_CONTENTS_ACTION = PREFIX + "get_file_contents_action_context"; //$NON-NLS-1$
@@ -103,6 +103,6 @@ public interface IHelpContextIds {
 	public static final String SYNC_ADD_ACTION = PREFIX + "sync_add_action_context"; //$NON-NLS-1$
 	public static final String SYNC_IGNORE_ACTION = PREFIX + "sync_ignore_action_context"; //$NON-NLS-1$
 	public static final String MERGE_UPDATE_ACTION = PREFIX + "merge_update_action_context"; //$NON-NLS-1$
-	public static final String MERGE_FORCED_UPDATE_ACTION = PREFIX + "merge_forced update_action_context"; //$NON-NLS-1$
+	public static final String MERGE_FORCED_UPDATE_ACTION = PREFIX + "merge_forced_update_action_context"; //$NON-NLS-1$
 	public static final String MERGE_UPDATE_WITH_JOIN_ACTION = PREFIX + "merge_update_with_joinaction_context"; //$NON-NLS-1$
 }

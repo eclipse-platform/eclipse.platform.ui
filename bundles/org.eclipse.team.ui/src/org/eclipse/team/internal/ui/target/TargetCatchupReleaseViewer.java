@@ -27,7 +27,7 @@ public class TargetCatchupReleaseViewer extends CatchupReleaseViewer {
 		super(parent, input);
 		initializeActions(input);
 		// set F1 help
-		WorkbenchHelp.setHelp(this.getControl(), IHelpContextIds.CATCHUP_RELEASE_VIEWER);
+		WorkbenchHelp.setHelp(this.getControl(), IHelpContextIds.TARGET_CATCHUP_RELEASE_VIEWER);
 	}
 	
 	/**

@@ -50,7 +50,7 @@
  	<!-- TargetCatchupReleaseViewer			-->
  	<!-- ********************************** -->
 	
-	<context id="catchup_release_viewer_context">
+	<context id="target_catchup_release_viewer_context">
    		<description>Bring the local project up-to-date with the remote one
 		</description>
    	</context>
@@ -77,5 +77,44 @@
       <description>This view allows you to manipulate the files on the remote server.
       </description>
    	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- SiteExplorerViewActions		    -->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="add_site_action_context">
+      <description>Configure a new site to use for the Target provider
+      </description>
+   	</context>
+   	
+   	<context  id="new_folder_action_context">
+      <description>Create a new folder on the remote server
+      </description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- SyncViewActions				    -->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="refresh_action_context">
+      <description>Refresh the view
+      </description>
+   	</context>
+   	
+   	<context  id="expandall_action_context">
+      <description>Expand all branches
+      </description>
+   	</context>
+   	
+   	<context  id="remove_action_context">
+      <description>Remove this
+      </description>
+   	</context>
+   	
+   	<context  id="navigator_show_action_context">
+      <description>Remove from the navigator
+      </description>
+   	</context>
+   	
    	
 </contexts>

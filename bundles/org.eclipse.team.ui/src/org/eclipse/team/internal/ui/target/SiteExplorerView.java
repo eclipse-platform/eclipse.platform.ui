@@ -384,6 +384,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 			}
 		};
 		addSiteAction.setToolTipText(Policy.bind("SiteExplorerView.addSiteActionTooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(addSiteAction, IHelpContextIds.ADD_SITE_ACTION);
 		
 		newFolderAction = new Action(Policy.bind("SiteExplorerView.newFolderAction"), WorkbenchImages.getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER)) { //$NON-NLS-1$
 			public void run() {
@@ -423,6 +424,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		 				getSelectedRemoteFolder((IStructuredSelection)folderTree.getSelection()).length == 1;
 			}				
 		};
+		WorkbenchHelp.setHelp(newFolderAction, IHelpContextIds.NEW_FOLDER_ACTION);
 
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager tbm = bars.getToolBarManager();

@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
@@ -61,6 +62,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
@@ -335,6 +337,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		
 		// Expand action
 		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(expandAll, IHelpContextIds.EXPANDALL_ACTION);
 		
 		// Toggle granularity
 		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
@@ -349,6 +352,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		toggleGranularity.setChecked(compareFileContents);
 		
 		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(removeFromTree, IHelpContextIds.REMOVE_ACTION);
 		
 		copyAllRightToLeft = new Action(Policy.bind("CatchupReleaseViewer.copyAllRightToLeft"), null) { //$NON-NLS-1$
 			public void run() {
@@ -399,6 +403,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		// Show in navigator
 		if (diffModel.getViewSite() != null) {
 			showInNavigator = new ShowInNavigatorAction(diffModel.getViewSite(), Policy.bind("CatchupReleaseViewer.showInNavigator")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(showInNavigator, IHelpContextIds.NAVIGATOR_SHOW_ACTION);
 			addSelectionChangedListener(showInNavigator);
 		}
 		

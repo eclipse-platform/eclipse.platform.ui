@@ -415,5 +415,45 @@
       <description>Commit outgoing changes to the respository
       </description>
    	</context>
-
+   	
+   	<context  id="sync_forced_commit_action_context">
+      <description>Override repository with local file
+      </description>
+   	</context>
+	
+	<context  id="sync_update_action_context">
+      <description>Update local with remote
+      </description>
+   	</context>
+	
+	<context  id="sync_forced_update_action_context">
+      <description>Override local file with remote
+      </description>
+   	</context>
+	
+	<context  id="sync_add_action_context">
+      <description>Add file to repository
+      </description>
+   	</context>
+	
+	<context  id="sync_ignore_action_context">
+      <description>Ignore this file
+      </description>
+   	</context>
+	
+	<context  id="merge_update_action_context">
+      <description>Merge and update
+      </description>
+   	</context>
+	
+	<context  id="merge_forced_update_action_context">
+      <description>Perform a forced merge
+      </description>
+   	</context>
+	
+	<context  id="merge_update_with_joinaction_context">
+      <description>Perform a forced merge performing an auto-merge.
+      </description>
+   	</context>
+	
 </contexts>
