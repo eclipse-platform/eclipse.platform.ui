@@ -9,41 +9,20 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.externaltools.internal.core.ExternalTool;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsBuilder;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
  * Property page to add tool scripts in between builders.
@@ -410,8 +389,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Update the table item with the given build command
 	 */
 	private void updateCommandItem(TableItem item, ICommand command) {
-		String builderName = command.getBuilderName();
-		if (builderName.equals(ExternalToolsBuilder.ID)) {
+		String builderID = command.getBuilderName();
+		if (builderID.equals(ExternalToolsBuilder.ID)) {
 			ExternalTool script = ExternalTool.fromArgumentMap(command.getArguments());
 			item.setText(script.getName());
 			if (script.TOOL_TYPE_ANT.equals(script.getType())) {
@@ -421,6 +400,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 				item.setImage(image);
 			}
 		} else {
+			// Get the human-readable name of the builder
+			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, 	ResourcesPlugin.PT_BUILDERS, builderID);
+			String builderName = extension.getLabel();
 			item.setText(builderName);
 			item.setImage(builderImage);
 		}
