@@ -21,6 +21,10 @@ public final class DefaultDescription implements IContentDescription {
 		this.contentType = contentType;
 	}
 
+	public String getCharset() {
+		return contentType.getDefaultCharset();
+	}
+	
 	public IContentType getContentType() {
 		return contentType;
 	}
@@ -42,6 +46,7 @@ public final class DefaultDescription implements IContentDescription {
 	public void setProperty(QualifiedName key, Object value) {
 		throw new IllegalStateException();
 	}
+
 	public String toString() {
 		return "{default} : " + contentType; //$NON-NLS-1$ //$NON-NLS-2$
 	}

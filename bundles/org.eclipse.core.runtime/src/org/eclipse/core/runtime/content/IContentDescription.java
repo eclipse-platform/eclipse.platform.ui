@@ -80,6 +80,20 @@ public interface IContentDescription {
 	 * <code>false</code> otherwise
 	 */
 	public boolean isRequested(QualifiedName key);
+	
+	/**
+	 * Returns the charset name to be used when reading the contents
+	 * described by this object. 
+	 * <p>
+	 * If a Unicode byte order mark has been found (the 
+	 * <code>BYTE_ORDER_MARK</code> property has been set), 
+	 * a corresponding charset name will be returned (e.g. "UTF-8", 
+	 * "UTF-16"). Otherwise, the value of the <code>CHARSET</code> 
+	 * property will be returned.   
+	 * </p>
+	 * @return a charset name, or <code>null</code>
+	 */
+	public String getCharset();
 
 	/**
 	 * Returns the content type detected. Returns <code>null</code> if the 

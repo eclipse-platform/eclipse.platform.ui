@@ -15,8 +15,11 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 public final class ContentDescription implements IContentDescription {
-	private static final byte ALL_OPTIONS = 0x01;
-	private static final byte IMMUTABLE = 0x02;
+
+	private static final String CHARSET_UTF_16 = "UTF-16"; //$NON-NLS-1$
+	private static final String CHARSET_UTF_8 = "UTF-8"; //$NON-NLS-1$
+	private static final byte FLAG_ALL_OPTIONS = 0x01;
+	private static final byte FLAG_IMMUTABLE = 0x02;
 	private IContentType contentType;
 	private byte flags;
 	private Object keys;
@@ -24,7 +27,7 @@ public final class ContentDescription implements IContentDescription {
 
 	public ContentDescription(QualifiedName[] requested) {
 		if (requested == IContentDescription.ALL) {
-			flags |= ALL_OPTIONS;
+			flags |= FLAG_ALL_OPTIONS;
 			return;
 		}
 		if (requested.length > 1) {
@@ -36,10 +39,23 @@ public final class ContentDescription implements IContentDescription {
 	}
 
 	private void assertMutable() {
-		if ((flags & IMMUTABLE) != 0)
+		if ((flags & FLAG_IMMUTABLE) != 0)
 			throw new IllegalStateException("Content description is immutable"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @see IContentDescription
+	 */
+	public String getCharset() {
+		byte[] bom = (byte[]) getProperty(BYTE_ORDER_MARK);
+		if (bom == BOM_UTF_8)
+			return CHARSET_UTF_8; //$NON-NLS-1$
+		else if (bom == BOM_UTF_16BE || bom == BOM_UTF_16LE)
+			// UTF-16 will properly recognize the BOM
+			return CHARSET_UTF_16; //$NON-NLS-1$
+		return (String) getProperty(CHARSET);
+	}	
+	
 	/**
 	 * @see IContentDescription
 	 */
@@ -70,7 +86,7 @@ public final class ContentDescription implements IContentDescription {
 	 */
 	public boolean isRequested(QualifiedName propertyKey) {
 		// all options requested
-		if ((flags & ALL_OPTIONS) != 0)
+		if ((flags & FLAG_ALL_OPTIONS) != 0)
 			return true;
 		// no options requested
 		if (keys == null)
@@ -100,7 +116,7 @@ public final class ContentDescription implements IContentDescription {
 
 	public void markImmutable() {
 		assertMutable();
-		flags |= IMMUTABLE;
+		flags |= FLAG_IMMUTABLE;
 	}
 
 	void setContentType(IContentType contentType) {
@@ -114,7 +130,7 @@ public final class ContentDescription implements IContentDescription {
 	public void setProperty(QualifiedName newKey, Object newValue) {
 		assertMutable();
 		if (keys == null) {
-			if ((flags & ALL_OPTIONS) != 0) {
+			if ((flags & FLAG_ALL_OPTIONS) != 0) {
 				keys = newKey;
 				values = newValue;
 			}
@@ -125,7 +141,7 @@ public final class ContentDescription implements IContentDescription {
 			return;
 		}
 		if (keys instanceof QualifiedName) {
-			if ((flags & ALL_OPTIONS) != 0) {
+			if ((flags & FLAG_ALL_OPTIONS) != 0) {
 				keys = new QualifiedName[] {(QualifiedName) keys, newKey};
 				values = new Object[] {values, newValue};
 			}
@@ -137,7 +153,7 @@ public final class ContentDescription implements IContentDescription {
 				((Object[]) values)[i] = newValue;
 				return;
 			}
-		if ((flags & ALL_OPTIONS) == 0)
+		if ((flags & FLAG_ALL_OPTIONS) == 0)
 			return;
 		// need to resize arrays 		
 		int currentSize = tmpKeys.length;
