@@ -120,22 +120,13 @@
          id="org.eclipse.debug.ui.debugActionSet">
       <menu
             label="%RunMenu.label"
-            id="org.eclipse.ui.run">
-         <separator
-               name="stepGroup">
-         </separator>
-			<groupMarker
-                  name="stepIntoGroup">
-            </groupMarker>
-            <groupMarker
-                  name="stepOverGroup">
-            </groupMarker>
-            <groupMarker
-                  name="stepReturnGroup">
-            </groupMarker>
-            <groupMarker
-                  name="emptyStepGroup">
-            </groupMarker>
+            id="org.eclipse.ui.run"
+			path="additions">
+        <separator name="stepGroup"/>
+		<groupMarker name="stepIntoGroup"/>
+		<groupMarker name="stepOverGroup"/>
+        <groupMarker name="stepReturnGroup"/>
+        <groupMarker name="emptyStepGroup"/>
       </menu>
         <action
             label="%StepReturnAction.label"
@@ -206,20 +197,13 @@
          visible="false"
          id="org.eclipse.debug.ui.launchActionSet">
       <menu
-            label="%RunMenu.label"
-            id="org.eclipse.ui.run">
-         <separator
-               name="relaunchGroup">
-         </separator>
-         <separator
-               name="debugGroup">
-         </separator>
-         <separator
-               name="runGroup">
-         </separator>
-         <separator
-               name="emptyLaunchGroup">
-         </separator>
+           label="%RunMenu.label"
+           id="org.eclipse.ui.run"
+           path="additions">
+         <separator name="relaunchGroup"/>
+         <separator name="runGroup"/>
+         <separator name="debugGroup"/>
+         <separator name="emptyLaunchGroup"/>
       </menu>
       <action
             label="%OpenRunConfigurations.label"
@@ -241,6 +225,16 @@
             menubarPath="org.eclipse.ui.run/runGroup"
             helpContextId="run_history_menu_action_context"
             id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
+      </action>
+       <action
+            label="%DebugLastAction.label"
+            icon="icons/full/elcl16/debuglast_co.gif"
+            disabledIcon="icons/full/dlcl16/debuglast_co.gif"
+            hoverIcon="icons/full/clcl16/debuglast_co.gif"
+            class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+    		menubarPath="org.eclipse.ui.run/relaunchGroup"
+    		helpContextId="debug_last_action_context"
+            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
       </action>
       <action
             label="%RunLastAction.label"
@@ -283,16 +277,6 @@
     		menubarPath="org.eclipse.ui.run/debugGroup"
     		helpContextId="debug_history_menu_action_context"
             id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
-      </action>
-      <action
-            label="%DebugLastAction.label"
-            icon="icons/full/elcl16/debuglast_co.gif"
-            disabledIcon="icons/full/dlcl16/debuglast_co.gif"
-            hoverIcon="icons/full/clcl16/debuglast_co.gif"
-            class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
-    		menubarPath="org.eclipse.ui.run/relaunchGroup"
-    		helpContextId="debug_last_action_context"
-            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
       </action>
       <action
       		label="%DebugDropDownAction.label"
