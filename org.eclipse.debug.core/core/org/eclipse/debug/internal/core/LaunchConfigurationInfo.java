@@ -288,11 +288,12 @@ public class LaunchConfigurationInfo {
 	 * Returns the content of this info as XML
 	 * 
 	 * @return the content of this info as XML
+	 * @throws CoreException if a attribute has been set with a null key
 	 * @throws IOException if an exception occurs creating the XML
 	 * @throws ParserConfigurationException if an exception occurs creating the XML
 	 * @throws TransformerException if an exception occurs creating the XML
 	 */
-	protected String getAsXML() throws IOException, ParserConfigurationException, TransformerException {
+	protected String getAsXML() throws CoreException, IOException, ParserConfigurationException, TransformerException {
 
 		Document doc = LaunchManager.getDocument();
 		Element configRootElement = doc.createElement("launchConfiguration"); //$NON-NLS-1$
@@ -303,6 +304,14 @@ public class LaunchConfigurationInfo {
 		Iterator keys = getAttributeTable().keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
+			if (key == null) {
+				throw new DebugException(
+					new Status(
+						IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationInfo.36"), null //$NON-NLS-1$
+					)
+				);
+			}
 			Object value = getAttributeTable().get(key);
 			if (value == null) {
 				continue;
