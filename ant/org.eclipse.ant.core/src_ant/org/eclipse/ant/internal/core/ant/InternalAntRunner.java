@@ -269,6 +269,8 @@ public void run() {
         error = e;
         throw e;
 	} finally {
+		if (error != null)
+			error.printStackTrace();
         System.setErr(originalErr);
         System.setOut(originalOut);
 		fireBuildFinished(project, error);
