@@ -15,6 +15,7 @@ import org.eclipse.core.internal.events.ResourceDeltaFactory;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class SavedState implements ISavedState {
 	ElementTree oldTree;
@@ -60,8 +61,10 @@ public class SavedState implements ISavedState {
 
 	public void processResourceChangeEvents(IResourceChangeListener listener) {
 		try {
+			//use the notify rule to prevent concurrent resource change notifications
+			final ISchedulingRule rule = workspace.getWorkManager().getNotifyRule();
 			try {
-				workspace.prepareOperation(workspace.getRoot(), null);
+				workspace.prepareOperation(rule, null);
 				if (oldTree == null || newTree == null)
 					return;
 				workspace.beginOperation(true);
@@ -69,7 +72,7 @@ public class SavedState implements ISavedState {
 				forgetTrees(); // free trees to prevent memory leak
 				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_AUTO_BUILD, delta);
 			} finally {
-				workspace.endOperation(workspace.getRoot(), false, null);
+				workspace.endOperation(rule, false, null);
 			}
 		} catch (CoreException e) {
 			// this is unlikelly to happen, so, just log it

@@ -44,7 +44,7 @@ class WorkManager implements IManager {
 		}
 	}
 
-	protected NotifyRule notifyRule = new NotifyRule();
+	private NotifyRule notifyRule = new NotifyRule();
 	/**
 	 * Indicates that the last checkIn failed, either due to cancelation or due to the
 	 * workspace tree being locked for modifications (during resource change events).
@@ -66,7 +66,24 @@ class WorkManager implements IManager {
 		this.jobManager = Platform.getJobManager();
 		this.lock = jobManager.newLock();
 	}
-
+	
+	/**
+	 * Begins a resource change notification.
+	 * @param currentRule The rule for the operation that is ending.
+	 */
+	public void beginNotify(final ISchedulingRule currentRule) {
+		//if we don't currently have a rule, we must released the ws lock
+		// before beginRule to prevent deadlock
+		int depth = 0;
+		if (currentRule == null)
+			depth = beginUnprotected();
+		try {
+			jobManager.beginRule(notifyRule, null);
+		} finally {
+			if (currentRule == null)
+				endUnprotected(depth);
+		}
+	}
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
 	 * Must be followed eventually by endUnprotected. Any
@@ -150,6 +167,14 @@ class WorkManager implements IManager {
 	}
 
 	/**
+	 * End of a resource change notification.
+	 *
+	 */
+	public void endNotify() {
+		jobManager.endRule(notifyRule);
+	}
+	
+	/**
 	 * Re-acquires the workspace lock that was temporarily released during an
 	 * operation, and restores the old lock depth.
 	 * @see #beginUnprotected()
@@ -164,6 +189,13 @@ class WorkManager implements IManager {
 	 */
 	ILock getLock() {
 		return lock;
+	}
+	
+	/**
+	 * Returns the scheduling rule used during resource change notifications.
+	 */
+	public ISchedulingRule getNotifyRule() {
+		return notifyRule;
 	}
 
 	/**

@@ -197,12 +197,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public void checkpoint(boolean build) {
 		try {
+			final ISchedulingRule rule = getWorkManager().getNotifyRule();
 			try {
-				prepareOperation(getWorkManager().notifyRule, null);
+				prepareOperation(rule, null);
 				beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 			} finally {
-				endOperation(getWorkManager().notifyRule, build, null);
+				endOperation(rule, build, null);
 			}
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
@@ -864,6 +865,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// do the following in a try/finally to ensure that the operation tree is nulled at the end
 			// as we are completing a top level operation.
 			try {
+				workManager.beginNotify(rule);
 				notificationManager.beginNotify();
 				// check for a programming error on using beginOperation/endOperation
 				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
@@ -881,6 +883,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 				saveManager.snapshotIfNeeded(hasTreeChanges);
 			} finally {
+				workManager.endNotify();
 				// make sure the tree is immutable if we are ending a top-level operation.
 				if (depthOne) {
 					tree.immutable();
