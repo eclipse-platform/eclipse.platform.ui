@@ -457,8 +457,18 @@ public class LayoutTreeNode extends LayoutTree {
     }
     
     protected int doGetSizeFlags(boolean width) {
-        return (children[0].isVisible() ? children[0].getSizeFlags(width) : 0)
-        	| (children[1].isVisible() ? children[1].getSizeFlags(width) : 0); 
+        if (!children[0].isVisible()) {
+            return children[1].getSizeFlags(width);
+        }
+        
+        if (!children[1].isVisible()) {
+            return children[0].getSizeFlags(width);
+        }
+        
+        int leftFlags = children[0].getSizeFlags(width);
+        int rightFlags = children[1].getSizeFlags(width);
+        
+        return ((leftFlags | rightFlags) & ~SWT.MAX) | (leftFlags & rightFlags & SWT.MAX);
     }
 	
     /**
