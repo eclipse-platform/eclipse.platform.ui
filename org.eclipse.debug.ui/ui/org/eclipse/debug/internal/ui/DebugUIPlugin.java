@@ -848,7 +848,9 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * @see ILaunchListener
 	 */
 	public void launchRegistered(final ILaunch launch) {
-		fRecentLaunch = launch;
+		if (DebugUIPlugin.getDefault().isVisible(launch.getLauncher())) {
+			fRecentLaunch = launch;		
+		}
 		updateHistories(launch);
 		switchToDebugPerspectiveIfPreferred(launch);
 		
