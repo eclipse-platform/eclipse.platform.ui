@@ -51,6 +51,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		super();
 		this.pluginID = pluginID;
 		getPluginPreferences().addPreferenceChangeListener(this);
+		// TODO see bug 59975.
+		// access the /default/<pluginID> node which primes it with the default values
+		getDefaultPreferences();
 		pluginRoot.addNodeChangeListener(this);
 	}
 
