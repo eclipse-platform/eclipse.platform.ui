@@ -76,6 +76,7 @@ function getFrameInput(nav)
 			tocUrl="toc.jsp?toc="+args["toc"];
 			if(args["topic"])
 				return tocUrl+"&topic="+args["topic"];
+			return tocUrl;
 		}
 		else
 			return "tocs.jsp";
