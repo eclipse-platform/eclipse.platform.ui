@@ -144,4 +144,14 @@ public class BreakpointContainer extends PlatformObject    {
     public int hashCode() {
         return getCategory().hashCode();
     }
+    
+    /**
+     * Returns whether this container contains the given breakpoint.
+     * 
+     * @param breakpoint
+     * @return whether this container contains the given breakpoint
+     */
+    public boolean contains(IBreakpoint breakpoint) {
+        return fBreakpoints.contains(breakpoint);
+    }
 }

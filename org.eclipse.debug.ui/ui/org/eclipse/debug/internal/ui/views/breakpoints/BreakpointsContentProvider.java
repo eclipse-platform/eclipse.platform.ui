@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -121,7 +122,27 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 			}
         }
         if (!fDisposed) {
+            fViewer.getControl().setRedraw(false);
+            // maintain expandsion based on visible breakpoints
+            IBreakpoint[] breakpoints = null;
+            if (fOrganizers != null) {
+                breakpoints = ((BreakpointsViewer)fViewer).getVisibleBreakpoints();
+            }
             reorganize();
+            if (breakpoints != null) {
+                // restore expansion
+                for (int i = 0; i < fElements.length; i++) {
+                    BreakpointContainer container = (BreakpointContainer) fElements[i];
+                    for (int j = 0; j < breakpoints.length; j++) {
+                        if (container.contains(breakpoints[j])) {
+                            fViewer.expandToLevel(container, AbstractTreeViewer.ALL_LEVELS);
+                            break;
+                        }
+                    }
+                    
+                }
+            }
+            fViewer.getControl().setRedraw(true);
         }
     }
     
@@ -173,7 +194,6 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         }
         fViewer.getControl().setRedraw(false);
         fViewer.refresh();
-        fViewer.expandAll();
         fView.initializeCheckedState();
         fViewer.getControl().setRedraw(true);
     }

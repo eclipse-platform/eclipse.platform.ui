@@ -42,10 +42,12 @@ public class GroupBreakpointsAction extends Action {
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        if (fOrganzier == null) {
-            fView.setBreakpointOrganizers(null);
-        } else {
-            fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
+        if (isChecked()) {
+            if (fOrganzier == null) {
+                fView.setBreakpointOrganizers(null);
+            } else {
+                fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
+            }
         }
     }
     

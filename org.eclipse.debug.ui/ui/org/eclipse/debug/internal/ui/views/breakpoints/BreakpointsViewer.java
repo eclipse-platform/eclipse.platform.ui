@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -29,12 +36,62 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
         super(tree);
     }
     
+    /**
+     * Returns the item assocaited with the given element, or <code>null</code>.
+     * 
+     * @param element element in breakpoints view
+     * @return item assocaited with the given element, or <code>null</code>
+     */
     public Widget searchItem(Object element) {
         return findItem(element);
     }
     
+    /**
+     * Refreshes the given item in the tree.
+     * 
+     * @param item item to refresh
+     */
     public void refreshItem(TreeItem item) {
         updateItem(item, item.getData());
+    }
+    
+    /**
+     * Returns a collection of currently visible breakpoints.
+     * 
+     * @return collection of currently visible breakpoints
+     */
+    public IBreakpoint[] getVisibleBreakpoints() {
+        IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+        Object[] elements= ((ITreeContentProvider)getContentProvider()).getElements(manager);
+        List list = new ArrayList();
+        for (int i = 0; i < elements.length; i++) {
+            TreeItem item = (TreeItem) searchItem(elements[i]);
+            if (item != null) {
+                collectExpandedBreakpoints(item, list);
+            }
+        }
+        return (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+    }
+
+    /**
+     * Adds expanded breakpoints to the list. Traverses children of the given
+     * tree item if any.
+     * 
+     * @param item  
+     * @param list collection of visible breakpoints
+     */
+    private void collectExpandedBreakpoints(TreeItem item, List list) {
+        Object data = item.getData();
+        if (data instanceof IBreakpoint) {
+            list.add(data);
+            return;
+        }
+        if (item.getExpanded()) {
+            TreeItem[] items = item.getItems();
+            for (int i = 0; i < items.length; i++) {
+                collectExpandedBreakpoints(items[i], list);
+            }
+        }
     }
 
 }
