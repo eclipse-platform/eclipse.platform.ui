@@ -203,9 +203,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 					PluginFragmentModel fragment= fragments[j];
 					writer.print('\t');
 					args= new String[] {fragment.getId(), fragment.getVersion(), fragment.getName()};
-					writer.print(SystemSummaryMessages.getFormattedString("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
+					writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
 				}
-				writer.println();
 			}
 		}
 	}	
