@@ -37,7 +37,7 @@ public class AntJRETab extends JavaJRETab {
 		
 		useSeparateVM = new Button((Composite)getControl(), SWT.CHECK);
 		useSeparateVM.setFont(parent.getFont());
-		useSeparateVM.setText("Run &Ant in a separate Java virtual machine");
+		useSeparateVM.setText(AntLaunchConfigurationMessages.getString("AntJRETab.Run_&Ant_in_a_separate_Java_virtual_machine_1")); //$NON-NLS-1$
 		useSeparateVM.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				toggleUseSeparateVM();
@@ -82,8 +82,8 @@ public class AntJRETab extends JavaJRETab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (useSeparateVM.getSelection()) {
 			super.performApply(configuration);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.apache.tools.ant.Main");
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider");
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.apache.tools.ant.Main"); //$NON-NLS-1$
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		} else {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
