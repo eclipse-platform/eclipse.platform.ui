@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,37 @@
 package org.eclipse.jface.text;
 
 /**
- * Interface for objects which can be set into a synchronized mode when needed.
- * For that, the lock object must be set.
+ * Interface for text related objects which may be used in the multi-threaded
+ * context and thus must provide a way to prevent concurrent access and
+ * manipulation.
+ * <p>
+ * In order to reduce the probability of dead locks clients should synchronize
+ * their access to these objects by using the provided lock object rather than
+ * the object itself.
+ * <p>
+ * Managing objects can use the <code>setLockObject</code> method in order to
+ * synchronize whole sets of objects.
  * 
  * @since 3.0
  */
 public interface ISynchronizable {
 
     /**
-     * Sets the lock object for this object. If the lock object is not <code>null</code>
-     * subsequent calls to methods of this object are synchronized on this lock
-     * object.
-     * 
-     * @param lockObject the lock object. May be <code>null</code>.
-     */
+	 * Sets the lock object for this object. If the lock object is not
+	 * <code>null</code> subsequent calls to specified methods of this object
+	 * are synchronized on this lock object. Which methods are synchronized is
+	 * specified by the implementer.
+	 * 
+	 * @param lockObject the lock object. May be <code>null</code>.
+	 */
     void setLockObject(Object lockObject);
 
     /**
-     * Returns the lock object or <code>null</code> if there is none.
-     * 
-     * @return the lock object or <code>null</code>
-     */
+	 * Returns the lock object or <code>null</code> if there is none. Clients
+	 * should use the lock object in order to synchronize concurrent access to
+	 * the implementer.
+	 * 
+	 * @return the lock object or <code>null</code>
+	 */
     Object getLockObject();
 }

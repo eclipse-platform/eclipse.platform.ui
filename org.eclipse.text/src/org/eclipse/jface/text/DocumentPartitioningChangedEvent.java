@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class DocumentPartitioningChangedEvent {
 	
 	/**
 	 * Creates a new document partitioning changed event for the given document.
+	 * Initially this event is empty, i.e. does not describe any change.
 	 * 
 	 * @param document the changed document
 	 */
@@ -51,13 +52,12 @@ public class DocumentPartitioningChangedEvent {
 	 * if the given partitioning did not change.
 	 * 
 	 * @param partitioning the partitioning
-	 * @return the changed regionn of the given partitioning or <code>null</code>
+	 * @return the changed region of the given partitioning or <code>null</code>
 	 */
 	public IRegion getChangedRegion(String partitioning) {
 		return (IRegion) fMap.get(partitioning);
 	}
 
-	
 	/**
 	 * Returns the set of changed partitionings.
 	 * 
@@ -82,18 +82,18 @@ public class DocumentPartitioningChangedEvent {
 	}
 
 	/**
-	 * Returns <code>true</code> if the set of changed partitionings is empty. <code>false</code>
-	 * otherwise.
+	 * Returns <code>true</code> if the set of changed partitionings is empty,
+	 * <code>false</code> otherwise.
 	 * 
-	 * @return <code>true</code> if the set of changed partitionings is empty.
+	 * @return <code>true</code> if the set of changed partitionings is empty
 	 */
 	public boolean isEmpty() {
 		return fMap.isEmpty();
 	}
 	
 	/**
-	 * Returns the coverage of this event. This is the minimal region that contains all
-	 * changed regions of all changed partitionings.
+	 * Returns the coverage of this event. This is the minimal region that
+	 * contains all changed regions of all changed partitionings.
 	 * 
 	 * @return the coverage of this event
 	 */

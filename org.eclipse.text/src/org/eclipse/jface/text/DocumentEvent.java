@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.jface.text;
 
 
 /**
- * Specification of changes applied to documents. 
- * All changes are represented as replace commands, i.e.
- * specifying a document range whose text gets replaced with different text.
- * In addition to this information, the event also contains the changed document.
- *
- * @see IDocument
+ * Specification of changes applied to documents. All changes are represented as
+ * replace commands, i.e. specifying a document range whose text gets replaced
+ * with different text. In addition to this information, the event also contains
+ * the changed document.
+ * 
+ * @see org.eclipse.jface.text.IDocument
  */
 public class DocumentEvent {
 	
@@ -52,7 +52,7 @@ public class DocumentEvent {
 	}
 	
 	/**
-	 * Creates a new uninitialized document event.
+	 * Creates a new, not initialized document event.
 	 */
 	public DocumentEvent() {
 	}
@@ -67,7 +67,7 @@ public class DocumentEvent {
 	}
 	
 	/**
-	 * Returns the offset of the change
+	 * Returns the offset of the change.
 	 * 
 	 * @return the offset of the change
 	 */

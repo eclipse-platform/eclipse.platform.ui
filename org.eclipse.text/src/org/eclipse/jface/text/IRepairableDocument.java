@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -11,20 +11,17 @@ Contributors:
 package org.eclipse.jface.text;
 
 /**
- * Interface implemented by <code>IDocument</code> implementers that offer
- * repair methods on their documents. The following repair methods are
- * provided:
- * <ul>
- * <li>repairing line information</li>
- * </ul>
+ * Tagging interface to be implemented by
+ * {@link org.eclipse.jface.text.IDocument}implementers that offer a line
+ * repair method on the documents.
  * 
+ * @see org.eclipse.jface.text.IDocument
  * @since 3.0
  */
 public interface IRepairableDocument {
 	
 	/**
-	 * Repairs the line information of this document.
+	 * Repairs the line information of the document implementing this interface.
 	 */
 	void repairLineInformation();
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,23 @@ package org.eclipse.jface.text;
  * Slave documents are documents whose contents is defined in terms of a master
  * document. Thus, slave documents usually reflect a projection of the master document.
  * Slave documents are causally connected to the master document. This means, changes
- * of the master document have immediate effect in the slave document and vice versa.<p>
+ * of the master document have immediate effect on the slave document and vice versa.<p>
  * 
- * A slave document manager creates slave documents for given master documents. manages the
- * life cycle of the slave documents and keeps track of the information flow between
+ * A slave document manager creates slave documents for given master documents, manages the
+ * life cycle of the slave documents, and keeps track of the information flow between
  * master and slave documents. The slave document manager defines the construction rules of the
  * slave documents in terms of the master document.<p>
  * 
+* In order to provided backward compatibility for clients of <code>ISlaveDocumentManager</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li> {@link org.eclipse.jface.text.ISlaveDocumentManagerExtension} since version 3.0 extending the protocol
+ *      with an access to all managed slave document for a given master document. </li>
+ * </ul>
+ * 
+ * 
+ * @see org.eclipse.jface.text.IDocument
  * @since 2.1
  */
 public interface ISlaveDocumentManager {
@@ -34,7 +44,7 @@ public interface ISlaveDocumentManager {
 	 * 
 	 * @param master the master document
 	 * @return the newly created slave document
-	 * @see ISlaveDocumentManager#freeSlaveDocument(IDocument)
+	 * @see #freeSlaveDocument(IDocument)
 	 */
 	IDocument createSlaveDocument(IDocument master);
 	
@@ -45,6 +55,7 @@ public interface ISlaveDocumentManager {
 	 * this manager using <code>createSlaveDocument</code>.
 	 * 
 	 * @param slave the slave document to be freed
+	 * @see #createSlaveDocument(IDocument)
 	 */
 	void freeSlaveDocument(IDocument slave);
 	
