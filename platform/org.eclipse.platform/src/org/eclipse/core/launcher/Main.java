@@ -747,24 +747,16 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	protected String[] processCommandLine(String[] args) {
-		// TODO temporarily handle the fact that PDE appends the -showsplash <timeout> onto 
-		// the *end* of the command line.  This interferes with the -vmargs arg.  Process 
-		// -showsplash now and remove it from the end.  This code should be removed soon.
-		int end = args.length;
-		if (args.length > 1 && args[end - 2].equalsIgnoreCase(SHOWSPLASH)) {
-			showSplash = args[end - 1];
-			end -= 2;
-		}
-		String[] arguments = new String[end];
-		System.arraycopy(args, 0, arguments, 0, end);
-		int[] configArgs = new int[arguments.length];
+		if (args.length == 0)
+			return args;
+		int[] configArgs = new int[args.length];
 		configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
 		int configArgIndex = 0;
-		for (int i = 0; i < arguments.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			boolean found = false;
 			// check for args without parameters (i.e., a flag arg)
 			// check if debug should be enabled for the entire platform
-			if (arguments[i].equalsIgnoreCase(DEBUG)) {
+			if (args[i].equalsIgnoreCase(DEBUG)) {
 				debug = true;
 				// passed thru this arg (i.e., do not set found = true)
 				continue;
@@ -772,13 +764,13 @@ public class Main {
 
 			// look for and consume the nosplash directive.  This supercedes any
 			// -showsplash command that might be present.
-			if (arguments[i].equalsIgnoreCase(NOSPLASH)) {
+			if (args[i].equalsIgnoreCase(NOSPLASH)) {
 				splashDown = true;
 				found = true;
 			}
 
 			// check if this is initialization pass
-			if (arguments[i].equalsIgnoreCase(INITIALIZE)) {
+			if (args[i].equalsIgnoreCase(INITIALIZE)) {
 				initialize = true;
 				// passed thru this arg (i.e., do not set found = true)
 				continue;
@@ -788,7 +780,7 @@ public class Main {
 			// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 			// simply enable development mode.  Otherwise, assume that that the following arg is
 			// actually some additional development time class path entries.  This will be processed below.
-			if (arguments[i].equalsIgnoreCase(DEV) && ((i + 1 == arguments.length) || ((i + 1 < arguments.length) && (arguments[i + 1].startsWith("-"))))) { //$NON-NLS-1$
+			if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 				inDevelopmentMode = true;
 				// do not mark the arg as found so it will be passed through
 				continue;
@@ -803,33 +795,33 @@ public class Main {
 			// look for the VM args arg.  We have to do that before looking to see
 			// if the next element is a -arg as the thing following -vmargs may in
 			// fact be another -arg.
-			if (arguments[i].equalsIgnoreCase(VMARGS)) {
+			if (args[i].equalsIgnoreCase(VMARGS)) {
 				// consume the -vmargs arg itself
-				arguments[i] = null;
+				args[i] = null;
 				i++;
-				vmargs = new String[arguments.length - i];
-				for (int j = 0; i < arguments.length; i++) {
-					vmargs[j++] = arguments[i];
-					arguments[i] = null;
+				vmargs = new String[args.length - i];
+				for (int j = 0; i < args.length; i++) {
+					vmargs[j++] = args[i];
+					args[i] = null;
 				}
 				continue;
 			}
 
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-			if (i == arguments.length - 1 || arguments[i + 1].startsWith("-")) //$NON-NLS-1$
+			if (i == args.length - 1 || args[i + 1].startsWith("-")) //$NON-NLS-1$
 				continue;
-			String arg = arguments[++i];
+			String arg = args[++i];
 
 			// look for the development mode and class path entries.  
-			if (arguments[i - 1].equalsIgnoreCase(DEV)) {
+			if (args[i - 1].equalsIgnoreCase(DEV)) {
 				inDevelopmentMode = true;
 				devClassPath = processDevArg(arg);
 				continue;
 			}
 
 			// look for the framework to run
-			if (arguments[i - 1].equalsIgnoreCase(FRAMEWORK)) {
+			if (args[i - 1].equalsIgnoreCase(FRAMEWORK)) {
 				framework = arg;
 				found = true;
 			}
@@ -837,7 +829,7 @@ public class Main {
 			// look for explicitly set install root
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
-			if (arguments[i - 1].equalsIgnoreCase(INSTALL)) {
+			if (args[i - 1].equalsIgnoreCase(INSTALL)) {
 				System.getProperties().put(PROP_INSTALL_AREA, arg);
 				found = true;
 			}
@@ -845,31 +837,31 @@ public class Main {
 			// look for the configuration to use.  
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
-			if (arguments[i - 1].equalsIgnoreCase(CONFIGURATION)) {
+			if (args[i - 1].equalsIgnoreCase(CONFIGURATION)) {
 				System.getProperties().put(PROP_CONFIG_AREA, arg);
 				found = true;
 			}
 
 			// look for the command to use to set exit data in the launcher
-			if (arguments[i - 1].equalsIgnoreCase(EXITDATA)) {
+			if (args[i - 1].equalsIgnoreCase(EXITDATA)) {
 				exitData = arg;
 				found = true;
 			}
 
 			// look for the command to use to show the splash screen
-			if (arguments[i - 1].equalsIgnoreCase(SHOWSPLASH)) {
+			if (args[i - 1].equalsIgnoreCase(SHOWSPLASH)) {
 				showSplash = arg;
 				found = true;
 			}
 
 			// look for the command to use to end the splash screen
-			if (arguments[i - 1].equalsIgnoreCase(ENDSPLASH)) {
+			if (args[i - 1].equalsIgnoreCase(ENDSPLASH)) {
 				endSplash = arg;
 				found = true;
 			}
 
 			// look for the VM location arg
-			if (arguments[i - 1].equalsIgnoreCase(VM)) {
+			if (args[i - 1].equalsIgnoreCase(VM)) {
 				vm = arg;
 				found = true;
 			}
@@ -882,15 +874,15 @@ public class Main {
 		}
 		// remove all the arguments consumed by this argument parsing
 		if (configArgIndex == 0)
-			return arguments;
-		String[] passThruArgs = new String[arguments.length - configArgIndex - (vmargs == null ? 0 : vmargs.length + 1)];
+			return args;
+		String[] passThruArgs = new String[args.length - configArgIndex - (vmargs == null ? 0 : vmargs.length + 1)];
 		configArgIndex = 0;
 		int j = 0;
-		for (int i = 0; i < arguments.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			if (i == configArgs[configArgIndex])
 				configArgIndex++;
-			else if (arguments[i] != null)
-				passThruArgs[j++] = arguments[i];
+			else if (args[i] != null)
+				passThruArgs[j++] = args[i];
 		}
 		return passThruArgs;
 	}
