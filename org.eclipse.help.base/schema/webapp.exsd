@@ -35,6 +35,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -60,7 +63,6 @@
          3.0 (originally added in release 2.1 as org.eclipse.help.webapp)
       </documentation>
    </annotation>
-
 
    <annotation>
       <appInfo>
