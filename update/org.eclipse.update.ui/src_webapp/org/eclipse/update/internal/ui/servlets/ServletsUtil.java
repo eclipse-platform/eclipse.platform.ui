@@ -5,6 +5,9 @@ import java.util.Enumeration;
 
 import javax.servlet.http.*;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.update.internal.ui.UpdateUI;
+
 /**
  * @author dejan
  *
@@ -25,21 +28,24 @@ public class ServletsUtil {
 		for (; atts.hasMoreElements();) {
 			String attName = (String) atts.nextElement();
 			Object attValue = servletRequest.getParameter(attName);
-			buff.append(attName + "=" + "\"" + attValue + "\"+");
+			buff.append(attName + "=" + "\"" + attValue + "\"+"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		return host + ":" + port + context + "?" + buff.toString();
+		return host + ":" + port + context + "?" + buff.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static PrintWriter createResponsePrologue(HttpServletResponse response)
 		throws IOException {
-		response.setContentType("text/html");
+		response.setContentType("text/html"); //$NON-NLS-1$
 		PrintWriter writer = response.getWriter();
+		String title = UpdateUI.getString("ServletsUtil.responseTitle"); //$NON-NLS-1$
 		writer.println(
-			""
-				+ "<!DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\">"
-				+ "\n <HTML> \n <HEAD> \n <TITLE> "
-				+ "\n Eclipse Install </TITLE>\n </HEAD>\n");
-		writer.println(" <BODY topmargin=\"0\" leftmargin=\"0\">");
+			"" //$NON-NLS-1$
+				+ "<!DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\">" //$NON-NLS-1$
+				+ "\n <HTML> \n <HEAD> \n" //$NON-NLS-1$
+				+ "<TITLE>"+title+"</TITLE>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
+				+ "</HEAD>"); //$NON-NLS-1$
+		writer.println(" <BODY topmargin=\"0\" leftmargin=\"0\">"); //$NON-NLS-1$
 		return writer;
 	}
 
@@ -47,12 +53,12 @@ public class ServletsUtil {
 		PrintWriter writer,
 		String problem,
 		String resolution) {
-		createHeading(writer, "Web update failed");
+		createHeading(writer, UpdateUI.getString("ServletsUtil.updateFailed")); //$NON-NLS-1$
 		startTextArea(writer);
-		createParagraph(writer, "Problem", problem);
+		createParagraph(writer, UpdateUI.getString("ServletsUtil.problem"), problem); //$NON-NLS-1$
 		if (resolution != null) {
-			writer.println("<p>");
-			createParagraph(writer, "What you can do", resolution);
+			writer.println("<p>"); //$NON-NLS-1$
+			createParagraph(writer, UpdateUI.getString("ServletsUtil.whatToDo"), resolution); //$NON-NLS-1$
 		}
 		endTextArea(writer);
 	}
@@ -61,51 +67,60 @@ public class ServletsUtil {
 		PrintWriter writer,
 		String heading,
 		String text) {
-		writer.print("<b><font color=\"#5B78AC\">");
+		writer.print("<b><font color=\"#5B78AC\">"); //$NON-NLS-1$
 		writer.print(heading);
-		writer.println("</b></font><br>");
+		writer.println("</b></font><br>"); //$NON-NLS-1$
 		writer.println(text);
 	}
 
 	public static void createInfo(PrintWriter writer) {
-		createHeading(writer, "Web Update in progress");
+		createHeading(writer, UpdateUI.getString("ServletsUtil.updateInProgress")); //$NON-NLS-1$
 		startTextArea(writer);
 		writer.println(
-			"Web update has been initiated. You should see install wizard being open from the running Eclipse window.");
+			UpdateUI.getString("ServletsUtil.updateInitiated")); //$NON-NLS-1$
 		endTextArea(writer);
+	}
+	
+	private static boolean isWin32() {
+		return BootLoader.getWS().equals("win32"); //$NON-NLS-1$
 	}
 
 	private static void startTextArea(PrintWriter writer) {
 		writer.println(
-			"<table border=\"0\" width=\"100%\" cellspacing=\"5\" cellpadding=\"5\">");
-		writer.println("<tr>");
-		writer.println(
-			"<td width=\"100%\"><font face=\"MS Sans Serif\" size=\"1\">");
+			"<table border=\"0\" width=\"100%\" cellspacing=\"5\" cellpadding=\"5\">"); //$NON-NLS-1$
+		writer.println("<tr>"); //$NON-NLS-1$
+		writer.print("<td width=\"100%\">"); //$NON-NLS-1$
+		if (isWin32())
+			writer.println("<font face=\"MS Sans Serif\" size=\"1\">"); //$NON-NLS-1$
+		else
+			writer.println(""); //$NON-NLS-1$
 	}
 	private static void endTextArea(PrintWriter writer) {
-		writer.println("</td>");
-		writer.println("</tr>");
-		writer.println("</table>");
+		if (isWin32())
+			writer.println("</font>"); //$NON-NLS-1$
+		writer.println("</td>"); //$NON-NLS-1$
+		writer.println("</tr>"); //$NON-NLS-1$
+		writer.println("</table>"); //$NON-NLS-1$
 	}
 
 	public static void createHeading(PrintWriter writer, String title) {
 		writer.println(
-			"<table cols=1 width=\"588\" cellspacing=\"0\" cellpadding=\"0\">");
-		writer.println("<tr>");
+			"<table cols=1 width=\"588\" cellspacing=\"0\" cellpadding=\"0\">"); //$NON-NLS-1$
+		writer.println("<tr>"); //$NON-NLS-1$
 		writer.println(
-			"<td background=\"images/form_banner.jpg\" width=\"580\" height=\"30\">");
-		writer.print("<p><b><font size=\"3\" face=\"Tahoma\">&nbsp;");
+			"<td background=\"images/form_banner.jpg\" width=\"580\" height=\"30\">"); //$NON-NLS-1$
+		writer.print("<p><b><font size=\"3\" face=\"Tahoma\">&nbsp;"); //$NON-NLS-1$
 		writer.print(title);
-		writer.println("</font></b></p>");
-		writer.println("</td>");
-		writer.println("</tr>");
+		writer.println("</font></b></p>"); //$NON-NLS-1$
+		writer.println("</td>"); //$NON-NLS-1$
+		writer.println("</tr>"); //$NON-NLS-1$
 
-		writer.println("<tr>");
+		writer.println("<tr>"); //$NON-NLS-1$
 		writer.println(
-			"<td width=\"580\"><img border=\"0\" src=\"images/form_underline.jpg\" width=\"600\" height=\"15\"></td>");
-		writer.println("</td>");
-		writer.println("</tr>");
-		writer.println("</table>");
+			"<td width=\"580\"><img border=\"0\" src=\"images/form_underline.jpg\" width=\"600\" height=\"15\"></td>"); //$NON-NLS-1$
+		writer.println("</td>"); //$NON-NLS-1$
+		writer.println("</tr>"); //$NON-NLS-1$
+		writer.println("</table>"); //$NON-NLS-1$
 	}
 
 	public static void createResponseEpilogue(
@@ -116,16 +131,17 @@ public class ServletsUtil {
 		String backURL = getOriginatingURL(request);
 		if (backURL != null) {
 			startTextArea(writer);
-			writer.print("<img border=\"0\" src=\"images/backward_nav.gif\"/><a href=\"");
+			String backText = UpdateUI.getString("ServletsUtil.back"); //$NON-NLS-1$
+			writer.print("<img border=\"0\" src=\"images/backward_nav.gif\"/><a href=\""); //$NON-NLS-1$
 			writer.print(getOriginatingURL(request));
-			writer.print("\">Back</a>");
+			writer.print("\">"+backText+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			endTextArea(writer);
 		}
-		writer.println(" </BODY> ");
-		writer.println("</HTML>");
+		writer.println(" </BODY> "); //$NON-NLS-1$
+		writer.println("</HTML>"); //$NON-NLS-1$
 		writer.close();
 	}
 	private static String getOriginatingURL(HttpServletRequest request) {
-		return request.getParameter("backURL");
+		return request.getParameter("backURL"); //$NON-NLS-1$
 	}
 }

@@ -4,12 +4,14 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -36,87 +38,87 @@ import org.eclipse.update.ui.forms.internal.*;
 public class DetailsForm extends PropertyWebForm {
 	// NL keys
 
-	private static final String KEY_PROVIDER = "FeaturePage.provider";
-	private static final String KEY_VERSION = "FeaturePage.version";
-	private static final String KEY_IVERSION = "FeaturePage.installedVersion";
+	private static final String KEY_PROVIDER = "FeaturePage.provider"; //$NON-NLS-1$
+	private static final String KEY_VERSION = "FeaturePage.version"; //$NON-NLS-1$
+	private static final String KEY_IVERSION = "FeaturePage.installedVersion"; //$NON-NLS-1$
 	private static final String KEY_PENDING_VERSION =
-		"FeaturePage.pendingVersion";
-	private static final String KEY_SIZE = "FeaturePage.size";
-	private static final String KEY_ESTIMATE = "FeaturePage.estimate";
-	private static final String KEY_OS = "FeaturePage.os";
-	private static final String KEY_WS = "FeaturePage.ws";
-	private static final String KEY_NL = "FeaturePage.nl";
-	private static final String KEY_ARCH = "FeaturePage.arch";
-	private static final String KEY_PLATFORMS = "FeaturePage.platforms";
-	private static final String KEY_DESC = "FeaturePage.description";
-	private static final String KEY_INFO_LINK = "FeaturePage.infoLink";
-	private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink";
+		"FeaturePage.pendingVersion"; //$NON-NLS-1$
+	private static final String KEY_SIZE = "FeaturePage.size"; //$NON-NLS-1$
+	private static final String KEY_ESTIMATE = "FeaturePage.estimate"; //$NON-NLS-1$
+	private static final String KEY_OS = "FeaturePage.os"; //$NON-NLS-1$
+	private static final String KEY_WS = "FeaturePage.ws"; //$NON-NLS-1$
+	private static final String KEY_NL = "FeaturePage.nl"; //$NON-NLS-1$
+	private static final String KEY_ARCH = "FeaturePage.arch"; //$NON-NLS-1$
+	private static final String KEY_PLATFORMS = "FeaturePage.platforms"; //$NON-NLS-1$
+	private static final String KEY_DESC = "FeaturePage.description"; //$NON-NLS-1$
+	private static final String KEY_INFO_LINK = "FeaturePage.infoLink"; //$NON-NLS-1$
+	private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink"; //$NON-NLS-1$
 	private static final String KEY_COPYRIGHT_LINK =
-		"FeaturePage.copyrightLink";
-	private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
-	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
+		"FeaturePage.copyrightLink"; //$NON-NLS-1$
+	private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled"; //$NON-NLS-1$
+	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue"; //$NON-NLS-1$
 	private static final String KEY_ESTIMATE_VALUE =
-		"FeaturePage.estimateValue";
+		"FeaturePage.estimateValue"; //$NON-NLS-1$
 	private static final String KEY_MINUTE_ESTIMATE_VALUE =
-		"FeaturePage.minuteEstimateValue";
+		"FeaturePage.minuteEstimateValue"; //$NON-NLS-1$
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
-		"FeaturePage.unknownSizeValue";
+		"FeaturePage.unknownSizeValue"; //$NON-NLS-1$
 	private static final String KEY_UNKNOWN_ESTIMATE_VALUE =
-		"FeaturePage.unknownEstimateValue";
+		"FeaturePage.unknownEstimateValue"; //$NON-NLS-1$
 	private static final String KEY_DO_UNCONFIGURE =
-		"FeaturePage.doButton.unconfigure";
+		"FeaturePage.doButton.unconfigure"; //$NON-NLS-1$
 	private static final String KEY_DO_CONFIGURE =
-		"FeaturePage.doButton.configure";
-	private static final String KEY_DO_REPAIR = "FeaturePage.doButton.repair";
-	private static final String KEY_DO_CHANGE = "FeaturePage.doButton.change";
-	private static final String KEY_DO_UPDATE = "FeaturePage.doButton.update";
-	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install";
+		"FeaturePage.doButton.configure"; //$NON-NLS-1$
+	private static final String KEY_DO_REPAIR = "FeaturePage.doButton.repair"; //$NON-NLS-1$
+	private static final String KEY_DO_CHANGE = "FeaturePage.doButton.change"; //$NON-NLS-1$
+	private static final String KEY_DO_UPDATE = "FeaturePage.doButton.update"; //$NON-NLS-1$
+	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install"; //$NON-NLS-1$
 	private static final String KEY_DO_UNINSTALL =
-		"FeaturePage.doButton.uninstall";
+		"FeaturePage.doButton.uninstall"; //$NON-NLS-1$
 
 	private static final String KEY_BATCH_UNCONFIGURE =
-		"FeaturePage.batchButton.unconfigure";
+		"FeaturePage.batchButton.unconfigure"; //$NON-NLS-1$
 	private static final String KEY_BATCH_CONFIGURE =
-		"FeaturePage.batchButton.configure";
+		"FeaturePage.batchButton.configure"; //$NON-NLS-1$
 	private static final String KEY_BATCH_REPAIR =
-		"FeaturePage.batchButton.repair";
+		"FeaturePage.batchButton.repair"; //$NON-NLS-1$
 	private static final String KEY_BATCH_CHANGE =
-		"FeaturePage.batchButton.change";
+		"FeaturePage.batchButton.change"; //$NON-NLS-1$
 	private static final String KEY_BATCH_UPDATE =
-		"FeaturePage.batchButton.update";
+		"FeaturePage.batchButton.update"; //$NON-NLS-1$
 	private static final String KEY_BATCH_INSTALL =
-		"FeaturePage.batchButton.install";
+		"FeaturePage.batchButton.install"; //$NON-NLS-1$
 	private static final String KEY_BATCH_UNINSTALL =
-		"FeaturePage.batchButton.uninstall";
-	private static final String KEY_BATCH = "FeaturePage.batch";
+		"FeaturePage.batchButton.uninstall"; //$NON-NLS-1$
+	private static final String KEY_BATCH = "FeaturePage.batch"; //$NON-NLS-1$
 	private static final String KEY_SELECTED_UPDATES =
-		"FeaturePage.selectedUpdates";
+		"FeaturePage.selectedUpdates"; //$NON-NLS-1$
 
-	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
-	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
-	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle";
+	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle"; //$NON-NLS-1$
+	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title"; //$NON-NLS-1$
+	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle"; //$NON-NLS-1$
 	private static final String KEY_DIALOG_UCTITLE =
-		"FeaturePage.dialog.uctitle";
+		"FeaturePage.dialog.uctitle"; //$NON-NLS-1$
 	private static final String KEY_DIALOG_UMESSAGE =
-		"FeaturePage.dialog.umessage";
+		"FeaturePage.dialog.umessage"; //$NON-NLS-1$
 	private static final String KEY_DIALOG_MESSAGE =
-		"FeaturePage.dialog.message";
+		"FeaturePage.dialog.message"; //$NON-NLS-1$
 	private static final String KEY_DIALOG_CMESSAGE =
-		"FeaturePage.dialog.cmessage";
+		"FeaturePage.dialog.cmessage"; //$NON-NLS-1$
 	private static final String KEY_DIALOG_UCMESSAGE =
-		"FeaturePage.dialog.ucmessage";
-	private static final String KEY_MISSING_TITLE = "FeaturePage.missing.title";
+		"FeaturePage.dialog.ucmessage"; //$NON-NLS-1$
+	private static final String KEY_MISSING_TITLE = "FeaturePage.missing.title"; //$NON-NLS-1$
 	private static final String KEY_MISSING_MESSAGE =
-		"FeaturePage.missing.message";
+		"FeaturePage.missing.message"; //$NON-NLS-1$
 	private static final String KEY_MISSING_SEARCH =
-		"FeaturePage.missing.search";
-	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort";
+		"FeaturePage.missing.search"; //$NON-NLS-1$
+	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort"; //$NON-NLS-1$
 	private static final String KEY_SEARCH_OBJECT_NAME =
-		"FeaturePage.missing.searchObjectName";
+		"FeaturePage.missing.searchObjectName"; //$NON-NLS-1$
 	private static final String KEY_OPTIONAL_INSTALL_MESSAGE =
-		"FeaturePage.optionalInstall.message";
+		"FeaturePage.optionalInstall.message"; //$NON-NLS-1$
 	private static final String KEY_OPTIONAL_INSTALL_TITLE =
-		"FeaturePage.optionalInstall.title";
+		"FeaturePage.optionalInstall.title"; //$NON-NLS-1$
 	//	
 	private static final int REPAIR = 1;
 	private static final int CHANGE = 2;
@@ -272,7 +274,7 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText("");
+		setHeadingText(""); //$NON-NLS-1$
 		super.initialize(modelObject);
 	}
 
@@ -386,7 +388,7 @@ public class DetailsForm extends PropertyWebForm {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
 
-		doButton = factory.createButton(footer, "", SWT.PUSH);
+		doButton = factory.createButton(footer, "", SWT.PUSH); //$NON-NLS-1$
 		doButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doButtonSelected();
@@ -438,7 +440,7 @@ public class DetailsForm extends PropertyWebForm {
 		itemsLink.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 
 		//SWTUtil.setButtonDimensionHint(doButton);
-		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.DetailsForm");
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.DetailsForm"); //$NON-NLS-1$
 
 	}
 
@@ -525,12 +527,12 @@ public class DetailsForm extends PropertyWebForm {
 			VersionedIdentifier ivid =
 				installedFeature.getVersionedIdentifier();
 			if (buf.length() > 0)
-				buf.append(", ");
+				buf.append(", "); //$NON-NLS-1$
 			PluginVersionIdentifier iversion = ivid.getVersion();
 			buf.append(iversion.toString());
 			if (!enabled) {
-				buf.append(" ");
-				buf.append(UpdateUI.getString("FeaturePage.disabledVersion"));
+				buf.append(" "); //$NON-NLS-1$
+				buf.append(UpdateUI.getString("FeaturePage.disabledVersion")); //$NON-NLS-1$
 			}
 			if (ivid.equals(vid)) {
 				alreadyInstalled = true;
@@ -586,7 +588,7 @@ public class DetailsForm extends PropertyWebForm {
 			&& feature.getDescription().getAnnotation() != null)
 			descriptionText.setText(feature.getDescription().getAnnotation());
 		else
-			descriptionText.setText("");
+			descriptionText.setText(""); //$NON-NLS-1$
 
 		Image logoImage = loadProviderImage(feature);
 		if (logoImage == null)
@@ -880,13 +882,13 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setOS(String os) {
 		if (os == null)
-			osLabel.setText("");
+			osLabel.setText(""); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(os);
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < array.length; i++) {
 				if (i > 0)
-					buf.append("\n");
+					buf.append("\n"); //$NON-NLS-1$
 				buf.append(mapOS(array[i]));
 			}
 			osLabel.setText(buf.toString());
@@ -914,7 +916,7 @@ public class DetailsForm extends PropertyWebForm {
 			country = nl.substring(loc + 1);
 		} else {
 			language = nl;
-			country = "";
+			country = ""; //$NON-NLS-1$
 		}
 		Locale locale = new Locale(language, country);
 		return locale.getDisplayName();
@@ -922,13 +924,13 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setWS(String ws) {
 		if (ws == null)
-			wsLabel.setText("");
+			wsLabel.setText(""); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(ws);
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < array.length; i++) {
 				if (i > 0)
-					buf.append("\n");
+					buf.append("\n"); //$NON-NLS-1$
 				buf.append(mapWS(array[i]));
 			}
 			wsLabel.setText(buf.toString());
@@ -937,13 +939,13 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setArch(String arch) {
 		if (arch == null)
-			archLabel.setText("");
+			archLabel.setText(""); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(arch);
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < array.length; i++) {
 				if (i > 0)
-					buf.append("\n");
+					buf.append("\n"); //$NON-NLS-1$
 				buf.append(mapArch(array[i]));
 			}
 			archLabel.setText(buf.toString());
@@ -952,13 +954,13 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void setNL(String nl) {
 		if (nl == null)
-			nlLabel.setText("");
+			nlLabel.setText(""); //$NON-NLS-1$
 		else {
 			String[] array = getTokens(nl);
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < array.length; i++) {
 				if (i > 0)
-					buf.append("\n");
+					buf.append("\n"); //$NON-NLS-1$
 				buf.append(mapNL(array[i]));
 			}
 			nlLabel.setText(buf.toString());
@@ -967,7 +969,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private String[] getTokens(String source) {
 		Vector result = new Vector();
-		StringTokenizer stok = new StringTokenizer(source, ",");
+		StringTokenizer stok = new StringTokenizer(source, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String tok = stok.nextToken();
 			result.add(tok);
@@ -1040,25 +1042,48 @@ public class DetailsForm extends PropertyWebForm {
 
 		final IFeature[] result = new IFeature[1];
 		final CoreException[] exception = new CoreException[1];
-
-		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-			public void run() {
+		final boolean aborted[] = new boolean[1];
+		aborted[0] = false;
+		
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					ISite site = SiteManager.getSite(siteURL, null);
+					monitor.beginTask(UpdateUI.getString("DetailsForm.locatingFeature"), 3); //$NON-NLS-1$
+					ISite site = SiteManager.getSite(siteURL, new SubProgressMonitor(monitor, 1));
+					if (site==null || monitor.isCanceled()) {
+						aborted[0] = true;
+						return;
+					} 
 					IFeatureReference[] refs = site.getFeatureReferences();
-					result[0] = findFeature(vid, refs);
+					result[0] = findFeature(vid, refs, new SubProgressMonitor(monitor, 1));
+					if (result[0]!=null) {
+						monitor.setTaskName(UpdateUI.getString("DetailsForm.downloadingInfo")); //$NON-NLS-1$
+						touchFeatureChildren(result[0], new SubProgressMonitor(monitor, 1));
+					}
 				} catch (CoreException e) {
-					exception[0] = e;
+					throw new InvocationTargetException(e);
+				}
+				finally {
+					monitor.done();
 				}
 			}
-		});
+		};
+		
+		ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
+		try {
+			pmd.run(true, true, op);
+		}
+		catch (InterruptedException e) {
+			return null;
+		}
+		catch (InvocationTargetException e) {
+			UpdateUI.logException(e);
+			return null;
+		}
 		IStatus status = null;
-		if (exception[0] != null) {
-			// Show error dialog
-			status = exception[0].getStatus();
-		} else if (result[0] != null) {
+		if (result[0] != null) {
 			return result[0];
-		} else {
+		} else if (!aborted[0]) {
 			String message =
 				UpdateUI.getFormattedMessage(
 					KEY_OPTIONAL_INSTALL_MESSAGE,
@@ -1084,7 +1109,11 @@ public class DetailsForm extends PropertyWebForm {
 
 	private static IFeature findFeature(
 		VersionedIdentifier vid,
-		IFeatureReference[] refs) {
+		IFeatureReference[] refs,
+		IProgressMonitor monitor) {
+		
+		monitor.beginTask("", refs.length*2); //$NON-NLS-1$
+			
 		for (int i = 0; i < refs.length; i++) {
 			IFeatureReference ref = refs[i];
 			try {
@@ -1092,17 +1121,36 @@ public class DetailsForm extends PropertyWebForm {
 				if (refVid.equals(vid)) {
 					return ref.getFeature(null);
 				}
+				monitor.worked(1);
 				// Try children
 				IFeature feature = ref.getFeature(null);
 				IFeatureReference[] irefs =
 					feature.getIncludedFeatureReferences();
-				IFeature result = findFeature(vid, irefs);
+				IFeature result = findFeature(vid, irefs, new SubProgressMonitor(monitor, 1));
 				if (result != null)
 					return result;
 			} catch (CoreException e) {
 			}
 		}
 		return null;
+	}
+	
+	private static void touchFeatureChildren(IFeature feature, IProgressMonitor monitor) throws CoreException {
+		IFeatureReference[] irefs =
+			feature.getIncludedFeatureReferences();
+		if (irefs.length>0) {
+			monitor.beginTask("", irefs.length*2); //$NON-NLS-1$
+			for (int i=0; i<irefs.length; i++) {
+				IFeatureReference iref = irefs[i];
+				IFeature child = iref.getFeature(null);
+				monitor.worked(1);
+				touchFeatureChildren(child, new SubProgressMonitor(monitor, 1));
+			}
+		}
+		else {
+			monitor.beginTask("", 1); //$NON-NLS-1$
+			monitor.worked(1);
+		}
 	}
 
 	public static void executeJob(
@@ -1148,8 +1196,8 @@ public class DetailsForm extends PropertyWebForm {
 			UpdateUI.getBackupConfigurationFor(feature);
 		if (config == null) {
 			String message =
-				"This feature is a patch and cannot be directly disabled. Locate a configuration before it was installed and revert to it instead.";
-			MessageDialog.openError(shell, "Disable Feature", message);
+				UpdateUI.getString("DetailsForm.featureAPatch"); //$NON-NLS-1$
+			MessageDialog.openError(shell, UpdateUI.getString("DetailsForm.disableFeature.title"), message); //$NON-NLS-1$
 			return;
 		}
 		try {
@@ -1281,7 +1329,7 @@ public class DetailsForm extends PropertyWebForm {
 	private void initiatePluginSearch(ArrayList missing) {
 		SearchCategoryDescriptor desc =
 			SearchCategoryRegistryReader.getDefault().getDescriptor(
-				"org.eclipse.update.ui.plugins");
+				"org.eclipse.update.ui.plugins"); //$NON-NLS-1$
 		if (desc == null)
 			return;
 		String name =
@@ -1294,7 +1342,7 @@ public class DetailsForm extends PropertyWebForm {
 		search.setSearchBookmarks(true);
 		search.setSearchDiscovery(true);
 		String value = PluginsSearchCategory.encodeImports(missing);
-		search.getSettings().put("imports", value);
+		search.getSettings().put("imports", value); //$NON-NLS-1$
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		try {
 			UpdateUI.getActivePage().showView(UpdatePerspective.ID_UPDATES);
@@ -1327,9 +1375,9 @@ public class DetailsForm extends PropertyWebForm {
 			return true;
 
 		String title =
-			UpdateUI.getString("FeaturePage.duplicatesEnabled.title");
+			UpdateUI.getString("FeaturePage.duplicatesEnabled.title"); //$NON-NLS-1$
 		String message =
-			UpdateUI.getString("FeaturePage.duplicatesEnabled.message");
+			UpdateUI.getString("FeaturePage.duplicatesEnabled.message"); //$NON-NLS-1$
 			MessageDialog dialog =
 				new MessageDialog(
 					UpdateUI.getActiveWorkbenchShell(),
