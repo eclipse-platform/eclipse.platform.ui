@@ -610,7 +610,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				// This breakpoint has actually been moved - already removed
 				// from the Breakpoint manager during the remove callback.
 				// Schedule the marker associated with the new resource for deletion.
-				fMoved.add(marker);
+				if (getBreakpoint(marker) == null) {
+					fMoved.add(marker);
+				}
 			} else {
 				// do nothing - we do not add until explicitly added
 			}
