@@ -4,7 +4,7 @@
   <property name="root" value="${basedir}/.."/>
   <property name="temp" value="${root}/__temp"/>
   <property name="plugins" value="${temp}/eclipse/plugins"/>
-  <property name="versionSuffix" value=""/>
+  <property name="versionSuffix" value="_2.1.0"/>
 
   <target name="init">
     <tstamp/>
