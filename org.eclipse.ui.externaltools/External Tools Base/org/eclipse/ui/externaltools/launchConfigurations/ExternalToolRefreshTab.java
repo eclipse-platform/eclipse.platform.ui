@@ -1,0 +1,232 @@
+package org.eclipse.ui.externaltools.launchConfigurations;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.externaltools.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
+import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.model.ToolUtil;
+
+public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
+
+	private ExternalToolVariableForm variableForm;
+	
+	protected Button refreshField;
+	protected Button recursiveField;
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		Composite mainComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		mainComposite.setLayout(layout);
+		mainComposite.setLayoutData(gridData);
+		
+		createRefreshComponent(mainComposite);
+		createRecursiveComponent(mainComposite);
+		createScopeComponent(mainComposite);
+	}
+	
+	/**
+	 * Creates the controls needed to edit the refresh recursive
+	 * attribute of an external tool
+	 * 
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createRecursiveComponent(Composite parent) {
+		recursiveField = new Button(parent, SWT.CHECK);
+		recursiveField.setText("Recurseively include sub-folders");
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		recursiveField.setLayoutData(data);
+	}
+	
+	/**
+	 * Creates the controls needed to edit the refresh scope
+	 * attribute of an external tool
+	 * 
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createRefreshComponent(Composite parent) {
+		refreshField = new Button(parent, SWT.CHECK);
+		refreshField.setText("Refresh resources after running tool"); //$NON-NLS-1$
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		refreshField.setLayoutData(data);
+	}
+	
+	/**
+	 * Creates the controls needed to edit the refresh scope variable
+	 * attribute of an external tool
+	 * 
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createScopeComponent(Composite parent) {
+		String label = "Choose scope variable: ";
+		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getRefreshVariables();
+		variableForm = new ExternalToolVariableForm(label, vars);
+		variableForm.createContents(parent, this);
+	}
+	
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		updateRefresh(configuration);
+		updateRecursive(configuration);
+		updateScope(configuration);
+	}
+	/**
+	 * Method udpateScope.
+	 * @param configuration
+	 */
+	private void updateScope(ILaunchConfiguration configuration) {
+		String scope = null;
+		try {
+			scope= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+		}
+		String varName = null;
+		String varValue = null;
+		if (scope != null) {
+			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
+			varName = varDef.name;
+			varValue = varDef.argument;
+		}
+		variableForm.selectVariable(varName, varValue);
+	}
+	/**
+	 * Method updateRecursive.
+	 * @param configuration
+	 */
+	private void updateRecursive(ILaunchConfiguration configuration) {
+		boolean recursive= true;
+		try {
+			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+		}
+		recursiveField.setSelection(recursive);
+	}
+	/**
+	 * Method updateRefresh.
+	 * @param configuration
+	 */
+	private void updateRefresh(ILaunchConfiguration configuration) {
+		String scope= null;
+		try {
+			scope= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+		}
+		refreshField.setSelection(scope != null);
+		refreshField.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnabledState();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		updateEnabledState();		
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		
+		if (refreshField.getSelection()) {
+			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
+		} else {
+			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+		}
+		
+		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, recursiveField.getSelection());
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "Refresh Scope";
+	}
+	
+	/**
+	 * Updates the enablement state of the fields.
+	 */
+	protected void updateEnabledState() {
+		if (refreshField != null) {
+			if (recursiveField != null) {
+				recursiveField.setEnabled(refreshField.getSelection());
+			}
+			if (variableForm != null) {
+				variableForm.setEnabled(refreshField.getSelection());
+			}
+		}
+	}
+	/**
+	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#convertHeightHint(int)
+	 */
+	public int convertHeightHint(int chars) {
+		return 0;
+	}
+
+	/**
+	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#setButtonGridData(org.eclipse.swt.widgets.Button)
+	 */
+	public GridData setButtonGridData(Button button) {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#setMessage(java.lang.String, int)
+	 */
+	public void setMessage(String newMessage, int newType) {
+	}
+
+	/**
+	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#updateValidState()
+	 */
+	public void updateValidState() {
+		updateLaunchConfigurationDialog();
+	}
+
+	/**
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
+	 */
+	public int getMessageType() {
+		return 0;
+	}
+
+}
