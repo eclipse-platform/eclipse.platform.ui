@@ -1470,10 +1470,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 */
 	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null));  //$NON-NLS-1$		
+			logErrorMessage(message);
 		}
+	}
+	
+	/**
+	 * Logs an internal error with the specified message.
+	 * 
+	 * @param message the error message to log
+	 */
+	public static void logErrorMessage(String message) {
+		// this message is intentionally not internationalized, as an exception may
+		// be due to the resource bundle itself
+		log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
 	}
 	
 	/**

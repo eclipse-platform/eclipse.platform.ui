@@ -140,8 +140,12 @@ public class DebugActionGroupsManager implements IMenuListener {
 				}
 
 			} else {
-				// invalid debug view action set
-				//invalidDebugViewActionSet(null, configurationElement.getAttribute("id")); //$NON-NLS-1$
+				// invalid debug action group
+				String errorId= "";
+				if (id != null) {
+					errorId= ": "  + id;
+				}
+				DebugUIPlugin.logErrorMessage("Improperly specified debug action group" + errorId);
 			}
 
 		}
@@ -219,8 +223,10 @@ public class DebugActionGroupsManager implements IMenuListener {
 							//fake a showing of the context menu to get a 
 							//look at all of the items in the menu
 							Menu swtMenu= ((MenuManager)menu).getMenu();
-							swtMenu.notifyListeners(SWT.Show, new Event());
-							swtMenu.notifyListeners(SWT.Hide, new Event());
+							if (!swtMenu.isDisposed()) {
+								swtMenu.notifyListeners(SWT.Show, new Event());
+								swtMenu.notifyListeners(SWT.Hide, new Event());
+							}
 						}
 					}
 				}
