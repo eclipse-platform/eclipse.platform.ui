@@ -5,10 +5,17 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
@@ -73,6 +80,11 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * Collection of children.
 	 */
 	private List fChildren= null;
+	
+	/**
+	 * Table of client defined attributes
+	 */
+	private HashMap fAttributes;	
 	
 	/**
 	 * Constructs a launch with the specified attributes. A launch must
@@ -353,6 +365,26 @@ public class Launch extends PlatformObject implements ILaunch {
 			return (ILaunchConfiguration)getElement();
 		}
 		return null;
+	}
+
+	/**
+	 * @see ILaunch#setAttribute(String, String)
+	 */
+	public void setAttribute(String key, String value) {
+		if (fAttributes == null) {
+			fAttributes = new HashMap(5);
+		}
+		fAttributes.put(key, value);		
+	}
+
+	/**
+	 * @see ILaunch#getAttribute(String)
+	 */
+	public String getAttribute(String key) {
+		if (fAttributes == null) {
+			return null;
+		}
+		return (String)fAttributes.get(key);
 	}
 
 }

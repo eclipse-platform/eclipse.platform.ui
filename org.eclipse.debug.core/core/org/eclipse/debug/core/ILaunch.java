@@ -83,7 +83,26 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * if no configration was launched.
 	 * 
 	 * @return the launched configuration or <code>null</code>
+	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration();
+	
+	/**
+	 * Sets the value of a client defined attribute.
+	 *
+	 * @param key the attribute key
+	 * @param value the attribute value
+	 * @since 2.0
+	 */
+	public void setAttribute(String key, String value);
+	
+	/**
+	 * Returns the value of a client defined attribute.
+	 *
+	 * @param key the attribute key
+	 * @return value the attribute value, or <code>null</code> if undefined
+	 * @since 2.0
+	 */
+	public String getAttribute(String key);	
 
 }
