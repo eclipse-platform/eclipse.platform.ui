@@ -68,7 +68,7 @@ public class FeatureReferenceModel extends ModelObject {
 		setWS(ref.getWS());
 		setOS(ref.getOS());
 		setArch(ref.getOSArch());
-		setNL(getNL());
+		setNL(ref.getNL());
 	}
 
 	/**
