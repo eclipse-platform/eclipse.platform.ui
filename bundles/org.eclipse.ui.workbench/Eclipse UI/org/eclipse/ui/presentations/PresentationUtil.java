@@ -29,13 +29,11 @@ public class PresentationUtil {
 	private final static String LISTENER_ID = PresentationUtil.class.getName() + ".dragListener"; //$NON-NLS-1$
 	private static Event dragEvent;
 	
-	/* not used
 	private static Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
 			dragEvent = event;
 		}
 	};
-	*/
 		
 	/**
 	 * Returns whether the mouse has moved enough to warrant
@@ -80,12 +78,14 @@ public class PresentationUtil {
 	
 	private static void handleMouseMove(Event e) {
 		if (dragControl != null && dragEvent != null && hasMovedEnough(e)) {
+			Control c = dragControl;
+			Listener l = (Listener)c.getData(LISTENER_ID);
+			Event de = dragEvent;
 			cancelDrag();
-			Listener l = (Listener)dragControl.getData(LISTENER_ID);
 			if (l != null) {
-				dragControl.setCapture(true);
-				l.handleEvent(dragEvent);
-				dragControl.setCapture(false);
+				c.setCapture(true);
+				l.handleEvent(de);
+				c.setCapture(false);
 			}
 		}
 	}	
@@ -113,13 +113,13 @@ public class PresentationUtil {
 	 * @param control the control containing the drag listener
 	 * @param dragListener the drag listener to attach
 	 */
-	public static void addDragListener(Control control, Listener dragListener) {
+	public static void addDragListener(Control control, Listener externalDragListener) {
 		control.addListener(SWT.DragDetect, dragListener);
 		control.addListener(SWT.MouseUp, clickListener);
 		control.addListener(SWT.MouseDoubleClick, clickListener);
 		control.addListener(SWT.MouseDown, mouseDownListener);
 		control.addListener(SWT.MouseMove, moveListener);
-		control.setData(LISTENER_ID, dragListener);
+		control.setData(LISTENER_ID, externalDragListener);
 	}
 	
 	/**
@@ -128,7 +128,7 @@ public class PresentationUtil {
 	 * @param control the control containing the drag listener
 	 * @param dragListener the drag listener to remove
 	 */
-	public static void removeDragListener(Control control, Listener dragListener) {
+	public static void removeDragListener(Control control, Listener externalDragListener) {
 		control.removeListener(SWT.DragDetect, dragListener);
 		control.removeListener(SWT.MouseUp, clickListener);
 		control.removeListener(SWT.MouseDoubleClick, clickListener);
