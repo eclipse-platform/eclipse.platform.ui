@@ -15,13 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ShowAnnotationOperation;
 
 public class ShowAnnotationAction extends WorkspaceAction {
@@ -51,7 +52,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		    return;
 		boolean binary = isBinary(cvsResource);
         if (binary) {
-		    if (!MessageDialog.openQuestion(getShell(), Policy.bind("ShowAnnotationAction.2"), Policy.bind("ShowAnnotationAction.3", cvsResource.getName()))) { //$NON-NLS-1$ //$NON-NLS-2$
+		    if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.ShowAnnotationAction_2, NLS.bind(CVSUIMessages.ShowAnnotationAction_3, new String[] { cvsResource.getName() }))) { //$NON-NLS-1$ //$NON-NLS-2$
 		        return;
 		    }
 		}
@@ -122,7 +123,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
         try {
             info= cvsResource.getSyncInfo();
             if (info == null) 
-                throw new CVSException(Policy.bind("ShowAnnotationAction.noSyncInfo", cvsResource.getName())); //$NON-NLS-1$
+                throw new CVSException(NLS.bind(CVSUIMessages.ShowAnnotationAction_noSyncInfo, new String[] { cvsResource.getName() })); //$NON-NLS-1$
         } catch (CVSException e) {
             throw new InvocationTargetException(e);
         }

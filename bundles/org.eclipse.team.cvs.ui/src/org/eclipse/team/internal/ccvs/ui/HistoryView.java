@@ -26,6 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.DND;
@@ -137,7 +138,7 @@ public class HistoryView extends ViewPart {
 	private class FetchLogEntriesJob extends Job {
 		public ICVSRemoteFile remoteFile;
 		public FetchLogEntriesJob() {
-			super(Policy.bind("HistoryView.fetchHistoryJob"));  //$NON-NLS-1$;
+			super(CVSUIMessages.HistoryView_fetchHistoryJob);  //$NON-NLS-1$;
 		}
 		public void setRemoteFile(ICVSRemoteFile file) {
 			this.remoteFile = file;
@@ -172,22 +173,22 @@ public class HistoryView extends ViewPart {
 	protected void contributeActions() {
 		// Refresh (toolbar)
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
-		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
+		refreshAction = new Action(CVSUIMessages.HistoryView_refreshLabel, plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
 			public void run() {
 				refresh();
 			}
 		};
-		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
+		refreshAction.setToolTipText(CVSUIMessages.HistoryView_refresh); //$NON-NLS-1$
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 		
 		//	Link with Editor (toolbar)
-		 linkWithEditorAction = new Action(Policy.bind("HistoryView.linkWithLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
+		 linkWithEditorAction = new Action(CVSUIMessages.HistoryView_linkWithLabel, plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
 			 public void run() {
 				 setLinkingEnabled(isChecked());
 			 }
 		 };
-		linkWithEditorAction.setToolTipText(Policy.bind("HistoryView.linkWithLabel")); //$NON-NLS-1$
+		linkWithEditorAction.setToolTipText(CVSUIMessages.HistoryView_linkWithLabel); //$NON-NLS-1$
 		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR));
 		linkWithEditorAction.setChecked(isLinkingEnabled());
 		
@@ -200,7 +201,7 @@ public class HistoryView extends ViewPart {
 			}
 		});
 
-		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
+		getContentsAction = getContextMenuAction(CVSUIMessages.HistoryView_getContentsAction, true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				monitor.beginTask(null, 100);
@@ -218,7 +219,7 @@ public class HistoryView extends ViewPart {
 		});
 		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
 
-		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
+		getRevisionAction = getContextMenuAction(CVSUIMessages.HistoryView_getRevisionAction, true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				try {
@@ -281,7 +282,7 @@ public class HistoryView extends ViewPart {
 				return resources;
 			}
 		};
-		tagWithExistingAction = getContextMenuAction(Policy.bind("HistoryView.tagWithExistingAction"), false /* no progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
+		tagWithExistingAction = getContextMenuAction(CVSUIMessages.HistoryView_tagWithExistingAction, false /* no progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
@@ -298,7 +299,7 @@ public class HistoryView extends ViewPart {
 				
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) { //$NON-NLS-1$
+		toggleTextAction = new Action(CVSUIMessages.HistoryView_showComment) { //$NON-NLS-1$
 			public void run() {
 				setViewerVisibility();
 				store.setValue(ICVSUIConstants.PREF_SHOW_COMMENTS, toggleTextAction.isChecked());
@@ -307,7 +308,7 @@ public class HistoryView extends ViewPart {
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
 		WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
 		// Toggle list visible action
-		toggleListAction = new Action(Policy.bind("HistoryView.showTags")) { //$NON-NLS-1$
+		toggleListAction = new Action(CVSUIMessages.HistoryView_showTags) { //$NON-NLS-1$
 			public void run() {
 				setViewerVisibility();
 				store.setValue(ICVSUIConstants.PREF_SHOW_TAGS, toggleListAction.isChecked());
@@ -342,11 +343,11 @@ public class HistoryView extends ViewPart {
 	
 		// Create actions for the text editor
 		copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
-		copyAction.setText(Policy.bind("HistoryView.copy")); //$NON-NLS-1$
+		copyAction.setText(CVSUIMessages.HistoryView_copy); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
 		
 		selectAllAction = new TextViewerAction(textViewer, ITextOperationTarget.SELECT_ALL);
-		selectAllAction.setText(Policy.bind("HistoryView.selectAll")); //$NON-NLS-1$
+		selectAllAction.setText(CVSUIMessages.HistoryView_selectAll); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 
 		actionBars.updateActionBars();
@@ -446,7 +447,7 @@ public class HistoryView extends ViewPart {
 						try {
 							fetchLogEntriesJob.join();
 						} catch (InterruptedException e) {
-							CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
+							CVSUIPlugin.log(new CVSException(NLS.bind(CVSUIMessages.HistoryView_errorFetchingEntries, new String[] { remoteFile.getName() }), e)); //$NON-NLS-1$
 						}
 					}
 					fetchLogEntriesJob.setRemoteFile(remoteFile);
@@ -556,7 +557,7 @@ public class HistoryView extends ViewPart {
 				try {
 					fetchLogEntriesJob.join();
 				} catch (InterruptedException e) {
-					CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", ""), e)); //$NON-NLS-1$ //$NON-NLS-2$
+					CVSUIPlugin.log(new CVSException(NLS.bind(CVSUIMessages.HistoryView_errorFetchingEntries, new String[] { "" }), e)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -781,8 +782,8 @@ public class HistoryView extends ViewPart {
 			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 			try {
 				if(cvsFile.isModified(null)) {
-					String title = Policy.bind("HistoryView.overwriteTitle"); //$NON-NLS-1$
-					String msg = Policy.bind("HistoryView.overwriteMsg"); //$NON-NLS-1$
+					String title = CVSUIMessages.HistoryView_overwriteTitle; //$NON-NLS-1$
+					String msg = CVSUIMessages.HistoryView_overwriteMsg; //$NON-NLS-1$
 					final MessageDialog dialog = new MessageDialog(getViewSite().getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 					final int[] result = new int[1];
 					getViewSite().getShell().getDisplay().syncExec(new Runnable() {
@@ -881,7 +882,7 @@ public class HistoryView extends ViewPart {
 			char c = string.charAt(i);
 			if (c == '\r' || c == '\n') {
 				if (!skipAdjacentLineSeparator)
-					buffer.append(Policy.bind("separator")); //$NON-NLS-1$
+					buffer.append(CVSUIMessages.separator); //$NON-NLS-1$
 				skipAdjacentLineSeparator = true;
 			} else {
 				buffer.append(c);

@@ -29,8 +29,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -76,16 +76,16 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		};
 		
 		if (project != null) {
-			useProjectNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.moduleIsProject"), 2); //$NON-NLS-1$
+			useProjectNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_moduleIsProject, 2); //$NON-NLS-1$
 			useProjectNameButton.addListener(SWT.Selection, listener);
 		}
-		useSpecifiedNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.specifyModule"), 1); //$NON-NLS-1$
+		useSpecifiedNameButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_specifyModule, 1); //$NON-NLS-1$
 		useSpecifiedNameButton.addListener(SWT.Selection, listener);
 
 		text = createTextField(composite);
 		text.addListener(SWT.Modify, listener);
 		
-		selectModuleButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.2"), 2); //$NON-NLS-1$
+		selectModuleButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_2, 2); //$NON-NLS-1$
 		selectModuleButton.addListener(SWT.Selection, listener);
 		moduleList = createModuleTree(composite, 2);
 		

@@ -21,6 +21,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -96,9 +96,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
         
-        super(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
-        setTitle(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
-        setDescription(Policy.bind("CommitWizardCommitPage.2")); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizardCommitPage_0); //$NON-NLS-1$
+        setTitle(CVSUIMessages.CommitWizardCommitPage_0); //$NON-NLS-1$
+        setDescription(CVSUIMessages.CommitWizardCommitPage_2); //$NON-NLS-1$
         
         fSettingsSaver= new SettingsSaver();
         fWizard= wizard;
@@ -168,9 +168,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             // Create composite for showing the reason for not showing the changes and a button to show them
             Composite changeDesc = new Composite(bottomChild, SWT.NONE);
             changeDesc.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
-            SWTUtils.createLabel(changeDesc, Policy.bind("CommitWizardCommitPage.1", Integer.toString(size), Integer.toString(getFileDisplayThreshold()))); //$NON-NLS-1$
+            SWTUtils.createLabel(changeDesc, NLS.bind(CVSUIMessages.CommitWizardCommitPage_1, new String[] { Integer.toString(size), Integer.toString(getFileDisplayThreshold()) })); //$NON-NLS-1$
             Button showChanges = new Button(changeDesc, SWT.PUSH);
-            showChanges.setText(Policy.bind("CommitWizardCommitPage.5")); //$NON-NLS-1$
+            showChanges.setText(CVSUIMessages.CommitWizardCommitPage_5); //$NON-NLS-1$
             showChanges.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     showChangesPane();
@@ -263,7 +263,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         if (fConfiguration != null) {
     		SyncInfoSet set = fConfiguration.getSyncInfoSet();
     		if (set.hasConflicts()) {
-    			setErrorMessage(Policy.bind("CommitWizardCommitPage.4")); //$NON-NLS-1$
+    			setErrorMessage(CVSUIMessages.CommitWizardCommitPage_4); //$NON-NLS-1$
     			setPageComplete(false);
     			return;
     		}
@@ -285,7 +285,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             if (MessageDialogWithToggle.NEVER.equals(value)) {
                 setPageComplete(false);
                 if (setMessage)
-                    setErrorMessage(Policy.bind("CommitWizardCommitPage.3")); //$NON-NLS-1$
+                    setErrorMessage(CVSUIMessages.CommitWizardCommitPage_3); //$NON-NLS-1$
                 return false;
             }
         }

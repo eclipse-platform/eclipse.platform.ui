@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
 import org.eclipse.team.internal.ccvs.ui.tags.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -96,7 +96,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ConfigureTagsFromRepoViewConfigure_Tag_Error_1"); //$NON-NLS-1$
+		return CVSUIMessages.ConfigureTagsFromRepoViewConfigure_Tag_Error_1; //$NON-NLS-1$
 	}
 
 }

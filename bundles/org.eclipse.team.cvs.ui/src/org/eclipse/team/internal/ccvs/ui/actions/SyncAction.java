@@ -26,8 +26,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
@@ -131,7 +131,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (info.getKind() == SyncInfo.IN_SYNC) {
-						MessageDialog.openInformation(shell, Policy.bind("SyncAction.noChangesTitle"), Policy.bind("SyncAction.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openInformation(shell, CVSUIMessages.SyncAction_noChangesTitle, CVSUIMessages.SyncAction_noChangesMessage); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						SyncInfoCompareInput input = new SyncInfoCompareInput(subscriber.getName(), info);
 						CompareUI.openCompareEditor(input);

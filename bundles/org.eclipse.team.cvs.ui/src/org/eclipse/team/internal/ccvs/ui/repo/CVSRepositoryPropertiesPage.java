@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -95,8 +96,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				updateWidgetEnablements();
 			}
 		};
-		useLocationAsLabel = createRadioButton(labelGroup, Policy.bind("CVSRepositoryPropertiesPage.useLocationAsLabel"), 3); //$NON-NLS-1$
-		useCustomLabel = createRadioButton(labelGroup, Policy.bind("CVSRepositoryPropertiesPage.useCustomLabel"), 1); //$NON-NLS-1$
+		useLocationAsLabel = createRadioButton(labelGroup, CVSUIMessages.CVSRepositoryPropertiesPage_useLocationAsLabel, 3); //$NON-NLS-1$
+		useCustomLabel = createRadioButton(labelGroup, CVSUIMessages.CVSRepositoryPropertiesPage_useCustomLabel, 1); //$NON-NLS-1$
 		useCustomLabel.addListener(SWT.Selection, labelListener);
 		labelText = createTextField(labelGroup);
 		labelText.addListener(SWT.Modify, labelListener);
@@ -104,19 +105,19 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$
 		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_connectionType, 1); //$NON-NLS-1$
 		methodType = createCombo(composite);
 		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_user, 1); //$NON-NLS-1$
 		userText = createTextField(composite);
 		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_password, 1); //$NON-NLS-1$
 		passwordText = createPasswordField(composite);
 			
-		createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_host, 1); //$NON-NLS-1$
 		hostText = createTextField(composite);
 		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_path, 1); //$NON-NLS-1$
 		pathText = createTextField(composite);
 		
 		// Port number
@@ -130,15 +131,15 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		portGroup.setLayout(layout);
-		useDefaultPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 3); //$NON-NLS-1$
-		useCustomPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
+		useDefaultPort = createRadioButton(portGroup, CVSUIMessages.ConfigurationWizardMainPage_useDefaultPort, 3); //$NON-NLS-1$
+		useCustomPort = createRadioButton(portGroup, CVSUIMessages.ConfigurationWizardMainPage_usePort, 1); //$NON-NLS-1$
 		portText = createTextField(portGroup);
 
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$
 
 		allowCachingButton = new Button(composite, SWT.CHECK);
-		allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
+		allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = 3;
 		allowCachingButton.setLayoutData(data);
@@ -161,7 +162,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
 		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
 		Label warningText = new Label(warningComposite, SWT.WRAP);
-		warningText.setText(Policy.bind("UserValidationDialog.7")); //$NON-NLS-1$
+		warningText.setText(CVSUIMessages.UserValidationDialog_7); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 300;
 		warningText.setLayoutData(data);
@@ -363,8 +364,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			if (!(location.getHost().equals(hostText.getText()) && location.getRootDirectory().equals(pathText.getText()))) {
 				// The host or path has changed
 				if (!MessageDialog.openConfirm(getShell(), 
-						Policy.bind("CVSRepositoryPropertiesPage.0"),  //$NON-NLS-1$
-						Policy.bind("CVSRepositoryPropertiesPage.1"))) { //$NON-NLS-1$
+						CVSUIMessages.CVSRepositoryPropertiesPage_0,  //$NON-NLS-1$
+						CVSUIMessages.CVSRepositoryPropertiesPage_1)) { //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -393,9 +394,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 								// To do: warn the user
 								DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
 								    progressMonitorDialog.getShell(), 
-									Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), //$NON-NLS-1$
-									Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
-									Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
+									CVSUIMessages.CVSRepositoryPropertiesPage_Confirm_Project_Sharing_Changes_1, //$NON-NLS-1$
+									CVSUIMessages.CVSRepositoryPropertiesPage_There_are_projects_in_the_workspace_shared_with_this_repository_2, //$NON-NLS-1$
+									NLS.bind(CVSUIMessages.CVSRepositoryPropertiesPage_sharedProject, new String[] { location.toString() }), //$NON-NLS-1$
 									(IProject[]) projects.toArray(new IProject[projects.size()]),
 									true,
 									DetailsDialogWithProjects.DLG_IMG_WARNING);
@@ -526,7 +527,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		try {
 			CVSRepositoryLocation l = CVSRepositoryLocation.fromProperties(createProperties());
 			if (!l.equals(location) && KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
-				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.0")); //$NON-NLS-1$
+				setErrorMessage(CVSUIMessages.ConfigurationWizardMainPage_0); //$NON-NLS-1$
 				setValid(false);
 				return;
 			}

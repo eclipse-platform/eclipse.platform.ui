@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -66,13 +67,13 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 	}
 	
 	protected String getErrorTitle() {
-		return Policy.bind("RefreshDirtyStateOperation.0"); //$NON-NLS-1$
+		return CVSUIMessages.RefreshDirtyStateOperation_0; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
 	 */
 	protected String getJobName() {
-		return Policy.bind("RefreshDirtyStateOperation.1"); //$NON-NLS-1$
+		return CVSUIMessages.RefreshDirtyStateOperation_1; //$NON-NLS-1$
 	}
 }

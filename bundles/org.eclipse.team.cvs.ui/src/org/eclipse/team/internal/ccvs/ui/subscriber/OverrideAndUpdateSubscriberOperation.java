@@ -17,11 +17,13 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.OverrideAndUpdateOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -68,6 +70,6 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
 	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -26,6 +27,7 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
@@ -52,7 +54,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -60,7 +62,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return Policy.bind("CommitAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CommitAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -237,12 +239,12 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 */
 	protected int promptForConflicts(SyncInfoSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String question = Policy.bind("CommitSyncAction.questionRelease"); //$NON-NLS-1$
-		String title = Policy.bind("CommitSyncAction.titleRelease"); //$NON-NLS-1$
+		String question = CVSUIMessages.CommitSyncAction_questionRelease; //$NON-NLS-1$
+		String title = CVSUIMessages.CommitSyncAction_titleRelease; //$NON-NLS-1$
 		String[] tips = new String[] {
-			Policy.bind("CommitSyncAction.releaseAll"), //$NON-NLS-1$
-			Policy.bind("CommitSyncAction.releasePart"), //$NON-NLS-1$
-			Policy.bind("CommitSyncAction.cancelRelease") //$NON-NLS-1$
+			CVSUIMessages.CommitSyncAction_releaseAll, //$NON-NLS-1$
+			CVSUIMessages.CommitSyncAction_releasePart, //$NON-NLS-1$
+			CVSUIMessages.CommitSyncAction_cancelRelease
 		};
 		Shell shell = getShell();
 		final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);

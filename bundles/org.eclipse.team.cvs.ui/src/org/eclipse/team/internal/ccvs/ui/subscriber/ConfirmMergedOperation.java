@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
@@ -20,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -39,7 +41,7 @@ public class ConfirmMergedOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return Policy.bind("SubscriberConfirmMergedAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -67,7 +69,7 @@ public class ConfirmMergedOperation extends CVSSubscriberOperation {
 		try {
 			CVSSyncInfo cvsInfo = getCVSSyncInfo(info);
 			if (cvsInfo == null) {
-				CVSUIPlugin.log(IStatus.ERROR, Policy.bind("SubscriberConfirmMergedAction.0", cvsInfo.getLocal().getFullPath().toString()), null); //$NON-NLS-1$
+				CVSUIPlugin.log(IStatus.ERROR, NLS.bind(CVSUIMessages.SubscriberConfirmMergedAction_0, new String[] { cvsInfo.getLocal().getFullPath().toString() }), null); //$NON-NLS-1$
 				return false;
 			}
 			// Make sure the parent is managed

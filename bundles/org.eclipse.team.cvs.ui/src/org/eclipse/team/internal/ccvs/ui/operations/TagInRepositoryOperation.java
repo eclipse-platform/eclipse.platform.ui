@@ -15,11 +15,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.RTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
@@ -57,10 +58,9 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	 */
 	protected String getErrorMessage(IStatus[] problems, int operationCount) {
 		if(operationCount == 1) {
-			return Policy.bind("TagInRepositoryAction.tagProblemsMessage"); //$NON-NLS-1$
+			return CVSUIMessages.TagInRepositoryAction_tagProblemsMessage; //$NON-NLS-1$
 		} else {
-			return Policy.bind("TagInRepositoryAction.tagProblemsMessageMultiple", //$NON-NLS-1$
-				Integer.toString(operationCount - problems.length), Integer.toString(problems.length));
+			return NLS.bind(CVSUIMessages.TagInRepositoryAction_tagProblemsMessageMultiple, new String[] { Integer.toString(operationCount - problems.length), Integer.toString(problems.length) });
 		}
 	}
 
@@ -108,7 +108,7 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	}
 
 	protected String getTaskName() {
-		return Policy.bind("TagFromRepository.taskName"); //$NON-NLS-1$
+		return CVSUIMessages.TagFromRepository_taskName; //$NON-NLS-1$
 	}
 
     /* (non-Javadoc)

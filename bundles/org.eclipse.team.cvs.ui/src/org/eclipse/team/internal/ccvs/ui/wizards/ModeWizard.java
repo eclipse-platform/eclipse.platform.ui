@@ -41,6 +41,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -121,8 +122,8 @@ public class ModeWizard extends ResizableWizard {
      */
     
     protected ModeWizard(Shell shell, final IResource[] resources) {
-        super(Policy.bind("ModeWizard.0"), CVSUIPlugin.getPlugin().getDialogSettings(), 700, 480); //$NON-NLS-1$
-        setWindowTitle(Policy.bind("ModeWizard.1")); //$NON-NLS-1$
+        super(CVSUIMessages.ModeWizard_0, CVSUIPlugin.getPlugin().getDialogSettings(), 700, 480); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.ModeWizard_1); //$NON-NLS-1$
         
         fChanges= getModeChanges(shell, resources);
         fPage= new ModeWizardSelectionPage(fChanges);
@@ -172,7 +173,7 @@ public class ModeWizard extends ResizableWizard {
                     }
                 }, IResource.DEPTH_INFINITE, false); 
             } catch (CoreException e) {
-                CVSUIPlugin.openError(shell, Policy.bind("ModeWizard.2"), null, e); //$NON-NLS-1$
+                CVSUIPlugin.openError(shell, CVSUIMessages.ModeWizard_2, null, e); //$NON-NLS-1$
             }
         }
         return changes;
@@ -193,7 +194,7 @@ public class ModeWizard extends ResizableWizard {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
                         final int totalWork= 10000;
-                        monitor.beginTask(Policy.bind("ModeWizard.3"), totalWork); //$NON-NLS-1$
+                        monitor.beginTask(CVSUIMessages.ModeWizard_3, totalWork); //$NON-NLS-1$
                         
                         final Map changesPerProvider= getProviderMapping(changes);
                         
@@ -226,7 +227,7 @@ public class ModeWizard extends ResizableWizard {
             // Check for any status messages and display them
             if (!messages.isEmpty()) {
                 boolean error = false;
-                final MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("ModeWizard.4"), null); //$NON-NLS-1$
+                final MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, CVSUIMessages.ModeWizard_4, null); //$NON-NLS-1$
                 for (int i = 0; i < messages.size(); i++) {
                     final IStatus status = (IStatus)messages.get(i);
                     if (status.getSeverity() == IStatus.ERROR || status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -242,14 +243,14 @@ public class ModeWizard extends ResizableWizard {
                 } else {
                     statusToDisplay = combinedStatus;
                 }
-                final String title= error ? Policy.bind("ModeWizard.5") : Policy.bind("ModeWizard.6"); //$NON-NLS-1$ //$NON-NLS-2$
+                final String title= error ? CVSUIMessages.ModeWizard_5 : CVSUIMessages.ModeWizard_6; //$NON-NLS-1$ //$NON-NLS-2$
                 CVSUIPlugin.openError(getShell(), title, message, new CVSException(statusToDisplay));
             }
             return super.performFinish();
         } catch (InterruptedException e) {
             return true;
         } catch (InvocationTargetException e) {
-            CVSUIPlugin.openError(getShell(), Policy.bind("ModeWizard.4"), null, e); //$NON-NLS-1$
+            CVSUIPlugin.openError(getShell(), CVSUIMessages.ModeWizard_4, null, e); //$NON-NLS-1$
             return false;
         }
     }

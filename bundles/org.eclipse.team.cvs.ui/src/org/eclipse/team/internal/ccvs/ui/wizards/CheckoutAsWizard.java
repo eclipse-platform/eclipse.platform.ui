@@ -18,7 +18,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.tags.*;
 import org.eclipse.ui.IWorkbenchPart;
@@ -70,7 +69,7 @@ public class CheckoutAsWizard extends Wizard {
 	public CheckoutAsWizard(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, boolean allowProjectConfiguration) {
 		this.part = part;
 		this.remoteFolders = remoteFolders;
-		setWindowTitle(Policy.bind("CheckoutAsWizard.title")); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.CheckoutAsWizard_title); //$NON-NLS-1$
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}
 	
@@ -90,7 +89,7 @@ public class CheckoutAsWizard extends Wizard {
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
 		
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), TagSource.create(remoteFolders), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", CVSUIMessages.CheckoutAsWizard_3, substImage, CVSUIMessages.CheckoutAsWizard_4, TagSource.create(remoteFolders), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 		        TagSelectionArea.INCLUDE_HEAD_TAG |
 		        TagSelectionArea.INCLUDE_BRANCHES |
 		        TagSelectionArea.INCLUDE_VERSIONS |
@@ -174,7 +173,7 @@ public class CheckoutAsWizard extends Wizard {
 	}
 	
 	private void handle(Throwable e) {
-		CVSUIPlugin.openError(getShell(), Policy.bind("CheckoutAsWizard.error"), null, e); //$NON-NLS-1$
+		CVSUIPlugin.openError(getShell(), CVSUIMessages.CheckoutAsWizard_error, null, e); //$NON-NLS-1$
 	}
 	
 	/*

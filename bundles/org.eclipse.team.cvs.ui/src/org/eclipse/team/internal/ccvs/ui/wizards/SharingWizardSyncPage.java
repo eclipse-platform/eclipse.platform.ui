@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,9 +40,9 @@ import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -114,7 +115,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		
 		fCheckbox= new Button(composite, SWT.CHECK);
 		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());
-		fCheckbox.setText(Policy.bind("SharingWizardSyncPage.12")); //$NON-NLS-1$
+		fCheckbox.setText(CVSUIMessages.SharingWizardSyncPage_12); //$NON-NLS-1$
 		fCheckbox.setSelection(true);
 		
 		updatePage();
@@ -125,7 +126,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	
 	private Control createNoChangesPage(PageBook pageBook) {
 		Composite composite = createComposite(pageBook, 1, false);
-		createWrappingLabel(composite, Policy.bind("SharingWizardSyncPage.3", project.getName()), 0); //$NON-NLS-1$
+		createWrappingLabel(composite, NLS.bind(CVSUIMessages.SharingWizardSyncPage_3, new String[] { project.getName() }), 0); //$NON-NLS-1$
 		return composite;
 	}
 	
@@ -134,10 +135,10 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		
-		createWrappingLabel(composite, Policy.bind("SharingWizardSyncPage.4"), 0); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.SharingWizardSyncPage_4, 0); //$NON-NLS-1$
 
 		Button showErrors = new Button(composite, SWT.PUSH);
-		showErrors.setText(Policy.bind("SharingWizardSyncPage.5")); //$NON-NLS-1$
+		showErrors.setText(CVSUIMessages.SharingWizardSyncPage_5); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		showErrors.setLayoutData(data);
 		showErrors.addSelectionListener(new SelectionAdapter() {
@@ -151,7 +152,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 
 	/* private */ void showErrors() {
 		ITeamStatus[] status = infos.getErrors();
-		String title = Policy.bind("SharingWizardSyncPage.8"); //$NON-NLS-1$
+		String title = CVSUIMessages.SharingWizardSyncPage_8; //$NON-NLS-1$
 		if (status.length == 1) {
 			IStatus s = status[0];
 			if (s.getException() instanceof CoreException) {
@@ -159,7 +160,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 			}
 			ErrorDialog.openError(getShell(), title, null, s);
 		} else {
-			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, Policy.bind("SharingWizardSyncPage.9"), null); //$NON-NLS-1$
+			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, CVSUIMessages.SharingWizardSyncPage_9, null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}

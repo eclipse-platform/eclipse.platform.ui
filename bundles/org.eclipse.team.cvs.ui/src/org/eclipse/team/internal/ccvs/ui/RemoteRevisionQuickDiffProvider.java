@@ -289,13 +289,13 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 			document.set(caw.toString());
 			//System.out.println("+ CVSQuickDiff: updating document : " + caw.toString());
 		} catch (IOException x) {
-			throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.readingFile"), x); //$NON-NLS-1$
+			throw new CVSException(CVSUIMessages.RemoteRevisionQuickDiffProvider_readingFile, x); //$NON-NLS-1$
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException x) {
-					throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.closingFile"), x); //$NON-NLS-1$
+					throw new CVSException(CVSUIMessages.RemoteRevisionQuickDiffProvider_closingFile, x); //$NON-NLS-1$
 				}
 			}
 		}
@@ -336,7 +336,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 		if(fUpdateJob != null && fUpdateJob.getState() != Job.NONE) {
 			fUpdateJob.cancel();
 		}
-		fUpdateJob = new Job(Policy.bind("RemoteRevisionQuickDiffProvider.fetchingFile")) { //$NON-NLS-1$
+		fUpdateJob = new Job(CVSUIMessages.RemoteRevisionQuickDiffProvider_fetchingFile) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					readDocument(monitor);

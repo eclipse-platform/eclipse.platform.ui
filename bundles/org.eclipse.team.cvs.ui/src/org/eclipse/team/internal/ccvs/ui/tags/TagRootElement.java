@@ -54,11 +54,11 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 	}
 	public String getLabel(Object o) {
 		if(typeOfTagRoot==CVSTag.BRANCH) {
-			return Policy.bind("MergeWizardEndPage.branches"); //$NON-NLS-1$
+			return CVSUIMessages.MergeWizardEndPage_branches; //$NON-NLS-1$
 		} else if(typeOfTagRoot==CVSTag.DATE){
-			return Policy.bind("TagRootElement.0"); //$NON-NLS-1$
+			return CVSUIMessages.TagRootElement_0; //$NON-NLS-1$
 		}else {
-			return Policy.bind("VersionsElement.versions"); //$NON-NLS-1$
+			return CVSUIMessages.VersionsElement_versions; //$NON-NLS-1$
 		}	
 	}
 	public Object getParent(Object o) {

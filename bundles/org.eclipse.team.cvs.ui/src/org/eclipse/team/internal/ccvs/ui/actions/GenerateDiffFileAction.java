@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 
 /**
@@ -33,7 +33,7 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void execute(IAction action) {
-		final String title = Policy.bind("GenerateCVSDiff.title"); //$NON-NLS-1$
+		final String title = CVSUIMessages.GenerateCVSDiff_title; //$NON-NLS-1$
 		final IResource[] resources = getSelectedResources();
 		final GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(resources[0]);
 		wizard.setWindowTitle(title);

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
@@ -96,7 +97,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
 	 */
 	public String getName() {
-		return Policy.bind("CompareParticipant.0", getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots())); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots()) }); //$NON-NLS-1$
 	}
 	
 	/*
@@ -197,7 +198,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
 	 */
 	protected String getShortTaskName() {
-		return Policy.bind("Participant.comparing"); //$NON-NLS-1$
+		return CVSUIMessages.Participant_comparing; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

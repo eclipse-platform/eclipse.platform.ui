@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
@@ -40,6 +41,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -123,7 +125,7 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 					return true;
 				} else {
 					// No other ancestors should be null. Log the problem.
-					CVSUIPlugin.log(IStatus.WARNING, Policy.bind("CVSSubscriberAction.0", info.getLocal().getFullPath().toString()), null); //$NON-NLS-1$
+					CVSUIPlugin.log(IStatus.WARNING, NLS.bind(CVSUIMessages.CVSSubscriberAction_0, new String[] { info.getLocal().getFullPath().toString() }), null); //$NON-NLS-1$
 					return false;
 				}
 			} else {
@@ -281,7 +283,7 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 				}
 			}
 		} catch(CoreException e) {
-			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_1"), e); //$NON-NLS-1$
+			throw new CVSException(CVSUIMessages.UpdateMergeActionProblems_merging_remote_resources_into_workspace_1, e); //$NON-NLS-1$
 		}
 	}
 	

@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -47,7 +47,7 @@ public class IgnoreAction extends WorkspaceTraversalAction {
          * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
          */
         protected String getTaskName(CVSTeamProvider provider) {
-            return Policy.bind("IgnoreAction.0", provider.getProject().getName()); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.IgnoreAction_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
         }
 
         /* (non-Javadoc)
@@ -76,7 +76,7 @@ public class IgnoreAction extends WorkspaceTraversalAction {
          * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
          */
         protected String getTaskName() {
-            return Policy.bind("IgnoreAction.1"); //$NON-NLS-1$
+            return CVSUIMessages.IgnoreAction_1; //$NON-NLS-1$
         }
         
     }
@@ -97,7 +97,7 @@ public class IgnoreAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("IgnoreAction.ignore"); //$NON-NLS-1$
+		return CVSUIMessages.IgnoreAction_ignore; //$NON-NLS-1$
 	}
 
 	/**

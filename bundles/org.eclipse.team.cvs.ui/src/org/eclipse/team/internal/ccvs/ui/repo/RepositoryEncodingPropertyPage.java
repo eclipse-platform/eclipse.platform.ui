@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -94,7 +95,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 				}
 				return false;
 			} catch (BackingStoreException e) {
-				CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("internal"), e)); //$NON-NLS-1$
+				CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, CVSUIMessages.internal, e)); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -333,15 +334,15 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		
-		createWrappingLabel(composite, Policy.bind("RepositoryEncodingPropertyPage.2"), 1); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_2, 1); //$NON-NLS-1$
 		
-		encoding = new EncodingFieldEditor(CVSRepositoryLocation.PREF_SERVER_ENCODING, Policy.bind("RepositoryEncodingPropertyPage.3"), composite); //$NON-NLS-1$
+		encoding = new EncodingFieldEditor(CVSRepositoryLocation.PREF_SERVER_ENCODING, CVSUIMessages.RepositoryEncodingPropertyPage_3, composite); //$NON-NLS-1$
 		encoding.setPreferencePage(this);
 		encoding.setPreferenceStore(getLocationPreferenceStore());
 		encoding.load();
 		encoding.setPropertyChangeListener(this);
 		
-		createWrappingLabel(composite, Policy.bind("RepositoryEncodingPropertyPage.4"), 1); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_4, 1); //$NON-NLS-1$
 		
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_ENCODING_PROPERTY_PAGE);
 		Dialog.applyDialogFont(parent);
@@ -383,7 +384,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	public boolean performOk() {
 		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation(false))) {
 			// The location may have been replaced by the main properties page
-			MessageDialog.openInformation(getShell(), Policy.bind("RepositoryEncodingPropertyPage.0"), Policy.bind("RepositoryEncodingPropertyPage.1", location.getLocation(true))); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), CVSUIMessages.RepositoryEncodingPropertyPage_0, NLS.bind(CVSUIMessages.RepositoryEncodingPropertyPage_1, new String[] { location.getLocation(true) })); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 		encoding.store();
@@ -391,7 +392,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 			((CVSRepositoryLocation)location).getPreferences().flush();
 		} catch (BackingStoreException e) {
 			// Log and ignore
-			CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("internal"), e)); //$NON-NLS-1$
+			CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, CVSUIMessages.internal, e)); //$NON-NLS-1$
 		}
 		return true;
 	}

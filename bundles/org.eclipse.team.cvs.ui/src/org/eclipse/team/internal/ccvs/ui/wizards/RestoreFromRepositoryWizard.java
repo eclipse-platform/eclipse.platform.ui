@@ -14,9 +14,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * This wizard allows the user to show deleted resources in the history view
@@ -33,7 +33,7 @@ public class RestoreFromRepositoryWizard extends Wizard {
 	public RestoreFromRepositoryWizard(IContainer parent, ICVSFile[] files) {
 		this.parent = parent;
 		this.files = files;
-		setWindowTitle(Policy.bind("RestoreFromRepositoryWizard.fileSelectionPageTitle")); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle); //$NON-NLS-1$
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class RestoreFromRepositoryWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
 		
-		fileSelectionPage = new RestoreFromRepositoryFileSelectionPage("FileSelectionPage", Policy.bind("RestoreFromRepositoryWizard.fileSelectionPageTitle"), substImage, Policy.bind("RestoreFromRepositoryWizard.fileSelectionPageDescription")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		fileSelectionPage = new RestoreFromRepositoryFileSelectionPage("FileSelectionPage", CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageTitle, substImage, CVSUIMessages.RestoreFromRepositoryWizard_fileSelectionPageDescription); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		fileSelectionPage.setInput(parent, files);
 		addPage(fileSelectionPage);
 	}

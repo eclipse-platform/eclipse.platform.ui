@@ -17,14 +17,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -53,18 +54,18 @@ public class UnmanageAction extends WorkspaceAction {
 		
 		static String getTitle(IProject[] projects) {
 			if (projects.length == 1)
-				return Policy.bind("Unmanage.title");  //$NON-NLS-1$
+				return CVSUIMessages.Unmanage_title;  //$NON-NLS-1$
 			else
-				return Policy.bind("Unmanage.titleN");  //$NON-NLS-1$
+				return CVSUIMessages.Unmanage_titleN;  //$NON-NLS-1$
 		}
 		
 		static String getMessage(IProject[] projects) {
 			if (projects.length == 1) {
 				IProject project = projects[0];
-				return Policy.bind("Unmanage.message", project.getName());  //$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.Unmanage_message, new String[] { project.getName() });  //$NON-NLS-1$
 			}
 			else {
-				return Policy.bind("Unmanage.messageN", new Integer(projects.length).toString());  //$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.Unmanage_messageN, new String[] { new Integer(projects.length).toString() });  //$NON-NLS-1$
 			}
 		}
 		
@@ -74,12 +75,12 @@ public class UnmanageAction extends WorkspaceAction {
 			radio1 = new Button(composite, SWT.RADIO);
 			radio1.addSelectionListener(selectionListener);
 			
-			radio1.setText(Policy.bind("Unmanage.option2")); //$NON-NLS-1$
+			radio1.setText(CVSUIMessages.Unmanage_option2); //$NON-NLS-1$
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);
 
-			radio2.setText(Policy.bind("Unmanage.option1")); //$NON-NLS-1$
+			radio2.setText(CVSUIMessages.Unmanage_option1); //$NON-NLS-1$
 			
 			// set initial state
 			radio1.setSelection(deleteContent);
@@ -133,7 +134,7 @@ public class UnmanageAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("Unmanage.unmanagingError");//$NON-NLS-1$
+		return CVSUIMessages.Unmanage_unmanagingError;//$NON-NLS-1$
 	}
 
 	/**

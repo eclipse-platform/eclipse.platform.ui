@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -67,7 +68,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
     static {
         DateFormat format;
         try {
-            format = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
+            format = new SimpleDateFormat(CVSUIMessages.Console_resultTimeFormat); //$NON-NLS-1$
         } catch (RuntimeException e) {
             // This can happen if the bundle contains an invalid  format
             format = new SimpleDateFormat("'(took 'm:ss.SSS')')"); //$NON-NLS-1$
@@ -260,7 +261,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	public void commandInvoked(Session session, String line) {
 	    if (!session.isOutputToConsole()) return;
 		commandStarted = System.currentTimeMillis();
-		appendLine(ConsoleDocument.COMMAND, Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_preExecutionDelimiter); //$NON-NLS-1$
 		appendLine(ConsoleDocument.COMMAND, line);
 	}
 
@@ -292,34 +293,34 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		try {
 			time = TIME_FORMAT.format(new Date(commandRuntime));
 		} catch (RuntimeException e) {
-			CVSUIPlugin.log(IStatus.ERROR, Policy.bind("Console.couldNotFormatTime"), e); //$NON-NLS-1$
+			CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.Console_couldNotFormatTime, e); //$NON-NLS-1$
 			time = ""; //$NON-NLS-1$
 		}
 		String statusText;
 		if (status != null) {
 		    boolean includeRoot = true;
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				statusText = Policy.bind("Console.resultServerError", status.getMessage(), time); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultServerError, new String[] { status.getMessage(), time }); //$NON-NLS-1$
 				includeRoot = false;
 			} else {
-				statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); //$NON-NLS-1$
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
 			outputStatus(status, includeRoot, includeRoot ? 0 : 1);
 		} else if (exception != null) {
 			if (exception instanceof OperationCanceledException) {
-				statusText = Policy.bind("Console.resultAborted", time); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultAborted, new String[] { time }); //$NON-NLS-1$
 			} else {
-				statusText = Policy.bind("Console.resultException", time); //$NON-NLS-1$
+				statusText = NLS.bind(CVSUIMessages.Console_resultException, new String[] { time }); //$NON-NLS-1$
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
 			if (exception instanceof CoreException) {
 			    outputStatus(((CoreException)exception).getStatus(), true, 1);
 			}
 		} else {
-			statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
+			statusText = NLS.bind(CVSUIMessages.Console_resultOk, new String[] { time }); //$NON-NLS-1$
 		}
-		appendLine(ConsoleDocument.COMMAND, Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, CVSUIMessages.Console_postExecutionDelimiter); //$NON-NLS-1$
 		appendLine(ConsoleDocument.COMMAND, ""); //$NON-NLS-1$
 	}
 	
@@ -401,11 +402,11 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 */
 	private String messageLineForStatus(IStatus status) {
 		if (status.getSeverity() == IStatus.ERROR) {
-			return Policy.bind("Console.error", status.getMessage()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_error, new String[] { status.getMessage() }); //$NON-NLS-1$
 		} else if (status.getSeverity() == IStatus.WARNING) {
-			return Policy.bind("Console.warning", status.getMessage()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_warning, new String[] { status.getMessage() }); //$NON-NLS-1$
 		} else if (status.getSeverity() == IStatus.INFO) {
-			return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.Console_info, new String[] { status.getMessage() }); //$NON-NLS-1$
 		}
 		return status.getMessage();
 	}

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.RepositoryProvider;
@@ -201,7 +202,7 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 		if (yesToAll) return 2;
 		if (!project.exists()) return 0;
 		final MessageDialog dialog = 
-			new MessageDialog(shell, Policy.bind("CVSProjectSetSerializer.Confirm_Overwrite_Project_8"), null, Policy.bind("CVSProjectSetSerializer.The_project_{0}_already_exists._Do_you_wish_to_overwrite_it__9", project.getName()), MessageDialog.QUESTION, //$NON-NLS-1$ //$NON-NLS-2$
+			new MessageDialog(shell, CVSUIMessages.CVSProjectSetSerializer_Confirm_Overwrite_Project_8, null, NLS.bind(CVSUIMessages.CVSProjectSetSerializer_The_project__0__already_exists__Do_you_wish_to_overwrite_it__9, new String[] { project.getName() }), MessageDialog.QUESTION, //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL,

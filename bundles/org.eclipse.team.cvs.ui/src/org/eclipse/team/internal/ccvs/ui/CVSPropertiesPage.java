@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -25,18 +26,18 @@ public abstract class CVSPropertiesPage extends PropertyPage {
 	public static String getTagLabel(CVSTag tag) {
 	
 	if (tag == null) {
-		return Policy.bind("CVSFilePropertiesPage.none"); //$NON-NLS-1$
+		return CVSUIMessages.CVSFilePropertiesPage_none; //$NON-NLS-1$
 	}
 	
 	switch (tag.getType()) {
 		case CVSTag.HEAD:
 			return tag.getName();
 		case CVSTag.VERSION:
-			return Policy.bind("CVSFilePropertiesPage.version", tag.getName()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_version, new String[] { tag.getName() }); //$NON-NLS-1$
 		case CVSTag.BRANCH:
-			return Policy.bind("CVSFilePropertiesPage.branch", tag.getName()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_branch, new String[] { tag.getName() }); //$NON-NLS-1$
 		case CVSTag.DATE:
-			return Policy.bind("CVSFilePropertiesPage.date", tag.getName()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CVSFilePropertiesPage_date, new String[] { tag.getName() }); //$NON-NLS-1$
 		default :
 			return tag.getName();
 		}

@@ -20,8 +20,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class ShowHistoryAction extends CVSAction {
 	/**
@@ -80,7 +80,7 @@ public class ShowHistoryAction extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
+		return CVSUIMessages.ShowHistoryAction_showHistory; //$NON-NLS-1$
 	}
 
 }

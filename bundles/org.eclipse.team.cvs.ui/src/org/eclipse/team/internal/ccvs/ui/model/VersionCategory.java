@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
@@ -115,7 +114,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable,
      * @param object The object to get a label for.
      */
     public String getLabel(Object o) {
-        return Policy.bind("VersionCategory.Versions_1"); //$NON-NLS-1$
+        return CVSUIMessages.VersionCategory_Versions_1; //$NON-NLS-1$
     }
 
     /**

@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ui.Utils;
 public class ConsoleRemoveAction extends Action {
 
 	ConsoleRemoveAction() {
-		Utils.initAction(this, "ConsoleRemoveAction.", Policy.getBundle()); //$NON-NLS-1$
+		Utils.initAction(this, "ConsoleRemoveAction.", Policy.getActionBundle()); //$NON-NLS-1$
 	}
 	
 	public void run() {

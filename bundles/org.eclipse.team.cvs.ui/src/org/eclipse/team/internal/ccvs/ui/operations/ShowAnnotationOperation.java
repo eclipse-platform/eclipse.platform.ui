@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -85,7 +86,7 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
      */
     protected String getTaskName() {
-        return Policy.bind("ShowAnnotationOperation.taskName"); //$NON-NLS-1$
+        return CVSUIMessages.ShowAnnotationOperation_taskName; //$NON-NLS-1$
     }
 
 	protected boolean hasCharset(ICVSResource cvsResource, InputStream contents) {
@@ -113,7 +114,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 			try {
 				workbench.showPerspective(defaultPerspectiveID, window);
 			} catch (WorkbenchException e) {
-				Utils.handleError(window.getShell(), e, Policy.bind("ShowAnnotationOperation.0"), e.getMessage()); //$NON-NLS-1$
+				Utils.handleError(window.getShell(), e, CVSUIMessages.ShowAnnotationOperation_0, e.getMessage()); //$NON-NLS-1$
 			}
 		}
        
@@ -209,9 +210,9 @@ public class ShowAnnotationOperation extends CVSOperation {
 		    // Ask the user whether to switch
 			final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
 			        Utils.getShell(null),
-			        Policy.bind("ShowAnnotationOperation.1"), //$NON-NLS-1$
-			        Policy.bind("ShowAnnotationOperation.2", desired.getLabel()), //$NON-NLS-1$
-			        Policy.bind("ShowAnnotationOperation.4"),   //$NON-NLS-1$
+			        CVSUIMessages.ShowAnnotationOperation_1, //$NON-NLS-1$
+			        NLS.bind(CVSUIMessages.ShowAnnotationOperation_2, new String[] { desired.getLabel() }), //$NON-NLS-1$
+			        CVSUIMessages.ShowAnnotationOperation_4,   //$NON-NLS-1$
 			        false /* toggle state */,
 			        store,
 			        ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS);

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -26,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
@@ -188,9 +190,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// changed when the checkout command is run.
 		String taskName;
 		if (targetProjects.length == 1) {
-			taskName = Policy.bind("CheckoutProjectOperation.8", resource.getName(), targetProjects[0].getName()); //$NON-NLS-1$
+			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_8, new String[] { resource.getName(), targetProjects[0].getName() }); //$NON-NLS-1$
 		} else {
-			taskName = Policy.bind("CheckoutProjectOperation.9", resource.getName(), String.valueOf(targetProjects.length)); //$NON-NLS-1$
+			taskName = NLS.bind(CVSUIMessages.CheckoutProjectOperation_9, new String[] { resource.getName(), String.valueOf(targetProjects.length) }); //$NON-NLS-1$
 		}
 		pm.beginTask(taskName, 100);
 		pm.setTaskName(taskName);
@@ -327,7 +329,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
 				// User said no to this project but not no to all
-				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, Policy.bind("CheckoutProjectOperation.0", remoteFolder.getRepositoryRelativePath())); //$NON-NLS-1$
+				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); //$NON-NLS-1$
 			}
 		}
 		// Create the projects and remove any previous content
@@ -351,7 +353,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			Policy.checkCanceled(monitor);
 			monitor.beginTask(null, 100 + children.length * 100);
-			monitor.subTask(Policy.bind("CheckoutOperation.scrubbingProject", project.getName())); //$NON-NLS-1$	
+			monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_scrubbingProject, new String[] { project.getName() })); //$NON-NLS-1$	
 			try {
 				for (int j = 0; j < children.length; j++) {
 					if ( ! children[j].getName().equals(".project")) {//$NON-NLS-1$
@@ -399,8 +401,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// First, if the project exists in the workspace, prompt
 		if (project.exists()) {
 			if (!promptToOverwrite(
-					Policy.bind("CheckoutOperation.confirmOverwrite"),  //$NON-NLS-1$
-					Policy.bind("CheckoutOperation.thisResourceExists", project.getName(), getRemoteModuleName(remoteFolder)))) { //$NON-NLS-1$
+					CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
+					NLS.bind(CVSUIMessages.CheckoutOperation_thisResourceExists, new String[] { project.getName(), getRemoteModuleName(remoteFolder) }))) { //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -424,8 +426,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		if (localLocation != null && localLocation.exists()) {
 			try {
 				return (promptToOverwrite(
-						Policy.bind("CheckoutOperation.confirmOverwrite"),  //$NON-NLS-1$
-						Policy.bind("CheckoutOperation.thisExternalFileExists", localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder)))); //$NON-NLS-1$
+						CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
+						NLS.bind(CVSUIMessages.CheckoutOperation_thisExternalFileExists, new String[] { localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder) }))); //$NON-NLS-1$
 			} catch (IOException e) {
 				CVSUIPlugin.log(CVSException.wrapException(e));
 			}
@@ -443,7 +445,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				IProject project = projects[i];
 				// Register the project with Team
 				try {
-					monitor.subTask(Policy.bind("CheckoutOperation.refreshingProject", project.getName())); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSUIMessages.CheckoutOperation_refreshingProject, new String[] { project.getName() })); //$NON-NLS-1$
 					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
 					if (folder.isCVSFolder()) {
 						RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
@@ -464,9 +466,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	protected String getTaskName() {
 		ICVSRemoteFolder[] remoteFolders = getRemoteFolders();
 		if (remoteFolders.length == 1) {
-			return Policy.bind("CheckoutSingleProjectOperation.taskname", remoteFolders[0].getName()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CheckoutSingleProjectOperation_taskname, new String[] { remoteFolders[0].getName() }); //$NON-NLS-1$
 		} else {
-			return Policy.bind("CheckoutMultipleProjectsOperation.taskName", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.CheckoutMultipleProjectsOperation_taskName, new String[] { new Integer(remoteFolders.length).toString() });  //$NON-NLS-1$
 		}
 	}
 	

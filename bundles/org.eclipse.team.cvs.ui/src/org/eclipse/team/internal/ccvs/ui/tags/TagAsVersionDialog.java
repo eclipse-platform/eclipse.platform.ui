@@ -19,8 +19,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -56,7 +56,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 		
 		final int width= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		
-		final Label label = SWTUtils.createLabel(parent, Policy.bind("TagAction.enterTag")); //$NON-NLS-1$
+		final Label label = SWTUtils.createLabel(parent, CVSUIMessages.TagAction_enterTag); //$NON-NLS-1$
 		label.setLayoutData(SWTUtils.createGridData(width, SWT.DEFAULT, true, false));
 
 		tagText = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -70,7 +70,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 			}
 		);
 		
-		moveTagButton= SWTUtils.createCheckBox(parent, Policy.bind("TagAction.moveTag")); //$NON-NLS-1$
+		moveTagButton= SWTUtils.createCheckBox(parent, CVSUIMessages.TagAction_moveTag); //$NON-NLS-1$
 		moveTagButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				moveTag = moveTagButton.getSelection();
@@ -100,7 +100,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	    composite.setLayoutData(gridData);
 		
 		tagArea = new TagSelectionArea(getShell(), tagSource, TagSelectionArea.INCLUDE_VERSIONS, null);
-		tagArea.setTagAreaLabel(Policy.bind("TagAction.existingVersions"));  //$NON-NLS-1$
+		tagArea.setTagAreaLabel(CVSUIMessages.TagAction_existingVersions);  //$NON-NLS-1$
 		tagArea.setIncludeFilterInputArea(false);
 		tagArea.createArea(composite);
 		tagArea.addPropertyChangeListener(new IPropertyChangeListener() {

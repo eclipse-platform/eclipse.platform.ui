@@ -14,11 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
+import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 
 /**
@@ -30,7 +30,6 @@ public class CompareRemoteResourcesAction extends CVSAction {
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		ICVSRemoteResource[] editions = getSelectedRemoteResources();
 		if (editions == null || editions.length != 2) {
-			MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		try {

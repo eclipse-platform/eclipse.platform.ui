@@ -23,8 +23,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 import org.eclipse.ui.PlatformUI;
 
@@ -106,7 +106,7 @@ public class CommitAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
 	}
 
 	/**

@@ -30,7 +30,6 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.ui.synchronize.ResourceScope;
@@ -91,11 +90,11 @@ public class CommitWizard extends ResizableWizard {
         }
         
         protected String getJobName() {
-            return Policy.bind("CommitWizard.0"); //$NON-NLS-1$
+            return CVSUIMessages.CommitWizard_0; //$NON-NLS-1$
         }
         
         protected String getTaskName() {
-            return Policy.bind("CommitWizard.1"); //$NON-NLS-1$
+            return CVSUIMessages.CommitWizard_1; //$NON-NLS-1$
         }
 
         /*
@@ -142,9 +141,9 @@ public class CommitWizard extends ResizableWizard {
     
     public CommitWizard(final IResource [] resources) throws CVSException {
         
-        super(Policy.bind("CommitWizard.3"), CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
         
-        setWindowTitle(Policy.bind("CommitWizard.2")); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.CommitWizard_2); //$NON-NLS-1$
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
         
         fResources= resources;
@@ -165,7 +164,7 @@ public class CommitWizard extends ResizableWizard {
             try {
 				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 				    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				    	monitor.beginTask(Policy.bind("CommitWizard.4"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+				    	monitor.beginTask(CVSUIMessages.CommitWizard_4, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				    	syncInfoCollector.waitForCollector(monitor);
 				    	monitor.done();
 				    }
@@ -297,7 +296,7 @@ public class CommitWizard extends ResizableWizard {
     
     private static void run(Shell shell, CommitWizard wizard) {
         if (!wizard.hasOutgoingChanges()) {
-            MessageDialog.openInformation(shell, Policy.bind("CommitWizard.6"), Policy.bind("CommitWizard.7")); //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialog.openInformation(shell, CVSUIMessages.CommitWizard_6, CVSUIMessages.CommitWizard_7); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             open(shell, wizard);
         }

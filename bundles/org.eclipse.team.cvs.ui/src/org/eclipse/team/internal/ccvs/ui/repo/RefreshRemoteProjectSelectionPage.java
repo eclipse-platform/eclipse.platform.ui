@@ -23,10 +23,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.ListSelectionArea;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.WorkingSetSelectionArea;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
@@ -106,7 +106,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			new InputElement(), 
 			new RemoteContentProvider(), 
 			new WorkbenchLabelProvider(), 
-			Policy.bind("RefreshRemoteProjectSelectionPage.selectRemoteProjects")); //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_selectRemoteProjects); //$NON-NLS-1$
 		listArea.createArea(composite);
 
 		listArea.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -116,7 +116,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		});
 		listArea.getViewer().setSorter(new RepositorySorter());
 		
-		workingSetArea = new WorkingSetSelectionArea(getShell(), Policy.bind("RefreshRemoteProjectSelectionPage.noWorkingSet"), Policy.bind("RefreshRemoteProjectSelectionPage.workingSet"), settings); //$NON-NLS-1$ //$NON-NLS-2$
+		workingSetArea = new WorkingSetSelectionArea(getShell(), CVSUIMessages.RefreshRemoteProjectSelectionPage_noWorkingSet, CVSUIMessages.RefreshRemoteProjectSelectionPage_workingSet, settings); //$NON-NLS-1$ //$NON-NLS-2$
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

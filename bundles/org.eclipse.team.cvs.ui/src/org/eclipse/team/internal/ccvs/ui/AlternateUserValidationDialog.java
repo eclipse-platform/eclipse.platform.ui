@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
@@ -51,7 +52,7 @@ public class AlternateUserValidationDialog extends Dialog {
 	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("AlternateUserValidationDialog.Enter_Password_2")); //$NON-NLS-1$
+		newShell.setText(CVSUIMessages.AlternateUserValidationDialog_Enter_Password_2); //$NON-NLS-1$
 	}
 	
 	protected Control createContents(Composite parent) {
@@ -77,7 +78,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		middleComposite.setLayoutData(new GridData());
 		
 		Label l = new Label(middleComposite, SWT.NULL);
-		l.setText(Policy.bind("AlternateUserValidationDialog.message", user)); //$NON-NLS-1$
+		l.setText(NLS.bind(CVSUIMessages.AlternateUserValidationDialog_message, new String[] { user })); //$NON-NLS-1$
 		l.setLayoutData(new GridData());
 		l = new Label(middleComposite, SWT.NULL);
 		l.setText(""); //$NON-NLS-1$
@@ -136,7 +137,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		buttonComposite.setLayout(new GridLayout());
 		buttonComposite.setLayoutData(new GridData());
 		Button b = new Button(buttonComposite, SWT.PUSH);
-		b.setText(Policy.bind("AlternateUserValidationDialog.OK_6")); //$NON-NLS-1$
+		b.setText(CVSUIMessages.AlternateUserValidationDialog_OK_6); //$NON-NLS-1$
 		data = new GridData();
 		data.widthHint = 70;
 		b.setLayoutData(data);
@@ -147,7 +148,7 @@ public class AlternateUserValidationDialog extends Dialog {
 		});
 		buttonComposite.getShell().setDefaultButton(b);
 		b = new Button(buttonComposite, SWT.PUSH);
-		b.setText(Policy.bind("AlternateUserValidationDialog.Cancel_7")); //$NON-NLS-1$
+		b.setText(CVSUIMessages.AlternateUserValidationDialog_Cancel_7); //$NON-NLS-1$
 		data = new GridData();
 		data.widthHint = 70;
 		b.setLayoutData(data);

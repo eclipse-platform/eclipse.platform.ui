@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -82,7 +82,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	}
 
 	protected String getTaskName() {
-		return Policy.bind("HasProjectMetaFile.taskName"); //$NON-NLS-1$
+		return CVSUIMessages.HasProjectMetaFile_taskName; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -335,7 +335,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			++index;
 		}	
 	
-		COMPRESSION_LABELS= new String [] { Policy.bind("CVSPreferencesPage.0"), Policy.bind("CVSPreferencesPage.1"), Policy.bind("CVSPreferencesPage.2"), Policy.bind("CVSPreferencesPage.3"), Policy.bind("CVSPreferencesPage.4"), Policy.bind("CVSPreferencesPage.5"), Policy.bind("CVSPreferencesPage.6"), Policy.bind("CVSPreferencesPage.7"), Policy.bind("CVSPreferencesPage.8"), Policy.bind("CVSPreferencesPage.9") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+		COMPRESSION_LABELS= new String [] { CVSUIMessages.CVSPreferencesPage_0, CVSUIMessages.CVSPreferencesPage_1, CVSUIMessages.CVSPreferencesPage_2, CVSUIMessages.CVSPreferencesPage_3, CVSUIMessages.CVSPreferencesPage_4, CVSUIMessages.CVSPreferencesPage_5, CVSUIMessages.CVSPreferencesPage_6, CVSUIMessages.CVSPreferencesPage_7, CVSUIMessages.CVSPreferencesPage_8, CVSUIMessages.CVSPreferencesPage_9 }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 		COMPRESSION_VALUES= new Integer [COMPRESSION_LABELS.length];
 		for (int i = 0; i < COMPRESSION_VALUES.length; i++) {
 			COMPRESSION_VALUES[i]= new Integer(i);
@@ -346,13 +346,13 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    PERSPECTIVE_LABELS= new String [perspectives.length + 1];
 		Arrays.sort(perspectives, new PerspectiveDescriptorComparator());
 		PERSPECTIVE_VALUES[0]= ICVSUIConstants.OPTION_NO_PERSPECTIVE;
-		PERSPECTIVE_LABELS[0]= Policy.bind("CVSPreferencesPage.10"); //$NON-NLS-1$
+		PERSPECTIVE_LABELS[0]= CVSUIMessages.CVSPreferencesPage_10; //$NON-NLS-1$
 		for (int i = 0; i < perspectives.length; i++) {
 			PERSPECTIVE_VALUES[i + 1]= perspectives[i].getId();
 			PERSPECTIVE_LABELS[i + 1]= perspectives[i].getLabel();
 		}
 		
-		YES_NO_PROMPT= new String [] { Policy.bind("CVSPreferencesPage.11"), Policy.bind("CVSPreferencesPage.12"), Policy.bind("CVSPreferencesPage.13") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		YES_NO_PROMPT= new String [] { CVSUIMessages.CVSPreferencesPage_11, CVSUIMessages.CVSPreferencesPage_12, CVSUIMessages.CVSPreferencesPage_13 }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		/**
 		 * Handle deleted perspectives
 		 */
@@ -384,18 +384,18 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Composite createGeneralTab(final TabFolder tabFolder) {
 		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
-		tab.setText(Policy.bind("CVSPreferencesPage.14")); //$NON-NLS-1$
+		tab.setText(CVSUIMessages.CVSPreferencesPage_14); //$NON-NLS-1$
 		tab.setControl(composite);
-		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  Policy.bind("CVSPreferencesPage.15"), IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, Policy.bind("CVSPreferencesPage.16"), IHelpContextIds.PREF_CONFIRM_MOVE_TAG); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, Policy.bind("CVSPreferencesPage.17"), IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, Policy.bind("CVSPreferencesPage.18"), IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  CVSUIMessages.CVSPreferencesPage_15, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, CVSUIMessages.CVSPreferencesPage_16, IHelpContextIds.PREF_CONFIRM_MOVE_TAG); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, CVSUIMessages.CVSPreferencesPage_17, IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, CVSUIMessages.CVSPreferencesPage_18, IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
         
         final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
         new TextField(
                 textComposite, 
                 ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD, 
-                Policy.bind("CVSPreferencesPage.20"), //$NON-NLS-1$
+                CVSUIMessages.CVSPreferencesPage_20, //$NON-NLS-1$
                 null) {
             protected void modifyText(Text text) {
                 // Parse the timeout value
@@ -405,11 +405,11 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
                         setErrorMessage(null);
                         setValid(true);
                     } else {
-                        setErrorMessage(Policy.bind("CVSPreferencesPage.21")); //$NON-NLS-1$
+                        setErrorMessage(CVSUIMessages.CVSPreferencesPage_21); //$NON-NLS-1$
                         setValid(false);
                     }
                 } catch (NumberFormatException ex) {
-                    setErrorMessage(Policy.bind("CVSPreferencesPage.22")); //$NON-NLS-1$
+                    setErrorMessage(CVSUIMessages.CVSPreferencesPage_22); //$NON-NLS-1$
                     setValid(false);
                 }
             }
@@ -421,14 +421,14 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Composite createConnectionTab(final TabFolder tabFolder) {
 		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
-		tab.setText(Policy.bind("CVSPreferencesPage.19")); //$NON-NLS-1$
+		tab.setText(CVSUIMessages.CVSPreferencesPage_19); //$NON-NLS-1$
 		tab.setControl(composite);
 		
 		final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
 		new TextField(
 				textComposite, 
 				ICVSUIConstants.PREF_TIMEOUT, 
-				Policy.bind("CVSPreferencesPage.23"),  //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_23,  //$NON-NLS-1$
 				IHelpContextIds.PREF_COMMS_TIMEOUT) {
 			protected void modifyText(Text text) {
 				// Parse the timeout value
@@ -438,11 +438,11 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 						setErrorMessage(null);
 						setValid(true);
 					} else {
-						setErrorMessage(Policy.bind("CVSPreferencesPage.24")); //$NON-NLS-1$
+						setErrorMessage(CVSUIMessages.CVSPreferencesPage_24); //$NON-NLS-1$
 						setValid(false);
 					}
 				} catch (NumberFormatException ex) {
-					setErrorMessage(Policy.bind("CVSPreferencesPage.25")); //$NON-NLS-1$
+					setErrorMessage(CVSUIMessages.CVSPreferencesPage_25); //$NON-NLS-1$
 					setValid(false);
 				}
 			}
@@ -451,15 +451,15 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		final ComboBox quietnessCombo = new IntegerComboBox(
 				textComposite, 
 				ICVSUIConstants.PREF_QUIETNESS, 
-				Policy.bind("CVSPreferencesPage.26"),  //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_26,  //$NON-NLS-1$
 				IHelpContextIds.PREF_QUIET,
-				new String [] { Policy.bind("CVSPreferencesPage.27"), Policy.bind("CVSPreferencesPage.28"), Policy.bind("CVSPreferencesPage.29") }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String [] { CVSUIMessages.CVSPreferencesPage_27, CVSUIMessages.CVSPreferencesPage_28, CVSUIMessages.CVSPreferencesPage_29 }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				new Integer [] { new Integer(0), new Integer(1), new Integer(2)});
 		
 		quietnessCombo.getCombo().addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				if (getQuietnessOptionFor(quietnessCombo.getCombo().getSelectionIndex()).equals(Command.SILENT)) {
-					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencesPage.30"), Policy.bind("CVSPreferencesPage.31"));  //$NON-NLS-1$ //$NON-NLS-2$
+					MessageDialog.openWarning(getShell(), CVSUIMessages.CVSPreferencesPage_30, CVSUIMessages.CVSPreferencesPage_31);  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -470,7 +470,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		new IntegerComboBox(
 				textComposite, 
 				ICVSUIConstants.PREF_COMPRESSION_LEVEL, 
-				Policy.bind("CVSPreferencesPage.32"),  //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_32,  //$NON-NLS-1$
 				IHelpContextIds.PREF_COMPRESSION, 
 				COMPRESSION_LABELS, COMPRESSION_VALUES);
 
@@ -481,18 +481,18 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Composite createFilesFoldersTab(final TabFolder tabFolder) {
 		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
-		tab.setText(Policy.bind("CVSPreferencesPage.33")); //$NON-NLS-1$
+		tab.setText(CVSUIMessages.CVSPreferencesPage_33); //$NON-NLS-1$
 		tab.setControl(composite);
-		new Checkbox(composite, ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, Policy.bind("CVSPreferencesPage.34"), IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, Policy.bind("CVSPreferencesPage.35"), IHelpContextIds.PREF_LINEEND); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, Policy.bind("CVSPreferencesPage.36"), IHelpContextIds.PREF_PRUNE); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_REPLACE_UNMANAGED, Policy.bind("CVSPreferencesPage.37"), IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, CVSUIMessages.CVSPreferencesPage_34, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, CVSUIMessages.CVSPreferencesPage_35, IHelpContextIds.PREF_LINEEND); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSUIMessages.CVSPreferencesPage_36, IHelpContextIds.PREF_PRUNE); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_REPLACE_UNMANAGED, CVSUIMessages.CVSPreferencesPage_37, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED); //$NON-NLS-1$
 		SWTUtils.createPlaceholder(composite, 1);
 		final Composite bottom= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
 		new StringComboBox(
 				bottom, 
 				ICVSUIConstants.PREF_TEXT_KSUBST, 
-				Policy.bind("CVSPreferencesPage.38"),  //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_38,  //$NON-NLS-1$
 				IHelpContextIds.PREF_KEYWORDMODE, 
 				KSUBST_LABELS, KSUBST_VALUES);
 		
@@ -503,20 +503,20 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 
 		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT, 1);
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
-		tab.setText(Policy.bind("CVSPreferencesPage.39")); //$NON-NLS-1$
+		tab.setText(CVSUIMessages.CVSPreferencesPage_39); //$NON-NLS-1$
 		tab.setControl(composite);
 		
 		new StringRadioButtons(
 				composite,
 				ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS,
-				Policy.bind("CVSPreferencesPage.40"), //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_40, //$NON-NLS-1$
 				IHelpContextIds.PREF_ALLOW_EMPTY_COMMIT_COMMENTS,
 				YES_NO_PROMPT,
 				new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER, MessageDialogWithToggle.PROMPT });
 		
 		new IntegerRadioButtons(composite, 
 				ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, 
-				Policy.bind("CVSPreferencesPage.41"),  //$NON-NLS-1$
+				CVSUIMessages.CVSPreferencesPage_41,  //$NON-NLS-1$
 				IHelpContextIds.PREF_SAVE_DIRTY_EDITORS, 
 	    		YES_NO_PROMPT,
 	    		new Integer [] { new Integer(ICVSUIConstants.OPTION_AUTOMATIC),	new Integer(ICVSUIConstants.OPTION_NEVER), 	new Integer(ICVSUIConstants.OPTION_PROMPT)});
@@ -524,7 +524,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    new StringRadioButtons(
 	    		composite, 
 	    		ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, 
-	    		Policy.bind("CVSPreferencesPage.42"), //$NON-NLS-1$
+	    		CVSUIMessages.CVSPreferencesPage_42, //$NON-NLS-1$
 	    		IHelpContextIds.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS,
 	    		YES_NO_PROMPT,
 	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
@@ -534,7 +534,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    new StringComboBox(
 	    		composite, 
 	    		ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
-	    		Policy.bind("CVSPreferencesPage.43"), //$NON-NLS-1$
+	    		CVSUIMessages.CVSPreferencesPage_43, //$NON-NLS-1$
 	    		IHelpContextIds.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
 	    		PERSPECTIVE_LABELS,
 	    		PERSPECTIVE_VALUES);

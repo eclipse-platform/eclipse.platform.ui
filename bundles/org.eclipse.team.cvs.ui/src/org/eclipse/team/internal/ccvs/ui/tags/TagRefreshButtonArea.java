@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
@@ -52,8 +53,8 @@ public class TagRefreshButtonArea extends DialogArea {
      */
     public void createArea(Composite parent) {
     	
-    	final String addButtonLabel= Policy.bind("TagConfigurationDialog.21"); //$NON-NLS-1$
-    	final String refreshButtonLabel= Policy.bind("TagConfigurationDialog.20"); //$NON-NLS-1$
+    	final String addButtonLabel= CVSUIMessages.TagConfigurationDialog_21; //$NON-NLS-1$
+    	final String refreshButtonLabel= CVSUIMessages.TagConfigurationDialog_20; //$NON-NLS-1$
     	
     	final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
     	
@@ -101,14 +102,14 @@ public class TagRefreshButtonArea extends DialogArea {
 						setBusy(true);
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								fMessageLabel.setText(Policy.bind("TagRefreshButtonArea.6")); //$NON-NLS-1$
+								fMessageLabel.setText(CVSUIMessages.TagRefreshButtonArea_6); //$NON-NLS-1$
 							}
 						});
-						monitor.beginTask(Policy.bind("TagRefreshButtonArea.5"), 100); //$NON-NLS-1$
+						monitor.beginTask(CVSUIMessages.TagRefreshButtonArea_5, 100); //$NON-NLS-1$
 						final CVSTag[] tags = tagSource.refresh(false, Policy.subMonitorFor(monitor, 70));
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								fMessageLabel.setText(background && tags.length == 0 ? Policy.bind("TagRefreshButtonArea.7") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+								fMessageLabel.setText(background && tags.length == 0 ? CVSUIMessages.TagRefreshButtonArea_7 : ""); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						});
 						if (!background && tags.length == 0 && promptForBestEffort()) {
@@ -125,7 +126,7 @@ public class TagRefreshButtonArea extends DialogArea {
 		} catch (InterruptedException e) {
 			// operation cancelled
 		} catch (InvocationTargetException e) {
-			CVSUIPlugin.openError(shell, Policy.bind("TagConfigurationDialog.14"), null, e); //$NON-NLS-1$
+			CVSUIPlugin.openError(shell, CVSUIMessages.TagConfigurationDialog_14, null, e); //$NON-NLS-1$
 		}
 	}
     
@@ -142,13 +143,13 @@ public class TagRefreshButtonArea extends DialogArea {
         final boolean[] prompt = new boolean[] { false };
         shell.getDisplay().syncExec(new Runnable() {
             public void run() {
-		        MessageDialog dialog = new MessageDialog(shell, Policy.bind("TagRefreshButtonArea.0"), null, //$NON-NLS-1$
+		        MessageDialog dialog = new MessageDialog(shell, CVSUIMessages.TagRefreshButtonArea_0, null, //$NON-NLS-1$
 		                getNoTagsFoundMessage(),
 		                MessageDialog.INFORMATION,
 		                new String[] {
-		            		Policy.bind("TagRefreshButtonArea.1"), //$NON-NLS-1$
-		            		Policy.bind("TagRefreshButtonArea.2"), //$NON-NLS-1$
-		            		Policy.bind("TagRefreshButtonArea.3") //$NON-NLS-1$
+		            		CVSUIMessages.TagRefreshButtonArea_1, //$NON-NLS-1$
+		            		CVSUIMessages.TagRefreshButtonArea_2, //$NON-NLS-1$
+		            		CVSUIMessages.TagRefreshButtonArea_3
 		        		}, 1);
 		        int code = dialog.open();
 		        if (code == 0) {
@@ -164,7 +165,7 @@ public class TagRefreshButtonArea extends DialogArea {
     }
     
     private String getNoTagsFoundMessage() {
-        return Policy.bind("TagRefreshButtonArea.4", tagSource.getShortDescription()); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.TagRefreshButtonArea_4, new String[] { tagSource.getShortDescription() }); //$NON-NLS-1$
     }
     
     public void setTagSource(TagSource tagSource) {

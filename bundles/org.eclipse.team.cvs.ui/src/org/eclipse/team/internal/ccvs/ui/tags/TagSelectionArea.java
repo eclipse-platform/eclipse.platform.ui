@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -51,8 +52,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -169,9 +170,9 @@ public class TagSelectionArea extends DialogArea {
         Composite inner = createGrabbingComposite(parent, 1);
         if (isIncludeFilterInputArea()) {
             createFilterInput(inner);
-            tagAreaTextLabel = createWrappingLabel(inner, Policy.bind("TagSelectionArea.0"), 1); //$NON-NLS-1$
+            tagAreaTextLabel = createWrappingLabel(inner, CVSUIMessages.TagSelectionArea_0, 1); //$NON-NLS-1$
         } else {
-		    tagAreaTextLabel = createWrappingLabel(inner, Policy.bind("TagSelectionArea.1", getTagAreaLabel()), 1);  //$NON-NLS-1$
+		    tagAreaTextLabel = createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_1, new String[] { getTagAreaLabel() }), 1);  //$NON-NLS-1$
         }
 		switcher = new PageBook(inner, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -183,7 +184,7 @@ public class TagSelectionArea extends DialogArea {
     }
 
     private void createFilterInput(Composite inner) {
-        createWrappingLabel(inner, Policy.bind("TagSelectionArea.2", getTagAreaLabel()), 1); //$NON-NLS-1$
+        createWrappingLabel(inner, NLS.bind(CVSUIMessages.TagSelectionArea_2, new String[] { getTagAreaLabel() }), 1); //$NON-NLS-1$
         filterText = createText(inner, 1);
         filterText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -211,7 +212,7 @@ public class TagSelectionArea extends DialogArea {
      */
     public String getTagAreaLabel() {
         if (tagAreaLabel == null)
-            tagAreaLabel = Policy.bind("TagSelectionArea.3"); //$NON-NLS-1$
+            tagAreaLabel = CVSUIMessages.TagSelectionArea_3; //$NON-NLS-1$
         return tagAreaLabel;
     }
 
@@ -461,14 +462,14 @@ public class TagSelectionArea extends DialogArea {
 		handleSelectionChange();
 	}
 	private void addMenuItemActions(IMenuManager manager) {
-		manager.add(new Action(Policy.bind("TagSelectionDialog.0")) { //$NON-NLS-1$
+		manager.add(new Action(CVSUIMessages.TagSelectionDialog_0) { //$NON-NLS-1$
 			public void run() {
 				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), getLocation());
 				addDateTag(dateTag);
 			}
 		});
 		if(getSelectedDateTagElement().length > 0){
-			manager.add(new Action(Policy.bind("TagSelectionDialog.1")) { //$NON-NLS-1$
+			manager.add(new Action(CVSUIMessages.TagSelectionDialog_1) { //$NON-NLS-1$
 				public void run() {
 					deleteDateTag();
 				}

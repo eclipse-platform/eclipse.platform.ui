@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -384,7 +385,7 @@ public class RemoteCompareOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("RemoteCompareOperation.0", new Object[] {left.getName(), right.getName(), getRemoteResource().getRepositoryRelativePath()}); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.RemoteCompareOperation_0, (new Object[] {left.getName(), right.getName(), getRemoteResource().getRepositoryRelativePath()})); //$NON-NLS-1$
 	}
 	
 	protected IWorkbenchPage getTargetPage() {

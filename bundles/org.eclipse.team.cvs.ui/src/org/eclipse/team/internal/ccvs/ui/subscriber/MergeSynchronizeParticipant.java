@@ -15,11 +15,12 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ui.Utils;
@@ -120,12 +121,12 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 			String qualifier = descriptor.getId();
 			String localname = secondayId;
 			if(qualifier == null || localname == null) {
-				throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.8")); //$NON-NLS-1$
+				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_8); //$NON-NLS-1$
 			}
 			try {
 				setSubscriber(read(new QualifiedName(qualifier, localname), memento));
 			} catch (CVSException e) {
-				throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.9"), e); //$NON-NLS-1$
+				throw new PartInitException(CVSUIMessages.MergeSynchronizeParticipant_9, e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -155,7 +156,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getName()
 	 */
 	public String getName() {		
-		return Policy.bind("CompareParticipant.0", ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots()));  //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CompareParticipant_0, new String[] { ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots()) });  //$NON-NLS-1$
 	}
 	
 	/*
@@ -221,7 +222,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 		
 		IMemento[] rootNodes = memento.getChildren(CTX_ROOT);
 		if(rootNodes == null || rootNodes.length == 0) {
-			throw new CVSException(Policy.bind("MergeSynchronizeParticipant.10", id.toString())); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_10, new String[] { id.toString() })); //$NON-NLS-1$
 		}
 		
 		List resources = new ArrayList();
@@ -233,11 +234,11 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("MergeSynchronizeParticipant.11", path.toString()), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(CVSStatus.INFO, NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_11, new String[] { path.toString() }), null); //$NON-NLS-1$
 			}
 		}
 		if(resources.isEmpty()) {
-			throw new CVSException(Policy.bind("MergeSynchronizeParticipant.12", id.toString())); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeSynchronizeParticipant_12, new String[] { id.toString() })); //$NON-NLS-1$
 		}
 		IResource[] roots = (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return new CVSMergeSubscriber(id, roots, start, end);
@@ -275,6 +276,6 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
 	 */
 	protected String getShortTaskName() {
-		return Policy.bind("Participant.merging"); //$NON-NLS-1$
+		return CVSUIMessages.Participant_merging; //$NON-NLS-1$
 	}
 }

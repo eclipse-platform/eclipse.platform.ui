@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -111,9 +112,9 @@ public class IgnoreResourcesDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (resources.length == 1) {
-			newShell.setText(Policy.bind("IgnoreResourcesDialog.titleSingle", resources[0].getName())); //$NON-NLS-1$
+			newShell.setText(NLS.bind(CVSUIMessages.IgnoreResourcesDialog_titleSingle, new String[] { resources[0].getName() })); //$NON-NLS-1$
 		} else {
-			newShell.setText(Policy.bind("IgnoreResourcesDialog.titleMany", Integer.toString(resources.length))); //$NON-NLS-1$
+			newShell.setText(NLS.bind(CVSUIMessages.IgnoreResourcesDialog_titleMany, new String[] { Integer.toString(resources.length) })); //$NON-NLS-1$
 		}
 	}
 	
@@ -135,7 +136,7 @@ public class IgnoreResourcesDialog extends Dialog {
 		
 		WorkbenchHelp.setHelp(top, IHelpContextIds.ADD_TO_CVSIGNORE);
 		
-		createIndentedLabel(top, Policy.bind("IgnoreResourcesDialog.prompt"), 0); //$NON-NLS-1$
+		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_prompt, 0); //$NON-NLS-1$
 		
 		Listener selectionListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -148,20 +149,20 @@ public class IgnoreResourcesDialog extends Dialog {
 			}
 		};
 		
-		addNameEntryButton = createRadioButton(top, Policy.bind("IgnoreResourcesDialog.addNameEntryButton")); //$NON-NLS-1$
+		addNameEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addNameEntryButton); //$NON-NLS-1$
 		addNameEntryButton.addListener(SWT.Selection, selectionListener);
 		addNameEntryButton.setSelection(selectedAction == ADD_NAME_ENTRY);
-		createIndentedLabel(top, Policy.bind("IgnoreResourcesDialog.addNameEntryExample"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
+		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addNameEntryExample, LABEL_INDENT_WIDTH); //$NON-NLS-1$
 		
-		addExtensionEntryButton = createRadioButton(top, Policy.bind("IgnoreResourcesDialog.addExtensionEntryButton")); //$NON-NLS-1$
+		addExtensionEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addExtensionEntryButton); //$NON-NLS-1$
 		addExtensionEntryButton.addListener(SWT.Selection, selectionListener);
 		addExtensionEntryButton.setSelection(selectedAction == ADD_EXTENSION_ENTRY);
-		createIndentedLabel(top, Policy.bind("IgnoreResourcesDialog.addExtensionEntryExample"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
+		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addExtensionEntryExample, LABEL_INDENT_WIDTH); //$NON-NLS-1$
 
-		addCustomEntryButton = createRadioButton(top, Policy.bind("IgnoreResourcesDialog.addCustomEntryButton")); //$NON-NLS-1$
+		addCustomEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addCustomEntryButton); //$NON-NLS-1$
 		addCustomEntryButton.addListener(SWT.Selection, selectionListener);
 		addCustomEntryButton.setSelection(selectedAction == ADD_CUSTOM_ENTRY);
-		createIndentedLabel(top, Policy.bind("IgnoreResourcesDialog.addCustomEntryExample"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
+		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addCustomEntryExample, LABEL_INDENT_WIDTH); //$NON-NLS-1$
 		
 		customEntryText = createIndentedText(top, resources[0].getName(), LABEL_INDENT_WIDTH);
 		customEntryText.addListener(SWT.Modify, modifyListener);
@@ -220,14 +221,14 @@ public class IgnoreResourcesDialog extends Dialog {
 		if (selectedAction == ADD_CUSTOM_ENTRY) {
 			customPattern = customEntryText.getText();
 			if (customPattern.length() == 0) {
-				setError(Policy.bind("IgnoreResourcesDialog.patternMustNotBeEmpty")); //$NON-NLS-1$
+				setError(CVSUIMessages.IgnoreResourcesDialog_patternMustNotBeEmpty); //$NON-NLS-1$
 				return;
 			}
 			FileNameMatcher matcher = new FileNameMatcher(new String[] { customPattern });
 			for (int i = 0; i < resources.length; i++) {
 				String name = resources[i].getName();
 				if (! matcher.match(name)) {
-					setError(Policy.bind("IgnoreResourcesDialog.patternDoesNotMatchFile", name)); //$NON-NLS-1$
+					setError(NLS.bind(CVSUIMessages.IgnoreResourcesDialog_patternDoesNotMatchFile, new String[] { name })); //$NON-NLS-1$
 					return;
 				}
 			}

@@ -13,9 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.PlatformUI;
 
 public class RemoteFileElement extends RemoteResourceElement {
@@ -39,7 +40,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 		if (!(o instanceof ICVSRemoteFile)) return null;
 		ICVSRemoteFile file = (ICVSRemoteFile)o;
 		try {
-			return Policy.bind("nameAndRevision", file.getName(), file.getRevision()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { file.getName(), file.getRevision() }); //$NON-NLS-1$
 		} catch (TeamException e) {
 		    handle(null, null, e);
 			return null;

@@ -14,11 +14,12 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -47,21 +48,21 @@ public class CommitOperation extends SingleCommandOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("RepositoryManager.committing"); //$NON-NLS-1$
+		return CVSUIMessages.RepositoryManager_committing; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("CommitOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CommitOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
+		return CVSUIMessages.CommitAction_commitFailed; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -21,7 +21,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -88,8 +88,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 				}
 			};
 			useResourceTag = true;
-			useResourceTagButton = createRadioButton(composite, Policy.bind("TagSelectionWizardPage.0"), 1); //$NON-NLS-1$
-			selectTagButton = createRadioButton(composite, Policy.bind("TagSelectionWizardPage.1"), 1); //$NON-NLS-1$
+			useResourceTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_0, 1); //$NON-NLS-1$
+			selectTagButton = createRadioButton(composite, CVSUIMessages.TagSelectionWizardPage_1, 1); //$NON-NLS-1$
 			useResourceTagButton.setSelection(useResourceTag);
 			selectTagButton.setSelection(!useResourceTag);
 			useResourceTagButton.addSelectionListener(listener);

@@ -131,7 +131,7 @@ public class CommitSetDialog extends Dialog {
 		composite.setFont(parent.getFont());
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(Policy.bind("CommitSetDialog.0")); //$NON-NLS-1$
+		label.setText(CVSUIMessages.CommitSetDialog_0); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		nameText = new Text(composite, SWT.BORDER);
@@ -163,8 +163,8 @@ public class CommitSetDialog extends Dialog {
 		radioAreaLayout.marginBottom = 0;
 		radioArea.setLayout(radioAreaLayout);
 		
-        useTitleButton = createRadioButton(radioArea, Policy.bind("CommitSetDialog.2")); //$NON-NLS-1$
-        enterCommentButton = createRadioButton(radioArea, Policy.bind("CommitSetDialog.3")); //$NON-NLS-1$
+        useTitleButton = createRadioButton(radioArea, CVSUIMessages.CommitSetDialog_2); //$NON-NLS-1$
+        enterCommentButton = createRadioButton(radioArea, CVSUIMessages.CommitSetDialog_3); //$NON-NLS-1$
         SelectionAdapter listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnablements();

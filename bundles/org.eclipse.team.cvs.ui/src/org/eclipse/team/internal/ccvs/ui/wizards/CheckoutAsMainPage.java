@@ -15,14 +15,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -50,7 +51,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsMainPage(ImageDescriptor titleImage, ICVSRemoteFolder[] folders, boolean allowProjectConfiguration) {
-		super(NAME, Policy.bind("CheckoutAsMainPage.title"), titleImage, Policy.bind("CheckoutAsMainPage.description")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(NAME, CVSUIMessages.CheckoutAsMainPage_title, titleImage, CVSUIMessages.CheckoutAsMainPage_description); //$NON-NLS-1$ //$NON-NLS-2$
 		this.folders = folders;
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}
@@ -97,11 +98,11 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * Create the page contents for a single folder checkout
 	 */
 	private void createSingleFolderArea(Composite composite) {
-		createLabel(composite, Policy.bind("CheckoutAsMainPage.singleFolder", getFolderName())); //$NON-NLS-1$
-		configuredProjectButton = createRadioButton(composite, Policy.bind("CheckoutAsMainPage.asConfiguredProject"), 1); //$NON-NLS-1$
+		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_singleFolder, new String[] { getFolderName() })); //$NON-NLS-1$
+		configuredProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asConfiguredProject, 1); //$NON-NLS-1$
 		if (!allowProjectConfiguration) {
 			configuredProjectButton.setEnabled(false);
-			Label configuredLabel = createWrappingLabel(composite, Policy.bind("CheckoutAsMainPage.10"), 5); //$NON-NLS-1$
+			Label configuredLabel = createWrappingLabel(composite, CVSUIMessages.CheckoutAsMainPage_10, 5); //$NON-NLS-1$
 			configuredLabel.setEnabled(false);
 		}
 		createCheckoutAsProjectRadioArea(composite);
@@ -117,7 +118,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * Create the page contents for a multiple folder checkout
 	 */
 	private void createMultipleFoldersArea(Composite composite) {
-		createLabel(composite, Policy.bind("CheckoutAsMainPage.multipleFolders", new Integer(folders.length).toString())); //$NON-NLS-1$
+		createLabel(composite, NLS.bind(CVSUIMessages.CheckoutAsMainPage_multipleFolders, new String[] { new Integer(folders.length).toString() })); //$NON-NLS-1$
 		createCheckoutAsProjectRadioArea(composite);
 		createCheckoutIntoRadioArea(composite);
 		simpleProjectButton.setSelection(true);
@@ -128,10 +129,10 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 */
 	private void createCheckoutAsProjectRadioArea(Composite composite) {
 		if (isSingleFolder()) {
-			simpleProjectButton = createRadioButton(composite, Policy.bind("CheckoutAsMainPage.asSimpleProject"), 1); //$NON-NLS-1$
+			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asSimpleProject, 1); //$NON-NLS-1$
 			createProjectNameGroup(composite);
 		} else {
-			simpleProjectButton = createRadioButton(composite, Policy.bind("CheckoutAsMainPage.asProjects"), 1); //$NON-NLS-1$
+			simpleProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_asProjects, 1); //$NON-NLS-1$
 		}
 	}
 	
@@ -139,7 +140,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * @param composite
 	 */
 	private void createCheckoutIntoRadioArea(Composite composite) {
-		intoProjectButton = createRadioButton(composite, Policy.bind("CheckoutAsMainPage.intoProject"), 1); //$NON-NLS-1$
+		intoProjectButton = createRadioButton(composite, CVSUIMessages.CheckoutAsMainPage_intoProject, 1); //$NON-NLS-1$
 	}
 
 	/**
@@ -157,7 +158,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup,SWT.NONE);
-		projectLabel.setText(Policy.bind("CheckoutAsMainPage.projectNameLabel")); //$NON-NLS-1$
+		projectLabel.setText(CVSUIMessages.CheckoutAsMainPage_projectNameLabel); //$NON-NLS-1$
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);

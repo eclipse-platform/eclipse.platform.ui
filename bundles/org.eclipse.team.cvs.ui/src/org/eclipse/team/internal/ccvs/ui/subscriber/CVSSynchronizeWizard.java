@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
 import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantWizard;
 import org.eclipse.team.ui.TeamUI;
@@ -39,7 +39,7 @@ public class CVSSynchronizeWizard extends SubscriberParticipantWizard {
 		if(desc != null) {
 			return desc.getName();
 		} else {
-			return Policy.bind("CVSSynchronizeWizard.0"); //$NON-NLS-1$
+			return CVSUIMessages.CVSSynchronizeWizard_0; //$NON-NLS-1$
 		}
 	}
 	

@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -220,7 +221,7 @@ public abstract class CVSOperation extends TeamOperation {
     }
 
     protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return Policy.bind("CVSOperation.0", String.valueOf(failures.length),  String.valueOf(totalOperations)); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CVSOperation_0, new String[] { String.valueOf(failures.length), String.valueOf(totalOperations) }); //$NON-NLS-1$
 	}
 
 	/**
@@ -365,14 +366,14 @@ public abstract class CVSOperation extends TeamOperation {
      */
     protected IAction getShowConsoleAction() {
         // Show the console as the goto action
-        return new Action(Policy.bind("CVSOperation.1")) { //$NON-NLS-1$
+        return new Action(CVSUIMessages.CVSOperation_1) { //$NON-NLS-1$
             public void run() {
                 CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
                 if (console != null)
                     console.show(true);
             }
             public String getToolTipText() {
-                return Policy.bind("CVSOperation.2"); //$NON-NLS-1$
+                return CVSUIMessages.CVSOperation_2; //$NON-NLS-1$
             }
         };
     }

@@ -23,7 +23,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation.CompareTreeBuilder;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
@@ -33,7 +33,7 @@ import org.eclipse.team.ui.synchronize.*;
 class OpenChangeSetAction extends SynchronizeModelAction {
 
     protected OpenChangeSetAction(ISynchronizePageConfiguration configuration) {
-        super(Policy.bind("OpenCommitSetAction.20"), configuration); //$NON-NLS-1$
+        super(CVSUIMessages.OpenCommitSetAction_20, configuration); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -121,7 +121,7 @@ class OpenChangeSetAction extends SynchronizeModelAction {
                 if (infos.length > 0) {
                     ICVSRepositoryLocation location = getLocation(infos[0]);
                     if (location == null) {
-                        handle(new CVSException(Policy.bind("OpenCommitSetAction.21"))); //$NON-NLS-1$
+                        handle(new CVSException(CVSUIMessages.OpenCommitSetAction_21)); //$NON-NLS-1$
                         return;
                     }
                     CompareTreeBuilder builder = new CompareTreeBuilder(location, null, null);

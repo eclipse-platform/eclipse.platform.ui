@@ -170,25 +170,25 @@ public class EditorsView extends ViewPart {
 		// file name
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("EditorsView.file")); //$NON-NLS-1$
+		col.setText(CVSUIMessages.EditorsView_file); //$NON-NLS-1$
 		layout.addColumnData(new ColumnWeightData(30, true));
 
 		// user name
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("EditorsView.user")); //$NON-NLS-1$
+		col.setText(CVSUIMessages.EditorsView_user); //$NON-NLS-1$
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("EditorsView.date")); //$NON-NLS-1$
+		col.setText(CVSUIMessages.EditorsView_date); //$NON-NLS-1$
 		layout.addColumnData(new ColumnWeightData(30, true));
 
 		// computer name
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("EditorsView.computer")); //$NON-NLS-1$
+		col.setText(CVSUIMessages.EditorsView_computer); //$NON-NLS-1$
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 	}

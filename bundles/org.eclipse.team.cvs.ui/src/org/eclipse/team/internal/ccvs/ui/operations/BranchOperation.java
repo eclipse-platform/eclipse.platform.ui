@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -24,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
@@ -59,7 +61,7 @@ public class BranchOperation extends RepositoryProviderOperation {
     		boolean allSticky = areAllResourcesSticky(resources);
     		String initialVersionName = calculateInitialVersionName(resources,allSticky);
     		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
-    											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
+    											CVSUIMessages.BranchWizard_title, //$NON-NLS-1$
     											resources, 
     											allSticky, 
     											initialVersionName);
@@ -119,7 +121,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 		
 		// Determine the total amount of work
 		int totalWork = (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
-		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
+		monitor.beginTask(CVSUIMessages.CVSTeamProvider_makeBranch, totalWork);  //$NON-NLS-1$
 		try {
 			// Build the arguments list
 			ICVSResource[] arguments = getCVSArguments(resources);
@@ -203,7 +205,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 					// 512 ticks gives us a maximum of 2048 which seems reasonable for folders and files in a project
 					progress.beginTask(null, 100);
 					final IProgressMonitor monitor = Policy.infiniteSubMonitorFor(progress, 100);
-					monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", provider.getProject().getName()), 512); //$NON-NLS-1$
+					monitor.beginTask(NLS.bind(CVSUIMessages.CVSTeamProvider_folderInfo, new String[] { provider.getProject().getName() }), 512); //$NON-NLS-1$
 					
 					// Visit all the children folders in order to set the root in the folder sync info
 					for (int i = 0; i < resources.length; i++) {
@@ -213,7 +215,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 								//ResourceSyncInfo info = file.getSyncInfo();
 								byte[] syncBytes = file.getSyncBytes();
 								if (syncBytes != null) {
-									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", file.getName())); //$NON-NLS-1$
+									monitor.subTask(NLS.bind(CVSUIMessages.CVSTeamProvider_updatingFile, new String[] { file.getName() })); //$NON-NLS-1$
 									file.setSyncBytes(ResourceSyncInfo.setTag(syncBytes, tag), ICVSFile.UNKNOWN);
 								}
 							}
@@ -221,7 +223,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 								monitor.worked(1);
 								FolderSyncInfo info = folder.getFolderSyncInfo();
 								if (info != null) {
-									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
+									monitor.subTask(NLS.bind(CVSUIMessages.CVSTeamProvider_updatingFolder, new String[] { info.getRepository() })); //$NON-NLS-1$
                                     MutableFolderSyncInfo newInfo = info.cloneMutable();
                                     newInfo.setTag(tag);
 									folder.setFolderSyncInfo(newInfo);
@@ -256,14 +258,14 @@ public class BranchOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("BranchOperation.0"); //$NON-NLS-1$
+		return CVSUIMessages.BranchOperation_0; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("BranchOperation.1", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.BranchOperation_1, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 	
 	/**

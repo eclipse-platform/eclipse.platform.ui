@@ -16,9 +16,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 /**
  * BranchCategory is the model element for the branches category
  * for a particular repository in the repositories view. Its children
@@ -54,6 +54,6 @@ public class BranchCategory extends TagCategory {
 	 * @param object The object to get a label for.
 	 */
 	public String getLabel(Object o) {
-		return Policy.bind("BranchCategory.Branches_1"); //$NON-NLS-1$
+		return CVSUIMessages.BranchCategory_Branches_1; //$NON-NLS-1$
 	}
 }

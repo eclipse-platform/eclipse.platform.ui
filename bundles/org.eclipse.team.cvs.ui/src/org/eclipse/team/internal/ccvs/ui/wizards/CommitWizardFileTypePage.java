@@ -31,7 +31,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.preferences.FileTypeTable;
 
@@ -44,9 +44,9 @@ public class CommitWizardFileTypePage extends WizardPage {
     private final Collection fNames;
     
     public CommitWizardFileTypePage(Collection unknownExtensions, Collection unknownNames) {
-        super(Policy.bind("CommitWizardFileTypePage.0")); //$NON-NLS-1$
-        setTitle(Policy.bind("CommitWizardFileTypePage.0")); //$NON-NLS-1$
-        setDescription(Policy.bind("CommitWizardFileTypePage.2")); //$NON-NLS-1$
+        super(CVSUIMessages.CommitWizardFileTypePage_0); //$NON-NLS-1$
+        setTitle(CVSUIMessages.CommitWizardFileTypePage_0); //$NON-NLS-1$
+        setDescription(CVSUIMessages.CommitWizardFileTypePage_2); //$NON-NLS-1$
         
         fNames= new ArrayList();
         for (final Iterator iter = unknownNames.iterator(); iter.hasNext();) {
@@ -70,7 +70,7 @@ public class CommitWizardFileTypePage extends WizardPage {
         Dialog.applyDialogFont(composite);
         
 	    final Label label= new Label(composite, SWT.WRAP);
-	    label.setText(Policy.bind("CommitWizardFileTypePage.3")); //$NON-NLS-1$
+	    label.setText(CVSUIMessages.CommitWizardFileTypePage_3); //$NON-NLS-1$
 	    label.setLayoutData(SWTUtils.createHFillGridData());
         
         final List items= new ArrayList();

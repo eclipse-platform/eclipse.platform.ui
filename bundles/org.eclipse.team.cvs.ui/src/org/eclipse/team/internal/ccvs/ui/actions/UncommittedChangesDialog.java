@@ -19,14 +19,15 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.*;
 
 public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
@@ -56,13 +57,13 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
 
 	protected String getResourceListMessage(ResourceMapping mapping) {
         if (mapping == null) {
-            return Policy.bind("UncommittedChangesDialog.2"); //$NON-NLS-1$
+            return CVSUIMessages.UncommittedChangesDialog_2; //$NON-NLS-1$
         } else {
             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
             if (mapping.getModelObject() instanceof IFile) {
-                return Policy.bind("UncommittedChangesDialog.4", label); //$NON-NLS-1$
+                return NLS.bind(CVSUIMessages.UncommittedChangesDialog_4, new String[] { label }); //$NON-NLS-1$
             }
-            return Policy.bind("UncommittedChangesDialog.3", label); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.UncommittedChangesDialog_3, new String[] { label }); //$NON-NLS-1$
         }
     }
 

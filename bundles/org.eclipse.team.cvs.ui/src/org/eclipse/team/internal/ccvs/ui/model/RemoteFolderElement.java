@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -37,7 +38,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
         CVSTag tag = folder.getTag();
         if (tag != null && tag.getType() != CVSTag.HEAD) {
             if (folder.getRemoteParent() == null) {
-                return Policy.bind("RemoteFolderElement.nameAndTag", folder.getName(), tag.getName()); //$NON-NLS-1$
+                return NLS.bind(CVSUIMessages.RemoteFolderElement_nameAndTag, new String[] { folder.getName(), tag.getName() }); //$NON-NLS-1$
             }
         }
         return folder.getName();
@@ -66,7 +67,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
 		}
         try {
             monitor = Policy.monitorFor(monitor);
-            monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", getLabel(o)), 100); //$NON-NLS-1$
+            monitor.beginTask(NLS.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren, new String[] { getLabel(o) }), 100); //$NON-NLS-1$
 			FetchMembersOperation operation = new FetchMembersOperation(null, (ICVSRemoteFolder)o, collector);
 			operation.run(Policy.subMonitorFor(monitor, 100));
         } catch (InvocationTargetException e) {

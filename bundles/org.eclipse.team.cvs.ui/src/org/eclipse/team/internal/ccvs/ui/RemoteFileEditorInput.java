@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -125,7 +126,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 		String fullPath;
 		try {
 			String revision = file.getRevision();
-			fullPath = Policy.bind("RemoteFileEditorInput.fullPathAndRevision", path.toString(), revision); //$NON-NLS-1$
+			fullPath = NLS.bind(CVSUIMessages.RemoteFileEditorInput_fullPathAndRevision, new String[] { path.toString(), revision }); //$NON-NLS-1$
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e);
 			fullPath = path.toString();
@@ -162,7 +163,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	public String getName() {
 		String name = file.getName();
 		try {
-			return Policy.bind("nameAndRevision", name, file.getRevision()); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { name, file.getRevision() }); //$NON-NLS-1$
 		} catch (TeamException e) {
 			return name;
 		}

@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
@@ -52,7 +53,7 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ReplaceWithRemoteAction.problemMessage"); //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithRemoteAction_problemMessage; //$NON-NLS-1$
 	}
 
 	/**

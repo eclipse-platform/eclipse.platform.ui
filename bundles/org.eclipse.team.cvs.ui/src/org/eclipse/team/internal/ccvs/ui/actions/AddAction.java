@@ -18,8 +18,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
 import org.eclipse.team.internal.ccvs.ui.wizards.AddWizard;
 
@@ -58,7 +58,7 @@ public class AddAction extends WorkspaceTraversalAction {
 			}
 		}
 		if (prompt) {
-			return MessageDialog.openQuestion(getShell(), Policy.bind("AddAction.addIgnoredTitle"), Policy.bind("AddAction.addIgnoredQuestion")); //$NON-NLS-1$ //$NON-NLS-2$
+			return MessageDialog.openQuestion(getShell(), CVSUIMessages.AddAction_addIgnoredTitle, CVSUIMessages.AddAction_addIgnoredQuestion); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return true;
 	}

@@ -64,11 +64,11 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		};
 		
-		useExternal = createRadioButton(composite, Policy.bind("ExtMethodPreferencePage.0"), 1); //$NON-NLS-1$
+		useExternal = createRadioButton(composite, CVSUIMessages.ExtMethodPreferencePage_0, 1); //$NON-NLS-1$
 		useExternal.addSelectionListener(selectionListener);
 		external = createExternalArea(composite);
 		
-		useInternal = createRadioButton(composite, Policy.bind("ExtMethodPreferencePage.1"), 1); //$NON-NLS-1$
+		useInternal = createRadioButton(composite, CVSUIMessages.ExtMethodPreferencePage_1, 1); //$NON-NLS-1$
 		useInternal.addSelectionListener(selectionListener);
 		internal = createInternalArea(composite);
 		
@@ -97,14 +97,14 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
-		intro.setText(Policy.bind("ExtMethodPreferencePage.2")); //$NON-NLS-1$
+		intro.setText(CVSUIMessages.ExtMethodPreferencePage_2); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
 		data.widthHint = 300;
 		intro.setLayoutData(data);
 		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.CVSPropertiesPage_connectionType, 1); //$NON-NLS-1$
 		methodType = createCombo(composite);
 		return composite;
 	}
@@ -118,19 +118,19 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
-		intro.setText(Policy.bind("ExtMethodPreferencePage_message")); //$NON-NLS-1$
+		intro.setText(CVSUIMessages.ExtMethodPreferencePage_message); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 3;
 		data.horizontalAlignment = GridData.FILL;
 		data.widthHint = 300;
 		intro.setLayoutData(data);
 		
-		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH")); //$NON-NLS-1$
+		new Label(composite, SWT.LEFT).setText(CVSUIMessages.ExtMethodPreferencePage_CVS_RSH); //$NON-NLS-1$
 		cvsRsh = new Text(composite, SWT.BORDER);
 		cvsRsh.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		final Button b = new Button(composite, SWT.NONE);
-		b.setText(Policy.bind("ExtMethodPreferencePage_Browse")); //$NON-NLS-1$
+		b.setText(CVSUIMessages.ExtMethodPreferencePage_Browse); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -140,7 +140,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		b.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent (Event event) {
 				FileDialog d = new FileDialog(getShell());
-				d.setText(Policy.bind("ExtMethodPreferencePage_Details")); //$NON-NLS-1$
+				d.setText(CVSUIMessages.ExtMethodPreferencePage_Details); //$NON-NLS-1$
 				String file = d.open();
 				if(file!=null) {
 					setCvsRshText(file);
@@ -148,14 +148,14 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}			
 		});
 		
-		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH_Parameters")); //$NON-NLS-1$
+		new Label(composite, SWT.LEFT).setText(CVSUIMessages.ExtMethodPreferencePage_CVS_RSH_Parameters); //$NON-NLS-1$
 		cvsRshParameters = new Text(composite, SWT.BORDER);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
 		cvsRshParameters.setLayoutData(data);
 
-		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_SERVER__7")); //$NON-NLS-1$
+		new Label(composite, SWT.LEFT).setText(CVSUIMessages.ExtMethodPreferencePage_CVS_SERVER__7); //$NON-NLS-1$
 		cvsServer = new Text(composite, SWT.BORDER);
 		data = new GridData();
 		data.horizontalSpan = 2;

@@ -27,9 +27,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -62,7 +62,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText(Policy.bind("ConfigurationWizardAutoconnectPage.description")); //$NON-NLS-1$
+		description.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_description); //$NON-NLS-1$
 		
 		if (location == null) return;
 
@@ -70,22 +70,22 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, ""); //$NON-NLS-1$
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.user")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_user); //$NON-NLS-1$
 		createLabel(composite, location.getUsername());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.host")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_host); //$NON-NLS-1$
 		createLabel(composite, location.getHost());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_port); //$NON-NLS-1$
 		int port = location.getPort();
 		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default")); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_default); //$NON-NLS-1$
 		} else {
 			createLabel(composite, "" + port); //$NON-NLS-1$
 		}
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.connectionType")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_connectionType); //$NON-NLS-1$
 		createLabel(composite, location.getMethod().getName());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.repositoryPath")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_repositoryPath); //$NON-NLS-1$
 		createLabel(composite, location.getRootDirectory());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.module")); //$NON-NLS-1$
+		createLabel(composite, CVSUIMessages.ConfigurationWizardAutoconnectPage_module); //$NON-NLS-1$
 		createLabel(composite, info.getRepository());
 		
 		// Spacer
@@ -95,7 +95,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		final Button check = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		data.horizontalSpan = 2;
-		check.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate")); //$NON-NLS-1$
+		check.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_validate); //$NON-NLS-1$
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				validate = check.getSelection();
@@ -117,7 +117,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
-				CVSUIPlugin.openError(null, Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null); //$NON-NLS-1$ //$NON-NLS-2$
+				CVSUIPlugin.openError(null, CVSUIMessages.ConfigurationWizardAutoconnectPage_noSyncInfo, CVSUIMessages.ConfigurationWizardAutoconnectPage_noCVSDirectory, null); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 			location = CVSRepositoryLocation.fromString(info.getRoot());

@@ -15,8 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
 import org.eclipse.team.internal.ui.dialogs.ResourceMappingResourceDisplayArea;
@@ -34,17 +35,17 @@ public class TagLocalAction extends TagAction {
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    dialog[0] = new UncommittedChangesDialog(getShell(), Policy.bind("TagLocalAction.4"), mappings, monitor) { //$NON-NLS-1$
+                    dialog[0] = new UncommittedChangesDialog(getShell(), CVSUIMessages.TagLocalAction_4, mappings, monitor) { //$NON-NLS-1$
                         protected String getSingleMappingMessage(ResourceMapping mapping) {
                             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
                             if (getAllMappings().length == 1) {
-                                return Policy.bind("TagLocalAction.2", label); //$NON-NLS-1$
+                                return NLS.bind(CVSUIMessages.TagLocalAction_2, new String[] { label }); //$NON-NLS-1$
                             }
-                            return Policy.bind("TagLocalAction.0", label); //$NON-NLS-1$
+                            return NLS.bind(CVSUIMessages.TagLocalAction_0, new String[] { label }); //$NON-NLS-1$
                         }
             
                         protected String getMultipleMappingsMessage() {
-                            return Policy.bind("TagLocalAction.1"); //$NON-NLS-1$
+                            return CVSUIMessages.TagLocalAction_1; //$NON-NLS-1$
                         }
                     };
                 }

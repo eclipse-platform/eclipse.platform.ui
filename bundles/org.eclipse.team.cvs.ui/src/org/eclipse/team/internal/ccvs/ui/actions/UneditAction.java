@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class UneditAction extends WorkspaceAction {
@@ -32,7 +32,7 @@ public class UneditAction extends WorkspaceAction {
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		
-		if(! MessageDialog.openConfirm(getShell(), Policy.bind("Uneditaction.confirmTitle"), Policy.bind("Uneditaction.confirmMessage"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if(! MessageDialog.openConfirm(getShell(), CVSUIMessages.Uneditaction_confirmTitle, CVSUIMessages.Uneditaction_confirmMessage)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		

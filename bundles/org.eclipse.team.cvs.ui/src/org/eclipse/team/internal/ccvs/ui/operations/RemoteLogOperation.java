@@ -15,12 +15,14 @@ import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
@@ -235,7 +237,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryLocationOperation#execute(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void execute(ICVSRepositoryLocation location, ICVSRemoteResource[] remoteResources, IProgressMonitor monitor) throws CVSException {
-		monitor.beginTask(Policy.bind("RemoteLogOperation.0", location.getHost()), 100); //$NON-NLS-1$
+		monitor.beginTask(NLS.bind(CVSUIMessages.RemoteLogOperation_0, new String[] { location.getHost() }), 100); //$NON-NLS-1$
 		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()), false /* do not output to console */);
 		// Create a log listener that will update the cache as entries are received
 		LogListener listener = new LogListener(entryCache);
@@ -269,7 +271,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("RemoteLogOperation.1"); //$NON-NLS-1$
+		return CVSUIMessages.RemoteLogOperation_1; //$NON-NLS-1$
 	}
 	
 	protected Command.LocalOption[] getLocalOptions(CVSTag tag1, CVSTag tag2) {

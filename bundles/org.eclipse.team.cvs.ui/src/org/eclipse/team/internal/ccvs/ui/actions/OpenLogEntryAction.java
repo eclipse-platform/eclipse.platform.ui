@@ -69,7 +69,7 @@ public class OpenLogEntryAction extends CVSAction {
 				final ILogEntry[] entries = getSelectedLogEntries();
 				for (int i = 0; i < entries.length; i++) {
 					if (entries[i].isDeletion()) {
-						MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted")); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openError(getShell(), CVSUIMessages.OpenLogEntryAction_deletedTitle, CVSUIMessages.OpenLogEntryAction_deleted); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						ICVSRemoteFile file = entries[i].getRemoteFile();
 						String filename = file.getName();

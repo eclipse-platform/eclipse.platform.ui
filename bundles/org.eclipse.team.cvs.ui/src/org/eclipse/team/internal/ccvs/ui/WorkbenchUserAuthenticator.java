@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
@@ -80,7 +81,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 			
 		if (result[0] == null) {
-			throw new OperationCanceledException(Policy.bind("WorkbenchUserAuthenticator.cancelled")); //$NON-NLS-1$
+			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_cancelled); //$NON-NLS-1$
 		}
 		
 		if (userinfo.isUsernameMutable()) {
@@ -203,7 +204,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 			
 		if (result[0] == null) {
-			throw new OperationCanceledException(Policy.bind("WorkbenchUserAuthenticator.The_operation_was_canceled_by_the_user_1")); //$NON-NLS-1$
+			throw new OperationCanceledException(CVSUIMessages.WorkbenchUserAuthenticator_The_operation_was_canceled_by_the_user_1); //$NON-NLS-1$
 		}
 		
 		userinfo.setPassword(result[0]);
@@ -248,7 +249,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
         final Display display = CVSUIPlugin.getStandardDisplay();
         display.syncExec(new Runnable() {
             public void run() {
-                openConfirm[0] = MessageDialog.openConfirm(null, Policy.bind("WorkbenchUserAuthenticator.1"), Policy.bind("WorkbenchUserAuthenticator.2", location.getHost())); //$NON-NLS-1$ //$NON-NLS-2$
+                openConfirm[0] = MessageDialog.openConfirm(null, CVSUIMessages.WorkbenchUserAuthenticator_1, NLS.bind(CVSUIMessages.WorkbenchUserAuthenticator_2, new String[] { location.getHost() })); //$NON-NLS-1$ //$NON-NLS-2$
             }
         });
         if (!openConfirm[0]) {

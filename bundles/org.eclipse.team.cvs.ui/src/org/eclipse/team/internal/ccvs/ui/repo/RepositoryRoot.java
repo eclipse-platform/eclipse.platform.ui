@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -154,12 +155,12 @@ public class RepositoryRoot extends PlatformObject {
 			}
 			FolderSyncInfo info = ((ICVSFolder)resource).getFolderSyncInfo();
 			if (info == null)
-				throw new CVSException(Policy.bind("RepositoryRoot.folderInfoMissing", resource.getName())); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getName() })); //$NON-NLS-1$
 			return info.getRepository();
 		} else {
 			FolderSyncInfo info = resource.getParent().getFolderSyncInfo();
 			if (info == null)
-				throw new CVSException(Policy.bind("RepositoryRoot.folderInfoMissing", resource.getParent().getName())); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSUIMessages.RepositoryRoot_folderInfoMissing, new String[] { resource.getParent().getName() })); //$NON-NLS-1$
 			String path = new Path(null, info.getRepository()).append(resource.getName()).toString();
 			return path;
 		}

@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -179,7 +180,7 @@ public class RepositoryManager {
 	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {		
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Policy.bind("RepositoryManager.fetchingRemoteFolders", tag.getName()), 100); //$NON-NLS-1$
+			monitor.beginTask(NLS.bind(CVSUIMessages.RepositoryManager_fetchingRemoteFolders, new String[] { tag.getName() }), 100); //$NON-NLS-1$
 			if (tag.getType() == CVSTag.HEAD) {
 				ICVSRemoteResource[] resources = location.members(tag, false, Policy.subMonitorFor(monitor, 60));
 				RepositoryRoot root = getRepositoryRootFor(location);
@@ -329,7 +330,7 @@ public class RepositoryManager {
 					is.close();
 				}
 			} catch (IOException e) {
-				CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
+				CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
 			} catch (TeamException e) {
 				CVSUIPlugin.log(e);
 			}
@@ -347,7 +348,7 @@ public class RepositoryManager {
 					saveState();
 					file.delete();
 				} catch (IOException e) {
-					CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
+					CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
 				} catch (TeamException e) {
 					CVSUIPlugin.log(e);
 				}
@@ -366,7 +367,7 @@ public class RepositoryManager {
 				is.close();
 			}
 		} catch (IOException e) {
-			CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
+			CVSUIPlugin.log(Status.ERROR, CVSUIMessages.RepositoryManager_ioException, e); //$NON-NLS-1$
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e);
 		}
@@ -388,10 +389,10 @@ public class RepositoryManager {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
+				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e)); //$NON-NLS-1$
+			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { stateFile.getAbsolutePath() }), e)); //$NON-NLS-1$
 		}
 	}
 	private void writeState(XMLWriter writer) {
@@ -413,9 +414,9 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new RepositoriesViewContentHandler(this));
 		} catch (SAXException ex) {
-			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", REPOSITORIES_VIEW_FILE), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); //$NON-NLS-1$
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", REPOSITORIES_VIEW_FILE), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); //$NON-NLS-1$
 		}
 	}
 	private void readCommentHistory(InputStream stream) throws IOException, TeamException {
@@ -424,9 +425,9 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new CommentHistoryContentHandler());
 		} catch (SAXException ex) {
-			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); //$NON-NLS-1$
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), ex); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); //$NON-NLS-1$
 		}
 	}
 	
@@ -505,10 +506,10 @@ public class RepositoryManager {
 		 		 }
 		 		 boolean renamed = tempFile.renameTo(histFile);
 		 		 if (!renamed) {
-		 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
+		 		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_rename, new String[] { tempFile.getAbsolutePath() }), null)); //$NON-NLS-1$
 		 		 }
 		 } catch (IOException e) {
-		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",histFile.getAbsolutePath()), e)); //$NON-NLS-1$
+		 		 throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, NLS.bind(CVSUIMessages.RepositoryManager_save, new String[] { histFile.getAbsolutePath() }), e)); //$NON-NLS-1$
 		 }
 	}
 	private void writeCommentHistory(XMLWriter writer) {

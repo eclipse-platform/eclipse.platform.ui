@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -26,15 +26,15 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[2];
 	{
 		PropertyDescriptor descriptor;
-		String category = Policy.bind("cvs"); //$NON-NLS-1$
+		String category = CVSUIMessages.cvs; //$NON-NLS-1$
 		
 		// resource name
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, Policy.bind("CVSRemoteFolderPropertySource.name")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFolderPropertySource_name); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// tag
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, Policy.bind("CVSRemoteFolderPropertySource.tag")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, CVSUIMessages.CVSRemoteFolderPropertySource_tag); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
@@ -71,7 +71,7 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 		if (id.equals(ICVSUIConstants.PROP_TAG)) {
 			CVSTag tag = folder.getTag();
 			if (tag == null) {
-				return Policy.bind("CVSRemoteFolderPropertySource.none"); //$NON-NLS-1$
+				return CVSUIMessages.CVSRemoteFolderPropertySource_none; //$NON-NLS-1$
 			}
 			return tag.getName();
 		}

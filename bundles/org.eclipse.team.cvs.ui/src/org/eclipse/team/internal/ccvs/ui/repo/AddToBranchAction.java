@@ -24,8 +24,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 
 /**
@@ -53,7 +53,7 @@ public class AddToBranchAction extends CVSAction {
 				final CVSException[] exception = new CVSException[] { null };
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("AddToBranchAction.enterTag"), Policy.bind("AddToBranchAction.enterTagLong"), null, validator); //$NON-NLS-1$ //$NON-NLS-2$
+						InputDialog dialog = new InputDialog(getShell(), CVSUIMessages.AddToBranchAction_enterTag, CVSUIMessages.AddToBranchAction_enterTagLong, null, validator); //$NON-NLS-1$ //$NON-NLS-2$
 						if (dialog.open() == InputDialog.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
 							try {

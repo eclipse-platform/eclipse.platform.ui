@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -28,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -48,7 +50,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return Policy.bind("MergeUpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.MergeUpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -147,7 +149,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 		// Assumption that all nodes are from the same subscriber.
 		currentSubcriber = ((CVSSyncInfo)node).getSubscriber();
 		if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
-			throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.toString())); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSUIMessages.MergeUpdateAction_invalidSubscriber, new String[] { currentSubcriber.toString() })); //$NON-NLS-1$
 		}
 	}
 

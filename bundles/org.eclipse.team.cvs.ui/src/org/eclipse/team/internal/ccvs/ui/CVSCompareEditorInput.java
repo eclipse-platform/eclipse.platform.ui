@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
@@ -104,7 +105,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSResource resource = edition;
 			if (edition instanceof ICVSRemoteFile) {
 				try {
-					return Policy.bind("nameAndRevision", resource.getName(), ((ICVSRemoteFile)edition).getRevision()); //$NON-NLS-1$
+					return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { resource.getName(), ((ICVSRemoteFile)edition).getRevision() }); //$NON-NLS-1$
 				} catch (TeamException e) {
 					// fall through
 				}
@@ -113,14 +114,14 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)edition).getTag();
 					if (tag == null) {
-						return Policy.bind("CVSCompareEditorInput.inHead", edition.getName()); //$NON-NLS-1$
+						return NLS.bind(CVSUIMessages.CVSCompareEditorInput_inHead, new String[] { edition.getName() }); //$NON-NLS-1$
 					} else if (tag.getType() == CVSTag.BRANCH) {
-						return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()}); //$NON-NLS-1$
+						return NLS.bind(CVSUIMessages.CVSCompareEditorInput_inBranch, (new Object[] {edition.getName(), tag.getName()})); //$NON-NLS-1$
 					} else {
-						return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()}); //$NON-NLS-1$
+						return NLS.bind(CVSUIMessages.CVSCompareEditorInput_repository, (new Object[] {edition.getName(), tag.getName()})); //$NON-NLS-1$
 					}
 				} else {
-					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), resource.getSyncInfo().getRevision()}); //$NON-NLS-1$
+					return NLS.bind(CVSUIMessages.CVSCompareEditorInput_repository, (new Object[] {edition.getName(), resource.getSyncInfo().getRevision()})); //$NON-NLS-1$
 				}
 			} catch (TeamException e) {
 				handle(e);
@@ -141,9 +142,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)resource).getTag();
 					if (tag == null) {
-						return Policy.bind("CVSCompareEditorInput.headLabel"); //$NON-NLS-1$
+						return CVSUIMessages.CVSCompareEditorInput_headLabel; //$NON-NLS-1$
 					} else if (tag.getType() == CVSTag.BRANCH) {
-						return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName()); //$NON-NLS-1$
+						return NLS.bind(CVSUIMessages.CVSCompareEditorInput_branchLabel, new String[] { tag.getName() }); //$NON-NLS-1$
 					} else {
 						return tag.getName();
 					}
@@ -209,7 +210,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		} else if (t instanceof TeamException) {
 			error = ((TeamException)t).getStatus();
 		} else {
-			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
+			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, CVSUIMessages.internal, t); //$NON-NLS-1$
 		}
 		setMessage(error.getMessage());
 		if (!(t instanceof TeamException)) {
@@ -226,18 +227,18 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		if (title == null) {
 			if (ancestor != null) {
-				title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
-				toolTipText = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourcePath(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+				title = NLS.bind(CVSUIMessages.CVSCompareEditorInput_titleAncestor, (new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)})); //$NON-NLS-1$
+				toolTipText = NLS.bind(CVSUIMessages.CVSCompareEditorInput_titleAncestor, (new Object[] {guessResourcePath(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)})); //$NON-NLS-1$
 			} else {
 				String leftName = null;
 				if (left != null) leftName = left.getName();
 				String rightName = null;
 				if (right != null) rightName = right.getName();
 				if (leftName != null && !leftName.equals(rightName)) {
-					title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
+					title = NLS.bind(CVSUIMessages.CVSCompareEditorInput_titleNoAncestorDifferent, (new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)}));  //$NON-NLS-1$
 				} else {
-					title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
-					title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourcePath(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+					title = NLS.bind(CVSUIMessages.CVSCompareEditorInput_titleNoAncestor, (new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)})); //$NON-NLS-1$
+					title = NLS.bind(CVSUIMessages.CVSCompareEditorInput_titleNoAncestor, (new Object[] {guessResourcePath(), getVersionLabel(left), getVersionLabel(right)})); //$NON-NLS-1$
 				}
 			}
 		}
@@ -278,7 +279,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		final boolean threeWay = ancestor != null;
 		if (right == null || left == null) {
-			setMessage(Policy.bind("CVSCompareEditorInput.different")); //$NON-NLS-1$
+			setMessage(CVSUIMessages.CVSCompareEditorInput_different); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -299,7 +300,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
 				if (node instanceof ITypedElement) {
 					ITypedElement element = (ITypedElement)node;
-					progressMonitor.subTask(Policy.bind("CompareEditorInput.fileProgress", new String[] {element.getName()})); //$NON-NLS-1$
+					progressMonitor.subTask(NLS.bind(CVSUIMessages.CompareEditorInput_fileProgress, (new String[] {element.getName()}))); //$NON-NLS-1$
 					progressMonitor.worked(1);
 				}
 			}
@@ -319,9 +320,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		try {	
 			// do the diff	
 			Object result = null;
-			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
+			monitor.beginTask(CVSUIMessages.CVSCompareEditorInput_comparing, 30); //$NON-NLS-1$
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
-			sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
+			sub.beginTask(CVSUIMessages.CVSCompareEditorInput_comparing, 100); //$NON-NLS-1$
 			try {
 				result = d.findDifferences(threeWay, sub, null, ancestor, left, right);
 			} finally {
@@ -428,7 +429,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
         CompareConfiguration cc = getCompareConfiguration();
         ITypedElement l = node.getLeft();
         if (l == null) {
-            cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.0")); //$NON-NLS-1$
+            cc.setLeftLabel(CVSUIMessages.CVSCompareEditorInput_0); //$NON-NLS-1$
             cc.setLeftImage(null);
         } else {
 	        cc.setLeftLabel(getLabel(l));
@@ -436,7 +437,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
         }
         ITypedElement r = node.getRight();
         if (r == null) {
-            cc.setRightLabel(Policy.bind("CVSCompareEditorInput.1")); //$NON-NLS-1$
+            cc.setRightLabel(CVSUIMessages.CVSCompareEditorInput_1); //$NON-NLS-1$
             cc.setRightImage(null);
         } else {
 	        cc.setRightLabel(getLabel(r));

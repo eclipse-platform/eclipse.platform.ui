@@ -24,6 +24,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +32,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
@@ -240,7 +240,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("CVSAction.errorTitle"); //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_errorTitle; //$NON-NLS-1$
 	}
 	
 	/**
@@ -248,7 +248,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getWarningTitle() {
-		return Policy.bind("CVSAction.warningTitle"); //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_warningTitle; //$NON-NLS-1$
 	}
 
 	/**
@@ -257,7 +257,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Sunclasses should override to present a custon message.
 	 */
 	protected String getMultiStatusMessage() {
-		return Policy.bind("CVSAction.multipleProblemsMessage"); //$NON-NLS-1$
+		return CVSUIMessages.CVSAction_multipleProblemsMessage; //$NON-NLS-1$
 	}
 	
 	/**
@@ -490,7 +490,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				return resources.contains(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$
+				return NLS.bind(CVSUIMessages.ReplaceWithAction_localChanges, new String[] { resource.getName() });//$NON-NLS-1$
 			}
 		};
 	}
@@ -520,9 +520,9 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 						public void run() {							
 							AvoidableMessageDialog dialog = new AvoidableMessageDialog(
 									shell,
-									Policy.bind("CVSAction.mixingTagsTitle"),  //$NON-NLS-1$
+									CVSUIMessages.CVSAction_mixingTagsTitle,  //$NON-NLS-1$
 									null,	// accept the default window icon
-									Policy.bind("CVSAction.mixingTags", tag.getName()),  //$NON-NLS-1$
+									NLS.bind(CVSUIMessages.CVSAction_mixingTags, new String[] { tag.getName() }),  //$NON-NLS-1$
 									MessageDialog.QUESTION, 
 									new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
 									0);
@@ -627,17 +627,17 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 						execute((IAction)null);
 					} else {
 						MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
-								Policy.bind("CVSAction.handlerNotEnabledTitle"), //$NON-NLS-1$
-								Policy.bind("CVSAction.handlerNotEnabledMessage")); //$NON-NLS-1$
+								CVSUIMessages.CVSAction_handlerNotEnabledTitle, //$NON-NLS-1$
+								CVSUIMessages.CVSAction_handlerNotEnabledMessage); //$NON-NLS-1$
 					}
 				}
 			}
 		} catch (InvocationTargetException e) {
-			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Operation was cancelled. Ignore
 		} catch (TeamException e) {
-			throw new ExecutionException(Policy.bind("CVSAction.errorTitle"), e); //$NON-NLS-1$
+			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -13,12 +13,13 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -60,14 +61,14 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("DisconnectOperation.0"); //$NON-NLS-1$
+		return CVSUIMessages.DisconnectOperation_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("DisconnectOperation.1", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.DisconnectOperation_1, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -18,9 +18,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -34,30 +34,30 @@ public class CVSRemoteFilePropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[5];
 	{
 		PropertyDescriptor descriptor;
-		String category = Policy.bind("cvs"); //$NON-NLS-1$
+		String category = CVSUIMessages.cvs; //$NON-NLS-1$
 		
 		// resource name
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, Policy.bind("CVSRemoteFilePropertySource.name")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, CVSUIMessages.CVSRemoteFilePropertySource_name); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// revision
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_REVISION, Policy.bind("CVSRemoteFilePropertySource.revision")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_REVISION, CVSUIMessages.CVSRemoteFilePropertySource_revision); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
 		// date
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_DATE, Policy.bind("CVSRemoteFilePropertySource.date")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_DATE, CVSUIMessages.CVSRemoteFilePropertySource_date); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[2] = descriptor;
 		// author
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_AUTHOR, Policy.bind("CVSRemoteFilePropertySource.author")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_AUTHOR, CVSUIMessages.CVSRemoteFilePropertySource_author); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[3] = descriptor;
 		// comment
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_COMMENT, Policy.bind("CVSRemoteFilePropertySource.comment")); //$NON-NLS-1$
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_COMMENT, CVSUIMessages.CVSRemoteFilePropertySource_comment); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[4] = descriptor;

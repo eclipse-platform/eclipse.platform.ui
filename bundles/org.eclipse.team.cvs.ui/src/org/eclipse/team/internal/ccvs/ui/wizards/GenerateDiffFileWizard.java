@@ -56,10 +56,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.misc.ContainerContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -154,29 +154,29 @@ public class GenerateDiffFileWizard extends Wizard {
         private boolean validateFilesystemLocation() {
             final String pathString= fsPathText.getText().trim();
             if (pathString.length() == 0 || !new Path("").isValidPath(pathString)) { //$NON-NLS-1$
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.0")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); //$NON-NLS-1$
                 return false;
             }
             
             final File file= new File(pathString);
             if (!file.isAbsolute()) {
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.0")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); //$NON-NLS-1$
                 return false;
             }
             
             if (file.isDirectory()) {
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.2")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2); //$NON-NLS-1$
                 return false;
             }
             
             if (pathString.endsWith("/") || pathString.endsWith("\\")) {  //$NON-NLS-1$//$NON-NLS-2$
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.3")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); //$NON-NLS-1$
                 return false;
             }
             
             final File parent= file.getParentFile();
             if (!(parent.exists() && parent.isDirectory())) {
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.3")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_3); //$NON-NLS-1$
                 return false;
             }
             return true;
@@ -189,12 +189,12 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private boolean validateWorkspaceLocation() {
             if (wsSelectedContainer == null) {
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.4")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); //$NON-NLS-1$
                 return false;
             }
             final String filename= wsFilenameText.getText().trim();
             if (!new Path("").isValidSegment(filename)) { //$NON-NLS-1$
-                setErrorMessage(Policy.bind("GenerateDiffFileWizard.5")); //$NON-NLS-1$
+                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5); //$NON-NLS-1$
                 return false;
             }
             return true;
@@ -270,9 +270,9 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private void setupWorkspaceControls(Composite composite) {
             wsRadio= new Button(composite, SWT.RADIO);
-            wsRadio.setText(Policy.bind("Save_In_Workspace_7")); //$NON-NLS-1$
+            wsRadio.setText(CVSUIMessages.Save_In_Workspace_7); //$NON-NLS-1$
  
-            new Label(composite, SWT.LEFT).setText(Policy.bind("Select_a_folder_then_type_in_the_file_name__8"));		 //$NON-NLS-1$
+            new Label(composite, SWT.LEFT).setText(CVSUIMessages.Select_a_folder_then_type_in_the_file_name__8);		 //$NON-NLS-1$
             
             wsTreeViewer = new TreeViewer(composite, SWT.BORDER);
             final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -294,7 +294,7 @@ public class GenerateDiffFileWizard extends Wizard {
             
             final Label label = new Label(group, SWT.NONE);
             label.setLayoutData(new GridData());
-            label.setText(Policy.bind("Fi&le_name__9")); //$NON-NLS-1$
+            label.setText(CVSUIMessages.Fi_le_name__9); //$NON-NLS-1$
             
             wsFilenameText = new Text(group,SWT.BORDER);
             wsFilenameText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -307,7 +307,7 @@ public class GenerateDiffFileWizard extends Wizard {
             GridLayout layout;
             fsRadio= new Button(composite, SWT.RADIO);
 
-            fsRadio.setText(Policy.bind("Save_In_File_System_3")); //$NON-NLS-1$
+            fsRadio.setText(CVSUIMessages.Save_In_File_System_3); //$NON-NLS-1$
             
             final Composite nameGroup = new Composite(composite,SWT.NONE);
             layout = new GridLayout();
@@ -322,7 +322,7 @@ public class GenerateDiffFileWizard extends Wizard {
             fsPathText.setLayoutData(gd);
             
             fsBrowseButton = new Button(nameGroup, SWT.NULL);
-            fsBrowseButton.setText(Policy.bind("Browse..._4")); //$NON-NLS-1$
+            fsBrowseButton.setText(CVSUIMessages.Browse____4); //$NON-NLS-1$
         }
         
         /**
@@ -330,7 +330,7 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private void setupClipboardControls(final Composite composite) {
             cpRadio= new Button(composite, SWT.RADIO);
-            cpRadio.setText(Policy.bind("Save_To_Clipboard_2")); //$NON-NLS-1$
+            cpRadio.setText(CVSUIMessages.Save_To_Clipboard_2); //$NON-NLS-1$
         }
         
         
@@ -406,8 +406,8 @@ public class GenerateDiffFileWizard extends Wizard {
                         final File file= new File(fsPathText.getText());
                         dialog.setFilterPath(file.getParent());
                     }
-                    dialog.setText(Policy.bind("Save_Patch_As_5")); //$NON-NLS-1$
-                    dialog.setFileName(Policy.bind("patch.txt_6")); //$NON-NLS-1$
+                    dialog.setText(CVSUIMessages.Save_Patch_As_5); //$NON-NLS-1$
+                    dialog.setFileName(CVSUIMessages.patch_txt_6); //$NON-NLS-1$
                     final String path = dialog.open();
                     if (path != null) {
                         fsPathText.setText(new Path(path).toOSString());
@@ -492,11 +492,11 @@ public class GenerateDiffFileWizard extends Wizard {
             WorkbenchHelp.setHelp(composite, IHelpContextIds.PATCH_OPTIONS_PAGE);
             
             recurseOption = new Button(composite, SWT.CHECK);
-            recurseOption.setText(Policy.bind("Do_not_recurse_into_sub-folders_10")); //$NON-NLS-1$
+            recurseOption.setText(CVSUIMessages.Do_not_recurse_into_sub_folders_10); //$NON-NLS-1$
             recurseOption.setSelection(true);
             
             includeNewFilesOptions = new Button(composite, SWT.CHECK);
-            includeNewFilesOptions.setText(Policy.bind("Do_not_include_new_files_in_patch_11")); //$NON-NLS-1$
+            includeNewFilesOptions.setText(CVSUIMessages.Do_not_include_new_files_in_patch_11); //$NON-NLS-1$
             includeNewFilesOptions.setSelection(true);
             
             Group diffTypeGroup = new Group(composite, SWT.NONE);
@@ -505,15 +505,15 @@ public class GenerateDiffFileWizard extends Wizard {
             diffTypeGroup.setLayout(layout);
             GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
             diffTypeGroup.setLayoutData(data);
-            diffTypeGroup.setText(Policy.bind("Diff_output_format_12")); //$NON-NLS-1$
+            diffTypeGroup.setText(CVSUIMessages.Diff_output_format_12); //$NON-NLS-1$
             
             unifiedDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            unifiedDiffOption.setText(Policy.bind("Unified_(format_required_by_Compare_With_Patch_feature)_13")); //$NON-NLS-1$
+            unifiedDiffOption.setText(CVSUIMessages.Unified__format_required_by_Compare_With_Patch_feature__13); //$NON-NLS-1$
             unifiedDiffOption.setSelection(true);
             contextDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            contextDiffOption.setText(Policy.bind("Context_14")); //$NON-NLS-1$
+            contextDiffOption.setText(CVSUIMessages.Context_14); //$NON-NLS-1$
             regularDiffOption = new Button(diffTypeGroup, SWT.RADIO);
-            regularDiffOption.setText(Policy.bind("Standard_15")); //$NON-NLS-1$
+            regularDiffOption.setText(CVSUIMessages.Standard_15); //$NON-NLS-1$
             
             Dialog.applyDialogFont(parent);
         }
@@ -627,20 +627,20 @@ public class GenerateDiffFileWizard extends Wizard {
     public GenerateDiffFileWizard(IResource resource) {
         super();
         this.resource = resource;
-        setWindowTitle(Policy.bind("GenerateCVSDiff.title")); //$NON-NLS-1$
+        setWindowTitle(CVSUIMessages.GenerateCVSDiff_title); //$NON-NLS-1$
         initializeDefaultPageImageDescriptor();
         defaultValuesStore= new DefaultValuesStore();
     }
     
     public void addPages() {
-        String pageTitle = Policy.bind("GenerateCVSDiff.pageTitle"); //$NON-NLS-1$
-        String pageDescription = Policy.bind("GenerateCVSDiff.pageDescription"); //$NON-NLS-1$
+        String pageTitle = CVSUIMessages.GenerateCVSDiff_pageTitle; //$NON-NLS-1$
+        String pageDescription = CVSUIMessages.GenerateCVSDiff_pageDescription; //$NON-NLS-1$
         locationPage = new LocationPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF), defaultValuesStore);
         locationPage.setDescription(pageDescription);
         addPage(locationPage);
         
-        pageTitle = Policy.bind("Advanced_options_19"); //$NON-NLS-1$
-        pageDescription = Policy.bind("Configure_the_options_used_for_the_CVS_diff_command_20"); //$NON-NLS-1$
+        pageTitle = CVSUIMessages.Advanced_options_19; //$NON-NLS-1$
+        pageDescription = CVSUIMessages.Configure_the_options_used_for_the_CVS_diff_command_20; //$NON-NLS-1$
         optionsPage = new OptionsPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF));
         optionsPage.setDescription(pageDescription);
         addPage(optionsPage);		
@@ -707,7 +707,7 @@ public class GenerateDiffFileWizard extends Wizard {
             try {
                 workspaceResource.getParent().refreshLocal(IResource.DEPTH_ONE, null);
             } catch(CoreException e) {
-                CVSUIPlugin.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e); //$NON-NLS-1$
+                CVSUIPlugin.openError(getShell(), CVSUIMessages.GenerateCVSDiff_error, null, e); //$NON-NLS-1$
                 return false;
             }
             break;
@@ -742,15 +742,15 @@ public class GenerateDiffFileWizard extends Wizard {
     	 * The file exists.
     	 */
     	if (!file.canWrite()) {
-    	    final String title= Policy.bind("GenerateCVSDiff.1"); //$NON-NLS-1$
-    	    final String msg= Policy.bind("GenerateCVSDiff.2"); //$NON-NLS-1$
+    	    final String title= CVSUIMessages.GenerateCVSDiff_1; //$NON-NLS-1$
+    	    final String msg= CVSUIMessages.GenerateCVSDiff_2; //$NON-NLS-1$
     	    final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
     	    dialog.open();
     	    return false;
     	}
     	
-    	final String title = Policy.bind("GenerateCVSDiff.overwriteTitle"); //$NON-NLS-1$
-    	final String msg = Policy.bind("GenerateCVSDiff.overwriteMsg"); //$NON-NLS-1$
+    	final String title = CVSUIMessages.GenerateCVSDiff_overwriteTitle; //$NON-NLS-1$
+    	final String msg = CVSUIMessages.GenerateCVSDiff_overwriteMsg; //$NON-NLS-1$
     	final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
     	dialog.open();
     	if (dialog.getReturnCode() != 0)            

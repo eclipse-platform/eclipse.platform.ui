@@ -15,7 +15,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.SaveablePartDialog;
 
@@ -45,7 +45,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 		 * Add the replace button to the dialog.
 		 */
 		protected void createButtonsForButtonBar(Composite parent) {
-			replaceButton = createButton(parent, REPLACE_ID, Policy.bind("ReplaceWithRevisionAction.0"), true); //$NON-NLS-1$
+			replaceButton = createButton(parent, REPLACE_ID, CVSUIMessages.ReplaceWithRevisionAction_0, true); //$NON-NLS-1$
 			replaceButton.setEnabled(false);
 			input.getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {
@@ -87,6 +87,6 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction#getActionTitle()
 	 */
 	protected String getActionTitle() {
-		return Policy.bind("ReplaceWithRevisionAction.1"); //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithRevisionAction_1; //$NON-NLS-1$
 	}
 }

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -117,7 +117,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
      * @param t the exception that occurred.
      */
     protected void handle(Throwable t) {
-        handle(Policy.bind("CVSModelElement.0"), Policy.bind("CVSModelElement.1"), t); //$NON-NLS-1$ //$NON-NLS-2$
+        handle(CVSUIMessages.CVSModelElement_0, CVSUIMessages.CVSModelElement_1, t); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**

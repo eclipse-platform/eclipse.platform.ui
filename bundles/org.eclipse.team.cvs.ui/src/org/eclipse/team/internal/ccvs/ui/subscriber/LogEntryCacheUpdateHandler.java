@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
@@ -159,7 +160,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
     
     public LogEntryCacheUpdateHandler(ISynchronizePageConfiguration configuration) {
-        super(Policy.bind("LogEntryCacheUpdateHandler.1"), Policy.bind("LogEntryCacheUpdateHandler.0")); //$NON-NLS-1$ //$NON-NLS-2$
+        super(CVSUIMessages.LogEntryCacheUpdateHandler_1, CVSUIMessages.LogEntryCacheUpdateHandler_0); //$NON-NLS-1$ //$NON-NLS-2$
         this.configuration = configuration;
         this.subscriber = getSubscriber(configuration);
         cacheReference = new SoftReference(new LogEntryCache());
@@ -388,7 +389,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
 	            }
 	            if (job.getState() != Job.NONE) {
 	                // The job never completed in the time aloted so throw an exception
-	                throw new CVSException(Policy.bind("LogEntryCacheUpdateHandler.2")); //$NON-NLS-1$
+	                throw new CVSException(CVSUIMessages.LogEntryCacheUpdateHandler_2); //$NON-NLS-1$
 	            }
 	        }
 	        // Queue the event even if the job didn't stop in the time aloted
@@ -424,8 +425,8 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
                 logEntriesCache = new LogEntryCache();
                 cacheReference = new SoftReference(logEntriesCache);
             }
-            monitor.beginTask(Policy.bind("CVSChangeSetCollector.4"), 100 * projectMapping.size()); //$NON-NLS-1$
-            monitor.setTaskName(Policy.bind("CVSChangeSetCollector.4")); //$NON-NLS-1$
+            monitor.beginTask(CVSUIMessages.CVSChangeSetCollector_4, 100 * projectMapping.size()); //$NON-NLS-1$
+            monitor.setTaskName(CVSUIMessages.CVSChangeSetCollector_4); //$NON-NLS-1$
             for (Iterator iter = projectMapping.values().iterator(); iter.hasNext();) {
                 SyncInfoSet set = (SyncInfoSet) iter.next();
                 fetchLogEntries(logEntriesCache, set, Policy.subMonitorFor(monitor, 90));

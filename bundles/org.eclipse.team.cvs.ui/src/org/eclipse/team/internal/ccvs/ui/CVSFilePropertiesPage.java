@@ -50,9 +50,9 @@ public class CVSFilePropertiesPage extends CVSPropertiesPage {
 			ICVSFile cvsResource = CVSWorkspaceRoot.getCVSFileFor(file);
 			if (!cvsResource.isManaged()) {
 				if (cvsResource.isIgnored()) {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.ignored")); //$NON-NLS-1$
+					createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_ignored); //$NON-NLS-1$
 				} else {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.notManaged")); //$NON-NLS-1$
+					createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_notManaged); //$NON-NLS-1$
 				}
 				createLabel(composite, ""); //$NON-NLS-1$
 				return composite;
@@ -62,33 +62,33 @@ public class CVSFilePropertiesPage extends CVSPropertiesPage {
 
 			
 			if (syncInfo.isAdded()) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.isAdded"), 2); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_isAdded, 2); //$NON-NLS-1$
 			} else {
 				// Base
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision")); //$NON-NLS-1$
+				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_baseRevision); //$NON-NLS-1$
 				createLabel(composite, syncInfo.getRevision());
 				Date baseTime = syncInfo.getTimeStamp();
 				if (baseTime != null) {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp")); //$NON-NLS-1$
+					createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_baseTimestamp); //$NON-NLS-1$
 					createLabel(composite, DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(syncInfo.getTimeStamp()));
 				}
 				
 				// Modified
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified")); //$NON-NLS-1$
-				createLabel(composite, cvsResource.isModified(null) ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
+				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_modified); //$NON-NLS-1$
+				createLabel(composite, cvsResource.isModified(null) ? CVSUIMessages.yes : CVSUIMessages.no); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			// Keyword Mode
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode")); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_keywordMode); //$NON-NLS-1$
 			createLabel(composite, syncInfo.getKeywordMode().getLongDisplayText());
 			
 			// Tag
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_tag); //$NON-NLS-1$
 			CVSTag tag = Util.getAccurateFileTag(cvsResource);
 			createLabel(composite, getTagLabel(tag));
 		} catch (TeamException e) {
 			// Display error text
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error")); //$NON-NLS-1$
+			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_error); //$NON-NLS-1$
 			createLabel(composite, ""); //$NON-NLS-1$
 		}
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FILE_PROPERTY_PAGE);

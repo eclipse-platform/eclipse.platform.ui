@@ -16,7 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 
 /**
  * This dialog prompts for the type of update which should take place
@@ -28,7 +28,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 	public static final int YES = IDialogConstants.YES_ID;
 	
 	public UpdateDialog(Shell parentShell, SyncInfoSet syncSet) {
-		super(parentShell, Policy.bind("UpdateDialog.overwriteTitle"), Policy.bind("UpdateDialog.overwriteDetailsTitle"), syncSet); //$NON-NLS-1$ //$NON-NLS-2$
+		super(parentShell, CVSUIMessages.UpdateDialog_overwriteTitle, syncSet); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 		// TODO: set F1 help
 		//WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
 		
-		createWrappingLabel(composite, Policy.bind("UpdateDialog.overwriteMessage")); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.UpdateDialog_overwriteMessage); //$NON-NLS-1$
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

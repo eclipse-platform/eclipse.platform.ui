@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -39,17 +40,17 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    dialog[0] = new UncommittedChangesDialog(shell, Policy.bind("ReplaceWithTagAction.4"), mappings, monitor) { //$NON-NLS-1$
+                    dialog[0] = new UncommittedChangesDialog(shell, CVSUIMessages.ReplaceWithTagAction_4, mappings, monitor) { //$NON-NLS-1$
                         protected String getSingleMappingMessage(ResourceMapping mapping) {
                             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
                             if (getAllMappings().length == 1) {
-                                return Policy.bind("ReplaceWithTagAction.2", label); //$NON-NLS-1$
+                                return NLS.bind(CVSUIMessages.ReplaceWithTagAction_2, new String[] { label }); //$NON-NLS-1$
                             }
-                            return Policy.bind("ReplaceWithTagAction.0", label); //$NON-NLS-1$
+                            return NLS.bind(CVSUIMessages.ReplaceWithTagAction_0, new String[] { label }); //$NON-NLS-1$
                         }
             
                         protected String getMultipleMappingsMessage() {
-                            return Policy.bind("ReplaceWithTagAction.1"); //$NON-NLS-1$
+                            return CVSUIMessages.ReplaceWithTagAction_1; //$NON-NLS-1$
                         }
                     };
                 }
@@ -95,8 +96,8 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					return;
 				}
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), TagSource.create(resourceMappings[0]), 
-					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
-					Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
+					CVSUIMessages.ReplaceWithTagAction_message, //$NON-NLS-1$
+					CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, //$NON-NLS-1$
 					TagSelectionDialog.INCLUDE_ALL_TAGS, 
 					false, /*show recurse*/
 					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); //$NON-NLS-1$
@@ -129,7 +130,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ReplaceWithTagAction.replace"); //$NON-NLS-1$
+		return CVSUIMessages.ReplaceWithTagAction_replace; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -42,7 +42,7 @@ public class AvoidableMessageDialog extends MessageDialog {
 		GridData data = new GridData();
 		data.horizontalIndent = 50;
 		dontShowAgain.setLayoutData(data);
-		dontShowAgain.setText(Policy.bind("AvoidableMessageDialog.dontShowAgain")); //$NON-NLS-1$
+		dontShowAgain.setText(CVSUIMessages.AvoidableMessageDialog_dontShowAgain); //$NON-NLS-1$
 		dontShowAgain.setSelection(dontShow);
 		dontShowAgain.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {

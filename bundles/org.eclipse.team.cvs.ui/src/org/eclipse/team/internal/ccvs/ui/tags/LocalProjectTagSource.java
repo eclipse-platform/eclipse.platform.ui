@@ -17,12 +17,13 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Tag source that gets its tags from the projects exist in the workspace
@@ -95,7 +96,7 @@ public class LocalProjectTagSource extends TagSource {
      * @see org.eclipse.team.internal.ccvs.ui.tags.TagSource#getShortDescription()
      */
     public String getShortDescription() {
-        return Policy.bind("LocalProjectTagSource.0", Integer.toString(remoteFolders.length)); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.LocalProjectTagSource_0, new String[] { Integer.toString(remoteFolders.length) }); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

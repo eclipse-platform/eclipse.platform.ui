@@ -13,9 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.util.*;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -75,7 +76,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		
 		String elementName = getElementName(namespaceURI, localName, qName);
 		if (!elementName.equals(tagStack.peek())) {
-			throw new SAXException(Policy.bind("RepositoriesViewContentHandler.unmatchedTag", elementName)); //$NON-NLS-1$
+			throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_unmatchedTag, new String[] { elementName })); //$NON-NLS-1$
 		}
 		
 		if (elementName.equals(REPOSITORIES_VIEW_TAG)) {
@@ -128,7 +129,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		} else if (elementName.equals(REPOSITORY_TAG)) {
 			String id = atts.getValue(ID_ATTRIBUTE);
 			if (id == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", REPOSITORY_TAG, ID_ATTRIBUTE)); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { REPOSITORY_TAG, ID_ATTRIBUTE })); //$NON-NLS-1$
 			}
 			ICVSRepositoryLocation root;
 			try {
@@ -137,7 +138,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 					KnownRepositories.getInstance().addRepository(root, false);
 				}
 			} catch (CVSException e) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.errorCreatingRoot", id), e); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_errorCreatingRoot, new String[] { id }), e); //$NON-NLS-1$
 			}
 			currentRepositoryRoot = new RepositoryRoot(root);
 			String name = atts.getValue(NAME_ATTRIBUTE);
@@ -150,20 +151,20 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		} else if (elementName.equals(DATE_TAG_TAG)){
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", DATE_TAGS_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { DATE_TAGS_TAG, NAME_ATTRIBUTE })); //$NON-NLS-1$
 			}
 			dateTags.add(new CVSTag(name, CVSTag.DATE));
 		}else if (elementName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { WORKING_SET_TAG, NAME_ATTRIBUTE })); //$NON-NLS-1$
 			}
 			// Ignore any elements until the corresponding end tag is reached
 			ignoreElements = true;
 		}  else if (elementName.equals(MODULE_TAG)) {
 			String path = atts.getValue(PATH_ATTRIBUTE);
 			if (path == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", MODULE_TAG, PATH_ATTRIBUTE)); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { MODULE_TAG, PATH_ATTRIBUTE })); //$NON-NLS-1$
 			}
 			String type = atts.getValue(TYPE_ATTRIBUTE);
 			if (type != null && type.equals(DEFINED_MODULE_TYPE)) {
@@ -187,7 +188,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			}
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", TAG_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
+				throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { TAG_TAG, NAME_ATTRIBUTE })); //$NON-NLS-1$
 			}
 			tags.add(new CVSTag(name, getCVSTagType(type)));
 		} else if (elementName.equals(AUTO_REFRESH_FILE_TAG)) {
@@ -196,7 +197,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				// get the old path attribute format which was relative to the module
 				path = atts.getValue(PATH_ATTRIBUTE);
 				if (path == null) {
-					throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", AUTO_REFRESH_FILE_TAG, FULL_PATH_ATTRIBUTE)); //$NON-NLS-1$
+					throw new SAXException(NLS.bind(CVSUIMessages.RepositoriesViewContentHandler_missingAttribute, new String[] { AUTO_REFRESH_FILE_TAG, FULL_PATH_ATTRIBUTE })); //$NON-NLS-1$
 				}
 				if (RepositoryRoot.isDefinedModuleName(currentRemotePath)) {
 					path = null;

@@ -45,9 +45,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -199,37 +199,37 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			}
 		};
 		
-		Group g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Location_1")); //$NON-NLS-1$
+		Group g = createGroup(composite, CVSUIMessages.ConfigurationWizardMainPage_Location_1); //$NON-NLS-1$
 		
 		// Host name
-		createLabel(g, Policy.bind("ConfigurationWizardMainPage.host")); //$NON-NLS-1$
+		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_host); //$NON-NLS-1$
 		hostCombo = createEditableCombo(g);
 		hostCombo.addListener(SWT.Selection, listener);
 		hostCombo.addListener(SWT.Modify, listener);
 		
 		// Repository Path
-		createLabel(g, Policy.bind("ConfigurationWizardMainPage.repositoryPath")); //$NON-NLS-1$
+		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_repositoryPath); //$NON-NLS-1$
 		repositoryPathCombo = createEditableCombo(g);
 		repositoryPathCombo.addListener(SWT.Selection, listener);
 		repositoryPathCombo.addListener(SWT.Modify, listener);
 
-		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Authentication_2")); //$NON-NLS-1$
+		g = createGroup(composite, CVSUIMessages.ConfigurationWizardMainPage_Authentication_2); //$NON-NLS-1$
 		
 		// User name
-		createLabel(g, Policy.bind("ConfigurationWizardMainPage.userName")); //$NON-NLS-1$
+		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_userName); //$NON-NLS-1$
 		userCombo = createEditableCombo(g);
 		userCombo.addListener(SWT.Selection, listener);
 		userCombo.addListener(SWT.Modify, listener);
 		
 		// Password
-		createLabel(g, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
+		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_password); //$NON-NLS-1$
 		passwordText = createPasswordField(g);
 		passwordText.addListener(SWT.Modify, listener);
 
-		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Connection_3")); //$NON-NLS-1$
+		g = createGroup(composite, CVSUIMessages.ConfigurationWizardMainPage_Connection_3); //$NON-NLS-1$
 		
 		// Connection type
-		createLabel(g, Policy.bind("ConfigurationWizardMainPage.connection")); //$NON-NLS-1$
+		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_connection); //$NON-NLS-1$
 		connectionMethodCombo = createCombo(g);
 		connectionMethodCombo.addListener(SWT.Selection, listener);
 
@@ -244,8 +244,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		portGroup.setLayout(layout);
-		useDefaultPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
-		useCustomPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
+		useDefaultPort = createRadioButton(portGroup, CVSUIMessages.ConfigurationWizardMainPage_useDefaultPort, 2); //$NON-NLS-1$
+		useCustomPort = createRadioButton(portGroup, CVSUIMessages.ConfigurationWizardMainPage_usePort, 1); //$NON-NLS-1$
 		useCustomPort.addListener(SWT.Selection, listener);
 		portText = createTextField(portGroup);
 		portText.addListener(SWT.Modify, listener);
@@ -259,7 +259,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			validateButtonTabGroup.setLayout(new FillLayout());
 
 			validateButton = new Button(validateButtonTabGroup, SWT.CHECK);
-			validateButton.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate")); //$NON-NLS-1$
+			validateButton.setText(CVSUIMessages.ConfigurationWizardAutoconnectPage_validate); //$NON-NLS-1$
 			validateButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
 					validate = validateButton.getSelection();
@@ -268,7 +268,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 		
 		allowCachingButton = new Button(composite, SWT.CHECK);
-		allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
+		allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.horizontalSpan = 3;
 		allowCachingButton.setLayoutData(data);
@@ -291,7 +291,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
 		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
 		Label warningText = new Label(warningComposite, SWT.WRAP);
-		warningText.setText(Policy.bind("UserValidationDialog.7")); //$NON-NLS-1$
+		warningText.setText(CVSUIMessages.UserValidationDialog_7); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 300;
 		GC gc= new GC(composite);
@@ -536,7 +536,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		try {
 			CVSRepositoryLocation l = CVSRepositoryLocation.fromProperties(createProperties());
 			if (!l.equals(oldLocation) && KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
-				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.0")); //$NON-NLS-1$
+				setErrorMessage(CVSUIMessages.ConfigurationWizardMainPage_0); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
 			}
@@ -578,43 +578,43 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	public static final int INVALID_FIELD_CONTENTS = 2;
 	public static final IStatus validateUserName(String user) {
 		if (user.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.1"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, CVSUIMessages.ConfigurationWizardMainPage_1, null); //$NON-NLS-1$
 		}
 		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.invalidUserName"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_invalidUserName, null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}
 	public static final IStatus validateHost(String host) {
 		if (host.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.2"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, CVSUIMessages.ConfigurationWizardMainPage_2, null); //$NON-NLS-1$
 		}
 		if (host.indexOf(':') != -1) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.invalidHostName"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_invalidHostName, null); //$NON-NLS-1$
 		}
 		if (host.startsWith(" ") || host.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.5"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_5, null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}
 	public static final IStatus validatePort(String port) {
 		if (port.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.3"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, CVSUIMessages.ConfigurationWizardMainPage_3, null); //$NON-NLS-1$
 		}
 		try {
 			Integer.parseInt(port);
 		} catch (NumberFormatException e) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-				Policy.bind("ConfigurationWizardMainPage.invalidPort"), null); //$NON-NLS-1$
+				CVSUIMessages.ConfigurationWizardMainPage_invalidPort, null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}
 	public static final IStatus validatePath(String pathString) {
 		if (pathString.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.4"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, CVSUIMessages.ConfigurationWizardMainPage_4, null); //$NON-NLS-1$
 		}
 		IPath path = new Path(null, pathString);
 		String[] segments = path.segments();
@@ -622,7 +622,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			String string = segments[i];
 			if (string.charAt(0) == ' ' || string.charAt(string.length() -1) == ' ') {
 				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_invalidPathWithSpaces, null); //$NON-NLS-1$
 			}
 		}
 		// look for // and inform the user that we support use of C:\cvs\root instead of /c//cvs/root
@@ -630,10 +630,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			if (pathString.indexOf("//") == 2) { //$NON-NLS-1$
 				// The user is probably trying to specify a CVSNT path
 				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.useNTFormat"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_useNTFormat, null); //$NON-NLS-1$
 			} else {
 				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.invalidPathWithSlashes"), null); //$NON-NLS-1$
+					CVSUIMessages.ConfigurationWizardMainPage_invalidPathWithSlashes, null); //$NON-NLS-1$
 			}
 		}
 		return Status.OK_STATUS;

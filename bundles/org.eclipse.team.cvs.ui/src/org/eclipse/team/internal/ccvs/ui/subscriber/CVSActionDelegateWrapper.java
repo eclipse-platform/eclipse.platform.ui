@@ -24,7 +24,7 @@ public class CVSActionDelegateWrapper extends ActionDelegateWrapper {
 
 	public CVSActionDelegateWrapper(CVSAction delegate, ISynchronizePageConfiguration configuration) {
 		super(delegate, configuration, delegate.getId());
-		Utils.initAction(this, getBundleKeyPrefix(), Policy.getBundle());
+		Utils.initAction(this, getBundleKeyPrefix(), Policy.getActionBundle());
 	}
 
 	/**

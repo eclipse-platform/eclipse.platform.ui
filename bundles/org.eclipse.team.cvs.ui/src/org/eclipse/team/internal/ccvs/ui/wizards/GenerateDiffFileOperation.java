@@ -33,8 +33,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * An operation to run the CVS diff operation on a set of resources. The result
@@ -62,7 +62,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	    
 	    final CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 	    monitor.beginTask("", 500); //$NON-NLS-1$
-	    monitor.setTaskName(Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
+	    monitor.setTaskName(CVSUIMessages.GenerateCVSDiff_working); //$NON-NLS-1$
 		try {
 			if (outputFile != null) {
 			    generateDiffToFile(monitor, provider, outputFile);
@@ -87,9 +87,9 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
                 os.close();
             }
         } catch (FileNotFoundException e) {
-            throw new TeamException(Policy.bind("GenerateDiffFileOperation.0"), e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_0, e); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new TeamException(Policy.bind("GenerateDiffFileOperation.1"), e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_1, e); //$NON-NLS-1$
         }
         
 		if (file.length() == 0) {
@@ -107,7 +107,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
                 os.close();
             }
         } catch (IOException e) {
-            throw new TeamException(Policy.bind("GenerateDiffFileOperation.2"), e); //$NON-NLS-1$
+            throw new TeamException(CVSUIMessages.GenerateDiffFileOperation_2, e); //$NON-NLS-1$
         }
         if (os.size() == 0) {
             reportEmptyDiff();
@@ -134,8 +134,8 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
         	public void open(Shell shell) {
         		MessageDialog.openInformation(
         			shell,
-        			Policy.bind("GenerateCVSDiff.noDiffsFoundTitle"), //$NON-NLS-1$
-        			Policy.bind("GenerateCVSDiff.noDiffsFoundMsg")); //$NON-NLS-1$
+        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundTitle, //$NON-NLS-1$
+        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundMsg); //$NON-NLS-1$
         	}
         }, CVSUIPlugin.PERFORM_SYNC_EXEC);
     }

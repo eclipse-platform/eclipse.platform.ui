@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -39,14 +39,9 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	private SyncInfoSet syncSet;
 	private Object[] selectedResources;
 
-	/**
-	 * @param parentShell
-	 * @param dialogTitle
-	 */
-	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, String detailsTitle, SyncInfoSet syncSet) {
+	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, SyncInfoSet syncSet) {
 		super(parentShell, dialogTitle);
 		this.syncSet = syncSet;
-		//this.detailsTitle = detailsTitle;
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +107,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 	
-		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.selectAll"), false); //$NON-NLS-1$
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_selectAll, false); //$NON-NLS-1$
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(true);
@@ -121,7 +116,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 		};
 		selectButton.addSelectionListener(listener);
 	
-		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.deselectAll"), false); //$NON-NLS-1$
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_deselectAll, false); //$NON-NLS-1$
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(false);

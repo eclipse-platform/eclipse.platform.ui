@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,7 +52,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	 * @param parentShell
 	 */
 	public AddToVersionControlDialog(Shell parentShell, IResource[] unaddedResources) {
-		super(parentShell, Policy.bind("AddToVersionControlDialog.title")); //$NON-NLS-1$
+		super(parentShell, CVSUIMessages.AddToVersionControlDialog_title); //$NON-NLS-1$
 		this.unaddedResources = unaddedResources;
 	}
 
@@ -68,9 +69,9 @@ public class AddToVersionControlDialog extends DetailsDialog {
 			 
 		// add a description label
 		if (unaddedResources.length==1) {
-			createWrappingLabel(composite, Policy.bind("AddToVersionControlDialog.thereIsAnUnaddedResource", new Integer(unaddedResources.length).toString()));  //$NON-NLS-1$
+			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereIsAnUnaddedResource, new String[] { new Integer(unaddedResources.length).toString() }));  //$NON-NLS-1$
 		} else {
-			createWrappingLabel(composite, Policy.bind("AddToVersionControlDialog.thereAreUnaddedResources", new Integer(unaddedResources.length).toString()));  //$NON-NLS-1$
+			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereAreUnaddedResources, new String[] { new Integer(unaddedResources.length).toString() }));  //$NON-NLS-1$
 		}
 	}
 
@@ -99,7 +100,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	private void addUnaddedResourcesArea(Composite composite) {
 		
 		// add a description label
-		createWrappingLabel(composite, Policy.bind("ReleaseCommentDialog.unaddedResources")); //$NON-NLS-1$
+		createWrappingLabel(composite, CVSUIMessages.ReleaseCommentDialog_unaddedResources); //$NON-NLS-1$
 	
 		// add the selectable checkbox list
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
@@ -148,7 +149,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 	
-		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.selectAll"), false); //$NON-NLS-1$
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_selectAll, false); //$NON-NLS-1$
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(true);
@@ -157,7 +158,7 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		};
 		selectButton.addSelectionListener(listener);
 	
-		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.deselectAll"), false); //$NON-NLS-1$
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, CVSUIMessages.ReleaseCommentDialog_deselectAll, false); //$NON-NLS-1$
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(false);

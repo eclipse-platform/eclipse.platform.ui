@@ -17,10 +17,12 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
@@ -58,10 +60,9 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	protected String getErrorMessage(IStatus[] problems, int operationCount) {
 		// We accumulated 1 status per resource above.
 		if(operationCount == 1) {
-			return Policy.bind("TagAction.tagProblemsMessage"); //$NON-NLS-1$
+			return CVSUIMessages.TagAction_tagProblemsMessage; //$NON-NLS-1$
 		} else {
-			return Policy.bind("TagAction.tagProblemsMessageMultiple", //$NON-NLS-1$
-				Integer.toString(operationCount - problems.length), Integer.toString(problems.length));
+			return NLS.bind(CVSUIMessages.TagAction_tagProblemsMessageMultiple, new String[] { Integer.toString(operationCount - problems.length), Integer.toString(problems.length) });
 		}
 	}
 	
@@ -128,14 +129,14 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	}
 
 	protected  String getTaskName() {
-		return Policy.bind("TagFromWorkspace.taskName"); //$NON-NLS-1$
+		return CVSUIMessages.TagFromWorkspace_taskName; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("TagOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.TagOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

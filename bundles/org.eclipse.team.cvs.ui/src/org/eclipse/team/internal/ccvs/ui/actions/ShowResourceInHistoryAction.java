@@ -20,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class ShowResourceInHistoryAction extends WorkspaceAction {
 	/*
@@ -43,7 +42,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
+		return CVSUIMessages.ShowHistoryAction_showHistory; //$NON-NLS-1$
 	}
 
 	/**

@@ -26,6 +26,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -209,11 +210,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				}
 				String question;
 				if (resources.length == 1) {
-					question = Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resources[0].getFullPath().toString()); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshQuestion, new String[] { status.getMessage(), resources[0].getFullPath().toString() }); //$NON-NLS-1$
 				} else {
-					question = Policy.bind("CVSUIPlugin.refreshMultipleQuestion", status.getMessage()); //$NON-NLS-1$
+					question = NLS.bind(CVSUIMessages.CVSUIPlugin_refreshMultipleQuestion, new String[] { status.getMessage() }); //$NON-NLS-1$
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), question); //$NON-NLS-1$
+				result[0] = MessageDialog.openQuestion(shellToUse, CVSUIMessages.CVSUIPlugin_refreshTitle, question); //$NON-NLS-1$
 			}
 		};
 		Display.getDefault().syncExec(runnable);
@@ -333,7 +334,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void log(CoreException e) {
-		log(e.getStatus().getSeverity(), Policy.bind("simpleInternal"), e); //$NON-NLS-1$
+		log(e.getStatus().getSeverity(), CVSUIMessages.simpleInternal, e); //$NON-NLS-1$
 	}
 	
 	/**
@@ -393,16 +394,16 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			status = ((TeamException)exception).getStatus();
 			log = ((flags & LOG_TEAM_EXCEPTIONS) > 0);
 		} else if (exception instanceof InterruptedException) {
-			return new CVSStatus(IStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
+			return new CVSStatus(IStatus.OK, CVSUIMessages.ok); //$NON-NLS-1$
 		} else if (exception != null) {
-			status = new CVSStatus(IStatus.ERROR, Policy.bind("internal"), exception); //$NON-NLS-1$
+			status = new CVSStatus(IStatus.ERROR, CVSUIMessages.internal, exception); //$NON-NLS-1$
 			log = ((flags & LOG_OTHER_EXCEPTIONS) > 0);
-			if (title == null) title = Policy.bind("SimpleInternal"); //$NON-NLS-1$
+			if (title == null) title = CVSUIMessages.internal; //$NON-NLS-1$
 		}
 		
 		// Check for a build error and report it differently
 		if (status.getCode() == IResourceStatus.BUILD_FAILED) {
-			message = Policy.bind("buildError"); //$NON-NLS-1$
+			message = CVSUIMessages.buildError; //$NON-NLS-1$
 			log = true;
 		}
 		
@@ -422,7 +423,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		final IOpenableInShell openable = new IOpenableInShell() {
 			public void open(Shell shell) {
 				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
-					MessageDialog.openInformation(shell, Policy.bind("information"), displayStatus.getMessage()); //$NON-NLS-1$
+					MessageDialog.openInformation(shell, CVSUIMessages.information, displayStatus.getMessage()); //$NON-NLS-1$
 				} else {
 					ErrorDialog.openError(shell, displayTitle, displayMessage, displayStatus);
 				}

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -23,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
@@ -68,7 +70,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e);
 		}
-		return Policy.bind("CheckoutIntoOperation.taskname", new Integer(remoteFolders.length).toString(), localFolderName);  //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CheckoutIntoOperation_taskname, new String[] { new Integer(remoteFolders.length).toString(), localFolderName });  //$NON-NLS-1$
 	}
 
 	/**
@@ -151,7 +153,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				ICVSResource resource = parentFolder.getChild(childPath);
 				if (resource != null && !resource.isFolder()) {
 					// The target folder conflicts with an existing file
-					addError(new CVSStatus(IStatus.ERROR, Policy.bind("CheckoutIntoOperation.targetIsFile", remoteFolder.getName(), resource.getIResource().getFullPath().toString()))); //$NON-NLS-1$
+					addError(new CVSStatus(IStatus.ERROR, NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFile, new String[] { remoteFolder.getName(), resource.getIResource().getFullPath().toString() }))); //$NON-NLS-1$
 					return null;
 				}
 				targetFolderSet.add(parentFolder.getFolder(childPath));
@@ -197,9 +199,9 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 						// then the remote cannot be loaded.
 						String message;
 						if (targetFolder.exists()) {
-							message = Policy.bind("CheckoutIntoOperation.targetIsFolder", remoteFolder.getName(), targetFolder.getIResource().getFullPath().toString()); //$NON-NLS-1$
+							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsFolder, new String[] { remoteFolder.getName(), targetFolder.getIResource().getFullPath().toString() }); //$NON-NLS-1$
 						} else {
-							message = Policy.bind("CheckoutIntoOperation.targetIsPrunedFolder", remoteFolder.getName(), targetFolder.getFolderSyncInfo().getRepository()); //$NON-NLS-1$
+							message = NLS.bind(CVSUIMessages.CheckoutIntoOperation_targetIsPrunedFolder, new String[] { remoteFolder.getName(), targetFolder.getFolderSyncInfo().getRepository() }); //$NON-NLS-1$
 						}
 						return new CVSStatus(IStatus.ERROR, message);
 					}
@@ -258,12 +260,11 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 					if (resource == null) return;
 					FolderSyncInfo info = folder.getFolderSyncInfo();
 					if (info.isSameMapping(remoteInfo)) {
-						throw new CVSException(Policy.bind("CheckoutIntoOperation.mappingAlreadyExists",  //$NON-NLS-1$
-							new Object[] {
-								remoteFolder.getName(), 
-								targetFolder.getIResource().getFullPath().toString(),
-								resource.getFullPath().toString()
-							}));
+						throw new CVSException(NLS.bind(CVSUIMessages.CheckoutIntoOperation_mappingAlreadyExists, (new Object[] {
+                        	remoteFolder.getName(), 
+                        	targetFolder.getIResource().getFullPath().toString(),
+                        	resource.getFullPath().toString()
+                        })));
 					}
 					folder.acceptChildren(this);
 				}
@@ -287,7 +288,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		for (int i=0;i<targetFolders.length;i++) {
 			ICVSFolder targetFolder = targetFolders[i];
 			if (needsPromptForOverwrite(targetFolder, Policy.subMonitorFor(monitor, 50)) && !promptToOverwrite(targetFolder)) {
-				return new CVSStatus(IStatus.INFO, Policy.bind("CheckoutIntoOperation.cancelled", remoteFolder.getName())); //$NON-NLS-1$
+				return new CVSStatus(IStatus.INFO, NLS.bind(CVSUIMessages.CheckoutIntoOperation_cancelled, new String[] { remoteFolder.getName() })); //$NON-NLS-1$
 			}
 		}
 		
@@ -305,8 +306,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 
 	private boolean promptToOverwrite(ICVSFolder folder) {
 		return promptToOverwrite(
-			Policy.bind("CheckoutOperation.confirmOverwrite"),  //$NON-NLS-1$
-			Policy.bind("CheckoutIntoOperation.overwriteMessage", folder.getName())); //$NON-NLS-1$
+			CVSUIMessages.CheckoutOperation_confirmOverwrite,  //$NON-NLS-1$
+			NLS.bind(CVSUIMessages.CheckoutIntoOperation_overwriteMessage, new String[] { folder.getName() })); //$NON-NLS-1$
 	}
 	
 	private IStatus scrubFolder(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {

@@ -17,11 +17,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction;
 
 /**
@@ -75,7 +75,7 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		if (f_provider == null || f_resources == null) {
-			throw new InvocationTargetException(new RuntimeException(Policy.bind("EditorsAction.classNotInitialized", this.getClass().getName()))); //$NON-NLS-1$
+			throw new InvocationTargetException(new RuntimeException(NLS.bind(CVSUIMessages.EditorsAction_classNotInitialized, new String[] { this.getClass().getName() }))); //$NON-NLS-1$
 		}
 		try {
 			execute(f_provider,f_resources,monitor);

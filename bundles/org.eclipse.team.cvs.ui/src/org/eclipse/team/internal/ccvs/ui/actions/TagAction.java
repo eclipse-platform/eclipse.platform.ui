@@ -20,13 +20,14 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.tags.TagAsVersionDialog;
@@ -83,15 +84,15 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 		    return null;
 		}
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
-											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
+											CVSUIMessages.TagAction_tagResources, //$NON-NLS-1$
 											operation);
 		if (dialog.open() != Window.OK) return null;
 
 		// The user has indicated they want to force a move.  Make sure they really do.		
 		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
 			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), 
-				Policy.bind("TagAction.moveTagConfirmTitle"),  //$NON-NLS-1$
-				Policy.bind("TagAction.moveTagConfirmMessage", dialog.getTagName()), //$NON-NLS-1$
+				CVSUIMessages.TagAction_moveTagConfirmTitle,  //$NON-NLS-1$
+				NLS.bind(CVSUIMessages.TagAction_moveTagConfirmMessage, new String[] { dialog.getTagName() }), //$NON-NLS-1$
 				null,
 				false,
 				null,
@@ -111,11 +112,11 @@ public abstract class TagAction extends WorkspaceTraversalAction {
 	protected abstract ITagOperation createTagOperation();
 
 	protected String getErrorTitle() {
-		return Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
+		return CVSUIMessages.TagAction_tagErrorTitle; //$NON-NLS-1$
 	}
 	
 	protected String getWarningTitle() {
-		return Policy.bind("TagAction.tagWarningTitle"); //$NON-NLS-1$
+		return CVSUIMessages.TagAction_tagWarningTitle; //$NON-NLS-1$
 	}
 	
 	/**

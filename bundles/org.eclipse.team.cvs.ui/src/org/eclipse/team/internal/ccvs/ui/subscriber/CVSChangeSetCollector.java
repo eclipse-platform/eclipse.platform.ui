@@ -52,7 +52,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
      */
     private static final String LOG_ENTRY_HANDLER = CVSUIPlugin.ID + ".LogEntryHandler"; //$NON-NLS-1$
     
-    private static final String DEFAULT_INCOMING_SET_NAME = Policy.bind("CVSChangeSetCollector.0"); //$NON-NLS-1$
+    private static final String DEFAULT_INCOMING_SET_NAME = CVSUIMessages.CVSChangeSetCollector_0; //$NON-NLS-1$
     
     boolean disposed = false;
 

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -45,7 +46,7 @@ public class NewLocationWizard extends Wizard {
 	public NewLocationWizard() {
 		IDialogSettings section = getLocationDialogSettings();
 		setDialogSettings(section);
-		setWindowTitle(Policy.bind("NewLocationWizard.title")); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.NewLocationWizard_title); //$NON-NLS-1$
 	}
 	
 
@@ -58,12 +59,12 @@ public class NewLocationWizard extends Wizard {
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.heading"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", CVSUIMessages.NewLocationWizard_heading, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ //$NON-NLS-2$
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
 		mainPage.setShowValidate(true);
-		mainPage.setDescription(Policy.bind("NewLocationWizard.description")); //$NON-NLS-1$
+		mainPage.setDescription(CVSUIMessages.NewLocationWizard_description); //$NON-NLS-1$
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
@@ -109,7 +110,7 @@ public class NewLocationWizard extends Wizard {
 		} catch (TeamException e) {
 			if (location[0] == null) {
 				// Exception creating the root, we cannot continue
-				CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, e); //$NON-NLS-1$
+				CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_exception, null, e); //$NON-NLS-1$
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.
@@ -119,11 +120,11 @@ public class NewLocationWizard extends Wizard {
 				}
 					
 				if (error.isMultiStatus()) {
-					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.validationFailedTitle"), null, e); //$NON-NLS-1$
+					CVSUIPlugin.openError(getContainer().getShell(), CVSUIMessages.NewLocationWizard_validationFailedTitle, null, e); //$NON-NLS-1$
 				} else {
 					keepLocation = MessageDialog.openQuestion(getContainer().getShell(),
-						Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
-						Policy.bind("NewLocationWizard.validationFailedText", new Object[] {error.getMessage()})); //$NON-NLS-1$
+						CVSUIMessages.NewLocationWizard_validationFailedTitle, //$NON-NLS-1$
+						NLS.bind(CVSUIMessages.NewLocationWizard_validationFailedText, (new Object[] {error.getMessage()}))); //$NON-NLS-1$
 				}
 			}
 		}

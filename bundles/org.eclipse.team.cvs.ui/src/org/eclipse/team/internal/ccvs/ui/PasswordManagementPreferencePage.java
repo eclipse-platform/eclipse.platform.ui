@@ -51,7 +51,7 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 	};
 		
 	public void init(IWorkbench workbench) {
-		setDescription(Policy.bind("PasswordManagementPreferencePage.2")); //$NON-NLS-1$
+		setDescription(CVSUIMessages.PasswordManagementPreferencePage_2); //$NON-NLS-1$
 	}
 	
 	/**
@@ -88,8 +88,8 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		new TableColumn(table, SWT.NULL);
 		new TableColumn(table, SWT.NULL);
 		TableColumn[] columns = table.getColumns();
-		columns[0].setText(Policy.bind("PasswordManagementPreferencePage.3"));  //$NON-NLS-1$
-		columns[1].setText(Policy.bind("PasswordManagementPreferencePage.4"));  //$NON-NLS-1$
+		columns[0].setText(CVSUIMessages.PasswordManagementPreferencePage_3);  //$NON-NLS-1$
+		columns[1].setText(CVSUIMessages.PasswordManagementPreferencePage_4);  //$NON-NLS-1$
 		viewer.setColumnProperties(new String[] {"location", "username"}); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.setLabelProvider(new TableLabelProvider());
 		viewer.setContentProvider(new IStructuredContentProvider() {
@@ -122,7 +122,7 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		buttons.setLayout(layout);
 		
 		removeButton = new Button(buttons, SWT.PUSH);
-		removeButton.setText(Policy.bind("PasswordManagementPreferencePage.5"));  //$NON-NLS-1$
+		removeButton.setText(CVSUIMessages.PasswordManagementPreferencePage_5);  //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -136,7 +136,7 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 			}
 		});
 		removeAllButton = new Button(buttons, SWT.PUSH);
-		removeAllButton.setText(Policy.bind("PasswordManagementPreferencePage.6"));  //$NON-NLS-1$
+		removeAllButton.setText(CVSUIMessages.PasswordManagementPreferencePage_6);  //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);

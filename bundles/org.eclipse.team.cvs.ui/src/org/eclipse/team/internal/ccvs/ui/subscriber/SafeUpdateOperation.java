@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -35,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
@@ -338,8 +340,8 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(getShell(), 
-								Policy.bind("SafeUpdateAction.warnFilesWithConflictsTitle"), //$NON-NLS-1$
-								Policy.bind("SafeUpdateAction.warnFilesWithConflictsDescription")); //$NON-NLS-1$
+								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsTitle, //$NON-NLS-1$
+								CVSUIMessages.SafeUpdateAction_warnFilesWithConflictsDescription); //$NON-NLS-1$
 			}
 		});
 	}
@@ -390,7 +392,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	}
 	
 	protected String getErrorTitle() {
-		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+		return CVSUIMessages.UpdateAction_update; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -398,7 +400,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	 */
 	protected String getJobName() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.UpdateAction_jobName, new String[] { new Integer(syncSet.size()).toString() }); //$NON-NLS-1$
 	}
 
 	/**
@@ -416,8 +418,8 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 			TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
 					String sizeString = Integer.toString(set.size());
-					String message = set.size() > 1 ? Policy.bind("UpdateAction.promptForUpdateSeveral", sizeString) : Policy.bind("UpdateAction.promptForUpdateOne", sizeString); //$NON-NLS-1$ //$NON-NLS-2$
-					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("UpdateAction.promptForUpdateTitle", sizeString), message); 					 //$NON-NLS-1$
+					String message = set.size() > 1 ? NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateSeveral, new String[] { sizeString }) : NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateOne, new String[] { sizeString }); //$NON-NLS-1$ //$NON-NLS-2$
+					result[0] = MessageDialog.openQuestion(getShell(), NLS.bind(CVSUIMessages.UpdateAction_promptForUpdateTitle, new String[] { sizeString }), message); 					 //$NON-NLS-1$
 				}
 			});
 		}

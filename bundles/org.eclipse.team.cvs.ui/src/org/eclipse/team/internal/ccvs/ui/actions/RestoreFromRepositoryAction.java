@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -32,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.RestoreFromRepositoryWizard;
@@ -122,7 +124,7 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 		ICVSFile[] files = fetchDeletedFiles(resource);
 		if (files == null) return;
 		if (files.length == 0) {
-			MessageDialog.openInformation(getShell(), Policy.bind("RestoreFromRepositoryAction.noFilesTitle"), Policy.bind("RestoreFromRepositoryAction.noFilesMessage", resource.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getShell(), CVSUIMessages.RestoreFromRepositoryAction_noFilesTitle, NLS.bind(CVSUIMessages.RestoreFromRepositoryAction_noFilesMessage, new String[] { resource.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		RestoreFromRepositoryWizard wizard = new RestoreFromRepositoryWizard(resource, files);

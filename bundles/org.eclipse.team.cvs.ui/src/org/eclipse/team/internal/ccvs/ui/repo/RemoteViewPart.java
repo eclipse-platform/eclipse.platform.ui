@@ -10,48 +10,28 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.*;
 
 /**
  * This class acts as a superclass to all remote CVS tree views.
@@ -79,7 +59,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	private class ChangeWorkingSetAction extends Action {
 		String name;
 		public ChangeWorkingSetAction(String name, int index) {
-			super(Policy.bind("RepositoriesView.workingSetMenuItem", new Integer(index).toString(), name)); //$NON-NLS-1$
+			super(NLS.bind(CVSUIMessages.RepositoriesView_workingSetMenuItem, new String[] { new Integer(index).toString(), name })); //$NON-NLS-1$
 			this.name = name;
 		}
 		public void run() {
@@ -187,7 +167,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		if (workingSet == null) {
 			toolTip = null;
 		} else {
-			toolTip = Policy.bind("RemoteViewPart.workingSetToolTip", workingSet.getName()); //$NON-NLS-1$
+			toolTip = NLS.bind(CVSUIMessages.RemoteViewPart_workingSetToolTip, new String[] { workingSet.getName() }); //$NON-NLS-1$
 		}
 		setTitleToolTip(toolTip);
 		if (refreshViewer) refreshViewer();
@@ -202,26 +182,26 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		
 		// Refresh (toolbar)
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
-		refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
+		refreshAction = new Action(CVSUIMessages.RepositoriesView_refresh, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
 			public void run() {
 				refreshAll();
 			}
 		};
-		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
+		refreshAction.setToolTipText(CVSUIMessages.RepositoriesView_refreshTooltip); //$NON-NLS-1$
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
-		collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
+		collapseAllAction = new Action(CVSUIMessages.RepositoriesView_collapseAll, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
 			public void run() {
 				collapseAll();
 			}
 		};
-		collapseAllAction.setToolTipText(Policy.bind("RepositoriesView.collapseAllTooltip")); //$NON-NLS-1$
+		collapseAllAction.setToolTipText(CVSUIMessages.RepositoriesView_collapseAllTooltip); //$NON-NLS-1$
 		collapseAllAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		
 		// Select Working Set (popup)
-		selectWorkingSetAction = new Action(Policy.bind("RepositoriesView.newWorkingSet")) { //$NON-NLS-1$
+		selectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_newWorkingSet) { //$NON-NLS-1$
 			public void run() {
 				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 				IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
@@ -243,7 +223,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		WorkbenchHelp.setHelp(selectWorkingSetAction, IHelpContextIds.SELECT_WORKING_SET_ACTION);
 
 		// Deselect Working Set (popup)
-		deselectWorkingSetAction = new Action(Policy.bind("RepositoriesView.deselectWorkingSet")) { //$NON-NLS-1$
+		deselectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_deselectWorkingSet) { //$NON-NLS-1$
 			public void run() {
 				setWorkingSet(null, true);
 			}
@@ -251,7 +231,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		WorkbenchHelp.setHelp(deselectWorkingSetAction, IHelpContextIds.DESELECT_WORKING_SET_ACTION);
 
 		// Edit Working Set (popup)
-		editWorkingSetAction = new Action(Policy.bind("RepositoriesView.editWorkingSet")) { //$NON-NLS-1$
+		editWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_editWorkingSet) { //$NON-NLS-1$
 			public void run() {
 				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 				IWorkingSet workingSet = getWorkingSet();
@@ -262,10 +242,8 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				IWorkingSetEditWizard wizard = manager.createWorkingSetEditWizard(workingSet);
 				if (wizard == null) {
 					// todo
-					String title = Policy.bind("EditWorkingSetAction.error.nowizard.title"); //$NON-NLS-1$
-					String message = Policy.bind("EditWorkingSetAction.error.nowizard.message"); //$NON-NLS-1$
-					CVSUIPlugin.openError(shell, title, message, null);
-					return;
+                    CVSUIPlugin.log(IStatus.ERROR, NLS.bind("No wizard registered for working set {0}", new Object[] {workingSet.getName()}), null); //$NON-NLS-1$
+                    return;
 				}
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();

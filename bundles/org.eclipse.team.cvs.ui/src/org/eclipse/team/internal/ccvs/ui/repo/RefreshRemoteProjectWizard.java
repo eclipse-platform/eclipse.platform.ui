@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -78,7 +79,7 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		if (settings == null) {
 			this.settings = workbenchSettings.addNewSection("RefreshRemoteProjectWizard");//$NON-NLS-1$
 		}
-		setWindowTitle(Policy.bind("RefreshRemoteProjectWizard.title")); //$NON-NLS-1$
+		setWindowTitle(CVSUIMessages.RefreshRemoteProjectWizard_title); //$NON-NLS-1$
 	}
 	
 	/**
@@ -89,9 +90,9 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION);
 		projectSelectionPage = new RefreshRemoteProjectSelectionPage(
 			"ProjectSelectionPage", //$NON-NLS-1$
-			Policy.bind("RefreshRemoteProjectSelectionPage.pageTitle"), //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageTitle, //$NON-NLS-1$
 			substImage,
-			Policy.bind("RefreshRemoteProjectSelectionPage.pageDescription"), //$NON-NLS-1$
+			CVSUIMessages.RefreshRemoteProjectSelectionPage_pageDescription, //$NON-NLS-1$
 			settings, root, rootFolders);
 		addPage(projectSelectionPage);
 	}
@@ -156,12 +157,12 @@ public class RefreshRemoteProjectWizard extends Wizard {
         final boolean[] prompt = new boolean[] { false };
         getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
-		        MessageDialog dialog = new MessageDialog(getShell(), Policy.bind("RefreshRemoteProjectWizard.0"), null, //$NON-NLS-1$
+		        MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.RefreshRemoteProjectWizard_0, null, //$NON-NLS-1$
 		                getNoTagsMessage(folders),
 		                MessageDialog.INFORMATION,
 		                new String[] {
-		            		Policy.bind("RefreshRemoteProjectWizard.1"), //$NON-NLS-1$
-		            		Policy.bind("RefreshRemoteProjectWizard.2") //$NON-NLS-1$
+		            		CVSUIMessages.RefreshRemoteProjectWizard_1, //$NON-NLS-1$
+		            		CVSUIMessages.RefreshRemoteProjectWizard_2
 		        		}, 1);
 		        int code = dialog.open();
 		        if (code == 0) {
@@ -175,8 +176,8 @@ public class RefreshRemoteProjectWizard extends Wizard {
 
     private String getNoTagsMessage(ICVSRemoteResource[] folders) {
         if (folders.length == 1) {
-            return Policy.bind("RefreshRemoteProjectWizard.3", folders[0].getRepositoryRelativePath()); //$NON-NLS-1$
+            return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_3, new String[] { folders[0].getRepositoryRelativePath() }); //$NON-NLS-1$
         }
-        return Policy.bind("RefreshRemoteProjectWizard.4", Integer.toString(folders.length)); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.RefreshRemoteProjectWizard_4, new String[] { Integer.toString(folders.length) }); //$NON-NLS-1$
     }
 }

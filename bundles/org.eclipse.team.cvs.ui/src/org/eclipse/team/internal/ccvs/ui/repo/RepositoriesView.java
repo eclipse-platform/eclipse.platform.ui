@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -41,12 +42,12 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSResourceTransfer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
@@ -157,7 +158,7 @@ public class RepositoriesView extends RemoteViewPart {
 		// Create actions
 
 		// New Repository (popup)
-		newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+		newAction = new Action(CVSUIMessages.RepositoriesView_new, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -167,7 +168,7 @@ public class RepositoriesView extends RemoteViewPart {
 		WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
 		if (includeAnonConnection()) {
-			newAnonAction = new Action(Policy.bind("RepositoriesView.newAnonCVS"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+			newAnonAction = new Action(CVSUIMessages.RepositoriesView_newAnonCVS, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 				public void run() {
 					Properties p = new Properties();
 					p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -232,7 +233,7 @@ public class RepositoriesView extends RemoteViewPart {
 	 */
 	protected void addWorkbenchActions(IMenuManager manager) {
 		// New actions go next
-		MenuManager sub = new MenuManager(Policy.bind("RepositoriesView.newSubmenu"), IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
+		MenuManager sub = new MenuManager(CVSUIMessages.RepositoriesView_newSubmenu, IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
 		manager.add(sub);
 		super.addWorkbenchActions(manager);
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
@@ -316,7 +317,8 @@ public class RepositoriesView extends RemoteViewPart {
 		if (!(selection instanceof IStructuredSelection)) return ""; //$NON-NLS-1$
 		IStructuredSelection s = (IStructuredSelection)selection;
 		
-		if (s.size() > 1) return Policy.bind("RepositoriesView.NItemsSelected", String.valueOf(s.size())); //$NON-NLS-1$
+		if (s.size() > 1)
+            return NLS.bind(CVSUIMessages.RepositoriesView_NItemsSelected, new String[] { String.valueOf(s.size()) }); //$NON-NLS-1$
 		Object element = CVSAction.getAdapter(s.getFirstElement(), ICVSResource.class);
 		if (element instanceof ICVSRemoteResource) {
 			ICVSRemoteResource res = (ICVSRemoteResource)element;
@@ -327,13 +329,13 @@ public class RepositoriesView extends RemoteViewPart {
 				try {
 					name = res.getRepositoryRelativePath() + " " + ((ICVSRemoteFile)res).getRevision(); //$NON-NLS-1$
 				} catch (TeamException e) {
-					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoriesView.CannotGetRevision"), e); //$NON-NLS-1$
+					TeamPlugin.log(IStatus.ERROR, CVSUIMessages.RepositoriesView_CannotGetRevision, e); //$NON-NLS-1$
 					name = res.getRepositoryRelativePath();
 				} 
 			}
-			return Policy.bind("RepositoriesView.ResourceInRepository", name, res.getRepository().getLocation(true)); //$NON-NLS-1$
+			return NLS.bind(CVSUIMessages.RepositoriesView_ResourceInRepository, new String[] { name, res.getRepository().getLocation(true) }); //$NON-NLS-1$
 		}
-		return Policy.bind("RepositoriesView.OneItemSelected"); //$NON-NLS-1$
+		return CVSUIMessages.RepositoriesView_OneItemSelected; //$NON-NLS-1$
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -105,7 +106,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		// Create default contents
 		Label label = new Label(top, SWT.WRAP);
-		label.setText(Policy.bind("CVSAnnotateView.viewInstructions")); //$NON-NLS-1$
+		label.setText(CVSUIMessages.CVSAnnotateView_viewInstructions); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 		top.layout();
 	}
@@ -161,7 +162,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		IDocumentProvider provider = editor.getDocumentProvider();
 		document = provider.getDocument(editor.getEditorInput());
 
-		setPartName(Policy.bind("CVSAnnotateView.showFileAnnotation", new Object[] {cvsResource.getName()})); //$NON-NLS-1$
+		setPartName(NLS.bind(CVSUIMessages.CVSAnnotateView_showFileAnnotation, (new Object[] {cvsResource.getName()}))); //$NON-NLS-1$
 		try {
 			IResource localResource = cvsResource.getIResource();
 			if (localResource != null) {
@@ -361,7 +362,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		            return (ITextEditor)part;
 		        } else {
 		            // There is something really wrong so just bail
-		            throw new PartInitException(Policy.bind("AnnotateView.0")); //$NON-NLS-1$
+		            throw new PartInitException(CVSUIMessages.AnnotateView_0); //$NON-NLS-1$
 		        }
 		    }
 		}

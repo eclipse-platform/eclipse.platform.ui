@@ -17,11 +17,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -42,7 +44,7 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("ReplaceOperation.taskName"); //$NON-NLS-1$
+		return CVSUIMessages.ReplaceOperation_taskName; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +64,7 @@ public class ReplaceOperation extends UpdateOperation {
 				new PrepareForReplaceVisitor().visitResources(
 					provider.getProject(), 
 					resources, 
-					Policy.bind("ReplaceOperation.1"), //$NON-NLS-1$
+					CVSUIMessages.ReplaceOperation_1, //$NON-NLS-1$
 					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
 				
@@ -120,6 +122,6 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("ReplaceOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.ReplaceOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 }

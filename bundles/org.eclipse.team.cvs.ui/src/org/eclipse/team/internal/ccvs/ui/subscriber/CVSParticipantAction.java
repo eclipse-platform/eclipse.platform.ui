@@ -26,12 +26,12 @@ public abstract class CVSParticipantAction extends SynchronizeModelAction {
 
 	protected CVSParticipantAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
-		Utils.initAction(this, getBundleKeyPrefix(), Policy.getBundle());
+		Utils.initAction(this, getBundleKeyPrefix(), Policy.getActionBundle());
 	}
 	
 	protected CVSParticipantAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
 		super(null, configuration, provider);
-		Utils.initAction(this, bundleKey, Policy.getBundle());
+		Utils.initAction(this, bundleKey, Policy.getActionBundle());
 	}
 
 	/**

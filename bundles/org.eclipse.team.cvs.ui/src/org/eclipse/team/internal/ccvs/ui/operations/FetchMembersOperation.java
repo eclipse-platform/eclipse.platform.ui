@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderMemberFetcher;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
@@ -129,7 +131,7 @@ public class FetchMembersOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("FetchMembersOperation.0", getRemoteFolder().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.FetchMembersOperation_0, new String[] { getRemoteFolder().getName() }); //$NON-NLS-1$
 	}
 
 	private ICVSRemoteFolder getRemoteFolder() {

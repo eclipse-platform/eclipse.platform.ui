@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -24,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -61,14 +63,14 @@ public class AddOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("AddAction.adding"); //$NON-NLS-1$
+		return CVSUIMessages.AddAction_adding; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
-		return Policy.bind("AddOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.AddOperation_0, new String[] { provider.getProject().getName() }); //$NON-NLS-1$
 	}
 	
 	/*
@@ -152,7 +154,7 @@ public class AddOperation extends RepositoryProviderOperation {
 					throw exception[0];
 				}
 			} catch (CoreException e) {
-				throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.visitError", new Object[] {resources[i].getFullPath()}), e)); //$NON-NLS-1$
+				throw CVSException.wrapException(e);
 			}
 		}
 		// If an exception occured during the visit, throw it here
@@ -224,7 +226,7 @@ public class AddOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getErrorMessage(org.eclipse.core.runtime.IStatus[], int)
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return Policy.bind("AddAction.addFailed"); //$NON-NLS-1$
+		return CVSUIMessages.AddAction_addFailed; //$NON-NLS-1$
 	}
 	
     protected KSubstOption getKSubstOption(IFile file) {

@@ -14,12 +14,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderSandbox;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -161,7 +163,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("CheckoutToRemoteFolderOperation.0", getRemoteFolders()[0].getName()); //$NON-NLS-1$
+		return NLS.bind(CVSUIMessages.CheckoutToRemoteFolderOperation_0, new String[] { getRemoteFolders()[0].getName() }); //$NON-NLS-1$
 	}
 	
 	protected IStatus checkout(final ICVSRemoteFolder resource, final ICVSFolder sandbox, IProgressMonitor pm) throws CVSException {

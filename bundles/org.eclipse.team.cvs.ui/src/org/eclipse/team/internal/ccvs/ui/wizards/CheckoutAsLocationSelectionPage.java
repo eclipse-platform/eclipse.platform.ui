@@ -17,13 +17,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -54,7 +55,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsLocationSelectionPage(ImageDescriptor titleImage, ICVSRemoteFolder[] remoteFolders) {
-		super(NAME, Policy.bind("CheckoutAsLocationSelectionPage.title"), titleImage, Policy.bind("CheckoutAsLocationSelectionPage.description")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(NAME, CVSUIMessages.CheckoutAsLocationSelectionPage_title, titleImage, CVSUIMessages.CheckoutAsLocationSelectionPage_description); //$NON-NLS-1$ //$NON-NLS-2$
 		this.remoteFolders = remoteFolders;
 	}
 
@@ -101,7 +102,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 
 		final Button useDefaultsButton =
 			new Button(composite, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(Policy.bind("CheckoutAsLocationSelectionPage.useDefaultLabel")); //$NON-NLS-1$
+		useDefaultsButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_useDefaultLabel); //$NON-NLS-1$
 		useDefaultsButton.setSelection(this.useDefaults);
 
 		createUserSpecifiedProjectLocationGroup(composite, !this.useDefaults);
@@ -135,9 +136,9 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		// location label
 		locationLabel = new Label(projectGroup, SWT.NONE);
 		if (isSingleFolder()) {
-			locationLabel.setText(Policy.bind("CheckoutAsLocationSelectionPage.locationLabel")); //$NON-NLS-1$
+			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_locationLabel); //$NON-NLS-1$
 		} else {
-			locationLabel.setText(Policy.bind("CheckoutAsLocationSelectionPage.parentDirectoryLabel")); //$NON-NLS-1$
+			locationLabel.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_parentDirectoryLabel); //$NON-NLS-1$
 		}
 		locationLabel.setEnabled(enabled);
 
@@ -150,7 +151,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText(Policy.bind("CheckoutAsLocationSelectionPage.browseLabel")); //$NON-NLS-1$
+		this.browseButton.setText(CVSUIMessages.CheckoutAsLocationSelectionPage_browseLabel); //$NON-NLS-1$
 		this.browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
@@ -182,12 +183,12 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		} else {
 			targetLocation = locationPathField.getText();
 			if (targetLocation.equals("")) {//$NON-NLS-1$
-				return(Policy.bind("CheckoutAsLocationSelectionPage.locationEmpty")); //$NON-NLS-1$
+				return(CVSUIMessages.CheckoutAsLocationSelectionPage_locationEmpty); //$NON-NLS-1$
 			}
 			else{
 				IPath path = new Path("");//$NON-NLS-1$
 				if (!path.isValidPath(targetLocation)) {
-					return Policy.bind("CheckoutAsLocationSelectionPage.invalidLocation"); //$NON-NLS-1$
+					return CVSUIMessages.CheckoutAsLocationSelectionPage_invalidLocation; //$NON-NLS-1$
 				}
 			}
 
@@ -269,9 +270,9 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	private void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 		if (isSingleFolder()) {
-			dialog.setMessage(Policy.bind("CheckoutAsLocationSelectionPage.messageForSingle", getSingleProject().getName())); //$NON-NLS-1$
+			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForSingle, new String[] { getSingleProject().getName() })); //$NON-NLS-1$
 		} else {
-			dialog.setMessage(Policy.bind("CheckoutAsLocationSelectionPage.messageForMulti", new Integer(remoteFolders.length).toString())); //$NON-NLS-1$
+			dialog.setMessage(NLS.bind(CVSUIMessages.CheckoutAsLocationSelectionPage_messageForMulti, new String[] { new Integer(remoteFolders.length).toString() })); //$NON-NLS-1$
 		}
 	
 		String dirName = locationPathField.getText();

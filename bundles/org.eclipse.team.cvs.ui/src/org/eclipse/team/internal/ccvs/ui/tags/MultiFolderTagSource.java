@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 
 /**
  * A tag source for multiple folders.
@@ -33,7 +34,7 @@ public class MultiFolderTagSource extends SingleFolderTagSource {
      * @see org.eclipse.team.internal.ccvs.ui.merge.SingleFolderTagSource#getShortDescription()
      */
     public String getShortDescription() {
-        return Policy.bind("MultiFolderTagSource.0", Integer.toString(folders.length)); //$NON-NLS-1$
+        return NLS.bind(CVSUIMessages.MultiFolderTagSource_0, new String[] { Integer.toString(folders.length) }); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
