@@ -52,7 +52,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -141,7 +141,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
      */
     public int getTabWidth(ISourceViewer sourceViewer) {
-    	return AntUIPlugin.getDefault().getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+    	return AntUIPlugin.getDefault().getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
     }
     
     private AntEditorProcInstrScanner getDefaultScanner() {

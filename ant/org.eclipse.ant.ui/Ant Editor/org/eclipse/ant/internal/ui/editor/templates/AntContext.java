@@ -16,7 +16,7 @@ import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -26,7 +26,7 @@ public class AntContext extends DocumentTemplateContext {
 	
 	private AntModel fAntModel;
 	
-	public AntContext(ContextType type, IDocument document, AntModel model, int completionOffset, int completionLength) {
+	public AntContext(TemplateContextType type, IDocument document, AntModel model, int completionOffset, int completionLength) {
 		super(type, document, completionOffset, completionLength);
 		fAntModel= model;
 	}

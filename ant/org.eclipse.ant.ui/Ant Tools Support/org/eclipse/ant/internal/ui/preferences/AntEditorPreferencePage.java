@@ -47,7 +47,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AnnotationPreference;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
@@ -125,18 +125,18 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		}
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
@@ -216,26 +216,26 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
 		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
+		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.37"); //$NON-NLS-1$
 		errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.38"), AntPreferencesMessages.getString("AntEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
+		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
+		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
+		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
+		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 		return appearanceComposite;
 	}

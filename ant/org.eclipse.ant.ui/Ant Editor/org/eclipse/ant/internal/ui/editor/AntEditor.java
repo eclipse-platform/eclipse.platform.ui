@@ -16,7 +16,6 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
-
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
@@ -74,8 +73,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ContentAssistAction;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -482,7 +481,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		
-		if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
+		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 			Object value= event.getNewValue();
 			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
 			if (value instanceof Integer) {
@@ -512,13 +511,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		//TODO the framework does not currently support/listen to the color registry
 		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
 		if (property.equals(AntEditorPreferenceConstants.CURRENT_LINE_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
+			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
 			return;
 		} else if (property.equals(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
+			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
 			return;
 		} else if (property.equals(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
+			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
 			return;
 		}
 							
@@ -666,7 +665,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	
 	private int getTabSize() {
 		IPreferenceStore preferences= getPreferenceStore();
-		return preferences.getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);	
+		return preferences.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);	
 	}
 	
 	/* (non-Javadoc)

@@ -225,9 +225,9 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.ITextHoverExtension#getInformationControlCreator()
+	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
-	public IInformationControlCreator getInformationControlCreator() {
+	public IInformationControlCreator getHoverControlCreator() {
 		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean("PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {

@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.templates;
 
-import org.eclipse.jface.text.templates.ContextType;
-import org.eclipse.jface.text.templates.GlobalVariables;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 
 
 /**
  * A very simple context type.
  */
-public class BuildFileContextType extends ContextType {
+public class BuildFileContextType extends TemplateContextType {
 
 	/** This context's id */
 	public static final String BUILDFILE_CONTEXT_TYPE= "org.eclipse.ant.ui.templateContextType.buildFile"; //$NON-NLS-1$
@@ -30,13 +30,13 @@ public class BuildFileContextType extends ContextType {
 	}
 
 	private void addGlobalResolvers() {
-		addResolver(new GlobalVariables.Cursor());
-		addResolver(new GlobalVariables.WordSelection());
-		addResolver(new GlobalVariables.LineSelection());
-		addResolver(new GlobalVariables.Dollar());
-		addResolver(new GlobalVariables.Date());
-		addResolver(new GlobalVariables.Year());
-		addResolver(new GlobalVariables.Time());
-		addResolver(new GlobalVariables.User());
+		addResolver(new GlobalTemplateVariables.Cursor());
+		addResolver(new GlobalTemplateVariables.WordSelection());
+		addResolver(new GlobalTemplateVariables.LineSelection());
+		addResolver(new GlobalTemplateVariables.Dollar());
+		addResolver(new GlobalTemplateVariables.Date());
+		addResolver(new GlobalTemplateVariables.Year());
+		addResolver(new GlobalTemplateVariables.Time());
+		addResolver(new GlobalTemplateVariables.User());
 	}
 }

@@ -59,7 +59,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
 import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
@@ -71,15 +70,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
-import org.eclipse.jface.text.templates.TemplateContext;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -1464,7 +1461,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
-	protected ContextType getContextType(ITextViewer textViewer, IRegion region) {
+	protected TemplateContextType getContextType(ITextViewer textViewer, IRegion region) {
 		 switch (currentProposalMode) {
             case PROPOSAL_MODE_TASK_PROPOSAL:
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
