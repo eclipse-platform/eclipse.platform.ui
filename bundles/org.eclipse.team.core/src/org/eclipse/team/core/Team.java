@@ -30,7 +30,12 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -513,6 +518,26 @@ public final class Team {
 			loadTextState();
 			readIgnoreState();
 			initializePluginIgnores();
+			// Register a delta listener that will tell the provider about a project move
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+				public void resourceChanged(IResourceChangeEvent event) {
+					IResourceDelta[] projectDeltas = event.getDelta().getAffectedChildren();
+					for (int i = 0; i < projectDeltas.length; i++) {							
+						IResourceDelta delta = projectDeltas[i];
+						IResource resource = delta.getResource();
+						RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+						// Only consider projects that have a provider
+						if (provider == null) continue;
+						// Only consider project additions that are moves
+						if (delta.getKind() != IResourceDelta.ADDED) continue;
+						if ((delta.getFlags() & IResourceDelta.MOVED_FROM) == 0) continue;
+						// Only consider providers whose project is not mapped properly already
+						if (provider.getProject().equals(resource.getProject())) continue;
+						// Tell the provider about it's new project
+						provider.setProject(resource.getProject());
+					}
+				}
+			}, IResourceChangeEvent.PRE_AUTO_BUILD);
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
