@@ -59,7 +59,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
 					Policy.bind(
-						"SiteContentProvider.ErrorCreatingURLForArchiveID",
+						"SiteContentProvider.ErrorCreatingURLForArchiveID", //$NON-NLS-1$
 						archiveID,
 						getURL().toExternalForm()),
 					e);
