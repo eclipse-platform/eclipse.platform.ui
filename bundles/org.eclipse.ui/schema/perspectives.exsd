@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="perspective" name="Perspectives"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to add perspective factories to the workbench.  A perspective factory is used to define the initial layout and visible action sets for a perspective.  The user can select a perspective by invoking the "Open Perspective" submenu of the "Window" menu.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="perspective" name="Perspectives"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add perspective factories to the workbench.  A perspective factory is used to define the initial layout and visible action sets for a perspective.  The user can select a perspective by invoking the &quot;Open Perspective&quot; submenu of the &quot;Window&quot; menu.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -105,12 +105,12 @@ with this perspective.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-        point="org.eclipse.ui.perspectives"&gt; 
+        point=&quot;org.eclipse.ui.perspectives&quot;&gt; 
         &lt;perspective 
-            id="org.eclipse.ui.resourcePerspective" 
-            name="Resource" 
-            class="org.eclipse.ui.internal.ResourcePerspective" 
-            icon="icons/MyIcon.gif"&gt; 
+            id=&quot;org.eclipse.ui.resourcePerspective&quot; 
+            name=&quot;Resource&quot; 
+            class=&quot;org.eclipse.ui.internal.ResourcePerspective&quot; 
+            icon=&quot;icons/MyIcon.gif&quot;&gt; 
         &lt;/perspective&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -133,7 +133,7 @@ The &lt;samp&gt;plugin_customization.ini&lt;/samp&gt; file is used to define the
 &lt;pre&gt;
     defaultPerspectiveId = org.eclipse.ui.resourcePerspective 
 &lt;/pre&gt;
-The perspectives which appear in the "Open Perspective" menu are shortcuts for perspective selection.  This set is defined by the active perspective itself, and extensions made through the perspectiveExtensions extension point.
+The perspectives which appear in the &quot;Open Perspective&quot; menu are shortcuts for perspective selection.  This set is defined by the active perspective itself, and extensions made through the perspectiveExtensions extension point.
       </documentation>
    </annotation>
 
@@ -142,9 +142,9 @@ The perspectives which appear in the "Open Perspective" menu are shortcuts for p
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides a "Resource Perspective".  
+         The workbench provides a &quot;Resource Perspective&quot;.  
 Additional perspectives may be added by plug-ins. 
-They are selected using the "Open Perspective" submenu of the "Window" menu.
+They are selected using the &quot;Open Perspective&quot; submenu of the &quot;Window&quot; menu.
       </documentation>
    </annotation>
 
@@ -153,8 +153,11 @@ They are selected using the "Open Perspective" submenu of the "Window" menu.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2003 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

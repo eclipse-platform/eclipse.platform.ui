@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="markerUpdaters" name="Marker Updaters"/>
-   </appInfo>
-   <documentation>
-      This extension point is used for registering marker update strategies with marker annotation models. A resource that is opened in a text editor is associated with a marker annotation model. For each marker attached to the resource this model manages a position that is updated with each change applied to the text in the editor. If the resource is saved, the text in the editor and the position managed for a marker are passed over to the registered marker update strategies. These strategies can then update the marker's attributes based on the text and the position. Marker update strategies are requested to implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IMarkerUpdater&lt;/samp&gt;. The update strategies can be registered either for a particular marker type or all marker types. The latter by omitting any marker type in the extension.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="markerUpdaters" name="Marker Updaters"/>
+      </appInfo>
+      <documentation>
+         This extension point is used for registering marker update strategies with marker annotation models. A resource that is opened in a text editor is associated with a marker annotation model. For each marker attached to the resource this model manages a position that is updated with each change applied to the text in the editor. If the resource is saved, the text in the editor and the position managed for a marker are passed over to the registered marker update strategies. These strategies can then update the marker&apos;s attributes based on the text and the position. Marker update strategies are requested to implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IMarkerUpdater&lt;/samp&gt;. The update strategies can be registered either for a particular marker type or all marker types. The latter by omitting any marker type in the extension.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -83,11 +83,11 @@
       </appInfo>
       <documentation>
          &lt;pre&gt;
-&lt;extension point= "org.eclipse.ui.markerUpdaters"&gt; 
+&lt;extension point= &quot;org.eclipse.ui.markerUpdaters&quot;&gt; 
     &lt;updater 
-        id="org.eclipse.jdt.ui.markerUpdaters.JavaSearchMarkerUpdater" 
-        class="org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater" 
-        markerType="org.eclipse.search.searchmarker"&gt; 
+        id=&quot;org.eclipse.jdt.ui.markerUpdaters.JavaSearchMarkerUpdater&quot; 
+        class=&quot;org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater&quot; 
+        markerType=&quot;org.eclipse.search.searchmarker&quot;&gt; 
     &lt;/updater&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -96,10 +96,10 @@ This example registers &lt;samp&gt;org.eclipse.jdt.internal.ui.search.JavaSearch
 type &lt;samp&gt;org.eclipse.search.searchmarker&lt;/samp&gt; including all its derived types.
 &lt;/p&gt;
 &lt;pre&gt;
-&lt;extension point= "org.eclipse.ui.markerUpdaters"&gt; 
+&lt;extension point= &quot;org.eclipse.ui.markerUpdaters&quot;&gt; 
     &lt;updater 
-        id="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
-        class="org.eclipse.ui.texteditor.BasicMarkerUpdater"&gt; 
+        id=&quot;org.eclipse.ui.texteditor.BasicMarkerUpdater&quot; 
+        class=&quot;org.eclipse.ui.texteditor.BasicMarkerUpdater&quot;&gt; 
     &lt;/updater&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -132,12 +132,10 @@ This example registers &lt;samp&gt;org.eclipse.ui.texteditor.BasicMarkerUpdater&
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
-	&lt;img	SRC="ngibmcpy.gif"
-			ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
-			BORDER=0 height=14 width=324&gt;&lt;/a&gt;
-&lt;/p&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

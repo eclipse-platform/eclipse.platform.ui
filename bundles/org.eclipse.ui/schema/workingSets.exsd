@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="workingSets" name="Working Sets"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to define a working set wizard page. Working sets contain a number of elements of type IAdaptable and can be used to group elements for presentation to the user or for operations on a set of elements. A working set wizard page is used to create and edit working sets that contain elements of a specific type.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="workingSets" name="Working Sets"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define a working set wizard page. Working sets contain a number of elements of type IAdaptable and can be used to group elements for presentation to the user or for operations on a set of elements. A working set wizard page is used to create and edit working sets that contain elements of a specific type.
 &lt;p&gt;
 To select a working set the user is presented with a list of working sets that exist in the workbench. From that list a working set can be selected and edited using one of the wizard pages defined using this extension point. An existing working set is always edited with the wizard page that was used to create it or with the default resource based working set page if the original page is not available.
 &lt;p&gt;
@@ -15,8 +15,8 @@ A new working set can be defined by the user from the same working set selection
 Views provide a user interface to open the working set selection dialog and must store the selected working set.
 &lt;p&gt;
 The resource navigator uses a working set to filter elements from the navigator view. Only parents and children of working set elements are shown in the view, in addition to the working set elements themselves.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -59,7 +59,7 @@ The resource navigator uses a working set to filter elements from the navigator 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the element type that will be displayed and edited by the working set page. This should be a descriptive name like "Resource" or "Java Element".
+                  the name of the element type that will be displayed and edited by the working set page. This should be a descriptive name like &quot;Resource&quot; or &quot;Java Element&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -103,12 +103,12 @@ The resource navigator uses a working set to filter elements from the navigator 
          Following is an example of how the resource working set dialog extension is defined to display and edit generic IResource elements: 
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.workingSets"&gt;
+    &lt;extension point=&quot;org.eclipse.ui.workingSets&quot;&gt;
         &lt;workingSet
-            id="org.eclipse.ui.resourceWorkingSetPage"
-            name="Resource"
-            icon="icons/resworkset.gif"
-            pageClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage"&gt;
+            id=&quot;org.eclipse.ui.resourceWorkingSetPage&quot;
+            name=&quot;Resource&quot;
+            icon=&quot;icons/resworkset.gif&quot;
+            pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot;&gt;
         &lt;/workingSet&gt;
     &lt;/extension&gt;
 &lt;/pre&gt;
@@ -139,9 +139,11 @@ The resource navigator uses a working set to filter elements from the navigator 
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
