@@ -293,6 +293,7 @@ public class DecorationScheduler {
 					}
 				}
 				monitor.worked(100 - workCount);
+				monitor.done();
 				return Status.OK_STATUS;
 			}
 		};
