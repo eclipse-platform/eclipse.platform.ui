@@ -519,6 +519,20 @@ public class GenerateDiffFileWizard extends Wizard {
 		try {
 			if(type != mainPage.CLIPBOARD) {
 				File file = new File(fs!=null ? fs : ws.getLocation().toOSString());
+				// Temporary code. Pending resolution of 31606
+				File parent = file.getParentFile();
+				if (parent!=null && !parent.exists()) {
+					String title = Policy.bind("GenerateCVSDiff.badParentTitle"); //$NON-NLS-1$
+					String msg =   Policy.bind("GenerateCVSDiff.badParentMsg"); //$NON-NLS-1$
+					final MessageDialog dialog = new MessageDialog(getShell(),
+																	title,
+																	null,
+																	msg,
+																	MessageDialog.ERROR,
+																	new String[] { IDialogConstants.OK_LABEL }, 0);
+					dialog.open();
+					return false;
+				}
 				if (file.exists()) {
 					// prompt then delete
 					String title = Policy.bind("GenerateCVSDiff.overwriteTitle"); //$NON-NLS-1$
