@@ -273,7 +273,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		} finally {
 			building = false;
 			deltaCache.flush();
-			autoBuildJob.avoidBuild();
 		}
 	}
 	public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
@@ -295,7 +294,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		} finally {
 			monitor.done();
 			deltaCache.flush();
-			autoBuildJob.avoidBuild();
 		}
 	}
 	protected boolean canRun(int trigger) {
