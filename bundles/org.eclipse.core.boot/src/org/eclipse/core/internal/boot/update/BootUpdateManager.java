@@ -114,9 +114,9 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 					// Register platform component's boot plugin
 					// This allows the platform to start with the plugin's boot.jar
 					//-------------------------------------------------------------
-					if (vidComponents[i].getIdentifier().equals(LaunchInfo.PLATFORM_COMPONENT_ID) == true) {
-						if (strId.equals(LaunchInfo.BOOT_PLUGIN_ID) == true) {
-							launchInfo.setRuntime(strId + "_" + pluginDescriptors[j].getVersionStr());
+					if (launchInfo.isPlatformComponent(vidComponents[i].getIdentifier())) {
+						if (launchInfo.isRuntimePlugin(strId)) {
+							launchInfo.setRuntime(new LaunchInfo.VersionedIdentifier(strId,pluginDescriptors[j].getVersionStr()));
 						}
 					}
 				}

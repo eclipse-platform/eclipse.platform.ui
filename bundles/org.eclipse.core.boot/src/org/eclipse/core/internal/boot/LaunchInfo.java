@@ -14,8 +14,8 @@ import org.eclipse.core.internal.boot.update.BootUpdateManager;
  
 public class LaunchInfo implements IInstallInfo {
 	
-	public static final String PLATFORM_COMPONENT_ID = "org.eclipse.platform";
-	public static final String BOOT_PLUGIN_ID = "org.eclipse.core.boot";	
+	private static final String PLATFORM_COMPONENT_ID = "org.eclipse.platform";
+	private static final String BOOT_PLUGIN_ID = "org.eclipse.core.boot";	
 
 	private static LaunchInfo profile = null;
 
@@ -736,6 +736,26 @@ public void isDanglingComponent(VersionedIdentifier component, boolean isDanglin
 	}
 }
 
+public boolean isDominantConfiguration(String config) {
+	if (config==null || config.trim().equals("")) return false;
+	if (this.appconfig==null) return false;
+	VersionedIdentifier argId = new VersionedIdentifier(config);
+	VersionedIdentifier appId = new VersionedIdentifier(this.appconfig);
+	return argId.getIdentifier().equals(appId.getIdentifier());
+}
+
+public boolean isPlatformComponent(String comp) {
+	if (comp==null || comp.trim().equals("")) return false;
+	VersionedIdentifier vid = new VersionedIdentifier(comp);
+	return vid.getIdentifier().equals(PLATFORM_COMPONENT_ID);
+}
+
+public boolean isRuntimePlugin(String plugin) {
+	if (plugin==null || plugin.trim().equals("")) return false;
+	VersionedIdentifier vid = new VersionedIdentifier(plugin);
+	return vid.getIdentifier().equals(BOOT_PLUGIN_ID);
+}
+
 private static boolean isFileProtocol(URL u) {
 
 	return URL_FILE.equals(u.getProtocol()) || URL_VA.equals(u.getProtocol());
@@ -1033,6 +1053,23 @@ private static LaunchInfo restoreProfile(URL base) {
 	//make sure we come up using the most accurate information possible
 
 	LaunchInfo li;
+	
+	// check for install.properties
+	Properties props = new Properties();
+	InputStream is = null;
+	try {
+		URL summary = new URL(base,INSTALLDIR+LAUNCH_SUMMARY);
+		is = summary.openStream();
+		props.load(is);
+	} catch(IOException e) {
+	} finally {
+		if (is!=null) {
+			try {
+				is.close();
+			} catch(IOException e) {
+			}
+		}
+	}
 
 	// check for improper shutdown
 	URL info;
@@ -1041,7 +1078,7 @@ private static LaunchInfo restoreProfile(URL base) {
 		li = new LaunchInfo(info,base);
 		if (DEBUG)
 			debug("Using temporary profile "+info.toString());
-		return li;
+		return restoreProfileSummary(li,props);
 	} catch(IOException e) {
 	}
 
@@ -1051,7 +1088,7 @@ private static LaunchInfo restoreProfile(URL base) {
 		li = new LaunchInfo(info,base);
 		if (DEBUG)
 			debug("Using saved profile "+info.toString());
-		return li;
+		return restoreProfileSummary(li,props);
 	} catch(IOException e) {
 	}
 	
@@ -1061,7 +1098,7 @@ private static LaunchInfo restoreProfile(URL base) {
 		li = new LaunchInfo(info,base);
 		if (DEBUG)
 			debug("Using backup profile "+info.toString());
-		return li;
+		return restoreProfileSummary(li,props);
 	} catch(IOException e) {
 	}
 
@@ -1075,7 +1112,7 @@ private static LaunchInfo restoreProfile(URL base) {
 				li.setNewId();
 				if (DEBUG)
 					debug("Using history profile "+history[i].getIdentifier());
-				return li;
+				return restoreProfileSummary(li,props);
 			} catch(IOException e) {
 			}
 		}
@@ -1093,8 +1130,24 @@ private static LaunchInfo restoreProfile(URL base) {
 		if (DEBUG)
 			debug("Using default profile");
 	}
-	return li;
+	return restoreProfileSummary(li,props);
 }
+
+private static LaunchInfo restoreProfileSummary(LaunchInfo info, Properties summary) {
+	String runtime = summary.getProperty(PLATFORM);
+	String config = summary.getProperty(APP_CONFIG);
+	String app = summary.getProperty(APP);
+	
+	if (runtime!=null && !runtime.trim().equals(""))
+		info.platform = runtime.trim();	
+	if (config!=null && !config.trim().equals(""))
+		info.appconfig = config.trim();	
+	if (app!=null && !app.trim().equals(""))
+		info.app = app.trim();
+	
+	return info;
+}
+
 synchronized public void revertTo(History history) {
 
 	if (history == null)
@@ -1205,31 +1258,32 @@ synchronized private void set(VersionedIdentifier id, List active, List inactive
 	setNewHistory();
 }
 
-private void setApplication(String app) {
+public void setApplication(String app) {
 	if (this.app!=null && !this.app.equals(app)) {
 		setNewHistory();
-		if (app!=null) this.app = app;
+		if (app!=null && !app.equals("")) this.app = app;
 		else this.app = DEFAULT_APP;
 	}
 }
-/**
- * @param appconfig is the directory identifier (incl. version suffix)
- * of the "dominant" application configuration.
- */	
-private void setApplicationConfiguration(String appconfig) {
+
+private void setDominantConfiguration(String appconfig) {
 	if (this.appconfig!=null && !this.appconfig.equals(appconfig)) {
 		setNewHistory();
-		if (appconfig!=null) this.appconfig = appconfig;
+		if (appconfig!=null && !appconfig.equals("")) this.appconfig = appconfig;
 		else this.appconfig = DEFAULT_APP_CONFIG;
 	}
 }
+
 public void setComponent(VersionedIdentifier component) {
 	set(component, comps, compsInact);
 }
 
 public void setConfiguration(VersionedIdentifier config) {
 	set(config, configs, configsInact);
+	if (isDominantConfiguration(config.toString()) && configs.contains(config))
+		setDominantConfiguration(config.toString());
 }
+
 /*
  * called after any new configs, components and plugins are processed
  */
@@ -1241,8 +1295,8 @@ private void setDefaultRuntime() {
 		// check active list for runtime
 		for (int i=0; i< plugins.size(); i++) {
 			vid = (VersionedIdentifier) plugins.get(i);
-			if (vid.getIdentifier().equals(BOOT_PLUGIN_ID)) {
-				setRuntime(vid.toString());
+			if (isRuntimePlugin(vid.getIdentifier())) {
+				setRuntime(vid);
 				found = true;
 				break;
 			}
@@ -1252,8 +1306,8 @@ private void setDefaultRuntime() {
 			// check unmanaged list for runtime
 			for (int i=0; i< pluginsUnmgd.size(); i++) {
 				vid = (VersionedIdentifier) pluginsUnmgd.get(i);
-				if (vid.getIdentifier().equals(BOOT_PLUGIN_ID)) {
-					setRuntime(vid.toString());
+				if (isRuntimePlugin(vid.getIdentifier())) {
+					setRuntime(vid);
 					found = true;
 					break;
 				}
@@ -1366,18 +1420,12 @@ public void setPlugin(VersionedIdentifier plugin) {
 		setNewHistory();
 	}
 }
-/**
- * @param platform is the directory identifier (incl. version suffix)
- * of the plugins subdirectory containing boot.jar. At install time
- * it is conained in a component identifier by 
- * LaunchInfo.PLATFORM_COMPONENT_ID and has the base directory 
- * name (no version suffix) identified by
- * LaunchInfo.BOOT_PLUGIN_ID
- */	
-public void setRuntime(String platform) {
+
+public void setRuntime(VersionedIdentifier runtime) {
+	String platform = runtime==null ? null : runtime.toString();
 	if (this.platform!=null && !this.platform.equals(platform)) {
 		setNewHistory();
-		if (platform!=null) this.platform = platform;
+		if (platform!=null && !platform.equals("")) this.platform = platform;
 		else this.platform = DEFAULT_PLATFORM;
 	}
 }
