@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.views.internal.markers;
 
-import java.util.List;
-
 
 /**
  * Generic filtering interface.
@@ -24,7 +22,7 @@ public interface IFilter {
 	 * 
 	 * @param elements
 	 */
-	public void filter(List elements);
+	public Object[] filter(Object[] elements);
 	
 	/**
 	 * @param item

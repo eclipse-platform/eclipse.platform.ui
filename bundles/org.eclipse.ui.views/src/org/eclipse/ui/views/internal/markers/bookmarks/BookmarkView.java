@@ -12,8 +12,11 @@
 package org.eclipse.ui.views.internal.markers.bookmarks;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -28,9 +31,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.markers.CreationTime;
-import org.eclipse.ui.views.internal.markers.FiltersDialog;
 import org.eclipse.ui.views.internal.markers.Folder;
 import org.eclipse.ui.views.internal.markers.IField;
+import org.eclipse.ui.views.internal.markers.IFilter;
 import org.eclipse.ui.views.internal.markers.LineNumber;
 import org.eclipse.ui.views.internal.markers.MarkerFilter;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
@@ -78,6 +81,9 @@ public class BookmarkView extends MarkerView {
 	};
 	
 	private CellEditorActionHandler editorActionHandler;
+	
+	private MarkerFilter filter;
+	private MarkerRegistry registry;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -148,7 +154,12 @@ public class BookmarkView extends MarkerView {
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getRegistry()
 	 */
 	protected MarkerRegistry getRegistry() {
-		return BookmarkRegistry.getInstance();
+		if (registry == null) {
+			registry = BookmarkRegistry.getInstance();
+			registry.setFilter(getFilter());
+			registry.setInput((IResource) getViewerInput());
+		}
+		return registry;
 	}
 
 	/* (non-Javadoc)
@@ -161,7 +172,7 @@ public class BookmarkView extends MarkerView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFilter()
 	 */
-	protected MarkerFilter getFilter() {
+	protected IFilter getFilter() {
 		if (filter == null) {
 			filter = new BookmarkFilter();
 			filter.restoreState(getDialogSettings());
@@ -172,7 +183,7 @@ public class BookmarkView extends MarkerView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFiltersDialog()
 	 */
-	protected FiltersDialog getFiltersDialog() {
+	protected Dialog getFiltersDialog() {
 		if (getFilter() != null && getFilter() instanceof BookmarkFilter) {
 			return new BookmarkFiltersDialog(getSite().getShell(), (BookmarkFilter) getFilter());
 		}
@@ -192,7 +203,6 @@ public class BookmarkView extends MarkerView {
 			if (property.equals(IMarker.MESSAGE)) { // Description
 				marker.setAttribute(IMarker.MESSAGE, value);
 			}
-			MarkerFilter filter = getFilter();
 			if (filter != null && !filter.select(marker)) {
 				filtersChanged();
 			}
@@ -204,6 +214,13 @@ public class BookmarkView extends MarkerView {
 				null,
 				e.getStatus());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.tableview.TableView#getViewerInput()
+	 */
+	protected Object getViewerInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 }

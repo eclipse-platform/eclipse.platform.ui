@@ -9,26 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers.tasks;
+package org.eclipse.ui.views.internal.tableview;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.ui.views.internal.markers.MarkerRegistry;
+import java.util.List;
 
 
-class TaskRegistry extends MarkerRegistry {
-	
-	private static TaskRegistry instance = null;
-	
-	public static TaskRegistry getInstance() {
-		if (instance == null) {
-			instance = new TaskRegistry();
-			instance.setType(IMarker.TASK);
-		}
-		return instance;
-	}
-	
-	private TaskRegistry() {
-		super();
-	}
+public interface IItemsChangedListener {
+
+	/**
+	 * @param additions new items added
+	 * @param removals items removed
+	 * @param changes changed items
+	 */
+	public void itemsChanged(List additions, List removals, List changes);
 
 }

@@ -99,19 +99,17 @@ public class MarkerFilter implements IFilter {
 	/**
 	 * @see org.eclipse.ui.views.internal.markerregistry.IFilter#filter(java.util.List)
 	 */
-	public void filter(List elements) {
+	public Object[] filter(Object[] elements) {
 		if (elements == null)	
-			return;
-		int i = 0;
-		while (i < elements.size()) {
-			Object element = elements.get(i);
+			return new Object[0];
+		List filteredElements = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
 			if (select(element)) {
-				i++; 
-			}
-			else {
-				elements.remove(i);
+				filteredElements.add(element); 
 			}
 		}
+		return filteredElements.toArray();
 	}
 
 	/**

@@ -9,20 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.tableview;
 
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.views.internal.markers.IField;
 
 
-class MarkerSorter extends ViewerSorter implements Comparator {
-	
+public class TableSorter extends ViewerSorter implements Comparator {
+
 	public static final int MAX_DEPTH = 4; 
 	public static final int ASCENDING = 1;
 	public static final int DESCENDING = -1; 
@@ -41,13 +41,13 @@ class MarkerSorter extends ViewerSorter implements Comparator {
 	private final String TAG_DEFAULT_PRIORITY = "defaultPriority"; //$NON_NLS-1$
 	private final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON_NLS-1$
 	
-	public MarkerSorter(MarkerSorter other) {
+	public TableSorter(TableSorter other) {
 		this(other.getFields(), other.getDefaultPriorities(), other.getDefaultDirections());
 		priorities = other.getPriorities();
 		directions = other.getDirections();
 	}
 	
-	public MarkerSorter(IField[] properties, final int[] defaultPriorities, final int[] defaultDirections) {
+	public TableSorter(IField[] properties, final int[] defaultPriorities, final int[] defaultDirections) {
 		super();
 		this.fields = properties;
 		if (properties == null || defaultPriorities == null || defaultDirections == null ||
@@ -150,26 +150,19 @@ class MarkerSorter extends ViewerSorter implements Comparator {
 	}
 	
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		IMarker marker1 = (IMarker) e1;
-		IMarker marker2 = (IMarker) e2;
-		
-		//optimization
-		if (marker1.getId() == marker2.getId())
-			return 0;
-		return compare(marker1, marker2, 0);
+		return compare(e1, e2, 0);
 	}
 
-	protected int compare(IMarker marker1, IMarker marker2, int depth) {
-		//never return 0 unless the marker id's are the same
-		if (depth >= priorities.length || depth >= MAX_DEPTH) {
-			return (int) (marker1.getId() - marker2.getId());
+	protected int compare(Object obj1, Object obj2, int depth) {
+		if (depth >= priorities.length) {
+			return 0;
 		}
 		
 		int column = priorities[depth];
 		IField property = fields[column];
-		int result = property.compare(marker1, marker2);
+		int result = property.compare(obj1, obj2);
 		if (result == 0)
-			return compare(marker1, marker2, depth + 1);
+			return compare(obj1, obj2, depth + 1);
 		return result * directions[column];
 	}
 	

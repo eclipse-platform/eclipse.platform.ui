@@ -19,15 +19,17 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
 import org.eclipse.ui.views.internal.markers.MarkerUtil;
 
 
-class DeleteCompletedAction extends Action {
+class DeleteCompletedAction extends SelectionProviderAction {
 	
 	private MarkerRegistry registry;
 	private IWorkbenchPart part;
@@ -36,11 +38,11 @@ class DeleteCompletedAction extends Action {
 	 * @param provider
 	 * @param text
 	 */
-	protected DeleteCompletedAction(IWorkbenchPart part, MarkerRegistry registry) {
-		super(Messages.getString("deleteCompletedAction.title")); //$NON-NLS-1$
+	protected DeleteCompletedAction(IWorkbenchPart part, ISelectionProvider provider, MarkerRegistry registry) {
+		super(provider, Messages.getString("deleteCompletedAction.title")); //$NON-NLS-1$
 		this.part = part;
 		this.registry = registry;
-		setEnabled(true);
+		setEnabled(false);
 	}
 	
 	/* (non-Javadoc)
@@ -93,16 +95,23 @@ class DeleteCompletedAction extends Action {
 	
 	private List getCompletedTasks() {
 		List completed = new ArrayList();
-		List markers = registry.getElements();
+		Object[] markers = registry.getElements();
 		
-		for (int i = 0; i < markers.size(); i++) {
-			IMarker marker = (IMarker) markers.get(i);
+		for (int i = 0; i < markers.length; i++) {
+			IMarker marker = (IMarker) markers[i];
 			if (MarkerUtil.isEditable(marker) && marker.getAttribute(IMarker.DONE, false)) {
 				completed.add(marker);
 			}
 		}
 		
 		return completed;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(!selection.isEmpty());
 	}
 
 }

@@ -12,9 +12,12 @@
 package org.eclipse.ui.views.internal.markers.problems;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -25,14 +28,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.markers.CreationTime;
-import org.eclipse.ui.views.internal.markers.FiltersDialog;
 import org.eclipse.ui.views.internal.markers.Folder;
+import org.eclipse.ui.views.internal.markers.IField;
+import org.eclipse.ui.views.internal.markers.IFilter;
 import org.eclipse.ui.views.internal.markers.LineNumber;
 import org.eclipse.ui.views.internal.markers.MarkerFilter;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
 import org.eclipse.ui.views.internal.markers.MarkerView;
 import org.eclipse.ui.views.internal.markers.Message;
-import org.eclipse.ui.views.internal.markers.IField;
 import org.eclipse.ui.views.internal.markers.Resource;
 
 
@@ -84,6 +87,9 @@ public class ProblemView extends MarkerView {
 		};
 	}
 	
+	private MarkerFilter filter;
+	private MarkerRegistry registry;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#createColumns(org.eclipse.swt.widgets.Table)
 	 */
@@ -99,7 +105,12 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getRegistry()
 	 */
 	protected MarkerRegistry getRegistry() {
-		return ProblemRegistry.getInstance();
+		if (registry == null) {
+			registry = ProblemRegistry.getInstance();
+			registry.setFilter(getFilter());
+			registry.setInput((IResource) getViewerInput());
+		}
+		return registry;
 	}
 
 	/* (non-Javadoc)
@@ -138,7 +149,7 @@ public class ProblemView extends MarkerView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFilter()
 	 */
-	protected MarkerFilter getFilter() {
+	protected IFilter getFilter() {
 		if (filter == null) {
 			filter = new ProblemFilter();
 			filter.restoreState(getDialogSettings());
@@ -149,11 +160,18 @@ public class ProblemView extends MarkerView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFiltersDialog()
 	 */
-	protected FiltersDialog getFiltersDialog() {
+	protected Dialog getFiltersDialog() {
 		if (getFilter() != null && getFilter() instanceof ProblemFilter) {
 			return new ProblemFiltersDialog(getSite().getShell(), (ProblemFilter) getFilter());
 		}
 		return super.getFiltersDialog();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.tableview.TableView#getViewerInput()
+	 */
+	protected Object getViewerInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 }

@@ -9,26 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers.tasks;
+package org.eclipse.ui.views.internal.tableview;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.ui.views.internal.markers.MarkerRegistry;
+import org.eclipse.ui.views.internal.markers.IFilter;
 
 
-class TaskRegistry extends MarkerRegistry {
+public interface ITableViewContentProvider {
 	
-	private static TaskRegistry instance = null;
-	
-	public static TaskRegistry getInstance() {
-		if (instance == null) {
-			instance = new TaskRegistry();
-			instance.setType(IMarker.TASK);
-		}
-		return instance;
-	}
-	
-	private TaskRegistry() {
-		super();
-	}
+	public Object[] getElements();
+	public IFilter getFilter();
+	public void setFilter(IFilter filter);
+	public void addItemsChangedListener(IItemsChangedListener listener);
+	public void removeItemsChangedListener(IItemsChangedListener listener);
 
 }

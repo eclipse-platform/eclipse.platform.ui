@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.tableview;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -21,48 +20,45 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 
-class MarkerContentProvider implements IStructuredContentProvider, IMarkerChangedListener {
+class TableContentProvider implements IStructuredContentProvider, IItemsChangedListener {
 	
-	private TableViewer viewer;
+	private ITableViewContentProvider provider;
 	private IWorkbenchPartSite site;
-	private MarkerRegistry registry;
+	private TableViewer viewer;
 	
-	public MarkerContentProvider(IWorkbenchPartSite site, MarkerRegistry registry) {
+	public TableContentProvider(IWorkbenchPartSite site, ITableViewContentProvider provider) {
 		this.site = site;
-		this.registry = registry;
-		registry.addMarkerChangedListener(this);
+		this.provider = provider;
+		provider.addItemsChangedListener(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return registry.getElements().toArray();
+		return provider.getElements();
 	}
 
-	/**
-	 * The visual part that is using this content provider is about
-	 * to be disposed. Deallocate all allocated SWT resources.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		registry.removeMarkerChangedListener(this);
+		provider.removeItemsChangedListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (oldInput == null) {
-			IResource resource = (IResource) newInput;
-			registry.setInput((IResource) newInput);
+		if (viewer != null && viewer instanceof TableViewer) {
+			this.viewer = (TableViewer) viewer;
 		}
-		this.viewer = (TableViewer) viewer;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.internal.markerregistry.IMarkerChangedListener#markerChanged(java.util.List, java.util.List, java.util.List)
+	 * @see org.eclipse.ui.views.internal.tableview.IItemsChangedListener#itemsChanged(java.util.List, java.util.List, java.util.List)
 	 */
-	public void markerChanged(final List additions, final List removals, final List changes) {
+	public void itemsChanged(final List additions, final List removals, final List changes) {
 		if (viewer != null) {
 			site.getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {

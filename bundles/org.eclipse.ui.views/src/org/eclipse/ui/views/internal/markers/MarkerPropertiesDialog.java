@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -215,17 +214,18 @@ public class MarkerPropertiesDialog extends Dialog {
 			catch (CoreException e) {
 			}
 		}
-		else if (initialAttributes == null && resource == null) {
-			resource = (IResource) ResourcesPlugin.getWorkspace().getRoot();
+		else if (resource == null) {
+			resource = ResourcesPlugin.getWorkspace().getRoot();
 		}
 		
 		Composite composite = (Composite) super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 		createDescriptionArea(composite);
-		if (marker != null)
+		if (marker != null) {
 			createCreationTimeArea(composite);
+		}
 		createAttributesArea(composite);
-		if (resource != null && resource.getType() != IResource.ROOT)
+		if (resource != null)
 			createResourceArea(composite);
 		updateDialogFromMarker();
 		updateEnablement();
@@ -379,7 +379,7 @@ public class MarkerPropertiesDialog extends Dialog {
 	 * Updates the dialog from the predefined attributes.
 	 */
 	protected void updateDialogForNewMarker() {
-		if (resource != null) {
+		if (resource != null && resourceText != null && folderText != null) {
 			resourceText.setText(resource.getName());
 			
 			IPath path = resource.getFullPath();
@@ -408,7 +408,7 @@ public class MarkerPropertiesDialog extends Dialog {
 			descriptionText.selectAll();
 				
 			Object line = initialAttributes.get(IMarker.LINE_NUMBER);
-			if (line != null && line instanceof Integer)
+			if (line != null && line instanceof Integer && locationText != null)
 				locationText.setText(Messages.format("label.lineNumber", new Object[] {line})); //$NON-NLS-1$
 		}
 	}
@@ -417,7 +417,9 @@ public class MarkerPropertiesDialog extends Dialog {
 	 * Method declared on Dialog
 	 */
 	protected void okPressed() {
-		saveChanges();
+		if (marker == null || MarkerUtil.isEditable(marker)) {
+			saveChanges();
+		}
 		super.okPressed();
 	}
 
@@ -493,12 +495,12 @@ public class MarkerPropertiesDialog extends Dialog {
 	}
 	
 	private void createMarker() {
-		if (resource == null || !(resource instanceof IFile))
+		if (resource == null) {
 			return;
+		}
 			
-		IFile file = (IFile) resource;
 		try {
-			marker = file.createMarker(type);
+			marker = resource.createMarker(type);
 		}
 		catch (CoreException e) {
 		}

@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.internal.markers;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
@@ -38,5 +39,11 @@ class SelectAllAction extends SelectionProviderAction {
 		super.getSelectionProvider().setSelection(newSelection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(!selection.isEmpty());
+	}
 
 }

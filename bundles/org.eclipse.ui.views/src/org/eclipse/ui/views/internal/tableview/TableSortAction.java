@@ -9,18 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.tableview;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 
 
-class MarkerSortAction extends Action {
+public class TableSortAction extends Action {
 	
-	private MarkerView view;
-	private MarkerSortDialog dialog;
+	private TableView view;
+	private TableSortDialog dialog;
 	
-	public MarkerSortAction(MarkerView view, MarkerSortDialog dialog) {
+	public TableSortAction(TableView view, TableSortDialog dialog) {
 		super(Messages.getString("sortAction.title")); //$NON-NLS-1$
 		this.view = view;
 		this.dialog = dialog;
@@ -29,7 +29,7 @@ class MarkerSortAction extends Action {
 
 	public void run() {
 		if (dialog.open() == Window.OK && dialog.isDirty()) {
-			view.sorterChanger();
+			view.sorterChanged();
 		}
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.tableview;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,10 +28,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.views.internal.markers.IField;
 
-class MarkerSortDialog extends Dialog {
+public class TableSortDialog extends Dialog {
 	
-	private MarkerSorter sorter;
+	private TableSorter sorter;
 	private Combo[] priorityCombos;
 	private String[] propertyText;
 	private IField[] properties;
@@ -53,7 +54,7 @@ class MarkerSortDialog extends Dialog {
 	};
 
 	
-	public MarkerSortDialog(Shell parentShell, MarkerSorter sorter) {
+	public TableSortDialog(Shell parentShell, TableSorter sorter) {
 		super(parentShell);
 		this.sorter = sorter;
 		dirty = false;
@@ -91,7 +92,7 @@ class MarkerSortDialog extends Dialog {
 		
 		ascendingButtons = new Button[priorities.length];
 		descendingButtons = new Button[priorities.length];
-		priorityCombos = new Combo[Math.min(priorities.length, MarkerSorter.MAX_DEPTH)];
+		priorityCombos = new Combo[Math.min(priorities.length, TableSorter.MAX_DEPTH)];
 		initPriotityText();
 		
 		Label sortByLabel = new Label(prioritiesArea, SWT.NULL);
@@ -128,9 +129,9 @@ class MarkerSortDialog extends Dialog {
 			if (i < priorityCombos.length - 1) {
 				priorityCombos[i].addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						int oldSelectionDirection = MarkerSorter.ASCENDING;
+						int oldSelectionDirection = TableSorter.ASCENDING;
 						if (descendingButtons[index].getSelection())
-							oldSelectionDirection = MarkerSorter.DESCENDING;
+							oldSelectionDirection = TableSorter.DESCENDING;
 						ArrayList oldSelectionList = new ArrayList(Arrays.asList(priorityCombos[index].getItems()));
 						oldSelectionList.removeAll(Arrays.asList(priorityCombos[index + 1].getItems()));
 						if (oldSelectionList.size() != 1)
@@ -153,8 +154,8 @@ class MarkerSortDialog extends Dialog {
 								priorityCombos[j].select(priorityCombos[j].indexOf(oldSelection));
 								ascendingButtons[index].setSelection(ascendingButtons[j].getSelection());
 								descendingButtons[index].setSelection(descendingButtons[j].getSelection());
-								ascendingButtons[j].setSelection(oldSelectionDirection == MarkerSorter.ASCENDING);
-								descendingButtons[j].setSelection(oldSelectionDirection == MarkerSorter.DESCENDING);
+								ascendingButtons[j].setSelection(oldSelectionDirection == TableSorter.ASCENDING);
+								descendingButtons[j].setSelection(oldSelectionDirection == TableSorter.DESCENDING);
 							}
 							//this combo contains newSelection
 							else if (newSelectionIndex >= 0) {
@@ -218,8 +219,8 @@ class MarkerSortDialog extends Dialog {
 			priorityCombos[i].select(priorityCombos[i].indexOf(propertyText[priorities[i]]));
 			availablePriorities.remove(propertyText[priorities[i]]);
 
-			ascendingButtons[i].setSelection(directions[priorities[i]] == MarkerSorter.ASCENDING);
-			descendingButtons[i].setSelection(directions[priorities[i]] == MarkerSorter.DESCENDING);
+			ascendingButtons[i].setSelection(directions[priorities[i]] == TableSorter.ASCENDING);
+			descendingButtons[i].setSelection(directions[priorities[i]] == TableSorter.DESCENDING);
 		}
 	}
 	
@@ -237,9 +238,9 @@ class MarkerSortDialog extends Dialog {
 					return;
 				}
 				sorter.setTopPriority(properties[index]);
-				int direction = MarkerSorter.ASCENDING;
+				int direction = TableSorter.ASCENDING;
 				if (descendingButtons[i].getSelection())
-					direction = MarkerSorter.DESCENDING;
+					direction = TableSorter.DESCENDING;
 				sorter.setTopPriorityDirection(direction);
 			}
 		}

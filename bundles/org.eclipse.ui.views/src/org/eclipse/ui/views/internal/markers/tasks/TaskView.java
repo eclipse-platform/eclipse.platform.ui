@@ -12,11 +12,15 @@
 package org.eclipse.ui.views.internal.markers.tasks;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -38,9 +42,9 @@ import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.markers.CreationTime;
-import org.eclipse.ui.views.internal.markers.FiltersDialog;
 import org.eclipse.ui.views.internal.markers.Folder;
 import org.eclipse.ui.views.internal.markers.IField;
+import org.eclipse.ui.views.internal.markers.IFilter;
 import org.eclipse.ui.views.internal.markers.LineNumber;
 import org.eclipse.ui.views.internal.markers.MarkerFilter;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
@@ -91,8 +95,12 @@ public class TaskView extends MarkerView {
 
 	protected SelectionProviderAction markCompletedAction;
 	protected Action deleteCompletedAction;
+	protected Action addGlobalTaskAction;
 	
 	private CellEditorActionHandler editorActionHandler;
+	
+	private MarkerFilter filter;
+	private MarkerRegistry registry;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -175,7 +183,12 @@ public class TaskView extends MarkerView {
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getRegistry()
 	 */
 	protected MarkerRegistry getRegistry() {
-		return TaskRegistry.getInstance();
+		if (registry == null) {
+			registry = TaskRegistry.getInstance();
+			registry.setFilter(getFilter());
+			registry.setInput((IResource) getViewerInput());
+		}
+		return registry;
 	}
 	
 	/* (non-Javadoc)
@@ -185,10 +198,19 @@ public class TaskView extends MarkerView {
 		super.createActions();
 		propertiesAction = new TaskPropertiesAction(this, getViewer());
 		markCompletedAction = new MarkCompletedAction(getViewer());
-		deleteCompletedAction = new DeleteCompletedAction(this, getRegistry());
+		deleteCompletedAction = new DeleteCompletedAction(this, getViewer(), getRegistry());
+		addGlobalTaskAction = new AddGlobalTaskAction(this);
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.markers.MarkerView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void fillContextMenu(IMenuManager manager) {
+		manager.add(addGlobalTaskAction);
+		manager.add(new Separator());
+		super.fillContextMenu(manager);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#fillContextMenuAdditions(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -199,9 +221,17 @@ public class TaskView extends MarkerView {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.markers.MarkerView#initToolBar(org.eclipse.jface.action.IToolBarManager)
+	 */
+	protected void initToolBar(IToolBarManager tbm) {
+		tbm.add(addGlobalTaskAction);
+		super.initToolBar(tbm);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFilter()
 	 */
-	protected MarkerFilter getFilter() {
+	protected IFilter getFilter() {
 		if (filter == null) {
 			filter = new TaskFilter();
 			filter.restoreState(getDialogSettings());
@@ -231,7 +261,7 @@ public class TaskView extends MarkerView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.markerview.MarkerView#getFiltersDialog()
 	 */
-	protected FiltersDialog getFiltersDialog() {
+	protected Dialog getFiltersDialog() {
 		if (getFilter() != null && getFilter() instanceof TaskFilter) {
 			return new TaskFiltersDialog(getSite().getShell(), (TaskFilter) getFilter());
 		}
@@ -260,7 +290,6 @@ public class TaskView extends MarkerView {
 			else if (property.equals(IMarker.MESSAGE)) { // Description
 				marker.setAttribute(IMarker.MESSAGE, value);
 			}
-			MarkerFilter filter = getFilter();
 			if (filter != null && !filter.select(marker)) {
 				filtersChanged();
 			}
@@ -293,4 +322,11 @@ public class TaskView extends MarkerView {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.tableview.TableView#getViewerInput()
+	 */
+	protected Object getViewerInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.views.internal.markers.problems;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
 
 
@@ -21,6 +22,7 @@ class ProblemRegistry extends MarkerRegistry {
 	public static ProblemRegistry getInstance() {
 		if (instance == null) {
 			instance = new ProblemRegistry();
+			instance.setType(IMarker.PROBLEM);
 		}
 		return instance;
 	}

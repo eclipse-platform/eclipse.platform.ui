@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.views.internal.markers.bookmarks;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.views.internal.markers.MarkerRegistry;
 
 
@@ -21,6 +22,7 @@ class BookmarkRegistry extends MarkerRegistry {
 	public static BookmarkRegistry getInstance() {
 		if (instance == null) {
 			instance = new BookmarkRegistry();
+			instance.setType(IMarker.BOOKMARK);
 		}
 		return instance;
 	}

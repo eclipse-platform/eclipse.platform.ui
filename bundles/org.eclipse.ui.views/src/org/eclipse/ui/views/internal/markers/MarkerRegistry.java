@@ -13,8 +13,6 @@ package org.eclipse.ui.views.internal.markers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -24,128 +22,56 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.views.internal.tableview.IItemsChangedListener;
+import org.eclipse.ui.views.internal.tableview.ITableViewContentProvider;
 
 
 /**
  * Registry that tracks resource markers and maintains a sorted, filtered list of the markers. 
  * Notifies listeners of changes in these markers.
  */
-public class MarkerRegistry implements IResourceChangeListener {
+public class MarkerRegistry implements IResourceChangeListener, ITableViewContentProvider {
 	
 	private IFilter filter;
-	private Comparator comparator;
 	private IResource input;
-	private List rawElements;
-	private List elements;
 	private String[] types;
 	
 	private List listeners;
 	
 	protected MarkerRegistry() {
-		rawElements = new ArrayList();
-		elements = new ArrayList();
 		listeners = new ArrayList();
 		types = new String[0];
 	}
 	
-	private void refresh(boolean full) {
-		if (input == null) {
-			return;
-		}
-		if (full) {
-			IMarker[] markers;
-			rawElements = new ArrayList();
-			elements = new ArrayList();
-			for (int i = 0; i < types.length; i++) {
-				try {
-					IMarker[] newMarkers = input.findMarkers(types[i], true, IResource.DEPTH_INFINITE);
-					rawElements.addAll(Arrays.asList(newMarkers));
-				}
-				catch (CoreException e) {
-				}
-			}
-		}
-		if (comparator != null)
-			Collections.sort(rawElements, comparator);
-		elements = new ArrayList(rawElements);
-		if (filter != null)
-			filter.filter(elements);
-	}
-	
-	/**
-	 * Perfoms a full refresh. Asks the input for all its markers then sorts and 
-	 * filters those markers.
-	 */
-	public void refresh() {
-		refresh(true);
-	}
-	
-	/**
-	 * Refilters the list of markers. Notifies listeners of differences between 
-	 * the old list of markers and the new list. 
-	 */
-	public void refilter() {
-		List additions = new ArrayList();
-		List removals = new ArrayList();
-		List changes = new ArrayList();
-		List newElements = new ArrayList(rawElements);
-		int i = 0;
-		while (i < newElements.size()) {
-			Object element = newElements.get(i);
-			int index = Collections.binarySearch(elements, element, comparator);
-			if (filter.select(element)) {
-				//check if element is in old list
-				if (index < 0) {
-					additions.add(element);
-				}
-				i++;
-			}
-			else {
-				newElements.remove(element);
-				if (index >= 0) {
-					removals.add(element);
-				}
-			}
-		}
-		elements = newElements;
-		if (additions.size() + removals.size() + changes.size() > 0) {
-			notifyListeners(additions, removals, changes);
-		}
-	}
-	
-	/**
-	 * Resorts the list of markers.
-	 */
-	public void resort() {
-		if (comparator != null)
-			Collections.sort(rawElements, comparator);
-		elements = new ArrayList(rawElements);
-		if (filter != null)
-			filter.filter(elements);
-	}
-	
-	/**
-	 * @return the registry's comparator or <code>null</code> if no comparator has been set.
-	 */
-	public Comparator getComparator() {
-		return comparator;
-	}
-
 	/**
 	 * @return a filtered, sorted list of markers.
 	 */
-	public List getElements() {
+	public Object[] getElements() {
+		Object[] elements = getUnfilteredElements();
+		if (filter != null) {
+			Object[] filteredItems = filter.filter(elements);
+			return filteredItems;
+		}
 		return elements;
 	}
 	
 	/**
-	 * @param index
-	 * @return the element in the list at the specified index
+	 * @return an unfiltered list of elements
 	 */
-	public IMarker getMarker(int index) {
-		if (index >= 0 && index < elements.size())
-			return (IMarker) elements.get(index);
-		return null;
+	public Object[] getUnfilteredElements() {
+		if (input == null) {
+			return new Object[0];
+		}
+		List elements = new ArrayList();
+		for (int i = 0; i < types.length; i++) {
+			try {
+				IMarker[] newMarkers = input.findMarkers(types[i], true, IResource.DEPTH_INFINITE);
+				elements.addAll(Arrays.asList(newMarkers));
+			}
+			catch (CoreException e) {
+			}
+		}
+		return elements.toArray();
 	}
 
 	/**
@@ -164,27 +90,6 @@ public class MarkerRegistry implements IResourceChangeListener {
 	}
 
 	/**
-	 * @return an unfiltered list of elements
-	 */
-	public List getRawElements() {
-		return rawElements;
-	}
-
-	/**
-	 * Sets the registry's comparator
-	 * 
-	 * @param comparator
-	 */
-	public void setComparator(Comparator comparator) {
-		if (this.comparator == null || !this.comparator.equals(comparator)) {
-			this.comparator = comparator;
-			if (input != null) {
-				resort();
-			}
-		}
-	}
-
-	/**
 	 * Sets the registry's filter
 	 * 
 	 * @param filter 
@@ -192,9 +97,6 @@ public class MarkerRegistry implements IResourceChangeListener {
 	public void setFilter(IFilter filter) {
 		if (this.filter == null || !this.filter.equals(filter)) {
 			this.filter = filter;
-			if (input != null) {
-				refilter();
-			}
 		}
 	}
 
@@ -212,7 +114,6 @@ public class MarkerRegistry implements IResourceChangeListener {
 		input = resource;
 		if (input != null)
 			resource.getWorkspace().addResourceChangeListener(this);
-		refresh(true);
 	}
 
 	/**
@@ -233,7 +134,6 @@ public class MarkerRegistry implements IResourceChangeListener {
 			this.types = new String[0];
 		else
 			this.types = types;
-		refresh();
 	}
 	
 	/**
@@ -243,57 +143,6 @@ public class MarkerRegistry implements IResourceChangeListener {
 	 */
 	public void setType(String type) {
 		setTypes(new String[] { type });
-	}
-
-	private void add(IMarker marker) {
-		if (marker == null)
-			return;
-			
-		if (rawElements.contains(marker))
-			return;
-			
-		if (comparator == null) {
-			rawElements.add(marker);
-			if (filter == null || filter.select(marker))
-				elements.add(marker);
-		}
-		else {
-			int rawPosition = Collections.binarySearch(rawElements, marker, comparator);
-			if (rawPosition < 0)
-				rawElements.add(-1 - rawPosition, marker);
-			if (filter == null || filter.select(marker)) {
-				int position = Collections.binarySearch(elements, marker, comparator);
-				if (position < 0)
-					elements.add(-1 - position, marker);
-			}
-		}
-	}
-	
-	private void add(List markers) {
-		if (markers == null)
-			return;
-		for (int i = 0; i < markers.size(); i++) {
-			Object obj = markers.get(i);
-			if (obj instanceof IMarker)
-				add((IMarker) obj);
-		}
-	}
-	
-	private void remove(IMarker marker) {
-		if (marker == null)
-			return;
-		rawElements.remove(marker);
-		elements.remove(marker);
-	}
-	
-	private void remove(List markers) {
-		if (markers == null)
-			return;
-		for (int i = 0; i < markers.size(); i++) {
-			Object obj = markers.get(i);
-			if (obj instanceof IMarker)
-				remove((IMarker) obj);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -312,8 +161,9 @@ public class MarkerRegistry implements IResourceChangeListener {
 		if (delta == null) 
 			return;
 		getMarkerDeltas(delta, additions, removals, changes);
-		add(additions);
-		remove(removals);
+		//filter additions and changes but not removals since they have already been deleted
+		filterList(additions);
+		filterList(changes);
 		notifyListeners(additions, removals, changes);
 	}
 	
@@ -368,38 +218,60 @@ public class MarkerRegistry implements IResourceChangeListener {
 		}
 	}
 	
-	/**
-	 * Adds an IMarkerChangedListener to the list of listeners. Has no effect if the list 
-	 * already contains an identical listener.
-	 * 
-	 * @param listener the listener
+	private void notifyListeners(List additions, List removals, List changes) {
+		if (listeners == null)
+			return;
+		for (int i = 0; i < listeners.size(); i++) {
+			IItemsChangedListener listener = (IItemsChangedListener) listeners.get(i);
+			listener.itemsChanged(additions, removals, changes);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.tableview.ITableViewContentProvider#addItemsChangedListener(org.eclipse.ui.views.internal.tableview.IItemsChangedListener)
 	 */
-	public void addMarkerChangedListener(IMarkerChangedListener listener) {
+	public void addItemsChangedListener(IItemsChangedListener listener) {
 		if (listeners == null || listener == null)
 			return;
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
-	
-	/**
-	 * Removes the listener from the list of listeners. Has no effect if the list does not
-	 * contain the listener.
-	 * 
-	 * @param listener
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.internal.tableview.ITableViewContentProvider#removeItemsChangedListener(org.eclipse.ui.views.internal.tableview.IItemsChangedListener)
 	 */
-	public void removeMarkerChangedListener(IMarkerChangedListener listener) {
+	public void removeItemsChangedListener(IItemsChangedListener listener) {
 		if (listeners == null || listener == null)
 			return;
 		listeners.remove(listener);
 	}
 	
-	private void notifyListeners(List additions, List removals, List changes) {
-		if (listeners == null)
-			return;
-		for (int i = 0; i < listeners.size(); i++) {
-			IMarkerChangedListener listener = (IMarkerChangedListener) listeners.get(i);
-			listener.markerChanged(additions, removals, changes);
-		}
+	/**
+	 * @return
+	 */
+	public int getItemCount() {
+		//TODO do this more efficiently
+		return getElements().length;
 	}
 	
+	public int getRawItemCount() {
+		//TODO do this more efficiently
+		return getUnfilteredElements().length;
+	}
+	
+	private void filterList(List list) {
+		if (filter == null || list == null) {
+			return;
+		}
+		int i = 0;
+		while (i < list.size()) {
+			if (filter.select(list.get(i))) {
+				i++;
+			}
+			else {
+				list.remove(i);
+			}
+		}
+	}
+
 }

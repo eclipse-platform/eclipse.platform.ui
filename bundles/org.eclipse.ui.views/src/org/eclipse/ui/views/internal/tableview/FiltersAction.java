@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.tableview;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.ui.views.internal.markers.FiltersDialog;
+import org.eclipse.ui.views.internal.markers.ImageFactory;
 
 
 /**
@@ -20,13 +23,13 @@ import org.eclipse.jface.action.Action;
  */
 class FiltersAction extends Action {
 	
-	private MarkerView view;
-	private FiltersDialog dialog;
+	private TableView view;
+	private Dialog dialog;
 	
 	/**
 	 * Creates the action
 	 */
-	public FiltersAction(MarkerView view, FiltersDialog dialog) {
+	public FiltersAction(TableView view, Dialog dialog) {
 		super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
 		setImageDescriptor(ImageFactory.getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
 		this.view = view;
@@ -41,7 +44,7 @@ class FiltersAction extends Action {
 		if (dialog == null) {
 			return;
 		}
-		if (dialog.open() == FiltersDialog.OK && dialog.isDirty()) {
+		if (dialog.open() == FiltersDialog.OK) {
 			view.filtersChanged();
 		}
 	}
