@@ -108,7 +108,10 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 					if (3 == e.button) {
 						Menu menu= getMenu();
 						if (menu != null) {
-							menu.setLocation(e.x, e.y);
+							Control c= (Control)e.widget;
+							Point p= new Point(e.x, e.y);
+							Point p2= c.toDisplay(p);
+							menu.setLocation(p2.x, p2.y);
 							menu.setVisible(true);
 						}
 					}
@@ -262,6 +265,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		while (e.hasNext()) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
 			column.createControl(this, fComposite);
+			fComposite.childAdded(column.getControl());
 		}
 		
 		parent.addDisposeListener(new DisposeListener() {
