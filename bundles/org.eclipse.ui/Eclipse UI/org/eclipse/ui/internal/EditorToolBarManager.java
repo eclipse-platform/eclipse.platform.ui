@@ -154,7 +154,7 @@ public void setVisible(boolean visible, boolean forceVisibility) {
  * @since 2.0
  */
 public void setEnabledAllowed(boolean enabledAllowed) {
-	if (this.enabledAllowed = enabledAllowed)
+	if (this.enabledAllowed == enabledAllowed)
 		return;
 	this.enabledAllowed = enabledAllowed;
 	overrides.updateEnabledAllowed();
