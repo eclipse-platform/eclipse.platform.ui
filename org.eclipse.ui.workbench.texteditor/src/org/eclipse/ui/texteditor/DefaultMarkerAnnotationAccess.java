@@ -48,21 +48,20 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 	 * @return the annotation preference or <code>null</code> if none
 	 */	
 	private AnnotationPreference getAnnotationPreference(IMarker marker) {
-		
-		try {
-			
-			int severity= marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-
-			Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
-			while (e.hasNext()) {
-				AnnotationPreference info= (AnnotationPreference) e.next();
-				if (marker.isSubtypeOf(info.getMarkerType()) && severity == info.getSeverity())
-					return info;
+		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			Integer severity;
+			boolean isSubtype;
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			try {
+				severity= (Integer)marker.getAttribute(IMarker.SEVERITY);
+				isSubtype= marker.isSubtypeOf(info.getMarkerType());
+			} catch (CoreException x) {
+				return null;
 			}
-			
-		} catch (CoreException x) {
-		}
-		
+			if (isSubtype && (severity == null || severity.intValue() == info.getSeverity()))
+				return info;
+			}
 		return null;
 	}
 	
