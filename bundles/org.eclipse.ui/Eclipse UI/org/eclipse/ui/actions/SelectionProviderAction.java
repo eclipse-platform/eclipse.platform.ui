@@ -37,6 +37,7 @@ public abstract class SelectionProviderAction extends Action
 /**
  * Creates a new action with the given text that monitors selection changes
  * within the given selection provider.
+ * The resulting action is added as a listener on the selection provider.
  *
  * @param provider the selection provider that will provide selection notification
  * @param text the string used as the text for the action, 
@@ -47,6 +48,15 @@ protected SelectionProviderAction(ISelectionProvider provider, String text) {
 	this.provider = provider;
 	provider.addSelectionChangedListener(this);
 }
+
+/**
+ * Disposes this action by removing it as a listener from the selection provider.
+ * This must be called by the creator of the action when the action is no longer needed.
+ */
+public void dispose() {
+	provider.removeSelectionChangedListener(this);
+}
+
 /**
  * Returns the current selection in the selection provider.
  *
