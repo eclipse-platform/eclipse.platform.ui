@@ -303,19 +303,22 @@ public class AboutDialog extends ProductInfoDialog {
 	 */
 	private AboutInfo[] getFeaturesWithImages() {
 		// quickly exclude any that do not have a provider name and image
-		List infoList = new ArrayList(featureInfos.length);
+		List infoList = new ArrayList(featureInfos.length + 1);
+
+		// make sure primary is first
+		if (primaryInfo != null && primaryInfo.getProviderName() != null
+				&& primaryInfo.getFeatureImageName() != null) {
+			infoList.add(primaryInfo);
+		}
+
 		for (int i = 0; i < featureInfos.length; i++) {
 			if (featureInfos[i].getProviderName() != null
 				&& featureInfos[i].getFeatureImageName() != null) {
 				infoList.add(featureInfos[i]);
 			}
 		}
-		List keepers = new ArrayList(featureInfos.length);
-		// ensure the primary feature make the first cut so we can eliminate at end
-		// handle case where there is no primary feature info
-		if (primaryInfo != null) {
-			keepers.add(primaryInfo);
-		}
+		List keepers = new ArrayList(infoList.size());
+
 		// precompute CRCs of all the feature images
 		long[] featureImageCRCs = new long[infoList.size()];
 		for (int i = 0; i < infoList.size(); i++) {
@@ -338,10 +341,6 @@ public class AboutDialog extends ProductInfoDialog {
 				keepers.add(outer);
 			}
 		}
-		if (primaryInfo != null) {
-			keepers.remove(primaryInfo);
-		}
 		return (AboutInfo[]) keepers.toArray(new AboutInfo[keepers.size()]);
 	}
-
 }
