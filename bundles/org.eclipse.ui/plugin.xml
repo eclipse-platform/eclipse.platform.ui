@@ -28,10 +28,10 @@
 
 
 <!-- Workbench extension points -->
-   <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets"/>
-   <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations"/>
-   <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes"/>
-   <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions"/>
+   <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets" schema="schema/acceleratorSets.exsd"/>
+   <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations" schema="schema/acceleratorConfigurations.exsd"/>
+   <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes" schema="schema/acceleratorScopes.exsd"/>
+   <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions" schema="schema/actionDefinitions.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.mxsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.mxsd"/>
    <extension-point id="capabilities" name="%ExtPoint.capabilities" schema="schema/capabilities.mxsd"/>
@@ -54,13 +54,13 @@
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.mxsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.mxsd"/>
    <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.mxsd"/>
-   <extension-point id="startup" name="%ExtPoint.startup"/>
+   <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
    <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.mxsd"/>
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.mxsd"/>
-   <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
+   <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
 <!-- Text extension points -->
-   <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
-   <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
+   <extension-point id="documentProviders" name="%ExtPoint.documentProviders" schema="schema/documentProviders.exsd"/>
+   <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters" schema="schema/markerUpdaters.exsd"/>
 
    <extension
          id="workbench"
@@ -1506,7 +1506,7 @@
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.EditorView"
             id="org.eclipse.ui.internal.EditorView">
-      </view>      
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.markerImageProviders">
@@ -1848,30 +1848,30 @@
    <extension
          point="org.eclipse.ui.fontDefinitions">
       <fontDefinition
-      		id="org.eclipse.jface.bannerfont"
-            label="%FontsPreference.BannerFontLabel">
+            label="%FontsPreference.BannerFontLabel"
+            id="org.eclipse.jface.bannerfont">
          <description>
             %FontsPreference.BannerFontDescription
          </description>
       </fontDefinition>
       <fontDefinition
-      		id="org.eclipse.jface.dialogfont"
-            label="%FontsPreference.DialogFontLabel">
+            label="%FontsPreference.DialogFontLabel"
+            id="org.eclipse.jface.dialogfont">
          <description>
             %FontsPreference.DialogFontDescription
          </description>
       </fontDefinition>
       <fontDefinition
-      		id="org.eclipse.jface.headerfont"
             label="%FontsPreference.HeaderFontLabel"
-            registryKey="org.eclipse.jface.headerfont">
+            registryKey="org.eclipse.jface.headerfont"
+            id="org.eclipse.jface.headerfont">
          <description>
             %FontsPreference.HeaderFontDescription
          </description>
       </fontDefinition>
-       <fontDefinition
-      		id="org.eclipse.jface.textfont"
-            label="%FontsPreference.TextFontLabel">
+      <fontDefinition
+            label="%FontsPreference.TextFontLabel"
+            id="org.eclipse.jface.textfont">
          <description>
             %FontsPreference.TextFontDescription
          </description>
