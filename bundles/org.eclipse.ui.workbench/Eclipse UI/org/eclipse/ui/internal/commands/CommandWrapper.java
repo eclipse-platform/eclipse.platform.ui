@@ -152,7 +152,7 @@ final class CommandWrapper implements ICommand {
         // TODO Make this go faster.
         final List bindings = new ArrayList();
         final Map allBindings = bindingManager.getActiveBindings();
-        if (bindings == null) {
+        if (allBindings == null) {
             return bindings;
         }
 
