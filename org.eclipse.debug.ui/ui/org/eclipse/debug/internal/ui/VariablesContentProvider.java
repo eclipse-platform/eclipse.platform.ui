@@ -48,7 +48,10 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 			}
 			return children;
 		} catch (DebugException de) {
-			DebugUIPlugin.logError(de);
+			// XXX: temp fix for bug 6518 - do not log the error
+			// (most often, the thread has resumed underneath us
+			// and we can no longer retrieve variables or values
+			//DebugUIPlugin.logError(de);
 		}
 		return new Object[0];
 	}
