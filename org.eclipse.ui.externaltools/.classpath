@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="External Tools"/>
+    <classpathentry kind="src" path="Ant Builder"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.eclipse.ant.core"/>
