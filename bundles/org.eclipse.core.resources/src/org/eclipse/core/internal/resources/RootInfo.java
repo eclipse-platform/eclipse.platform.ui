@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.properties.PropertyStore;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class RootInfo extends ResourceInfo {
 	/** The property store for this resource */
-	protected PropertyStore propertyStore = null;
+	protected Object propertyStore = null;
 
 	/**
 	 * Returns the property store associated with this info.  The return value may be null.
 	 */
-	public PropertyStore getPropertyStore() {
+	public Object getPropertyStore() {
 		return propertyStore;
 	}
 
@@ -36,7 +35,7 @@ public class RootInfo extends ResourceInfo {
 	/**
 	 * Sets the property store associated with this info.  The value may be null.
 	 */
-	public void setPropertyStore(PropertyStore value) {
+	public void setPropertyStore(Object value) {
 		propertyStore = value;
 	}
 

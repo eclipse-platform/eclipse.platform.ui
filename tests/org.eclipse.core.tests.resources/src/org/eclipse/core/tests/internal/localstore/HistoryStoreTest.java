@@ -116,7 +116,7 @@ public class HistoryStoreTest extends ResourceTest {
 		// this does not cause the history store states to be removed.
 		store.remove(Path.ROOT, monitor);
 		// Now make sure all the states are really removed.
-		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
+		store.removeGarbage();
 	}
 
 	public HistoryStoreTest() {

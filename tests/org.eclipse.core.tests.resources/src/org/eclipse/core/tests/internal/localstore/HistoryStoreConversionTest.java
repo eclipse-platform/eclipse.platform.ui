@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.resources.FileState;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.localstore.IHistoryStore;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -55,7 +54,8 @@ public class HistoryStoreConversionTest extends ResourceTest {
 
 	public void testConversion() {
 		IPath baseLocation = getRandomLocation();
-		HistoryStore original = null;
+		IHistoryStore original = null;
+		boolean success = false;
 		try {
 			IProject project1 = getWorkspace().getRoot().getProject("proj1");
 			IFile file11 = project1.getFile("file11.txt");
@@ -70,24 +70,48 @@ public class HistoryStoreConversionTest extends ResourceTest {
 			ensureExistsInWorkspace(files, true);
 
 			assertTrue("0.1", baseLocation.toFile().mkdirs());
-			original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
-
+			original = createHistoryStore("1", baseLocation, 0x100, false, false, false);
 			for (int i = 0; i < files.length; i++)
 				for (int j = 0; j < 10; j++)
 					original.addState(files[i].getFullPath(), files[i].getLocation().toFile(), files[i].getLocation().toFile().lastModified(), false);
 			// close existing history store so all data is committed
-			original.shutdown(getMonitor());
+			try {
+				original.shutdown(getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
 			// do the conversion
-			HistoryStore2 destination = new HistoryStore2((Workspace) getWorkspace(), baseLocation, 0x100);
-			new HistoryStoreConverter().convertHistory((Workspace) getWorkspace(), baseLocation, 0x100, destination, false);
-
+			IHistoryStore destination = null;
+			destination = createHistoryStore("3", baseLocation, 0x100, true, true, false);
 			// reopen history store for comparison
-			original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
-			compare("1", original, destination);
+			original = createHistoryStore("4", baseLocation, 0x100, false, false, false);
+			compare("5", original, destination);
+			success = true;
 		} finally {
 			if (original != null)
-				original.shutdown(getMonitor());
+				try {
+					original.shutdown(getMonitor());
+				} catch (CoreException e) {
+					if (success)
+						fail("99.99", e);
+				}
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
 		}
+	}
+
+	private IHistoryStore createHistoryStore(String tag, IPath location, int limit, boolean newImpl, boolean convert, boolean rename) {
+		try {
+			return ResourcesCompatibilityHelper.createHistoryStore(location, limit, newImpl, convert, rename);
+		} catch (ClassNotFoundException e) {
+			fail(tag + ".1", e);
+		} catch (NoSuchMethodException e) {
+			fail(tag + ".2", e);
+		} catch (IllegalAccessException e) {
+			fail(tag + ".3", e);
+		} catch (InvocationTargetException e) {
+			fail(tag + ".4", e.getTargetException());
+		}
+		// never gets here
+		return null;
 	}
 }

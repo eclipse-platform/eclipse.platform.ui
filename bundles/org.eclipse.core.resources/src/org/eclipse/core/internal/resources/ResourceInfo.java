@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.Map;
-import org.eclipse.core.internal.properties.PropertyStore;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
@@ -174,7 +173,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	/**
 	 * Returns the property store associated with this info.  The return value may be null.
 	 */
-	public PropertyStore getPropertyStore() {
+	public Object getPropertyStore() {
 		return null;
 	}
 
@@ -339,7 +338,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	/**
 	 * Sets the property store associated with this info.  The value may be null.
 	 */
-	public void setPropertyStore(PropertyStore value) {
+	public void setPropertyStore(Object value) {
 		// needs to be implemented on subclasses
 	}
 

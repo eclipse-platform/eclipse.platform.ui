@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.properties.*;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.properties.IPropertyManager;
+import org.eclipse.core.internal.resources.ResourcesCompatibilityHelper;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -58,7 +59,7 @@ public class PropertyConversionTest extends ResourceTest {
 	}
 
 	public void testConversion() {
-		PropertyManager original = null;
+		IPropertyManager original = null;
 		try {
 			IProject project1 = getWorkspace().getRoot().getProject("proj1");
 			IFile file11 = project1.getFile("file11.txt");
@@ -72,8 +73,8 @@ public class PropertyConversionTest extends ResourceTest {
 			IResource[] files = {file11, file111, file21, file211};
 			ensureExistsInWorkspace(files, true);
 
-			original = new PropertyManager((Workspace) getWorkspace());
-			final PropertyManager tmpOriginal = original;
+			original = createPropertyManager("1", false, false);
+			final IPropertyManager tmpOriginal = original;
 			try {
 				// set properties on all resources
 				getWorkspace().getRoot().accept(new IResourceVisitor() {
@@ -89,22 +90,37 @@ public class PropertyConversionTest extends ResourceTest {
 					}
 				});
 			} catch (CoreException e) {
-				fail("0.1", e);
+				fail("1.9", e);
 			}
 			// do the conversion
-			PropertyManager2 destination = new PropertyManager2((Workspace) getWorkspace());
-			new PropertyStoreConverter().convertProperties((Workspace) getWorkspace(), destination);
+			IPropertyManager destination = createPropertyManager("2", true, true);
 
 			// reopen history store for comparison
-			original = new PropertyManager((Workspace) getWorkspace());
-			compare("1", getWorkspace(), original, destination);
+			original = createPropertyManager("3", false, false);
+			compare("4", getWorkspace(), original, destination);
 		} finally {
 			if (original != null)
 				try {
 					original.shutdown(getMonitor());
 				} catch (CoreException e) {
-					fail("2.0", e);
+					fail("99.9", e);
 				}
 		}
+	}
+
+	private IPropertyManager createPropertyManager(String tag, boolean newImpl, boolean convert) {
+		try {
+			return ResourcesCompatibilityHelper.createPropertyManager(newImpl, convert);
+		} catch (ClassNotFoundException e) {
+			fail(tag + ".1", e);
+		} catch (NoSuchMethodException e) {
+			fail(tag + ".2", e);
+		} catch (IllegalAccessException e) {
+			fail(tag + ".3", e);
+		} catch (InvocationTargetException e) {
+			fail(tag + ".4", e.getTargetException());
+		}
+		// never gets here
+		return null;
 	}
 }

@@ -44,10 +44,21 @@ public interface IPropertyManager extends IManager {
 	/**
 	 * Returns the value of the identified property on the given resource as
 	 * maintained by this store.
+	 * <p>
+	 * The qualifier part of the property name must be the unique identifier
+	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
+	 * </p>
 	 */
 	public String getProperty(IResource target, QualifiedName name) throws CoreException;
 
-	public void setProperty(IResource target, QualifiedName key, String value) throws CoreException;
+	/**
+	 * Sets the value of the identified property on the given resource.
+	 * <p>
+	 * The qualifier part of the property name must be the unique identifier
+	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
+	 * </p>
+	 */
+	public void setProperty(IResource target, QualifiedName name, String value) throws CoreException;
 
 	/**
 	 * Returns a map (<propertyKey: QualifiedName -> value: String>) containing 

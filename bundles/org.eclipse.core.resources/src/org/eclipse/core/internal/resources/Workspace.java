@@ -16,7 +16,6 @@ import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
-import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -1852,7 +1851,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			aliasManager.startup(null);
 			refreshManager = new RefreshManager(this);
 			refreshManager.startup(null);
-			propertyManager = PropertyManager.createPropertyManager(this);
+			propertyManager = ResourcesCompatibilityHelper.createPropertyManager();
 			propertyManager.startup(monitor);
 			charsetManager = new CharsetManager(this);
 			charsetManager.startup(null);

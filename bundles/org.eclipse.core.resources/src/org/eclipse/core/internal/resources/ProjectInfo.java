@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
 import org.eclipse.core.internal.events.BuildCommand;
-import org.eclipse.core.internal.properties.PropertyStore;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProjectNature;
 
@@ -25,7 +24,7 @@ public class ProjectInfo extends ResourceInfo {
 	protected HashMap natures = null;
 
 	/** The property store for this resource */
-	protected PropertyStore propertyStore = null;
+	protected Object propertyStore = null;
 
 	/**
 	 * Discards any instantiated nature and builder instances associated with
@@ -58,7 +57,7 @@ public class ProjectInfo extends ResourceInfo {
 	/**
 	 * Returns the property store associated with this info.  The return value may be null.
 	 */
-	public PropertyStore getPropertyStore() {
+	public Object getPropertyStore() {
 		return propertyStore;
 	}
 
@@ -103,7 +102,7 @@ public class ProjectInfo extends ResourceInfo {
 	/**
 	 * Sets the property store associated with this info.  The value may be null.
 	 */
-	public void setPropertyStore(PropertyStore value) {
+	public void setPropertyStore(Object value) {
 		propertyStore = value;
 	}
 }

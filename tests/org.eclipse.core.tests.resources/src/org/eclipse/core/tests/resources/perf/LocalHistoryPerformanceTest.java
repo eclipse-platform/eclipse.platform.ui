@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources.perf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.IHistoryStore;
-import org.eclipse.core.internal.localstore.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -157,7 +156,7 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 					// this does not cause the history store states to be removed.
 					store.remove(Path.ROOT, getMonitor());
 					// Now make sure all the states are really removed.
-					TestingSupport.removeGarbage(store);
+					store.removeGarbage();
 				} catch (Exception e) {
 					fail("2.0", e);
 				}

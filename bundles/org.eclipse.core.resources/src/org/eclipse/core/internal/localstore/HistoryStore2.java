@@ -100,7 +100,7 @@ public class HistoryStore2 implements IHistoryStore {
 	private Set blobsToRemove = new HashSet();
 	private BucketTree tree;
 	private Workspace workspace;
-
+	
 	public HistoryStore2(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
 		location.toFile().mkdirs();

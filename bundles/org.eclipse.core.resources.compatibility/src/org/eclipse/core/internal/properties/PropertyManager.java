@@ -24,25 +24,9 @@ import org.eclipse.core.runtime.*;
  */
 public class PropertyManager implements IManager, ILifecycleListener, IPropertyManager {
 	protected Workspace workspace;
-	private static final String ENABLE_NEW_PROPERTY_STORE = ResourcesPlugin.PI_RESOURCES + ".newProperties"; //$NON-NLS-1$
 
 	public PropertyManager(Workspace workspace) {
 		this.workspace = workspace;
-	}
-
-	public static IPropertyManager createPropertyManager(Workspace workspace) {
-		// the default is to use old implementation
-		if (!Boolean.getBoolean(ENABLE_NEW_PROPERTY_STORE))
-			// keep using the old history store
-			return new PropertyManager(workspace);
-		PropertyManager2 newPropertyManager = new PropertyManager2(workspace);
-		// try to convert the existing data now	
-		IStatus result = new PropertyStoreConverter().convertProperties(workspace, newPropertyManager);
-		if (result.getSeverity() != IStatus.OK)
-			// if we do anything (either we fail or succeed converting), a non-OK status is returned
-			ResourcesPlugin.getPlugin().getLog().log(result);
-		return newPropertyManager;
-
 	}
 
 	public void closePropertyStore(IResource target) throws CoreException {
@@ -199,7 +183,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 				String message = NLS.bind(Messages.properties_storeNotAvailable, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
-			PropertyStore store = info.getPropertyStore();
+			PropertyStore store = (PropertyStore) info.getPropertyStore();
 			if (store == null)
 				store = openPropertyStore(host);
 			return store;
@@ -219,7 +203,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 		Resource host = getPropertyHost(target);
 		ResourceInfo info = host.getResourceInfo(false, false);
 		if (info != null) {
-			PropertyStore store = info.getPropertyStore();
+			PropertyStore store = (PropertyStore) info.getPropertyStore();
 			if (store != null) {
 				//sync on the store in case of concurrent deletion
 				synchronized (store) {
