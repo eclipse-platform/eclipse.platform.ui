@@ -39,8 +39,8 @@ import org.osgi.framework.Bundle;
  * 
  * @since 3.0
  * 
- * @issue The dependency on org.eclipse.jface.text for ITextSelection must be severed
- * Nick suggests it may be possible to do with IActionFilter
+ * Note: The dependency on org.eclipse.jface.text for ITextSelection must be severed
+ * It may be possible to do with IActionFilter
  * generic workbench registers IActionFilter for "size" property against IStructuredSelection
  * workbench text registers IActionFilter for "size" property against ITextSelection
  * code here: sel.getAdapter(IActionFilter.class)
@@ -145,7 +145,8 @@ public final class SelectionEnabler {
 	}
 
 /**
- * ActionEnabler constructor.
+ * Create a new instance of the receiver.
+ * @param configElement
  */
 public SelectionEnabler(IConfigurationElement configElement) {
 	super();
@@ -155,7 +156,9 @@ public SelectionEnabler(IConfigurationElement configElement) {
 	parseClasses(configElement);
 }
 /**
- * Returns true if the given selection matches the conditions 
+ * Check if the receiver is enabled for the given selection.
+ * @param selection
+ * @return <code>true</code> if the given selection matches the conditions 
  * specified in <code>IConfirgurationElement</code>.
  */
 public boolean isEnabledForSelection(ISelection selection) {
@@ -408,6 +411,9 @@ private boolean verifyElement(IAdaptable element) {
 /**
  * Verifies that the given name matches the given
  * wildcard filter. Returns true if it does.
+ * @param name
+ * @param filter
+ * @return <code>true</code> if there is a match
  */
 public static boolean verifyNameMatch(String name, String filter) {
 	return SimpleWildcardTester.testWildcardIgnoreCase(filter, name);

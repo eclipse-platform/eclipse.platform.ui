@@ -113,8 +113,6 @@ public class ImportResourcesAction
 
 	/**
 	 * Invoke the Import wizards selection Wizard.
-	 *
-	 * @param browser Window
 	 */
 	public void run() {
 		if (workbenchWindow == null) {

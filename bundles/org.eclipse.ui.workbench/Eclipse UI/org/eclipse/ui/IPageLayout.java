@@ -410,7 +410,7 @@ public IViewLayout getViewLayout(String viewId);
  *   or the special editor area id returned by <code>getEditorArea</code>
  * 
  * @since 3.0
- * @issue should we allow regular views' titles to be hidden?
+ * Note: should we allow regular views' titles to be hidden?
  */
 public void addStandaloneView(String viewId, boolean showTitle,
         int relationship, float ratio, String refId);

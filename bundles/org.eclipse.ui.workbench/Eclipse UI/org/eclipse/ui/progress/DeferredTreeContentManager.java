@@ -131,7 +131,7 @@ public class DeferredTreeContentManager {
 	 * deferred adapter. If children are waiting to be retrieved for this parent
 	 * already, that job is cancelled and another is started.
 	 * 
-	 * @param parent.
+	 * @param parent
 	 *            The parent object being filled in,
 	 * @param adapter
 	 *            The adapter being used to fetch the children.

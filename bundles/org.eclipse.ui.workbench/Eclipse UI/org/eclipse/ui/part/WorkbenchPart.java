@@ -42,8 +42,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * <code>EditorPart</code>.
  * </p>
  * 
- * @see ViewPart
- * @see EditorPart
+ * @see org.eclipse.ui.part.ViewPart
+ * @see org.eclipse.ui.part.EditorPart
  */
 public abstract class WorkbenchPart implements IWorkbenchPart2, IExecutableExtension {
 	private String title = ""; //$NON-NLS-1$
@@ -118,14 +118,20 @@ protected void firePropertyChange(final int propertyId) {
 	}
 }
 /**
- * This implementation of the method declared by <code>IAdaptable</code>
- * passes the request along to the platform's adapter manager; roughly
- * <code>Platform.getAdapterManager().getAdapter(this, adapter)</code>.
+ * {@inheritDoc}
+ * 
  * Subclasses may override this method (however, if they do so, they
  * should invoke the method on their superclass to ensure that the
  * Platform's adapter manager is consulted).
  */
 public Object getAdapter(Class adapter) {
+	
+	/**
+	 * This implementation of the method declared by <code>IAdaptable</code>
+	 * passes the request along to the platform's adapter manager; roughly
+	 * <code>Platform.getAdapterManager().getAdapter(this, adapter)</code>.
+	 */
+
 	return Platform.getAdapterManager().getAdapter(this, adapter);
 }
 /**
@@ -195,6 +201,7 @@ public void removePropertyListener(IPropertyListener l) {
  */
 public abstract void setFocus();
 /**
+ * {@inheritDoc}
  * The <code>WorkbenchPart</code> implementation of this
  * <code>IExecutableExtension</code> records the configuration element in
  * and internal state variable (accessible via <code>getConfigElement</code>).
@@ -302,7 +309,7 @@ protected void setTitleToolTip(String toolTip) {
  * is listening to.
  * @param busy boolean to indicate that the busy state has started
  *  	or ended.
- * @see IWorkbenchPartProgressService.schedule(Job,int,boolean).
+ * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusyForFamily(Object)
  * @since 3.0
  */
 public void showBusy(boolean busy){

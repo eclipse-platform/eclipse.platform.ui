@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.dialogs.NewWizard;
  * enablement state up to date. Ordinarily, the window's references to these
  * listeners will be dropped automatically when the window closes. However,
  * if the client needs to get rid of an action while the window is still open,
- * the client must call {@link IWorkbenchAction#dispose dispose} to give the
+ * the client must call #dispose() to give the
  * action an opportunity to deregister its listeners and to perform any other
  * cleanup.
  * </p>
@@ -74,7 +74,8 @@ public class NewWizardAction
 	private IWorkbenchWindow workbenchWindow;
 	
 	/**
-	 *	Create a new instance of this class.
+	 * Create a new instance of this class.
+	 * @param window
 	 */
 	public NewWizardAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
@@ -103,6 +104,7 @@ public class NewWizardAction
 	/**
 	 * Returns the id of the category of wizards to show
 	 * or <code>null</code> to show all categories.
+	 * @return String
 	 */
 	public String getCategoryId() {
 		return categoryId;
@@ -110,6 +112,7 @@ public class NewWizardAction
 	/**
 	 * Sets the id of the category of wizards to show
 	 * or <code>null</code> to show all categories.
+	 * @param id
 	 */
 	public void setCategoryId(String id) {
 		categoryId = id;
