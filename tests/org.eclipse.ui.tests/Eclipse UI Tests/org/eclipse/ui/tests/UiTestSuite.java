@@ -35,7 +35,6 @@ import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.presentations.PresentationsTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
-import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
 
 /**
@@ -55,11 +54,7 @@ public class UiTestSuite extends TestSuite {
      */
     public UiTestSuite() {
         addTest(new ApiTestSuite());
-
-        if (!PlatformUtil.onLinux()) {
-            addTest(new UIAutomatedSuite());
-        }
-
+        addTest(new UIAutomatedSuite());
         addTest(new PropertySheetTestSuite());
         addTest(new InternalTestSuite());
         addTest(new NavigatorTestSuite());
