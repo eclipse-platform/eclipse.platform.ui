@@ -208,7 +208,7 @@ public final class AdapterManager implements IAdapterManager {
 			factories.put(adaptable, list);
 		}
 		list.add(factory);
-		extensionFactory.registerAdapters(factory, adaptable);
+		getExtensionFactory().registerAdapters(factory, adaptable);
 		flushLookup();
 	}
 	/*
