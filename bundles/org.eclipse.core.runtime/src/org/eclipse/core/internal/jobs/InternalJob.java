@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.jobs.*;
  * Internal implementation class for jobs.
  */
 public abstract class InternalJob extends PlatformObject implements Comparable {
-
 	/** 
 	 * Job state code (value 8) indicating that a job is blocked by another currently
 	 * running job.  From an API point of view, this is the same as WAITING.
@@ -31,6 +30,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * this is the same as RUNNING.
 	 */
 	public static final int ABOUT_TO_RUN = 0x10;
+	
+	//flag mask bits
+	private static final int M_STATE = 0xFF;
+	private static final int M_SYSTEM = 0x0100;
+	private static final int M_USER = 0x0200;
+	
+	private static final JobManager manager = JobManager.getInstance();
+	private static int nextJobNumber = 0;
 
 	/**
 	 * Start time constant indicating a job should be started at
@@ -41,15 +48,6 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Start time constant indicating that the job has no start time.
 	 */
 	protected static final long T_NONE = -1;
-	
-	
-	//flag mask bits
-	private static final int M_STATE = 0xFF;
-	private static final int M_SYSTEM = 0x0100;
-	private static final int M_USER = 0x0200;
-	
-	private static final JobManager manager = JobManager.getInstance();
-	private static int nextJobNumber = 0;
 	
 	private volatile int flags = Job.NONE;
 	private final int jobNumber = nextJobNumber++;
@@ -65,6 +63,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	private InternalJob previous;
 	private int priority = Job.LONG;
+	/**
+	 * Arbitrary properties (key,value) pairs, attached
+	 * to a job instance by a third party.
+	 */
+	private ObjectMap properties;
 	private IStatus result;
 	private ISchedulingRule schedulingRule;
 	/**
@@ -78,11 +81,6 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * The thread that is currently running this job
 	 */
 	private Thread thread = null;
-	/**
-	 * Arbitrary properties (key,value) pairs, attached
-	 * to a job instance by a third party.
-	 */
-	private ObjectMap properties;
 
 	protected InternalJob(String name) {
 		Assert.isNotNull(name);
@@ -114,6 +112,16 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	protected boolean cancel() {
 		return manager.cancel(this);
+	}
+	/**
+	 * For debugging purposes only.  Asserts that the job is in
+	 * the expected state.
+	 * @param expectedState The expected state
+	 */
+	private void checkState(int expectedState) {
+		int actualState = getState();
+		if (actualState != expectedState)
+			new RuntimeException("Method should not be called when in state: " + toStateString(actualState)).printStackTrace(); //$NON-NLS-1$
 	}
 	public final int compareTo(Object otherJob) {
 		return (int) (((InternalJob) otherJob).startTime - startTime);
@@ -295,12 +303,18 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			default :
 				throw new IllegalArgumentException(String.valueOf(newPriority));
 		}
+		//pedantic checking
+		if (JobManager.DEBUG)
+			checkState(Job.NONE); //$NON-NLS-1$
 	}
 	protected void setProgressGroup(IProgressMonitor group, int ticks) {
 		Assert.isNotNull(group);
 		IProgressMonitor result = manager.createMonitor(this, group, ticks);
 		if (result != null)
 			setProgressMonitor(result);
+		//pedantic checking
+		if (JobManager.DEBUG)
+			checkState(Job.NONE); //$NON-NLS-1$
 	}
 	final void setProgressMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
@@ -334,6 +348,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	protected void setRule(ISchedulingRule rule) {
 		manager.setRule(this, rule);
+		//pedantic checking
+		if (JobManager.DEBUG)
+			checkState(Job.NONE); //$NON-NLS-1$
 	}
 	final void setStartTime(long time) {
 		startTime = time;
@@ -343,18 +360,24 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	protected void setSystem(boolean value) {
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
-	}
-	/* (non-javadoc)
-	 * @see Job.setUser
-	 */
-	protected void setUser(boolean value) {
-		flags = value ? flags | M_USER : flags & ~M_USER;
+		//pedantic checking
+		if (JobManager.DEBUG)
+			checkState(Job.NONE); //$NON-NLS-1$
 	}
 	/* (non-javadoc)
 	 * @see Job.setThread
 	 */
 	protected void setThread(Thread thread) {
 		this.thread = thread;
+	}
+	/* (non-javadoc)
+	 * @see Job.setUser
+	 */
+	protected void setUser(boolean value) {
+		flags = value ? flags | M_USER : flags & ~M_USER;
+		//pedantic checking
+		if (JobManager.DEBUG)
+			checkState(Job.NONE); //$NON-NLS-1$
 	}
 	/* (Non-javadoc)
 	 * @see Job#shouldSchedule
@@ -364,6 +387,24 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	protected boolean sleep() {
 		return manager.sleep(this);
+	}
+	/**
+	 * Returns a string representation of the given state. 
+	 * For debugging purposes only.
+	 */
+	private String toStateString(int state) {
+		switch (state) {
+			case Job.NONE:
+				return "NONE"; //$NON-NLS-1$
+			case Job.WAITING:
+				return "WAITING"; //$NON-NLS-1$
+			case Job.SLEEPING:
+				return "SLEEPING"; //$NON-NLS-1$
+			case Job.RUNNING:
+				return "RUNNING"; //$NON-NLS-1$
+			default:
+				return "Unknown state: " + state; //$NON-NLS-1$
+		}
 	}
 	public String toString() {
 		return getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
