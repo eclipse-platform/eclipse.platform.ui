@@ -36,8 +36,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -136,7 +134,9 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -146,6 +146,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
+import org.eclipse.ui.internal.commands.CommandManagerWrapper;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
@@ -673,6 +674,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						text.removeVerifyKeyListener(fActivationCodeTrigger);
 				}
 				
+//				if (fActions != null) {
+//					Iterator iter= fActions.values().iterator();
+//					while (iter.hasNext()) {
+//						IAction action= (IAction)iter.next();
+//						unregisterActionFromKeyActivation(action);
+//					}
+//				}
+				
 				fIsInstalled= false;
 				fKeyBindingService= null;
 			}
@@ -694,8 +703,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
-			if (action.getActionDefinitionId() != null)
+			if (action.getActionDefinitionId() != null) {
 				fKeyBindingService.unregisterAction(action);
+				CommandManagerWrapper commandMgr= (CommandManagerWrapper)PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+				Map map= new HashMap(1);
+				map.put(action.getActionDefinitionId(), null);
+				commandMgr.setHandlersByCommandId(map);
+			}
 		}
 
 		/**
@@ -747,12 +761,40 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Internal part and shell activation listener for triggering state validation.
 	 * @since 2.0
 	 */
-	class ActivationListener extends ShellAdapter implements IPartListener {
+	class ActivationListener implements IPartListener, IWindowListener {
 		
 		/** Cache of the active workbench part. */
 		private IWorkbenchPart fActivePart;
 		/** Indicates whether activation handling is currently be done. */
 		private boolean fIsHandlingActivation= false;
+		/**
+		 * The part service.
+		 * @since 3.1
+		 */
+		private IPartService fPartService;
+		
+		/**
+		 * Creates this activation listener.
+		 * 
+		 * @param partService the part service on which to add the part listener
+		 * @since 3.1
+		 */
+		public ActivationListener(IPartService partService) {
+			fPartService= partService;
+			fPartService.addPartListener(this);
+			PlatformUI.getWorkbench().addWindowListener(this);
+		}
+		
+		/**
+		 * Disposes this activation listenern.
+		 *
+		 * @since 3.1
+		 */
+		public void dispose() {
+			fPartService.removePartListener(this);
+			PlatformUI.getWorkbench().removeWindowListener(this);
+			fPartService= null;
+		}
 		
 		/*
 		 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
@@ -787,22 +829,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void partOpened(IWorkbenchPart part) {
 		}
 	
-		/*
-		 * @see ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
-		 */
-		public void shellActivated(ShellEvent e) {
-			/*
-			 * Workaround for problem described in 
-			 * http://dev.eclipse.org/bugs/show_bug.cgi?id=11731
-			 * Will be removed when SWT has solved the problem.
-			 */
-			e.widget.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					handleActivation();
-				}
-			});
-		}
-		
 		/**
 		 * Handles the activation triggering a element state check in the editor.
 		 */
@@ -818,6 +844,46 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fIsHandlingActivation= false;
 				}
 			}
+		}
+
+		/*
+		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
+		 * @since 3.1
+		 */
+		public void windowActivated(IWorkbenchWindow window) {
+			if (window == getEditorSite().getWorkbenchWindow()) {
+				/*
+				 * Workaround for problem described in 
+				 * http://dev.eclipse.org/bugs/show_bug.cgi?id=11731
+				 * Will be removed when SWT has solved the problem.
+				 */
+				window.getShell().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						handleActivation();
+					}
+				});
+			}
+		}
+
+		/*
+		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
+		 * @since 3.1
+		 */
+		public void windowDeactivated(IWorkbenchWindow window) {
+		}
+
+		/*
+		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
+		 * @since 3.1
+		 */
+		public void windowClosed(IWorkbenchWindow window) {
+		}
+
+		/*
+		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
+		 * @since 3.1
+		 */
+		public void windowOpened(IWorkbenchWindow window) {
 		}
 	}
 	
@@ -1707,7 +1773,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * The editor's activation listener.
 	 * @since 2.0
 	 */
-	private ActivationListener fActivationListener= new ActivationListener();
+	private ActivationListener fActivationListener;
 	/** 
 	 * The map of the editor's status fields.
 	 * @since 2.0
@@ -2334,9 +2400,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		setSite(site);
 		
-		internalInit(site.getWorkbenchWindow(),site, input);
-		site.getWorkbenchWindow().getPartService().addPartListener(fActivationListener);
-		site.getShell().addShellListener(fActivationListener);
+		internalInit(site.getWorkbenchWindow(), site, input);
+		fActivationListener= new ActivationListener(site.getWorkbenchWindow().getPartService());
 	}
 	
 	/**
@@ -3002,10 +3067,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void dispose() {
 		
 		if (fActivationListener != null) {
-			getSite().getWorkbenchWindow().getPartService().removePartListener(fActivationListener);
-			Shell shell= getSite().getShell();
-			if (shell != null && !shell.isDisposed())
-				shell.removeShellListener(fActivationListener);
+			fActivationListener.dispose();
 			fActivationListener= null;
 		}
 		
