@@ -68,13 +68,17 @@ public interface IWorkbenchPartReference {
 	 * Returns the name of the part, as it should be shown in tabs
 	 * 
 	 * @return the part name
+	 * 
+	 * @since 3.0
 	 */
 	public String getPartName();
 	
 	/**
 	 * Returns the content description for the part (or the empty string if none)
 	 * 
-	 * @return the content description for the part  
+	 * @return the content description for the part
+	 * 
+	 * @since 3.0  
 	 */
 	public String getContentDescription();
 }

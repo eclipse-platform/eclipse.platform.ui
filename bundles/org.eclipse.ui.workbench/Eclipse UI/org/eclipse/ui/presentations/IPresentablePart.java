@@ -101,13 +101,7 @@ public interface IPresentablePart {
 	 * Adds a listener for changes to properties of this workbench part.
 	 * Has no effect if an identical listener is already registered.
 	 * <p>
-	 * The properties ids are as follows:
-	 * <ul>
-	 *   <li><code>PROP_TITLE</code> </li>
-	 *   <li><code>PROP_INPUT</code> </li>
-	 *   <li><code>PROP_DIRTY</code> </li>
-	 *   <li><code>PROP_TOOLBAR</code> </li>
-	 * </ul>
+	 * The properties ids are defined by the PROP_* constants, above.
 	 * </p>
 	 *
 	 * @param listener a property listener (not null)

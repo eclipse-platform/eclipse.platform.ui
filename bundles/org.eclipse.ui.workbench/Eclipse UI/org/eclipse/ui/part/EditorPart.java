@@ -11,7 +11,11 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract base implementation of all workbench editors.
@@ -62,8 +66,6 @@ import org.eclipse.ui.*;
  */
 public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
-	private boolean automaticPartName = true;
-	
 	/**
 	 * Editor input, or <code>null</code> if none.
 	 */
@@ -173,45 +175,17 @@ protected void setInput(IEditorInput input) {
 	editorInput = input;
 }
 
-/**
- * Sets the part name, as it should be displayed in tabs. The name will also be included 
- * in the part's title unless it explicitly calls setTitle to override this behavior.
- * Setting the part name to the empty string (default) will cause the part title to be
- * used as the part name. New editors should use setPartName instead of setTitle.
- *
- * @param partName the part name, as it should be displayed in tabs.
+/* (non-Javadoc)
  * 
- * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
- */
-protected void setPartName(String partName) {
-	automaticPartName = partName.equals(""); //$NON-NLS-1$
-	
-	if (automaticPartName && !automaticTitle) {
-		partName = getTitle();
-	}
-	
-	super.setPartName(partName);
-}
-
-/**
- * Sets or clears the title of this editor. Setting this to null or the empty string (default)
- * will cause the title to be automatically generated based on the part name and
- * content description. Setting this to a non-empty string will override this
- * behavior.
- * <p>
- * For compatibility with old editors, setting the setTitle will also set the part name unless
- * the editor calls setPartName with a non-empty string to override this behavior.
- * </p> 
- *
- * @deprecated new code should use setPartName and setContentDescription
- *
- * @param title the title, or <code>null</code> to clear
+ * @see WorkbenchPart
  */
 protected void setTitle(String title) {
+	title = Util.safeString(title);
+	
 	super.setTitle(title);
 	
-	if (automaticPartName && !automaticTitle) {
-		setPartName(""); //$NON-NLS-1$
+	if (!title.equals("")) {
+		internalSetPartName(title); //$NON-NLS-1$
 	}
 }
 
