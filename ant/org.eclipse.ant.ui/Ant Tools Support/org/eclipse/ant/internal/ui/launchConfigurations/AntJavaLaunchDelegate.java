@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
-import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Used by the AntLaunchDelegate for Ant builds in a separate VM
@@ -30,10 +29,6 @@ public class AntJavaLaunchDelegate extends JavaLocalApplicationLaunchConfigurati
 		} catch (CoreException ce) {
 			//likely dealing with a non-Java project
 		}
-		//compute classpath
-		unresolvedClasspathEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-		resolvedClasspathEntries = JavaRuntime.resolveRuntimeClasspath(unresolvedClasspathEntries, configuration);
-		
 		//no need to check for breakpoints as always in run mode
 		return true;
 	}
