@@ -921,7 +921,7 @@ public final class InternalPlatform {
 
 	public boolean isRunning() {
 		try {
-			return context.getBundle().getState() == Bundle.ACTIVE;
+			return initialized && context.getBundle().getState() == Bundle.ACTIVE;
 		} catch (IllegalStateException e) {
 			return false;
 		}
