@@ -59,9 +59,7 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ArrayList perspectiveActionIds = new ArrayList(3);
 	private ArrayList fastViews = new ArrayList(3);
-	//Number of open editors before reusing. If < 0, use the 
-	//user preference settings.
-	private int reuseEditors = -1;
+
 /**
  * LayoutFactory constructor comment.
  */
@@ -482,5 +480,16 @@ public void stackView(String viewId, String refId) {
 	} catch (PartInitException e) {
 		WorkbenchPlugin.log(e.getMessage());
 	}
+}
+/**
+ * @see IPageLayout
+ */
+public int getEditorReuseThreshold() {
+	return -1;
+}
+/**
+ * @see IPageLayout
+ */
+public void setEditorReuseThreshold(int openEditors) {
 }
 }

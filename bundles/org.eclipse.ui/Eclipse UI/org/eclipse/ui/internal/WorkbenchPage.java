@@ -2367,6 +2367,11 @@ public int getEditorReuseThreshold() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
 	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 }
+/**
+ * @see IPageLayout.
+ */
+public void setEditorReuseThreshold(int openEditors) {
+}
 /*
  * Returns the editors in activation order (oldest first).
  */
