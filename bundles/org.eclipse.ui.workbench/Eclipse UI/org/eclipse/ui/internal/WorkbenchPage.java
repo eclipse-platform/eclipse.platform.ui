@@ -1198,7 +1198,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			if (errors[0] == 1)
 				message = WorkbenchMessages.getString("WorkbenchPage.oneErrorClosingPage"); //$NON-NLS-1$
 			else
-				message = WorkbenchMessages.getString("WorkbenchPage.multipleErrorsRestoring"); //$NON-NLS-1$
+				message = WorkbenchMessages.getString("WorkbenchPage.multipleErrorsClosingPage"); //$NON-NLS-1$
 			MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 		}
 		activePart = null;
