@@ -29,12 +29,7 @@ import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -541,18 +536,14 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		XmlElement element= (XmlElement)selection.getFirstElement();
 		String path = getElementPath(element);
-		
 		if (path != null) {
-			IPath resourcePath= new Path(path);
-			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-			IResource resource= root.getFileForLocation(resourcePath);
-			if (resource != null && resource.getType() == IResource.FILE && resource.exists()) {
+			IFile file= AntUtil.getFileForLocation(path, null);
+			if (file != null) {
 				menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
-				openWithMenu.setFile(resource);
+				openWithMenu.setFile(file);
 				submenu.add(openWithMenu);
 				menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
-				
 			}
 		}
 	}
