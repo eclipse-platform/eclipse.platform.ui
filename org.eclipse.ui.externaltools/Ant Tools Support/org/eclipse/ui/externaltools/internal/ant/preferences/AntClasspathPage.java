@@ -337,6 +337,8 @@ public class AntClasspathPage extends AntPage {
 		antHomeComposite.setLayoutData(gd);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		antHomeComposite.setLayout(layout);
 		
 		antHomeButton = new Button(antHomeComposite, SWT.CHECK);
