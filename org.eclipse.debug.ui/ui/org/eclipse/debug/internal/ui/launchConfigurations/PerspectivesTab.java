@@ -248,6 +248,11 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		createVerticalSpacer(composite, 2);
 		
 		fRestoreDefaults = createPushButton(composite, LaunchConfigurationsMessages.getString("PerspectivesTab.3"), null); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan= 2;
+		gd.horizontalAlignment= SWT.END;
+		gd.verticalAlignment= SWT.END;
+		fRestoreDefaults.setLayoutData(gd);
 		fRestoreDefaults.addSelectionListener(fSelectionAdapter);
 		
 		Dialog.applyDialogFont(composite);
