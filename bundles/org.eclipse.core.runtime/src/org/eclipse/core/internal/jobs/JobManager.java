@@ -115,12 +115,16 @@ public class JobManager implements IJobManager {
 	 */
 	protected boolean cancel(InternalJob job) {
 		synchronized (lock) {
-			if (job.getState() == Job.RUNNING) {
-				IProgressMonitor monitor = job.getMonitor();
-				if (monitor != null) {
-					monitor.setCanceled(true);
-					return false;
-				}
+			switch (job.getState()) {
+				case Job.NONE :
+					return true;
+				case Job.RUNNING :
+					//cannot cancel a job that has already started
+					IProgressMonitor monitor = job.getMonitor();
+					if (monitor != null) {
+						monitor.setCanceled(true);
+						return false;
+					}
 			}
 			changeState(job, Job.NONE);
 		}
@@ -232,17 +236,18 @@ public class JobManager implements IJobManager {
 	 * to stop, but worker threads may still continue processing.
 	 */
 	private void doShutdown() {
+		//cancel all running jobs
+		Job[] toCancel= null;
 		synchronized (lock) {
-			//cancel all running jobs
-			for (Iterator it = running.iterator(); it.hasNext();) {
-				Job job = (Job) it.next();
-				job.cancel();
-			}
+			toCancel = (Job[])running.toArray(new Job[running.size()]);
 			//clean up
 			sleeping.clear();
 			waiting.clear();
 			running.clear();
 		}
+		//cancel jobs outside sync block to avoid deadlock
+		for (int i = 0; i < toCancel.length; i++)
+			cancel(toCancel[i]);
 		pool.shutdown();
 	}
 	public void endRule() {
