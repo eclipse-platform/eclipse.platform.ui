@@ -21,11 +21,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -39,6 +41,8 @@ import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
  * </p>
  */
 public class ExternalToolsUtil {
+
+	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 
 	/**
 	 * Not to be instantiated.
@@ -318,5 +322,29 @@ public class ExternalToolsUtil {
 	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
 		Map map = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map) null);
 		return map;
+	}
+
+	/**
+	 * Returns a launch configuration from the given ICommand arguments. If the
+	 * given arguments are from an old-style external tool, an unsaved working
+	 * copy will be created from the arguments and returned.
+	 * 
+	 * @param commandArgs the builder ICommand arguments
+	 * @param newName a new name for the config if the one in the command is
+	 * invalid
+	 * @return a launch configuration, a launch configuration working copy, or
+	 * <code>null</code> if not possible.
+	 */
+	public static ILaunchConfiguration configFromBuildCommandArgs(Map commandArgs) {
+		String configHandle = (String) commandArgs.get(LAUNCH_CONFIG_HANDLE);
+		if (configHandle == null) {
+			// Probably an old-style external tool. Try to migrate.
+			return ExternalToolMigration.configFromArgumentMap(commandArgs);
+		}
+		try {
+			return DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(configHandle);
+		} catch (CoreException e) {
+			return null;
+		}
 	}
 }

@@ -23,52 +23,35 @@ public interface IExternalToolConstants {
 	public static final String PLUGIN_ID = "org.eclipse.ui.externaltools"; //$NON-NLS-1$;
 
 	/**
-	 * Extension point to declare types of external tools
-	 * (value <code>toolTypes</code>).
-	 */
-	public static final String PL_TOOL_TYPES = "toolTypes"; //$NON-NLS-1$
-	
-	/**
 	 * Extension point to declare argument variables
 	 * (value <code>argumentVariables</code>).
 	 */
 	public static final String PL_ARGUMENT_VARIABLES = "argumentVariables"; //$NON-NLS-1$
-	
+
 	/**
 	 * Extension point to declare file variables
 	 * (value <code>fileVariables</code>).
 	 */
 	public static final String PL_FILE_VARIABLES = "fileVariables"; //$NON-NLS-1$
-	
+
 	/**
 	 * Extension point to declare directory variables
 	 * (value <code>directoryVariables</code>).
 	 */
 	public static final String PL_DIRECTORY_VARIABLES = "directoryVariables"; //$NON-NLS-1$
-	
+
 	/**
 	 * Extension point to declare refresh scope variables
 	 * (value <code>refreshVariables</code>).
 	 */
 	public static final String PL_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$
-	
 
 	// ------- Views -------
-	/**
-	 * External tool view identifier (value <code>org.eclipse.ui.externaltools.ExternalToolView</code>).
-	 */
-	public static final String VIEW_ID = PLUGIN_ID + ".ExternalToolView"; //$NON-NLS-1$
-	
-	/**
-	 * Log Console view identifier (value <code>org.eclipse.ui.externaltools.LogConsoleView</code>).
-	 */
-	public static final String LOG_CONSOLE_VIEW_ID = PLUGIN_ID + ".LogConsoleView"; //$NON-NLS-1$
-	
+
 	/**
 	 * Ant View identifier (value <code>org.eclipse.ui.externaltools.AntView</code>).
 	 */
 	public static final String ANT_VIEW_ID = PLUGIN_ID + ".AntView"; //$NON-NLS-1$
-
 
 	// ------- Tool Types -------
 	/**
@@ -82,9 +65,8 @@ public interface IExternalToolConstants {
 	 */
 	public static final String TOOL_TYPE_ANT_BUILD = "antBuildType"; //$NON-NLS-1$;
 
-
 	// ------- Variables -------
-	
+
 	/**
 	 * Variable that expands to the absolute path on the system's hard drive
 	 * to the workspace directory (value <code>workspace_loc</code>).
@@ -119,7 +101,7 @@ public interface IExternalToolConstants {
 	 * of a resource (value <code>resource_path</code>).
 	 */
 	public static final String VAR_RESOURCE_PATH = "resource_path"; //$NON-NLS-1$
-	
+
 	/**
 	 * Variable that expands to the name of a resource (value <code>resource_name</code>).
 	 */
@@ -162,13 +144,13 @@ public interface IExternalToolConstants {
 	 * Variable that expands to the current editor selected text (value <code>editor_sel_text</code>).
 	 */
 	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
-	
+
 	// ------- Refresh Variables -------
 	/**
 	 * Variable that expands to the workspace root object (value <code>workspace</code>).
 	 */
 	public static final String VAR_WORKSPACE = "workspace"; //$NON-NLS-1$
-	
+
 	/**
 	 * Variable that expands to the project resource (value <code>project</code>).
 	 */
@@ -213,88 +195,91 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>none</code>).
 	 */
 	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
-	
+
 	// ------- Images -------
 	/**
 	 * External tools wizard banner image
 	 */
 	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Refresh action image
 	 */
 	public static final String IMG_ACTION_REFRESH = PLUGIN_ID + ".IMG_ACTION_REFRESH"; //$NON-NLS-1$
-	
+
 	/**
 	 * Main tab image.
-	 */ 
+	 */
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
-	
+
 	/**
 	 * Options tab image.
-	 */ 
+	 */
 	public static final String IMG_TAB_OPTIONS = PLUGIN_ID + ".IMG_TAB_OPTIONS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Ant Targets tab image.
-	 */ 
+	 */
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
-		
+
 	// ------- Launch configuration types --------
 	/**
-	 * Ant launch configuration type identifier
+	 * Ant launch configuration type identifier.
 	 */
 	public static final String ID_ANT_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntLaunchConfigurationType"; //$NON-NLS-1$
 	
 	/**
-	 * Program launch configuration type identifier
+	 * Ant builder launch configuration type identifier. Ant project builders
+	 * are of this type.
+	 */
+	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntBuilderLaunchConfigurationType"; //$NON-NLS-1$
+
+	/**
+	 * Program launch configuration type identifier.
 	 */
 	public static final String ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"; //$NON-NLS-1$
 	
+	/**
+	 * Program builder launch configuration type identifier. Program project
+	 * builders are of this type.
+	 */
+	public static final String ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"; //$NON-NLS-1$	
+
 	// ------- Launch configuration groups --------
 	/**
 	 * Identifier for external tools launch configuration group
 	 */
 	public static final String ID_EXTERNAL_TOOLS_LAUNCH_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
-	
+	/**
+	 * Identifier for external tools launch configuration group
+	 */
+	public static final String ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP = "org.eclipse.ui.externaltools.launchGroup.builder"; //$NON-NLS-1$
+
 	// ------- Common External Tool Launch Configuration Attributes -------
+
+	/**
+	 * Boolean attribute indicating if external tool output should be captured.
+	 * Default value is <code>false</code>.
+	 */
+	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
 	/**
 	 * String attribute identifying the location of an external. Default value
 	 * is <code>null</code>. Encoding is tool specific.
 	 */
 	public static final String ATTR_LOCATION = PLUGIN_ID + ".ATTR_LOCATION"; //$NON-NLS-1$
-	
-	/**
-	 * String attribute identifying the working directory of an external tool.
-	 * Default value is <code>null</code>, which indicates a default working
-	 * directory, which is tool specific.
-	 */
-	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$		
-	
-	/**
-	 * String attribute containing a (optional) description of an external tool.
-	 * Default value is <code>null</code>.
-	 */
-	public static final String ATTR_TOOL_DESCRIPTION = PLUGIN_ID + ".ATTR_TOOL_DESCRIPTION"; //$NON-NLS-1$
-		
-	/**
-	 * Boolean attribute indicating if an external tool should be run in the
-	 * background. Default value is <code>false</code>.
-	 */
-	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
-			
-	/**
-	 * String attribute containing the arguments that should be passed to the
-	 * tool. Default value is <code>null</code>, and encoding is tool specific.
-	 */
-	public static final String ATTR_TOOL_ARGUMENTS = PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Boolean attribute indicating if the user should be prompted for
 	 * arguments before running a tool. Default value is <code>false</code>.
 	 */
-	public static final String ATTR_PROMPT_FOR_ARGUMENTS = PLUGIN_ID + ".ATTR_PROMPT_FOR_ARGUMENTS"; //$NON-NLS-1$									
-	
+	public static final String ATTR_PROMPT_FOR_ARGUMENTS = PLUGIN_ID + ".ATTR_PROMPT_FOR_ARGUMENTS"; //$NON-NLS-1$
+
+	/**
+	 * Boolean attribute indicating if a refresh scope is recursive. Default
+	 * value is <code>false</code>.
+	 */
+	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
+
 	/**
 	 * String attribute identifying the scope of resources that should be
 	 * refreshed after an external tool is run. Default value is
@@ -303,11 +288,42 @@ public interface IExternalToolConstants {
 	public static final String ATTR_REFRESH_SCOPE = PLUGIN_ID + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean attribute indicating if a refresh scope is recursive. Default
-	 * value is <code>false</code>.
+	 * String attribute containing an array of build kinds for which an
+	 * external tool builder should be run.
 	 */
-	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
+	public static final String ATTR_RUN_BUILD_KINDS = PLUGIN_ID + ".ATTR_RUN_BUILD_KINDS"; //$NON-NLS-1$
+
+	/**
+	 * Boolean attribute indicating if an external tool should be run in the
+	 * background. Default value is <code>false</code>.
+	 */
+	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
 	
+	/**
+	 * Boolean attribute indicating if the console should be shown on external
+	 * tool output. Default value is <code>false</code>.
+	 */
+	public static final String ATTR_SHOW_CONSOLE = PLUGIN_ID + ".ATTR_SHOW_CONSOLE"; //$NON-NLS-1$
+
+	/**
+	 * String attribute containing the arguments that should be passed to the
+	 * tool. Default value is <code>null</code>, and encoding is tool specific.
+	 */
+	public static final String ATTR_TOOL_ARGUMENTS = PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
+
+	/**
+	 * String attribute containing a (optional) description of an external tool.
+	 * Default value is <code>null</code>.
+	 */
+	public static final String ATTR_TOOL_DESCRIPTION = PLUGIN_ID + ".ATTR_TOOL_DESCRIPTION"; //$NON-NLS-1$
+
+	/**
+	 * String attribute identifying the working directory of an external tool.
+	 * Default value is <code>null</code>, which indicates a default working
+	 * directory, which is tool specific.
+	 */
+	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$
+
 	// ------- Common Ant Launch Configuration Attributes -------
 	/**
 	 * String attribute indicating the Ant targets to execute. Default value is
@@ -315,14 +331,14 @@ public interface IExternalToolConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 */
 	public static final String ATTR_ANT_TARGETS = PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Map attribute indicating the Ant properties to be defined during the
 	 * build. Default value is <code>null</code> which indicates no additional
 	 * properties will be defined.
 	 */
 	public static final String ATTR_ANT_PROPERTIES = PLUGIN_ID + ".ATTR_ANT_PROPERTIES"; //$NON-NLS-1$					
-	
+
 	/**
 	 * String attribute indicating the Ant targets to execute. Default value is
 	 * <code>null</code> which indicates that no additional property files

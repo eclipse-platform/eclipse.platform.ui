@@ -10,11 +10,13 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -23,15 +25,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,32 +52,40 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolRegistry;
-import org.eclipse.ui.externaltools.internal.view.NewExternalToolAction;
-import org.eclipse.ui.externaltools.model.ExternalTool;
-import org.eclipse.ui.externaltools.model.ExternalToolStorage;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
+import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.model.IStorageListener;
 
 /**
  * Property page to add external tools in between builders.
  */
 public final class BuilderPropertyPage extends PropertyPage {
 	private static final int BUILDER_TABLE_WIDTH = 250;
-	private static final String NEW_NAME= "BuilderPropertyPageName"; //$NON-NLS-1$
-	private static final String IMG_BUILDER= "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
+	private static final String NEW_NAME = "BuilderPropertyPageName"; //$NON-NLS-1$
+	private static final String IMG_BUILDER = "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
 	private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
+
+	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 
 	private Table builderTable;
 	private Button upButton, downButton, newButton, editButton, removeButton;
 	private ArrayList imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
-	private IStorageListener storageListener= new StorageListener();
+	private IDebugModelPresentation debugModelPresentation;
+	private ILaunchConfigurationListener launchConfigurationListener = new ILaunchConfigurationListener() {
+		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+			addConfig(configuration, builderTable.getSelectionIndex() + 1, true);
+		}
+		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		}
+		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		}
+	};
 
 	/**
 	 * Creates an initialized property page
@@ -90,14 +106,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 		//add build spec entries to the table
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			ExternalToolRegistry registry= ExternalToolsPlugin.getDefault().getToolRegistry(getShell());
 			for (int i = 0; i < commands.length; i++) {
-				ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(commands[i].getArguments(), NEW_NAME);
-				if (registry.hasToolNamed(tool.getName())) {
-					addTool(tool, -1, false);
+				//ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(commands[i].getArguments(), NEW_NAME);
+				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
+				if (config != null) {
+					addConfig(config, -1, false);
 				} else {
-					// If the tool generated from the command is not in the registry, it's
-					// just a command, not a tool.
 					addCommand(commands[i], -1, false);
 				}
 			}
@@ -105,7 +119,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			handleException(e);
 		}
 	}
-	
+
 	/**
 	 * Adds a build command to the table viewer.
 	 * 
@@ -122,73 +136,104 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		newItem.setData(command);
 		updateCommandItem(newItem, command);
-		if (select) builderTable.setSelection(position);
+		if (select)
+			builderTable.setSelection(position);
 	}
-	
-	private void addTool(ExternalTool tool, int position, boolean select) {
+
+	private void addConfig(ILaunchConfiguration config, int position, boolean select) {
 		TableItem newItem;
 		if (position < 0) {
 			newItem = new TableItem(builderTable, SWT.NONE);
 		} else {
 			newItem = new TableItem(builderTable, SWT.NONE, position);
 		}
-		newItem.setData(tool);
-		updateToolItem(newItem, tool);
-		if (select) builderTable.setSelection(position);
+		newItem.setData(config);
+		updateConfigItem(newItem, config);
+		if (select) {
+			builderTable.setSelection(position);
+		}
 	}
-	
-	private void updateToolItem(TableItem item, ExternalTool tool) {
-		item.setText(tool.getName());
-		Image toolImage= ExternalToolsPlugin.getDefault().getTypeRegistry().getToolType(tool.getType()).getImageDescriptor().createImage();
-		imagesToDispose.add(toolImage);
-		item.setImage(toolImage);
+
+	private void updateConfigItem(TableItem item, ILaunchConfiguration config) {
+		item.setText(config.getName());
+		Image configImage = debugModelPresentation.getImage(config);
+		if (configImage == null) {
+			configImage= builderImage;
+		}
+		item.setImage(configImage);
 	}
-	
+
 	/**
 	 * Configures and creates a new build command
 	 * that invokes an external tool.  Returns the new command,
 	 * or <code>null</code> if no command was created.
 	 */
-//	private ICommand createTool() {
-//		try {
-//			EditDialog dialog;
-//			dialog = new EditDialog(getShell(), null);
-//			if (dialog.open() == Window.OK) {
-//				ExternalTool tool = dialog.getExternalTool();
-//				ICommand command = getInputProject().getDescription().newCommand();
-//				return tool.toBuildCommand(command);
-//			} else {
-//				return null;	
-//			}
-//		} catch(CoreException e) {
-//			handleException(e);
-//			return null;
-//		}		
-//	}
+	//	private ICommand createTool() {
+	//		try {
+	//			EditDialog dialog;
+	//			dialog = new EditDialog(getShell(), null);
+	//			if (dialog.open() == Window.OK) {
+	//				ExternalTool tool = dialog.getExternalTool();
+	//				ICommand command = getInputProject().getDescription().newCommand();
+	//				return tool.toBuildCommand(command);
+	//			} else {
+	//				return null;	
+	//			}
+	//		} catch(CoreException e) {
+	//			handleException(e);
+	//			return null;
+	//		}		
+	//	}
 	
-	public ICommand toBuildCommand(ExternalTool tool, ICommand command) {
-		Map args= ExternalToolRegistry.toolToBuildCommandArgs(tool);
+	/**
+	 * Converts the given config to a build command which is stored in the
+	 * given command.
+	 *
+	 * @return the configured build command
+	 */
+	public ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
+		Map args= null;
+		if (config instanceof ILaunchConfigurationWorkingCopy) {
+			if (((ILaunchConfigurationWorkingCopy) config).getLocation() == null) {
+				// This config represents an old external tool builder that hasn't
+				// been edited. Try to find the old ICommand and reuse the arguments.
+				// The goal here is to not change the storage format of old, unedited builders.
+				ICommand[] commands= getInputProject().getDescription().getBuildSpec();
+				for (int i = 0; i < commands.length; i++) {
+					ICommand projectCommand = commands[i];
+					String name= ExternalToolMigration.getNameFromCommandArgs(projectCommand.getArguments());
+					if (name != null && name.equals(config.getName())) {
+						args= projectCommand.getArguments();
+						break;
+					}
+				}
+			}
+		} 
+		if (args == null) {
+			// Launch configuration builders are stored by storing their handle
+			args= new HashMap();
+			args.put(LAUNCH_CONFIG_HANDLE, config.getMemento());
+		}
 		command.setBuilderName(ExternalToolBuilder.ID);
 		command.setArguments(args);
-		
 		return command;
 	}
-	
+
 	/**
 	 * Edits an exisiting build command that invokes an external tool.
 	 */
-//	private void editTool(ICommand command) {
-//		ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(command.getArguments(), NEW_NAME);
-//		if (tool == null)
-//			return;
-//		EditDialog dialog;
-//		dialog = new EditDialog(getShell(), tool);
-//		if (dialog.open() == Window.OK) {
-//			tool = dialog.getExternalTool();
-//			tool.toBuildCommand(command);
-//		}
-//	}
-	
+	//	private void editTool(ICommand command) {
+	//		ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(command.getArguments(), NEW_NAME);
+	//		if (tool == null)
+	//			return;
+	//		EditDialog dialog;
+	//		dialog = new EditDialog(getShell(), tool);
+	//		if (dialog.open() == Window.OK) {
+	//			tool = dialog.getExternalTool();
+	//			tool.toBuildCommand(command);
+	//		}
+	//	}
+
 	/**
 	 * Creates and returns a button with the given label, id, and enablement.
 	 */
@@ -197,38 +242,39 @@ public final class BuilderPropertyPage extends PropertyPage {
 		GridData data = new GridData();
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		button.setLayoutData(data); 
+		button.setLayoutData(data);
 		button.setText(label);
 		button.setEnabled(false);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleButtonPressed((Button)e.widget);
+				handleButtonPressed((Button) e.widget);
 			}
 		});
 		return button;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		debugModelPresentation = DebugUITools.newDebugModelPresentation();
 		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();
 		invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_INVALID_BUILD_TOOL).createImage();
 
 		imagesToDispose.add(builderImage);
 		imagesToDispose.add(invalidBuildToolImage);
-		
+
 		Composite topLevel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		topLevel.setLayout(layout);
 		topLevel.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label description = new Label(topLevel, SWT.WRAP);
 		description.setText(ToolMessages.getString("BuilderPropertyPage.description")); //$NON-NLS-1$
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
+
 		Composite tableAndButtons = new Composite(topLevel, SWT.NONE);
 		tableAndButtons.setLayoutData(new GridData(GridData.FILL_BOTH));
 		layout = new GridLayout();
@@ -236,7 +282,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
 		tableAndButtons.setLayout(layout);
-	
+
 		// table of builders and tools		
 		builderTable = new Table(tableAndButtons, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -247,7 +293,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				handleTableSelectionChanged();
 			}
 		});
-		
+
 		//button area
 		Composite buttonArea = new Composite(tableAndButtons, SWT.NONE);
 		layout = new GridLayout();
@@ -261,20 +307,15 @@ public final class BuilderPropertyPage extends PropertyPage {
 		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
-	
+
 		newButton.setEnabled(true);
-		
+
 		//populate widget contents	
 		addBuildersToTable();
-		initializeStorageListener();
-		
+
 		return topLevel;
 	}
-	
-	private void initializeStorageListener() {
-		ExternalToolStorage.addStorageListener(storageListener);
-	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on DialogPage.
 	 */
@@ -285,9 +326,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 			image.dispose();
 		}
 		imagesToDispose.clear();
-		ExternalToolStorage.removeStorageListener(storageListener);
 	}
-	
+
 	/**
 	 * Returns the project that is the input for this property page,
 	 * or <code>null</code>.
@@ -295,54 +335,71 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private IProject getInputProject() {
 		IAdaptable element = getElement();
 		if (element instanceof IProject) {
-			return (IProject)element;
+			return (IProject) element;
 		}
 		Object resource = element.getAdapter(IResource.class);
 		if (resource instanceof IProject) {
-			return (IProject)resource;
+			return (IProject) resource;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * One of the buttons has been pressed, act accordingly.
 	 */
 	private void handleButtonPressed(Button button) {
 		if (button == newButton) {
-			new NewExternalToolAction().run();
+			createNewConfig();
 		} else if (button == editButton) {
-			TableItem[] selection = builderTable.getSelection();
+			TableItem selection = builderTable.getSelection()[0];
 			if (selection != null) {
-				new PropertyDialogAction(getShell(), new ISelectionProvider() {
-					public void addSelectionChangedListener(ISelectionChangedListener listener) {
-					}
-
-					public ISelection getSelection() {
-						TableItem[] items= builderTable.getSelection();
-						List list= new ArrayList(items.length);
-						for (int i= 0, numItems= items.length; i < numItems; i++) {
-							list.add(items[i].getData());
+				Object data = selection.getData();
+				if (data instanceof ILaunchConfiguration) {
+					ILaunchConfiguration config= (ILaunchConfiguration) data;
+					if (data instanceof ILaunchConfigurationWorkingCopy) {
+						// Warn the user that editing an old config will cause storage migration.
+						if (!MessageDialog.openQuestion(getShell(), "Migrate project builder", "This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by older versions of Eclipse.\nProceed with edit?")) {
+							return;
 						}
-						return new StructuredSelection(list);
+						ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) data;
+						workingCopy.setContainer(getBuilderFolder());
+						// Before saving, make sure the name is valid
+						String name= workingCopy.getName();
+						name.replace('/', '.');
+						if (name.charAt(0) == ('.')) {
+							name = name.substring(1);
+						}
+						IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+						if (!status.isOK()) {
+							name = "ExternalTool"; //$NON-NLS-1$
+						}
+						name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+						workingCopy.rename(name);
+						try {
+							config= workingCopy.doSave(); 
+						} catch (CoreException e) {
+							handleException(e);
+							return;
+						}
+						// Replace the working copy in the table with the stored config
+						selection.setData(config);
 					}
-
-					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-					}
-
-					public void setSelection(ISelection selection) {
-					}					
-				}).run();
-				Object data= selection[0].getData();
-				if (data instanceof ExternalTool) {
-					// The table contains ExternalTools and ICommands,
-					// but we only edit ExternalTools
-					updateToolItem(selection[0], (ExternalTool) data);
+					//DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), new StructuredSelection(config), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+					DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+					updateConfigItem(selection, (ILaunchConfiguration) data);
 				}
 			}
 		} else if (button == removeButton) {
 			TableItem[] selection = builderTable.getSelection();
 			if (selection != null) {
 				for (int i = 0; i < selection.length; i++) {
+					Object data= selection[i].getData();
+					if (data instanceof ILaunchConfiguration) {
+						try {
+							((ILaunchConfiguration) data).delete();
+						} catch (CoreException e) {
+						}
+					}
 					selection[i].dispose();
 				}
 			}
@@ -354,24 +411,94 @@ public final class BuilderPropertyPage extends PropertyPage {
 		handleTableSelectionChanged();
 		builderTable.setFocus();
 	}
-	
+	private void createNewConfig() {
+		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
+		String category = LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
+		List externalToolsTypes = new ArrayList();
+		for (int i = 0; i < types.length; i++) {
+			ILaunchConfigurationType configurationType = types[i];
+			if (category.equals(configurationType.getCategory())) {
+				externalToolsTypes.add(configurationType);
+			}
+		}
+
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), debugModelPresentation);
+		dialog.setElements(externalToolsTypes.toArray());
+		dialog.setMultipleSelection(false);
+		dialog.setTitle("Choose configuration type");
+		dialog.setMessage("Choose an external tool type to create");
+
+		//		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), externalToolsTypes, new IStructuredContentProvider() {
+		//			public Object[] getElements(Object inputElement) {
+		//				if (inputElement instanceof List) {
+		//					return ((List)inputElement).toArray();
+		//				}
+		//				return null;
+		//			}
+		//
+		//			public void dispose() {
+		//			}
+		//
+		//			public void inputChanged(Viewer viewer,	Object oldInput, Object newInput) {
+		//			}
+		//		}, debugModelPresentation, "Choose an external tool type to create");
+		dialog.open();
+		Object result[] = dialog.getResult();
+		if (result == null || result.length == 0) {
+			return;
+		}
+		ILaunchConfigurationType type = (ILaunchConfigurationType) result[0];
+		ILaunchConfigurationWorkingCopy workingCopy = null;
+		try {
+			workingCopy = type.newInstance(getBuilderFolder(), "New_Builder");
+		} catch (CoreException e) {
+			handleException(e);
+			return;
+		}		
+		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
+		ILaunchConfiguration config = null;
+		try {
+			config = workingCopy.doSave();
+		} catch (CoreException e) {
+			handleException(e);
+			return;
+		}
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(launchConfigurationListener);
+		DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(launchConfigurationListener);
+	}
+
+	/**
+	 * Returns the folder where project builders should be stored or
+	 * <code>null</code> if the folder could not be created
+	 */
+	private IFolder getBuilderFolder() {
+		IFolder folder = getInputProject().getFolder(".externalToolBuilders");
+		if (!folder.exists()) {
+			try {
+				folder.create(true, true, new NullProgressMonitor());
+			} catch (CoreException e) {
+				return null;
+			}
+		}
+		return folder;
+	}
+
 	/**
 	 * Handles unexpected internal exceptions
 	 */
 	private void handleException(Exception e) {
 		IStatus status;
 		if (e instanceof CoreException) {
-			status = ((CoreException)e).getStatus();
+			status = ((CoreException) e).getStatus();
 		} else {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("BuilderPropertyPage.statusMessage"), e); //$NON-NLS-1$
 		}
-		ErrorDialog.openError(
-			getShell(),
-			ToolMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
-			ToolMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
-			status);
+		ErrorDialog.openError(getShell(), ToolMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
+		ToolMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
+		status);
 	}
-	
+
 	/**
 	 * The user has selected a different builder in table.
 	 * Update button enablement.
@@ -381,14 +508,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 		TableItem[] items = builderTable.getSelection();
 		if (items != null && items.length == 1) {
 			TableItem item = items[0];
-			Object data= item.getData();
-			if (data instanceof ExternalTool) {
+			Object data = item.getData();
+			if (data instanceof ILaunchConfiguration) {
 				editButton.setEnabled(true);
 				removeButton.setEnabled(true);
 				int selection = builderTable.getSelectionIndex();
 				int max = builderTable.getItemCount();
 				upButton.setEnabled(selection != 0);
-				downButton.setEnabled(selection < max-1);
+				downButton.setEnabled(selection < max - 1);
 				return;
 			}
 		}
@@ -398,21 +525,21 @@ public final class BuilderPropertyPage extends PropertyPage {
 		upButton.setEnabled(false);
 		downButton.setEnabled(false);
 	}
-	
+
 	/**
 	 * Moves an entry in the builder table to the given index.
 	 */
 	private void move(TableItem item, int index) {
 		Object data = item.getData();
 		String text = item.getText();
-		Image image= item.getImage();
+		Image image = item.getImage();
 		item.dispose();
 		TableItem newItem = new TableItem(builderTable, SWT.NONE, index);
 		newItem.setData(data);
 		newItem.setText(text);
 		newItem.setImage(image);
 	}
-	
+
 	/**
 	 * Move the current selection in the build list down.
 	 */
@@ -421,12 +548,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 		if (builderTable.getSelectionCount() == 1) {
 			int currentIndex = builderTable.getSelectionIndex();
 			if (currentIndex < builderTable.getItemCount() - 1) {
-				move(builderTable.getItem(currentIndex), currentIndex+1);
-				builderTable.setSelection(currentIndex+1);
+				move(builderTable.getItem(currentIndex), currentIndex + 1);
+				builderTable.setSelection(currentIndex + 1);
 			}
 		}
 	}
-	
+
 	/**
 	 * Move the current selection in the build list up.
 	 */
@@ -434,11 +561,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 		int currentIndex = builderTable.getSelectionIndex();
 		// Only do this operation on a single selection
 		if (currentIndex > 0 && builderTable.getSelectionCount() == 1) {
-			move(builderTable.getItem(currentIndex), currentIndex-1);
-			builderTable.setSelection(currentIndex-1);
+			move(builderTable.getItem(currentIndex), currentIndex - 1);
+			builderTable.setSelection(currentIndex - 1);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IPreferencePage.
 	 */
@@ -448,95 +575,62 @@ public final class BuilderPropertyPage extends PropertyPage {
 		int numCommands = builderTable.getItemCount();
 		ICommand[] commands = new ICommand[numCommands];
 		for (int i = 0; i < numCommands; i++) {
-			Object data= builderTable.getItem(i).getData();
+			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
-			} else if (data instanceof ExternalTool) {
-				// Translate ExternalTools to ICommands for storage
-				ICommand newCommand= null;
+			} else if (data instanceof ILaunchConfiguration) {
+				// Translate launch configs to ICommands for storage
+				ICommand newCommand = null;
 				try {
-					newCommand= project.getDescription().newCommand();
+					newCommand = project.getDescription().newCommand();
+					data = toBuildCommand(((ILaunchConfiguration) data), newCommand);
 				} catch (CoreException exception) {
 					MessageDialog.openError(getShell(), "Command error", "An error occurred while saving the project's build commands");
 					return true;
 				}
-				data= toBuildCommand(((ExternalTool)data), newCommand);
 			}
-			commands[i] = (ICommand)data;
+			commands[i] = (ICommand) data;
 		}
 		//set the build spec
 		try {
 			IProjectDescription desc = project.getDescription();
 			desc.setBuildSpec(commands);
-			project.setDescription(desc, null);
-		} catch(CoreException e) {
+			project.setDescription(desc, IResource.FORCE, null);
+		} catch (CoreException e) {
 			handleException(e);
 		}
 		return super.performOk();
 	}
-	
+
 	/**
 	 * Update the table item with the given build command
 	 */
 	private void updateCommandItem(TableItem item, ICommand command) {
 		String builderID = command.getBuilderName();
 		if (builderID.equals(ExternalToolBuilder.ID)) {
-			ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(command.getArguments(), NEW_NAME);
-			if (tool == null) {
+			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(command.getArguments());
+			if (config == null) {
 				item.setText(ToolMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
 				item.setImage(invalidBuildToolImage);
 				return;
 			}
-			item.setText(tool.getName());
-			Image toolImage= ExternalToolsPlugin.getDefault().getTypeRegistry().getToolType(tool.getType()).getImageDescriptor().createImage();
-			imagesToDispose.add(toolImage);
-			item.setImage(toolImage);
+			item.setText(config.getName());
+			Image configImage = debugModelPresentation.getImage(config);
+			if (configImage != null) {
+				imagesToDispose.add(configImage);
+				item.setImage(configImage);
+			} else {
+				item.setImage(builderImage);
+			}
 		} else {
 			// Get the human-readable name of the builder
-			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, 	ResourcesPlugin.PT_BUILDERS, builderID);
+			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
 			String builderName;
 			if (extension != null)
 				builderName = extension.getLabel();
 			else
-				builderName = ToolMessages.format("BuilderPropertyPage.missingBuilder", new Object[] {builderID}); //$NON-NLS-1$
+				builderName = ToolMessages.format("BuilderPropertyPage.missingBuilder", new Object[] { builderID }); //$NON-NLS-1$
 			item.setText(builderName);
 			item.setImage(builderImage);
-		}
-	}
-	
-	private class StorageListener implements IStorageListener {
-		/**
-		 * @see IStorageListener#toolDeleted(ExternalTool)
-		 */
-		public void toolDeleted(ExternalTool tool) {
-		}
-		/**
-		 * @see IStorageListener#toolCreated(ExternalTool)
-		 */
-		public void toolCreated(ExternalTool tool) {
-			try {
-				final ICommand newCommand;
-				newCommand= getInputProject().getDescription().newCommand();
-				toBuildCommand(tool, newCommand);
-				if (newCommand != null) {
-					getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							int insertPosition = builderTable.getSelectionIndex() + 1;
-							addCommand(newCommand, insertPosition, true);
-						}
-					});
-				}
-			} catch (CoreException e) {
-			}
-		}
-		/**
-		 * @see IStorageListener#toolModified(ExternalTool)
-		 */
-		public void toolModified(ExternalTool tool) {
-		}
-		/**
-		 * @see IStorageListener#toolsRefreshed()
-		 */
-		public void toolsRefreshed() {
 		}
 	}
 }
