@@ -100,6 +100,13 @@ public class ProjectCapabilitySelectionGroup {
 		data.grabExcessHorizontalSpace = true;
 		descText.setLayoutData(data);
 		
+		// Add a text field to explain grayed out items
+		Label grayLabel = new Label(composite, SWT.LEFT);
+		grayLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.grayItems")); //$NON-NLS-1$
+		data = new GridData();
+		data.verticalAlignment = SWT.TOP;
+		grayLabel.setLayoutData(data);
+		
 		// Listen for selection changes to update the description field
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener () {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -259,12 +266,12 @@ public class ProjectCapabilitySelectionGroup {
 					// do not allow the check to proceed.
 					if (prereqCapabilities[i] == null) {
 						StringBuffer msg = new StringBuffer();
-						msg.append("The project feature \"");
+						msg.append("The capability \"");
 						msg.append(capability.getName());
-						msg.append("\" requires another project feature which is missing (id = ");
+						msg.append("\" requires another capability which is missing (id = ");
 						msg.append(prereqIds[i]);
-						msg.append(").\n\nThis feature cannot be checked.");
-						MessageDialog.openWarning(listViewer.getControl().getShell(), "Required Feature Missing", msg.toString());
+						msg.append(").\n\nThis capability cannot be checked.");
+						MessageDialog.openWarning(listViewer.getControl().getShell(), "Required Capability Missing", msg.toString());
 						listViewer.setChecked(capability, false);
 						return;
 					}
@@ -278,7 +285,7 @@ public class ProjectCapabilitySelectionGroup {
 			}
 			// Warn the user that the prerequisites need to be checked also
 			StringBuffer msg = new StringBuffer();
-			msg.append("The project feature \"");
+			msg.append("The capability \"");
 			msg.append(capability.getName());
 			msg.append("\" requires the following:");
 			for (int i = 0; i < allPrereqs.size(); i++) {
@@ -286,8 +293,8 @@ public class ProjectCapabilitySelectionGroup {
 				msg.append("\n   ");
 				msg.append(cap.getName());
 			}
-			msg.append("\n\nDo you want these required project features checked also?");
-			boolean yes = MessageDialog.openQuestion(listViewer.getControl().getShell(), "Required Features", msg.toString());
+			msg.append("\n\nDo you want these required capabilities checked also?");
+			boolean yes = MessageDialog.openQuestion(listViewer.getControl().getShell(), "Required Capabilities", msg.toString());
 			if (yes) {
 				// User wants all prerequisite capabilities to be checked.
 				capabilitiesModified();
@@ -418,7 +425,7 @@ public class ProjectCapabilitySelectionGroup {
 			// so force it checked and warn the user.
 			listViewer.setChecked(capability, true);
 			StringBuffer msg = new StringBuffer();
-			msg.append("The project feature \"");
+			msg.append("The capability \"");
 			msg.append(capability.getName());
 			msg.append("\" is required by the following:");
 			for (int i = 0; i < descriptors.size(); i++) {
@@ -428,8 +435,8 @@ public class ProjectCapabilitySelectionGroup {
 					msg.append(cap.getName());
 				}
 			}
-			msg.append("\n\nThis feature must remain checked.");
-			MessageDialog.openWarning(listViewer.getControl().getShell(), "Feature Required", msg.toString());
+			msg.append("\n\nThis capability must remain checked.");
+			MessageDialog.openWarning(listViewer.getControl().getShell(), "Capability Required", msg.toString());
 		}
 	}
 	

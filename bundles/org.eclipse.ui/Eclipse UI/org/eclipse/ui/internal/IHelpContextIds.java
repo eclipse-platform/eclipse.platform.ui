@@ -129,4 +129,5 @@ public interface IHelpContextIds {
 	public static final String NEW_PROJECT_WIZARD = PREFIX + "new_project_wizard_context"; //$NON-NLS-1$
 	public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context"; //$NON-NLS-1$
 	public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
+	public static final String UPDATE_CAPABILITY_WIZARD = PREFIX + "update_capability_wizard_context"; //$NON-NLS-1$
 }

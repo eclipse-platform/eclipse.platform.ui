@@ -18,6 +18,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.InstallCapabilityStep.IProjectProvider;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.Category;
@@ -27,7 +28,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * Standard workbench wizard that guides the user to supply
  * the necessary information to create a project.
  */
-public class NewProjectWizard extends MultiStepWizard implements INewWizard {
+public class NewProjectWizard extends MultiStepWizard implements INewWizard, IProjectProvider {
 	// init method parameters supplied
 	private IWorkbench workbench;
 	private IStructuredSelection selection;
@@ -135,6 +136,13 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard {
 	}
 
 	/* (non-Javadoc)
+	 * Method declared on IProjectProvider.
+	 */
+	 public IProject getProject() {
+	 	return newProject;
+	 }
+	 
+	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
@@ -153,8 +161,8 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard {
 		setWindowTitle(WorkbenchMessages.getString("NewProjectWizard.windowTitle")); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on BasicNewResourceWizard.
+	/**
+	 * Sets the image banner for the wizard
 	 */
 	protected void initializeDefaultPageImageDescriptor() {
 		String iconPath = "icons/full/";//$NON-NLS-1$		

@@ -118,6 +118,13 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	/* (non-Javadoc)
 	 * Method declared on IWizardPage.
 	 */
+	public IWizardPage getPreviousPage() {
+		return stepContainer.getPreviousPage();
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWizardPage.
+	 */
 	public void setPreviousPage(IWizardPage page) {
 		// Do not allow to go back
 		super.setPreviousPage(null);
@@ -444,6 +451,16 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		public String getMessage() {
 			if (currentPage != null)
 				return currentPage.getMessage();
+			else
+				return null;
+		}
+		
+		/**
+		 * Returns the current page's previous page
+		 */
+		public IWizardPage getPreviousPage() {
+			if (currentPage != null)
+				return currentPage.getPreviousPage();
 			else
 				return null;
 		}
