@@ -114,6 +114,11 @@ abstract class EclipseResource implements ICVSResource {
 			return false;
 		}
 		
+		// If the resource is a derived resource, it is ignored
+		if (resource.isDerived()) {
+			return true;
+		}
+		
 		// initialize matcher with global ignores, basic CVS ignore patterns, and ignore patterns
 		// from the .cvsignore file.
 		FileNameMatcher matcher = new FileNameMatcher(SyncFileWriter.BASIC_IGNORE_PATTERNS);
