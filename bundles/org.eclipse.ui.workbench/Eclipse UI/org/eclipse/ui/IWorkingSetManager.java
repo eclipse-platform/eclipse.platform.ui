@@ -93,6 +93,7 @@ public interface IWorkingSetManager {
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
 	/**
 	 * Creates a working set edit wizard for the specified working set.
+	 * The working set will already be set in the wizard.
 	 * The caller is responsible for creating and opening a wizard dialog.
 	 *
 	 * Example:
