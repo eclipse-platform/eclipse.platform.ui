@@ -11,7 +11,7 @@
 package org.eclipse.ui.intro;
 
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchSite;
  *  
  * @since 3.0
  */
-public interface IIntroSite extends IWorkbenchSite {
+public interface IIntroSite extends IWorkbenchPartSite {
 
 	/**
 	 * Returns intro area action bars in case the intro part needs to contribute
