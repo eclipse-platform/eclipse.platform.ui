@@ -5,17 +5,10 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IPluginDescriptor;
-
-import org.eclipse.swt.graphics.FontData;
-
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
-
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -103,34 +96,6 @@ public class UIPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
-
-		// FIXME: Workaround for bug 28725
-		processDefaultsToFontDefinition(JFaceResources.BANNER_FONT);
-		processDefaultsToFontDefinition(JFaceResources.DIALOG_FONT);
-		processDefaultsToFontDefinition(JFaceResources.HEADER_FONT);
-		processDefaultsToFontDefinition(JFaceResources.TEXT_FONT);
 	}
 
-	/*
-	 * FIXME: Workaround for bug 28725
-	 */
-	private void processDefaultsToFontDefinition(String propertyName) {
-
-		FontDefinition[] definitions = FontDefinition.getDefinitions();
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
-		for (int i = 0; i < definitions.length; i++) {
-			String defaultsTo = definitions[i].getDefaultsTo();
-			if (defaultsTo != null
-				&& defaultsTo.equals(propertyName)
-				&& store.isDefault(definitions[i].getId())) {
-
-				FontData[] data =
-					PreferenceConverter.getFontDataArray(store, defaultsTo);
-				JFaceResources.getFontRegistry().put(
-					definitions[i].getId(),
-					data);
-			}
-		}
 	}
-}
