@@ -480,7 +480,7 @@ private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput
 {
 	// Create an editor instance.
 	final IEditorPart editor[] = new IEditorPart[1];
-	final Throwable ex[] = new Exception[1];
+	final Throwable ex[] = new Throwable[1];
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() throws CoreException {
 			editor[0] = (IEditorPart) WorkbenchPlugin.createExtension(
