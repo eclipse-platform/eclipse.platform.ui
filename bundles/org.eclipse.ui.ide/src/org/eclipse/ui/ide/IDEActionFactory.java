@@ -12,7 +12,6 @@ package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -24,9 +23,7 @@ import org.eclipse.ui.internal.actions.AboutAction;
 import org.eclipse.ui.internal.NewWizardDropDownAction;
 import org.eclipse.ui.internal.TipsAndTricksAction;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
-import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Access to standard actions provided by the IDE workbench (including
@@ -73,14 +70,9 @@ public abstract class IDEActionFactory extends ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			try {
-				IWorkbenchAction action = new AboutAction(window, IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
-				action.setId(getId());
-				return action;
-			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("Failed to get feature info for about action.", e.getStatus()); //$NON-NLS-1$
-				throw new IllegalStateException();
-			}
+			IWorkbenchAction action = new AboutAction(window);
+			action.setId(getId());
+			return action;
 		}
 	};
 		
@@ -306,14 +298,9 @@ public abstract class IDEActionFactory extends ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			try {
-				IWorkbenchAction action = new TipsAndTricksAction(window, IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
-				action.setId(getId());
-				return action;
-			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("Failed to get feature info for tips & tricks action.", e.getStatus()); //$NON-NLS-1$
-				throw new IllegalStateException();
-			}
+			IWorkbenchAction action = new TipsAndTricksAction(window);
+			action.setId(getId());
+			return action;
 		}
 	};
 	

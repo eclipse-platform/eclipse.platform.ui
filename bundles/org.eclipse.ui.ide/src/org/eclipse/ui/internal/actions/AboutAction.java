@@ -11,11 +11,14 @@
 package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
+import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 
@@ -32,23 +35,26 @@ public class AboutAction
  */
 private IWorkbenchWindow workbenchWindow;
 
-private AboutInfo primaryInfo;
-private AboutInfo[] featureInfos;
-	
 /**
  * Creates a new <code>AboutAction</code> with the given label
  */
-public AboutAction(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
+public AboutAction(IWorkbenchWindow window) {
 	if (window == null) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
 	
-	this.primaryInfo = primaryInfo;
-	this.featureInfos = featureInfos;
-	
 	// use message with no fill-in
-	String productName = primaryInfo.getProductName();
+	AboutInfo primaryInfo = null;
+	try {
+		primaryInfo = IDEApplication.getPrimaryInfo();
+	} catch (WorkbenchException e) {
+		// do nothing
+	}
+	String productName = null;
+	if (primaryInfo != null) {
+		productName = primaryInfo.getProductName();
+	}
 	if (productName == null) {
 		productName = ""; //$NON-NLS-1$
 	}
@@ -67,7 +73,17 @@ public void run() {
 		// action has been disposed
 		return;
 	}
-	new AboutDialog(workbenchWindow, primaryInfo, featureInfos).open();
+	try {
+		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+		AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
+		new AboutDialog(workbenchWindow, primaryInfo, featureInfos).open();
+	} catch (WorkbenchException e) {
+		ErrorDialog.openError(
+			workbenchWindow.getShell(), 
+			IDEWorkbenchMessages.format("AboutAction.errorDialogTitle", new Object[] {getText()}),  //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("AboutInfo.infoReadError"),  //$NON-NLS-1$
+			e.getStatus());
+	}
 }
 
 /* (non-Javadoc)

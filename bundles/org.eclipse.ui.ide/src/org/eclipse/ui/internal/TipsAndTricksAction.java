@@ -22,9 +22,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -41,20 +43,15 @@ public class TipsAndTricksAction
 	 */
 	 private IWorkbenchWindow workbenchWindow;
 	 
-	 private AboutInfo primaryInfo;
-	 private AboutInfo[] featureInfos;
-
 	/**
 	 *	Create an instance of this class
 	 */
-	public TipsAndTricksAction(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
+	public TipsAndTricksAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		this.primaryInfo = primaryInfo;
-		this.featureInfos = featureInfos;
 		setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
 		setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
@@ -70,7 +67,19 @@ public class TipsAndTricksAction
 			return;
 		}
 		// Ask the user to select a feature
-		ArrayList tipsAndTricksFeatures = new ArrayList();
+		AboutInfo[] featureInfos = null;
+		try {
+			featureInfos = IDEApplication.getFeatureInfos();
+		} catch (WorkbenchException e) {
+			ErrorDialog.openError(
+				workbenchWindow.getShell(), 
+				IDEWorkbenchMessages.getString("TipsAndTricks.errorDialogTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricks.infoReadError"),  //$NON-NLS-1$
+				e.getStatus());
+			return;
+		}
+		
+		ArrayList tipsAndTricksFeatures = new ArrayList(featureInfos.length);
 		for (int i = 0; i < featureInfos.length; i++) {
 			if (featureInfos[i].getTipsAndTricksHref() != null)
 				tipsAndTricksFeatures.add(featureInfos[i]);
@@ -89,6 +98,18 @@ public class TipsAndTricksAction
 		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
 
+		AboutInfo primaryInfo = null;
+		try {
+			primaryInfo = IDEApplication.getPrimaryInfo();
+		} catch (WorkbenchException e) {
+			ErrorDialog.openError(
+				workbenchWindow.getShell(), 
+				IDEWorkbenchMessages.getString("TipsAndTricks.errorDialogTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricks.infoReadError"),  //$NON-NLS-1$
+				e.getStatus());
+			return;
+		}
+		
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell, 
 			features, 
