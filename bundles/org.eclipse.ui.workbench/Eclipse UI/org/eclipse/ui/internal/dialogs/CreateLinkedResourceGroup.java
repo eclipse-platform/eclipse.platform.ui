@@ -41,7 +41,6 @@ public class CreateLinkedResourceGroup {
 
 	// widgets
 	private Composite groupComposite;
-	private Button linkButton;
 	private Text linkTargetField;
 	private Button browseButton;
 	private Button variablesButton;
@@ -266,13 +265,20 @@ private void handleLinkTargetBrowseButtonPressed() {
  * Opens a path variable selection dialog
  */
 private void handleVariablesButtonPressed() {
+	int variableTypes = IResource.FOLDER;
+	
+	// allow selecting file and folder variables when creating a 
+	// linked file
+	if (type == IResource.FILE) {
+		variableTypes |= IResource.FILE;
+	}	
 	PathVariableSelectionDialog dialog = 
-		new PathVariableSelectionDialog(linkTargetField.getShell(), IResource.FILE | IResource.FOLDER);
+		new PathVariableSelectionDialog(linkTargetField.getShell(), variableTypes);
 	
 	if (dialog.open() == IDialogConstants.OK_ID) {
 		String[] variableNames = (String[]) dialog.getResult();
 				
-		if (variableNames != null) {
+		if (variableNames != null && variableNames.length == 1) {
 			linkTargetField.setText(variableNames[0]);
 		}
 	}

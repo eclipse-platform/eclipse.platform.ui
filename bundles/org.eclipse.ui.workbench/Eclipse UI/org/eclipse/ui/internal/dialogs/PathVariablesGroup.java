@@ -38,6 +38,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 2.1
  */
 public class PathVariablesGroup {
+	/**
+	 * Simple data structure that holds a path variable name/value pair.
+	 */
+	public static class PathVariableElement {
+		public String name;
+		public IPath path;
+	}
+
 	// sizing constants
 	private static final int SIZING_SELECTION_PANE_WIDTH = 400;
 
@@ -56,6 +64,8 @@ public class PathVariablesGroup {
 	private boolean multiSelect;
 	// IResource.FILE and/or IResource.FOLDER
 	private int variableType;
+	// External listener called when the table selection changes
+	private Listener selectionListener;
 	// temporary collection for keeping currently defined variables
 	private SortedMap tempPathVariables;
 	// set of removed variables' names
@@ -86,6 +96,20 @@ public class PathVariablesGroup {
 		tempPathVariables = new TreeMap();
 		// initialize internal model
 		initTemporaryState();
+	}
+	/**
+	 * Creates a new PathVariablesGroup.
+	 *
+	 * @param multiSelect create a multi select tree
+	 * @param variableType the type of variables that are displayed in 
+	 * 	the widget group. <code>IResource.FILE</code> and/or <code>IResource.FOLDER</code>
+	 * 	logically ORed together.
+	 * @param selectionListener listener notified when the selection changes
+	 * 	in the variables list.
+	 */
+	public PathVariablesGroup(boolean multiSelect, int variableType, Listener selectionListener) {
+		this(multiSelect, variableType);
+		this.selectionListener = selectionListener;
 	}
 	/**
 	 * Opens a dialog for creating a new variable.
@@ -127,7 +151,7 @@ public class PathVariablesGroup {
 		if (imageUnkown == null ) {
 			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPluginID(
 				PlatformUI.PLUGIN_ID, 
-				"icons/full/obj16/question.gif");	//$NON-NLS-1$
+				"icons/full/obj16/warning.gif");	//$NON-NLS-1$
 			imageUnkown = descriptor.createImage();
 		}
 		initializeDialogUnits(parent);
@@ -162,6 +186,8 @@ public class PathVariablesGroup {
 		variableTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
+				if (selectionListener != null)
+					selectionListener.handleEvent(new Event());
 			}
 		});
 		data = new GridData(GridData.FILL_BOTH);
@@ -225,23 +251,26 @@ public class PathVariablesGroup {
 
 	}
 	/**
-	 * Returns the names of the selected variables.
+	 * Returns the selected variables.
 	 *  
-	 * @return the names of the selected variables. Returns an empty 
-	 * 	array if the widget group has not been created yet by calling 
+	 * @return the selected variables. Returns an empty array if 
+	 * 	the widget group has not been created yet by calling 
 	 * 	<code>createContents</code>
 	 */
-	public String[] getSelection() {
+	public PathVariableElement[] getSelection() {
 		if (variableTable == null) {
-			return new String[0];
+			return new PathVariableElement[0];
 		}
 		TableItem[] items = variableTable.getSelection();
-		String[] variableNames = new String[items.length];
-		
+		PathVariableElement[] selection = new PathVariableElement[items.length]; 
+
 		for (int i = 0; i < items.length; i++) {
-			variableNames[i] = (String) items[i].getData();
+			String name = (String) items[i].getData();
+			selection[i] = new PathVariableElement();
+			selection[i].name = name;
+			selection[i].path = (IPath) tempPathVariables.get(name);
 		}
-		return variableNames;
+		return selection;
 	}
 	/**
 	 * Creates the add/edit/remove buttons
@@ -366,8 +395,12 @@ public class PathVariablesGroup {
 			if (varName.equals(selectedVarName))
 				selectedVarIndex = variableTable.getItemCount() - 1;
 		}
-		if (variableTable.getItemCount() > selectedVarIndex)
+		if (variableTable.getItemCount() > selectedVarIndex) {
 			variableTable.setSelection(selectedVarIndex);
+			if (selectionListener != null)
+				selectionListener.handleEvent(new Event());		
+		} else if (variableTable.getItemCount() == 0 && selectionListener != null)
+			selectionListener.handleEvent(new Event());
 	}
 	/**
 	 * Commits the temporary state to the path variable manager in response to user
