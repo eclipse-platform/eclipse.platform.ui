@@ -66,7 +66,7 @@ public class CycleBuilder extends TestBuilder {
 	 * Method getRandomContents.
 	 * @return InputStream
 	 */
-	private InputStream getRandomContents() {
+	protected InputStream getRandomContents() {
 		return new ByteArrayInputStream("foo".getBytes());
 	}
 
