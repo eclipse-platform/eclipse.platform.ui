@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and scopes, which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;scope&lt;/code&gt; elements.
+The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and scopes which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;scope&lt;/code&gt; elements.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -369,7 +369,9 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&lt;/code&gt; plugin makes extensive use of the &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -398,7 +400,13 @@ This is no public API for declaring commands, categories, key bindings, key conf
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br/&gt;
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
+&lt;p&gt;
       </documentation>
    </annotation>
 
