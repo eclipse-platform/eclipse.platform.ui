@@ -90,7 +90,7 @@ public class AntCorePreferences {
 		}
 		
 		String propertyFiles= prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTY_FILES);
-		if (propertyFiles.equals("")) {
+		if (propertyFiles.equals("")) { //$NON-NLS-1$
 			customPropertyFiles= new String[0];
 		} else {
 			customPropertyFiles= getArrayFromString(propertyFiles);
@@ -294,14 +294,14 @@ public class AntCorePreferences {
 		if (!tools.exists()) {
 			//attempt to find in the older 1.1.* 
 			path= path.removeLastSegments(1);
-			path= path.append("classes.zip");
+			path= path.append("classes.zip"); //$NON-NLS-1$
 			tools = path.toFile();
 			if (!tools.exists()) {
 				return null;
 			}
 		}
 		try {
-			return new URL("file:" + tools.getAbsolutePath());
+			return new URL("file:" + tools.getAbsolutePath()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
@@ -557,7 +557,7 @@ public class AntCorePreferences {
 		}
 		
 		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
-		String prefAntHome= "";
+		String prefAntHome= ""; //$NON-NLS-1$
 		if (antHome != null) {
 			prefAntHome= antHome;
 		} 

@@ -199,7 +199,7 @@ public class InternalAntRunner {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		if (prefs.getAntHome() != null) {
-			System.setProperty("ant.home", prefs.getAntHome());
+			System.setProperty("ant.home", prefs.getAntHome()); //$NON-NLS-1$
 		}
 		
 		Property[] properties= prefs.getCustomProperties();
@@ -858,7 +858,7 @@ public class InternalAntRunner {
 			try {
 				Diagnostics.doReport(System.out);
 			} catch (NullPointerException e) {
-				logMessage(getCurrentProject(), "ANT_HOME must be set to use Ant diagnostics", Project.MSG_ERR);
+				logMessage(getCurrentProject(), InternalAntMessages.getString("InternalAntRunner.ANT_HOME_must_be_set_to_use_Ant_diagnostics_2"), Project.MSG_ERR); //$NON-NLS-1$
 			}
 			return false;
 		}
