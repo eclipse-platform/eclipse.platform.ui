@@ -147,6 +147,7 @@ public class PerspectiveSwitcher {
 		perspectiveBar.update(false);
 		ensureVisible(index, workbenchPage);
 		MRUList.add(0, perspective);
+		setCoolItemSize(coolItem);
 	}
 	
 	/**
