@@ -37,7 +37,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * MenuManager for coolbar popup menu
 	 */
 	private MenuManager coolBarMenuManager = new MenuManager();
-
+	private Menu coolBarMenu = null;
 	/** 
 	 * Flag to track whether or not to remember coolbar item positions when an item
 	 * is deleted.
@@ -122,11 +122,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					coolBar.getParent().layout();
 				}
 			});
-			coolBar.addMouseListener(new MouseAdapter() {
-				public void mouseDown(MouseEvent e) {
-					popupCoolBarMenu(e);
-				}
-			});
+			coolBar.setMenu(getCoolBarMenu());
 		}
 		return coolBar;
 	}
@@ -415,6 +411,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			if (group != null) ids.add(group.getId());
 		}
 		return ids;
+	}
+	/**
+	 */
+	/* package */ Menu getCoolBarMenu() {
+		if (coolBarMenu == null) {
+			coolBarMenu = coolBarMenuManager.createContextMenu(coolBar);
+		}
+		return coolBarMenu;
 	}
 	/**
 	 * Return the SWT control for this manager.
@@ -722,17 +726,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	/* package */ void lockLayout(boolean value) {
 		coolBar.setLocked(value);
-	}
-	/**
-	 */
-	/* package */ void popupCoolBarMenu(MouseEvent e) {
-		if (e.button != 3)
-			return;
-		Point pt = new Point(e.x, e.y);
-		pt = ((Control) e.widget).toDisplay(pt);
-		Menu coolBarMenu = coolBarMenuManager.createContextMenu(coolBar);
-		coolBarMenu.setLocation(pt.x, pt.y);
-		coolBarMenu.setVisible(true);
 	}
 	/**
 	 */

@@ -7,14 +7,11 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
 
 /**
  * CoolItemToolBarManager class
@@ -28,14 +25,14 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	}
 	public ToolBar createControl(Composite parent) {
 		ToolBar tBar = super.createControl(parent);
-		// add support for popup menu, must hook the mouse
-		// down event for each toolbar on the coolbar
-		tBar.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				parentManager.popupCoolBarMenu(e);
-			}
-		});
+		tBar.setMenu(parentManager.getCoolBarMenu());
 		return tBar;
+	}
+	public void dispose() {
+		// the toolbar menu is shared by all coolitems, so clear the
+		// reference to the menu so that it does not get disposed of
+		getControl().setMenu(null);
+		super.dispose();
 	}
 	protected CoolBarContributionItem getCoolBarItem() {
 		return coolBarItem;
