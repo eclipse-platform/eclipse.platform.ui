@@ -118,7 +118,7 @@ private void log(Throwable t) {
 			nested = ((SWTError)t).throwable;	
 		if (nested != null) {
 			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
-			WorkbenchPlugin.log("*** Stack trace of contained exception ***", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
+			WorkbenchPlugin.log("\n*** Stack trace of contained exception ***", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
 		}
 		if (WorkbenchPlugin.DEBUG) {
 			t.printStackTrace();

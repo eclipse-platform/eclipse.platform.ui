@@ -226,13 +226,13 @@ private boolean overImage(CTabItem item,int x) {
  * Create a page and tab for an editor.
  */
 private void createPage(EditorPane editorPane) {
-	IEditorPart editorPart = editorPane.getEditorPart();
 	createTab(editorPane);
 	editorPane.createControl(parent);
 	editorPane.setContainer(this);
 	enableDrop(editorPane);
 	// Update tab to be in-sync after creation of
 	// pane's control since prop listener was not on
+	IEditorPart editorPart = editorPane.getEditorPart();
 	updateEditorTab(editorPart);
 	editorPart.addPropertyListener(this);
 

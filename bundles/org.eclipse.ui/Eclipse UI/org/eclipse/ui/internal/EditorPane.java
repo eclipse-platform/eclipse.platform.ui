@@ -50,10 +50,18 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		public void setFocus() {
 			if (text != null) text.setFocus();
 		}
+		protected void setTitle(String title) {
+			super.setTitle(title);
+		}
+		protected void setTitleToolTip(String text) {
+			super.setTitleToolTip(text);
+		}
 	}
 	IEditorPart oldEditorPart = (IEditorPart)oldPart;
 	EditorSite oldEditorSite = (EditorSite)oldEditorPart.getEditorSite();
 	ErrorEditorPart newPart = new ErrorEditorPart();
+	newPart.setTitle(oldPart.getTitle());
+	newPart.setTitleToolTip(oldPart.getTitleToolTip());
 	oldEditorSite.setPart(newPart);
 	newPart.init(oldEditorSite, oldEditorPart.getEditorInput());
 	return newPart;

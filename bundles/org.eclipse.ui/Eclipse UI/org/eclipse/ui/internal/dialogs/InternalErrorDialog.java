@@ -101,10 +101,10 @@ protected void createDropDownText(Composite parent) {
 		PrintStream ps = new PrintStream(baos);
 		detail.printStackTrace(ps);
 		if((detail instanceof SWTError) && (((SWTError)detail).throwable != null)) {
-			ps.println("*** Stack trace of contained exception ***"); //$NON-NLS-1$
+			ps.println("\n*** Stack trace of contained exception ***"); //$NON-NLS-1$
 			((SWTError)detail).throwable.printStackTrace(ps);
 		} else if((detail instanceof SWTException) && (((SWTException)detail).throwable != null)) {
-			ps.println("*** Stack trace of contained exception ***"); //$NON-NLS-1$
+			ps.println("\n*** Stack trace of contained exception ***"); //$NON-NLS-1$
 			((SWTException)detail).throwable.printStackTrace(ps);
 		}
 		ps.flush();

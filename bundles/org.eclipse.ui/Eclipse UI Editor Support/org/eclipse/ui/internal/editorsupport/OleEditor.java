@@ -213,6 +213,9 @@ public class OleEditor extends EditorPart {
 	 */
 
 	private void createClientSite() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientFrame == null || clientFrame.isDisposed())
+			return;
 		// Create a OLE client site.
 		clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
 		clientSite.setBackground(
@@ -224,7 +227,8 @@ public class OleEditor extends EditorPart {
 		//Check the client active flag. Set it to false when we have deactivated
 		//to prevent multiple deactivations.
 		if (part == this && clientActive) {
-			clientSite.deactivateInPlaceClient();
+			if(clientSite != null)
+				clientSite.deactivateInPlaceClient();
 			this.clientActive = false;
 			this.oleActivated = false;
 		}
@@ -233,8 +237,10 @@ public class OleEditor extends EditorPart {
 	 * Display an error dialog with the supplied title and message.
 	 */
 	private void displayErrorDialog(String title, String message) {
-
-		MessageDialog.openError(getClientSite().getShell(), title, message);
+		Shell parent = null;
+		if(getClientSite() != null)	
+			parent = getClientSite().getShell();
+		MessageDialog.openError(parent, title, message);
 	}
 	/**
 	 * @see IWorkbenchPart#dispose
@@ -257,6 +263,8 @@ public class OleEditor extends EditorPart {
 	 *	Print this object's contents
 	 */
 	public void doPrint() {
+		if(clientSite == null)
+			return;
 		BusyIndicator.showWhile(clientSite.getDisplay(), new Runnable() {
 			public void run() {
 				clientSite.exec(OLE.OLECMDID_PRINT, OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
@@ -268,6 +276,8 @@ public class OleEditor extends EditorPart {
 	 *	Save the viewer's contents to the source file system file
 	 */
 	public void doSave(final IProgressMonitor monitor) {
+		if(clientSite == null)
+			return;
 		BusyIndicator.showWhile(clientSite.getDisplay(), new Runnable() {
 			public void run() {
 
@@ -306,7 +316,8 @@ public class OleEditor extends EditorPart {
 	 *	Save the viewer's contents into the provided resource.
 	 */
 	public void doSaveAs() {
-
+		if(clientSite == null)
+			return;
 		WorkspaceModifyOperation op = saveNewFileOperation();
 		Shell shell = clientSite.getShell();
 		try {
@@ -388,6 +399,9 @@ public class OleEditor extends EditorPart {
 	 *	Initialize the workbench menus for proper merging
 	 */
 	protected void initializeWorkbenchMenus() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientFrame == null || clientFrame.isDisposed())
+			return;		
 		// Get the browser menubar.  If one does not exist then
 		// create it.
 		Shell shell = clientFrame.getShell();
@@ -520,6 +534,9 @@ public class OleEditor extends EditorPart {
 	 * Asks the part to take focus within the workbench.
 	 */
 	public void setFocus() {
+		//If there was an OLE Error or nothing has been created yet
+		if (clientFrame == null || clientFrame.isDisposed())
+			return;
 		oleActivate();
 		clientFrame.setFocus();
 	}
@@ -529,7 +546,7 @@ public class OleEditor extends EditorPart {
 	 */
 	private void oleActivate() {
 		//If there was an OLE Error or nothing has been created yet
-		if (clientFrame == null || clientFrame.isDisposed())
+		if (clientSite == null || clientFrame == null || clientFrame.isDisposed())
 			return;
 
 		if (!oleActivated) {
