@@ -10,22 +10,27 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import java.util.Iterator;
+
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * Action for copying the currently selected breakpoints to the clipboard.
  */
-public class CopyBreakpointsAction extends SelectionListenerAction {
+public class CopyBreakpointsAction extends BreakpointSelectionAction {
 
     /**
      * System clipboard
@@ -38,21 +43,15 @@ public class CopyBreakpointsAction extends SelectionListenerAction {
     private PasteBreakpointsAction pasteAction;
     
     /**
-     * Associated view.
-     */
-    protected BreakpointsView breakpointsView;
-
-    /**
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
      * @param clipboard a platform clipboard
      */
     public CopyBreakpointsAction(BreakpointsView view, Clipboard clipboard) {
-        super(BreakpointGroupMessages.getString("CopyBreakpointsAction.0")); //$NON-NLS-1$
+        super(BreakpointGroupMessages.getString("CopyBreakpointsAction.0"), view); //$NON-NLS-1$
         Assert.isNotNull(clipboard);
         this.clipboard = clipboard;
-        breakpointsView = view;
         setToolTipText(BreakpointGroupMessages.getString("CopyBreakpointsAction.1")); //$NON-NLS-1$
     }
 
@@ -74,7 +73,18 @@ public class CopyBreakpointsAction extends SelectionListenerAction {
      * clipboard.
      */
     public void run() {
-        setClipboard(getStructuredSelection());
+        IStructuredSelection selection = getStructuredSelection();
+        Object[] objects = selection.toArray();
+        StringBuffer buffer = new StringBuffer();
+        ILabelProvider labelProvider = (ILabelProvider) ((StructuredViewer)getBreakpointsView().getViewer()).getLabelProvider();
+        for (int i = 0; i < objects.length; i++) {
+            Object object = objects[i];
+            if (i > 0) {
+                buffer.append("\n"); //$NON-NLS-1$
+            }
+            buffer.append(labelProvider.getText(object));
+        }
+        setClipboard(selection, buffer.toString());
 
         // update the enablement of the paste action
         // workaround since the clipboard does not suppot callbacks
@@ -87,29 +97,36 @@ public class CopyBreakpointsAction extends SelectionListenerAction {
      * 
      * @param selection the selection to copy to the clipboard
      */
-    private void setClipboard(ISelection selection) {
+    private void setClipboard(ISelection selection, String text) {
         try {
             LocalSelectionTransfer.getInstance().setSelection(selection);
             LocalSelectionTransfer.getInstance().setSelectionSetTime(System.currentTimeMillis());
-            clipboard.setContents(new Object[] {selection}, new Transfer[] {LocalSelectionTransfer.getInstance()});
+            clipboard.setContents(new Object[] {selection, text}, new Transfer[] {LocalSelectionTransfer.getInstance(), TextTransfer.getInstance()});
         } catch (SWTError e) {
             if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
                 throw e;
             if (MessageDialog.openQuestion(
-                    breakpointsView.getSite().getShell(), BreakpointGroupMessages.getString("CopyBreakpointsAction.2"), //$NON-NLS-1$
+                    getBreakpointsView().getSite().getShell(), BreakpointGroupMessages.getString("CopyBreakpointsAction.2"), //$NON-NLS-1$
                     BreakpointGroupMessages.getString("CopyBreakpointsAction.3"))) { //$NON-NLS-1$
-                setClipboard(selection);
+                setClipboard(selection, text);
             }
         }
     }
 
     /**
-     * The <code>CopyAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables this action if 
-     * one or more resources of compatible types are selected.
+     * Enables if one or more breakpoints are selected.
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-        return breakpointsView.canMove(selection);
+        if (selection.isEmpty()) {
+            return false;
+        }
+        Iterator iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            if (!(iterator.next() instanceof IBreakpoint)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

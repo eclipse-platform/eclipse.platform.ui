@@ -1171,14 +1171,6 @@
                id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints">
          </action>
         <action
-               label="%GroupBy.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupBreakpointsByAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="*"
-               id="org.eclipse.debug.ui.actions.GroupBreakpointsByAction">
-        </action>
-        <action
                label="%RemoveAction.label"
                icon="icons/full/elcl16/rem_co.gif"
                helpContextId="remove_breakpoint_action_context"
@@ -1207,7 +1199,6 @@
         </action>
       </viewerContribution>
       <!-- Breakpoint actions -->
-      <!-- Breakpoint group actions -->
 <!-- Contributions to Variables View Popup Menu -->
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView"

@@ -35,8 +35,8 @@ import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.CutBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.ShowEmptyGroupsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -90,7 +90,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  */
 public class BreakpointsView extends AbstractDebugView implements ISelectionListener, IBreakpointManagerListener, IPerspectiveListener2 {
 
-	private BreakpointsViewEventHandler fEventHandler;
+    private BreakpointsViewEventHandler fEventHandler;
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			handleCheckStateChanged(event);
@@ -100,6 +100,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	// Persistance constants
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
+    private static final String ACTION_REMOVE_FROM_GROUP = "RemoveFromGroup"; //$NON-NLS-1$
 	private BreakpointsContentProvider fContentProvider;
     private Clipboard fClipboard;
     
@@ -372,6 +373,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+        disposeAction(IWorkbenchActionDefinitionIds.COPY);
+        disposeAction(IWorkbenchActionDefinitionIds.PASTE);
+        disposeAction(ACTION_REMOVE_FROM_GROUP); //$NON-NLS-1$
+        
 	    if (getCheckboxViewer() != null) {
 	        getCheckboxViewer().removeCheckStateListener(fCheckListener);
 	    }
@@ -411,8 +416,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         configure(paste, IWorkbenchActionDefinitionIds.PASTE, ActionFactory.PASTE.getId(),ISharedImages.IMG_TOOL_PASTE);
         SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
         configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
-        SelectionListenerAction cut = new CutBreakpointsAction(this, fClipboard, paste);
-        configure(cut, IWorkbenchActionDefinitionIds.CUT, ActionFactory.CUT.getId(), ISharedImages.IMG_TOOL_CUT);
+        
+        SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
+        setAction(ACTION_REMOVE_FROM_GROUP, remove); //$NON-NLS-1$
+        getViewer().addSelectionChangedListener(remove);
 	}
 
 	/**
@@ -432,6 +439,21 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         getViewer().addSelectionChangedListener(action);
         action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     }
+    
+    /**
+     * Cleans up selection listener action
+     * 
+     * @param id action id
+     */
+    private void disposeAction(String id) {
+        IAction action = getAction(id);
+        if (action instanceof SelectionListenerAction) {
+            SelectionListenerAction sla = (SelectionListenerAction) action;
+            if (getViewer() != null) {
+                getViewer().removeSelectionChangedListener(sla);
+            }
+        }
+    }
 
     /**
 	 * Adds items to the context menu.
@@ -445,11 +467,13 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-        menu.add(getAction(IWorkbenchActionDefinitionIds.CUT));
         menu.add(getAction(IWorkbenchActionDefinitionIds.COPY));
         menu.add(getAction(IWorkbenchActionDefinitionIds.PASTE));
+        IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
+        if (action.isEnabled()) {
+            menu.add(action);
+        }
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-
 		menu.add(new Separator(IDebugUIConstants.SELECT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.REMOVE_GROUP));
@@ -825,4 +849,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         }
         return null;
     }    
+    
+    public boolean isShowingGroups() {
+        return fContentProvider.isShowingGroups();
+    }
 }

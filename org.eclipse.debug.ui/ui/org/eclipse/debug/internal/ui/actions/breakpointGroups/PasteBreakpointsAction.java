@@ -12,20 +12,13 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
@@ -36,12 +29,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * 
  * @since 2.0
  */
-public class PasteBreakpointsAction extends SelectionListenerAction {
-
-    /**
-     * The id of this action.
-     */
-    public static final String ID = PlatformUI.PLUGIN_ID + ".PasteAction";//$NON-NLS-1$
+public class PasteBreakpointsAction extends BreakpointSelectionAction {
 
     /**
      * System clipboard
@@ -49,20 +37,14 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
     private Clipboard clipboard;
     
     /**
-     * The breakpoints view
-     */
-    private BreakpointsView breakpointsView;
-
-    /**
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
      */
     public PasteBreakpointsAction(BreakpointsView view, Clipboard clipboard) {
-        super(BreakpointGroupMessages.getString("PasteBreakpointsAction.0")); //$NON-NLS-1$
+        super(BreakpointGroupMessages.getString("PasteBreakpointsAction.0"), view); //$NON-NLS-1$
         Assert.isNotNull(clipboard);
         this.clipboard = clipboard;
-        breakpointsView = view;
         setToolTipText(BreakpointGroupMessages.getString("PasteBreakpointsAction.1")); //$NON-NLS-1$
     }
 
@@ -87,27 +69,7 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
      * Implementation of method defined on <code>IAction</code>.
      */
     public void run() {
-        ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
-        Object target = getTarget();
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
-            Object[] objects = ss.toArray();
-            IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof IBreakpoint) {
-                    IBreakpoint breakpoint = (IBreakpoint) objects[i];
-                    try {
-                        BreakpointSetOrganizer.setAddToDefault(false);
-                        breakpointManager.addBreakpoint(breakpoint);
-                    } catch (CoreException e) {
-                        DebugUIPlugin.log(e);
-                    } finally {
-                        BreakpointSetOrganizer.setAddToDefault(true);
-                    }
-                }
-            }
-        }
-        breakpointsView.performPaste(target, selection);
+        getBreakpointsView().performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
     }
 
     /**
@@ -122,11 +84,17 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
      *  project or multiple selected files in the same folder 
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-        if (!super.updateSelection(selection))
-            return false;
+        // can't paste into "Others" (only move)
+        Object target = getTarget();
+        if (target instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) target;
+            if (container.getCategory() instanceof OtherBreakpointCategory) {
+                return false;
+            }
+        }
 
         final ISelection[] clipboardData = new ISelection[1];
-        breakpointsView.getSite().getShell().getDisplay().syncExec(new Runnable() {
+        getBreakpointsView().getSite().getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
                 // clipboard must have resources or files
                 LocalSelectionTransfer transfer = LocalSelectionTransfer.getInstance();
@@ -134,8 +102,8 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
             }
         });
         ISelection pasteSelection = clipboardData[0];
-        Object target = getTarget();
-        return breakpointsView.canPaste(target, pasteSelection);
+        
+        return getBreakpointsView().canPaste(target, pasteSelection);
     }
 }
 
