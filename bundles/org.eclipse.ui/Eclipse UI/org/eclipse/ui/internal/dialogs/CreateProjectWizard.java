@@ -84,13 +84,13 @@ public class CreateProjectWizard extends Wizard {
 				if (((CoreException)t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
 					MessageDialog.openError(
 						getShell(), 
-						WorkbenchMessages.getString("NewProjectWizard.errorMessage"),  //$NON-NLS-1$
-						WorkbenchMessages.getString("NewProjectWizard.caseVariantExistsError")  //$NON-NLS-1$,
+						WorkbenchMessages.getString("CreateProjectWizard.errorMessage"),  //$NON-NLS-1$
+						WorkbenchMessages.getString("CreateProjectWizard.caseVariantExistsError")  //$NON-NLS-1$,
 						);	
 				} else {
 					ErrorDialog.openError(
 						getShell(), 
-						WorkbenchMessages.getString("NewProjectWizard.errorMessage"),  //$NON-NLS-1$
+						WorkbenchMessages.getString("CreateProjectWizard.errorMessage"),  //$NON-NLS-1$
 						null, // no special message
 				 		((CoreException) t).getStatus());
 				}
@@ -105,8 +105,8 @@ public class CreateProjectWizard extends Wizard {
 						t));
 				MessageDialog.openError(
 					getShell(),
-					WorkbenchMessages.getString("NewProjectWizard.errorMessage"),  //$NON-NLS-1$
-					WorkbenchMessages.format("NewProjectWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
+					WorkbenchMessages.getString("CreateProjectWizard.errorMessage"),  //$NON-NLS-1$
+					WorkbenchMessages.format("CreateProjectWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 			}
 			return null;
 		}

@@ -145,6 +145,13 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 
 	/**
+	 * Returns the capability for the nature id
+	 */
+	public Capability getCapabilityForNature(String natureId) {
+		return (Capability)natureToCapability.get(natureId);
+	}
+	
+	/**
 	 * Returns the list of capabilities in the registry
 	 */
 	public ArrayList getCapabilities() {

@@ -284,7 +284,7 @@ public class ProjectCapabilitySelectionGroup {
 				}
 			}
 			// Warn the user that the prerequisites need to be checked also
-			StringBuffer msg = new StringBuffer();
+/*			StringBuffer msg = new StringBuffer();
 			msg.append("The capability \"");
 			msg.append(capability.getName());
 			msg.append("\" requires the following:");
@@ -295,6 +295,7 @@ public class ProjectCapabilitySelectionGroup {
 			}
 			msg.append("\n\nDo you want these required capabilities checked also?");
 			boolean yes = MessageDialog.openQuestion(listViewer.getControl().getShell(), "Required Capabilities", msg.toString());
+*/			boolean yes = true;
 			if (yes) {
 				// User wants all prerequisite capabilities to be checked.
 				capabilitiesModified();

@@ -103,27 +103,30 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		try {
 			natureIds = getProject().getDescription().getNatureIds();
 		} catch (CoreException e) {
-			handle(new InvocationTargetException(e));
+			ErrorDialog.openError(
+				getShell(),
+				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.internalError"), //$NON-NLS-1$
+				e.getStatus());
 			return true;
 		}
-
 		
 		// Keep only the nature ids whose capability is selected
 		ArrayList keepIds = new ArrayList();
+		ArrayList removeCaps = new ArrayList();
 		for (int i = 0; i < natureIds.length; i++) {
+			boolean isRemoved = true;
 			String id = natureIds[i];
 			for (int j = 0; j < caps.length; j++) {
 				if (id.equals(caps[j].getNatureId())) {
 					keepIds.add(id);
+					isRemoved = false;
 					break;
 				}
 			}
+			if (isRemoved)
+				removeCaps.add(reg.getCapabilityForNature(id));
 		}
-		
-		// Remove the natures not part of the capabilities selected
-		if (keepIds.size() != natureIds.length)
-			performUpdateNatures(keepIds);
-		
 		
 		// Collect the capabilities to add
 		ArrayList newCaps = new ArrayList();
@@ -139,12 +142,20 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 			if (isNew)
 				newCaps.add(cap);
 		}
-		
-		// Prune the capability list
-		if (newCaps.size() > 0) {
-			Capability[] results = new Capability[newCaps.size()];
-			newCaps.toArray(results);
-			UpdateProjectCapabilityWizard wizard = new UpdateProjectCapabilityWizard(getProject(), results);
+
+		// Launch the step wizard if needed		
+		if (newCaps.size() > 0 || keepIds.size() != natureIds.length) {
+			Capability[] newCapabilities = new Capability[newCaps.size()];
+			newCaps.toArray(newCapabilities);
+			
+			Capability[] removeCapabilities = new Capability[removeCaps.size()];
+			removeCaps.toArray(removeCapabilities);
+			
+			String[] keepNatureIds = new String[keepIds.size()];
+			keepIds.toArray(keepNatureIds);
+			
+			UpdateProjectCapabilityWizard wizard =
+				new UpdateProjectCapabilityWizard(getProject(), newCapabilities, removeCapabilities, keepNatureIds);
 			
 			MultiStepWizardDialog dialog = new MultiStepWizardDialog(getShell(), wizard);
 			dialog.create();
@@ -154,55 +165,5 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		}
 		
 		return true;
-	}
-	
-	/**
-	 * Update the project natures
-	 */
-	private void performUpdateNatures(final ArrayList keepIds) {
-		// define the operation to update natures
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					IProjectDescription description = getProject().getDescription();
-					String[] ids = new String[keepIds.size()];
-					keepIds.toArray(ids);
-					description.setNatureIds(ids);
-					getProject().setDescription(description, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-	
-		// run the update nature operation
-		try {
-			new ProgressMonitorDialog(getShell()).run(true, true, runnable);
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
-			handle(e);
-		}
-	}
-
-	/**
-	 * Handler for exceptions
-	 */
-	private void handle(InvocationTargetException e) {
-		IStatus status;
-		Throwable target = e.getTargetException();
-		if (target instanceof CoreException) {
-			status = ((CoreException) target).getStatus();
-		} else {
-			String msg = target.getMessage();
-			if (msg == null)
-				msg = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.internalError"); //$NON-NLS-1$
-			status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, msg, target);
-		}
-		ErrorDialog.openError(
-			getShell(),
-			WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ProjectCapabilityPropertyPage.internalError"), //$NON-NLS-1$
-			status);
-		WorkbenchPlugin.log("Error in ProjectCapabilityPropertyPage", status); //$NON-NLS-1$
 	}
 }

@@ -24,6 +24,7 @@ public class InstallCapabilityStep extends WizardStep {
 	/**
 	 * Creates the capability install step
 	 * 
+	 * @param number step order number
 	 * @param capability the capability to install
 	 */
 	public InstallCapabilityStep(int number, Capability capability, IWorkbench workbench, IProjectProvider projectProvider) {

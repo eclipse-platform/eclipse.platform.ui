@@ -25,18 +25,24 @@ import org.eclipse.ui.internal.registry.CapabilityRegistry;
  */
 public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IProjectProvider {
 	private IProject project;
-	private Capability[] capabilities;
+	private Capability[] addCapabilities;
+	private Capability[] removeCapabilities;
+	private String[] natureIds;
 	
 	/**
 	 * Creates a wizard.
 	 * 
 	 * @param project the project to configure new capabilities
-	 * @param capabilities the new capabilities to configure on the project
+	 * @param addCapabilities the new capabilities to configure on the project
+	 * @param removeCapabilities the old capabilities to remove from the project
+	 * @param natureIds the list of nature ids to keep on the project
 	 */
-	public UpdateProjectCapabilityWizard(IProject project, Capability[] capabilities) {
+	public UpdateProjectCapabilityWizard(IProject project, Capability[] addCapabilities, Capability[] removeCapabilities, String[] natureIds) {
 		super();
 		this.project = project;
-		this.capabilities = capabilities;
+		this.addCapabilities = addCapabilities;
+		this.removeCapabilities = removeCapabilities;
+		this.natureIds = natureIds;
 		initializeDefaultPageImageDescriptor();
 		setWindowTitle(WorkbenchMessages.getString("UpdateProjectCapabilityWizard.windowTitle")); //$NON-NLS-1$
 	}
@@ -46,12 +52,22 @@ public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IP
 	 * the chosen capabilities
 	 */
 	private void buildSteps() {
+		int stepNumber = 1;
+		RemoveCapabilitiesStep removeStep = null;
+		if (removeCapabilities.length > 0) {
+			removeStep = new RemoveCapabilitiesStep(stepNumber,natureIds,removeCapabilities, project);
+			stepNumber++;
+		}
+		
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
-		Capability[] results = reg.pruneCapabilities(capabilities);
-		WizardStep[] steps = new WizardStep[results.length];
-		for (int i = 0; i < results.length; i++)
-			steps[i] = new InstallCapabilityStep(i+1, results[i], workbench, this);
+		Capability[] results = reg.pruneCapabilities(addCapabilities);
+		WizardStep[] steps = new WizardStep[results.length + (stepNumber - 1)];
+		
+		if (removeStep != null)
+			steps[0] = removeStep;
+		for (int i = 0; i < results.length; i++, stepNumber++)
+			steps[stepNumber - 1] = new InstallCapabilityStep(stepNumber, results[i], workbench, this);
 		setSteps(steps);
 	}
 	
