@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.internal.resources.FileState;
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
@@ -28,10 +29,6 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 /**
  * This class defines all tests for the HistoryStore Class.
  */
-
-// FIXME Should explicitly test each of the public methods in the 
-// HistoryStore class (e.g. ensure we test copyHistory explicitly.  These
-// tests only test it through the resources that use it.)
 
 public class HistoryStoreTest extends EclipseWorkspaceTest {
 public HistoryStoreTest() {
@@ -1664,5 +1661,188 @@ private void wipeHistoryStore() {
 	store.removeAll();
 	// Now make sure all the states are really removed.
 	store.removeGarbage();
+}
+
+/*
+ * This test is designed to exercise the public API method
+ * HistoryStore.copyHistory().  The following tests will be performed:
+ * - give a null source path
+ * - give a null destination path
+ * - give the same path for source and destination
+ * - give an invalid source path but a valid destination path
+ * - give an invalid destination path but a valid source path
+ */
+public void testCopyHistoryFile() {
+	// Create a project, folder and file so we have some history store
+	// Should have a project that appears as follows:
+	// - project name TestCopyHistoryProject
+	// - has one folder called folder1
+	// - folder1 has one file called file1.txt
+	// - file1.txt was created with initial data "content1"
+	// - change data in file1.txt to be "content2"
+	// - change data in file1.txt to be "content3"
+	// As a result of the above, there should be 2 history store states for
+	// file1.txt (one with "contents1" and the other with "contents2".
+	
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
+	// create common objects
+	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	IFolder folder = project.getFolder("folder1");
+	IFile file = folder.getFile("file1.txt");
+	IFile file2 = folder.getFile("file2.txt");
+	try {
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		file2.create(getContents(contents[3]), true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.9", e);
+	}
+
+	// Test with null source and/or destination
+	HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+	store.copyHistory(null, null);
+	store.copyHistory(null, file2.getLocation());
+	store.copyHistory(file.getLocation(), null);
+	
+	// Try to copy the history store stuff to the same location
+	store.copyHistory(file.getLocation(), file.getLocation());
+	
+	// Test a valid copy of a file
+	store.copyHistory(file.getFullPath(), file2.getFullPath());
+	IFileState[] states = null;
+	try {
+		states = file2.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("2.4");
+	}
+	assertEquals("2.4", 3, states.length);
+	try {
+		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+	} catch (CoreException e) {
+		fail("2.8");
+	}
+}
+public void testCopyHistoryFolder() {
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
+	// create common objects
+	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	IFolder folder = project.getFolder("folder1");
+	IFolder folder2 = project.getFolder("folder2");
+	IFile file = folder.getFile("file1.txt");
+	IFile file2 = folder2.getFile("file1.txt");
+	try {
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		folder2.create(true, true, getMonitor());
+		file2.create(getContents(contents[3]), true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.9", e);
+	}
+
+	// Test a valid copy of a folder
+	HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+	store.copyHistory(folder.getFullPath(), folder2.getFullPath());
+	IFileState[] states = null;
+	try {
+		states = file2.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("2.4");
+	}
+	assertEquals("2.4", 3, states.length);
+	try {
+		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+	} catch (CoreException e) {
+		fail("2.8");
+	}
+}
+public void testCopyHistoryProject() {
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
+	// create common objects
+	IProject project = getWorkspace().getRoot().getProject("TestCopyHistoryProject");
+	IProject project2 = getWorkspace().getRoot().getProject("TestCopyHistoryProject2");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		project2.create(getMonitor());
+		project2.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	IFolder folder = project.getFolder("folder1");
+	IFolder folder2 = project2.getFolder("folder1");
+	IFile file = folder.getFile("file1.txt");
+	IFile file2 = folder2.getFile("file1.txt");
+	try {
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		folder2.create(true, true, getMonitor());
+		file2.create(getContents(contents[3]), true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.9", e);
+	}
+
+	// Test a valid copy of a folder
+	HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+	store.copyHistory(project.getFullPath(), project2.getFullPath());
+	IFileState[] states = null;
+	try {
+		states = file2.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("2.4");
+	}
+	assertEquals("2.4", 3, states.length);
+	try {
+		assertTrue("2.5", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[0]), states[1].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[3]), states[2].getContents()));
+	} catch (CoreException e) {
+		fail("2.8");
+	}
 }
 }
