@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -17,6 +19,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
@@ -61,12 +64,23 @@ public class GetMergeAction extends MergeAction {
 			}	
 		}
 		ITeamNode[] changed = syncSet.getChangedNodes();
-		IResource[] changedResources = new IResource[changed.length];
+		List changedResources = new ArrayList();
+		List addedResources = new ArrayList();
 		for (int i = 0; i < changed.length; i++) {
-			changedResources[i] = changed[i].getResource();
+			if ((changed[i].getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) {
+				addedResources.add(changed[i].getResource());
+			} else {
+				changedResources.add(changed[i].getResource());
+			}
 		}
 		try {
-			CVSUIPlugin.getPlugin().getRepositoryManager().get(changedResources, monitor);
+			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+			if (addedResources.size() > 0) {
+				manager.update((IResource[])addedResources.toArray(new IResource[0]), monitor);
+			}
+			if (changedResources.size() > 0) {
+				manager.get((IResource[])changedResources.toArray(new IResource[0]), monitor);
+			}
 		} catch (TeamException e) {
 			// remove the change from the set, add an error
 			CVSUIPlugin.getPlugin().log(e.getStatus());
