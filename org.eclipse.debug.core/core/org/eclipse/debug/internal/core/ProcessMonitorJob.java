@@ -45,6 +45,8 @@ public class ProcessMonitorJob extends Job {
 			try {
 				fOSProcess.waitFor();
 			} catch (InterruptedException ie) {
+				// clear interrupted state
+				Thread.interrupted();
 			} finally {
 				fOSProcess = null;
 				fProcess.terminated();
