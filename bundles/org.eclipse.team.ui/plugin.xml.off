@@ -22,7 +22,7 @@
 <extension-point id="configurationWizards" name="Configuration Wizards"/>
 <extension-point id="decorators" name="Provider Decorators"/>
 
-<!-- Define some example ASCII extensions. This will be done
+<!-- Define some example text extensions. This will be done
      by other plugins later. -->
      
 <extension point="org.eclipse.team.core.fileTypes">
@@ -38,6 +38,11 @@
        <page id="org.eclipse.team.ui.TextPreferences"
        	  class="org.eclipse.team.internal.ui.TextPreferencePage"
        	    name="%TextPreferencePage.name">
+       </page>
+       <page id="org.eclipse.team.ui.IgnorePreferences"
+       	  class="org.eclipse.team.internal.ui.IgnorePreferencePage"
+       	    name="%IgnorePreferencePage.name"
+       	    category="org.eclipse.team.ui.TextPreferences">
        </page>
    </extension>
 
