@@ -69,8 +69,8 @@ public class ProgressContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	private TreeViewer viewer;
-	private Job updateJob;
+	TreeViewer viewer;
+	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
 
 	public ProgressContentProvider(TreeViewer mainViewer) {

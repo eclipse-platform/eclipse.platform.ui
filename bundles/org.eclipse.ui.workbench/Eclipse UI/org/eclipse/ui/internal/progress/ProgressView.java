@@ -15,9 +15,9 @@ import org.eclipse.ui.part.ViewPart;
 public class ProgressView extends ViewPart implements IViewPart {
 
 	ProgressTreeViewer viewer;
-	private Action cancelAction;
-	private Action deleteAction;
-	private Action showErrorAction;
+	Action cancelAction;
+	Action deleteAction;
+	Action showErrorAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -145,7 +145,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * JobInfo.
 	 * @return
 	 */
-	private JobInfo getSelectedInfo() {
+	JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
 			JobTreeElement element =
@@ -167,7 +167,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((JobTreeElement) e1).compareTo((JobTreeElement) e2);
+				return ((Comparable) e1).compareTo(e2);
 			}
 		};
 	}

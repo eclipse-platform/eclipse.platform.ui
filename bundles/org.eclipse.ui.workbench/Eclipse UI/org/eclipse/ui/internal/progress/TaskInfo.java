@@ -25,11 +25,11 @@ public class TaskInfo extends SubTaskInfo {
 	 * Create a new instance of the receiver with the supplied total
 	 * work and task name.
 	 * @param parentJob
-	 * @param taskName
+	 * @param infoName
 	 * @param total
 	 */
-	TaskInfo(Job parentJob, String taskName, int total) {
-		super(parentJob, taskName);
+	TaskInfo(Job parentJob, String infoName, int total) {
+		super(parentJob, infoName);
 		totalWork = total;
 	}
 

@@ -26,8 +26,6 @@ public class JobProgressManager
 	private ArrayList providers = new ArrayList();
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection updates = Collections.synchronizedSet(new HashSet());
-	private boolean updateAll = false;
 	boolean debug = false;
 
 	/**
@@ -219,7 +217,7 @@ public class JobProgressManager
 	 * @param job
 	 * @return
 	 */
-	private JobInfo getJobInfo(Job job) {
+	JobInfo getJobInfo(Job job) {
 		JobInfo info = (JobInfo) jobs.get(job);
 		if (info == null) {
 			info = new JobInfo(job);
@@ -289,7 +287,7 @@ public class JobProgressManager
 	 * @param job
 	 * @return
 	 */
-	private boolean isNonDisplayableJob(Job job) {
+	boolean isNonDisplayableJob(Job job) {
 		if (isNeverDisplayedJob(job))
 			return true;
 		if (debug) //Always display in debug mode
@@ -311,7 +309,7 @@ public class JobProgressManager
 			.getName()
 			.equals(
 				ProgressMessages.getString(
-					"ProgressContentProvider.UpdateProgressJob")))
+					"ProgressContentProvider.UpdateProgressJob"))) //$NON-NLS-1$
 			return true;
 		return false;
 	}

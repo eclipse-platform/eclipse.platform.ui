@@ -40,10 +40,10 @@ public class AnimationItem {
 	private ImageData[] disabledData;
 	private Image animatedImage;
 	private Image disabledImage;
-	private Canvas imageCanvas;
-	private GC imageCanvasGC;
+	Canvas imageCanvas;
+	GC imageCanvasGC;
 	private ImageLoader loader = new ImageLoader();
-	private boolean animated = false;
+	boolean animated = false;
 	private Job animateJob;
 	private IJobChangeListener listener;
 
@@ -92,7 +92,7 @@ public class AnimationItem {
 	 * @param exception
 	 * @return
 	 */
-	private Status exceptionStatus(Throwable exception) {
+	Status exceptionStatus(Throwable exception) {
 		return new Status(
 			IStatus.ERROR,
 			PlatformUI.PLUGIN_ID,
@@ -116,7 +116,7 @@ public class AnimationItem {
 	 * @param fileSystemPath The URL for the file system to the image.
 	 * @return ImageData[]
 	 */
-	private ImageData[] getImageData(URL fileSystemPath) {
+	ImageData[] getImageData(URL fileSystemPath) {
 		try {
 			InputStream stream = fileSystemPath.openStream();
 			ImageData[] result = loader.load(stream);
@@ -206,7 +206,7 @@ public class AnimationItem {
 	 * Get the current ImageData for the receiver.
 	 * @return ImageData[]
 	 */
-	private ImageData[] getImageData() {
+	ImageData[] getImageData() {
 		if (animated)
 			return animatedData;
 		else
@@ -219,7 +219,7 @@ public class AnimationItem {
 	 * @param image The image to display
 	 * @param imageData The array of ImageData. Required to show an animation.
 	 */
-	private void paintImage(
+	void paintImage(
 		PaintEvent event,
 		Image image,
 		ImageData imageData) {
@@ -285,7 +285,7 @@ public class AnimationItem {
 	 * and display them one after another.
 	 * @param monitor The monitor supplied to the job
 	 */
-	private void animateLoop(IProgressMonitor monitor) {
+	void animateLoop(IProgressMonitor monitor) {
 		// Create an off-screen image to draw on, and a GC to draw with.
 		// Both are disposed after the animation.
 
@@ -492,7 +492,7 @@ public class AnimationItem {
 	/**
 	 * Open a progress view in the current page.
 	 */
-	private void openProgressView() {
+	void openProgressView() {
 		try {
 			window.getActivePage().showView(PROGRESS_VIEW_NAME);
 		} catch (PartInitException exception) {
