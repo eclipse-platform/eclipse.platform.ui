@@ -67,15 +67,18 @@ public EditorRegistry() {
  * @param filenames     Collection of filenames the editor applies to
  * @param bDefault      Indicates whether the editor should be made the default editor
  *                      and hence appear first inside a FileEditorMapping
+ * @return a <code>List</code> of <code>FileEditorMapping</code>
  *
  * This method is not API and should not be called outside the workbench code.
  */
-public void addEditorFromPlugin(EditorDescriptor editor, 
+public List addEditorFromPlugin(EditorDescriptor editor, 
 	List extensions, List filenames, boolean bDefault) {
 
 	// record it in our quick reference list
 	sortedEditorsFromPlugins.add(editor);
 
+	ArrayList mappings = new ArrayList(extensions.size() + filenames.size());
+	
 	// add it to the table of mappings
 	Iterator enum = extensions.iterator();
 	while(enum.hasNext()) {
@@ -90,6 +93,7 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 			mapping.addEditor(editor);
 			if (bDefault)
 				mapping.setDefaultEditor(editor);
+			mappings.add(mapping);
 		}
 	}
 
@@ -118,11 +122,14 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 			mapping.addEditor(editor);
 			if (bDefault)
 				mapping.setDefaultEditor(editor);
+			mappings.add(mapping);
 		}
 	}
 
 	// Update editor map.
 	mapIDtoEditor.put(editor.getId(), editor);
+	
+	return mappings;
 }
 /**
  * Add external editors to the editor mapping.

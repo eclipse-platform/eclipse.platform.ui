@@ -5,6 +5,7 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.*;
@@ -32,7 +33,10 @@ public class EditorRegistryReader extends RegistryReader {
 	private static final   String       ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
 	private static final   String       ATT_FILENAMES = "filenames";//$NON-NLS-1$
 	private static final   String       ATT_EXTENDEDTYPE = "extendedType";//$NON-NLS-1$
+	private static final   String       ATT_OVERRIDES = "overrides";//$NON-NLS-1$
 	private EditorRegistry editorRegistry;
+	private ArrayList overrides = new ArrayList();
+	
 /**
  * Get the editors that are defined in the registry
  * and add them to the ResourceEditorRegistry
@@ -47,6 +51,36 @@ protected void addEditors(boolean readAll, EditorRegistry registry) {
 	IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 	this.editorRegistry = registry;
 	readRegistry(pluginRegistry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+	
+	// update the registry with the overrides
+	Iterator enum = overrides.iterator();
+	while (enum.hasNext()) {
+		OverrideData data = (OverrideData)enum.next();
+		
+		// Get the editor descriptor for each override editor id
+		IEditorDescriptor[] overrideEditors = new IEditorDescriptor[data.overrideList.size()];
+		for (int i = 0; i < overrideEditors.length; i++) {
+			overrideEditors[i] = editorRegistry.findEditor((String)data.overrideList.get(i));
+		}
+		
+		// For each mapping, remove any override editor from
+		// its list and update the default editor if it is
+		// part of the override editor list.
+		Iterator mappings = data.mappingList.iterator();
+		while (mappings.hasNext()) {
+			FileEditorMapping mapping = (FileEditorMapping)mappings.next();
+			IEditorDescriptor defEditor = mapping.getDefaultEditor();
+			for (int i = 0; i < overrideEditors.length; i++) {
+				if (overrideEditors[i] != null) {
+					if (overrideEditors[i].getId().equals(defEditor.getId())) {
+						mapping.setDefaultEditor(data.editor);
+					}
+					mapping.removeEditor((EditorDescriptor)overrideEditors[i]);
+				}
+			}
+		}	
+	}
+	overrides.clear();
 }
 /**
  * Implementation of the abstract method that
@@ -69,6 +103,7 @@ protected boolean readElement(IConfigurationElement element) {
 
 	List extensionsVector = new ArrayList();
 	List filenamesVector = new ArrayList();
+	List overridesVector = new ArrayList();
 	boolean defaultEditor = false;
 
 	// Get editor name (required field).
@@ -107,6 +142,13 @@ protected boolean readElement(IConfigurationElement element) {
 			filenamesVector.add(tokenizer.nextToken().trim());
 		}
 	}
+	String overridesString = element.getAttribute(ATT_OVERRIDES);
+	if (overridesString != null) {
+		StringTokenizer tokenizer = new StringTokenizer(overridesString, ",");//$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			overridesVector.add(tokenizer.nextToken().trim());
+		}
+	}
 
 	// Get launcher class or command.	
 	String launcher = element.getAttribute(ATT_LAUNCHER);
@@ -135,7 +177,25 @@ protected boolean readElement(IConfigurationElement element) {
 		defaultEditor = def.equalsIgnoreCase(P_TRUE);
 				
 	// Add the editor to the manager.	
-	editorRegistry.addEditorFromPlugin(editor, extensionsVector, filenamesVector, defaultEditor);
+	List fileMappings = editorRegistry.addEditorFromPlugin(editor, extensionsVector, filenamesVector, defaultEditor);
+	
+	if (overridesVector.size() > 0) {
+		overrides.add(new OverrideData(editor, overridesVector, fileMappings));
+	}
+	
 	return true;
+}
+
+private static final class OverrideData {
+	/*package*/EditorDescriptor editor;
+	/*package*/List overrideList;
+	/*package*/List mappingList;
+	
+	/*package*/OverrideData(EditorDescriptor editor, List overrideList, List mappingList) {
+		super();
+		this.editor = editor;
+		this.overrideList = overrideList;
+		this.mappingList = mappingList;
+	}
 }
 }

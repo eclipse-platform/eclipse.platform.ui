@@ -163,8 +163,9 @@ public String getName() {
  * Remove the given editor from the set of editors registered.
  */
 public void removeEditor(EditorDescriptor editor) {
-	editors.remove(editor);
-	deletedEditors.add(editor);
+	if (editors.remove(editor)) {
+		deletedEditors.add(editor);
+	}
 }
 /**
  * Set the default editor registered for file type
