@@ -383,7 +383,7 @@ public class OverviewRuler implements IOverviewRuler {
 	
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
-				if (fTextViewer != null && fModel != null)
+				if (fTextViewer != null)
 					doubleBufferPaint(event.gc);
 			}
 		});
