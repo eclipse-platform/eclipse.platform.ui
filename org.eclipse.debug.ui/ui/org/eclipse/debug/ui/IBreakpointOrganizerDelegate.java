@@ -87,7 +87,7 @@ public interface IBreakpointOrganizerDelegate {
     /**
      * Removes the specified breakpoint from the given category. Only
      * called if <code>canRemove(...)</code> returns <code>true</code> for
-     * the givem breakpoint and category.
+     * the given breakpoint and category.
      * 
      * @param breakpoint breakpoint to recategorize
      * @param category the category the breakpoint is remove from
@@ -109,7 +109,7 @@ public interface IBreakpointOrganizerDelegate {
      * Returns whether the given breakpoint can be removed from the given
      * category.
      * 
-     * @param breakpoint berakpoint to recategorize
+     * @param breakpoint breakpoint to recategorize
      * @param category the category to remove the breakpoint from
      * @return whether the given breakpoint can be removed from the given
      * category
