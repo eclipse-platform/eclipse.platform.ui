@@ -488,6 +488,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * Only one input handler is permitted for any build.
 	 * 
 	 * @param className an input handler class name
+	 * @since 2.1
 	 */
 	public void setInputHandler(String className) {
 		inputHandlerClassName= className;
