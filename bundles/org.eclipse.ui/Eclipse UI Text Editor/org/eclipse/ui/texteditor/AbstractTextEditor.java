@@ -1595,7 +1595,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					 * Set progress monitor to canceled in order to report back 
 					 * to enclosing operations. 
 					 */
-					progressMonitor.setCanceled(true);
+					if (progressMonitor != null) {
+						progressMonitor.setCanceled(true);
+					}
 				}
 			} else {
 				
@@ -1608,7 +1610,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 * Set progress monitor to canceled in order to report back 
 				 * to enclosing operations. 
 				 */
-				progressMonitor.setCanceled(true);
+				if (progressMonitor != null) {
+					progressMonitor.setCanceled(true);
+				}
 			}
 			
 		} finally {
