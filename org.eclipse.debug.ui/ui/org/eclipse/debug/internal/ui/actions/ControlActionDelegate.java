@@ -45,14 +45,14 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Whether this delegate has been initialized
 	 */
-	private boolean fInitialized = false;
+	protected boolean fInitialized = false;
 	
 	/**
 	 * Whether this delegate has a direct action owner.
 	 * That is it is NOT contributed via XML.
 	 */
 	private boolean fHasOwner = false;
-
+	
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set

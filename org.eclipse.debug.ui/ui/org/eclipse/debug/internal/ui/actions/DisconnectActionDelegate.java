@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -13,7 +14,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
-public class DisconnectActionDelegate extends ControlActionDelegate {
+public class DisconnectActionDelegate extends ListenerActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)
@@ -30,6 +31,9 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 		return element instanceof IDisconnect && ((IDisconnect) element).canDisconnect();
 	}
 	
+	/**
+	 * @see ControlActionDelegate#getHelpContextId()
+	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.DISCONNECT_ACTION;
 	}
@@ -74,5 +78,14 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 	 */
 	protected String getText() {
 		return ActionMessages.getString("DisconnectActionDelegate.&Disconnect_4"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
+	 */
+	protected void doHandleDebugEvent(DebugEvent event) {	
+		if (event.getKind() == DebugEvent.TERMINATE) {
+			getAction().setEnabled(false);
+		}
 	}
 }
