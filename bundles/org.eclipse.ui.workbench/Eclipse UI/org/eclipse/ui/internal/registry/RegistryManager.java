@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,12 +32,27 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ExtensionEventHandlerMessages;
 
+/**
+ * TODO: clean up method names and visibility
+ * TODO: clean up access to 'real objects' in the registry object.  Should the collection be mutable directly or should it all be done via accessors?
+ * TODO: examine Collections API usage to determine proper interfaces to use 
+ * TODO: usage of syncExec is scary.  Can we get away with asyncExec?
+ * TODO: determine whether the reset perspective code belongs here or in a subclass
+ * TODO: rename to AbstractRegistryManager ?  Extract a meaningful interface?
+ * TODO: can we remove the REGISTRY_CACHE_* flags?  The only one that seems interesting ATM is deleted
+ * TODO: why is null being returned from getRegistryObjects when the array is empty?  It'd be easier to return the empty array - then the caller doesnt need to handle the null case
+ * TODO: add exception handling in the do* methods so that one bad extension doesn't kill processing of an entire delta
+ * TODO: add documentation!
+ * TODO: add Comparator so that getRegistryObjects returns an ordered array?
+ * 
+ * @since 3.1
+ */
 public abstract class RegistryManager implements IRegistryChangeListener {
     private String elementId;
 
     private String extPtId;
 
-    private HashMap cache;
+    private Map cache;
 
     public static final int REGISTRY_CACHE_STATE_UNKNOWN = 0;
 
@@ -49,47 +64,12 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 
     public static final String INTERNAL_REGISTRY_ADDITION = "InternalRegistryAddition"; //$NON-NLS-1$
 
-    private List changeList = new ArrayList(10);
-
-    private class RegistryElement {
-        private int state;
-
-        private ArrayList realObjects = null;
-
-        public RegistryElement(Object obj) {
-            state = REGISTRY_CACHE_STATE_UNKNOWN;
-            if (realObjects == null) {
-                realObjects = new ArrayList();
-            }
-            realObjects.add(obj);
-        }
-
-        public void addNewObject(Object obj) {
-            if (realObjects == null) {
-                realObjects = new ArrayList();
-            }
-            realObjects.add(obj);
-        }
-
-        public void changeState(int newState) {
-            if ((newState > REGISTRY_CACHE_STATE_UNKNOWN)
-                    && (newState <= REGISTRY_CACHE_STATE_MAX))
-                state = newState;
-        }
-
-        public ArrayList getRealObjects() {
-            return realObjects;
-        }
-    }
+    protected List changeList = new ArrayList(10);
 
     public RegistryManager(String elementId, String extPtId) {
         this.elementId = elementId;
         this.extPtId = extPtId;
         cache = new HashMap();
-    }
-
-    public RegistryManager getCache() {
-        return this;
     }
 
     public void addResetMessage(String msg) {
@@ -102,7 +82,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
             return null;
         ArrayList retList = new ArrayList();
         for (int i = 0; i < regElements.length; i++) {
-            ArrayList listElement = ((RegistryElement) regElements[i])
+            List listElement = ((RegistryElement) regElements[i])
                     .getRealObjects();
             if (listElement != null) {
                 ListIterator iter = listElement.listIterator();
@@ -165,7 +145,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
     }
 
     public void add(IExtensionDelta delta) {
-        IExtensionPoint extPt = delta.getExtensionPoint();
         IExtension ext = delta.getExtension();
         // Get the name of the plugin that is adding this extension.  The
         // name of the plugin that adds the extension point is us.
@@ -227,7 +206,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
     }
 
     public void remove(IExtensionDelta delta) {
-        IExtensionPoint extPt = delta.getExtensionPoint();
         IExtension ext = delta.getExtension();
         // Get the name of the plugin that is adding this extension.  The
         // name of the plugin that adds the extension point is us.
@@ -348,7 +326,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
         if (element != null) {
             // Find the registry element that contains this object and
             // remove only that one.
-            ArrayList realObjects = element.getRealObjects();
+            List realObjects = element.getRealObjects();
             realObjects.remove(object);
         }
     }
@@ -367,7 +345,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
         while (iter.hasNext()) {
             Object pluginId = iter.next();
             RegistryElement elem = (RegistryElement) cache.get(pluginId);
-            if (elem != null && elem.state == REGISTRY_CACHE_STATE_DELETED) {
+            if (elem != null && elem.getState() == REGISTRY_CACHE_STATE_DELETED) {
                 keysToRemove.add(pluginId);
             }
         }
@@ -377,5 +355,40 @@ public abstract class RegistryManager implements IRegistryChangeListener {
         while (removeIterator.hasNext()) {
             cache.remove(removeIterator.next());
         }
+    }
+}
+
+class RegistryElement {
+    private int state;
+
+    private List realObjects = null;
+
+    public RegistryElement(Object obj) {
+        state = RegistryManager.REGISTRY_CACHE_STATE_UNKNOWN;
+        if (realObjects == null) {
+            realObjects = new ArrayList();
+        }
+        realObjects.add(obj);
+    }
+
+    public void addNewObject(Object obj) {
+        if (realObjects == null) {
+            realObjects = new ArrayList();
+        }
+        realObjects.add(obj);
+    }
+
+    public int getState() {
+    	return state;
+    }
+    
+    public void changeState(int newState) {
+        if ((newState > RegistryManager.REGISTRY_CACHE_STATE_UNKNOWN)
+                && (newState <= RegistryManager.REGISTRY_CACHE_STATE_MAX))
+            state = newState;
+    }
+
+    public List getRealObjects() {
+        return realObjects;
     }
 }
