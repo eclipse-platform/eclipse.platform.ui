@@ -24,13 +24,13 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class LocalHistoryPerformanceTest extends ResourceTest {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
+		//		TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
 		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory100x4"));		
 		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory20x20"));
 		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory4x100"));
-		suite.addTest(new LocalHistoryPerformanceTest("testGetHistory"));
-		return suite;
-		//		return new TestSuite(LocalHistoryPerformanceTest.class);
+		//		suite.addTest(new LocalHistoryPerformanceTest("testGetHistory"));
+		//		return suite;
+		return new TestSuite(LocalHistoryPerformanceTest.class);
 	}
 
 	public LocalHistoryPerformanceTest(String name) {
