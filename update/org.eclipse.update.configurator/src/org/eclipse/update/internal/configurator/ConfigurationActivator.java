@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.configurator;
+package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
@@ -17,7 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.debug.*;
 import org.eclipse.osgi.service.environment.*;
-import org.eclipse.update.internal.configurator.*;
+import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;

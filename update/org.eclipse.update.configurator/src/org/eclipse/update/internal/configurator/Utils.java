@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configurator.*;
 
 public class Utils {
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
