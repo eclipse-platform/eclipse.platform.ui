@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.subscriber.*;
 import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
 import org.eclipse.ui.PlatformUI;
@@ -72,11 +71,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 							prompt = false;
 						}
 					}
-					
-					// ensure the synchronize views are shown
-					TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
-					
-					
+						
 					// Prompt user if preferences are set for this type of refresh.
 					if (prompt) {
 						notifyIfNeededModal(event);

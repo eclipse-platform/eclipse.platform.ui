@@ -176,7 +176,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @param resources the resources to be refreshed.
 	 */
 	public void refresh(IResource[] resources, IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
-		refreshHelper(site, taskName, resources, getSubscriberSyncInfoCollector(), listener);
+		ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+		refreshHelper(view.getSite(), taskName, resources, getSubscriberSyncInfoCollector(), listener);
 	}
 	
 	public IRefreshSubscriberListenerFactory getRefreshListeners() {
