@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
-import sun.security.action.GetPropertyAction;
 
 /**
  * This class models a sentry that verifies whether resources are available for editing or overwriting.
