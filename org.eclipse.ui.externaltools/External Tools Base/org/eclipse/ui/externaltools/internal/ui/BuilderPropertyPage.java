@@ -92,12 +92,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
 	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
-	
-	private static String fEnableText=ExternalToolsUIMessages.getString("BuilderPropertyPage.36"); //$NON-NLS-1$
-	private static String fDisableText= ExternalToolsUIMessages.getString("BuilderPropertyPage.37"); //$NON-NLS-1$
 
 	private Table builderTable;
-	private Button upButton, downButton, newButton, copyButton, editButton, removeButton, toggleEnabledButton;
+	private Button upButton, downButton, newButton, copyButton, editButton, removeButton, enableButton, disableButton;
 	private List imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
 	
@@ -403,7 +400,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		tableAndButtons.setLayout(layout);
 
 		// table of builders and tools		
-		builderTable = new Table(tableAndButtons, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		builderTable = new Table(tableAndButtons, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = BUILDER_TABLE_WIDTH;
 		builderTable.setLayoutData(data);
@@ -432,7 +429,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
-		toggleEnabledButton = createButton(buttonArea, fDisableText);
+		enableButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.41")); //$NON-NLS-1$
+		disableButton= createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.42")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
@@ -503,8 +501,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 			moveSelectionUp();
 		} else if (button == downButton) {
 			moveSelectionDown();
-		} else if (button == toggleEnabledButton) {
-			handleToggleEnabledButtonPressed();
+		} else if (button == enableButton) {
+			handleEnableButtonPressed();
+		} else if (button == disableButton) {
+			handleDisableButtonPressed();
 		}
 		handleTableSelectionChanged();
 		builderTable.setFocus();
@@ -513,10 +513,23 @@ public final class BuilderPropertyPage extends PropertyPage {
 	/**
 	 * 
 	 */
-	private void handleToggleEnabledButtonPressed() {
-		boolean enable= fEnableText.equals(toggleEnabledButton.getText());
+	private void handleDisableButtonPressed() {
+		handleToggleEnabledButtonPressed(false);
+	}
+
+	/**
+	 * 
+	 */
+	private void handleEnableButtonPressed() {
+		handleToggleEnabledButtonPressed(true);
+	}
+
+	/**
+	 * A button which toggles launch config enabled state has been 
+	 * pressed. The selected configs should be enabled or disabled.
+	 */
+	private void handleToggleEnabledButtonPressed(boolean enable) {
 		TableItem[] selection = builderTable.getSelection();
-		boolean enableToggled= false;
 		TableItem item;
 		for (int i = 0; i < selection.length; i++) {
 			item= selection[i];
@@ -536,16 +549,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 				} catch (CoreException e) {
 					continue;
 				}
-				enableToggled= true;
 				userHasMadeChanges= true;
 				updateConfigItem(item, workingCopy);
-			}
-		}
-		if (enableToggled) {
-			if (enable) {
-				toggleEnabledButton.setText(fDisableText);
-			} else {
-				toggleEnabledButton.setText(fEnableText);
 			}
 		}
 	}
@@ -896,43 +901,69 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleTableSelectionChanged() {
 		newButton.setEnabled(true);
 		TableItem[] items = builderTable.getSelection();
-		editButton.setEnabled(false);
-		removeButton.setEnabled(false);
-		upButton.setEnabled(false);
-		downButton.setEnabled(false);
-		toggleEnabledButton.setEnabled(false);
-		if (items != null && items.length == 1) {
-			TableItem item = items[0];
-			Object firstData = item.getData();
-			if (firstData instanceof ILaunchConfiguration) {
-				toggleEnabledButton.setEnabled(true);
-				for (int i = 0; i < items.length; i++) {
-					Object data= items[i].getData();
-					if (data instanceof ILaunchConfiguration) {
-						if (isUnmigratedConfig((ILaunchConfiguration) data)) {
-							toggleEnabledButton.setEnabled(false);
-						}
+		boolean validSelection= items != null && items.length > 0;
+		boolean enableEdit= validSelection;
+		boolean enableRemove= validSelection;
+		boolean enableUp= validSelection;
+		boolean enableDown= validSelection;
+		boolean enableEnable= validSelection;
+		boolean enableDisable= validSelection;
+		if (validSelection) {
+			if (items.length > 1) {
+				enableEdit= false;
+			}
+			int indeces[]= builderTable.getSelectionIndices();
+			int max = builderTable.getItemCount();
+			enableUp= indeces[0] != 0;
+			enableDown= indeces[indeces.length - 1] < max - 1;
+			boolean disabledSelected= false; // Any disabled configs selected?
+			boolean enabledSelected= false; // Any enabled configs selected?
+			for (int i = 0; i < items.length; i++) {
+				TableItem item = items[i];
+				Object data= item.getData();
+				if (data instanceof ILaunchConfiguration) {
+					ILaunchConfiguration config= (ILaunchConfiguration) data;
+					boolean configEnabled= true;
+					try {
+						configEnabled = ExternalToolsUtil.isBuilderEnabled(config);
+					} catch (CoreException e) {
+						ExternalToolsPlugin.getDefault().log(e);
 					}
-				}
-				try {
-					if (ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) firstData)) {
-						toggleEnabledButton.setText(fDisableText);
+					if (configEnabled) {
+						enabledSelected= true;
 					} else {
-						toggleEnabledButton.setText(fEnableText);
+						disabledSelected= true;
 					}
-				} catch (CoreException e) {
-					toggleEnabledButton.setEnabled(false);
+					if (isUnmigratedConfig(config)) {
+						enableEnable= false;
+						enableDisable= false;
+					}
+				} else {
+					enableEdit= false;
+					enableUp= false;
+					enableDown= false;
+					enableEnable= false;
+					enableDisable= false;
+					if (data instanceof ErrorConfig) {
+						continue;
+					}
+					enableRemove= false;
+					break;
 				}
-				editButton.setEnabled(true);
-				removeButton.setEnabled(true);
-				int selection = builderTable.getSelectionIndex();
-				int max = builderTable.getItemCount();
-				upButton.setEnabled(selection != 0);
-				downButton.setEnabled(selection < max - 1);
-			} else if (firstData instanceof ErrorConfig) {
-				removeButton.setEnabled(true);
+			}
+			if (!disabledSelected) {
+				enableEnable= false;
+			}
+			if (!enabledSelected) {
+				enableDisable= false;
 			}
 		}
+		editButton.setEnabled(enableEdit);
+		removeButton.setEnabled(enableRemove);
+		upButton.setEnabled(enableUp);
+		downButton.setEnabled(enableDown);
+		enableButton.setEnabled(enableEnable);
+		disableButton.setEnabled(enableDisable);
 	}
 
 	/**
@@ -954,26 +985,36 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Move the current selection in the build list down.
 	 */
 	private void moveSelectionDown() {
-		// Only do this operation on a single selection
-		if (builderTable.getSelectionCount() == 1) {
-			int currentIndex = builderTable.getSelectionIndex();
-			if (currentIndex < builderTable.getItemCount() - 1) {
-				move(builderTable.getItem(currentIndex), currentIndex + 1);
-				builderTable.setSelection(currentIndex + 1);
+		int indices[]= builderTable.getSelectionIndices();
+		if (indices.length < 1) {
+			return;
+		}
+		int newSelection[]= new int[indices.length];
+		int max= builderTable.getItemCount() - 1;
+		for (int i = 0; i < indices.length; i++) {
+			int index= indices[i];
+			if (index < max) {
+				move (builderTable.getItem(index), index + 1);
+				newSelection[i]= index + 1;
 			}
 		}
+		builderTable.setSelection(newSelection);
 	}
 
 	/**
 	 * Move the current selection in the build list up.
 	 */
 	private void moveSelectionUp() {
-		int currentIndex = builderTable.getSelectionIndex();
-		// Only do this operation on a single selection
-		if (currentIndex > 0 && builderTable.getSelectionCount() == 1) {
-			move(builderTable.getItem(currentIndex), currentIndex - 1);
-			builderTable.setSelection(currentIndex - 1);
+		int indices[]= builderTable.getSelectionIndices();
+		int newSelection[]= new int[indices.length];
+		for (int i = 0; i < indices.length; i++) {
+			int index= indices[i];
+			if (index > 0) {
+				move (builderTable.getItem(index), index - 1);
+				newSelection[i]= index - 1;
+			}
 		}
+		builderTable.setSelection(newSelection);
 	}
 
 	/* (non-Javadoc)
