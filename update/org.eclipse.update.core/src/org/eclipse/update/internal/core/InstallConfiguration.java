@@ -15,11 +15,12 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
+import org.eclipse.core.boot.IPlatformConfiguration;
 
 /**
  * Manages ConfiguredSites
@@ -743,24 +744,16 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		IPluginDescriptor desc = reg.getPluginDescriptor(vid.getIdentifier());
 		ArrayList list = new ArrayList();
 		if (desc != null) {
-			try {
-				// get all of the fragments
-				PluginDescriptorModel descModel = (PluginDescriptorModel) desc;
-				PluginFragmentModel[] frags = descModel.getFragments();
-
-				for (int i = 0; frags != null && i < frags.length; i++) {
-					String location = frags[i].getLocation();
-					try {
-						URL locationURL = new URL(location);
-						locationURL = Platform.resolve(locationURL);
-						list.add(asInstallRelativeURL(locationURL));
-					} catch (IOException e) {
-						// skip bad fragments
-					}
+			FragmentEntry[] fragments = FragmentEntry.getFragments(desc.getUniqueIdentifier());
+			for (int i = 0; fragments != null && i < fragments.length; i++) {
+				String location = fragments[i].getLocation();
+				try {
+					URL locationURL = new URL(location);
+					locationURL = Platform.resolve(locationURL);
+					list.add(asInstallRelativeURL(locationURL));
+				} catch (IOException e) {
+					// skip bad fragments
 				}
-
-			} catch (ClassCastException e) {
-				// cannot determine fragments
 			}
 		}
 		return (URL[]) list.toArray(new URL[0]);

@@ -12,8 +12,8 @@ package org.eclipse.update.internal.core;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 
 /**
@@ -314,22 +314,23 @@ public class SiteStatusAnalyzer {
 			for (int i = 0; i < desc.length; i++) {
 				String id = desc[i].getUniqueIdentifier();
 				String ver = desc[i].getVersionIdentifier().toString();
-				VersionedIdentifier versionID = new VersionedIdentifier(id, ver);
-				pluginIdentifier = new PluginIdentifier(versionID, desc[i].getLabel(), false);
+				VersionedIdentifier versionID =
+					new VersionedIdentifier(id, ver);
+				pluginIdentifier =
+					new PluginIdentifier(versionID, desc[i].getLabel(), false);
 				allRunningPlugins.add(pluginIdentifier);
 				// check fragments
-				if (desc[i] instanceof PluginDescriptorModel) {
-					PluginDescriptorModel descModel = (PluginDescriptorModel) desc[i];
-					PluginFragmentModel[] frags = descModel.getFragments();
-					if (frags != null) {
-						for (int j = 0; j < frags.length; j++) {
-							String fragID = frags[j].getId();
-							String fragVER = frags[j].getVersion();
-							VersionedIdentifier fragVersionID = new VersionedIdentifier(fragID, fragVER);
-							pluginIdentifier = new PluginIdentifier(fragVersionID, frags[j].getName(), true);
-							allRunningPlugins.add(pluginIdentifier);
-						}
-					}
+				FragmentEntry[] fragments = FragmentEntry.getFragments(id);
+				for (int j = 0; j < fragments.length; j++) {
+					VersionedIdentifier fragVersionID =
+						new VersionedIdentifier(fragments[j].getPluginIdentifier(), fragments[j].getPluginVersion());
+			
+					pluginIdentifier =
+						new PluginIdentifier(
+							fragVersionID,
+							fragments[j].getName(),
+							true);
+					allRunningPlugins.add(pluginIdentifier);
 				}
 			}
 		}
