@@ -19,37 +19,80 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.0
  */
 public abstract class AbstractPresentationFactory {
-	
-	/**
-	 * Creates a skin for a tab folder (a stackable set of views docked
-	 * in the workbench window. Must not return null;
-	 * 
-	 * @param flags any combination of SWT.MIN, SWT.MAX, and SWT.CLOSE
-	 * @return a newly created part stack
-	 */
-	public abstract StackPresentation createViewStack(Composite parent, IStackPresentationSite container, int flags);
 
-	/**
-	 * Creates a skin for an editor workbook (a stackable set of editors 
-	 * docked in the workbench window). Must not return null.
-	 * 
-	 * @param flags any combination of SWT.MIN, SWT.MAX, and SWT.CLOSE
-	 * @return a newly created part stack
-	 */
-	public abstract StackPresentation createEditorStack(Composite parent, IStackPresentationSite container, int flags);
-	
-	/**
-	 * Creates a skin for a tab folder (a stackable set of views docked
-	 * in the workbench window. Returns null iff this skin does not support
-	 * fast views.
-	 * 
-	 * TODO: document flags
-	 * 
-	 * @param flags any combination of SWT.MIN, SWT.MAX, and SWT.CLOSE
-	 * @return a newly created part stack
-	 */
-	public StackPresentation createFastViewPresentation(Composite parent, 
-			IPresentationSite container, IPresentablePart thePart, int flags) {
-		return null;
-	}
+    public static final int ROLE_EDITOR_WORKBOOK = 0;
+
+    public static final int ROLE_DOCKED_VIEW = 1;
+
+    public static final int ROLE_FAST_VIEW = 2;
+
+    public static final int ROLE_DETACHED_VIEW = 3;
+
+    /**
+     * Creates a part presentation.
+     * <p>
+     * The presentation creates its controls under the given parent composite.
+     * </p>
+     * <p>
+     * The role argument indicates how this presentation is being used: whether
+     * it presenting editors, regular docked views, fast views, or detached
+     * views.
+     * </p>
+     * <p>
+     * The flags SWT.SINGLE and SWT.MULTI indicate whether this presentation
+     * will contain a single part or multiple parts (either SWT.SINGLE or
+     * SWT.MULTIPLE is specified, not both). If SWT.SINGLE is specified, then
+     * <code>addPart</code> will be called exactly once.
+     * </p>
+     * <p>
+     * In Eclipse 3.0, SWT.SINGLE is used for presenting fast views and
+     * detached views (which are not presented together with other views),
+     * while SWT.MULTI is used for presenting editors and docked views. These
+     * assumptions may change in future versions of Eclipse, so implementors
+     * should base their choice on single vs. multi presentation on these flags
+     * rather than on the role argument.
+     * </p>
+     * <p>
+     * The remaining flags (SWT.MIN, SWT.MAX, SWT.MOVE) indicate whether the
+     * corresponding operation is supported by the presentation. These
+     * operations apply to the presentation as a whole, including all parts it
+     * contains.
+     * </p>
+     * <p>
+     * The perspective id and folder id can be used to tailor the choice of
+     * presentation to particular perspectives or folders within a perspective.
+     * To preserve Eclipse's independence of presentation and function, neither
+     * the presentation factory nor the part presentation implementation should
+     * refer directly to particular perspectives or folders (nor should
+     * perspectives refer to particular presentations). Any mapping between
+     * perspectives, folders and presentations should be done extrinsically,
+     * for example using a separate extension point to associate a perspective
+     * or folder with a presentation. Maintaining this separation of concerns
+     * allows functional components (views, editors, perspectives) and
+     * presentations to be mixed and matched independently across different
+     * products.
+     * </p>
+     * 
+     * @param parent
+     *            the parent composite to use for the presentation's controls
+     * @param site
+     *            the site used for communication between the presentation and
+     *            the workbench
+     * @param role
+     *            one of the ROLE_* constants indicating the role of this
+     *            presentation
+     * @param flags
+     *            the <em>bitwise OR</em> of one or more of SWT.SINGLE,
+     *            SWT.MULTI, SWT.MIN, SWT.MAX, SWT.MOVE
+     * @param perspectiveId
+     *            the id of the perspective containing this presentation
+     * @param folderId
+     *            the id of the folder corresponding to this presentation, or
+     *            <code>null</code> if there is no corresponding folder or if
+     *            it has no id
+     * @return a newly created part presentation
+     */
+    public abstract StackPresentation createPartPresentation(Composite parent,
+            IStackPresentationSite site, int role, int flags,
+            String perspectiveId, String folderId);
 }

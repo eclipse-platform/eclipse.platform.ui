@@ -7,15 +7,9 @@ import org.eclipse.ui.presentations.StackPresentation;
 
 public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
 
-	public StackPresentation createViewStack(Composite parent,
-			IStackPresentationSite container, int flags) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StackPresentation createEditorStack(Composite parent,
-			IStackPresentationSite container, int flags) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public StackPresentation createPartPresentation(Composite parent,
+            IStackPresentationSite site, int role, int flags,
+            String perspectiveId, String folderId) {
+        return null;
+    }
 }
