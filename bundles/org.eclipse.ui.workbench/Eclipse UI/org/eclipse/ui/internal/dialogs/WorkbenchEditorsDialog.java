@@ -105,7 +105,23 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		super.configureShell(newShell);
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.WORKBENCH_EDITORS_DIALOG);
 	}
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
 		
+		Button button = getButton(IDialogConstants.OK_ID);
+		if (button != null)
+			button.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.activate")); //$NON-NLS-1$
+			
+		button = getButton(IDialogConstants.CANCEL_ID);
+		if (button != null)
+			button.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.close")); //$NON-NLS-1$
+		
+	}
+	
 	/**
 	 * Initialize the dialog bounds with the bounds saved
 	 * from the settings.
