@@ -26,6 +26,9 @@ import org.xml.sax.SAXException;
 
 public class FeatureModelFactory {
 
+
+	private static DefaultFeatureParser parser = new DefaultFeatureParser();
+
 	/**
 	 * Creates a default model factory.
 	 * 
@@ -49,7 +52,7 @@ public class FeatureModelFactory {
 	 */
 	public FeatureModel parseFeature(InputStream stream)
 		throws CoreException, SAXException {
-		DefaultFeatureParser parser = new DefaultFeatureParser(this);
+		parser.init(this);
 		FeatureModel featureModel = null;
 		try {
 			featureModel = parser.parse(stream);

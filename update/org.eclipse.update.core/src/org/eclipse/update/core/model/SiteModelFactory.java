@@ -25,6 +25,8 @@ import org.xml.sax.SAXException;
  * @since 2.0
  */
 public class SiteModelFactory {
+	
+	private static DefaultSiteParser parser = new DefaultSiteParser();
 
 	/**
 	 * Creates a default site factory.
@@ -64,7 +66,7 @@ public class SiteModelFactory {
 		throws CoreException, InvalidSiteTypeException {
 		SiteModel result = null;
 		try {
-			DefaultSiteParser parser = new DefaultSiteParser(this);
+			parser.init(this);
 			result = parser.parse(stream);
 			if (parser.getStatus()!=null) {
 				// some internalError were detected

@@ -43,7 +43,8 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			URL remoteURL =
 				new URL(SOURCE_FILE_SITE + "parsertests/feature1.xml");
 			DefaultFeatureParser parser =
-				new DefaultFeatureParser(new FeatureExecutableFactory());
+				new DefaultFeatureParser();
+			parser.init(new FeatureExecutableFactory());
 			URL resolvedURL = URLEncoder.encode(remoteURL);
 			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
 			remoteFeature.resolve(remoteURL, null);
@@ -62,7 +63,8 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			URL remoteURL =
 				new URL(SOURCE_FILE_SITE + "parsertests/feature1bis.xml");
 			DefaultFeatureParser parser =
-				new DefaultFeatureParser(new FeatureExecutableFactory());
+				new DefaultFeatureParser();
+			parser.init(new FeatureExecutableFactory());
 			URL resolvedURL = URLEncoder.encode(remoteURL);
 			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
 			remoteFeature.resolve(remoteURL, null);
@@ -81,7 +83,8 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			URL remoteURL =
 				new URL(SOURCE_FILE_SITE + "parsertests/feature2.xml");
 			DefaultFeatureParser parser =
-				new DefaultFeatureParser(new FeatureExecutableFactory());
+				new DefaultFeatureParser();
+			parser.init(new FeatureExecutableFactory());
 			URL resolvedURL = URLEncoder.encode(remoteURL);
 			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
 			remoteFeature.resolve(remoteURL, null);

@@ -106,7 +106,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (element.getURL() != null) {
 					ISite featureSite = element.getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				w.println("/>"); //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (element.getURL() != null) {
 					ISite featureSite = element.getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				w.println("/>"); //$NON-NLS-1$

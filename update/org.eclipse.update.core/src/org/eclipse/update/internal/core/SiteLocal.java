@@ -224,7 +224,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				file = new File(newURL.getFile());
 				if (isTransient())
 					file.deleteOnExit();
-				Writer writer = new Writer(file, "UTF8");
+				UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(file, "UTF-8");
 				writer.write(this);
 			} catch (FileNotFoundException e) {
 				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToSaveStateIn", file.getAbsolutePath()), e);
@@ -259,7 +259,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// SITE 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.print(gap + "label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			w.print(gap + "label=\"" + UpdateManagerUtils.Writer.xmlSafe(getLabel()) + "\" ");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		w.print(gap + "history=\"" + getMaximumHistoryCount() + "\" ");
@@ -310,11 +310,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		URL locationAsDirectory = UpdateManagerUtils.getParent(getLocationURL());
 		String URLInfoString = UpdateManagerUtils.getURLAsString(locationAsDirectory, config.getURL());
 
-		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+		w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 
 		if (config.getLabel() != null) {
-			w.print("label=\"" + Writer.xmlSafe(config.getLabel()) + "\"");
+			w.print("label=\"" + UpdateManagerUtils.Writer.xmlSafe(config.getLabel()) + "\"");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -697,13 +697,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
 			config.setLocationURLString(relativeURL);
 			config.resolve(configURL, getResourceBundle(url));
-			try {
-				config.initialize();
-				config.setLabel(Utilities.format(config.getCreationDate()));
-				validConfig.add(config);
-			} catch (CoreException e) {
-				UpdateManagerPlugin.warn(null, e);
-			}
+			config.setLabel(Utilities.format(config.getCreationDate()));
+			validConfig.add(config);
 		}
 
 		// add the currentConfig last
@@ -732,13 +727,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
 			config.setLocationURLString(relativeURL);
 			config.resolve(configURL, getResourceBundle(url));
-			try {
-				config.initialize();
-				config.setLabel(Utilities.format(config.getCreationDate()));
-				site.addPreservedInstallConfigurationModel(config);
-			} catch (CoreException e) {
-				UpdateManagerPlugin.warn(null, e);
-			}
+			config.setLabel(Utilities.format(config.getCreationDate()));
+			site.addPreservedInstallConfigurationModel(config);
 		}
 	}
 

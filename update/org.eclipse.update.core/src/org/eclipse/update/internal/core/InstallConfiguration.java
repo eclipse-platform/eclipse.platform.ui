@@ -262,7 +262,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	private void export(File exportFile) throws CoreException {
 		try {
-			Writer writer = new Writer(exportFile, "UTF8"); //$NON-NLS-1$
+			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(exportFile, "UTF-8"); //$NON-NLS-1$
 			writer.write(this);
 		} catch (FileNotFoundException e) {
 			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSaveConfiguration", exportFile.getAbsolutePath()), e);

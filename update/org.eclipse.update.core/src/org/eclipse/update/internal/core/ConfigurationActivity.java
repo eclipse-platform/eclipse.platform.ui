@@ -43,7 +43,7 @@ public class ConfigurationActivity
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println("action=\"" + getAction() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.println(gap + increment+ "label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			w.println(gap + increment+ "label=\"" + UpdateManagerUtils.Writer.xmlSafe(getLabel()) + "\" ");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		w.println(gap + increment+"date=\"" + getDate().getTime() + "\" ");

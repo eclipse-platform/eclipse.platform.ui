@@ -72,15 +72,23 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * 
 	 * @param factory site model factory
 	 */
-	public DefaultSiteParser(SiteModelFactory factory) {
+	public DefaultSiteParser() {
 		super();
 		this.parser = new SAXParser();
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350
-		this.factory = factory;
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Created"); //$NON-NLS-1$
+	}
+	
+	public void init (SiteModelFactory factory){
+		// PERF: separate instance creation from parsing
+		this.factory = factory;
+		stateStack = new Stack();
+		objectStack = new Stack();
+		status = null;
+		DESCRIPTION_SITE_ALREADY_SEEN = false;
 	}
 
 	/**

@@ -82,12 +82,21 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @param factory feature model factory
 	 * @since 2.0
 	 */
-	public DefaultFeatureParser(FeatureModelFactory factory) {
+	public DefaultFeatureParser() {
 		super();
 		this.parser = new SAXParser();
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350		
+	}
+
+	public void init(FeatureModelFactory factory) {
+		// PERF: separate instance creation from parsing
 		this.factory = factory;
+		stateStack = new Stack();
+		objectStack = new Stack();
+		status = null;
+		URL_ALREADY_SEEN = false;
+		//parser.reset();
 	}
 
 	/**

@@ -511,7 +511,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		File file = filePath.toFile();
 		// persist list of new features 
 		try {
-			Writer writer = new Writer(file, "UTF8");
+			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(file, "UTF-8");
 			writer.write(this);
 			return true;
 		} catch (UnsupportedEncodingException e) {
@@ -555,9 +555,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 					w.print(gap + increment + increment + "<" + InstallChangeParser.REFERENCE + " ");
 					//$NON-NLS-1$
-					w.println("siteURL = \"" + Writer.xmlSafe(getURLSiteString(featureSite)) + "\" ");
+					w.println("siteURL = \"" + UpdateManagerUtils.Writer.xmlSafe(getURLSiteString(featureSite)) + "\" ");
 					//$NON-NLS-1$ //$NON-NLS-2$
-					w.println(gap + increment + increment + increment + "featureURL=\"" + Writer.xmlSafe(URLFeatureString) + "\" />");
+					w.println(gap + increment + increment + increment + "featureURL=\"" + UpdateManagerUtils.Writer.xmlSafe(URLFeatureString) + "\" />");
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				w.println(""); //$NON-NLS-1$
