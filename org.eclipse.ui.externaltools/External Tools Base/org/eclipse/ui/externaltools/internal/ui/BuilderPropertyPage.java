@@ -174,7 +174,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			for (int i = 0; i < commands.length; i++) {
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 				if (config != null) {
-					if (!config.exists()) {
+					if (!config.isWorkingCopy() && !config.exists()) {
 						IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.Exists"), new String[]{config.getLocation().toOSString()}), null); 	 //$NON-NLS-1$
 						ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
 										MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.External_Tool_Builder_{0}_Not_Added_2"), new String[]{config.getName()}),  //$NON-NLS-1$
