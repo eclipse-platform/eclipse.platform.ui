@@ -22,7 +22,7 @@ public class AntLaunchWizard extends Wizard {
 	}
 	
 	public String[] getTargetNamesToPreselect() {
-		String propertyString = "";
+		String propertyString = null;
 		try {
 			propertyString = antFile.getPersistentProperty(
 				new QualifiedName(AntUIPlugin.PI_ANTUI,PROPERTY_SELECTEDTARGETS));
@@ -31,10 +31,10 @@ public class AntLaunchWizard extends Wizard {
 				IStatus.WARNING,
 				AntUIPlugin.PI_ANTUI,
 				IStatus.WARNING,
-				"Could not read ant targets property from resource: " + antFile.getFullPath().toString(),
+				Policy.bind("status.targetNotRead", antFile.getFullPath().toString()),
 				e);
 		}
-		
+				if (propertyString == null)			return new String[0];
 		StringTokenizer tokenizer = new StringTokenizer(propertyString,SEPARATOR_TARGETS);
 		String result[] = new String[tokenizer.countTokens()];
 		int index = 0;
@@ -102,7 +102,7 @@ public class AntLaunchWizard extends Wizard {
 					IStatus.WARNING,
 					AntUIPlugin.PI_ANTUI,
 					IStatus.WARNING,
-					"Could not write ant targets property to resource: " + antFile.getFullPath().toString(),
+					Policy.bind("status.targetNotWritten", antFile.getFullPath().toString()),
 					e));
 		}
 	}

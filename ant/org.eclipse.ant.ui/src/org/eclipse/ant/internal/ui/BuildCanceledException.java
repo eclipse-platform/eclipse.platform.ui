@@ -10,6 +10,6 @@ import org.apache.tools.ant.BuildException;
 public class BuildCanceledException extends BuildException {
 
 	public BuildCanceledException() {
-		super("Canceled");
+		super(Policy.bind("exception.canceled"));
 	}
 }

@@ -18,7 +18,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
 	
 	public AntLaunchWizardPage(EclipseProject project) {
-		super("execute ant script","Execute Ant Script",null);
+		super("execute ant script",Policy.bind("wizard.executeAntScriptTitle"),null);
 		this.project = project;
 	}
 	
@@ -39,7 +39,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		
-		new Label(composite,SWT.NONE).setText("Available Targets:");
+		new Label(composite,SWT.NONE).setText(Policy.bind("wizard.availableTargetsLabel"));
 		
 		listViewer = new CheckboxTableViewer(composite,SWT.BORDER | SWT.CHECK);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -56,12 +56,12 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		listViewer.setContentProvider(TargetsListContentProvider.getInstance());
 		listViewer.setInput(project);
 		
-		new Label(composite,SWT.NONE).setText("Arguments:");
+		new Label(composite,SWT.NONE).setText(Policy.bind("wizard.argumentsLabel"));
 		Text argumentsField = new Text(composite,SWT.BORDER);
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		showLogOnSuccess = new Button(composite, SWT.CHECK);
-		showLogOnSuccess.setText("Display log after successful script execution");
+		showLogOnSuccess.setText(Policy.bind("wizard.displayLogLabel"));
 
 		restorePreviousSelectedTargets();
 		listViewer.addCheckStateListener(this);

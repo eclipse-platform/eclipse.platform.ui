@@ -53,8 +53,8 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 				e);
 			ErrorDialog.openError(
 				AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),
-				"Ant script error",
-				"A problem occurred parsing the Ant file",
+				Policy.bind("error.antScriptError"),
+				Policy.bind("error.antParsingError"),
 				status);
 				
 			return null;
@@ -82,7 +82,7 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 		buildFileName= selection.getLocation().toOSString();
 
 		String[] args= {"-buildfile", buildFileName};
-		monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);
+		monitor.beginTask(Policy.bind("monitor.runningAnt"), IProgressMonitor.UNKNOWN);
 
 		try {
 			//TBD: should remove the build listener somehow

@@ -35,7 +35,7 @@ public class UIBuildListener implements BuildListener {
 		}
 	}
 	public void buildStarted(BuildEvent be) {
-		fMonitor.subTask("Build started...");
+		fMonitor.subTask(Policy.bind("monitor.buildStarted"));
 		removeMarkers();
 	}
 	private void checkCanceled() {
@@ -102,7 +102,7 @@ public class UIBuildListener implements BuildListener {
 	public void targetStarted(BuildEvent be) {
 		checkCanceled();
 		fTarget= be.getTarget();
-		fMonitor.subTask("Target: \""+fTarget.getName()+"\" starting...");
+		fMonitor.subTask(Policy.bind("monitor.targetColumn")+"\""+fTarget.getName()+"\" "+Policy.bind("monitor.started"));
 	}
 	public void taskFinished(BuildEvent be) {
 		checkCanceled();
@@ -110,7 +110,7 @@ public class UIBuildListener implements BuildListener {
 	public void taskStarted(BuildEvent be) {
 		checkCanceled();
 		fTask= be.getTask();
-		fMonitor.subTask("Target: \""+fTarget.getName()+"\" - "+fTask.getTaskName());
+		fMonitor.subTask(Policy.bind("monitor.targetColumn")+"\""+fTarget.getName()+"\" - "+fTask.getTaskName());
 		if (be.getException() != null)
 			handleBuildException(be.getException());
 	}

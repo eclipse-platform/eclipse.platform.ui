@@ -33,7 +33,7 @@ public class TargetsListLabelProvider extends LabelProvider {
 	
 //	public Image getImage(Object model) {
 //		return null;
-//	}s
+//	}
 
 	public void setSelectedTargets(Vector value) {
 		selectedTargets = value;
