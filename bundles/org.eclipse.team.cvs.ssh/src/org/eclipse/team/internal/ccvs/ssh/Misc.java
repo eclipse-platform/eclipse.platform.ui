@@ -17,6 +17,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import org.eclipse.osgi.util.NLS;
+
 class Misc {
 	private static MessageDigest md5 = null;
 	private static SecureRandom random = null;
@@ -311,7 +313,7 @@ static public byte[] readMpInt(InputStream is) throws IOException {
 	int b = is.read();
 
 	if(a == -1 || b == -1){
-		throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
+		throw new IOException(CVSSSHMessages.stream);//$NON-NLS-1$
 	}
 
 	int bits = ((a & 0xFF) << 8) + (b & 0xFF);
@@ -328,7 +330,7 @@ public static byte[] md5(byte[] b) throws IOException {
 		try {
 			md5 = MessageDigest.getInstance("MD5");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
-			throw new IOException(Policy.bind("Misc.missingMD5", e.getMessage())); //$NON-NLS-1$
+			throw new IOException(NLS.bind(CVSSSHMessages.Misc_missingMD5, new String[] { e.getMessage() })); //$NON-NLS-1$
 		}
 	}
 
@@ -348,7 +350,7 @@ public static void readFully(InputStream is, byte[] b, int off, int len) throws 
 		bytesRead = is.read(b, totalBytesRead + off, len - totalBytesRead);
 
 		if (bytesRead == -1) {
-			throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
+			throw new IOException(CVSSSHMessages.stream);//$NON-NLS-1$
 		}
 
 		totalBytesRead += bytesRead;
@@ -369,7 +371,7 @@ public static int readInt(InputStream is) throws IOException {
 	int d = is.read();
 
 	if (a == -1 || b == -1 || c == -1 || d == -1) {
-		throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
+		throw new IOException(CVSSSHMessages.stream);//$NON-NLS-1$
 	}
 
 	return (a << 24) + (b << 16) + (c << 8) + d;
@@ -380,7 +382,7 @@ public static String readString(InputStream is) throws IOException {
 	for (int i = 0; i < buffer.length; i++) {
 		int next = is.read();
 		if (next == -1) {
-			throw new IOException(Policy.bind("stream")); //$NON-NLS-1$
+			throw new IOException(CVSSSHMessages.stream); //$NON-NLS-1$
 		} else {
 			buffer[i] = (byte)next;
 		}
@@ -393,7 +395,7 @@ public static void skipFully(InputStream is, long n) throws IOException {
 
 		if (b == -1) {
 			if (n > 0) {
-				throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
+				throw new IOException(CVSSSHMessages.stream);//$NON-NLS-1$
 			}
 
 			return;
