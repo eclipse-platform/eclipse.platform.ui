@@ -26,7 +26,7 @@ public abstract class SelectableControl extends Canvas {
 			}
 		});
 		addMouseListener(new MouseAdapter () {
-			public void mouseDown(MouseEvent e) {
+			public void mouseUp(MouseEvent e) {
 				notifyListeners(SWT.Selection);
 			}
 		});

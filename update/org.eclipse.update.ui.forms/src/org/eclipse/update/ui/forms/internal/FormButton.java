@@ -33,23 +33,23 @@ public FormButton(Button button, FormWidgetFactory factory) {
 public Button getButton() {
 	return button;
 }
-public org.eclipse.swt.graphics.Image getDisabledImage() {
+public Image getDisabledImage() {
 	return disabledImage;
 }
-public org.eclipse.swt.graphics.Image getHoverImage() {
+public Image getHoverImage() {
 	return hoverImage;
 }
-public org.eclipse.swt.graphics.Image getImage() {
+public Image getImage() {
 	return image;
 }
-public void setDisabledImage(org.eclipse.swt.graphics.Image newDisabledImage) {
+public void setDisabledImage(Image newDisabledImage) {
 	disabledImage = newDisabledImage;
 }
 public void setEnabled(boolean enabled) {
 	button.setEnabled(enabled);
 	updateImage();
 }
-public void setHoverImage(org.eclipse.swt.graphics.Image newHoverImage) {
+public void setHoverImage(Image newHoverImage) {
 	hoverImage = newHoverImage;
 }
 public void setImage(Image newImage) {
