@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,11 +86,11 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			// Do a check on disk and in the workspace in case something is out of sync.
 			assertExistsInWorkspace("2.1.1", project);
 			assertExistsInFileSystem("2.1.2", project);
-			
+
 			assertExistsInWorkspace("2.2.1", file1);
 			assertExistsInFileSystem("2.2.2", file1);
 			assertTrue("2.2.3", file1.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			assertDoesNotExistInWorkspace("2.3.1", file2);
 			assertDoesNotExistInFileSystem("2.3.2", file2);
 			assertTrue("2.3.3", file2.isSynchronized(IResource.DEPTH_INFINITE));
@@ -109,7 +109,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			
 			assertTrue("2.7.0", project.isSynchronized(IResource.DEPTH_ZERO));
 			assertTrue("2.7.1", project.isSynchronized(IResource.DEPTH_INFINITE));
-			
+
 			try {
 				input.close();
 			} catch (IOException e) {
