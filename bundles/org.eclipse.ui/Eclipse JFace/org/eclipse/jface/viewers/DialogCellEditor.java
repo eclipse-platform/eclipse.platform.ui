@@ -5,6 +5,10 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import java.text.MessageFormat;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -30,6 +34,11 @@ import org.eclipse.swt.widgets.*;
 public abstract class DialogCellEditor extends CellEditor {
 
 	/**
+	 * Image registry key for three dot image (value <code>"cell_editor_dots_button_image"</code>).
+	 */
+	public static final String CELL_EDITOR_IMG_DOTS_BUTTON = "cell_editor_dots_button_image";//$NON-NLS-1$
+
+	/**
 	 * The editor control.
 	 */
 	private Composite editor;
@@ -53,6 +62,11 @@ public abstract class DialogCellEditor extends CellEditor {
 	 * The value of this cell editor; initially <code>null</code>.
 	 */
 	private Object value = null;
+	
+	static {
+		ImageRegistry reg = JFaceResources.getImageRegistry();
+		reg.put(CELL_EDITOR_IMG_DOTS_BUTTON, ImageDescriptor.createFromFile(DialogCellEditor.class, "images/dots_button.gif"));//$NON-NLS-1$
+	}
 
 	/**
 	 * Internal class for laying out the dialog.
@@ -100,7 +114,8 @@ protected DialogCellEditor(Composite parent) {
  * @return the new button control
  */
 protected Button createButton(Composite parent) {
-	Button result = new Button(parent, SWT.ARROW | SWT.DOWN);
+	Button result = new Button(parent, SWT.DOWN);
+	result.setImage(JFaceResources.getImage(CELL_EDITOR_IMG_DOTS_BUTTON));
 	return result;
 }
 /**
