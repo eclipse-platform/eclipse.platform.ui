@@ -457,8 +457,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 					HashMap newIdmapHM = new HashMap();
 					fIdMaps.put(newIdMap.getName(),newIdmapHM);
 					Vector Mappings = idmap.getMappings();
-					for (Enumeration enum= Mappings.elements(); enum.hasMoreElements(); ) {
-						Mapping mapping = (Mapping) enum.nextElement();
+					for (Enumeration enumeration= Mappings.elements(); enumeration.hasMoreElements(); ) {
+						Mapping mapping = (Mapping) enumeration.nextElement();
 						Mapping newMapping = new Mapping(mapping.getElement(), mapping.getSignature(), mapping.getIdAttribute());
 						newMappings.add(newMapping);
 						newIdmapHM.put(newMapping.getKey(), newMapping.getIdAttribute());
@@ -619,7 +619,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		//find index where to insert table entry
 		TableItem[] items = fIdMapsTable.getItems();
 		int i;
-		for (i=0; i<items.length && idmap.getName().compareToIgnoreCase(items[i].getText(0)) > 0; i++);
+		for (i=0; i<items.length && idmap.getName().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
+			/*empty*/ ;
 		TableItem item = new TableItem(fIdMapsTable, SWT.NULL, i);
 		String[] values = new String[] {idmap.getName(), (idmap.isInternal())?XMLCompareMessages.getString("XMLComparePreference.topTableColumn2internal"):XMLCompareMessages.getString("XMLComparePreference.topTableColumn2user"),idmap.getExtension()}; //$NON-NLS-2$ //$NON-NLS-1$
 		item.setText(values);
@@ -635,8 +636,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	protected TableItem newMappingsTableItem(Mapping mapping, boolean selected) {
 		TableItem[] items = fMappingsTable.getItems();
 		int i;
-		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++);
-
+		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
+			/*empty*/ ;
 		TableItem item = new TableItem(fMappingsTable, SWT.NULL, i);
 		String idtext = mapping.getIdAttribute();
 		String idtype;
@@ -658,7 +659,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	protected TableItem newOrderedTableItem(Mapping mapping, boolean selected) {
 		TableItem[] items = fOrderedTable.getItems();
 		int i;
-		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++);
+		for (i=0; i<items.length && mapping.getElement().compareToIgnoreCase(items[i].getText(0)) > 0; i++)
+			/*empty*/ ;
 
 		TableItem item = new TableItem(fOrderedTable, SWT.NULL, i);
 		
@@ -777,8 +779,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 			//Refresh Mappings Table
 			fMappingsTable.removeAll();
 			Vector Mappings = ((IdMap)items[0].getData()).getMappings();
-			for (Enumeration enum = Mappings.elements(); enum.hasMoreElements(); ) {
-				newMappingsTableItem((Mapping)enum.nextElement(), false);
+			for (Enumeration enumeration = Mappings.elements(); enumeration.hasMoreElements(); ) {
+				newMappingsTableItem((Mapping)enumeration.nextElement(), false);
 			}
 			//Refresh Ordered Table
 			fOrderedTable.removeAll();
