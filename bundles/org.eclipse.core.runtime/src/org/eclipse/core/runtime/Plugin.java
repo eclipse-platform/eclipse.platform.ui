@@ -119,7 +119,6 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * 
 	 * @since 2.0
-	 * TODO @deprecated TODO see DJ for details
 	 */
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
@@ -303,7 +302,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue(String, String)
 	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
-	 * TODO @deprecated TODO see DJ for details
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
@@ -328,7 +326,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#store(OutputStream, String)
 	 * @see Preferences#needsSaving()
 	 * @since 2.0
-	 * TODO @deprecated TODO see DJ for details
 	 */
 	public final void savePluginPreferences() {
 		if (preferences == null || !preferences.needsSaving()) {
@@ -359,7 +356,7 @@ public abstract class Plugin implements BundleActivator {
 	 * settings supplied from outside the plug-in (product configuration or
 	 * platform start up).
 	 * </p>
-	 * TODO @deprecated
+	 * TODO @deprecated TODO see DJ for details
 	 * @since 2.0
 	 */
 	protected void initializeDefaultPluginPreferences() {
@@ -372,7 +369,6 @@ public abstract class Plugin implements BundleActivator {
 	 * preference values. It cannot be over-ridden by subclasses and 
 	 * should not be called by clients.
 	 * 
-	 * TODO @deprecated
 	 * @since 3.0
 	 */
 	public final void internalInitializeDefaultPluginPreferences() {
