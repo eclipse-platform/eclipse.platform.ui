@@ -7,29 +7,35 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.roles;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IRoleListener</code> can be used by clients to receive 
+ * notification of changes to one or more instances of <code>IRole</code>.
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface may be implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see IRole#addRoleListener
+ * @see IRole#removeRoleListener
+ * @see IRoleEvent
  */
 public interface IRoleListener {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @param roleEvent
+	 * Notifies that one or more attributes of an instance of 
+	 * <code>IRole</code> have changed. Specific details are described in the 
+	 * <code>IRoleEvent</code>.
+	 *
+	 * @param role the role event. Guaranteed not to be <code>null</code>.
 	 */
 	void roleChanged(IRoleEvent roleEvent);
 }

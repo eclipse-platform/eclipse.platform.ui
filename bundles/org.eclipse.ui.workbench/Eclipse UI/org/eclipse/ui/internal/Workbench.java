@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -41,6 +43,9 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -49,11 +54,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContextResolver;
+import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContextResolver;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -95,6 +100,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.commands.IActionService;
@@ -104,6 +110,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
@@ -121,14 +128,18 @@ import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.progress.IProgressManager;
 
 /**
- * The workbench class represents the top of the Eclipse user interface. 
+ * The workbench class represe
+nts the top of the Eclipse user interface. 
  * Its primary responsability is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
@@ -140,7 +151,7 @@ import org.eclipse.ui.keys.KeyStroke;
  * be rewritten to use the new workbench adviser API.
  * </p>
  */
-public final class Workbench implements IWorkbench, IContextResolver {
+public final class Workbench implements IWorkbench {
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
 	private static final int RESTORE_CODE_OK = 0;
@@ -252,50 +263,119 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	}
 	
 	/* begin command and context support */
-
-	private final Listener listener = new Listener() {
+		
+	/** The properties key for the key strokes that should be processed out of
+	 * order.
+	 */
+	private static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
+	/** The collection of keys that are to be processed out-of-order. */
+	private static KeySequence outOfOrderKeys;
+	
+	static {
+		initializeOutOfOrderKeys();
+	}
+	
+	/**
+	 * A listener that makes sure that global key bindings are processed if no
+	 * other listeners do any useful work.
+	 * 
+	 * @since 3.0
+	 */
+	private class OutOfOrderListener implements Listener {		
 		public void handleEvent(Event event) {
-			if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
-				return;
-
-			if (event.widget instanceof Control) {
-				Shell shell = ((Control) event.widget).getShell();
-				if (shell.getParent() != null)
-					return;
+			// Always remove myself as a listener.
+			event.widget.removeListener(event.type, this);
+				
+			/* If the event is still up for grabs, then re-route through the
+			 * global key filter.
+			 */
+			if (event.doit) {
+				Set keyStrokes = generatePossibleKeyStrokes(event);
+				processKeyEvent(keyStrokes, event);
+			}
+		}
+	}
+	
+	/**
+	 * A listener that makes sure that out-of-order processing occurs if no
+	 * other verify listeners do any work.
+	 * 
+	 * @since 3.0
+	 */
+	private class OutOfOrderVerifyListener implements VerifyKeyListener {		
+		/**
+		 * Checks whether any other verify listeners have triggered.  If not,
+		 * then it sets up the top-level out-of-order listener.
+		 * 
+		 * @param event The verify event after it has been processed by all
+		 * other verify listeners; must not be <code>null</code>.
+		 */
+		public void verifyKey(VerifyEvent event) {
+			// Always remove myself as a listener.
+			Widget widget = event.widget;
+			if (widget instanceof StyledText) {
+				((StyledText) widget).removeVerifyKeyListener(this);
 			}
 
-			KeyStroke keyStroke =
-				KeySupport.convertAcceleratorToKeyStroke(
-					KeySupport.convertEventToAccelerator(event));
-
-			if (press(keyStroke, event)) {
-				switch (event.type) {
-					case SWT.KeyDown :
-						event.doit = false;
-						break;
-					case SWT.Traverse :
-						event.detail = SWT.TRAVERSE_NONE;
-						event.doit = true;
-						break;
-					default :
-						}
-
-				event.type = SWT.NONE;
+			// If the event is still up for grabs, then re-route through the
+			// global key filter.
+			if (event.doit) {
+				widget.addListener(SWT.KeyDown, outOfOrderListener);
 			}
+		}
+	}
+
+	/** The listener that runs key events past the global key bindings. */
+	private final Listener keyBindingFilter = new Listener() {
+		public void handleEvent(Event event) {
+			filterKeyBindings(event);
+		}
+	};
+	/** 
+	 * The listener that allows out-of-order key processing to hook back into
+	 * the global key bindings.
+	 */
+	private final OutOfOrderListener outOfOrderListener = new OutOfOrderListener();
+	/**
+	 * The listener that allows out-of-order key processing on 
+	 * <code>StyledText</code> widgets to detect useful work in a verify key
+	 * listener.
+	 */
+	private final OutOfOrderVerifyListener outOfOrderVerifyListener = new OutOfOrderVerifyListener();
+	
+	private final Listener modeCleaner = new Listener() {
+		public void handleEvent(Event event) {
+			CommandManager manager = (CommandManager) getCommandManager();
+			manager.setMode(KeySequence.getInstance()); // clear the mode
+			// TODO Remove this when mode listener updating becomes available.
+			updateModeLines(manager.getMode());
 		}
 	};
 
-	private final ICommandManagerListener commandManagerListener =
-		new ICommandManagerListener() {
+	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
 		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
 			updateActiveContextIds();
 		}
 	};
 
-	private final IContextManagerListener contextManagerListener =
-		new IContextManagerListener() {
+	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+		
+		List activeContextIds;
+		
 		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
 			updateActiveContextIds();
+			
+			List activeContextIds = contextManagerEvent.getContextManager().getActiveContextIds();
+
+			if (!Util.equals(this.activeContextIds, activeContextIds)) {
+				this.activeContextIds = activeContextIds;
+				IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+				if (workbenchWindow instanceof WorkbenchWindow) {
+					MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+					menuManager.updateAll(true);
+				}
+			}
 		}
 	};
 
@@ -401,8 +481,9 @@ public final class Workbench implements IWorkbench, IContextResolver {
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-	private StatusLineContributionItem modeContributionItem;
-
+	private volatile boolean keyFilterDisabled;
+	private final Object keyFilterMutex = new Object();
+	
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
 	//private IContextActivationService activeWorkbenchWindowContextActivationService;
@@ -446,109 +527,328 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	}
 
 	public final void disableKeyFilter() {
-		final Display display = Display.getCurrent();
-		display.removeFilter(SWT.KeyDown, listener);
-		display.removeFilter(SWT.Traverse, listener);
+		synchronized (keyFilterMutex) {
+			final Display display = Display.getCurrent();
+			display.removeFilter(SWT.KeyDown, keyBindingFilter);
+			display.removeFilter(SWT.Traverse, keyBindingFilter);
+			keyFilterDisabled = true;
+		}
 	}
 
 	public final void enableKeyFilter() {
-		final Display display = Display.getCurrent();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
+		synchronized (keyFilterMutex) {
+			final Display display = Display.getCurrent();
+			display.addFilter(SWT.KeyDown, keyBindingFilter);
+			display.addFilter(SWT.Traverse, keyBindingFilter);
+			keyFilterDisabled = false;
+		}
 	}
-
-	public final boolean inContext(final String commandId) {
+	
+	public final boolean isKeyFilterEnabled() {
+		synchronized (keyFilterMutex) {
+			return !keyFilterDisabled;
+		}
+	}
+	
+	public String getName(String commandId) {
+		String name = null;
+		
 		if (commandId != null) {
 			final ICommand command = commandManager.getCommand(commandId);
 
 			if (command != null)
-				return command.isDefined() && command.isActive();
+				try {
+				    name = command.getName();
+				} catch (NotDefinedException eNotDefined) {
+				}
 		}
 
-		return true;
+		return name;
 	}
 
-	// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
-	// TODO remove event parameter once key-modified actions are removed
-	public final boolean press(KeyStroke keyStroke, Event event) {
-		final KeySequence modeBeforeKeyStroke = commandManager.getMode();
-		final List keyStrokes =
-			new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
-		keyStrokes.add(keyStroke);
-		final KeySequence modeAfterKeyStroke =
-			KeySequence.getInstance(keyStrokes);
-		final Map matchesByKeySequenceForModeBeforeKeyStroke =
-			commandManager.getMatchesByKeySequenceForMode();
-		commandManager.setMode(modeAfterKeyStroke);
-		final Map matchesByKeySequenceForModeAfterKeyStroke =
-			commandManager.getMatchesByKeySequenceForMode();
-		boolean consumeKeyStroke = false;
+	/**
+	 * Initializes the <code>outOfOrderKeys</code> member variable using the
+	 * keys defined in the properties file.
+	 * 
+	 * @since 3.0
+	 */
+	private static void initializeOutOfOrderKeys() {
+		// Get the key strokes which should be out of order.
+		String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
+		outOfOrderKeys = KeySequence.getInstance();
+		try {
+			outOfOrderKeys = KeySequence.getInstance(keysText);
+		} catch (ParseException e) {
+			String message = "Could not parse out-of-order keys definition: '" + keysText + "'.  Continuing with no out-of-order keys."; //$NON-NLS-1$ //$NON-NLS-2$
+			WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Launches the command matching a the typed key.  This filter an incoming
+	 * <code>SWT.KeyDown</code> or <code>SWT.Traverse</code> event at the level
+	 * of the display (i.e., before it reaches the widgets).  It does not allow
+	 * processing in a dialog or if the key strokes does not contain a natural
+	 * key.
+	 * </p>
+	 * <p>
+	 * Some key strokes (defined as a property) are declared as out-of-order
+	 * keys.  This means that they are processed by the widget <em>first</em>.
+	 * Only if the other widget listeners do no useful work does it try to
+	 * process key bindings.  For example, "ESC" can cancel the current widget
+	 * action, if there is one, without triggering key bindings.
+	 * </p>
+	 *  
+	 * @param event The incoming event; must not be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private void filterKeyBindings(Event event) {
+		/* Only process key strokes containing natural keys to trigger key 
+		 * bindings
+		 */
+		if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+			return;
 
-		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
-			// this key stroke is part of one or more possible completions: consume the keystroke
-			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						 //$NON-NLS-1$
-			consumeKeyStroke = true;
-		} else {
-			// there are no possible longer multi-stroke sequences, allow a completion now if possible
-			final Match match =
-				(Match) matchesByKeySequenceForModeBeforeKeyStroke.get(
-					modeAfterKeyStroke);
-
-			if (match != null) {
-				// a completion was found. 
-				final String commandId = match.getCommandId();
-				final Map actionsById = commandManager.getActionsById();
-				org.eclipse.ui.commands.IAction action =
-					(org.eclipse.ui.commands.IAction) actionsById.get(
-						commandId);
-
-				if (action != null) {
-					// an action was found corresponding to the completion
-
-					if (action.isEnabled()) {
-						try {
-							modeContributionItem.setText(
-								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format()); //$NON-NLS-1$
-							action.execute(event);
-						} catch (final Exception e) {
-							// TODO 						
-						}
-					}
-
-					// consume the keystroke
-					consumeKeyStroke = true;
+		// Don't allow dialogs to process key bindings.
+		if (event.widget instanceof Control) {
+			Shell shell = ((Control) event.widget).getShell();
+			if (shell.getParent() != null)
+				return;
+		}
+			
+		// Allow special key out-of-order processing.
+		Set keyStrokes = generatePossibleKeyStrokes(event);
+		if (isOutOfOrderKey(keyStrokes)) {
+			if (event.type == SWT.KeyDown) {
+				Widget widget = event.widget;
+				if (widget instanceof StyledText) {
+					/* KLUDGE.  Some people try to do useful work in verify
+					 * listeners.  The way verify listeners work in SWT, we
+					 * need to verify the key as well; otherwise, we can
+					 * detect that useful work has been done.
+					 */
+					((StyledText) widget).addVerifyKeyListener(outOfOrderVerifyListener);
+				} else {
+					widget.addListener(SWT.KeyDown, outOfOrderListener);
 				}
 			}
-
-			// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
-			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
-				consumeKeyStroke = true;
-
-			// clear mode			
-			commandManager.setMode(KeySequence.getInstance());
-			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform()) //$NON-NLS-1$
-					? KeySupport.formatOSX(KeySequence.getInstance())
-					: KeySequence.getInstance().format());
+			/* Otherwise, we count on a key down arriving eventually.
+			 * Expecting out of order handling on Ctrl+Tab, for example, is
+			 * a bad idea (stick to keys that are not window traversal 
+			 * keys). 
+			 */
+		} else {
+			processKeyEvent(keyStrokes, event);
 		}
-
-		// TODO is this necessary?		
-		updateActiveContextIds();
-		return consumeKeyStroke;
 	}
+	
+	/**
+	 * <p>
+	 * Determines whether the given event represents a key press that should be
+	 * handled as an out-of-order event.  An out-of-order key press is one that
+	 * is passed to the focus control first.  Only if the focus control fails to
+	 * respond will the regular key bindings get applied.
+	 * </p>
+	 * <p>
+	 * Care must be taken in choosing which keys are chosen as out-of-order
+	 * keys.  This method has only been designed and test to work with the
+	 * unmodified "Escape" key stroke.
+	 * </p>
+	 * 
+	 * @param keyStrokes The key stroke in which to look for out-of-order keys;
+	 * must not be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private static boolean isOutOfOrderKey(Set keyStrokes) {		
+		// Compare to see if one of the possible key strokes is out of order.
+		Iterator keyStrokeItr = keyStrokes.iterator();
+		while (keyStrokeItr.hasNext()) {
+			if (outOfOrderKeys.getKeyStrokes().contains(keyStrokeItr.next())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Generates any key strokes that are near matches to the given event.  The
+	 * first such key stroke is always the exactly matching key stroke.
+	 * 
+	 * @param event The event from which the key strokes should be generated;
+	 * must not be <code>null</code>.
+	 * @return The set of nearly matching key strokes.  It is never 
+	 * <code>null</code> and never empty. 
+	 * 
+	 * @since 3.0
+	 */
+	public static Set generatePossibleKeyStrokes(Event event) {
+		Set keyStrokes = new HashSet();
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event)));
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event)));
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event)));
+		return keyStrokes;
+	}
+	
+	/**
+	 * Actually performs the processing of the key event by interacting with the
+	 * <code>ICommandManager</code>.  If work is carried out, then the event is
+	 * stopped here (i.e., <code>event.doit = false</code>).
+	 * 
+	 * @param keyStrokes The set of all possible matching key strokes; must not
+	 * be <code>null</code>.
+	 * @param event The event to process; must not be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private void processKeyEvent(Set keyStrokes, Event event) {
+		if (press(keyStrokes, event)) {
+			switch (event.type) {
+				case SWT.KeyDown :
+					event.doit = false;
+					break;
+				case SWT.Traverse :
+					event.detail = SWT.TRAVERSE_NONE;
+					event.doit = true;
+					break;
+				default :
+					}
+
+			event.type = SWT.NONE;
+		}
+	}
+	
+	/**
+	 * Processes a key press with respect to the key binding architecture.  This
+	 * updates the mode of the command manager, and runs the current handler for
+	 * the command that matches the key sequence, if any.
+	 * 
+	 * @param potentialKeyStrokes The key strokes that could potentially match,
+	 * in the order of priority; must not be <code>null</code>.
+	 * @param event The event to pass to the action; may be <code>null</code>.
+	 * 
+	 * @return <code>true</code> if a command is executed; <code>false</code>
+	 * otherwise.
+	 * 
+	 * @since 3.0
+	 */
+	public boolean press(Set potentialKeyStrokes, Event event) {
+		// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
+		// TODO remove event parameter once key-modified actions are removed
+		
+		// Check every potential key stroke until one matches.
+		Iterator keyStrokeItr = potentialKeyStrokes.iterator();
+		while (keyStrokeItr.hasNext()) {
+			KeySequence modeBeforeKeyStroke = commandManager.getMode();
+			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
+			keyStrokes.add(keyStrokeItr.next());
+			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
+			Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+			commandManager.setMode(modeAfterKeyStroke);
+			Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+			boolean consumeKeyStroke = false;
+			boolean matchingSequence = false;
+
+			if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
+				// this key stroke is part of one or more possible completions: consume the keystroke
+				updateModeLines(modeAfterKeyStroke);
+				consumeKeyStroke = true;
+				matchingSequence = true;
+			} else {
+				// there are no possible longer multi-stroke sequences, allow a completion now if possible
+				Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
+
+				if (match != null) {
+					// a completion was found. 
+					String commandId = match.getCommandId();
+					Map actionsById = commandManager.getActionsById();
+					org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+
+					if (action != null) {
+						// an action was found corresponding to the completion
+
+						if (action.isEnabled()) {
+							updateModeLines(modeAfterKeyStroke);
+							try {
+								action.execute(event);
+							} catch (Exception e) {
+								String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
+								WorkbenchPlugin.log(message, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+							}
+						}
+	
+						// consume the keystroke
+						consumeKeyStroke = true;
+					}
+					
+					matchingSequence = true;
+				}
+	
+				// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
+				if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
+					consumeKeyStroke = true;
+	
+				// clear mode			
+				commandManager.setMode(KeySequence.getInstance());
+				updateModeLines(KeySequence.getInstance());
+			}
+	
+			// TODO is this necessary?		
+			updateActiveContextIds();
+			
+			if (consumeKeyStroke) {
+				// We found a match, so stop now.
+				return consumeKeyStroke;
+			} else {
+				/* If we haven't consumed the stroke, but we found a command
+				 * That matches, then we should break the loop.
+				 */
+				if (matchingSequence) {
+					break;
+				} else {
+					// Restore the mode, so we can try again.
+					commandManager.setMode(modeBeforeKeyStroke);
+				}
+			}
+		}
+		
+		// No key strokes match.
+		return false;
+	}	
+	
+	/**
+	 * Updates the text of the mode lines with the current mode.
+	 * @param mode The mode which should be used to update the status line;
+	 * must not be <code>null</code>.
+	 */
+	private void updateModeLines(KeySequence mode) {
+		// Format the mode into text.
+		String text = mode.format();
+		
+		// Update each open window's status line.
+		IWorkbenchWindow[] windows = getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchWindow window = windows[i];
+			if (window instanceof WorkbenchWindow) {
+				// @issue mode contribution item is added by IDE, so an upcall would be required here
+				// mode contribution item should use a mode listener instead
+//				((WorkbenchWindow) window).getActionBuilder().updateModeLine(text);
+ 			}
+ 		}
+ 	}
 
 	public void updateActiveContextIds() {
-		commandManager.setActiveContextIds(
-			contextManager.getActiveContextIds());
+		commandManager.setActiveContextIds(contextManager.getActiveContextIds());
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
-		if (workbenchWindow != null) {
-			MenuManager menuManager =
-				((WorkbenchWindow) workbenchWindow).getMenuManager();
+		if (workbenchWindow instanceof WorkbenchWindow) {
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();			
 			menuManager.update(IAction.TEXT);
 		}
 	}
@@ -760,15 +1060,46 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	}
 
 	private void initializeCommandsAndContexts(final Display display) {
-		ContextResolver.getInstance().setContextResolver(this);
+		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
+			public String guessCommandIdFromActionId(String actionId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).guessCommandIdFromActionId(actionId);		
+			}
+
+			public Integer getAccelerator(String commandId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).getAccelerator(commandId);		
+			}
+	
+			public String getAcceleratorText(String commandId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).getAcceleratorText(commandId);		
+			}	
+
+			public final boolean inContext(final String commandId) {
+				if (commandId != null) {
+					final ICommand command = commandManager.getCommand(commandId);
+	
+					if (command != null)
+						return command.isDefined() && command.isActive();
+				}
+
+				return true;
+			}
+			
+			public final boolean isKeyFilterEnabled() {
+				return Workbench.this.isKeyFilterEnabled();
+			}
+		});
+		
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
-		modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$	
 		commandManager.addCommandManagerListener(commandManagerListener);
 		contextManager.addContextManagerListener(contextManagerListener);
 		updateActiveContextIds();
-		display.addFilter(SWT.Traverse, listener);
-		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, keyBindingFilter);
+		display.addFilter(SWT.KeyDown, keyBindingFilter);
+		display.addFilter(SWT.FocusOut, modeCleaner);
 		addWindowListener(windowListener);
 		updateActiveCommandIdsAndActiveContextIds();
 	}
@@ -793,10 +1124,6 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	 * Fire window opened event.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
-		if (window instanceof WorkbenchWindow)
-			((WorkbenchWindow) window).getStatusLineManager().add(
-				modeContributionItem);
-
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowOpened(window);
@@ -806,10 +1133,6 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
-		if (window instanceof WorkbenchWindow)
-			((WorkbenchWindow) window).getStatusLineManager().add(
-				modeContributionItem);
-
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -1338,10 +1661,10 @@ public final class Workbench implements IWorkbench, IContextResolver {
 		WorkbenchColors.startup();
 	}
 
-	/*
-	 * Returns true if the workbench is in the process of closing
+	/**
+	 * Returns <code>true</code> if the workbench is in the process of closing.
 	 */
-	/* package */ boolean isClosing() {
+	public boolean isClosing() {
 		return isClosing;
 	}
 	
@@ -2122,4 +2445,21 @@ public final class Workbench implements IWorkbench, IContextResolver {
 		return WorkbenchPlugin.getDefault().getElementFactory(factoryId);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
+	 */
+	public IObjectActivityManager getActivityManager(String id, boolean create) {
+		if(RoleManager.getInstance().isFiltering())
+			return ObjectActivityManager.getManager(id,create);
+		else
+			return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getProgressManager()
+	 */
+	public IProgressManager getProgressManager() {
+		return ProgressManager.getInstance();
+	}
 }

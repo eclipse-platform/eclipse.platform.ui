@@ -46,7 +46,7 @@ class ProgressUtil {
 		try {
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null)
-				activePage.showView(JobProgressManager.PROGRESS_VIEW_NAME);
+				activePage.showView(ProgressManager.PROGRESS_VIEW_NAME);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}

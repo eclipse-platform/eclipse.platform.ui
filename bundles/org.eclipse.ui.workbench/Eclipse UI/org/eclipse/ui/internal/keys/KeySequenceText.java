@@ -12,22 +12,23 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.NaturalKey;
 import org.eclipse.ui.keys.ParseException;
 
 /**
@@ -52,10 +53,12 @@ public final class KeySequenceText {
 	private KeySequence keySequence = KeySequence.getInstance();
 	/** The maximum number of key strokes permitted in the sequence. */
 	private int maxStrokes = INFINITE;
-	/** The incomplete key stroke, if any. */
-	private KeyStroke temporaryStroke = null;
 	/** The text widget that is wrapped for this class. */
 	private final Text text;
+	/** The listener that makes sure that the text widget remains up-to-date
+	 * with regards to external modification of the text (e.g., cut & pasting).
+	 */
+	private final UpdateSequenceListener updateSequenceListener = new UpdateSequenceListener();
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the 
@@ -68,8 +71,7 @@ public final class KeySequenceText {
 		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
 
-		/* TODO doug: pls. investigate. works until one backspaces to an empty text field, at which point the font gets changed somehow 
-		if ("carbon".equals(SWT.getPlatform())) {
+		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
 			// don't worry about this font name here, it is the official menu font and point size on the mac.
 			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
 		
@@ -81,20 +83,27 @@ public final class KeySequenceText {
 			
 			text.setFont(font);		
 		}
-		*/
 
 		// Add the key listener.
 		final Listener keyFilter = new KeyTrapListener();
 		text.addListener(SWT.KeyUp, keyFilter);
 		text.addListener(SWT.KeyDown, keyFilter);
-
-		// Add the traversal listener.
-		text.addTraverseListener(new FocusTrapListener());
+		
+		// Add the focus listener that attaches the global traversal filter.
+		text.addFocusListener(new TraversalFilterManager());
 
 		// Add an internal modify listener.
-		text.addModifyListener(new UpdateSequenceListener());
+		text.addModifyListener(updateSequenceListener);
 	}
 
+	/**
+	 * Changes the font on the underlying text widget.
+	 * @param font The new font.
+	 */
+	public void setFont(Font font) {
+		text.setFont(font);
+	}
+	
 	/**
 	 * Adds a listener for modification of the text component.
 	 * @param modifyListener The listener that is to be added; must not be
@@ -108,8 +117,7 @@ public final class KeySequenceText {
 	 * Clears the text field and resets all the internal values.
 	 */
 	public final void clear() {
-		keySequence = null;
-		temporaryStroke = null;
+		keySequence = KeySequence.getInstance();
 		text.setText(EMPTY_STRING);
 	}
 
@@ -121,30 +129,22 @@ public final class KeySequenceText {
 	public final KeySequence getKeySequence() {
 		return keySequence;
 	}
-
-	public final boolean hasIncompleteStroke() {
-		return (temporaryStroke != null);
+	
+	/** 
+	 * An accessor for the underlying text widget's contents.
+	 * @return The text contents of this entry; never <code>null</code>.
+	 */
+	final String getText() {
+		return text.getText();
 	}
 
 	/**
-	 * Checks whether the given key stroke is a temporary key stroke or not.
-	 * @param keyStroke The key stroke to check for completion; may be
-	 * <code>null</code>, which results in <code>false</code>.
-	 * @return <code>true</code> if the key stroke has no natural key; 
+	 * Tests whether the current key sequence has a stroke with no natural key.
+	 * @return <code>true</code> is there is an incomplete stroke; 
 	 * <code>false</code> otherwise.
 	 */
-	private static final boolean isComplete(final KeyStroke keyStroke) {
-		if (keyStroke != null) {
-			final NaturalKey naturalKey = keyStroke.getNaturalKey();
-
-			if (naturalKey instanceof CharacterKey) {
-				final CharacterKey characterKey = (CharacterKey) naturalKey;
-				return (characterKey.getCharacter() != '\0');
-			} else
-				return true;
-		}
-
-		return false;
+	public final boolean hasIncompleteStroke() {
+		return !keySequence.isComplete();
 	}
 
 	/**
@@ -157,10 +157,8 @@ public final class KeySequenceText {
 
 	/**
 	 * <p>
-	 * A mutator for the key sequence and incomplete stroke stored within this
-	 * widget.  This does some checking to see if the incomplete stroke is 
-	 * really incomplete; if it is complete, then it is rolled into the key 
-	 * sequence.  The text and caret position are updated.
+	 * A mutator for the key sequence stored within this widget.  The text and
+	 * caret position are updated.
 	 * </p>
 	 * <p>
 	 * All sequences are limited to maxStrokes number of strokes in length.
@@ -170,82 +168,34 @@ public final class KeySequenceText {
 	 *   
 	 * @param newKeySequence The new key sequence for this widget; may be
 	 * <code>null</code> if none.
-	 * @param incompleteStroke The new incomplete stroke for this widget; may be
-	 * <code>null</code> or incomplete -- both conditions are dealt with.
 	 */
-	public final void setKeySequence(final KeySequence newKeySequence, final KeyStroke incompleteStroke) {
-		// Figure out whether the stroke should be rolled in.
-		if (isComplete(incompleteStroke)) {
-			if (newKeySequence == null) {
-				// This is guaranteed to be possible by setMaxStrokes
-				keySequence = KeySequence.getInstance(incompleteStroke);
-			} else {
-				final List keyStrokes = new ArrayList(newKeySequence.getKeyStrokes());
-				keyStrokes.add(incompleteStroke);
-				if (maxStrokes != INFINITE) {
-					final int keyStrokesSize = keyStrokes.size();
-					for (int i = keyStrokesSize - 1; i >= maxStrokes; i--) {
-						keyStrokes.remove(i);
-					}
-				}
-				keySequence = KeySequence.getInstance(keyStrokes);
+	public void setKeySequence(KeySequence newKeySequence) {
+		keySequence = newKeySequence;
+		
+		// Trim any extra strokes.
+		if (maxStrokes != INFINITE) {
+			List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
+			int keyStrokesSize = keyStrokes.size();
+			for (int i = keyStrokesSize - 1; i >= maxStrokes; i--) {
+				keyStrokes.remove(i);
 			}
-			temporaryStroke = null;
-		} else {
-			if ((newKeySequence != null) && (maxStrokes != INFINITE)) {
-				final List untrimmedKeyStrokes = newKeySequence.getKeyStrokes();
-				final int keyStrokesSize = untrimmedKeyStrokes.size();
-				if (keyStrokesSize > maxStrokes) {
-					final List keyStrokes = new ArrayList(untrimmedKeyStrokes);
-					for (int i = keyStrokesSize - 1; i >= maxStrokes; i--) {
-						keyStrokes.remove(i);
-					}
-					keySequence = KeySequence.getInstance(keyStrokes);
-					temporaryStroke = null;
-				} else if (keyStrokesSize == maxStrokes) {
-					keySequence = newKeySequence;
-					temporaryStroke = null;
-				} else {
-					keySequence = newKeySequence;
-					temporaryStroke = incompleteStroke;
-				}
-			} else {
-				keySequence = newKeySequence;
-				temporaryStroke = incompleteStroke;
-			}
+			keySequence = KeySequence.getInstance(keyStrokes);	
 		}
-
-		/* Create a dummy (and rather invalid) sequence to get localized display
-		 * formatting
-		 */
-		final KeySequence dummySequence;
-
-		if (keySequence == null) {
-			if (temporaryStroke == null) {
-				dummySequence = KeySequence.getInstance();
-			} else {
-				dummySequence = KeySequence.getInstance(temporaryStroke);
-			}
-		} else {
-			final List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
-			if (temporaryStroke != null) {
-				keyStrokes.add(temporaryStroke);
-			}
-			dummySequence = KeySequence.getInstance(keyStrokes);
-		}
-
-		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */
-		dummySequence.format());
+				
+		// We need to update the text, but we don't need to synchronize.
+		text.removeModifyListener(updateSequenceListener);
+		text.setText(keySequence.format());
+		text.addModifyListener(updateSequenceListener);
 
 		// Update the caret position.
-		text.setSelection(text.getText().length());
+		text.setSelection(getText().length());
 	}
 
 	/**
 	 * A mutator for the layout information associated with the wrapped widget.
 	 * @param layoutData The layout information; must not be <code>null</code>.
 	 */
-	public final void setLayoutData(final Object layoutData) {
+	public void setLayoutData(Object layoutData) {
 		text.setLayoutData(layoutData);
 	}
 
@@ -255,61 +205,20 @@ public final class KeySequenceText {
 	 * @param maximumStrokes The maximum number of strokes; should be a positive
 	 * integer or <code>INFINITE</code>.
 	 */
-	public final void setMaxStrokes(final int maximumStrokes) {
+	public void setMaxStrokes(int maximumStrokes) {
 		if ((maximumStrokes > 0) || (maximumStrokes == INFINITE)) {
 			maxStrokes = maximumStrokes;
 		}
-	}
-
-	/**
-	 * A traversal listener that blocks all traversal except for tabs and arrow
-	 * keys.
-	 */
-	private final class FocusTrapListener implements TraverseListener {
-
-		/**
-		 * Handles the traverse event on the text field wrapped by this class.
-		 * It swallows all traverse events example for tab and arrow key 
-		 * navigation.  The other forms of navigation can be reached by tabbing
-		 * off of the control.
-		 * 
-		 * @param event The trigger event; must not be <code>null</code>.
-		 */
-		public final void keyTraversed(final TraverseEvent event) {
-			switch (event.detail) {
-				case SWT.TRAVERSE_ESCAPE :
-				case SWT.TRAVERSE_MNEMONIC :
-				case SWT.TRAVERSE_NONE :
-				case SWT.TRAVERSE_PAGE_NEXT :
-				case SWT.TRAVERSE_PAGE_PREVIOUS :
-				case SWT.TRAVERSE_RETURN :
-					event.doit = false;
-					break;
-					
-				case SWT.TRAVERSE_TAB_NEXT :
-				case SWT.TRAVERSE_TAB_PREVIOUS :				
-					// Check if modifiers other than just 'Shift' were down.
-					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT)) != 0) {
-						// Modifiers other than shift were down.
-						event.doit = false;
-						break;
-					}
-					// fall through -- either no modifiers, or just shift.
-				
-				case SWT.TRAVERSE_ARROW_NEXT :
-				case SWT.TRAVERSE_ARROW_PREVIOUS :
-				default :
-					// Let the traversal happen, but clear the incomplete stroke
-					setKeySequence(getKeySequence(), null);
-			}
-		}
+		
+		// Make sure we are obeying the new limit.
+		setKeySequence(getKeySequence());
 	}
 
 	/**
 	 * A key listener that traps incoming events and displays them in the 
 	 * wrapped text field.  It has no effect on traversal operations.
 	 */
-	private final class KeyTrapListener implements Listener {
+	private class KeyTrapListener implements Listener {
 		/**
 		 * Handles the key pressed and released events on the wrapped text 
 		 * widget.  This makes sure to either add the pressed key to the 
@@ -320,39 +229,37 @@ public final class KeySequenceText {
 		 * 
 		 * @param event The triggering event; must not be <code>null</code>. 
 		 */
-		public final void handleEvent(final Event event) {
+		public void handleEvent(Event event) {
+			List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
+			
 			if (event.type == SWT.KeyDown) {
 				if ((event.character == SWT.BS) && (event.stateMask == 0)) {
 					// Remove the last key stroke.
-					if (hasIncompleteStroke()) {
-						/* Remove the incomplete stroke.  This should not really
-						 * be possible, but it is better to be safe than sorry.
-						 */
-						setKeySequence(getKeySequence(), null);
-					} else {
-						// Remove the last complete stroke.
-						final KeySequence sequence = getKeySequence();
-						final List keyStrokes = new ArrayList(sequence.getKeyStrokes());
-						if (!keyStrokes.isEmpty()) {
-							keyStrokes.remove(keyStrokes.size() - 1);
-							setKeySequence(KeySequence.getInstance(keyStrokes), null);
-						}
+					if (!keyStrokes.isEmpty()) {
+						keyStrokes.remove(keyStrokes.size() - 1);
 					}
+					
 				} else {
 					// Handles the key pressed event.
-					final int key = KeySupport.convertEventToAccelerator(event);
-					final KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
-					setKeySequence(getKeySequence(), stroke);
+					// Remove the incomplete stroke, if any.
+					if ((hasIncompleteStroke()) && (!keyStrokes.isEmpty())) {
+						keyStrokes.remove(keyStrokes.size() - 1);
+					}
+					
+					// Add the new stroke.
+					int key = KeySupport.convertEventToUnmodifiedAccelerator(event);
+					KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
+					keyStrokes.add(stroke);
 				}
 
-			} else if (hasIncompleteStroke()) {
+			} else if ((event.type == SWT.KeyUp) && (hasIncompleteStroke())) {
 				/* Handles the key released event, which is only relevant if
 				 * there is an incomplete stroke.
 				 */
 				/* Figure out the SWT integer representation of the remaining
 				 * values.
 				 */
-				final Event mockEvent = new Event();
+				Event mockEvent = new Event();
 				if ((event.keyCode & SWT.MODIFIER_MASK) != 0) {
 					// This key up is a modifier key being released.
 					mockEvent.stateMask = event.stateMask - event.keyCode;
@@ -366,19 +273,99 @@ public final class KeySequenceText {
 				/* Get a reasonable facsimile of the stroke that is still
 				 * pressed.
 				 */
-				final int key = KeySupport.convertEventToAccelerator(mockEvent);
-				final KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
-
-				if (remainingStroke.getModifierKeys().isEmpty()) {
-					setKeySequence(getKeySequence(), null);
-				} else {
-					setKeySequence(getKeySequence(), remainingStroke);
+				int key = KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
+				KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
+				if (!keyStrokes.isEmpty()) {
+					keyStrokes.remove(keyStrokes.size() - 1);
+				}
+				if (!remainingStroke.getModifierKeys().isEmpty()) {
+					keyStrokes.add(remainingStroke);
 				}
 
 			}
+					
+			// Update the underlying widget.
+			setKeySequence(KeySequence.getInstance(keyStrokes));
 
 			// Prevent the event from reaching the widget.
 			event.doit = false;
+		}
+	}
+
+	/**
+	 * A traversal listener that blocks all traversal except for tabs and arrow
+	 * keys.
+	 */
+	private class TraversalFilter implements Listener {
+		/**
+		 * Handles the traverse event on the text field wrapped by this class.
+		 * It swallows all traverse events example for tab and arrow key 
+		 * navigation.  The other forms of navigation can be reached by tabbing
+		 * off of the control.
+		 * 
+		 * @param event The trigger event; must not be <code>null</code>.
+		 */
+		public void handleEvent(Event event) {
+			switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE :
+				case SWT.TRAVERSE_MNEMONIC :
+				case SWT.TRAVERSE_NONE :
+				case SWT.TRAVERSE_PAGE_NEXT :
+				case SWT.TRAVERSE_PAGE_PREVIOUS :
+				case SWT.TRAVERSE_RETURN :
+					event.type = SWT.None;
+					event.doit = false;
+					break;
+					
+				case SWT.TRAVERSE_TAB_NEXT :
+				case SWT.TRAVERSE_TAB_PREVIOUS :				
+					// Check if modifiers other than just 'Shift' were down.
+					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT)) != 0) {
+						// Modifiers other than shift were down.
+						event.type = SWT.None;
+						event.doit = false;
+						break;
+					}
+					// fall through -- either no modifiers, or just shift.
+				
+				case SWT.TRAVERSE_ARROW_NEXT :
+				case SWT.TRAVERSE_ARROW_PREVIOUS :
+				default :
+					// Let the traversal happen, but clear the incomplete stroke
+					if (hasIncompleteStroke()) {
+						List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
+						if (!keyStrokes.isEmpty()) {
+							keyStrokes.remove(keyStrokes.size() - 1);
+						}
+						setKeySequence(KeySequence.getInstance(keyStrokes));
+					}
+			}
+			
+		}
+	}
+	
+	/**
+	 * The manager resposible for installing and removing the traversal filter
+	 * when the key sequence entry widget gains and loses focus.
+	 */
+	private class TraversalFilterManager implements FocusListener {
+		/** The managed filter.  We only need one instance. */
+		private TraversalFilter filter = new TraversalFilter();
+		
+		/**
+		 * Attaches the global traversal filter.
+		 * @param event Ignored.
+		 */
+		public void focusGained(FocusEvent event) {
+			Display.getCurrent().addFilter(SWT.Traverse, filter);
+		}
+		
+		/**
+		 * Detaches the global traversal filter.
+		 * @param event Ignored.
+		 */
+		public void focusLost(FocusEvent event) {
+			Display.getCurrent().removeFilter(SWT.Traverse, filter);
 		}
 	}
 
@@ -387,41 +374,28 @@ public final class KeySequenceText {
      * class (i.e., direct modification of the underlying text) do not break
      * this class' view of the world.
      */
-	private final class UpdateSequenceListener implements ModifyListener {
+	private class UpdateSequenceListener implements ModifyListener {
 		/**
 		 * Handles the modify event on the underlying text widget.
          * @param event The triggering event; ignored.
          */
-		public final void modifyText(final ModifyEvent event) {
+		public void modifyText(ModifyEvent event) {
 			try {
 				// The original sequence.
-				final KeySequence originalSequence = getKeySequence();
-				final List keyStrokes = new ArrayList(originalSequence.getKeyStrokes());
-				if (temporaryStroke != null) {
-					keyStrokes.add(temporaryStroke);
-				}
-				final KeySequence sequenceFromStrokes = KeySequence.getInstance(keyStrokes);
+				KeySequence originalSequence = getKeySequence();
 
 				// The new sequence drawn from the text.
-				final String contents = text.getText();
-				final KeySequence sequenceFromText = KeySequence.getInstance(contents);
+				String contents = getText();
+				KeySequence newSequence = KeySequence.getInstance(contents);
 
 				// Check to see if they're the same.
-				if (!sequenceFromStrokes.equals(sequenceFromText)) {
-					final List strokes = sequenceFromText.getKeyStrokes();
-					final Iterator strokeItr = strokes.iterator();
-					while (strokeItr.hasNext()) {
-						// Make sure that it's a valid sequence.
-						if (!isComplete((KeyStroke) strokeItr.next())) {
-							setKeySequence(getKeySequence(), temporaryStroke);
-							return;
-						}
-					}
-					setKeySequence(sequenceFromText, null);
+				if (!originalSequence.equals(newSequence)) {
+					setKeySequence(newSequence);
 				}
-			} catch (final ParseException e) {
+				
+			} catch (ParseException e) {
 				// Abort any cut/paste-driven modifications
-				setKeySequence(getKeySequence(), temporaryStroke);
+				setKeySequence(getKeySequence());
 			}
 		}
 	}

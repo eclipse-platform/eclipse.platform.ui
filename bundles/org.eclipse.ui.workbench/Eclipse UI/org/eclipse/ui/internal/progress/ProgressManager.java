@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -49,7 +50,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.progress.UIJob;
 
@@ -392,7 +392,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 
-					IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+					IWorkbench workbench = PlatformUI.getWorkbench();
 
 					//Abort on shutdown
 					if (workbench instanceof Workbench && ((Workbench) workbench).isClosing())
@@ -738,7 +738,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 	public void busyCursorWhile(final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 
-		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
 		dialog.setOpenOnRun(false);
 		final boolean[] busy = { true };
 
@@ -759,7 +759,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			}
 		};
 
-		updateJob.schedule(100);
+		updateJob.schedule(IProgressManager.LONG_OPERATION_MILLISECONDS);
 
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];

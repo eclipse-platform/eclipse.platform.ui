@@ -13,6 +13,8 @@ package org.eclipse.jface.dialogs;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -23,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * A modal dialog that displays progress during a long running operation.
  * <p>
- * This concete dialog class can be instantiated as is, 
+ * This concrete dialog class can be instantiated as is, 
  * or further subclassed as required.
  * </p>
  * <p>
@@ -111,9 +113,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	private String task;
 
 	/**
-	 * The number of currently running runnables.
+	 * The nesting depth of currently running runnables.
 	 */
-	private int runningRunnables;
+	private int nestingDepth;
 	
 	/**
 	 * The cursor used in the cancel button;
@@ -126,13 +128,20 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	private Cursor waitCursor;
 	
 	/**
+	 * Flag indicating whether to open or merely
+	 * create the dialog before run.
+	 */
+	private boolean openOnRun = true;
+	
+	/**
 	 * Internal progress monitor implementation.
 	 */
-	private class ProgressMonitor implements IProgressMonitor {
+	private class ProgressMonitor implements IProgressMonitorWithBlocking {
 		
 		private String fSubTask= "";//$NON-NLS-1$
 		private boolean fIsCanceled;
 		protected boolean forked = false;
+		protected boolean locked = false;
 		
 		public void beginTask(String name, int totalWork) {
 			if (progressIndicator.isDisposed())
@@ -184,6 +193,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		
 		public void setCanceled(boolean b) {
 			fIsCanceled= b;
+			if(locked)
+				clearBlocked();
 		}
 		
 		public void subTask(String name) {
@@ -207,6 +218,26 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		public void internalWorked(double work) {
 			if (!progressIndicator.isDisposed())
 				progressIndicator.worked(work);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+		 */
+		public void clearBlocked() {
+			setMessage(task);
+			locked = false;
+			imageLabel.setImage(getImage());
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+			setMessage(reason.getMessage());
+			locked = true;
+			imageLabel.setImage(getImage());
+
 		}
 	}
 /**
@@ -241,7 +272,7 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
  * only closes the dialog if there are no currently running runnables.
  */
 public boolean close() {
-	if (runningRunnables <= 0) {
+	if (getNestingDepth() <= 0) {
 		if (cancel != null && !cancel.isDisposed()) {
 			cancel.setCursor(null);
 		}
@@ -348,18 +379,86 @@ public IProgressMonitor getProgressMonitor() {
  */
 public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 	setCancelable(cancelable);
-	open();
 	try {
-		runningRunnables++;
-		
+		aboutToRun();
 		//Let the progress monitor know if they need to update in UI Thread
 		progressMonitor.forked = fork;
 		ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
-	} finally {	
-		runningRunnables--;
-		close();
+	} finally {
+		finishedRun();
 	}
 }
+
+/**
+ * Returns whether the dialog should be opened before the operation
+ * is run.  Defaults to <code>true</code>
+ * 
+ * @return <code>true</code> to open the dialog before run,
+ *   <code>false</code> to only create the dialog, but not open it
+ */
+public boolean getOpenOnRun() {
+	return openOnRun;
+}
+
+/**
+ * Sets whether the dialog should be opened before the operation
+ * is run. 
+ * NOTE: Setting this to false and not forking a process may starve
+ * any asyncExec that tries to open the dialog later.
+ * 
+ * @param openOnRun <code>true</code> to open the dialog before run,
+ *   <code>false</code> to only create the dialog, but not open it
+ */
+public void setOpenOnRun(boolean openOnRun) {
+	this.openOnRun = openOnRun;
+}
+
+/**
+ * Returns the nesting depth of running operations.
+ * 
+ * @return the nesting depth of running operations
+ */
+protected int getNestingDepth() {
+	return nestingDepth;
+}
+
+/**
+ * Increments the nesting depth of running operations.
+ */
+protected void incrementNestingDepth() {
+	nestingDepth++;
+}
+
+protected void decrementNestingDepth() {
+	nestingDepth--;
+}
+
+/**
+ * Called just before the operation is run.
+ * Default behaviour is to open or create the dialog,
+ * based on the setting of <code>getOpenOnRun</code>,
+ * and increment the nesting depth.
+ */
+protected void aboutToRun() {
+	if (getOpenOnRun()) {
+		open();
+	}
+	else {
+		create();
+	}
+	incrementNestingDepth();
+}
+
+/**
+ * Called just after the operation is run.
+ * Default behaviour is to decrement the nesting depth,
+ * and close the dialog.
+ */
+protected void finishedRun() {
+	decrementNestingDepth();
+	close();
+}
+
 /**
  * Sets whether the progress dialog is cancelable or not.
  *
@@ -387,7 +486,10 @@ private void setOperationCancelButtonEnabled(boolean b) {
  * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
  */
 protected Image getImage() {
-	return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
+	if(progressMonitor.locked)
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_LOCKED);
+	else
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 }
 	
 /**
@@ -407,6 +509,18 @@ private void update() {
 	if (messageLabel == null || messageLabel.isDisposed())
 			return;	
 	messageLabel.update();
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.window.Window#open()
+ */
+public int open() {
+	//Check to be sure it is not already done. If it is just return OK.
+	if(!getOpenOnRun()){
+		if(getNestingDepth() == 0)
+			return OK;
+	}
+	return super.open();
 }
 
 }

@@ -7,17 +7,17 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.roles;
 
-import java.util.List;
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * <p>
- * JAVADOC
- * </p>
+ * An instance of <code>IRoleManager</code> can be used to obtain instances of 
+ * <code>IRole</code>.
+ * </p> 
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -26,45 +26,61 @@ import java.util.SortedSet;
  * </p>
  * 
  * @since 3.0
+ * @see IRole
+ * @see IRoleManagerListener
+ * @see RoleManagerFactory
  */
 public interface IRoleManager {
 
 	/**
-	 * Registers an IRoleManagerListener instance with this role manager.
+	 * Registers an instance of <code>IRoleManagerListener</code> to listen for 
+	 * changes to attributes of this instance.
 	 *
-	 * @param roleManagerListener the IRoleManagerListener instance to register.
-	 * @throws NullPointerException
+	 * @param roleManagerListener the instance of 
+	 *                            <code>IRoleManagerListener</code> to register. 
+	 *                            Must not be <code>null</code>. If an attempt 
+	 *                            is made to register an instance of  
+	 *                            <code>IRoleManagerListener</code> which is 
+	 *                            already registered with this instance, no 
+	 *                            operation is performed.
 	 */	
 	void addRoleManagerListener(IRoleManagerListener roleManagerListener);
 
 	/**
-	 * JAVADOC
+	 * Returns a handle to an role given an identifier.
 	 *
-	 * @return
-	 */
-	List getActiveRoleIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param roleId
-	 * @return
-	 * @throws NullPointerException
+	 * @param  roleId an identifier. Must not be <code>null</code>
+	 * @return        a handle to an role.
 	 */	
 	IRole getRole(String roleId);
 
 	/**
-	 * JAVADOC
+	 * <p>
+	 * Returns the set of identifiers to defined roles.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
 	 *
-	 * @return
-	 */
-	SortedSet getDefinedRoleIds();
+	 * @return the set of identifiers to defined roles. This set may be empty, 
+	 *         but is guaranteed not to be <code>null</code>. If this set is not 
+	 *         empty, it is guaranteed to only contain instances of 
+	 *         <code>String</code>.
+	 */	
+	Set getDefinedRoleIds();
 	
 	/**
-	 * Unregisters an IRoleManagerListener instance with this role manager.
+	 * Unregisters an instance of <code>IRoleManagerListener</code> listening 
+	 * for changes to attributes of this instance.
 	 *
-	 * @param roleManagerListener the IRoleManagerListener instance to unregister.
-	 * @throws NullPointerException
+	 * @param roleManagerListener the instance of 
+	 *                            <code>IRoleManagerListener</code> to 
+	 *                            unregister. Must not be <code>null</code>. If 
+	 *                            an attempt is made to unregister an instance 
+	 *                            of <code>IRoleManagerListener</code> which is 
+	 *                            not already registered with this instance, no 
+	 *                            operation is performed.
 	 */
 	void removeRoleManagerListener(IRoleManagerListener roleManagerListener);
 }

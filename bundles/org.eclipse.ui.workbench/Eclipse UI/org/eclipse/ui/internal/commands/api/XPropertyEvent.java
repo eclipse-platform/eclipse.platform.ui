@@ -31,7 +31,6 @@ public class XPropertyEvent {
 	 * JAVADOC
 	 * 
 	 * @param name
-	 * @throws IllegalArgumentException
 	 */	
 	public XPropertyEvent(String name)
 		throws IllegalArgumentException {		

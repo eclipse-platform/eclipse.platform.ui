@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
       </appInfo>
       <documentation>
-         This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import&quot; dialog. 
+         This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import Dialog&quot; and are used to import resources into the workbench. 
 &lt;p&gt;
 Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
 &lt;/p&gt;
@@ -169,7 +169,7 @@ Wizards may optionally specify a description subelement whose body should contai
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The generic workbench does not include any import wizards. (However, the IDE plug-in defines wizards for basic import engines for files and directories.)
+         The workbench comes preloaded with the basic import engines for files and directories.
       </documentation>
    </annotation>
 
@@ -178,8 +178,11 @@ Wizards may optionally specify a description subelement whose body should contai
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002,2003 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

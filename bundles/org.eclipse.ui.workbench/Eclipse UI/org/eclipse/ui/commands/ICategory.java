@@ -30,7 +30,6 @@ public interface ICategory extends Comparable {
 	 * Registers an ICategoryListener instance with this category.
 	 *
 	 * @param categoryListener the ICategoryListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addCategoryListener(ICategoryListener categoryListener);
 
@@ -68,7 +67,6 @@ public interface ICategory extends Comparable {
 	 * Unregisters an ICategoryListener instance with this category.
 	 *
 	 * @param categoryListener the ICategoryListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeCategoryListener(ICategoryListener categoryListener);
 }

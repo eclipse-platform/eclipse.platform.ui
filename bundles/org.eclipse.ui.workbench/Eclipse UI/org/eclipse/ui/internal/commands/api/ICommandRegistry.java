@@ -32,7 +32,6 @@ public interface ICommandRegistry {
 	 * Registers an ICommandRegistryListener instance with this command registry.
 	 *
 	 * @param commandRegistryListener the ICommandRegistryListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
 
@@ -89,7 +88,6 @@ public interface ICommandRegistry {
 	 * Unregisters an ICommandRegistryListener instance with this command registry.
 	 *
 	 * @param commandRegistryListener the ICommandRegistryListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
 }

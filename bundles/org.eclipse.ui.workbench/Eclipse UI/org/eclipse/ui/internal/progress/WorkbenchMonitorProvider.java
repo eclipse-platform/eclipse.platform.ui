@@ -24,7 +24,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IStatusLineWithProgressManager;
 
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 
@@ -246,7 +246,7 @@ class WorkbenchMonitorProvider {
 	 */
 	private IStatusLineWithProgressManager getStatusLineManager() {
 
-		IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null && window instanceof WorkbenchWindow) {
 			IStatusLineManager manager = ((WorkbenchWindow) window).getStatusLineManager();
 			if (manager instanceof IStatusLineWithProgressManager)

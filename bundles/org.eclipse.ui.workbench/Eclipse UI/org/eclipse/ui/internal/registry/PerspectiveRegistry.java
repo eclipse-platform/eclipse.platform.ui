@@ -10,20 +10,41 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -211,19 +232,23 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
-		Iterator enum = getChildren().iterator();
+		
+		//Do not filter if looking up by id as the user 
+		//must have worken up state to have got this far
+		Iterator enum = children.iterator();
 		while (enum.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
 			if (desc.getId().equals(id))
 				return desc;
 		}
+		
 		return null;
 	}
 	/**
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
-		Iterator enum = getChildren().iterator();
+		Iterator enum = children.iterator();
 		while (enum.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) enum.next();
 			if (desc.getLabel().equals(label))
@@ -244,11 +269,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see IPerspectiveRegistry
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		ArrayList filteredChildren = getChildren(); 
-		int nSize = filteredChildren.size();
+		int nSize = children.size();
 		IPerspectiveDescriptor[] retArray = new IPerspectiveDescriptor[nSize];
 		for (int nX = 0; nX < nSize; nX++) {
-			retArray[nX] = (IPerspectiveDescriptor) filteredChildren.get(nX);
+			retArray[nX] = (IPerspectiveDescriptor) children.get(nX);
 		}
 		return retArray;
 	}
@@ -454,21 +478,5 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Step 3. Use application-specific default
 		defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
-	}
-	
-	private ArrayList getChildren(){
-		if(RoleManager.getInstance().isFiltering()){
-			RoleManager manager = RoleManager.getInstance();
-			ArrayList filtered = new ArrayList();
-			Iterator childIterator = children.iterator();
-			while(childIterator.hasNext()){
-				IPerspectiveDescriptor next = (IPerspectiveDescriptor) childIterator.next();
-				if(manager.isEnabledId(next.getId()))
-					filtered.add(next);
-			}
-			return filtered;
-		}
-			
-		return children;
 	}
 }

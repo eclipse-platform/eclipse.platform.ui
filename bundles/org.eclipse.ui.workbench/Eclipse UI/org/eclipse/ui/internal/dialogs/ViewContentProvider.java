@@ -11,10 +11,15 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
@@ -22,7 +27,7 @@ import org.eclipse.ui.internal.roles.RoleManager;
 
 public class ViewContentProvider implements ITreeContentProvider {
 /**
-	 * Create a new instance of the ViewContentProvider.
+ * Create a new instance of the ViewContentProvider.
  */
 public ViewContentProvider() {
 	super();
@@ -36,23 +41,43 @@ public Object[] getChildren(Object element) {
 		if (element instanceof IViewRegistry) {
 			IViewRegistry reg = (IViewRegistry) element;
 			Category[] categories = reg.getCategories();
-			ArrayList filtered = new ArrayList();
-			for (int i = 0; i < categories.length; i++) {
-				if (RoleManager.getInstance().isEnabledId(categories[i].getId()))
-					filtered.add(categories[i]);
-			}
-			return filtered.toArray();
+
+            IObjectActivityManager objectManager = 
+            	PlatformUI
+            		.getWorkbench()
+            		.getActivityManager(
+            			IWorkbenchConstants.PL_VIEWS, false);
+            if (objectManager != null) {
+                ArrayList filtered = new ArrayList();
+                Collection activeObjects = objectManager.getActiveObjects();                
+    			for (int i = 0; i < categories.length; i++) {
+                    if (activeObjects.contains(RoleManager.createViewCategoryIdKey(categories[i].getId()))) {
+                        filtered.add(categories[i]);
+                    }
+    			}
+    			return filtered.toArray();
+            }
+            return categories;
 		} else if (element instanceof Category) {
-			ArrayList list = ((Category) element).getElements();
+			ArrayList list = ((Category) element).getElements();            
 			if (list != null) {
-				ArrayList filtered = new ArrayList();
-				Iterator elements = list.iterator();
-				while (elements.hasNext()) {
-					IViewDescriptor next = (IViewDescriptor) elements.next();
-					if (RoleManager.getInstance().isEnabledId(next.getId()))
-						filtered.add(next);
-				}
-				return filtered.toArray();
+
+				IObjectActivityManager objectManager = 
+				PlatformUI.getWorkbench().getActivityManager(
+						IWorkbenchConstants.PL_VIEWS,
+						false);              
+                if (objectManager != null) {
+					Collection activeObjects = objectManager.getActiveObjects();
+                    ArrayList filtered = new ArrayList();
+                    for (Iterator i = list.iterator(); i.hasNext();) {
+                        IViewDescriptor desc = (IViewDescriptor) i.next();
+                        if (activeObjects.contains(desc.getId())) {
+                            filtered.add(desc);
+                        }
+                    }
+                    return filtered.toArray();                    
+                }
+                return list.toArray();                
 			}
 
 		} else {

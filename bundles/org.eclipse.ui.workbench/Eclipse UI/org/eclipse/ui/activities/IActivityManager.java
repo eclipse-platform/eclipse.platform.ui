@@ -107,11 +107,6 @@ public interface IActivityManager {
 	Set getEnabledActivityIds();	
 	
 	/**
-	 * TODO javadoc
-	 */	
-	boolean match(String string, Set activityIds);	
-	
-	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code> 
 	 * listening for changes to attributes of this instance.
 	 *

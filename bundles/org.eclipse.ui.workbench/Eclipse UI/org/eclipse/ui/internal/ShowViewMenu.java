@@ -12,17 +12,35 @@
 package org.eclipse.ui.internal;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.swt.widgets.Menu;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with
@@ -102,20 +120,17 @@ public class ShowViewMenu extends ContributionItem {
 		if (page.getPerspective() == null)
 			return;
 
-		// Get visible actions.
-		List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
-		viewIds = addOpenedViews(page, viewIds);
-		
-		List filtered = new ArrayList();
-		Iterator iterator = viewIds.iterator();
-		while(iterator.hasNext()){
-			String next = (String) iterator.next();
-			if(RoleManager.getInstance().isEnabledId(next))
-				filtered.add(next);			
-		}
-		
-		viewIds = filtered;
-		
+		// Get visible actions. (copy, we're going to be modifying it)
+		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());
+        
+        IObjectActivityManager objectManager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_VIEWS, false);
+        if (objectManager != null) {
+            // prune off all filtered views
+            viewIds.retainAll(objectManager.getActiveObjects());
+        }
+        // add all open views
+        viewIds = addOpenedViews(page, viewIds);
+
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();

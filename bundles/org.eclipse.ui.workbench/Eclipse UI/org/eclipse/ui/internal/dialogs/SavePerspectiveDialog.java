@@ -133,7 +133,7 @@ protected Control createDialogArea(Composite parent) {
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspectiveLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
-	list.setSorter(new ViewerSorter() {});
+	list.setSorter(new ViewerSorter());
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
 	list.getTable().setFont(font);

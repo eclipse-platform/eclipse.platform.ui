@@ -37,7 +37,6 @@ public interface IAction {
 	 * JAVADOC
 	 * 
 	 * @param event
-	 * @throws NullPointerException
 	 */
 	// TODO temporary method	
 	void execute(Event event);

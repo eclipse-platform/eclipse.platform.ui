@@ -183,11 +183,6 @@ public interface IActivity extends Comparable {
 	boolean isEnabled();	
 
 	/**
-	 * TODO javadoc
-	 */	
-	boolean match(String string);		
-	
-	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening for
 	 * changes to attributes of this instance.
 	 *

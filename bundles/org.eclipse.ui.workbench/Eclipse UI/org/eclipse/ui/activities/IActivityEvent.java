@@ -17,6 +17,14 @@ package org.eclipse.ui.activities;
  * of <code>IActivity</code>. 
  * </p>
  * <p>
+ * An instance of <code>IActivityEvent</code> specifies the instance of 
+ * <code>IActivity</code> that changed, but otherwise does not specify the 
+ * nature of that change. Clients can only assume that one or more attributes of 
+ * the particular instance of <code>IActivity</code> have changed. In the 
+ * future, this interface may be extended to be more specific about the nature 
+ * of the change.
+ * </p>
+ * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
@@ -36,39 +44,4 @@ public interface IActivityEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IActivity getActivity();
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasActiveChanged();
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasDefinedChanged();
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasDescriptionChanged();	
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasEnabledChanged();
-
-	/**
-	 * TODO javadoc
-	 */		
-	boolean hasNameChanged();
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasParentIdChanged();	
-	
-	/**
-	 * TODO javadoc
-	 */		
-	boolean havePatternBindingsChanged();		
 }

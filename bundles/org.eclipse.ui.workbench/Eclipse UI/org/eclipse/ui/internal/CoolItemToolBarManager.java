@@ -11,9 +11,13 @@
 package org.eclipse.ui.internal;
 
 
-import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 
 /**
  * CoolItemToolBarManager class
@@ -165,4 +169,21 @@ public class CoolItemToolBarManager extends ToolBarManager {
 			coolBarItem.setVisible(set, forceVisibility);
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.ToolBarManager#update(boolean)
+     */
+    public void update(boolean force) {
+        super.update(force);
+        
+        // the bar should only be enabled iff there are non-separator (visible) items
+        boolean enabled = false;
+        for (int i = 0; i < getItems().length; i++) {
+            if (!(getItems()[i] instanceof Separator) && getItems()[i].isVisible()) {
+                enabled = true;
+            }
+        }
+        
+        setVisible(enabled, true);        
+    }
 }      

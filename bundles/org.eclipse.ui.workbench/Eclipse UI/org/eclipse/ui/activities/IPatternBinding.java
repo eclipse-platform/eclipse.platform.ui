@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.activities;
 
-import java.util.regex.Pattern;
-
 /**
  * <p>
  * An instance of <code>IPatternBinding</code> represents a binding between an
@@ -35,7 +33,7 @@ public interface IPatternBinding extends Comparable {
 	 * 
 	 * @return the pattern. Guaranteed not to be <code>null</code>.
 	 */	
-	Pattern getPattern();
+	String getPattern();
 	
 	/**
 	 * <p>

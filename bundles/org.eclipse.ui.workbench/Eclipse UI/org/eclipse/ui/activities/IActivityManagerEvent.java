@@ -17,6 +17,14 @@ package org.eclipse.ui.activities;
  * instance of <code>IActivityManager</code>. 
  * </p>
  * <p>
+ * An instance of <code>IActivityManagerEvent</code> specifies the instance of 
+ * <code>IActivityManager</code> that changed, but otherwise does not specify 
+ * the nature of that change. Clients can only assume that one or more 
+ * attributes of the particular instance of <code>IActivityManager</code> have 
+ * changed. In the future, this interface may be extended to be more specific 
+ * about the nature of the change.
+ * </p>
+ * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
@@ -36,19 +44,4 @@ public interface IActivityManagerEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	IActivityManager getActivityManager();
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean haveActiveActivityIdsChanged();
-	
-	/**
-	 * TODO javadoc
-	 */		
-	boolean haveDefinedActivityIdsChanged();
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean haveEnabledActivityIdsChanged();	
 }

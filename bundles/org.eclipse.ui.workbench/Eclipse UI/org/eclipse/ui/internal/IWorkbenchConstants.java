@@ -35,10 +35,6 @@ public interface IWorkbenchConstants {
 	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
 	public static final String PL_ELEMENT_FACTORY ="elementFactories"; //$NON-NLS-1$
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_CONFIGURATIONS ="acceleratorConfigurations"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_SCOPES ="acceleratorScopes"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
-	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
 	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
 		

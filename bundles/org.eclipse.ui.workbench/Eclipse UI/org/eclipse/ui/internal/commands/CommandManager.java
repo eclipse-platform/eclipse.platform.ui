@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
@@ -144,6 +145,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedMap categoriesById = new TreeMap();	
 	private SortedMap categoryDefinitionsById = new TreeMap();
 	private SortedMap commandDefinitionsById = new TreeMap();
+	private Map commandIdsByActionIds = new HashMap(); // TODO temporary?
 	private ICommandManagerEvent commandManagerEvent;
 	private List commandManagerListeners;
 	private SortedMap commandsById = new TreeMap();	
@@ -310,23 +312,51 @@ public final class CommandManager implements ICommandManager {
 		return keyBindingMachine.setMode(mode);
 	}
 
-	public String getKeyTextForCommand(String commandId) {
-		String keyText = null;
+	public String guessCommandIdFromActionId(String actionId) {
+		return null; // TODO ? (String) commandIdsByActionIds.get(actionId);	
+	}
+
+	public Integer getAccelerator(String commandId) {
+		Integer accelerator = null;
 		
 		/* TODO
 		ICommand command = getCommand(commandId);
 		
 		if (command.isDefined()) {
-			try {
-				SortedSet keyBindings = command.getKeyBindings();
-	
-				if (!keyBindings.isEmpty()) {
-					IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
-					KeySequence keySequence = keyBinding.getKeySequence();
-					keyText = keySequence.format();
-				}
-			} catch (NotDefinedException eNotDefined) {				
+			SortedSet keyBindings = command.getKeyBindings();
+			...
+		}
+		*/
+		
+		Map keyBindingsByCommandId = getKeyBindingsByCommandId();				
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+		
+		if (keyBindings != null) {
+			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+		
+			if (keyBinding != null) {
+				KeySequence keySequence = keyBinding.getKeySequence();
+				List keyStrokes = keySequence.getKeyStrokes();
+
+				if (keyStrokes.size() == 1) {
+					KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+					accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+				}				
 			}
+		}
+			
+		return accelerator;
+	}	
+	
+	public String getAcceleratorText(String commandId) {
+		String acceleratorText = null;
+		
+		/* TODO
+		ICommand command = getCommand(commandId);
+		
+		if (command.isDefined()) {
+			SortedSet keyBindings = command.getKeyBindings();
+			...
 		}
 		*/
 
@@ -337,10 +367,10 @@ public final class CommandManager implements ICommandManager {
 			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 		
 			if (keyBinding != null)
-				keyText = keyBinding.getKeySequence().format();
+				acceleratorText = keyBinding.getKeySequence().format();
 		}
 			
-		return keyText != null ? keyText : Util.ZERO_LENGTH_STRING;
+		return acceleratorText;
 	}
 	
 	public void reset() {
@@ -362,7 +392,28 @@ public final class CommandManager implements ICommandManager {
 		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
 	
 		if (!Util.equals(actionsById, this.actionsById)) {	
-			this.actionsById = actionsById;	
+			this.actionsById = actionsById;
+			
+			// TODO begin temporary (?)
+			for (Iterator iterator = this.actionsById.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IAction action = (IAction) entry.getValue();
+				
+				if (commandId != null && action instanceof ActionHandler) {						
+					ActionHandler actionHandler = (ActionHandler) action;
+					org.eclipse.jface.action.IAction jfaceAction = (org.eclipse.jface.action.IAction) actionHandler.getAction();	
+					
+					if (jfaceAction != null) {
+						String actionId = jfaceAction.getId();
+						
+						if (actionId != null)
+							commandIdsByActionIds.put(actionId, commandId);
+					}
+				}				
+			}
+			// TODO end temporary
+			
 			fireCommandManagerChanged();
 		}
 	}

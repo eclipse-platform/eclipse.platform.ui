@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Utility for batching ActivityEvents into one ActivtyManagerEvent.  This 
  * Class is not threadsafe but it is used in RoleManager in a fashion that 
  * guarentees safety (by use of ThreadLocal).
  */
-public class ActivityDeltaCalculator {
+class ActivityDeltaCalculator {
 
-    private RoleManager fActivityManager;
-    private Set enabledActivities = new HashSet(17), 
-                disabledActivities = new HashSet(17);
+    private Collection enabledActivities = new HashSet(17);
+    private Collection disabledActivities = new HashSet(17);
                 
-    private boolean fInSession = false;
+    private boolean inSession = false;
 
     /**
-     * 
+     * Create a new instance of the receiver.
      * @param activityManager
      */
-    public ActivityDeltaCalculator(RoleManager activityManager) {
-        fActivityManager = activityManager;        
+    ActivityDeltaCalculator() {
+         
     }
     
     /**
@@ -41,7 +40,6 @@ public class ActivityDeltaCalculator {
         ActivityManagerEvent event = null;
         if (disabledActivities.size() > 0 || enabledActivities.size() > 0) { 
             event = new ActivityManagerEvent(
-                fActivityManager,
                 (Activity [])enabledActivities.toArray(new Activity[enabledActivities.size()]),
                 (Activity [])disabledActivities.toArray(new Activity[disabledActivities.size()]));
         }
@@ -52,9 +50,9 @@ public class ActivityDeltaCalculator {
      * Starts a new delta session if one hasn't alreayd been started.
      * @return whether a new session has been started.
      */
-    public boolean startDeltaSession() {        
-        if (!fInSession) {
-            fInSession = true;
+    boolean startDeltaSession() {        
+        if (!inSession) {
+            inSession = true;
             enabledActivities.clear();
             disabledActivities.clear();
             return true;
@@ -65,11 +63,12 @@ public class ActivityDeltaCalculator {
     }
     
     /**
+     * End the collection of updates and return the result.
      * @return an event that captures the changes described since the last call
      * to startDeltaSession().  If there have been no changes the null is returned.
      */
-    public ActivityManagerEvent endDeltaSession() {
-        fInSession = false;
+    ActivityManagerEvent endDeltaSession() {
+        inSession = false;
         return getEvent();
     } 
     
@@ -82,8 +81,8 @@ public class ActivityDeltaCalculator {
      * @throws IllegalStateException if there is not currently a session in 
      * progress 
      */
-    public void addActivity(Activity activity) {
-        if (!fInSession) {
+    void addActivity(Activity activity) {
+        if (!inSession) {
             throw new IllegalStateException();
         }
         if (activity.isEnabled()) {

@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -29,18 +30,25 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * RoleManager is the type that defines and filters based on role. */
+ * RoleManager is the type that defines and filters based on role.
+ * 
+ * @since 3.0
+ */
 public class RoleManager implements IActivityListener {
 
 	private static RoleManager singleton;
-	private boolean filterRoles = true;
+	private boolean filterRoles = false;
 
 	private Role[] roles = new Role[0];
 	private Hashtable activities = new Hashtable();
@@ -54,7 +62,8 @@ public class RoleManager implements IActivityListener {
 	private RecentActivityManager recentActivities;
 
 	/**
-	 * Set of IActivityManagerListeners */
+	 * Set of IActivityManagerListeners
+     */
 	private Set listeners = new HashSet();
 
 	/**
@@ -64,41 +73,40 @@ public class RoleManager implements IActivityListener {
 	 */
 	private final ThreadLocal deltaCalcs = new ThreadLocal() {
 		protected synchronized Object initialValue() {
-			return new ActivityDeltaCalculator(RoleManager.this);
+			return new ActivityDeltaCalculator();
 		}
 	};
 
 	/**
-	 * Get the static instance. Create a default one if it has
-	 * not been set.
+	 * Get the static instance. Create a default one if it has not been set.
+	 * 
 	 * @return RoleManager
 	 */
 	public static RoleManager getInstance() {
-		if (singleton == null)
-			singleton = new RoleManager();
-
+		if (singleton == null){
+			setManager(new RoleManager());
+		}
 		return singleton;
 
 	}
-	
+
 	/**
-	 * Set the singleton. This can only be done once so 
-	 * any subsequent called will throw IllegalArgumentException.
+	 * Set the singleton. This can only be done once so any subsequent called
+	 * will throw IllegalArgumentException.
+	 * 
 	 * @param manager
 	 */
-	public static void setManager(RoleManager manager){
-		if(singleton != null)
-			throw new IllegalArgumentException("Role Manager is already set");
+	public static void setManager(RoleManager manager) {
+		if (singleton != null)
+			throw new IllegalArgumentException(RoleMessages.getString("RoleManager.alreadySet")); //$NON-NLS-1$
 		singleton = manager;
-		
+		manager.startup();
+
 	}
-	
-	
 
 	/**
 	 * Shutdown the current manager if it exists.
-	 *
-	 */
+     */
 	public static void shutdown() {
 		if (singleton == null)
 			return;
@@ -107,23 +115,27 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Shutdown the receiver. 
-	 */
+	 * Shutdown the receiver.
+     */
 	public void shutdownManager() {
 
-		if (getRecentActivityManager() != null) 
+		if (getRecentActivityManager() != null)
 			getRecentActivityManager().shutdown();
+            
+        saveEnabledStates();
 	}
 
 	/**
-	 * @return the recent activities manager */
+	 * @return the recent activities manager
+     */
 	public RecentActivityManager getRecentActivityManager() {
 		return recentActivities;
 	}
 
 	/**
 	 * 
-	 * @param listener */
+	 * @param listener the listener to remove from the listener collection
+     */
 	public void addActivityManagerListener(IActivityManagerListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
@@ -145,15 +157,14 @@ public class RoleManager implements IActivityListener {
 		}
 
 		for (Iterator i = listenersCopy.iterator(); i.hasNext();) {
-			IActivityManagerListener listener =
-				(IActivityManagerListener) i.next();
+			IActivityManagerListener listener = (IActivityManagerListener) i.next();
 			listener.activityManagerChanged(event);
 		}
 	}
 
 	/**
-	 * 
-	 * @param listener */
+     * @param listener the listener to remove from the listener collection
+     */
 	public void removeActivityManagerListener(IActivityManagerListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
@@ -174,37 +185,7 @@ public class RoleManager implements IActivityListener {
 			fireActivityManagerEvent(deltaCalculator.endDeltaSession());
 		}
 	}
-
-	/**
-	 * Apply default pattern bindings to the objects governed by the given
-	 * manager.
-	 * 
-	 * @param manager
-	 */
-	public void applyPatternBindings(ObjectActivityManager manager) {
-		Set keys = manager.getObjectIds();
-		for (Iterator i = keys.iterator(); i.hasNext();) {
-			ObjectContributionRecord record =
-				(ObjectContributionRecord) i.next();
-			String objectKey = record.toString();
-			for (Iterator j = patternBindings.entrySet().iterator();
-				j.hasNext();
-				) {
-				Map.Entry patternEntry = (Map.Entry) j.next();
-				if (objectKey.matches((String) patternEntry.getKey())) {
-					Collection activityIds =
-						(Collection) patternEntry.getValue();
-					for (Iterator k = activityIds.iterator(); k.hasNext();) {
-						String activityId = (String) k.next();
-						if (getActivity(activityId) != null) {
-							manager.addActivityBinding(record, activityId);
-						}
-					}
-				}
-			}
-		}
-	}
-
+    
 	/**
 	 * Read the roles from the primary feature. If there is no roles file then
 	 * disable filter roles and leave. Otherwise read the contents of the file
@@ -213,19 +194,16 @@ public class RoleManager implements IActivityListener {
 	 * @return boolean true if successful
 	 */
 	private boolean readRoles() {
-		IPlatformConfiguration config =
-			BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration config = BootLoader.getCurrentPlatformConfiguration();
 		String id = config.getPrimaryFeatureIdentifier();
 		if (id == null)
 			return false;
-		IPlatformConfiguration.IFeatureEntry entry =
-			config.findConfiguredFeatureEntry(id);
+		IPlatformConfiguration.IFeatureEntry entry = config.findConfiguredFeatureEntry(id);
 		String plugInId = entry.getFeaturePluginIdentifier();
 		if (plugInId == null)
 			return false;
 
-		IPluginDescriptor desc =
-			Platform.getPluginRegistry().getPluginDescriptor(plugInId);
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(plugInId);
 		if (desc == null)
 			return false;
 
@@ -245,8 +223,7 @@ public class RoleManager implements IActivityListener {
 			}
 			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
-			Activity[] activityArray =
-				RoleParser.readActivityDefinitions(memento);
+			Activity[] activityArray = RoleParser.readActivityDefinitions(memento);
 			for (int i = 0; i < activityArray.length; i++) {
 				activityArray[i].addListener(this);
 				activities.put(activityArray[i].getId(), activityArray[i]);
@@ -272,36 +249,65 @@ public class RoleManager implements IActivityListener {
 	 * @param e
 	 */
 	private void reportError(Exception e) {
-		IStatus error =
-			new Status(
-				IStatus.ERROR,
-				PlatformUI.PLUGIN_ID,
-				IStatus.ERROR,
-				e.getLocalizedMessage(),
-				e);
+		IStatus error = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
 		WorkbenchPlugin.getDefault().getLog().log(error);
 		filterRoles = false;
 	}
 
 	protected RoleManager() {
-		if (readRoles()) {
-			// recent activities expire after an hour - create this irre
-			recentActivities = new RecentActivityManager(this, 3600000L);
+	}
+
+	//Initialize all of the state in the receiver. This must be
+	//done after creation to prevent problems with dependant
+	//classes referring to the startup state.
+	protected void startup() {
+
+		filterRoles = readRoles();
+		if (filterRoles) {
+			//recent activities expire after an hour - create this irre
+			recentActivities = new RecentActivityManager(3600000L);
 			loadEnabledStates();
 			connectToPlatform();
 		}
+
 	}
+    
+    /**
+     * Utility method for going from id->activity given a batch of ids.
+     * 
+     * @param activityIds the ids to look up.
+     * @return an array of Activity Objects that correspond to the supplied 
+     * activityIds.  Any id which does not correspond to an Activity 
+     * Object is discarded.  As a result, the returned array may be smaller than
+     * the supplied array.  
+     * @throws IllegalArgumentException if the supplied array is null.
+     * @since 3.0
+     */
+    public Activity [] toActivityArray(String [] activityIds) {
+        if (activityIds == null) {
+            throw new IllegalArgumentException();
+        }
+        Collection activityBatch = new ArrayList(activityIds.length); 
+        for (int i = 0; i < activityIds.length; i++) {
+            Activity activity = getActivity(activityIds[i]);
+            if (activity != null) {
+                activityBatch.add(activity);
+            }
+        }
+        return (Activity []) activityBatch.toArray(new Activity [activityBatch.size()]);        
+    }
 
 	/**
-	 * Do any operations specific to the platform being hooked. */
+	 * Do any operations specific to the platform being hooked.
+     */
 	protected void connectToPlatform() {
 	}
 
 	/**
-	 * Loads the enabled states from the preference store. */
+	 * Loads the enabled states from the preference store. 
+     */
 	void loadEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		//Do not set it if the store is not set so as to
 		//allow for switching off and on of roles
@@ -316,10 +322,10 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Save the enabled states in he preference store. */
+	 * Save the enabled states in he preference store. 
+     */
 	void saveEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
 
 		Iterator values = activities.values().iterator();
@@ -342,8 +348,9 @@ public class RoleManager implements IActivityListener {
 	/**
 	 * Return whether or not the id is enabled. If there is a role whose
 	 * pattern matches the id return whether or not the role is enabled. If
-	 * there is no match return true; TODO: replace with usage of
-	 * ObjectActivityManager.getActiveObjects()
+	 * there is no match return true; 
+     * 
+     * TODO: replace with usage of ObjectActivityManager.getActiveObjects()
 	 * 
 	 * @param id
 	 * @return boolean.
@@ -357,11 +364,9 @@ public class RoleManager implements IActivityListener {
 		while (bindingsPatterns.hasMoreElements()) {
 			String next = (String) bindingsPatterns.nextElement();
 			if (id.matches(next)) {
-				Iterator activityIds =
-					((Collection) patternBindings.get(next)).iterator();
+				Iterator activityIds = ((Collection) patternBindings.get(next)).iterator();
 				while (activityIds.hasNext()) {
-					Activity activity =
-						getActivity((String) activityIds.next());
+					Activity activity = getActivity((String) activityIds.next());
 					if (activity != null)
 						return activity.isEnabled();
 				}
@@ -447,8 +452,7 @@ public class RoleManager implements IActivityListener {
 		while (patternIterator.hasNext()) {
 			String next = (String) patternIterator.next();
 			if (id.matches(next)) {
-				Iterator mappingIds =
-					((Collection) patternBindings.get(next)).iterator();
+				Iterator mappingIds = ((Collection) patternBindings.get(next)).iterator();
 				while (mappingIds.hasNext()) {
 					String mappingId = (String) mappingIds.next();
 					Activity activity = getActivity(mappingId);
@@ -461,14 +465,77 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * @return the set of Activity objects. */
-	Collection getActivities() {
+	 * @return the set of Activity objects. 
+     */
+	public Collection getActivities() {
 		return activities.values();
 	}
 
 	/**
-	 * @return a delta calculator usable by the calling thread. */
+	 * @return a delta calculator usable by the calling thread. 
+     */
 	private ActivityDeltaCalculator getDeltaCalculator() {
 		return (ActivityDeltaCalculator) deltaCalcs.get();
 	}
+
+	/**
+	 * Return the list of perspective descriptors in the supplied registry
+	 * filtered for roles if appropriate.
+	 * 
+     * TODO: Find a better home for this guy.  He doesn't belong here.
+     * 
+	 * @param registry
+	 * @return IPerspectiveDescriptor[]
+	 */
+	public IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
+        ObjectActivityManager manager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
+        if (manager == null) {
+            return descriptors;
+        }
+        Collection activePerspectives = manager.getActiveObjects();
+        
+        Collection filtered = new ArrayList();
+        for (int i = 0; i < descriptors.length; i++) {
+            if (activePerspectives.contains(descriptors[i].getId())) {
+                filtered.add(descriptors[i]);
+            }
+        }
+        
+        return (IPerspectiveDescriptor []) filtered.toArray(new IPerspectiveDescriptor [filtered.size()]);        
+	}
+	
+	/**
+	 * Return whether or not this contribution item is
+	 * enabled.
+	 * @param item
+	 * @return
+	 */
+	public boolean isEnabledItem(IContributionItem item){
+		if(isFiltering())
+			return isEnabledId(item.getId());
+		else
+			return true;
+	}
+	/**
+	 * Return the bindings between patterns (key) and an array of 
+	 * activities (value.
+	 * @return Hashtable
+	 */
+	Map getPatternBindings() {
+		return patternBindings;
+	}
+
+	/**
+	 * Temporary utility method to create a key/object value from a given view 
+	 * category ID.
+	 * 
+	 * @param id
+	 * @return the value of id + '*'
+	 * @since 3.0
+	 */
+	public static String createViewCategoryIdKey(String id) {
+		return id + '*';
+	}
+	
 }

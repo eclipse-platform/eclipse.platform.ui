@@ -922,10 +922,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 
 						if (keyBinding != null)
-							return KeySupport.formatOSX(keyBinding.getKeySequence());
+							return keyBinding.getKeySequence().format();
 					}
 				} else {
-					String acceleratorText = commandManager.getKeyTextForCommand(commandId);
+					String acceleratorText = commandManager.getAcceleratorText(commandId);
 
 					if (acceleratorText != null)
 						return acceleratorText;
@@ -1572,9 +1572,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
 	 */
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+	public void run(
+		boolean fork,
+		boolean cancelable,
+		IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
-			
+		final boolean keyFilterEnabled = getWorkbenchImpl().isKeyFilterEnabled();
+		
 		ToolBarManager shortcutBar = getShortcutBar();
 		Control shortcutBarControl = null;
 		if (shortcutBar != null)
@@ -1582,13 +1586,21 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		boolean shortcutbarWasEnabled = false;
 		if (shortcutBarControl != null)
 			shortcutbarWasEnabled = shortcutBarControl.getEnabled();
+		
 		try {
 			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 				shortcutBarControl.setEnabled(false);
+			 
+			if (keyFilterEnabled)
+				getWorkbenchImpl().disableKeyFilter();
+
 			super.run(fork, cancelable, runnable);
 		} finally {
 			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+			
+			if (keyFilterEnabled)
+				getWorkbenchImpl().enableKeyFilter();
 		}
 	}
 	/**

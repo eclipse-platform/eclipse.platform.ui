@@ -13,12 +13,15 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.internal.plugins.ConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,15 +29,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.*;
+
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -175,7 +177,7 @@ public abstract class PluginAction extends Action
 	 */
 	private boolean hasAdaptableType() {
 		if (adaptableNotChecked) {
-			Object parentConfig = ((ConfigurationElement) configElement).getParent();
+			Object parentConfig = configElement.getParent();
 			String typeName = null;
 			if(parentConfig != null && parentConfig instanceof IConfigurationElement) 
 				typeName = ((IConfigurationElement) parentConfig).getAttribute("objectClass"); //$NON-NLS-1$
@@ -344,5 +346,14 @@ public abstract class PluginAction extends Action
 	 */
 	public String getOverrideActionId() {
 		return null;
+	}
+	
+	/**
+	 * @return the IConfigurationElement used to create this PluginAction.
+	 * 
+	 * @since 3.0
+	 */
+	protected IConfigurationElement getConfigElement() {
+		return configElement;
 	}
 }

@@ -1072,7 +1072,7 @@ class PropertySheetViewer extends Viewer {
 		item.setText(0, entry.getDisplayName());
 		item.setText(1, entry.getValueAsString());
 		Image image = entry.getImage();
-		if (image != null)
+		if (item.getImage(1) != image)
 			item.setImage(1, image);
 
 		// update the "+" icon	

@@ -11,13 +11,24 @@
 
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.ViewSite;
@@ -97,21 +108,16 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				cancelAction.setEnabled(false);
+				
 				deleteAction.setEnabled(false);
 				showErrorAction.setEnabled(false);
 				JobInfo info = getSelectedInfo();
-				if (info == null) {
+				if (info == null) 
 					return;
-				}
-				int code = info.getJob().getState();
-				if (code == Job.RUNNING)
-					cancelAction.setEnabled(true);
-				else if (info.getErrorStatus() != null) {
+				if(info.getErrorStatus() != null) {
 					deleteAction.setEnabled(true);
 					showErrorAction.setEnabled(true);
 				}
-
 			}
 		});
 
@@ -130,10 +136,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				ProgressContentProvider provider = (ProgressContentProvider) viewer.getContentProvider();
-				provider.debug = !provider.debug;
-				setChecked(provider.debug);
-				provider.refreshAll();
+				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+				updater.debug = !updater.debug;
+				setChecked(updater.debug);
+				updater.refreshAll();
 			}
 
 		});
@@ -206,7 +212,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (element == null) {
 					return;
 				}
-				element.getJob().cancel();
+				element.cancel();
+				ProgressManager.getInstance().refresh(element);
 
 			}
 
@@ -228,7 +235,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (element == null) {
 					return;
 				}
-				JobProgressManager.getInstance().clearJob(element.getJob());
+				ProgressManager.getInstance().clearJob(element.getJob());
 			}
 		};
 	}
@@ -243,7 +250,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {
-				JobProgressManager.getInstance().clearAllErrors();
+				ProgressManager.getInstance().clearAllErrors();
 			}
 		};
 	}

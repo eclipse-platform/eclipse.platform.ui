@@ -30,7 +30,6 @@ public interface IKeyConfiguration extends Comparable {
 	 * Registers an IKeyConfigurationListener instance with this key configuration.
 	 *
 	 * @param keyConfigurationListener the IKeyConfigurationListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 
@@ -83,7 +82,6 @@ public interface IKeyConfiguration extends Comparable {
 	 * Unregisters an IKeyConfigurationListener instance with this key configuration.
 	 *
 	 * @param keyConfigurationListener the IKeyConfigurationListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 }

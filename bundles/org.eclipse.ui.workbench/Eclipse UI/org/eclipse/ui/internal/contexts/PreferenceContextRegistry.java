@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -36,6 +38,18 @@ final class PreferenceContextRegistry extends AbstractMutableContextRegistry {
 			throw new NullPointerException();
 		
 		this.preferenceStore = preferenceStore;
+
+		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+				if (KEY.equals(propertyChangeEvent.getProperty())) {
+					try {
+						load();
+					} catch (final IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	void load() 

@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.progress.IProgressManager;
+
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
  * <p>
@@ -325,5 +328,26 @@ public boolean saveAllEditors(boolean confirm);
  */
 public IElementFactory getElementFactory(String factoryId);
 
-//IContextActivationService getContextActivationService();
+/**
+ * Get the manager for a given id, optionally creating it if it 
+ * doesn't exist.
+ * @param id. The id for the type of contribution that is to be looked
+ *  	up. The id is determined by the initial creator of the registry.
+ * @param create Create the activity manager if it does not exist yet.
+ * 		If this flag is false and the manager for this id has not been
+ * 		created return false.
+ * @return IObjectActivityManager or <code>null</code>.
+ */
+	
+public IObjectActivityManager getActivityManager(String id, boolean create);
+
+/**
+ * Return the progress manager for the workbench.
+ * @return IProgressManager
+ * @since 3.0
+ * <b>NOTE: This is experimental API and subject to change at any
+ * time</b>.
+ */
+public IProgressManager getProgressManager();
+
 }

@@ -7,14 +7,19 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.keys;
 
 /**
- * <p>
- * JAVADOC
+ * </p> 
+ * Instances of <code>NaturalKey</code> represent all keys on the keyboard not 
+ * known by convention as 'modifier keys'.
  * </p>
+ * <p>
+ * <code>NaturalKey</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
+ * </p> 
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
@@ -23,6 +28,11 @@ package org.eclipse.ui.keys;
  */
 public abstract class NaturalKey extends Key {
 
+	/**
+	 * Constructs an instance of <code>NaturalKey</code> given a name.
+	 * 
+	 * @param name The name of the key, must not be null.
+	 */	
 	NaturalKey(String name) {
 		super(name);
 	}

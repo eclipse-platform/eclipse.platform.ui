@@ -1320,7 +1320,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
-        textKeySequence.setKeySequence(keySequence, null);
+        textKeySequence.setKeySequence(keySequence);
 	}
 
 	private void update() {

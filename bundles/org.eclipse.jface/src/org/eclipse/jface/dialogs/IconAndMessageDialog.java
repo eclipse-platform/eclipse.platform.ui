@@ -33,6 +33,11 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * Message label is the label the message is shown on.
 	 */
 	protected Label messageLabel;
+	
+	/**
+	 * Return the label for the image.
+	 */
+	protected Label imageLabel;
 
 	/**
 	 * Constructor for IconAndMessageDialog.
@@ -52,10 +57,10 @@ public abstract class IconAndMessageDialog extends Dialog {
 		// create image
 		Image image = getImage();
 		if (image != null) {
-			Label label = new Label(composite, SWT.NULL);
-			image.setBackground(label.getBackground());
-			label.setImage(image);
-			label.setLayoutData(
+			imageLabel = new Label(composite, SWT.NULL);
+			image.setBackground(imageLabel.getBackground());
+			imageLabel.setImage(image);
+			imageLabel.setLayoutData(
 				new GridData(
 					GridData.HORIZONTAL_ALIGN_CENTER
 						| GridData.VERTICAL_ALIGN_BEGINNING));

@@ -19,6 +19,9 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @issue needs Javadoc
+ */
 public class StatusLineContributionItem extends ContributionItem {
 
 	public final static int DEFAULT_CHAR_WIDTH = 40; 
@@ -35,6 +38,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	public StatusLineContributionItem(String id, int charWidth) {
 		super(id);
 		this.charWidth = charWidth;
+		setVisible(false); // no text to start with
 	}
 
 	public void fill(Composite parent) {	
