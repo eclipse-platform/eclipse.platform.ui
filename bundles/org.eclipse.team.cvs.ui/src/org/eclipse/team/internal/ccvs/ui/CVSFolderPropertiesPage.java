@@ -10,27 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSFolderPropertiesPage extends CVSPropertiesPage {
@@ -156,12 +154,22 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 
 	private boolean disconnectFolder() {
 		if (MessageDialog.openQuestion(getShell(), Policy.bind("CVSFolderPropertiesPage.disconnectTitle"), Policy.bind("CVSFolderPropertiesPage.disconnectQuestion"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+			final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 			try {
-				cvsFolder.unmanage(null);
-			} catch (CVSException e) {
+				PlatformUI.getWorkbench().getProgressService().run(true, false, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							cvsFolder.unmanage(null);
+						} catch (CVSException e) {
+							throw new InvocationTargetException(e);
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
 				CVSUIPlugin.openError(getShell(), null, null, e);
 				return false;
+			} catch (InterruptedException e) {
+				// Ignore
 			}
 			return true;
 		} else {
