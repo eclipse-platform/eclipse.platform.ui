@@ -1659,7 +1659,7 @@ public final class BindingManager implements IContextManagerListener,
 
 			fireBindingManagerChanged(new BindingManagerEvent(this, false,
 					activeSchemeChanged, schemeId, schemeIdAdded,
-					!schemeIdAdded));
+					!schemeIdAdded, false, false));
 		}
 	}
 
@@ -1687,7 +1687,7 @@ public final class BindingManager implements IContextManagerListener,
 		this.prefixTable = prefixTable;
 
 		fireBindingManagerChanged(new BindingManagerEvent(this, true, false,
-				null, false, false));
+				null, false, false, false, false));
 	}
 
 	/**
@@ -1723,7 +1723,7 @@ public final class BindingManager implements IContextManagerListener,
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
 		clearSolution();
 		fireBindingManagerChanged(new BindingManagerEvent(this, false, true,
-				null, false, false));
+				null, false, false, false, false));
 	}
 
 	/**
@@ -1784,6 +1784,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.locale = locale;
 			this.locales = expand(locale, LOCALE_SEPARATOR);
 			clearSolution();
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
+					false, null, false, false, true, false));
 		}
 	}
 
@@ -1812,6 +1814,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.platform = platform;
 			this.platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 			clearSolution();
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
+					false, null, false, false, false, true));
 		}
 	}
 }

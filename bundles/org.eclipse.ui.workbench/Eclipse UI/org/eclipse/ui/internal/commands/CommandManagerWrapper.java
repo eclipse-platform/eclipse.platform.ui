@@ -25,6 +25,8 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -51,7 +53,7 @@ import org.eclipse.ui.keys.KeySequence;
  */
 public final class CommandManagerWrapper implements ICommandManager,
 		org.eclipse.core.commands.ICommandManagerListener,
-		IBindingManagerListener {
+		IBindingManagerListener, IContextManagerListener {
 
 	/**
 	 * Whether commands should print out information about which handlers are
@@ -234,6 +236,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 				});
 		this.commandManager.addCommandManagerListener(this);
 		this.bindingManager.addBindingManagerListener(this);
+		this.contextManager.addContextManagerListener(this);
 
 		// Make sure to read in the registry.
 		readRegistry();
@@ -259,8 +262,27 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * 
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
-	public void bindingManagerChanged(BindingManagerEvent event) {
-		// TODO Fire a command manager event.
+	public final void bindingManagerChanged(final BindingManagerEvent event) {
+		final boolean schemeDefinitionsChanged = event.isSchemeIdDefined()
+				|| event.isSchemeIdUndefined();
+		final Set previousSchemeIds;
+		if (schemeDefinitionsChanged) {
+			previousSchemeIds = new HashSet(event.getManager()
+					.getDefinedSchemeIds());
+			final String schemeId = event.getSchemeId();
+			if (event.isSchemeIdDefined()) {
+				previousSchemeIds.remove(schemeId);
+			} else {
+				previousSchemeIds.add(schemeId);
+			}
+		} else {
+			previousSchemeIds = null;
+		}
+
+		fireCommandManagerChanged(new CommandManagerEvent(this, false, event
+				.hasActiveSchemeChanged(), event.hasLocaleChanged(), event
+				.hasPlatformChanged(), false, false, event.isSchemeIdDefined()
+				|| event.isSchemeIdUndefined(), null, null, previousSchemeIds));
 	}
 
 	/*
@@ -268,9 +290,49 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * 
 	 * @see org.eclipse.commands.ICommandManagerListener#commandManagerChanged(org.eclipse.commands.CommandManagerEvent)
 	 */
-	public void commandManagerChanged(
-			org.eclipse.core.commands.CommandManagerEvent commandManagerEvent) {
-		// TODO Fire a command manager event.
+	public final void commandManagerChanged(
+			final org.eclipse.core.commands.CommandManagerEvent event) {
+		// Figure out the set of previous category identifiers.
+		final boolean categoryIdsChanged = event.isCategoryIdChanged();
+		final Set previousCategoryIds;
+		if (categoryIdsChanged) {
+			previousCategoryIds = new HashSet(commandManager
+					.getDefinedCategoryIds());
+			final String categoryId = event.getCategoryId();
+			if (event.isCategoryIdAdded()) {
+				previousCategoryIds.remove(categoryId);
+			} else {
+				previousCategoryIds.add(categoryId);
+			}
+		} else {
+			previousCategoryIds = null;
+		}
+
+		// Figure out the set of previous command identifiers.
+		final boolean commandIdsChanged = event.isCommandIdChanged();
+		final Set previousCommandIds;
+		if (commandIdsChanged) {
+			previousCommandIds = new HashSet(commandManager
+					.getDefinedCommandIds());
+			final String commandId = event.getCommandId();
+			if (event.isCommandIdAdded()) {
+				previousCommandIds.remove(commandId);
+			} else {
+				previousCommandIds.add(commandId);
+			}
+		} else {
+			previousCommandIds = null;
+		}
+		
+		fireCommandManagerChanged(new CommandManagerEvent(this, false, false,
+				false, false, categoryIdsChanged, commandIdsChanged, false,
+				previousCategoryIds, previousCommandIds, null));
+	}
+
+	public final void contextManagerChanged(final ContextManagerEvent event) {
+		fireCommandManagerChanged(new CommandManagerEvent(this, event
+				.haveActiveContextsChanged(), false, false, false, false,
+				false, false, null, null, null));
 	}
 
 	private void fireCommandManagerChanged(
@@ -310,7 +372,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public ICategory getCategory(String categoryId) {
 		// TODO Provide access to the categories.
-		//return new CategoryWrapper(commandManager.getCategory(categoryId));
+		// return new CategoryWrapper(commandManager.getCategory(categoryId));
 		return null;
 	}
 
@@ -626,12 +688,10 @@ public final class CommandManagerWrapper implements ICommandManager,
 			final IHandler handler;
 			if (value instanceof IHandler) {
 				handler = (IHandler) value;
-			} 
-			else if (value == null) {
+			} else if (value == null) {
 				// TODO: Possible fix for 84700 (Kim)
 				handler = null;
-			}
-			else {
+			} else {
 				handler = new LegacyHandlerWrapper(
 						(org.eclipse.ui.commands.IHandler) value);
 			}

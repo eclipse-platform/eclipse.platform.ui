@@ -39,6 +39,16 @@ public final class BindingManagerEvent {
 	private final boolean activeSchemeChanged;
 
 	/**
+	 * Whether the locale has changed.
+	 */
+	private final boolean localeChanged;
+
+	/**
+	 * Whether the platform has changed.
+	 */
+	private final boolean platformChanged;
+
+	/**
 	 * The binding manager that has changed; this value is never
 	 * <code>null</code>.
 	 */
@@ -79,11 +89,16 @@ public final class BindingManagerEvent {
 	 * @param schemeIdUndefined
 	 *            <code>true</code> if the given scheme became undefined;
 	 *            <code>false</code> otherwise.
+	 * @param localeChanged
+	 *            <code>true</code> iff the active locale changed
+	 * @param platformChanged
+	 *            <code>true</code> iff the active platform changed
 	 */
 	public BindingManagerEvent(final BindingManager manager,
 			final boolean activeBindingsChanged,
 			final boolean activeSchemeChanged, final String schemeId,
-			final boolean schemeIdDefined, final boolean schemeIdUndefined) {
+			final boolean schemeIdDefined, final boolean schemeIdUndefined,
+			final boolean localeChanged, final boolean platformChanged) {
 		if (manager == null)
 			throw new NullPointerException(
 					"A binding manager event needs a binding manager"); //$NON-NLS-1$
@@ -104,6 +119,8 @@ public final class BindingManagerEvent {
 		this.schemeId = schemeId;
 		this.schemeIdDefined = schemeIdDefined;
 		this.schemeIdUndefined = schemeIdUndefined;
+		this.localeChanged = localeChanged;
+		this.platformChanged = platformChanged;
 	}
 
 	/**
@@ -132,6 +149,14 @@ public final class BindingManagerEvent {
 	 */
 	public final boolean hasActiveSchemeChanged() {
 		return activeSchemeChanged;
+	}
+
+	public boolean hasLocaleChanged() {
+		return localeChanged;
+	}
+
+	public boolean hasPlatformChanged() {
+		return platformChanged;
 	}
 
 	/**
