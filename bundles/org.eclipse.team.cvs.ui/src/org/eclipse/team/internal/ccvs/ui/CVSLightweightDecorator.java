@@ -384,7 +384,13 @@ public class CVSLightweightDecorator
 		}
 
 		// if watch/edit is enabled, show non-read-only files as being edited
-		boolean decorateEdited = store.getBoolean(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY);
+		boolean decorateEdited;
+		try {
+			decorateEdited = provider.isWatchEditEnabled();
+		} catch (CVSException e1) {
+			CVSUIPlugin.log(e1);
+			decorateEdited = false;
+		}
 		
 		if (decorateEdited && resource.getType() == IResource.FILE && !resource.isReadOnly() && CVSWorkspaceRoot.hasRemote(resource)) {
 			return edited;

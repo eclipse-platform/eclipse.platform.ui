@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -514,6 +515,8 @@ public class CVSWorkspaceRoot {
 				IProject project = projects[i];
 				// Register the project with Team
 				RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+				provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
 			}
 			
 		} finally {

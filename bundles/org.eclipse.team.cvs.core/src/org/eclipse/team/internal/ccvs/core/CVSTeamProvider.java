@@ -124,6 +124,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 	// property used to indicate whether new directories should be discovered for the project
 	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
 		new QualifiedName("org.eclipse.team.cvs.core", "fetch_absent_directories");  //$NON-NLS-1$  //$NON-NLS-2$
+	// property used to indicate whether the project is configured to use Watch/edit
+	private final static QualifiedName WATCH_EDIT_PROP_KEY = 
+		new QualifiedName("org.eclipse.team.cvs.core", "watch_edit");  //$NON-NLS-1$  //$NON-NLS-2$
 
 	private static IFileModificationValidator getPluggedInValidator() {
 		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
@@ -1426,5 +1429,40 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 		}
 	}
-
+	
+	/**
+	 * Return true if the project is configured to use watch/edit. A project will use 
+	 * watch/edit if it was checked out when the global preference to use watch/edit is
+	 * turned on.
+	 * @return boolean
+	 */
+	public boolean isWatchEditEnabled() throws CVSException {
+		try {
+			IProject project = getProject();
+			String property = (String)project.getSessionProperty(WATCH_EDIT_PROP_KEY);
+			if (property == null) {
+				property = project.getPersistentProperty(WATCH_EDIT_PROP_KEY);
+				if (property == null) {
+					// The persistant property for the project was never set (i.e. old project)
+					// Use the global preference to determinw if the project is using watch/edit
+					return CVSProviderPlugin.getPlugin().isWatchEditEnabled();
+				} else {
+					project.setSessionProperty(WATCH_EDIT_PROP_KEY, property);
+				}
+			}
+			return Boolean.valueOf(property).booleanValue();
+		} catch (CoreException e) {
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
+		}
+	}
+	
+	public void setWatchEditEnabled(boolean enabled) throws CVSException {
+		try {
+			IProject project = getProject();
+			project.setPersistentProperty(WATCH_EDIT_PROP_KEY, enabled ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+			project.setSessionProperty(WATCH_EDIT_PROP_KEY, enabled ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+		} catch (CoreException e) {
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
+		}
+	}
 }

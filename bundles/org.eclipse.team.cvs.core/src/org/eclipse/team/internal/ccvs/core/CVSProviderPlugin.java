@@ -920,4 +920,11 @@ public class CVSProviderPlugin extends Plugin {
 		return fileModificationManager;
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public boolean isWatchEditEnabled() {
+		return getPluginPreferences().getBoolean(CVSProviderPlugin.READ_ONLY);
+	}
+
 }
