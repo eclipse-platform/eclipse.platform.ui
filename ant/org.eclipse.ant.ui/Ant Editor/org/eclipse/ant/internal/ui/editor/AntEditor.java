@@ -31,12 +31,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ILineTracker;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -50,6 +58,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -61,8 +70,85 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class AntEditor extends TextEditor {
 
+	static class TabConverter {
 		
+		private int fTabRatio;
+		private ILineTracker fLineTracker;
+		
+		public void setNumberOfSpacesPerTab(int ratio) {
+			fTabRatio= ratio;
+		}
+		
+		public void setLineTracker(ILineTracker lineTracker) {
+			fLineTracker= lineTracker;
+		}
+		
+		private int insertTabString(StringBuffer buffer, int offsetInLine) {
+			
+			if (fTabRatio == 0) {
+				return 0;
+			}
+				
+			int remainder= offsetInLine % fTabRatio;
+			remainder= fTabRatio - remainder;
+			for (int i= 0; i < remainder; i++) {
+				buffer.append(' ');
+			}
+			return remainder;
+		}
+		
+		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
+			String text= command.text;
+			if (text == null) {
+				return;
+			}
+				
+			int index= text.indexOf('\t');
+			if (index > -1) {
+				
+				StringBuffer buffer= new StringBuffer();
+				
+				fLineTracker.set(command.text);
+				int lines= fLineTracker.getNumberOfLines();
+				
+				try {
+						
+					for (int i= 0; i < lines; i++) {
+						
+						int offset= fLineTracker.getLineOffset(i);
+						int endOffset= offset + fLineTracker.getLineLength(i);
+						String line= text.substring(offset, endOffset);
+						
+						int position= 0;
+						if (i == 0) {
+							IRegion firstLine= document.getLineInformationOfOffset(command.offset);
+							position= command.offset - firstLine.getOffset();	
+						}
+						
+						int length= line.length();
+						for (int j= 0; j < length; j++) {
+							char c= line.charAt(j);
+							if (c == '\t') {
+								position += insertTabString(buffer, position);
+							} else {
+								buffer.append(c);
+								++ position;
+							}
+						}
+						
+					}
+						
+					command.text= buffer.toString();
+						
+				} catch (BadLocationException x) {
+				}
+			}
+		}
+	}	
 	class StatusLineSourceViewer extends SourceViewer{
+		
+		private boolean fIgnoreTextConverters= false;
+		
 		public StatusLineSourceViewer(Composite composite, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, int styles) {
 			super(composite, verticalRuler, overviewRuler, isOverviewRulerVisible(), styles);
 		}
@@ -80,16 +166,41 @@ public class AntEditor extends TextEditor {
 					String msg= fContentAssistant.showPossibleCompletions();
 					setStatusLineErrorMessage(msg);
 					return;
+				case UNDO:
+					fIgnoreTextConverters= true;
+					break;
+				case REDO:
+					fIgnoreTextConverters= true;
+					break;
 				default :
 					super.doOperation(operation);
 			}
 		}
-
+		
+		public void setTextConverter(TabConverter tabConverter) {
+			fTabConverter= tabConverter;
+		}
+		
+		public void updateIndentationPrefixes() {
+			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+			String[] types= configuration.getConfiguredContentTypes(this);
+			for (int i= 0; i < types.length; i++) {
+				String[] prefixes= configuration.getIndentPrefixes(this, types[i]);
+				if (prefixes != null && prefixes.length > 0)
+					setIndentPrefixes(prefixes, types[i]);
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.TextViewer#customizeDocumentCommand(org.eclipse.jface.text.DocumentCommand)
+		 */
+		protected void customizeDocumentCommand(DocumentCommand command) {
+			super.customizeDocumentCommand(command);
+			if (!fIgnoreTextConverters && fTabConverter != null) {
+				fTabConverter.customizeDocumentCommand(getDocument(), command);
+			}
+			fIgnoreTextConverters= false;
+		}
 	}
-	/**
-	 * The tab width
-	 */
-	public static final int TAB_WIDTH = 4;
 
 	/**
 	 * Selection changed listener for the outline view.
@@ -105,6 +216,9 @@ public class AntEditor extends TextEditor {
      * The page that shows the outline.
      */
     protected AntEditorContentOutlinePage page;
+    
+    /** The editor's tab converter */
+	private TabConverter fTabConverter;
   
     /**
      * Constructor for AntEditor.
@@ -269,8 +383,17 @@ public class AntEditor extends TextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		if (event.getProperty() == AntEditorPreferenceConstants.VALIDATE_BUILDFILES) {
+		String property= event.getProperty();
+		if (property == AntEditorPreferenceConstants.VALIDATE_BUILDFILES) {
 			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
+			return;
+		}
+		if (AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)) {
+			if (isTabConversionEnabled()) {
+				startTabConversion();
+			} else {
+				stopTabConversion();
+			}
 			return;
 		}
 		
@@ -384,5 +507,47 @@ public class AntEditor extends TextEditor {
 		if (formatAction.isEnabled()) {
 			menu.add(formatAction);
 		}
-	}			
+	}
+	
+	private void startTabConversion() {
+		if (fTabConverter == null) {
+			fTabConverter= new TabConverter();
+			fTabConverter.setLineTracker(new DefaultLineTracker());
+			fTabConverter.setNumberOfSpacesPerTab(getTabSize());
+			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
+			viewer.setTextConverter(fTabConverter);
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19270
+			viewer.updateIndentationPrefixes();
+		}
+	}
+	
+	private void stopTabConversion() {
+		if (fTabConverter != null) {
+			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
+			viewer.setTextConverter(null);
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=19270
+			viewer.updateIndentationPrefixes();
+			fTabConverter= null;
+		}
+	}
+	
+	private int getTabSize() {
+		IPreferenceStore preferences= getPreferenceStore();
+		return preferences.getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		if (isTabConversionEnabled()) {
+			startTabConversion();		
+		}
+	}
+	
+	private boolean isTabConversionEnabled() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
+	}
 }

@@ -83,6 +83,16 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
 	
 	/**
+	 * A named preference that specifies if the editor uses spaces for tabs.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>spaces instead of tabs are used
+	 * in the editor. If <code>false</code> the editor inserts a tab character when pressing the tab
+	 * key.
+	 * </p>
+	 */
+	public final static String EDITOR_SPACES_FOR_TABS= "spacesForTabs"; //$NON-NLS-1$
+	
+	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
 	 * fully validate the current Ant build file to check for errors.
 	 */
@@ -98,6 +108,7 @@ public class AntEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
+		store.setDefault(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
 		store.setDefault(AntEditorPreferenceConstants.VALIDATE_BUILDFILES, false);
 	}
 }

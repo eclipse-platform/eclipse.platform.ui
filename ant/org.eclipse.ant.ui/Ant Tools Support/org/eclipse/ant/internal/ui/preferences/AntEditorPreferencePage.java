@@ -154,6 +154,10 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
+		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 	
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
@@ -252,7 +256,14 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
 		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
 		addTextField(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
-				
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.37"); //$NON-NLS-1$
+		errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.38"), AntPreferencesMessages.getString("AntEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
+		addTextField(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
+		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				

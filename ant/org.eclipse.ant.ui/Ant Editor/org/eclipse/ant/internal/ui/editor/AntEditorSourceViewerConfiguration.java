@@ -9,7 +9,7 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 24108
+ * 	   IBM Corporation - bug fixes
  *     John-Mason P. Shackelford - bug 40255
  *******************************************************************************/
 
@@ -54,6 +54,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -138,11 +139,10 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     }
     
     /**
-     * @return TAB_WIDTH
      * @see SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
      */
     public int getTabWidth(ISourceViewer sourceViewer) {
-        return AntEditor.TAB_WIDTH;
+    	return AntUIPlugin.getDefault().getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
     }
     
     private AntEditorProcInstrScanner getDefaultScanner() {
