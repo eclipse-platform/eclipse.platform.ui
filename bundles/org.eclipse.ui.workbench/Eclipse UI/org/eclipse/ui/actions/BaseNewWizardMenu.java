@@ -98,6 +98,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         this.workbenchWindow = window;
         showDlgAction = ActionFactory.NEW.create(window);
         registerListeners();
+        // indicate that a new wizards submenu has been created
+        ((WorkbenchWindow) window)
+                .addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
     }
 
     /**

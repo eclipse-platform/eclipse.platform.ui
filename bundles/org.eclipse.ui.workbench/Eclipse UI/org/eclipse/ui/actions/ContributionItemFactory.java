@@ -219,9 +219,6 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            // indicate that a open perspectives submenu has been created
-            ((WorkbenchWindow) window)
-                    .addSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU);
             IContributionItem item = new BaseNewWizardMenu(window,
                     getId());
             return item;
