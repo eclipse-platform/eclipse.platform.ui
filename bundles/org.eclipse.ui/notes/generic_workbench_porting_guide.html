@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Eclipse 3.0 Porting Guide</title>
+</head>
+
+<body>
+
+<h1>Eclipse 3.0 Porting Guide<br>
+Generic Workbench</h1>
+<p>Last revised July 21, 2003</p>
+<p>In 3.0, the Eclipse Platform UI changed to separate out generic workbench
+from IDE specifics. This resulted in changes to API packages and extension
+points. This document describes how to port existing Eclipse 2.1 plug-ins to 3.0
+in light of these changes.</p>
+<p><i>[Under construction]</i></p>
+<p>The org.eclipse.ui plug-in which used to be the main Platform UI plug-in, now
+contains just the API and extension points for the generic workbench. Optional
+and IDE-specific API and extension points have moved to other plug-ins;
+IDE-specific functionality is now in the org.eclipse.ui.ide plug-in; text
+editors are now in the org.eclipse.ui.ide plug-in;&nbsp; </p>
+<p>The org.eclipse.ui.workbench plug-in was deleted. This was an internal UI
+plug-in, which client plug-ins would not ordinarily reference (it has no
+extension points, and all its API was re-exported by the org.eclipse.ui
+plug-in). The classes in this plug-in's API packages are now in one of the other
+UI plug-ins. The plug-in manifest file for a client plug-in that explicitly
+requires the org.eclipse.ui.workbench plug-in should be changed to require (a
+sufficient subset of) these plug-ins instead: org.eclipse.ui,
+org.eclipse.ui.editors, org.eclipse.ui.views.navigator,
+org.eclipse.ui.views.properties, org.eclipse.ui.views.contentoutline,
+org.eclipse.ui.ide.</p>
+<p>The org.eclipse.ui.views plug-in was deleted. This was an internal UI
+plug-in, which client plug-ins would not ordinarily reference (it has no
+extension points, and all its API was re-exported by the org.eclipse.ui
+plug-in). The classes in this plug-in's API packages are now in one of the other
+UI plug-ins. The plug-in manifest file for a client plug-in that explicitly
+requires the org.eclipse.ui.views plug-in should be changed to require (a
+sufficient subset of) these plug-ins instead: org.eclipse.ui.views.navigator,
+org.eclipse.ui.views.properties, org.eclipse.ui.views.contentoutline,
+org.eclipse.ui.ide.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+</body>
+
+</html>
