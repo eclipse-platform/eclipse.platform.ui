@@ -32,7 +32,7 @@ public class StandaloneHelp extends EclipseController {
 	// ID of the application to run
 	private static final String HELP_APPLICATION_ID =
 		"org.eclipse.help.helpApplication";
-		
+
 	/**
 	 * Constructs help system
 	 * @param args array of String options and their values
@@ -46,13 +46,13 @@ public class StandaloneHelp extends EclipseController {
 	public StandaloneHelp(String[] args) {
 		super(HELP_APPLICATION_ID, args);
 	}
-	
+
 	/**
 	 * @see org.eclipse.help.standalone.Infocenter#main(String[])
 	 */
 	public static void main(String[] args) {
 		StandaloneHelp help = new StandaloneHelp(args);
-		
+
 		List helpCommand = Options.getHelpCommand();
 
 		if (help.executeCommand(helpCommand)) {
@@ -60,12 +60,15 @@ public class StandaloneHelp extends EclipseController {
 		} else
 			printMainUsage();
 	}
-	
+
 	/**
 	 * Overrides the initialization of the connection to pass retry parameters.
 	 */
 	protected EclipseConnection initConnection() {
-		return new EclipseConnection(STARTUP_TIMEOUT, CONNECTION_RETRIES, CONNECTION_RETRY_INTERVAL);
+		return new EclipseConnection(
+			STARTUP_TIMEOUT,
+			CONNECTION_RETRIES,
+			CONNECTION_RETRY_INTERVAL);
 	}
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayContext(java.lang.String,int,int)
@@ -144,12 +147,16 @@ public class StandaloneHelp extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out.println(
-			"-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [platform options] [-vmargs [Java VM arguments]]");
+			"-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]");
 		System.out.println();
 		System.out.println("where:");
 		System.out.println(" href is the URL of the help resource to display,");
 		System.out.println(
-			" dir specifies Eclipse installation directory; it must be provided, when current directory is not the same as Eclipse installation directory,");
+			" eclipseInstallPath specifies Eclipse installation directory; it must be provided, when current directory is not the same as Eclipse installation directory,");
+		System.out.println(
+			" helpServerHost specifies host name of the interface that help server will use,");
+		System.out.println(
+			" helpServerPort specifies port number that help server will use,");
 		System.out.println(
 			" platform options are other options that are supported by Eclipse Executable.");
 	}
