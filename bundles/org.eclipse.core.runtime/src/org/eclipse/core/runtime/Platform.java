@@ -75,13 +75,24 @@ public final class Platform {
 	public static final String PT_ADAPTERS = "adapters"; //$NON-NLS-1$
 
 	/** 
+	 * The simple identifier constant (value "<code>preferences</code>") of
+	 * the extension point of the Core Runtime plug-in where plug-ins declare
+	 * extensions to the preference facility. A plug-in may define any number
+	 * of preference extensions.
+	 * 
+	 * @see #getPreferencesService
+	 * @since 3.0
+	 */
+	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
+
+	/** 
 	 * The simple identifier constant (value "<code>products</code>") of
 	 * the extension point of the Core Runtime plug-in where plug-ins declare
 	 * the existence of a product. A plug-in may define any
 	 * number of products; however, the platform is only capable
 	 * of running one product at a time.
 	 * 
-	 * @see org.eclipse.core.runtime.Platform#getProduct()
+	 * @see #getProduct()
 	 * @since 3.0
 	 */
 	public static final String PT_PRODUCT = "products"; //$NON-NLS-1$
