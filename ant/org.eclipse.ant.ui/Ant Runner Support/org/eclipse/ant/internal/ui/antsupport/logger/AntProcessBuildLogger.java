@@ -217,7 +217,6 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fHandledException= null;
 		fBuildFileParent= null;
 		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
-		TaskLinkManager.dispose(getAntProcess(null));
 		fProcess= null;
 		event.getProject().removeBuildListener(this);
 	}
