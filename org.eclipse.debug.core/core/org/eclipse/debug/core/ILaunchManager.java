@@ -373,6 +373,7 @@ public interface ILaunchManager {
 	 * @param id source path computer identifier
 	 * @return the source path computer extension registered with the given
 	 * unique identifier, or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public ISourcePathComputer getSourcePathComputer(String id);
 
@@ -391,6 +392,7 @@ public interface ILaunchManager {
 	 * Returns all registered source container type extensions.
 	 * 
 	 * @return all registered source container type extensions
+	 * @since 3.0
 	 */
 	public ISourceContainerType[] getSourceContainerTypes();
 	
@@ -401,6 +403,7 @@ public interface ILaunchManager {
 	 * @param id unique identifier of a source container type extension
 	 * @return the source container type extension registered with the
 	 * given unique identifier, or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public ISourceContainerType getSourceContainerType(String id);
 	

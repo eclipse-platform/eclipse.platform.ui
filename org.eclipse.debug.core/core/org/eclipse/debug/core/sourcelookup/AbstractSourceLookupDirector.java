@@ -77,6 +77,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	protected ILaunchConfiguration fConfig; 
 	//whether duplicates should be searched for or not
 	protected boolean fDuplicates = false;
+	// source path computer, or null if default
+	protected ISourcePathComputer fComputer = null;
 	/**
 	 * Cache of resolved source elements when duplicates exist.
 	 * Keys are the duplicates, values are the source element to use.
@@ -639,5 +641,23 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public String getId() {
 		return fId;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getSourcePathComputer()
+	 */
+	public ISourcePathComputer getSourcePathComputer() {
+		if (fComputer == null && getLaunchConfiguration() != null) {
+			try {
+				return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(getLaunchConfiguration());
+			} catch (CoreException e) {
+			}
+		}
+		return fComputer;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#setSourcePathComputer(org.eclipse.debug.core.sourcelookup.ISourcePathComputer)
+	 */
+	public void setSourcePathComputer(ISourcePathComputer computer) {
+		fComputer = computer;
 	}
 }

@@ -125,4 +125,27 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 */
 	public String getId();
 	
+	/**
+	 * Returns the source path computer to use with this source lookup
+	 * director, possibly <code>null</code>. By default, the source path 
+	 * computer returned is the one associated with this director's launch
+	 * configuration's type. However, the source path computer can be specified
+	 * programmatically by calling <code>setSourcePathComputer(...)</code>.
+	 * 
+	 * @return the source path computer to use with this source lookup
+	 *  director, possibly <code>null</code>
+	 */
+	public ISourcePathComputer getSourcePathComputer();
+	
+	/**
+	 * Sets the source path computer for this source lookup director.
+	 * This method can be used to override the default source path computer
+	 * for a launch configuration type. When <code>null</code> is specified
+	 * the default source path computer will be used (i.e. the one assocaited
+	 * with this director's launch configuration's type.
+	 *  
+	 * @param computer source path computer or <code>null</code>
+	 */
+	public void setSourcePathComputer(ISourcePathComputer computer);
+	
 }

@@ -83,15 +83,8 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * @return the source path computer to use, or <code>null</code>
 	 * if none
 	 */
-	private ISourcePathComputer getSourcePathComputer() {
-		if (getLaunchConfiguration() != null) {
-			try{
-				return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(getLaunchConfiguration());
-			}catch(CoreException e){
-				DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e); //$NON-NLS-1$
-			}
-		}
-		return null;
+	private ISourcePathComputer getSourcePathComputer() {	
+		return getDirector().getSourcePathComputer();
 	}
 
 	/* (non-Javadoc)
