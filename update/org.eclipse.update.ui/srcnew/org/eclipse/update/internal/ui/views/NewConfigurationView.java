@@ -161,9 +161,16 @@ public class NewConfigurationView
 		}
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
-				return showNestedFeaturesAction.isChecked()
-					&& ((ConfiguredFeatureAdapter) parent).hasIncludedFeatures(
-						null);
+				if (!showNestedFeaturesAction.isChecked())
+					return false;
+				
+				IFeatureAdapter[] features =
+					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+				for (int i = 0; i < features.length; i++) {
+					if (((ConfiguredFeatureAdapter)features[i]).isConfigured())
+						return true;	
+				}
+				return false;
 			}
 			if (parent instanceof ConfiguredSiteAdapter) {
 				IConfiguredSite site =
