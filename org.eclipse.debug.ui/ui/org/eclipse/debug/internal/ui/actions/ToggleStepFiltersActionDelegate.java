@@ -103,7 +103,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	 */
 	protected void update(IAction action, ISelection s) {
 		boolean enabled = true;
-		if (!s.isEmpty()) {
+		if (s != null && !s.isEmpty()) {
 			if (s instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection)s;
 				if (ss.size() == 1 && ss.getFirstElement() instanceof IDebugElement) {
