@@ -75,7 +75,7 @@ function onloadHandler() {
 	alert("<%=dataSaveError%>");
 	window.location="workingSetManager.jsp"
 <%}
-if(!data.isMozilla() || "1.3.1".compareTo(data.getMozillaVersion()) <=0){
+if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
 // buttons are not resized immediately on mozilla before 1.3
 %>
 	sizeButtons();

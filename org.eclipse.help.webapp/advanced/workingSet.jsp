@@ -126,7 +126,7 @@ plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 
 function onloadHandler() {
-<%if(!data.isMozilla() || "1.3.1".compareTo(data.getMozillaVersion()) <=0){
+<%if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
 // buttons are not resized immediately on mozilla before 1.3
 %>
 	sizeButtons();
