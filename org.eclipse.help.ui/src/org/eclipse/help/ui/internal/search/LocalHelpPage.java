@@ -257,7 +257,7 @@ public class LocalHelpPage extends RootScopePage{
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
-        if (searchSelected.isEnabled())
+        if (searchSelected.getSelection())
             BaseHelpSystem.getWorkingSetManager().addWorkingSet(getWorkingSet());
         else 
             BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());

@@ -74,7 +74,7 @@ public class GooglePage extends RootScopePage {
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
-        if (searchWeb.isEnabled())
+        if (searchWeb.getSelection())
             getPreferenceStore().setValue(getEngineId(), Google.WEB);
         else if (searchNewsgroups.isEnabled())
             getPreferenceStore().setValue(getEngineId(), Google.NEWS);
