@@ -66,8 +66,8 @@ in this directory, and all sub directories, will be indexed, and accessible
 through the documentation search, even if&nbsp; <tt>topic</tt> elements
 in the TOC file do not refer to these documents</li>
 </ul>
-<b><i>Configuration Markup for toc </i></b><i>(this is what goes into the
-TOC file)<b>:</b></i>
+<i><b>Configuration Markup for toc </b>(this is what goes into the TOC
+file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc (topic | anchor | link)* ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc link_to CDATA #IMPLIED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc label CDATA #REQUIRED ></tt>
@@ -155,9 +155,9 @@ files, could also be created with different combination of another toc
 files.)
 <p>(in file <tt>plugin.xml</tt>)
 <p><tt>&nbsp;&lt;extension point="org.eclipse.help.toc"></tt>
-<br><tt>&nbsp; &lt;toc file="maindocs.xml" type="toc" /></tt>
-<br><tt>&nbsp; &lt;toc file="task.xml"/></tt>
-<br><tt>&nbsp; &lt;toc file="sample.xml"/></tt>
+<br><tt>&nbsp; &lt;toc file="maindocs.xml" primary="true" /></tt>
+<br><tt>&nbsp; &lt;toc file="task.xml" /></tt>
+<br><tt>&nbsp; &lt;toc file="sample.xml" extradir="samples" /></tt>
 <br><tt>&nbsp;&lt;/extension></tt>
 <br>&nbsp;
 <p>(in file <tt>maindocs.xml</tt>)
@@ -203,6 +203,13 @@ Compile Tool"></tt>
 <p><br>Here is the resulting documentation hierarchy in the Eclipse Workbench
 :
 <p><img SRC="helpsample.jpg" height=431 width=803>
+<p>Assuming more documents exists with the path starting with "samples",
+they will not be displayed in the navigation tree, but be accessible using
+search.&nbsp; It is due to the presence of "extradir" attribute in the
+element <tt>&lt;toc file="sample.xml" extradir="samples" /> </tt>inside<tt>
+plugin.xml </tt>file. For example searching for "Creating Java Project"
+could return a document "Other Ways of Creating Java Project", which path
+is <tt>samples/sample2.html.</tt>
 <h4>
 Internationalization</h4>
 The TOC XML files can be translated and the resulting copy (with translated
