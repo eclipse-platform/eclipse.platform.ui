@@ -12,11 +12,17 @@ package org.eclipse.search.internal.ui.text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,12 +45,13 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /* package */ class ReplaceAction2 extends Action {
 	
 	private IWorkbenchSite fSite;
-	private List fElements;
+	private Collection fElements;
 	private FileSearchPage fPage;
 	
 	public ReplaceAction2(FileSearchPage page, List elements) {
@@ -63,10 +70,33 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 		fSite= page.getSite();
 		fPage= page;
 		setText(SearchMessages.getString("ReplaceAction.label_selected")); //$NON-NLS-1$
-		fElements= selection.toList();
+		fElements= collectFiles(selection);
 		setEnabled(!fElements.isEmpty());
 	}
 	
+	private Collection collectFiles(IStructuredSelection selection) {
+		final Set files= new HashSet();
+		for (Iterator resources= selection.iterator(); resources.hasNext();) {
+			IResource resource= (IResource) resources.next();
+			try {
+				resource.accept(new IResourceProxyVisitor() {
+					public boolean visit(IResourceProxy proxy) throws CoreException {
+						if (proxy.getType() == IResource.FILE) {
+							files.add(proxy.requestResource());
+							return false;
+						}
+						return true;
+					}
+				}, IContainer.NONE);
+			} catch (CoreException e) {
+				// TODO Don't know yet how to handle this. This is called when we open the context
+				// menu. A bad time to show a dialog.
+				SearchPlugin.getDefault().getLog().log(e.getStatus());
+			}
+		}
+		return files;
+	}
+
 	private AbstractTextSearchResult getResult() {
 		return fPage.getInput();
 	}

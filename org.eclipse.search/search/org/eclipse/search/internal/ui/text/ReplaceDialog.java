@@ -177,7 +177,9 @@ class ReplaceDialog extends ExtendedDialogWindow {
 			List markerList= element.getMarkers();
 			for (Iterator markers= markerList.iterator(); markers.hasNext(); ) {
 				IMarker marker= (IMarker)markers.next();
-				fMarkers.add(new ReplaceMarker(marker));
+				int charStart= MarkerUtilities.getCharStart(marker); 
+				if (charStart >= 0 && MarkerUtilities.getCharEnd(marker) > charStart)
+					fMarkers.add(new ReplaceMarker(marker));
 			}
 		}
 	}
