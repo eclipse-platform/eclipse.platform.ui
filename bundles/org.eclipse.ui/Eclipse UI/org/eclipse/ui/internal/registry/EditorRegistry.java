@@ -437,18 +437,27 @@ private void initializeFromStorage () {
 	sortInternalEditors();
 	rebuildInternalEditorMap();
 
-	setProductDefaults();
-	loadAssociations(); //get saved earlier state
+	IWorkbench workbench = PlatformUI.getWorkbench();
+	IPreferenceStore store = workbench.getPreferenceStore();
+	String defaultEditors = store.getString(IPreferenceConstants.DEFAULT_EDITORS);
+	String chachedDefaultEditors = store.getString(IPreferenceConstants.DEFAULT_EDITORS_CACHE);
+		
+	//If defaults has changed load it afterwards so it overrides the users associations.
+	if(defaultEditors == null || defaultEditors.equals(chachedDefaultEditors)) {
+		setProductDefaults(defaultEditors);
+		loadAssociations(); //get saved earlier state
+	} else {
+		loadAssociations(); //get saved earlier state
+		setProductDefaults(defaultEditors);
+		store.putValue(IPreferenceConstants.DEFAULT_EDITORS_CACHE,defaultEditors);
+	}
 	addExternalEditorsToEditorMap();
 }
 /**
  * Set the default editors according to the preference store which
  * can be overwritten in the file properties.ini.
  */
-private void setProductDefaults() {
-	IWorkbench workbench = PlatformUI.getWorkbench();
-	IPreferenceStore store = workbench.getPreferenceStore();
-	String defaultEditors = store.getString(IPreferenceConstants.DEFAULT_EDITORS);
+private void setProductDefaults(String defaultEditors) {
 	if(defaultEditors == null || defaultEditors.length() == 0)
 		return;
 		
