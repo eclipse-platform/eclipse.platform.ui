@@ -18,7 +18,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * The optimized remote synchronizer uses the base sync info when the remote
  * is unknown
  */
-public class OptimizedRemoteSynchronizer extends RemoteSynchronizer {
+public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 
 	// The local synchronizer is used for cases where the remote is unknown
 	private BaseSynchronizer baseSynchronizer = new BaseSynchronizer();
@@ -35,8 +35,8 @@ public class OptimizedRemoteSynchronizer extends RemoteSynchronizer {
 	 */
 	public byte[] getSyncBytes(IResource resource) throws CVSException {
 		byte[] bytes = getRemoteBytes(resource);
-		if (bytes == null) {
-			// The remote was never known so use the base
+		if ((bytes == null) && !hasRemoteBytesFor(resource)) {
+			// The remote was never known so use the base		
 			bytes = baseSynchronizer.getSyncBytes(resource);
 		}
 		return bytes;

@@ -71,11 +71,25 @@ public class MergeUpdateAction extends SubscriberUpdateAction {
 			// The update will fail for conflicts that turn out to be non-automergable
 			super.run(syncSet, Policy.subMonitorFor(monitor, syncSet.size() * 100));
 			
-			// It is possible that some of the conflicting changes were not auto-mergable
-			SyncResourceSet failedSet = createFailedSet(syncSet, willFail, (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]));
-			if (failedSet.isEmpty()) return;
-			if (!promptForOverwrite(failedSet)) return;
-			runOverwrite(failedSet.getSyncResources(), Policy.subMonitorFor(monitor, willFail.length * 100));
+			// It is possible that some of the conflicting changes were not auto-mergable.
+			// Accumulate all resources that have not been updated so far
+			final SyncResourceSet failedSet = createFailedSet(syncSet, willFail, (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]));
+			
+			// Remove all these from the original sync set
+			syncSet.rejectNodes(new SyncInfoFilter() {
+				public boolean select(SyncInfo info) {
+					return failedSet.getNodeFor(info.getLocal()) != null;
+				}
+			});
+			
+			// Ask the user if a replace should be performed on the remaining nodes
+			if (!failedSet.isEmpty() && promptForOverwrite(failedSet)) {
+				runOverwrite(failedSet.getSyncResources(), Policy.subMonitorFor(monitor, willFail.length * 100));
+				syncSet.addAll(failedSet);
+			}
+			
+			// Mark all succesfully updated resources as merged
+			((CVSMergeSubscriber)getSubscriber()).merged(syncSet.getResources());
 		} finally {
 			monitor.done();
 		}

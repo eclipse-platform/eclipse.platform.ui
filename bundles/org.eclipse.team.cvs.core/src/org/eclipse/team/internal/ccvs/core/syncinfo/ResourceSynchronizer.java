@@ -25,14 +25,6 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
  */
 public abstract class ResourceSynchronizer {
 	
-	public abstract byte[] getSyncBytes(IResource resource) throws CVSException;
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 * @throws TeamException
-	 */
 	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		byte[] remoteBytes = getSyncBytes(resource);
 		if (remoteBytes == null) {
@@ -50,6 +42,8 @@ public abstract class ResourceSynchronizer {
 		}
 	}
 
+	public abstract byte[] getSyncBytes(IResource resource) throws CVSException;
+
 	/**
 	 * Refreshes the contents of the resource synchronizer and returns the list
 	 * of resources whose remote sync state changed.
@@ -61,4 +55,5 @@ public abstract class ResourceSynchronizer {
 	public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		return new IResource[0];
 	}
+
 }

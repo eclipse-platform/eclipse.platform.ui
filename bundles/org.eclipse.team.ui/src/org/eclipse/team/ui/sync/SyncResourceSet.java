@@ -21,12 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.sync.views.SyncResource;
 
-/**
- * @author Administrator
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public class SyncResourceSet {
 
 	Set set = new HashSet();
@@ -159,9 +153,6 @@ public class SyncResourceSet {
 		return (SyncResource[]) result.toArray(new SyncResource[result.size()]);
 	}
 	
-	/**
-	 * 
-	 */
 	public SyncResource[] getSyncResources() {
 		return (SyncResource[]) set.toArray(new SyncResource[set.size()]);
 	}
@@ -178,26 +169,17 @@ public class SyncResourceSet {
 		return resources;
 	}
 	
-	/**
-	 * @return
-	 */
 	public boolean isEmpty() {
 		return set.isEmpty();
 	}
 	
-	/**
-	 * @param resources
-	 */
 	public void removeResources(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			removeResource(resource);
 		}
-	}
-	
-	/**
-	 * @param resource
-	 */
+	}	
+
 	private void removeResource(IResource resource) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			SyncResource node = (SyncResource)it.next();
@@ -208,16 +190,11 @@ public class SyncResourceSet {
 			}
 		}
 	}
-	/**
-	 * @return
-	 */
+
 	public int size() {
 		return set.size();
 	}
-	/**
-	 * @param file
-	 * @return
-	 */
+
 	public SyncResource getNodeFor(IResource resource) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			SyncResource node = (SyncResource)it.next();
@@ -226,6 +203,15 @@ public class SyncResourceSet {
 			}
 		}
 		return null;
+	}
+	
+	public void addAll(SyncResourceSet set) {
+		SyncResource[] resources = set.getSyncResources();
+		for (int i = 0; i < resources.length; i++) {
+			SyncResource resource = resources[i];
+			this.set.add(resource);
+		}
+		
 	}
 	
 }

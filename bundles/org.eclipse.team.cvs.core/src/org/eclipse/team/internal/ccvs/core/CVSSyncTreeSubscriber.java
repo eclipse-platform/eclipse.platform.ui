@@ -196,7 +196,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		IResource[] remoteChanges = getRemoteSynchronizer().refresh(resources, depth, monitor);
+		IResource[] remoteChanges = refreshRemote(resources, depth, monitor);
 		IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, monitor);
 		
 		Set allChanges = new HashSet();
@@ -204,6 +204,10 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		allChanges.addAll(Arrays.asList(baseChanges));
 		IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
 		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources)); 
+	}
+
+	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		return getRemoteSynchronizer().refresh(resources, depth, monitor);
 	}
 
 	/* (non-Javadoc)

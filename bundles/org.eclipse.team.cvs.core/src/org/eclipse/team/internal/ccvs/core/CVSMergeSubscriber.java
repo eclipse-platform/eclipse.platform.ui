@@ -11,17 +11,31 @@
 package org.eclipse.team.internal.ccvs.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
+import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
 import org.eclipse.team.internal.core.SaveContext;
 
@@ -38,16 +52,31 @@ import org.eclipse.team.internal.core.SaveContext;
  * 
  * TODO: Is the merge subscriber interested in workspace sync info changes?
  * TODO: Do certain operations (e.g. replace with) invalidate a merge subscriber?
- * TODO: How to ensure that sync info is flushed when projects are deleted?
+ * TODO: How to ensure that sync info is flushed when merge roots are deleted?
  */
-public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
+public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener, IResourceStateChangeListener {
 
 	public static final String UNIQUE_ID_PREFIX = "merge-";
 	
 	private CVSTag start, end;
-	private IResource[] roots;
-	private RemoteSynchronizer remoteSynchronizer;
-	private RemoteSynchronizer baseSynchronizer;
+	private List roots;
+	private RemoteTagSynchronizer remoteSynchronizer;
+	private RemoteSynchronizer mergedSynchronizer;
+	private RemoteTagSynchronizer baseSynchronizer;
+	
+
+	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		IResource[] remoteChanges = super.refreshRemote(resources, depth, monitor);
+		adjustMergedResources(remoteChanges);
+		return remoteChanges;
+	}
+
+	private void adjustMergedResources(IResource[] remoteChanges) throws CVSException {
+		for (int i = 0; i < remoteChanges.length; i++) {
+			IResource resource = remoteChanges[i];
+			mergedSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);			
+		}	
+	}
 
 	private static QualifiedName getUniqueId() {
 		String uniqueId = Long.toString(System.currentTimeMillis());
@@ -62,7 +91,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 		super(id, "CVS Merge: " + start.getName() + " to " + end.getName(), "CVS Merge");
 		this.start = start;
 		this.end = end;
-		this.roots = roots;
+		this.roots = new ArrayList(Arrays.asList(roots));
 		initialize();
 	}
 
@@ -72,8 +101,9 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 	private void initialize() {				
 		QualifiedName id = getId();
 		String syncKeyPrefix = id.getLocalName();
-		remoteSynchronizer = new RemoteSynchronizer(syncKeyPrefix + end.getName(), end);
-		baseSynchronizer = new RemoteSynchronizer(syncKeyPrefix + start.getName(), start);
+		remoteSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + end.getName(), end);
+		baseSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + start.getName(), start);
+		mergedSynchronizer = new RemoteSynchronizer(syncKeyPrefix + "0merged");
 		
 		try {
 			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
@@ -82,14 +112,29 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 			// always be available.
 			CVSProviderPlugin.log(e);
 		}
+		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
+	protected SyncInfo getSyncInfo(IResource local, IRemoteResource base, IRemoteResource remote, IProgressMonitor monitor) throws TeamException {
+		return new CVSMergeSyncInfo(local, base, remote, this, monitor);
+	}
+
+	public void merged(IResource[] resources) throws CVSException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			mergedSynchronizer.setSyncBytes(resource, remoteSynchronizer.getSyncBytes(resource));
+		}
+		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, resources));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#cancel()
 	 */
 	public void cancel() {
-		super.cancel();
-		TeamProvider.deregisterSubscriber(this);
+		super.cancel();		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);		
+		TeamProvider.deregisterSubscriber(this);		
 		remoteSynchronizer.dispose();
 		baseSynchronizer.dispose();				
 	}
@@ -105,7 +150,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#roots()
 	 */
 	public IResource[] roots() throws TeamException {
-		return roots;
+		return (IResource[]) roots.toArray(new IResource[roots.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -142,11 +187,13 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 		state.putInteger("endTagType", end.getType());
 		
 		// resources roots
-		SaveContext[] ctxRoots = new SaveContext[roots.length];
-		for (int i = 0; i < roots.length; i++) {
+		SaveContext[] ctxRoots = new SaveContext[roots.size()];
+		int i = 0;
+		for (Iterator it = roots.iterator(); it.hasNext(); i++) {
+			IResource element = (IResource) it.next();
 			ctxRoots[i] = new SaveContext();
 			ctxRoots[i].setName("resource");
-			ctxRoots[i].putString("fullpath", roots[i].getFullPath().toString());			
+			ctxRoots[i].putString("fullpath", element.getFullPath().toString());			
 		}
 		state.setChildren(ctxRoots);
 		return state;
@@ -197,4 +244,65 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 		// you can't release changes to a merge
 		return false;
 	}
+
+	/*
+	 * What to do when a root resource for this merge changes?
+	 * Deleted, Move, Copied
+	 * Changed in a CVS way (tag changed, revision changed...)
+	 * Contents changed by user
+	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		try {
+			IResourceDelta delta = event.getDelta();
+			if(delta != null) {
+				delta.accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					IResource resource = delta.getResource();
+			
+					if (resource.getType()==IResource.PROJECT) {
+						IProject project = (IProject)resource;
+						if (!project.isAccessible()) {
+							return false;
+						}
+						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
+							return false;
+						} 
+						if (RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) == null) {
+							return false;
+						}
+					}
+			
+					if (roots.contains(resource)) {
+						if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.MOVED_TO) {
+							cancel();
+						}
+						// stop visiting children
+						return false;
+					}
+					// keep visiting children
+					return true;
+				}
+			});
+			}
+		} catch (CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		}
+	}
+
+	public void resourceSyncInfoChanged(IResource[] changedResources) {
+	}
+
+	public void resourceModified(IResource[] changedResources) {
+	}
+
+	public void projectConfigured(IProject project) {
+	}
+
+	public void projectDeconfigured(IProject project) {
+	}
+
+	public boolean isMerged(IResource resource) throws CVSException {
+		return mergedSynchronizer.getSyncBytes(resource) != null;
+	}		
 }
