@@ -48,6 +48,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -290,7 +291,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 								CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject());
 								CVSTag revisionTag = new CVSTag(((ICVSRemoteFile)edition).getRevision(), CVSTag.VERSION);
 								if(CVSAction.checkForMixingTags(shell, new IResource[] {resource}, revisionTag)) {							
-									provider.update(new IResource[] {resource}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
+									provider.update(new IResource[] {resource}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
 								 				    revisionTag, true /*create backups*/, monitor);
 									getHistoryTableProvider().setFile((ICVSFile)edition);
 								}
