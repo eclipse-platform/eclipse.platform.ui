@@ -181,7 +181,10 @@ import java.util.Vector;
 				tCurPos = tCurPos + segLength;
 			}
 		}
-
+		if ((fSegments.length == 1) && (!fHasLeadingStar) && (!fHasTrailingStar)) {
+			// only one segment to match, no wildcards specified
+			return tCurPos == end;
+		}
 		/* process middle segments */	
 		for ( ; i < segCount && tCurPos <= bound; ++i) {
 			current = fSegments[i];

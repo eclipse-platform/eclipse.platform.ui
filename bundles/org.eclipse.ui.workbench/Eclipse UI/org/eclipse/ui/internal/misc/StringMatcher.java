@@ -181,7 +181,10 @@ public class StringMatcher {
 				tCurPos= tCurPos + segLength;
 			}
 		}
-
+		if ((fSegments.length == 1) && (!fHasLeadingStar) && (!fHasTrailingStar)) {
+			// only one segment to match, no wildcards specified
+			return tCurPos == end;
+		}
 		/* process middle segments */	
 		while (i < segCount) {
 			current= fSegments[i];
