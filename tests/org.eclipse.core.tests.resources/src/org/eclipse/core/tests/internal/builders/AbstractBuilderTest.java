@@ -108,6 +108,7 @@ public abstract class AbstractBuilderTest extends ResourceTest {
 	 * Restores the auto-build flag to its original value.
 	 */
 	protected void tearDown() throws Exception {
+		waitForBuild();
 		setAutoBuilding(autoBuilding);
 		super.tearDown();
 	}
