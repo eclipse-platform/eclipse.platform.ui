@@ -187,8 +187,9 @@ public class DecorationScheduler implements IResourceChangeListener {
 			notifyAll();
 		}
 		try {
+			if(decoratorUpdateThread != null)	
 			// Wait for the decorator thread to finish before returning.
-			decoratorUpdateThread.join();
+				decoratorUpdateThread.join();
 		} catch (InterruptedException e) {
 		}
 	}
