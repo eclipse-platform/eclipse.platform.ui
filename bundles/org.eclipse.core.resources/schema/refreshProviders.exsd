@@ -13,7 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="refreshProviders"/>
+            <element ref="refreshProvider"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
