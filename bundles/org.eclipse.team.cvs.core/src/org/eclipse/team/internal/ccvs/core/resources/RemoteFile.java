@@ -22,6 +22,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.*;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ILogEntryListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
@@ -33,7 +34,22 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
-	// sync info in byte form
+    /*
+     * Listener for accumulating the entries fetched using the "cvs log" command
+     */
+	private final class LogEntryListener implements ILogEntryListener {
+        private final List entries = new ArrayList();
+        public void handleLogEntryReceived(ILogEntry entry) {
+            if (entry.getRemoteFile().getRepositoryRelativePath().equals(getRepositoryRelativePath())) {
+                entries.add(entry);
+            }
+        }
+        public ILogEntry[] getEntries() {
+            return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
+        }
+    }
+
+    // sync info in byte form
 	private byte[] syncBytes;
 	// cache the log entry for the remote file
 	private ILogEntry entry;
@@ -210,17 +226,18 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				try {
-					final List entries = new ArrayList();
+				    LogEntryListener listener = new LogEntryListener();
 					IStatus status = Command.LOG.execute(
 						session,
 						Command.NO_GLOBAL_OPTIONS,
 						new LocalOption[] { 
 							Log.makeRevisionOption(getRevision())},
 						new ICVSResource[] { RemoteFile.this },
-						new LogListener(RemoteFile.this, entries),
+						new LogListener(RemoteFile.this, listener),
 						Policy.subMonitorFor(monitor, 90));
-					if (entries.size() == 1) {
-						entry = (ILogEntry)entries.get(0);
+					ILogEntry[] entries = listener.getEntries();
+					if (entries.length == 1) {
+						entry = entries[0];
 					}
 					if (status.getCode() == CVSStatus.SERVER_ERROR) {
 						throw new CVSServerException(status);
@@ -241,21 +258,22 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
-		final List entries = new ArrayList();
 		Session session = new Session(getRepository(), parent, false /* output to console */);
 		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
 			QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 			try {
 				CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+				LogEntryListener listener = new LogEntryListener();  
 				IStatus status = Command.LOG.execute(
 					session,
 					Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
-					new ICVSResource[] { RemoteFile.this }, new LogListener(RemoteFile.this, entries),
+					new ICVSResource[] { RemoteFile.this }, new LogListener(RemoteFile.this, listener),
 					Policy.subMonitorFor(monitor, 90));
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
+				return listener.getEntries();
 			} finally {
 				CVSProviderPlugin.getPlugin().setQuietness(quietness);
 				monitor.done();
@@ -263,7 +281,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		} finally { 
 			session.close();
 		}
-		return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
 	}
 	
 	/**

@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
-import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
-import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -39,36 +39,62 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 * A log entry cache that can be shared by multiple instances of the
 	 * remote log operation.
 	 */
-	public static class LogEntryCache {
+	public static class LogEntryCache implements ILogEntryListener {
 	    
 	    /*
-	     * Map that is used for the single revision cases
+	     * Cache of all log entries
 	     */
-		private Map entries = new HashMap(); /* Map ICVSRemoteFile->ILogEntry */
+		private Map entries = new HashMap(); /* Map String:remoteFilePath->Map (String:revision -> ILogEntry) */
 		
-		/*
-		 * Map that is used to cache multiple ILogEntry for a single resource
-		 */
-		private Map allEntries = new HashMap(); /* Map String->ILogEntry[] */
-		
+        private Map internalGetLogEntries(String path) {
+            return (Map)entries.get(path);
+        }
+        
+        private ILogEntry internalGetLogEntry(String path, String revision) {
+	        Map fileEntries = internalGetLogEntries(path);
+	        if (fileEntries != null) {
+	            return (ILogEntry)fileEntries.get(revision);
+	        }
+	        return null;
+        }
+        
+        public String[] getCachedFilePaths() {
+            return (String[]) entries.keySet().toArray(new String[entries.size()]);
+        }
+        
 		/**
-		 * Return the log entry that was fetch for the given resource
-		 * or <code>null</code> if no entry was fetched.
+		 * Return the log entry that for the given resource
+		 * or <code>null</code> if no entry was fetched or the
+		 * resource is not a file.
 		 * @param getFullPath(resource) the resource
-		 * @return the fetched log entry or <code>null</code>
+		 * @return the log entry or <code>null</code>
 		 */
 		public synchronized ILogEntry getLogEntry(ICVSRemoteResource resource) {
-			return (ILogEntry)entries.get(resource);
+		    if (resource instanceof ICVSRemoteFile) {
+		        try {
+                    String path = getFullPath(resource);
+                    String revision = ((ICVSRemoteFile)resource).getRevision();
+                    return internalGetLogEntry(path, revision);
+                } catch (TeamException e) {
+                    // Log and return null
+                    CVSUIPlugin.log(e);
+                }
+		    }
+		    return null;
 		}
-		
-		/**
+
+        /**
 		 * Return the log entries that were fetched for the given resource
 		 * or an empty list if no entry was fetched.
 		 * @param getFullPath(resource) the resource
 		 * @return the fetched log entries or an empty list is none were found
 		 */
 		public synchronized ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
-			return (ILogEntry[])allEntries.get(getFullPath(resource));
+		    Map fileEntries = internalGetLogEntries(getFullPath(resource));
+		    if (fileEntries != null) {
+		        return (ILogEntry[]) fileEntries.values().toArray(new ILogEntry[fileEntries.size()]);
+		    }
+            return null;
 		}
 		
 		/*
@@ -83,27 +109,10 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		
 		public synchronized void clearEntries() {
 			entries.clear();
-			allEntries.clear();
 		}
-
-	    public synchronized void cacheEntries(ICVSRemoteResource[] remotes, LogListener listener) {
-	        // Record the log entries for the files we want
-	        for (int i = 0; i < remotes.length; i++) {
-	        	ICVSRemoteResource resource = remotes[i];
-	        	if (!resource.isContainer()) {
-	        		ICVSRemoteFile file = (ICVSRemoteFile) resource;
-	        		ILogEntry entry = listener.getEntryFor(file);
-	        		if (entry != null) {
-	        			entries.put(file, entry);
-	        		}
-	        		ILogEntry allLogs[] = listener.getEntriesFor(file);
-	        		allEntries.put(getFullPath(file), allLogs);
-	        	}
-	        }
-	    }
 	    
 	    public synchronized ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {
-	        ILogEntry[] allLogs = (ILogEntry[])allEntries.get(getFullPath(file));
+	        ILogEntry[] allLogs = getLogEntries(file);
             String revision = file.getRevision();
             // First decrement the last digit and see if that revision exists
             String predecessorRevision = getPredecessorRevision(revision);
@@ -186,13 +195,22 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
          */
         public synchronized void clearEntries(ICVSRemoteResource resource) {
             String remotePath = getFullPath(resource);
-            LogEntry[] entries = (LogEntry[])allEntries.remove(remotePath);
-            if (entries != null) {
-                for (int i = 0; i < entries.length; i++) {
-                    LogEntry entry = entries[i];
-                    this.entries.remove(entry.getRemoteFile());
-                }
+            entries.remove(remotePath);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.core.client.listeners.ILogEntryListener#addEntry(org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry)
+         */
+        public void handleLogEntryReceived(ILogEntry entry) {
+    		ICVSRemoteFile file = entry.getRemoteFile();
+    		String fullPath = getFullPath(file);
+    		String revision = entry.getRevision();
+            Map fileEntries = internalGetLogEntries(fullPath);
+            if (fileEntries == null) {
+                fileEntries = new HashMap();
+                entries.put(fullPath, fileEntries);
             }
+            fileEntries.put(revision, entry);
         }
 	}
 	
@@ -209,7 +227,8 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	protected void execute(ICVSRepositoryLocation location, ICVSRemoteResource[] remoteResources, IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(Policy.bind("RemoteLogOperation.0", location.getHost()), 100); //$NON-NLS-1$
 		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()), false /* do not output to console */);
-		LogListener listener = new LogListener();
+		// Create a log listener that will update the cache as entries are received
+		LogListener listener = new LogListener(entryCache);
 		
 		ICVSRemoteResource[] remotes = remoteResources;
 		Command.LocalOption[] localOptions;
@@ -236,8 +255,6 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 			} finally {
 				s.close();
 			}
-
-			entryCache.cacheEntries(remotes, listener);
 		}
 	}
 
