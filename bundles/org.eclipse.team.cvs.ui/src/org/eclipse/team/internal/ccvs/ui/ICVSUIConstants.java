@@ -34,6 +34,7 @@ public interface ICVSUIConstants {
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR = "clcl16/clear_co.gif"; //$NON-NLS-1$
+	public final String IMG_COLLAPSE_ALL = "clcl16/collapseall.gif"; //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$

@@ -64,6 +64,8 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	private DrillDownAdapter drillPart;
 	
 	private Action refreshAction;
+	private Action collapseAllAction;
+	
 	private Action selectWorkingSetAction;
 	private Action deselectWorkingSetAction;
 	private Action editWorkingSetAction;
@@ -181,6 +183,13 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 			settings.put(SELECTED_WORKING_SET, name);
 		}
 		getContentProvider().setWorkingSet(workingSet);
+		String toolTip;
+		if (workingSet == null) {
+			toolTip = null;
+		} else {
+			toolTip = Policy.bind("RemoteViewPart.workingSetToolTip", workingSet.getName()); //$NON-NLS-1$
+		}
+		setTitleToolTip(toolTip);
 		if (refreshViewer) refreshViewer();
 	}
 	
@@ -202,6 +211,12 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
+		collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL)) { //$NON-NLS-1$
+			public void run() {
+				collapseAll();
+			}
+		};
+		
 		// Select Working Set (popup)
 		selectWorkingSetAction = new Action(Policy.bind("RepositoriesView.newWorkingSet")) { //$NON-NLS-1$
 			public void run() {
@@ -276,6 +291,8 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		IToolBarManager tbm = bars.getToolBarManager();
 		drillPart.addNavigationActions(tbm);
 		tbm.add(refreshAction);
+		tbm.add(new Separator());
+		tbm.add(collapseAllAction);
 		tbm.update(false);
 
 		// Create the open action for double clicks
@@ -353,6 +370,12 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		viewer.refresh();
 	}
 	
+	public void collapseAll() {
+		if (viewer == null) return;
+		viewer.getControl().setRedraw(false);		
+		viewer.collapseToLevel(viewer.getInput(), TreeViewer.ALL_LEVELS);
+		viewer.getControl().setRedraw(true);
+	}
 	/**
 	 * The mouse has been double-clicked in the tree, perform appropriate
 	 * behaviour.
@@ -398,5 +421,5 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		super.dispose();
 		viewer = null;
 	}
-
+	
 }
