@@ -96,6 +96,26 @@ public class JobManager implements IJobManager {
 			new JobManager().startup();
 		return instance;
 	}
+	/**
+	 * For debugging purposes only
+	 */
+	public static String printState(int state) {
+		switch (state) {
+		case Job.NONE :
+			return "NONE"; //$NON-NLS-1$
+		case Job.WAITING :
+			return "WAITING"; //$NON-NLS-1$
+		case Job.SLEEPING :
+			return "SLEEPING"; //$NON-NLS-1$
+		case Job.RUNNING :
+			return "RUNNING"; //$NON-NLS-1$
+		case InternalJob.BLOCKED:
+			return "BLOCKED"; //$NON-NLS-1$
+		case InternalJob.ABOUT_TO_RUN :
+			return "ABOUT_TO_RUN"; //$NON-NLS-1$
+		}
+		return "UNKNOWN"; //$NON-NLS-1$
+	}
 	private JobManager() {
 		instance = this;
 		synchronized (lock) {
@@ -153,6 +173,7 @@ public class JobManager implements IJobManager {
 	private void changeState(InternalJob job, int newState) {
 		synchronized (lock) {
 			int oldState = job.internalGetState();
+//			System.out.println("changeState (" + job + "): " + printState(oldState) +"->" + printState(newState));
 			switch (oldState) {
 				case Job.NONE :
 					break;
@@ -166,7 +187,6 @@ public class JobManager implements IJobManager {
 					} catch (RuntimeException e) {
 						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
 					}
-					job.setStartTime(InternalJob.T_NONE);
 					break;
 				case Job.SLEEPING :
 					try {
@@ -174,7 +194,6 @@ public class JobManager implements IJobManager {
 					} catch (RuntimeException e) {
 						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
 					}
-					job.setStartTime(InternalJob.T_NONE);
 					break;
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN :
@@ -186,6 +205,7 @@ public class JobManager implements IJobManager {
 			job.internalSetState(newState);
 			switch (newState) {
 				case Job.NONE :
+					job.setStartTime(InternalJob.T_NONE);
 				case InternalJob.BLOCKED :
 					break;
 				case Job.WAITING :
@@ -276,7 +296,6 @@ public class JobManager implements IJobManager {
 			job.internalSetProgressMonitor(null);
 			job.setThread(null);
 			rescheduleDelay = job.getStartTime();
-			job.setStartTime(InternalJob.T_NONE);
 			changeState(job, Job.NONE);
 			blocked = job.previous();
 			job.setPrevious(null);
@@ -284,11 +303,8 @@ public class JobManager implements IJobManager {
 			//add any blocked jobs back to the wait queue
 			while (blocked != null) {
 				InternalJob previous = blocked.previous();
-				//blocked job may have been canceled
-				if (blocked.internalGetState() == InternalJob.BLOCKED) {
-					changeState(blocked, Job.WAITING);
-					blockedJobCount++;
-				}
+				changeState(blocked, Job.WAITING);
+				blockedJobCount++;
 				blocked = previous;
 			}
 		}
@@ -732,8 +748,9 @@ public class JobManager implements IJobManager {
 	 * The worker must call endJob when the job is finished running.  
 	 */
 	protected Job startJob() {
+		Job job = null;
 		while (true) {
-			Job job = nextJob();
+			job = nextJob();
 			if (job == null)
 				return null;
 			//must perform this outside sync block because it is third party code
@@ -741,12 +758,13 @@ public class JobManager implements IJobManager {
 				//check for listener veto
 				jobListeners.aboutToRun(job);
 				//listeners may have canceled or put the job to sleep
-				if (job.getState() == Job.RUNNING) {
-					//change from ABOUT_TO_RUN to RUNNING
-					((InternalJob)job).internalSetState(Job.RUNNING);
-					((InternalJob) job).internalSetProgressMonitor(createMonitor(job));
-					jobListeners.running(job);
-					return job;
+				synchronized (lock) {
+					if (job.getState() == Job.RUNNING) {
+						//change from ABOUT_TO_RUN to RUNNING
+						((InternalJob) job).internalSetProgressMonitor(createMonitor(job));
+						((InternalJob)job).internalSetState(Job.RUNNING);
+						break;
+					}
 				}
 			}
 			if (job.getState() != Job.SLEEPING) {
@@ -755,6 +773,9 @@ public class JobManager implements IJobManager {
 				continue;
 			}
 		}
+		jobListeners.running(job);
+		return job;
+		
 	}
 	/**
 	 * Starts up the job manager. Jobs can be scheduled once again.
