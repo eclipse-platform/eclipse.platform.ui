@@ -207,15 +207,26 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = horizontalSpan;
 		tree.setLayoutData(data);	
-		TreeViewer result = new TreeViewer(tree);
+		TreeViewer result = new TreeViewer(tree) {
+			/*
+			 * Fix to allow filtering to be used without triggering fetching 
+			 * of the contents of all children (see bug 62268)
+			 */
+			public boolean isExpandable(Object element) {
+				ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+				if(cp == null)
+					return false;
+				
+				return cp.hasChildren(element);
+			}
+		};
 		result.setContentProvider(new RemoteContentProvider());
 		result.setLabelProvider(new WorkbenchLabelProvider());
-		// Can't filter the view (bug 62268)
-//		result.addFilter(new ViewerFilter() {
-//			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				return !(element instanceof ICVSRemoteFile);
-//			}
-//		});
+		result.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return !(element instanceof ICVSRemoteFile);
+			}
+		});
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateEnablements();
