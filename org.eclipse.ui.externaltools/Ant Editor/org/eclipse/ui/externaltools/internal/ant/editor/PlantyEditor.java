@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -28,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProvider;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -71,6 +73,7 @@ public class PlantyEditor extends TextEditor {
     public PlantyEditor() {
         super();
         setDocumentProvider(new PlantyDocumentProvider());
+        setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
     }
 
 
@@ -207,13 +210,35 @@ public class PlantyEditor extends TextEditor {
     }
 
 
-	/** (non-Javadoc)
-	 * Method declared on IEditorPart
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
 		if (page != null) {
 			page.update();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		String property= event.getProperty();
+		return property.equals(IAntEditorColorConstants.P_DEFAULT) ||
+		property.equals(IAntEditorColorConstants.P_PROC_INSTR) ||
+		property.equals(IAntEditorColorConstants.P_STRING) ||
+		property.equals(IAntEditorColorConstants.P_TAG) ||
+		property.equals(IAntEditorColorConstants.P_XML_COMMENT);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		if (affectsTextPresentation(event)) {
+			((PlantySourceViewerConfiguration)getSourceViewerConfiguration()).updateScanners();
+		}
+		super.handlePreferenceStoreChanged(event);
 	}
 }

@@ -1,11 +1,12 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
-//
-// PlantyDocumentProvider.java
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -33,9 +34,7 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
  */
 public class PlantyDocumentProvider extends FileDocumentProvider {
 
-	
-
-    protected IDocumentPartitioner createDocumentPartitioner() {
+    private IDocumentPartitioner createDocumentPartitioner() {
         DefaultPartitioner partitioner =
             new DefaultPartitioner(
                 new PlantyPartitionScanner(),
@@ -44,7 +43,6 @@ public class PlantyDocumentProvider extends FileDocumentProvider {
                     PlantyPartitionScanner.XML_COMMENT });
         return partitioner;
     }
-
 
     public IDocument createDocument(Object element) throws CoreException {
         IDocument document = super.createDocument(element);
@@ -57,5 +55,4 @@ public class PlantyDocumentProvider extends FileDocumentProvider {
         }
         return document;
     }
-
 }

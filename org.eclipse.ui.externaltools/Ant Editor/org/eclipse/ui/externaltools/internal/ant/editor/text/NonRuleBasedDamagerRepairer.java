@@ -1,8 +1,11 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 //
 // Copyright:
@@ -31,17 +34,13 @@ import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.StyleRange;
 
-public class NonRuleBasedDamagerRepairer
-	implements IPresentationDamager, IPresentationRepairer {
+public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPresentationRepairer {
 
 	/** The document this object works on */
 	protected IDocument fDocument;
-	/** The default text attribute if non is returned as data by the current token */
+	/** The default text attribute if none is returned as data by the current token */
 	protected TextAttribute fDefaultTextAttribute;
 
-	/**
-	 * Constructor for NonRuleBasedDamagerRepairer.
-	 */
 	public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
 		Assert.isNotNull(defaultTextAttribute);
 
@@ -63,7 +62,7 @@ public class NonRuleBasedDamagerRepairer
 	 * @return the line end offset for the given offset
 	 * @exception BadLocationException if offset is invalid in the current document
 	 */
-	protected int endOfLineOf(int offset) throws BadLocationException {
+	private int endOfLineOf(int offset) throws BadLocationException {
 
 		IRegion info = fDocument.getLineInformationOfOffset(offset);
 		if (offset <= info.getOffset() + info.getLength())
@@ -98,8 +97,9 @@ public class NonRuleBasedDamagerRepairer
 				if (info.getOffset() <= end && end <= info.getOffset() + info.getLength()) {
 					// optimize the case of the same line
 					end = info.getOffset() + info.getLength();
-				} else
+				} else {
 					end = endOfLineOf(end);
+				}
 
 				end = Math.min(partition.getOffset() + partition.getLength(), end);
 				return new Region(start, end - start);
@@ -114,9 +114,7 @@ public class NonRuleBasedDamagerRepairer
 	/**
 	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
 	 */
-	public void createPresentation(
-		TextPresentation presentation,
-		ITypedRegion region) {
+	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 		addRange(
 			presentation,
 			region.getOffset(),
@@ -132,12 +130,8 @@ public class NonRuleBasedDamagerRepairer
 	 * @param length the length of the range to be styled
 	 * @param attr the attribute describing the style of the range to be styled
 	 */
-	protected void addRange(
-		TextPresentation presentation,
-		int offset,
-		int length,
-		TextAttribute attr) {
-		if (attr != null)
+	private void addRange(TextPresentation presentation, int offset, int length, TextAttribute attr) {
+		if (attr != null) {
 			presentation.addStyleRange(
 				new StyleRange(
 					offset,
@@ -145,5 +139,15 @@ public class NonRuleBasedDamagerRepairer
 					attr.getForeground(),
 					attr.getBackground(),
 					attr.getStyle()));
+		}
+	}
+	
+	/**
+	 * Configures the scanner's default return token. This is the text attribute
+	 * which is returned when none is returned by the current token.
+	 */
+	public void setDefaultTextAttribute(TextAttribute defaultTextAttribute) {
+		Assert.isNotNull(defaultTextAttribute);
+		fDefaultTextAttribute= defaultTextAttribute;
 	}
 }
