@@ -63,10 +63,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @private
  *		This class is internal to the workbench and must not be called outside the workbench
  */
-public class AboutFeaturesDialog extends Dialog {
+public class AboutFeaturesDialog extends ProductInfoDialog {
 	
-	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
-
 	/**
 	 * Table height in dialog units (value 150).
 	 */
@@ -74,8 +72,6 @@ public class AboutFeaturesDialog extends Dialog {
 	private static final int INFO_HEIGHT = 100;
 
 	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
-
-	private boolean webBrowserOpened = false;
 
 	private Table table;
 	private Label imageLabel;	
@@ -97,13 +93,6 @@ public class AboutFeaturesDialog extends Dialog {
 	private boolean reverseSort = false;	// initially sort ascending
 	private AboutInfo lastSelection = null;
 
-	private 	AboutItem item;
-
-	private    int ABOUT_TEXT_WIDTH = 70; // chars
-	private    int ABOUT_TEXT_HEIGHT = 15; // chars
-	private 	Cursor handCursor;
-	private 	Cursor busyCursor;
-	
 	/**
 	 * Constructor for AboutFeaturesDialog
 	 */
@@ -150,12 +139,14 @@ public class AboutFeaturesDialog extends Dialog {
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-		busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+		setHandCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_HAND));
+		setBusyCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT));
 		getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				handCursor.dispose();
-				busyCursor.dispose();
+				if (getHandCursor() != null)
+					getHandCursor().dispose();
+				if (getBusyCursor() != null)
+					getBusyCursor().dispose();
 			}
 		});
 
@@ -265,47 +256,21 @@ public class AboutFeaturesDialog extends Dialog {
 		}
 		imageLabel.setImage(image);
 		String aboutText = info.getAboutText();
-		item = null;
+		setItem(null);
 		if (aboutText != null) {
 			// get an about item
-			item = scan(aboutText);
+			setItem(scan(aboutText));
 		}
-		if (item == null)
+		if (getItem() == null)
 			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation"));
 		else {
-			text.setText(item.getText());	
+			text.setText(getItem().getText());	
 			text.setCursor(null);
-			setLinkRanges(text, item.getLinkRanges());
+			setLinkRanges(text, getItem().getLinkRanges());
 		}
 	}
 	
-	/**
-	 * Scan the contents of the about text
-	 */
-	private AboutItem scan(String s) {
-		int max = s.length();
-		int i = s.indexOf(ATT_HTTP);
-		ArrayList linkRanges = new ArrayList();
-		ArrayList links = new ArrayList();
-		while (i != -1) {
-			int start = i;
-			// look for the first whitespace character
-			boolean found = false;
-			i += ATT_HTTP.length();
-			while (!found && i < max) {
-				found = Character.isWhitespace(s.charAt(i++));
-			}
-			linkRanges.add(new int[] {start, i - start});
-			links.add(s.substring(start, i));
-			i = s.indexOf(ATT_HTTP, i);
-		}
-		return new AboutItem(
-				s,
-				(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
-				(String[])links.toArray(new String[links.size()]));
-	}
-	
-	/** 
+		/** 
 	 * Select the initial selection
 	 * 
 	 */
@@ -562,106 +527,4 @@ public class AboutFeaturesDialog extends Dialog {
 		}
 	}
 	
-/**
- * Adds listeners to the given styled text
- */
-private void addListeners(StyledText styledText) {
-	styledText.addMouseListener(new MouseAdapter() {
-		public void mouseUp(MouseEvent e) {
-			StyledText text = (StyledText)e.widget;
-			int offset = text.getCaretOffset();
-			if (item != null && item.isLinkAt(offset)) {	
-				text.setCursor(busyCursor);
-				openLink(item.getLinkAt(offset));
-				text.setCursor(null);
 			}
-		}
-	});
-	styledText.addMouseMoveListener(new MouseMoveListener() {
-		public void mouseMove(MouseEvent e) {
-			StyledText text = (StyledText)e.widget;
-			int offset = -1;
-			try {
-				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
-			} catch (IllegalArgumentException ex) {
-				// leave value as -1
-			}
-			if (offset == -1)
-				text.setCursor(null);
-			else if (item != null && item.isLinkAt(offset)) 
-				text.setCursor(handCursor);
-			else 
-				text.setCursor(null);
-		}
-	});
-	
-	styledText.addTraverseListener(new TraverseListener() {
-		public void keyTraversed(TraverseEvent e) {
-			if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN ||
-				e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-					e.doit = true;
-			}
-		}
-	});
-	
-}
-	/**
-	 * Open a link
-	 */
-	private void openLink(final String href) {
-		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
-			Program.launch(href);
-		} else {
-				Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
-	public void run() {
-					try {
-						if (webBrowserOpened) {
-							Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-						} else {
-							Process p = Runtime.getRuntime().exec("netscape " + href); //$NON-NLS-1$
-							webBrowserOpened = true;
-							try {
-								if (p != null)
-									p.waitFor();
-							} catch (InterruptedException e) {
-								MessageDialog.openError(AboutFeaturesDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
-								e.getMessage());
-							} finally {
-								webBrowserOpened = false;
-							}
-						}
-					} catch (IOException e) {
-						MessageDialog.openError(AboutFeaturesDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
-						e.getMessage());
-
-					}
-				}
-			};
-			launcher.start();
-		}
-	}
-
-	/**
-	 * Sets the styled text's bold ranges
-	 */
-	private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
-		for (int i = 0; i < boldRanges.length; i++) {
-			StyleRange r =
-				new StyleRange(boldRanges[i][0], boldRanges[i][1], null, null, SWT.BOLD);
-			styledText.setStyleRange(r);
-		}
-	}
-	/**
-	 * Sets the styled text's link (blue) ranges
-	 */
-	private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
-		Color fg =
-			JFaceColors.getHyperlinkText(styledText.getShell().getDisplay());
-		for (int i = 0; i < linkRanges.length; i++) {
-			StyleRange r =
-				new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
-			styledText.setStyleRange(r);
-		}
-	}
-
-}

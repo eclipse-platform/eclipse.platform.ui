@@ -17,9 +17,13 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -28,7 +32,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -52,18 +55,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @private
  *		This class is internal to the workbench and must not be called outside the workbench
  */
-public class AboutDialog extends Dialog {
-	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
+public class AboutDialog extends ProductInfoDialog {
 	private	Image 			image;	//image to display on dialog
 	private  	AboutInfo     	aboutInfo;
 	private 	ArrayList images = new ArrayList();
-	private 	AboutItem item;
+	private 	StyledText text;
 	private	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
-	private    int ABOUT_TEXT_WIDTH = 70; // chars
-	private    int ABOUT_TEXT_HEIGHT = 15; // chars
-	private 	Cursor handCursor;
-	private 	Cursor busyCursor;
-	private 	boolean webBrowserOpened;
 
 /**
  * Create an instance of the AboutDialog
@@ -73,50 +70,6 @@ public AboutDialog(Shell parentShell) {
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	aboutInfo = workbench.getAboutInfo();
 }
-/**
- * Adds listeners to the given styled text
- */
-private void addListeners(StyledText styledText) {
-	styledText.addMouseListener(new MouseAdapter() {
-		public void mouseUp(MouseEvent e) {
-			StyledText text = (StyledText)e.widget;
-			int offset = text.getCaretOffset();
-			if (item != null && item.isLinkAt(offset)) {	
-				text.setCursor(busyCursor);
-				openLink(item.getLinkAt(offset));
-				text.setCursor(null);
-			}
-		}
-	});
-	styledText.addMouseMoveListener(new MouseMoveListener() {
-		public void mouseMove(MouseEvent e) {
-			StyledText text = (StyledText)e.widget;
-			int offset = -1;
-			try {
-				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
-			} catch (IllegalArgumentException ex) {
-				// leave value as -1
-			}
-			if (offset == -1)
-				text.setCursor(null);
-			else if (item != null && item.isLinkAt(offset)) 
-				text.setCursor(handCursor);
-			else 
-				text.setCursor(null);
-		}
-	});
-	
-	styledText.addTraverseListener(new TraverseListener() {
-		public void keyTraversed(TraverseEvent e) {
-			if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN ||
-				e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-					e.doit = true;
-			}
-		}
-	});
-	
-}
-
 public boolean close() {
 	//get rid of the image that was displayed on the left-hand side of the Welcome dialog
 	if (image != null)
@@ -157,12 +110,14 @@ protected void createButtonsForButtonBar(Composite parent) {
  * @return the dialog area control
  */
 protected Control createDialogArea(Composite parent) {
-	handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-	busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+	setHandCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_HAND));
+	setBusyCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT));
 	getShell().addDisposeListener(new DisposeListener() {
 		public void widgetDisposed(DisposeEvent e) {
-			handCursor.dispose();
-			busyCursor.dispose();
+			if (getHandCursor() != null)
+				getHandCursor().dispose();
+			if (getBusyCursor() != null)
+				getBusyCursor().dispose();
 		}
 	});
 	
@@ -174,7 +129,7 @@ protected Control createDialogArea(Composite parent) {
 		String aboutText = aboutInfo.getAboutText();
 		if (aboutText != null) {
 			// get an about item
-			item = scan(aboutText);
+			setItem(scan(aboutText));
 		}
 	}
 						
@@ -188,7 +143,7 @@ protected Control createDialogArea(Composite parent) {
 	// the image & text	
 	Composite topContainer = new Composite(outer, SWT.NONE);
 	layout = new GridLayout();
-	layout.numColumns = (image == null || item == null ? 1 : 2);
+	layout.numColumns = (image == null || getItem() == null ? 1 : 2);
 	layout.marginWidth = 0;
 	topContainer.setLayout(layout);
 	GridData data = new GridData();
@@ -207,23 +162,23 @@ protected Control createDialogArea(Composite parent) {
 		imageLabel.setImage(image);
 	}
 	
-	if (item != null) {
+	if (getItem() != null) {
 		// text on the right
-		StyledText styledText = new StyledText(topContainer, SWT.MULTI | SWT.READ_ONLY);
-		styledText.setCaret(null);
-		styledText.setFont(parent.getFont());
+		text = new StyledText(topContainer, SWT.MULTI | SWT.READ_ONLY);
+		text.setCaret(null);
+		text.setFont(parent.getFont());
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
 		data.widthHint = convertWidthInCharsToPixels(ABOUT_TEXT_WIDTH);
 		data.heightHint = convertHeightInCharsToPixels(ABOUT_TEXT_HEIGHT);
-		styledText.setText(item.getText());
-		styledText.setLayoutData(data);
-		styledText.setCursor(null);
-		styledText.setBackground(topContainer.getBackground());
-		setLinkRanges(styledText, item.getLinkRanges());
-		addListeners(styledText);
+		text.setText(getItem().getText());
+		text.setLayoutData(data);
+		text.setCursor(null);
+		text.setBackground(topContainer.getBackground());
+		setLinkRanges(text, getItem().getLinkRanges());
+		addListeners(text);
 	}
 
 	// horizontal bar
@@ -317,32 +272,6 @@ protected Control createDialogArea(Composite parent) {
 	return outer;
 }
 
-/**
- * Scan the contents of the about text
- */
-private AboutItem scan(String s) {
-	int max = s.length();
-	int i = s.indexOf(ATT_HTTP);
-	ArrayList linkRanges = new ArrayList();
-	ArrayList links = new ArrayList();
-	while (i != -1) {
-		int start = i;
-		// look for the first whitespace character
-		boolean found = false;
-		i += ATT_HTTP.length();
-		while (!found && i < max) {
-			found = Character.isWhitespace(s.charAt(i++));
-		}
-		linkRanges.add(new int[] {start, i - start});
-		links.add(s.substring(start, i));
-		i = s.indexOf(ATT_HTTP, i);
-	}
-	return new AboutItem(
-			s,
-			(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
-			(String[])links.toArray(new String[links.size()]));
-}
-
 
 /**
  * Returns the feature infos ensuring that none have duplicate icons and
@@ -392,68 +321,10 @@ private AboutInfo[] getFeaturesInfo() {
 
 
 /**
- * Open a link
- */
-private void openLink(final String href) {
-	if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
-		Program.launch(href);
-	} else {
-			Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
-	public void run() {
-				try {
-					if (webBrowserOpened) {
-						Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-					} else {
-						Process p = Runtime.getRuntime().exec("netscape " + href); //$NON-NLS-1$
-						webBrowserOpened = true;
-						try {
-							if (p != null)
-								p.waitFor();
-						} catch (InterruptedException e) {
-							MessageDialog.openError(AboutDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
-							e.getMessage());
-						} finally {
-							webBrowserOpened = false;
-						}
-					}
-				} catch (IOException e) {
-					MessageDialog.openError(AboutDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
-					e.getMessage());
-
-				}
-			}
-		};
-		launcher.start();
-	}
-}
-
-/**
  * Answer the product text to show on the right side of the dialog.
  */ 
 private String getAboutText() {
 	return aboutInfo.getAboutText();
 }
-
-
-/**
- * Sets the styled text's bold ranges
- */
-private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
-	for (int i = 0; i < boldRanges.length; i++) {
-		StyleRange r = new StyleRange(boldRanges[i][0], boldRanges[i][1], null, null, SWT.BOLD);
-		styledText.setStyleRange(r);
-	}
-}
-/**
- * Sets the styled text's link (blue) ranges
- */
-private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
-	Color fg = JFaceColors.getHyperlinkText(styledText.getShell().getDisplay());
-	for (int i = 0; i < linkRanges.length; i++) {
-		StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
-		styledText.setStyleRange(r);
-	}
-}
-
 
 }
