@@ -181,7 +181,7 @@ abstract public class AbstractInformationControlManager {
 	 * The custom information control creator.
 	 * @since 3.0
 	 */
-	private volatile IInformationControlCreator fCustomInformationControlCreator;	
+	private volatile IInformationControlCreator fCustomInformationControlCreator;
 
 	/**
 	 * Tells whether a custom information control is in use.
@@ -881,13 +881,15 @@ abstract public class AbstractInformationControlManager {
 	 * Stores the information control's bounds.
 	 */
 	protected void storeInformationControlBounds() {
-		if (fDialogSettings == null || !(fIsRestoringLocation || fIsRestoringSize))
+		if (fDialogSettings == null || fInformationControl == null || !(fIsRestoringLocation || fIsRestoringSize))
 			return;
 		
 		if (!(fInformationControl instanceof IInformationControlExtension3))
 			throw new UnsupportedOperationException();
 		
 		Rectangle bounds= ((IInformationControlExtension3)fInformationControl).getBounds();
+		if (bounds == null)
+			return;
 		
 		if (fIsRestoringSize) {
 			fDialogSettings.put(STORE_SIZE_X, bounds.width);
