@@ -41,36 +41,7 @@ public WorkbenchWizardNode(WorkbenchWizardSelectionPage aWizardPage, WorkbenchWi
 	this.parentWizardPage = aWizardPage;
 	this.wizardElement = element;
 }
-/**
- * Attempt to convert the elements in the passed selection into resources
- * by asking each for its IResource property (iff it isn't already a resource).
- * If all elements in the initial selection can be converted to resources then
- * answer a new selection containing these resources; otherwise answer a new
- * empty selection
- *
- * @param originalSelection IStructuredSelection
- * @return IStructuredSelection
- */
-protected IStructuredSelection convertToResources(IStructuredSelection originalSelection) {
-	List result = new ArrayList();
-	Iterator elements = originalSelection.iterator();
-	
-	while (elements.hasNext()) {
-		Object currentElement = elements.next();
-		if (currentElement instanceof IResource) {				// already a resource
-			result.add(currentElement);
-		} else if (!(currentElement instanceof IAdaptable))	{	// cannot be converted to resource
-			return new StructuredSelection();					// so fail
-		} else {
-			Object adapter = ((IAdaptable)currentElement).getAdapter(IResource.class);
-			if (!(adapter instanceof IResource))				// chose not to be converted to resource
-				return new StructuredSelection();				// so fail
-			result.add(adapter);							// add the converted resource
-		}
-	}
-	
-	return new StructuredSelection(result.toArray());						// all converted fine, answer new selection
-}
+
 /**
  * Returns the wizard represented by this wizard node.  <b>Subclasses</b>
  * must override this method.
@@ -126,11 +97,9 @@ public IWizard getWizard() {
 
 	IStructuredSelection currentSelection = getCurrentResourceSelection();
 	
-	if (!wizardElement.canHandleSelection(currentSelection)) {
-		currentSelection = convertToResources(currentSelection);
-		if (!currentSelection.isEmpty() && !wizardElement.canHandleSelection(currentSelection))
-			currentSelection = new StructuredSelection();
-	}
+	//Get the adapted version of the selection that works for the
+	//wizard node
+	currentSelection = wizardElement.adaptedSelection(currentSelection);
 		
 	workbenchWizard[0].init(getWorkbench(),currentSelection);
 

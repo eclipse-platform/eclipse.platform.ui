@@ -4,16 +4,18 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.Enumeration;
+import java.util.*;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.internal.SelectionEnabler;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  *	Instances represent registered wizards.
@@ -34,7 +36,7 @@ public WorkbenchWizardElement(String name) {
 	this.name = name;
 }
 /**
- *	Answer a boolean indicating whether self is able to handle the
+ *	Answer a boolean indicating whether the receiver is able to handle the
  *	passed selection
  *
  *	@return boolean
@@ -43,6 +45,29 @@ public WorkbenchWizardElement(String name) {
 public boolean canHandleSelection(IStructuredSelection selection) {
 	return getSelectionEnabler().isEnabledForSelection(selection);
 }
+
+/**
+ *	Answer the selection for the reciever based on whether the 
+ *  it can handle the selection. If it can return the selection.
+ *  If it can handle the adapted to IResource value of the selection.
+ *  If it satisfies neither of these conditions return an empty
+ *  IStructuredSelection.
+ *
+ *	@return IStructuredSelection
+ *	@param selection IStructuredSelection
+ */
+public IStructuredSelection adaptedSelection(IStructuredSelection selection) {
+	if (canHandleSelection(selection))
+		return selection;
+		
+	IStructuredSelection adaptedSelection = convertToResources(selection);
+	if (canHandleSelection(adaptedSelection))
+		return adaptedSelection;
+		
+	//Couldn't find one that works so just return
+	return StructuredSelection.EMPTY;
+}
+
 /**
  * Create an the instance of the object described by the configuration
  * element. That is, create the instance of the class the isv supplied in
@@ -141,5 +166,36 @@ public void setID(String value) {
  */
 public void setImageDescriptor(ImageDescriptor value) {
 	imageDescriptor = value;
+}
+
+/**
+ * Attempt to convert the elements in the passed selection into resources
+ * by asking each for its IResource property (iff it isn't already a resource).
+ * If all elements in the initial selection can be converted to resources then
+ * answer a new selection containing these resources; otherwise answer a new
+ * empty selection
+ *
+ * @param originalSelection IStructuredSelection
+ * @return IStructuredSelection
+ */
+private IStructuredSelection convertToResources(IStructuredSelection originalSelection) {
+	List result = new ArrayList();
+	Iterator elements = originalSelection.iterator();
+	
+	while (elements.hasNext()) {
+		Object currentElement = elements.next();
+		if (currentElement instanceof IResource) {				// already a resource
+			result.add(currentElement);
+		} else if (!(currentElement instanceof IAdaptable))	{	// cannot be converted to resource
+			return StructuredSelection.EMPTY;					// so fail
+		} else {
+			Object adapter = ((IAdaptable)currentElement).getAdapter(IResource.class);
+			if (!(adapter instanceof IResource))				// chose not to be converted to resource
+				return StructuredSelection.EMPTY;				// so fail
+			result.add(adapter);							// add the converted resource
+		}
+	}
+	
+	return new StructuredSelection(result.toArray());						// all converted fine, answer new selection
 }
 }

@@ -66,11 +66,8 @@ public void run() {
 	ISelection selection = workbench.getActiveWorkbenchWindow().getSelectionService().getSelection();
 	IStructuredSelection selectionToPass = null;
 	if (selection instanceof IStructuredSelection)
-		selectionToPass = (IStructuredSelection) selection;
+		selectionToPass = wizardElement.adaptedSelection((IStructuredSelection) selection);
 	else
-		selectionToPass = StructuredSelection.EMPTY;
-		
-	if (!wizardElement.canHandleSelection(selectionToPass))
 		selectionToPass = StructuredSelection.EMPTY;
 		
 	wizard.init(workbench, selectionToPass);
