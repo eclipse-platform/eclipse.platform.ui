@@ -34,7 +34,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -85,6 +84,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static int DIFFERENCE_NONE = 3;	
 	private final static Image IMAGE_BLANK = ImageFactory.getImage("blank"); //$NON-NLS-1$
 	private final static Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
+	private final static Image IMAGE_CLEAR = ImageFactory.getImage("clear"); //$NON-NLS-1$
 	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
 	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
 	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
@@ -151,6 +151,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private Button buttonAdd;
+	private Button buttonClear;
 	private Button buttonRemove;
 	private Button buttonRestore;
 	private Map categoryDefinitionsById;
@@ -168,8 +169,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map contextIdsByUniqueName;
 	private Map contextUniqueNamesById;
 	private ContextManager contextManager;
-	private Font fontLabelContextExtends;
-	private Font fontLabelKeyConfigurationExtends;	
+	// TODO private Font fontLabelContextExtends;
+	// TODO private Font fontLabelKeyConfigurationExtends;	
 	private Map keyConfigurationDefinitionsById;
 	private Map keyConfigurationIdsByUniqueName;
 	private Map keyConfigurationUniqueNamesById;
@@ -363,16 +364,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
 			Collections.sort(categoryNames, Collator.getInstance());						
 			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
-
 			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());
 			Collections.sort(commandNames, Collator.getInstance());						
 			comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
-
 			List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
 			Collections.sort(contextNames, Collator.getInstance());						
 			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
 			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
-
 			List keyConfigurationNames = new ArrayList(keyConfigurationIdsByUniqueName.keySet());
 			Collections.sort(keyConfigurationNames, Collator.getInstance());						
 			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
@@ -419,17 +417,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					keyConfigurationNames.add(name);
 				}
-			}
+			}	
 			
-			Collections.sort(contextNames, Collator.getInstance());						
-			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
-			labelContext.setVisible(!contextNames.isEmpty());
-			comboContext.setVisible(!contextNames.isEmpty());								
+			labelContext.setVisible(..);
+			comboContext.setVisible(..);					
 			
-			Collections.sort(keyConfigurationNames, Collator.getInstance());								
-			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
-			labelKeyConfiguration.setVisible(!keyConfigurationNames.isEmpty());
-			comboKeyConfiguration.setVisible(!keyConfigurationNames.isEmpty());
+			labelKeyConfiguration.setVisible(..);
+			comboKeyConfiguration.setVisible(..);
 			*/
 
 			List activeKeyConfigurationDefinitions = new ArrayList();
@@ -519,7 +513,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalSpan = 3;
 		labelSeparator.setLayoutData(gridData);	
 		labelCommandGroup = new Label(composite, SWT.LEFT);
-		gridData = new GridData(GridData.FILL_BOTH);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 		labelCommandGroup.setLayoutData(gridData);
 		labelCommandGroup.setText(Util.translateString(resourceBundle, "labelCommandGroup")); //$NON-NLS-1$
@@ -628,15 +622,37 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelContextExtends.setLayoutData(gridData);
 		labelKeySequence = new Label(composite, SWT.LEFT);
 		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
-		textKeySequence = new Text(composite, SWT.BORDER | SWT.LEFT);
-		gridData = new GridData();
+		Composite compositeKeySequence = new Composite(composite, SWT.NULL);
+		gridLayout = new GridLayout();
+		gridLayout.horizontalSpacing = 2;
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;		
+		gridLayout.numColumns = 2;
+		compositeKeySequence.setLayout(gridLayout);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
+		compositeKeySequence.setLayoutData(gridData);
+		textKeySequence = new Text(compositeKeySequence, SWT.BORDER | SWT.LEFT);
+		gridData = new GridData();
 		gridData.widthHint = 300;
 		textKeySequence.setLayoutData(gridData);
 
 		textKeySequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {
 				modifiedTextKeySequence();
+			}	
+		});
+
+		buttonClear = new Button(compositeKeySequence, SWT.FLAT);
+		buttonClear.setImage(IMAGE_CLEAR);
+		gridData = new GridData();
+		// TODO gridData.heightHint = 20;
+		// TODO gridData.widthHint = 20;
+		buttonClear.setLayoutData(gridData);
+
+		buttonClear.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedButtonClear();
 			}	
 		});
 
@@ -810,6 +826,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		System.out.println("current: " + preferenceKeyBindingDefinitions);		
 	}
 		
+	private void selectedButtonClear() {
+	}
+
 	private void selectedButtonRemove() {
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
