@@ -188,6 +188,10 @@ public interface ILaunchConfigurationTab {
 	 * 
 	 * @param launch the result of launching the current
 	 *  launch configuration
+	 * @deprecated As of R3.0, this method is no longer called by the launch
+	 *  framework. Since tabs do not exist when launching is performed elsewhere
+	 *  than the launch dialog, this method cannot be relied upon for launching
+	 *  functionality.
 	 */
 	public void launched(ILaunch launch);
 	
