@@ -51,9 +51,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -150,7 +150,7 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, helpContext);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, helpContext);
 	}
 	
 	/**

@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -40,7 +39,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides the generic implementation for a sub-page in the
@@ -310,7 +309,7 @@ public abstract class AntPage {
 	 * Creates the default contents of this page
 	 */
 	protected Composite createContents(Composite top) {
-		WorkbenchHelp.setHelp(top, getHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(top, getHelpContextId());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 2;

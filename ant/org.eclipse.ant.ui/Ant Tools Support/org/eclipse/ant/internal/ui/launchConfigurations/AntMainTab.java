@@ -29,10 +29,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntMainTab extends ExternalToolsMainTab {
 
@@ -79,7 +79,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		WorkbenchHelp.setHelp(mainComposite, IAntUIHelpContextIds.ANT_MAIN_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(mainComposite, IAntUIHelpContextIds.ANT_MAIN_TAB);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

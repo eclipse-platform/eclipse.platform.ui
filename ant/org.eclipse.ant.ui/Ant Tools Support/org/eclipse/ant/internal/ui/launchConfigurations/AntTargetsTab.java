@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -70,7 +69,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Launch configuration tab which allows the user to choose the targets
@@ -154,7 +152,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_TARGETS_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_TARGETS_TAB);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd = new GridData(GridData.FILL_BOTH);

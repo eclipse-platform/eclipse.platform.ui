@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Sub-page that allows the user to enter custom classpaths
@@ -118,7 +118,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * Creates this page's controls
 	 */
 	protected Composite createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IAntUIHelpContextIds.ANT_CLASSPATH_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_CLASSPATH_PAGE);
 		Font font = parent.getFont();
 		
 		Composite top = new Composite(parent, SWT.NONE);

@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.views.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -20,7 +19,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -34,7 +33,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RemoveProjectAction.Remove"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("RemoveProjectAction.Remove_2")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.REMOVE_PROJECT_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_PROJECT_ACTION);
 	}
 
 	/**

@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.views.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -28,7 +27,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action that prompts the user for build files and adds the selected files to
@@ -42,7 +40,7 @@ public class AddBuildFilesAction extends Action {
 		super(AntViewActionMessages.getString("AddBuildFilesAction.1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("AddBuildFilesAction.0")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.ADD_BUILDFILE_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
 	/* (non-Javadoc)

@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Ant preference page to set the classpath, tasks, types and properties.
@@ -61,7 +60,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
 		initializeDialogUnits(parent);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);

@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -226,7 +226,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 * @see FieldEditorPreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IAntUIHelpContextIds.ANT_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_PREFERENCE_PAGE);
 		return super.createContents(parent);
 	}
 

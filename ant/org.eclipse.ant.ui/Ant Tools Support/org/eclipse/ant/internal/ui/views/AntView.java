@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -71,8 +70,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -181,7 +180,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			// begin listening for resource changes
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		}
-		WorkbenchHelp.setHelp(parent, IAntUIHelpContextIds.ANT_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_VIEW);
 		updateProjectActions();
 	}
 	

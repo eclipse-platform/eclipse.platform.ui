@@ -53,9 +53,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
@@ -319,7 +319,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();
 		

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An abstract base class for dialogs with a status bar and ok/cancel buttons.
@@ -84,7 +84,7 @@ public abstract class StatusDialog extends Dialog {
 		if (fTitle != null) {
 			shell.setText(fTitle);
 		}
-		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.STATUS_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.STATUS_DIALOG);
 	}
 
 	/*

@@ -28,7 +28,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class AntJRETab extends JavaJRETab {
 
@@ -42,7 +42,7 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
 		Composite comp= (Composite)fJREBlock.getControl();
 		((GridData)comp.getLayoutData()).grabExcessVerticalSpace= true;
 		((GridData)comp.getLayoutData()).verticalAlignment= SWT.FILL;

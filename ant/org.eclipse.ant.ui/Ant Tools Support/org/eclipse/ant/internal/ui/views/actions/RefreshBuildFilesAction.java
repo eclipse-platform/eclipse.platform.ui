@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -28,7 +27,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -48,7 +46,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REFRESH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1")); //$NON-NLS-1$
 		fView = view;
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.REFRESH_BUILDFILE_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REFRESH_BUILDFILE_ACTION);
 	}
 
 	/**

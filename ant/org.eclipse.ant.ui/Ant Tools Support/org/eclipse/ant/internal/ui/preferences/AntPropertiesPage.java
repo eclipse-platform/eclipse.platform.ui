@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -26,7 +25,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Preference page for setting global Ant user properties.
@@ -62,7 +61,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 		
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setFont(font);
-		WorkbenchHelp.setHelp(top, IAntUIHelpContextIds.ANT_PROPERTIES_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IAntUIHelpContextIds.ANT_PROPERTIES_PAGE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns= 2;
 		top.setLayout(layout);

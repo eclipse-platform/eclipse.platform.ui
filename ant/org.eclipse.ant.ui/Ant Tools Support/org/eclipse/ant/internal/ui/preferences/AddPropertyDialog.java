@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class AddPropertyDialog extends Dialog {
 
@@ -148,9 +148,9 @@ public class AddPropertyDialog extends Dialog {
 			shell.setText(fTitle);
 		}
 		if (fInitialValues[0].length() == 0) {
-			WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.ADD_PROPERTY_DIALOG);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.ADD_PROPERTY_DIALOG);
 		} else {
-			WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.EDIT_PROPERTY_DIALOG);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.EDIT_PROPERTY_DIALOG);
 		}
 	}
 	

@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -41,8 +40,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -117,7 +116,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_BUILD_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_BUILD_TAB);
 		
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

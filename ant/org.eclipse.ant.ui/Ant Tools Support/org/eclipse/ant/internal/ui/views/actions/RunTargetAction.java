@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -48,7 +48,7 @@ public class RunTargetAction extends Action implements IUpdate {
 		
 		setText(AntViewActionMessages.getString("RunTargetAction.Run_1")); //$NON-NLS-1$
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN));
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
 
 		setToolTipText(AntViewActionMessages.getString("RunTargetAction.3")); //$NON-NLS-1$
 		fView= view;

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
@@ -47,7 +46,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a
@@ -421,7 +419,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
 	}
 
 	/* (non-Javadoc)

@@ -37,7 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab for setting Ant user properties per launch configuration. All properties
@@ -54,7 +54,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setFont(parent.getFont());
 		setControl(top);
-		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_PROPERTIES_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_PROPERTIES_TAB);
 
 		top.setLayout(new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.views.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -25,7 +24,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action opens a dialog to search for build files and adds the resulting
@@ -38,7 +36,7 @@ public class SearchForBuildFilesAction extends Action {
 		super(AntViewActionMessages.getString("SearchForBuildFilesAction.Search_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEARCH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("SearchForBuildFilesAction.Add_build_files_with_search_2")); //$NON-NLS-1$
 		this.view= view;
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
 	}
 	
 	/**

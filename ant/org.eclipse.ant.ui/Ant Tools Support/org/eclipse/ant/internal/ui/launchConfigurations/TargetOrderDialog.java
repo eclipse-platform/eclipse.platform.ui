@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -35,7 +34,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog to specify target execution order
@@ -249,6 +248,6 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.TARGET_ORDER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.TARGET_ORDER_DIALOG);
 	}
 }
