@@ -237,7 +237,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		event.findMarkerDeltas("breakpoint", true);
 		if (delta != null) {
 			try {
 				if (fgVisitor == null) {
