@@ -136,6 +136,96 @@ public class CodeCompletionTest extends AbstractAntUITest {
         proposals = processor.getPropertyProposals(documentText, "a", cursorPos);
         assertTrue(proposals.length >= 1);
         assertContains("alf", proposals);
+    }
+    
+    /**
+     * Test the code completion for the depend attribute of a target.
+     */
+    public void testTargetDependProposals() {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+    	//simple depends
+    	String documentText = "<project default=\"test\">\n";
+    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
+    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
+    	documentText += "<target name=\"pretest\"></target>\n";
+    	documentText += "<target name=\"test\" depends=\"\">\n";
+    	documentText +="<echo>depends</echo>\n";
+    	documentText +="</target>\n";
+    	documentText += "<target name=\"test2\"></target>\n";
+    	documentText += "<target name=\"test3\"></target>\n";
+    	processor.setLineNumber(6);
+    	processor.setColumnNumber(31);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 202), "", "depends");
+    	assertTrue(proposals.length == 3);
+    	assertContains("pretest", proposals);
+    	
+    	//comma separated depends
+    	documentText = "<project default=\"test\">\n";
+    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
+    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
+    	documentText += "<target name=\"pretest\"></target>\n";
+    	documentText += "<target name=\"test\" depends=\"pretest ,\">\n";
+    	documentText +="<echo>depends</echo>\n";
+    	documentText +="</target>\n";
+    	documentText += "<target name=\"test2\"></target>\n";
+    	documentText += "<target name=\"test3\"></target>\n";
+    	processor.setLineNumber(6);
+    	processor.setColumnNumber(41);
+    	proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 210), "te", "depends");
+    	assertTrue(proposals.length == 2);
+    	assertContains("test2", proposals);
+    }
+    
+    /**
+     * Test the code completion for the if attribute of a target.
+     */
+    public void testTargetIfProposals() {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+    	String documentText = "<project default=\"test\">\n";
+    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
+    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+    	
+    	documentText += "<target name=\"pretest\"></target>\n";
+    	documentText += "<target name=\"test\" if=\"\">\n";
+    	documentText +="<echo>depends</echo>\n";
+    	documentText +="</target>\n";
+    	documentText += "<target name=\"test2\"></target>\n";
+    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
+    	documentText += "<target name=\"test3\"></target>\n";
+    	processor.setLineNumber(6);
+    	processor.setColumnNumber(26);
+    	processor.setCursorPosition(160);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 160), "a", "if");
+    	assertTrue(proposals.length >= 1);
+    	assertContains("alf", proposals);
+    }
+    
+    /**
+     * Test the code completion for the unless attribute of a target.
+     */
+    public void testTargetUnlessProposals() {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+    	String documentText = "<project default=\"test\">\n";
+    	documentText += "<property name=\"prop1\" value=\"val1\" />\n";
+    	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+    	
+    	documentText += "<target name=\"pretest\"></target>\n";
+    	documentText += "<target name=\"test\" if=\"\">\n";
+    	documentText +="<echo>depends</echo>\n";
+    	documentText +="</target>\n";
+    	documentText += "<target name=\"test2\"></target>\n";
+    	documentText += "<property name=\"alf\" value=\"horst\" />\n";
+    	documentText += "<target name=\"test3\"></target>\n";
+    	processor.setLineNumber(6);
+    	processor.setColumnNumber(26);
+    	processor.setCursorPosition(164);
+    	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 164), "prop", "unless");
+    	assertTrue(proposals.length >= 2);
+    	assertContains("prop2", proposals);
 
     }
     

@@ -78,6 +78,7 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -85,6 +86,8 @@ import org.xml.sax.XMLReader;
 
 /**
  * Derived from the original Ant ProjectHelper2 class
+ * This class provides parsing for using a String as a source and provides
+ * handlers that will continue parsing to completion upon hitting errors.
  */
 public class ProjectHelper extends ProjectHelper2 {
 
@@ -98,6 +101,71 @@ public class ProjectHelper extends ProjectHelper2 {
 	 * be successful.
 	 */
 	private File buildFile= null;
+
+	private static AntHandler elementHandler = new ElementHandler();
+	private static AntHandler projectHandler = new ProjectHandler();
+	private static AntHandler targetHandler = new TargetHandler();
+	
+	
+	public static class ElementHandler extends ProjectHelper2.ElementHandler {
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public AntHandler onStartChild(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
+			return ProjectHelper.elementHandler;
+		}
+	}
+	
+	public static class MainHandler extends ProjectHelper2.MainHandler {
+		
+			/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) throws SAXParseException {
+			if (name.equals("project") //$NON-NLS-1$
+					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
+				return ProjectHelper.projectHandler;
+			} else {
+               return super.onStartChild(uri, name, qname, attrs, context);
+			}
+		}
+	}
+	
+	public static class ProjectHandler extends ProjectHelper2.ProjectHandler {
+		
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) {
+			if (name.equals("target") //$NON-NLS-1$
+					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
+				return ProjectHelper.targetHandler;
+			} else {
+				return ProjectHelper.elementHandler;
+			}
+		}
+	}
+	
+	public static class TargetHandler extends ProjectHelper2.TargetHandler {
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) {
+			return ProjectHelper.elementHandler;
+		}
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
+			try {
+				super.onStartElement(uri, tag, qname, attrs, context);
+			} catch (SAXParseException e) {
+				
+			} catch (BuildException be) {
+				
+			}
+		}
+	}
 	
      /**
      * Parses the project file, configuring the project as it goes.
@@ -109,15 +177,18 @@ public class ProjectHelper extends ProjectHelper2 {
      *                           be read
      */
     public void parse(Project project, Object source, RootHandler handler) throws BuildException {
-
+    	
     	if (!(source instanceof String)) {
     		super.parse(project, source, handler);
     	}
     	
+    	AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
+		//switch to using "our" handler so parsing will continue on hitting errors.
+    	handler= new RootHandler(context, new ProjectHelper.MainHandler());
+    	
         Reader stream= new StringReader((String)source);
              
         InputSource inputSource = null;
-
         try {
             /**
              * SAX 2 style parser used to parse the given file.
@@ -134,7 +205,6 @@ public class ProjectHelper extends ProjectHelper2 {
                 inputSource.setSystemId(uri);
             }
 
-            AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
             context.setBuildFile(buildFile);
             
             parser.setContentHandler(handler);

@@ -22,10 +22,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -279,7 +281,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             	String textToSearch= document.get().substring(0, cursorPosition-prefix.length());
                 taskString = getTaskStringFromDocumentStringToPrefix(textToSearch);
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
-				proposals=getAttributeValueProposals(taskString, attributeString, prefix);
+                if ("target".equalsIgnoreCase(taskString)) { //$NON-NLS-1$
+                	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
+                } else {
+                	proposals=getAttributeValueProposals(taskString, attributeString, prefix);
+                }
 				if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.31"); //$NON-NLS-1$
 				}
@@ -305,7 +311,61 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
     }
     
-    /**
+	protected ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
+		if (attributeName.equalsIgnoreCase("depends")) { //$NON-NLS-1$
+			return getDependsValueProposals(document, prefix);
+		} else if (attributeName.equalsIgnoreCase("if") || attributeName.equalsIgnoreCase("unless")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (!textToSearch.trim().endsWith(",")) { //$NON-NLS-1$
+				return getPropertyProposals(document, prefix, cursorPosition);
+			}
+		}
+		
+		return new ICompletionProposal[0];
+	}
+
+	private ICompletionProposal[] getDependsValueProposals(IDocument document, String prefix) {
+		List possibleDependencies = new ArrayList();
+		Element element = findEnclosingTargetElement(document, lineNumber, columnNumber);
+		String currentTargetName = null;
+		if(element == null 
+				|| (currentTargetName = element.getAttribute("name")) == null //$NON-NLS-1$
+				|| currentTargetName.length() == 0) {
+			return new ICompletionProposal[0];
+		}
+			
+		Map targets= findTargets(document);
+		Set targetNames= targets.keySet();
+		Iterator itr= targetNames.iterator();
+		Enumeration dependencies= null;
+		while (itr.hasNext()) {
+			String targetName = (String) itr.next();
+			if (targetName.equals(currentTargetName)) {
+				Target currentTarget= (Target)targets.get(targetName);
+				dependencies= currentTarget.getDependencies();
+				continue;
+			}
+			if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0){
+				possibleDependencies.add(targetName);
+			}
+		}
+		
+		if (dependencies != null) {
+			while (dependencies.hasMoreElements()) {
+				possibleDependencies.remove(dependencies.nextElement());
+			}
+		}
+		
+		ICompletionProposal[] proposals= new ICompletionProposal[possibleDependencies.size()];
+		int i= 0;
+		for (Iterator iter = possibleDependencies.iterator(); iter.hasNext(); i++) {
+			String targetName = (String) iter.next();
+			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), null, targetName, null, AntCompletionProposal.TASK_PROPOSAL);
+			proposals[i]= proposal;
+		}
+		return proposals;
+	}
+
+	/**
      * Returns all possible attributes for the specified task.
      * 
      * @param aTaskName the name of the task for that the attribute shall be 
@@ -416,6 +476,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	   String stringToPrefix = text.substring(0, aCursorPosition - aPrefix.length());
 	   // Property proposal
 	   String lastTwoCharacters = stringToPrefix.substring(stringToPrefix.length()-2, stringToPrefix.length());
+	   boolean appendBraces= true;
 	   if(lastTwoCharacters.equals("${")) { //$NON-NLS-1$
 		   replacementLength += 2;
 		   replacementOffset = aCursorPosition - aPrefix.length() - 2;
@@ -423,8 +484,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		   replacementLength += 1;
 		   replacementOffset = aCursorPosition - aPrefix.length() - 1;                
 	   } else {
-		   throw new AntEditorException("Internal Error computing property proposals"); //$NON-NLS-1$
+	   		replacementOffset= aCursorPosition - aPrefix.length();
+	   		appendBraces= false;
 	   }
+	   
 	   if(text.length() > aCursorPosition && text.charAt(aCursorPosition) == '}') {
 		   replacementLength += 1;
 	   }
@@ -432,11 +495,20 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             propertyName= (String)i.next();
             if(propertyName.toLowerCase().startsWith(aPrefix)) {
                 String additionalPropertyInfo = (String)properties.get(propertyName);
-                String replacementString = new StringBuffer("${").append(propertyName).append('}').toString();  //$NON-NLS-1$
+                
+                StringBuffer replacementString = new StringBuffer();
+                if (appendBraces) {
+                	replacementString.append("${"); //$NON-NLS-1$
+                }
+                replacementString.append(propertyName);
+                if (appendBraces) {
+                	replacementString.append('}');
+                }
+                
 				if (displayStringToProposals.get(propertyName) == null) {
                 	ICompletionProposal proposal = 
 		                new AntCompletionProposal(
-		                    replacementString, replacementOffset, replacementLength, 
+		                    replacementString.toString(), replacementOffset, replacementLength, 
 		                    replacementString.length(), image, propertyName,
 		                    additionalPropertyInfo, AntCompletionProposal.PROPERTY_PROPOSAL);
 					proposals.add(proposal);
@@ -700,7 +772,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         } else {
         	return PROPOSAL_MODE_TASK_PROPOSAL;
         }
-        if(stringToPrefix.charAt(stringToPrefix.length()-1) != lastChar && lastChar != '>') {
+        if(stringToPrefix.charAt(stringToPrefix.length()-1) != lastChar && lastChar != '>' && lastChar != ',') {
             /*
              * Substring must be trimmable from behind in case of attribute 
              * proposal because a space or a new line must be used as delimiter 
@@ -717,7 +789,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
-        } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"') {
+        } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
 			// Attribute value proposal
             String taskString =
                 getTaskStringFromDocumentStringToPrefix(
@@ -846,8 +918,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @return the parent task element or <code>null</code> if not found.
      */
     protected Element findParentElement(IDocument document, int aLineNumber, int aColumnNumber) {
-
-        // Return the parent
         return parseEditedFileSearchingForParent(document, aLineNumber, aColumnNumber).getParentElement(true);      
     }
     
@@ -884,7 +954,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	    
         lastDefaultHandler = handler;
         return handler;
-    }
+    }    
+
+
 
 	private void parse(IDocument document, SAXParser parser, AntEditorSaxDefaultHandler handler, File editedFile) {
 		InputSource inputSource = new InputSource(new StringReader(document.get()));
@@ -934,32 +1006,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		 *   Property relevant tasks.
 		 */
 
-        // Create an initialized project
-        Project project = new Project();
-        project.init();
-
-        /* 
-         * Ant's parsing facilities always works on a file, therefore we need
-         * to determine the actual location of the file. Though the file 
-         * contents will not be parsed. We parse the passed document string.
-         */
-        File file = getEditedFile();
-        String filePath= ""; //$NON-NLS-1$
-        if (file != null) {
-			filePath= file.getAbsolutePath();
-        }
-        project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
-
-        try {
-        	projectHelper.setBuildFile(file);
-            projectHelper.parse(project, document.get());  // File will be parsed here
-            projectHelper.setBuildFile(null);
-        }
-        catch(BuildException e) {
-            // ignore a build exception on purpose, since we also parse invalid
-            // build files.
-        }    
-        Map properties = project.getProperties();
+    	Project project= parseAndConfigureProject(document);
+    	Map properties = project.getProperties();
         
         // Determine the parent
         Element element = findEnclosingTargetElement(document, lineNumber, columnNumber);
@@ -1051,6 +1099,52 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         // Need to reget it since tempTable hasn't been updated with Ant 1.5
         return project.getProperties();
     }
+    
+    /**
+     * Parses the actually edited file as far as possible.
+     * <P>
+     * We use the parsing facilities of the ant plug-in here.
+     * 
+     * @return a map with all the found properties
+     */
+    private Map findTargets(IDocument document) {
+    	Project project = parseAndConfigureProject(document);    
+    	return project.getTargets();
+    }
+
+    /**
+	 * @param document
+	 * @return
+	 */
+	private Project parseAndConfigureProject(IDocument document) {
+		// Create an initialized project
+    	Project project = new Project();
+    	project.init();
+
+    	/* 
+    	 * Ant's parsing facilities always works on a file, therefore we need
+    	 * to determine the actual location of the file. Though the file 
+    	 * contents will not be parsed. We parse the passed document string.
+    	 */
+    	File file = getEditedFile();
+    	String filePath= ""; //$NON-NLS-1$
+    	if (file != null) {
+    		filePath= file.getAbsolutePath();
+    	}
+    	project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
+
+    	try {
+    		projectHelper.setBuildFile(file);
+    		projectHelper.parse(project, document.get());  // File will be parsed here
+    		projectHelper.getImportStack().removeAllElements();
+    		projectHelper.setBuildFile(null);
+    	}
+    	catch(BuildException e) {
+    		// ignore a build exception on purpose, since we also parse invalid
+    		// build files.
+    	}
+		return project;
+	}
 
     protected File getEditedFile() {
     	IWorkbenchPage page= AntUIPlugin.getActivePage();
@@ -1077,7 +1171,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     private Element findNotClosedParentElement(IDocument document, int aLineNumber, int aColumnNumber) {
         AntEditorSaxDefaultHandler handler = parseEditedFileSearchingForParent(document, aLineNumber, aColumnNumber);
         if(handler != null) {
-            
             // A not closed parent element can only be found by guessing.
             if(handler.getParentElement(false) == null) {
                 return handler.getParentElement(true);

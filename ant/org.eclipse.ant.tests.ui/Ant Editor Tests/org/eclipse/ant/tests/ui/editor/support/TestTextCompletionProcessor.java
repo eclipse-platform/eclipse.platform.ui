@@ -81,8 +81,18 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public void setColumnNumber(int aColumnNumber) {
     	columnNumber = aColumnNumber;
     }
+	
+	public void setCursorPosition(int cursorPosition) {
+		this.cursorPosition = cursorPosition;
+	}
     
 	public void setEditedFile(File aFile) {
 		editedFile= aFile;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getTargetAttributeValueProposals(org.eclipse.jface.text.IDocument, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ICompletionProposal[] getTargetAttributeValueProposals(String documentText, String textToSearch, String prefix, String attributeName) {
+		return super.getTargetAttributeValueProposals(new Document(documentText), textToSearch, prefix, attributeName);
 	}
 }
