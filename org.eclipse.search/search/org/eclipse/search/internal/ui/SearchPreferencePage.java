@@ -22,7 +22,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String POTENTIAL_MATCH_BG_COLOR= "org.eclipse.search.potentialMatch.bgColor"; //$NON-NLS-1$
+	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
 
 
@@ -33,8 +33,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	}
 
 	public static void initDefaults(IPreferenceStore store) {
-		RGB lightSkyBlue= new RGB(176, 226, 255);
-		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_BG_COLOR, lightSkyBlue);
+		RGB gray= new RGB(85, 85, 85);
+		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
 		store.setDefault(REUSE_EDITOR, false);
 	}
 
@@ -45,7 +45,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 	public static RGB getPotentialMatchBackgroundColor() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_BG_COLOR);
+		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
 	}
 
 	/*
@@ -60,8 +60,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		Composite parent= getFieldEditorParent();
 
 		ColorFieldEditor colorEditor= new ColorFieldEditor(
-			POTENTIAL_MATCH_BG_COLOR,
-			SearchMessages.getString("SearchPreferencePage.potentialMatchBgColor"), //$NON-NLS-1$
+			POTENTIAL_MATCH_FG_COLOR,
+			SearchMessages.getString("SearchPreferencePage.potentialMatchFgColor"), //$NON-NLS-1$
 			parent
         );
 		addField(colorEditor);
