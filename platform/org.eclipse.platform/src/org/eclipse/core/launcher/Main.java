@@ -233,55 +233,6 @@ public class Main {
 	protected BufferedWriter log = null;
 	protected boolean newSession = true;
 
-	static class Identifier {
-		private static final String DELIM = ". "; //$NON-NLS-1$
-		private int major, minor, service;
-		Identifier(int major, int minor, int service) {
-			super();
-			this.major = major;
-			this.minor = minor;
-			this.service = service;
-		}
-		Identifier(String versionString) {
-			super();
-			StringTokenizer tokenizer = new StringTokenizer(versionString, DELIM);
-
-			// major
-			if (tokenizer.hasMoreTokens())
-				major = Integer.parseInt(tokenizer.nextToken());
-
-			// minor
-			if (tokenizer.hasMoreTokens())
-				minor = Integer.parseInt(tokenizer.nextToken());
-
-			// service
-			if (tokenizer.hasMoreTokens())
-				service = Integer.parseInt(tokenizer.nextToken());
-		}
-		/**
-		 * Returns true if this id is considered to be greater than or equal to the given baseline.
-		 * e.g. 
-		 * 1.2.9 >= 1.3.1 -> false
-		 * 1.3.0 >= 1.3.1 -> false
-		 * 1.3.1 >= 1.3.1 -> true
-		 * 1.3.2 >= 1.3.1 -> true
-		 * 2.0.0 >= 1.3.1 -> true
-		 */
-		boolean isGreaterEqualTo(Identifier minimum) {
-			if (major < minimum.major)
-				return false;
-			if (major > minimum.major)
-				return true;
-			// major numbers are equivalent so check minor
-			if (minor < minimum.minor)
-				return false;
-			if (minor > minimum.minor)
-				return true;
-			// minor numbers are equivalent so check service
-			return service >= minimum.service;
-		}
-	}
-
 	/**
 	 * Executes the launch.
 	 * 
