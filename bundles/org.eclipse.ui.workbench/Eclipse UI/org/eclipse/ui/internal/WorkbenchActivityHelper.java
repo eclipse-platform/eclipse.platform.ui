@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 /**
- * Utility class that manages the preservation of active activities as well as 
+ * Utility class that manages the preservation of active activities as well as
  * setting up various ObjectActivityManagers used throughout the workbench.
  * 
  * @since 3.0
@@ -50,80 +50,133 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 public class WorkbenchActivityHelper {
 
     /**
-     * Prefix for all role preferences
-     */
+	 * Prefix for all role preferences
+	 */
     private static String PREFIX = "UIRoles."; //$NON-NLS-1$    
-    
+
     /**
-     * 
-     *Resource listener that reacts to new projects (and associated natures) 
-     * coming into the workspace.
-     */
+	 * 
+	 * Resource listener that reacts to new projects (and associated natures)
+	 * coming into the workspace.
+	 */
     private IResourceChangeListener listener;
 
     /**
-     * Singleton instance.
-     */
+	 * Singleton instance.
+	 */
     private static WorkbenchActivityHelper singleton;
-    
+
     /**
-     * Get the singleton instance of this class.
-     * @return the singleton instance of this class.
-     * @since 3.0
-     */
+	 * Get the singleton instance of this class.
+	 * 
+	 * @return the singleton instance of this class.
+	 * @since 3.0
+	 */
     public static WorkbenchActivityHelper getInstance() {
         if (singleton == null) {
-            singleton = new WorkbenchActivityHelper();            
+            singleton = new WorkbenchActivityHelper();
         }
         return singleton;
     }
-    
+
     /**
-     * Create a new <code>WorkbenchActivityHelper</code> which will populate 
-     * the various <code>ObjectActivityManagers</code> with Workbench 
-     * contributions.
-     */
+	 * Calls <code>isEnabled(IActivityManager, String)</code> with the Workbench 
+     * <code>IActivityManager</code>.
+     * 
+	 * @param idToMatchAgainst
+	 *            the <code>String</code> to match against
+	 * @return <code>false</code> if the <code>String</code> matches only
+	 *         disabled <code>IActivity</code> objects (based on pattern
+	 *         bindings), <code>true</code> otherwise.
+     * @see isEnabled(org.eclipse.ui.activities.IActivityManager, java.lang.String)
+	 * @since 3.0
+	 */
+    public static boolean isEnabled(String idToMatchAgainst) {
+        return isEnabled(((Workbench) PlatformUI.getWorkbench()).getActivityManager(), idToMatchAgainst);
+    }
+
+    /**
+	 * Determines whether the provided id matches <em>any</em> enabled 
+     * <code>IActivity</code> object (based on pattern bindings). If the id does
+     * not match any binding, then it is considered enabled.
+     * 
+	 * @param activityManager
+	 *            the <code>IActivityManager</code> to work with
+	 * @param idToMatchAgainst
+	 *            the <code>String</code> to match against
+	 * @return <code>false</code> if the <code>String</code> matches only
+	 *         disabled <code>IActivity</code> objects (based on pattern
+	 *         bindings), <code>true</code> otherwise.
+	 * @since 3.0
+	 */
+    public static boolean isEnabled(IActivityManager activityManager, String idToMatchAgainst) {
+        boolean match = false, enabled = false;
+        Set activityIds = activityManager.getDefinedActivityIds();
+
+        for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
+            IActivity activity = activityManager.getActivity((String) iterator.next());
+
+            if (activity.match(idToMatchAgainst)) {
+                match = true;
+                if (activity.isEnabled()) {
+                    enabled = true;
+                    break;
+                }
+            }
+        }
+
+        return match ? enabled : true;
+    }
+
+    /**
+	 * Create a new <code>WorkbenchActivityHelper</code> which will populate
+	 * the various <code>ObjectActivityManagers</code> with Workbench
+	 * contributions.
+	 */
     private WorkbenchActivityHelper() {
         listener = getChangeListener();
         WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
         loadEnabledStates();
-        
-        // TODO start enables all activities by default unless command line parameter -activities is specified 
-        
+
+        // TODO start enables all activities by default unless command line
+		// parameter -activities is specified
+
         Workbench workbench = (Workbench) PlatformUI.getWorkbench();
         String[] commandLineArgs = workbench.getCommandLineArgs();
         boolean activities = false;
-        
-		for (int i = 0; i < commandLineArgs.length; i++)
-			if (commandLineArgs[i].equalsIgnoreCase("-activities")) { //$NON-NLS-1$
-				activities = true;
-				break;
-			}  
-        
+
+        for (int i = 0; i < commandLineArgs.length; i++)
+            if (commandLineArgs[i].equalsIgnoreCase("-activities")) { //$NON-NLS-1$
+                activities = true;
+                break;
+            }
+
         if (!activities) {
-        	IActivityManager activityManager = workbench.getActivityManager();
-			activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
+            IActivityManager activityManager = workbench.getActivityManager();
+            activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
-        
-		// TODO end enables all activities by default unless command line parameter -activities is specified 
-        	
+
+        // TODO end enables all activities by default unless command line
+		// parameter -activities is specified
+
         createPreferenceMappings();
         createNewWizardMappings();
         createPerspectiveMappings();
-        createViewMappings();  
+        createViewMappings();
     }
-    
+
     /**
-     * Get a change listener for listening to resource changes.
-     * 
-     * @return
-     */
+	 * Get a change listener for listening to resource changes.
+	 * 
+	 * @return
+	 */
     private IResourceChangeListener getChangeListener() {
         return new IResourceChangeListener() {
             /*
-             * (non-Javadoc) @see
-             * org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-             */
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+			 */
             public void resourceChanged(IResourceChangeEvent event) {
 
                 IResourceDelta mainDelta = event.getDelta();
@@ -131,8 +184,7 @@ public class WorkbenchActivityHelper {
                 if (mainDelta == null)
                     return;
                 //Has the root changed?
-                if (mainDelta.getKind() == IResourceDelta.CHANGED
-                    && mainDelta.getResource().getType() == IResource.ROOT) {
+                if (mainDelta.getKind() == IResourceDelta.CHANGED && mainDelta.getResource().getType() == IResource.ROOT) {
 
                     try {
                         IResourceDelta[] children = mainDelta.getAffectedChildren();
@@ -147,7 +199,8 @@ public class WorkbenchActivityHelper {
                             }
                         }
 
-                    } catch (CoreException exception) {
+                    }
+                    catch (CoreException exception) {
                         //Do nothing if there is a CoreException
                     }
                 }
@@ -156,16 +209,16 @@ public class WorkbenchActivityHelper {
     }
 
     /**
-     * Enable all IActivity objects that match the given id.
-     * 
-     * @param id the id to match.
-     * @since 3.0
-     */
+	 * Enable all IActivity objects that match the given id.
+	 * 
+	 * @param id
+	 *            the id to match.
+	 * @since 3.0
+	 */
     public static void enableActivities(String id) {
-        IActivityManager activityManager = ((Workbench)PlatformUI.getWorkbench())
-            .getActivityManager();
+        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
         Set activities = new HashSet(activityManager.getEnabledActivityIds());
-        for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext(); ) {
+        for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
             IActivity activity = activityManager.getActivity(activityId);
             if (activity.match(id)) {
@@ -174,77 +227,80 @@ public class WorkbenchActivityHelper {
         }
         activityManager.setEnabledActivityIds(activities);
     }
-    
+
     /**
-     * Save the enabled state of all Activities and unhook the 
-     * <code>IResourceChangeListener</code>.
-     */ 
+	 * Save the enabled state of all Activities and unhook the <code>IResourceChangeListener</code>.
+	 */
     public void shutdown() {
         saveEnabledStates();
         if (listener != null) {
             WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(listener);
-        }        
+        }
     }
 
-    
     /**
-     * Create the mappings for the new wizard object activity manager.
-     * Objects of interest in this manager are Strings (wizard IDs).
-     */
+	 * Create the mappings for the new wizard object activity manager. Objects
+	 * of interest in this manager are Strings (wizard IDs).
+	 */
     private void createNewWizardMappings() {
         NewWizardsRegistryReader reader = new NewWizardsRegistryReader(false);
-        WizardCollectionElement wizardCollection = (WizardCollectionElement)reader.getWizards();
+        WizardCollectionElement wizardCollection = (WizardCollectionElement) reader.getWizards();
         IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_NEW, true);
-        Object [] wizards = flattenWizards(wizardCollection);
+        Object[] wizards = flattenWizards(wizardCollection);
         for (int i = 0; i < wizards.length; i++) {
-            WorkbenchWizardElement element = (WorkbenchWizardElement)wizards[i];
-            manager.addObject(element.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), element.getID(), element.getID());
-            
+            WorkbenchWizardElement element = (WorkbenchWizardElement) wizards[i];
+            manager.addObject(
+                element.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(),
+                element.getID(),
+                element.getID());
+
         }
-        manager.applyPatternBindings();        
+        manager.applyPatternBindings();
     }
-    
+
     /**
-     * Create the mappings for the perspective object activity manager.  
-     * Objects of interest in this manager are Strings (perspective IDs).
-     */
+	 * Create the mappings for the perspective object activity manager. Objects
+	 * of interest in this manager are Strings (perspective IDs).
+	 */
     private void createPerspectiveMappings() {
         IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        IPerspectiveDescriptor [] descriptors = registry.getPerspectives();
+        IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
         IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, true);
         for (int i = 0; i < descriptors.length; i++) {
             String localId = descriptors[i].getId();
             if (!(descriptors[i] instanceof PerspectiveDescriptor)) {
-                // this situation doesn't currently occur.  
-                // All of our IPerspectiveDescriptors are PerspectiveDescriptors
-                // give it a plugin ID of * to represent internal "plugins" (custom perspectives)
+                // this situation doesn't currently occur.
+                // All of our IPerspectiveDescriptors are
+				// PerspectiveDescriptors
+                // give it a plugin ID of * to represent internal "plugins"
+				// (custom perspectives)
                 // These objects will always be "active".
                 manager.addObject("*", localId, localId); //$NON-NLS-1$
                 continue;
             }
-            IConfigurationElement element = ((PerspectiveDescriptor)descriptors[i]).getConfigElement();
+            IConfigurationElement element = ((PerspectiveDescriptor) descriptors[i]).getConfigElement();
             if (element == null) {
                 // Custom perspective
-                // Give it a plugin ID of * to represent internal "plugins" (custom perspectives)
-                // These objects will always be "active".                
+                // Give it a plugin ID of * to represent internal "plugins"
+				// (custom perspectives)
+                // These objects will always be "active".
                 manager.addObject("*", localId, localId); //$NON-NLS-1$
                 continue;
             }
             String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-            manager.addObject(pluginId, localId, localId);              
+            manager.addObject(pluginId, localId, localId);
         }
-       manager.applyPatternBindings();        
-    }    
+        manager.applyPatternBindings();
+    }
 
     /**
-     * Create the mappings for the preference page object activity manager.
-     * Objects of interest in this manager are WorkbenchPreferenceNodes. 
-     */
-    private void createPreferenceMappings() {       
+	 * Create the mappings for the preference page object activity manager.
+	 * Objects of interest in this manager are WorkbenchPreferenceNodes.
+	 */
+    private void createPreferenceMappings() {
         PreferenceManager preferenceManager = WorkbenchPlugin.getDefault().getPreferenceManager();
         //add all WorkbenchPreferenceNodes to the manager
-        IObjectActivityManager objectManager =
-            PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PREFERENCES, true);
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PREFERENCES, true);
         for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext();) {
             IPreferenceNode node = (IPreferenceNode) i.next();
             if (node instanceof WorkbenchPreferenceNode) {
@@ -255,25 +311,28 @@ public class WorkbenchActivityHelper {
         // and then apply the default bindings
         objectManager.applyPatternBindings();
     }
-   
+
     /**
-     * Create the mappings for the perspective object activity manager.  
-     * Objects of interest in this manager are Strings (view IDs as well as view
-     * category IDs (in the form "{ID}*").
-     */
+	 * Create the mappings for the perspective object activity manager. Objects
+	 * of interest in this manager are Strings (view IDs as well as view
+	 * category IDs (in the form "{ID}*").
+	 */
     private void createViewMappings() {
         IViewRegistry viewRegistry = WorkbenchPlugin.getDefault().getViewRegistry();
-        IObjectActivityManager objectManager =
-            PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, true);        
-        
-        IViewDescriptor [] viewDescriptors = viewRegistry.getViews();
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, true);
+
+        IViewDescriptor[] viewDescriptors = viewRegistry.getViews();
         for (int i = 0; i < viewDescriptors.length; i++) {
             IConfigurationElement element = viewDescriptors[i].getConfigurationElement();
-            objectManager.addObject(element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), viewDescriptors[i].getId(), viewDescriptors[i].getId());
+            objectManager.addObject(
+                element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(),
+                viewDescriptors[i].getId(),
+                viewDescriptors[i].getId());
         }
-        
-        // this is a temporary hack until we decide whether categories warrent their own
-        // object manager.  
+
+        // this is a temporary hack until we decide whether categories warrent
+		// their own
+        // object manager.
         ICategory[] categories = viewRegistry.getCategories();
         for (int i = 0; i < categories.length; i++) {
             IConfigurationElement element = (IConfigurationElement) categories[i].getAdapter(IConfigurationElement.class);
@@ -282,75 +341,78 @@ public class WorkbenchActivityHelper {
                 objectManager.addObject(element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), categoryId, categoryId);
             }
         }
-        
+
         // and then apply the default bindings
-       objectManager.applyPatternBindings();        
+        objectManager.applyPatternBindings();
     }
-    
+
     /**
-     * Utility method to create a key/object value from a given view 
-     * category ID.
-     * 
-     * @param id
-     * @return the value of id + '*'
-     * @since 3.0
-     */
+	 * Utility method to create a key/object value from a given view category
+	 * ID.
+	 * 
+	 * @param id
+	 * @return the value of id + '*'
+	 * @since 3.0
+	 */
     public static String createViewCategoryIdKey(String id) {
         return id + '*';
     }
-       
+
     /**
-     * Take the tree WizardCollecitonElement structure and flatten it into a list
-     * of WorkbenchWizardElements. 
-     * 
-     * @param wizardCollection the collection to flatten.
-     * @return Object [] the flattened wizards.
-     * @since 3.0
-     */
+	 * Take the tree WizardCollecitonElement structure and flatten it into a
+	 * list of WorkbenchWizardElements.
+	 * 
+	 * @param wizardCollection
+	 *            the collection to flatten.
+	 * @return Object [] the flattened wizards.
+	 * @since 3.0
+	 */
     private Object[] flattenWizards(WizardCollectionElement wizardCollection) {
         return flattenWizards(wizardCollection, new HashSet());
     }
 
     /**
-     * Recursivly take a <code>WizardCollectionElement</code> and flatten it 
-     * into an array of all contained wizards.
-     *
-     * @param wizardCollection the collection to flatten.
-     * @param list the list of currently flattened wizards.
-     * @return Object [] the flattened wizards.
-     * @since 3.0
-     */
+	 * Recursivly take a <code>WizardCollectionElement</code> and flatten it
+	 * into an array of all contained wizards.
+	 * 
+	 * @param wizardCollection
+	 *            the collection to flatten.
+	 * @param list
+	 *            the list of currently flattened wizards.
+	 * @return Object [] the flattened wizards.
+	 * @since 3.0
+	 */
     private Object[] flattenWizards(WizardCollectionElement wizardCollection, Collection wizards) {
         wizards.addAll(Arrays.asList(wizardCollection.getWizards()));
         for (int i = 0; i < wizardCollection.getChildren().length; i++) {
             WizardCollectionElement child = (WizardCollectionElement) wizardCollection.getChildren()[i];
-            wizards.addAll(Arrays.asList(flattenWizards(child, wizards)));            
+            wizards.addAll(Arrays.asList(flattenWizards(child, wizards)));
         }
         return wizards.toArray();
     }
-    
+
     /**
-     * Create the preference key for the activity.
-     * 
-     * @param activity the activity.
-     * @return String a preference key representing the activity.
-     */
+	 * Create the preference key for the activity.
+	 * 
+	 * @param activity
+	 *            the activity.
+	 * @return String a preference key representing the activity.
+	 */
     private String createPreferenceKey(IActivity activity) {
         return PREFIX + activity.getId();
-    }    
-    
+    }
+
     /**
-     * Loads the enabled states from the preference store. 
-     */
+	 * Loads the enabled states from the preference store.
+	 */
     void loadEnabledStates() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
         //Do not set it if the store is not set so as to
         //allow for switching off and on of roles
-//        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
-//            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
-        IActivityManager activityManager = ((Workbench)PlatformUI.getWorkbench())
-            .getActivityManager();
+        //        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
+        //            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
+        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         Set enabledActivities = new HashSet();
         while (values.hasNext()) {
@@ -359,24 +421,22 @@ public class WorkbenchActivityHelper {
                 enabledActivities.add(activity.getId());
             }
         }
-        
+
         activityManager.setEnabledActivityIds(enabledActivities);
     }
-    
-    
+
     /**
-     * Save the enabled states in he preference store. 
-     */
+	 * Save the enabled states in he preference store.
+	 */
     private void saveEnabledStates() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-//        store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
-        IActivityManager activityManager = ((Workbench)PlatformUI.getWorkbench())
-            .getActivityManager();
+        //        store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
+        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         while (values.hasNext()) {
             IActivity activity = activityManager.getActivity((String) values.next());
 
             store.setValue(createPreferenceKey(activity), activity.isEnabled());
         }
-    }    
+    }
 }
