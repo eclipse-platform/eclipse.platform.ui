@@ -110,19 +110,6 @@ protected void checkForMove() {
 	}
 }
 /**
- * Destroy this delta and all of the internal data.  Since the bulk of the internal data
- * is shared with all other delta handle objects on the delta tree, this will invalidate
- * all of the other related resource delta objects
- */
-public void destroy() {
-	// just in case we've already been destroyed
-	if (deltaInfo != null)
-		deltaInfo.destroy();
-	deltaInfo = null;
-	oldInfo = null;
-	newInfo = null;
-}
-/**
  * @see IResourceDelta#getAffectedChildren
  */
 public IResourceDelta[] getAffectedChildren() {
