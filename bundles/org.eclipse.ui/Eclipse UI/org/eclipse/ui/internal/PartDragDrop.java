@@ -251,7 +251,7 @@ private LayoutPart getTargetPart(Control target) {
  * @see MouseListener::mouseDoubleClick
  */
 public void mouseDoubleClick(MouseEvent e) {
-	// do nothing
+	mouseDown = false;
 }
 /**
  * @see MouseListener::mouseDown
