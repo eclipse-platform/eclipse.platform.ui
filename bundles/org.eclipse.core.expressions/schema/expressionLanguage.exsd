@@ -42,7 +42,7 @@
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="1">
+         <choice>
             <element ref="not"/>
             <element ref="and"/>
             <element ref="or"/>
@@ -170,18 +170,18 @@ EvaluationResult.TRUE if the property matches the value and EvaluationResult.FAL
 otherwise. The value attribute is converted into a Java base type using the following
 rules:
 &lt;ul&gt;
-	&lt;li&gt;the string &amp;quot;true&amp;quot; is converted into Boolean.TRUE&lt;/li&gt;
-	&lt;li&gt;the string &amp;quot;false&amp;quot; is converted into Boolean.FALSE&lt;/li&gt;
-	&lt;li&gt;if the string contains a dot then the interpreter tries to convert
-	the value into a Float object. If this fails the string is treated as a
-	java.lang.String&lt;/li&gt;
-	&lt;li&gt;if the string only consists of numbers then the interpreter
-	converts the value in an Integer object.&lt;/li&gt;
-	&lt;li&gt;in all other cases the string is treated as a java.lang.String&lt;/li&gt;
-	&lt;li&gt;the conversion of the string into a Boolean, Float, or Integer can
-	be suppressed by surrounding the string with single quotes. For
-	example, the attribute value=&amp;quot;&apos;true&apos;&amp;quot; is converted into the
-	string &amp;quot;true&amp;quot;&lt;/li&gt;
+ &lt;li&gt;the string &amp;quot;true&amp;quot; is converted into Boolean.TRUE&lt;/li&gt;
+ &lt;li&gt;the string &amp;quot;false&amp;quot; is converted into Boolean.FALSE&lt;/li&gt;
+ &lt;li&gt;if the string contains a dot then the interpreter tries to convert
+ the value into a Float object. If this fails the string is treated as a
+ java.lang.String&lt;/li&gt;
+ &lt;li&gt;if the string only consists of numbers then the interpreter
+ converts the value in an Integer object.&lt;/li&gt;
+ &lt;li&gt;in all other cases the string is treated as a java.lang.String&lt;/li&gt;
+ &lt;li&gt;the conversion of the string into a Boolean, Float, or Integer can
+ be suppressed by surrounding the string with single quotes. For
+ example, the attribute value=&amp;quot;&apos;true&apos;&amp;quot; is converted into the
+ string &amp;quot;true&amp;quot;&lt;/li&gt;
 &lt;/ul&gt;
                </documentation>
             </annotation>
@@ -291,7 +291,7 @@ rules:
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
-        </sequence>
+         </sequence>
          <attribute name="variable" type="string" use="required">
             <annotation>
                <documentation>
@@ -475,11 +475,9 @@ rules:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000 - 2004 IBM Corporation and others.&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made 
-available under the terms of the Common Public License v1.0 which accompanies 
-this distribution, and is available at 
-&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
+         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
+
 </schema>
