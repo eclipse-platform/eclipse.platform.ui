@@ -404,6 +404,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @param containers source containers to search
 	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
+		ISourceContainer[] old = getSourceContainers();
+		for (int i = 0; i < old.length; i++) {
+			old[i].dispose();
+		}
 		fSourceContainers = containers;
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];

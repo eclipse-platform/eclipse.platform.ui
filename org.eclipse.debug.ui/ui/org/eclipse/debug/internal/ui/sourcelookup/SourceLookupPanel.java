@@ -62,6 +62,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	
 	protected AddContainerAction fAddAction; 
 	protected EditContainerAction fEditAction;
+	protected RestoreDefaultAction fRestoreDefaultAction;
 	
 	protected static final String DIALOG_SETTINGS_PREFIX = "sourceTab"; //$NON-NLS-1$
 	
@@ -164,10 +165,10 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		action.setButton(button);
 		addAction(action);		
 		
-		action = new RestoreDefaultAction();
-		button = createPushButton(pathButtonComp, action.getText(), fontMetrics);
-		action.setButton(button);
-		addAction(action);
+		fRestoreDefaultAction = new RestoreDefaultAction();
+		button = createPushButton(pathButtonComp, fRestoreDefaultAction.getText(), fontMetrics);
+		fRestoreDefaultAction.setButton(button);
+		addAction(fRestoreDefaultAction);
 		
 		retargetActions(fPathViewer);
 		
@@ -316,6 +317,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		fLocator = locator;
 		fAddAction.setSourceLookupDirector(locator);
 		fEditAction.setSourceLookupDirector(locator);
+		fRestoreDefaultAction.setSourceLookupDirector(locator);
 		setDirty(false);
 	}
 	

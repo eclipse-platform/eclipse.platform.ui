@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -21,6 +22,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class RestoreDefaultAction extends SourceContainerAction {
 	
+	private ISourceLookupDirector fDirector;
+
 	public RestoreDefaultAction() {
 		super(SourceLookupUIMessages.getString("sourceTab.defaultButton")); //$NON-NLS-1$
 	}
@@ -30,10 +33,15 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	public void run() {		
 		ISourceContainer[] containers = new ISourceContainer[1];
 		containers[0] = new DefaultSourceContainer();
+		containers[0].init(fDirector);
 		getViewer().setEntries(containers);
 		setEnabled(false);
 	}
-	
+
+	public void setSourceLookupDirector(ISourceLookupDirector director) {
+		fDirector = director;
+	}
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
