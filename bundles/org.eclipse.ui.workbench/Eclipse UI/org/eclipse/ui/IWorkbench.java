@@ -202,7 +202,7 @@ public interface IWorkbench extends IAdaptable {
 	/**
 	 * Creates a new local working set manager. Clients of local working set
 	 * managers are responsible for calling {@link IWorkingSetManager#dispose()}
-	 * when the working set is no longer needed.
+	 * when the working sets it manages are no longer needed.
 	 * 
 	 * @return the local working set manager
 	 * @since 3.1
