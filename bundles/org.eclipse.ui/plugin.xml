@@ -1578,5 +1578,21 @@
          </action>
       </actionSet>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+		    id="org.eclipse.ui.LinkedResourceDecorator"
+            adaptable="true"
+            label="%DecoratorLinkedResource.label"
+            decoratorClass="org.eclipse.ui.internal.LinkedResourceDecorator"
+            icon="icons/full/ovr16/link_ovr.gif"
+            quadrant="TOP_LEFT">
+         <description>
+            %DecoratorLinkedResource.desc
+	     </description>
+	     <enablement>
+	        <objectClass name="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+     </decorator>         
+   </extension>
 </plugin>
