@@ -542,7 +542,7 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	private CVSException wrapException(CoreException e) {
-		return new CVSException(e.getStatus()); //$NON-NLS-1$
+		return CVSException.wrapException(e);
 	}
 
 	public static void startup() {

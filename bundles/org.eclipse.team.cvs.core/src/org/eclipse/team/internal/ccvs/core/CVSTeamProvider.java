@@ -798,14 +798,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 			throw new CVSServerException(status);
 		}
 	}
-		
-	public static String getMessageFor(Exception e) {
-		String message = Policy.bind(e.getClass().getName(), new Object[] {e.getMessage()});
-		if (message.equals(e.getClass().getName()))
-			message = Policy.bind("CVSTeamProvider.exception", new Object[] {e.toString()}); //$NON-NLS-1$
-		return message;
-	}
-	
 	
 	/*
 	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
@@ -920,13 +912,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	private static TeamException wrapException(CoreException e) {
-		return new TeamException(statusFor(e));
-	}
-	
-	private static IStatus statusFor(CoreException e) {
-		// We should be taking out any status from the CVSException
-		// and creating an array of IStatus!
-		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, getMessageFor(e), e);
+		return CVSException.wrapException(e);
 	}
 	
 	public void configureProject() throws CoreException {
