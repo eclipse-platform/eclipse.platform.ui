@@ -101,6 +101,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="contentTargetId" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the content provider which this extension modifies.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

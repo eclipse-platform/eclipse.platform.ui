@@ -21,10 +21,11 @@ import org.eclipse.ui.internal.ActionExpression;
 public class NavigatorContentDescriptor extends NavigatorAbstractContentDescriptor {
 	private static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
 	private static final String ATT_PRIORITY = "priority"; //$NON-NLS-1$
+	private static final String ATT_CONTENT_TARGET_ID = "contentTargetId"; //$NON-NLS-1$
 
 	private int priority;
+	private String contentTargetId;
 	private ActionExpression enablement;
-
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
@@ -32,6 +33,9 @@ public class NavigatorContentDescriptor extends NavigatorAbstractContentDescript
 	 */
 	public NavigatorContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super(configElement);
+	}
+	public String getContentTargetId() {
+		return contentTargetId;
 	}
 	/**
 	 */
@@ -56,6 +60,7 @@ public class NavigatorContentDescriptor extends NavigatorAbstractContentDescript
 				// TODO: handle exception
 			}
 		} 
+		contentTargetId = configElement.getAttribute(ATT_CONTENT_TARGET_ID);
 			
 		IConfigurationElement[] children = configElement.getChildren(CHILD_ENABLEMENT);
 		if (children.length == 1) {

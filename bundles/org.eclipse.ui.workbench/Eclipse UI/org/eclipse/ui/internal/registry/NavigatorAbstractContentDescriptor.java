@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -29,7 +31,8 @@ public class NavigatorAbstractContentDescriptor {
 	private String name;
 	private String className;
 	private IConfigurationElement configElement;
-
+	private ArrayList subContentDescriptors = new ArrayList();
+	
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
@@ -39,6 +42,9 @@ public class NavigatorAbstractContentDescriptor {
 		super();
 		this.configElement = configElement;
 		readConfigElement();
+	}
+	protected void addSubContentDescriptor(NavigatorContentDescriptor descriptor) {
+		subContentDescriptors.add(descriptor);
 	}
 	public ITreeContentProvider createContentProvider() {
 		Object contentProvider = null;
@@ -58,6 +64,15 @@ public class NavigatorAbstractContentDescriptor {
 	}
 	/**
 	 */
+	protected NavigatorAbstractContentDescriptor findContentDescriptor(String contentProviderId) {
+		if (getId().equals(contentProviderId)) return this;
+		for (int i=0; i<subContentDescriptors.size(); i++) {
+			NavigatorAbstractContentDescriptor descriptor = (NavigatorContentDescriptor)subContentDescriptors.get(i);
+			NavigatorAbstractContentDescriptor foundDescriptor = descriptor.findContentDescriptor(contentProviderId);
+			if (foundDescriptor != null) return foundDescriptor;
+		}
+		return null;
+	}
 	public String getClassName() {
 		return className;
 	}
@@ -68,6 +83,9 @@ public class NavigatorAbstractContentDescriptor {
 	 */
 	public String getName() {
 		return name;
+	}
+	protected ArrayList getSubContentDescriptors() {
+		return subContentDescriptors;
 	}
 	protected void readConfigElement() throws WorkbenchException {
 		id = configElement.getAttribute(ATT_ID);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -23,6 +25,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class NavigatorRegistryReader extends RegistryReader {
 	private static final String TAG_VIEW = "view";	//$NON-NLS-1$
 	private NavigatorRegistry registry;
+	private ArrayList descriptors = new ArrayList();
 	
 /**
  * Overrides method in RegistryReader.
@@ -33,7 +36,8 @@ protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_VIEW)) {
 		try {
 			NavigatorDescriptor desc = new NavigatorDescriptor(element);
-			registry.add(desc);
+			if (desc.getRootContentDescriptor() != null) registry.add(desc);
+			else descriptors.add(desc);
 		} catch (WorkbenchException e) {
 			// log an error since its not safe to open a dialog here
 			WorkbenchPlugin.log("Unable to create navigator descriptor.",e.getStatus());//$NON-NLS-1$
@@ -51,5 +55,9 @@ protected boolean readElement(IConfigurationElement element) {
 public void readRegistry(IPluginRegistry in, NavigatorRegistry out) {
 	registry = out;
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_NAVIGATOR);
+	for (int i=0; i<descriptors.size(); i++) {
+		NavigatorDescriptor desc = (NavigatorDescriptor)descriptors.get(i);
+		registry.add(desc);
+	}
 }
 }
