@@ -412,6 +412,18 @@ public class FontRegistry {
 
 		return font;
 	}
+	
+	/**
+	 * Return whether or not the receiver has a value
+	 * for the supplied fontKey.
+	 * 
+	 * @param String. The key for the font.
+	 * @return boolean. true if there is a key for the font.
+	 */
+	public boolean hasValueFor(String fontKey){
+		return stringToFontData.containsKey(fontKey);
+	}
+	
 	/**
 	 * Shut downs this resource registry and disposes of all registered fonts.
 	 */
