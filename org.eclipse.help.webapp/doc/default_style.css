@@ -1,0 +1,63 @@
+P {
+	FONT-SIZE: 10pt; FONT-FAMILY: arial, helvetica, geneva
+}
+TABLE {
+	FONT-SIZE: 10pt; FONT-FAMILY: arial, helvetica, geneva
+}
+TD {
+	FONT-SIZE: 10pt; FONT-FAMILY: arial, helvetica, geneva
+}
+TH {
+	FONT-SIZE: 10pt; FONT-FAMILY: arial, helvetica, geneva
+}
+PRE {
+	FONT-SIZE: 10pt; FONT-FAMILY: "Courier New", Courier, mono
+}
+H2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 18pt; LINE-HEIGHT: 14px; FONT-FAMILY: arial, helvetica, geneva
+}
+CODE {
+	FONT-SIZE: 10pt; FONT-FAMILY: "Courier New", Courier, mono
+}
+SUP {
+	FONT-SIZE: 10px; FONT-FAMILY: arial,helvetica,geneva
+}
+H3 {
+	FONT-WEIGHT: bold; FONT-SIZE: 14pt; FONT-FAMILY: arial, helvetica, geneva
+}
+LI {
+	FONT-SIZE: 10pt; FONT-FAMILY: arial, helvetica, geneva
+}
+H1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 28px; FONT-FAMILY: arial, helvetica, geneva
+}
+BODY {
+	MARGIN-TOP: 5mm; FONT-SIZE: 10pt; MARGIN-LEFT: 3mm; FONT-FAMILY: arial, helvetica, geneva
+}
+.indextop {
+	FONT-WEIGHT: bold; FONT-SIZE: x-large; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.indexsub {
+	FONT-SIZE: xx-small; COLOR: #8080ff; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A.bar:link {
+	COLOR: #ffffff; TEXT-DECORATION: none
+}
+A.bar:visited {
+	COLOR: #ffffff; TEXT-DECORATION: none
+}
+A.bar:hover {
+	COLOR: #ffffff; TEXT-DECORATION: underline
+}
+A.bar {
+	COLOR: #ffffff
+}
+.jump {
+	FONT-SIZE: smaller; COLOR: #8080ff; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.jump:link {
+	FONT-SIZE: smaller; COLOR: #8080ff; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.jump:hover {
+	FONT-SIZE: smaller; COLOR: #0000ff; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
