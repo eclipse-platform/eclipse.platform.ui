@@ -313,4 +313,15 @@ protected void restoreWidgetValues() {
 			settings.getBoolean(STORE_COMPRESS_CONTENTS_ID));
 	}
 }
+
+/**
+ * Return a container that would cause a conflict with
+ * the path name. As zip files have no restrictions on
+ * destination return null.
+ * @return  null
+ * @param String. The path of the directory.
+ */
+protected String getConflictingContainerNameFor(String testString){
+	return null;
+}
 }
