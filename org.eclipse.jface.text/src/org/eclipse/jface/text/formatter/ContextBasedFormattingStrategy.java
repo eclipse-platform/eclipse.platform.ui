@@ -14,15 +14,11 @@ package org.eclipse.jface.text.formatter;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Formatting strategy for context based content formatting.
  * <p>
- * This strategy implements <code>IFormattingStrategyExtension</code>. It
- * must be registered with a content formatter implementing <code>IContentFormatterExtension2<code>
- * to take effect.
  * 
  * @see IContentFormatterExtension2
  * @see IFormattingStrategyExtension
@@ -30,22 +26,34 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public abstract class ContextBasedFormattingStrategy implements IFormattingStrategy, IFormattingStrategyExtension {
 
-	/** The current preferences to apply */
-	private Map fCurrentPreference= null;
+	/** The current preferences for formatting */
+	private Map fCurrentPreferences= null;
 
-	/** The preferences to apply during formatting */
+	/** The list of preferences for initiated the formatting steps */
 	private final LinkedList fPreferences= new LinkedList();
 
 	/** The source viewer to operate on */
-	private final ISourceViewer fViewer;
+	private ISourceViewer fViewer;
 
 	/**
-	 * Creates a new abstract formatting strategy.
+	 * Creates a new context based formatting strategy.
+	 */
+	public ContextBasedFormattingStrategy() {
+	}
+
+	/**
+	 * Creates a new context based formatting strategy.
+	 * 
+	 * TODO: remove
 	 * 
 	 * @param viewer
-	 *                  ISourceViewer to operate on
+	 *                   The source viewer to operate on
+	 * 
+	 * @deprecated Use {@link ContextBasedFormattingStrategy#ContextBasedFormattingStrategy()}
+	 * instead. Also set and use the property value of {@link FormattingContextProperties#CONTEXT_MEDIUM})
+	 * in order to access the document. Consider migration to {@link MultiPassContentFormatter}. To be removed.
 	 */
-	public ContextBasedFormattingStrategy(ISourceViewer viewer) {
+	public ContextBasedFormattingStrategy(final ISourceViewer viewer) {
 		fViewer= viewer;
 	}
 
@@ -53,34 +61,27 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
 	 */
 	public void format() {
-
-		Assert.isLegal(fPreferences.size() > 0);
-
-		fCurrentPreference= (Map)fPreferences.removeFirst();
+		fCurrentPreferences= (Map)fPreferences.removeFirst();
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.formatter.IFormattingStrategy#format(java.lang.String, boolean, java.lang.String, int[])
 	 */
-	public String format(String content, boolean isLineStart, String indent, int[] positions) {
-		// Do nothing
+	public String format(String content, boolean start, String indentation, int[] positions) {
 		return null;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
 	 */
-	public void formatterStarts(IFormattingContext context) {
-
-		final FormattingContext current= (FormattingContext)context;
-
-		fPreferences.addLast(current.getProperty(FormattingContextProperties.CONTEXT_PREFERENCES));
+	public void formatterStarts(final IFormattingContext context) {
+		fPreferences.addLast(context.getProperty(FormattingContextProperties.CONTEXT_PREFERENCES));
 	}
 
 	/*
 	 * @see IFormattingStrategy#formatterStarts(String)
 	 */
-	public void formatterStarts(String initialIndentation) {
+	public void formatterStarts(final String indentation) {
 		// Do nothing
 	}
 
@@ -90,22 +91,29 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	public void formatterStops() {
 		fPreferences.clear();
 
-		fCurrentPreference= null;
+		fCurrentPreferences= null;
 	}
 
 	/**
-	 * Returns the preferences to use during formatting.
+	 * Returns the preferences used for the current formatting step.
 	 * 
-	 * @return The formatting preferences
+	 * @return The preferences for the current formatting step
 	 */
 	public final Map getPreferences() {
-		return fCurrentPreference;
+		return fCurrentPreferences;
 	}
 
 	/**
-	 * Returns the source viewer to operate on.
+	 * Returns the source viewer where the formatting happens.
 	 * 
-	 * @return The source viewer to operate on
+	 * TODO: remove
+	 * 
+	 * @return The source viewer where the formatting happens.
+	 * 
+	 * @deprecated Set and use property value of
+	 * {@link FormattingContextProperties#CONTEXT_MEDIUM}) in
+	 * order to access the document. Consider migration to
+	 * {@link MultiPassContentFormatter}. To be removed.
 	 */
 	public final ISourceViewer getViewer() {
 		return fViewer;
