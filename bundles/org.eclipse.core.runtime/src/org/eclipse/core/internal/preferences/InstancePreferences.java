@@ -90,7 +90,7 @@ public class InstancePreferences extends EclipsePreferences {
 			return;
 		// If we are running with -data=@none we won't have an instance location.
 		if (Platform.getInstanceLocation() == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Cannot load Legacy plug-in preferences since instance location is not set."); //$NON-NLS-1$
 			return;
 		}
@@ -102,18 +102,18 @@ public class InstancePreferences extends EclipsePreferences {
 		if (instanceLocation != null && instanceLocation.isSet())
 			prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(bundleName, false).toFile();
 		if (prefFile == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Cannot load legacy values because instance location is not set."); //$NON-NLS-1$
 			return;
 		}
 		if (!prefFile.exists()) {
 			// no preference file - that's fine
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$
 			return;
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Loading legacy preferences from " + prefFile); //$NON-NLS-1$
 
 		// load preferences from file
@@ -124,7 +124,7 @@ public class InstancePreferences extends EclipsePreferences {
 			values.load(input);
 		} catch (IOException e) {
 			// problems loading preference store - quietly ignore
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("IOException encountered loading legacy preference file " + prefFile); //$NON-NLS-1$
 			return;
 		} finally {
@@ -133,7 +133,7 @@ public class InstancePreferences extends EclipsePreferences {
 					input.close();
 				} catch (IOException e) {
 					// ignore problems with close
-					if (InternalPlatform.DEBUG_PREFERENCES) {
+					if (InternalPlatform.DEBUG_PREFERENCE_GENERAL) {
 						Policy.debug("IOException encountered closing legacy preference file " + prefFile); //$NON-NLS-1$
 						e.printStackTrace();
 					}
@@ -147,7 +147,7 @@ public class InstancePreferences extends EclipsePreferences {
 			String value = values.getProperty(key);
 			// value shouldn't be null but check just in case...
 			if (value != null) {
-				if (InternalPlatform.DEBUG_PREFERENCES)
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 					Policy.debug("Loaded legacy preference: " + key + " -> " + value); //$NON-NLS-1$ //$NON-NLS-2$
 				// call these 2 methods rather than #put() so we don't send out unnecessary notification
 				Object oldValue = internalPut(key, value);
@@ -159,7 +159,7 @@ public class InstancePreferences extends EclipsePreferences {
 		// Delete the old file so we don't try and load it next time. 
 		if (!prefFile.delete())
 			//Only print out message in failure case if we are debugging.
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Unable to delete legacy preferences file: " + prefFile); //$NON-NLS-1$
 	}
 

@@ -107,7 +107,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void addNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
 		getNodeChangeListenerRegistry().add(absolutePath(), listener);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -117,7 +117,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
 		getPreferenceChangeListenerRegistry().add(absolutePath(), listener);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -228,7 +228,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				String path = splitPath[0];
 				path = makeRelative(path);
 				String key = splitPath[1];
-				if (InternalPlatform.DEBUG_PREFERENCES)
+				if (InternalPlatform.DEBUG_PREFERENCE_SET)
 					Policy.debug("Setting preference: " + path + '/' + key + '=' + value); //$NON-NLS-1$
 				//use internal methods to avoid notifying listeners
 				EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
@@ -496,12 +496,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		//Thread safety: copy field reference in case of concurrent modification
 		Properties temp = properties;
 		if (temp == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GET)
 				Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		String result = temp.getProperty(key);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GET)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
@@ -552,7 +552,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (properties == null)
 			properties = new Properties();
 		String oldValue = properties.getProperty(key);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_SET)
 			Policy.debug("Setting preference: " + absolutePath() + '/' + key + '=' + newValue); //$NON-NLS-1$
 		properties.setProperty(key, newValue);
 		return oldValue;
@@ -599,11 +599,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected void load(IPath location) throws BackingStoreException {
 		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Loading preferences from file: " + location); //$NON-NLS-1$
 		InputStream input = null;
 		Properties fromDisk = new Properties();
@@ -612,7 +612,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			fromDisk.load(input);
 		} catch (FileNotFoundException e) {
 			// file doesn't exist but that's ok.
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference file does not exist: " + location); //$NON-NLS-1$
 			return;
 		} catch (IOException e) {
@@ -898,7 +898,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void removeNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
 		getNodeChangeListenerRegistry().remove(absolutePath(), listener);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -908,7 +908,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
 		getPreferenceChangeListenerRegistry().remove(absolutePath(), listener);
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -918,11 +918,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected void save(IPath location) throws BackingStoreException {
 		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Saving preferences to file: " + location); //$NON-NLS-1$
 		Properties table = convertToProperties(new Properties(), EMPTY_STRING);
 		if (table.isEmpty()) {
@@ -1067,7 +1067,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		checkRemoved();
 		IEclipsePreferences node = getLoadLevel();
 		if (node == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}

@@ -83,12 +83,12 @@ public class DefaultPreferences extends EclipsePreferences {
 			return;
 		URL url = Platform.find(bundle, new Path(Plugin.PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
 		if (url == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference default override file not found for bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
 			return;
 		}
 		URL transURL = Platform.find(bundle, NL_DIR.append(Plugin.PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME).addFileExtension(PROPERTIES_FILE_EXTENSION));
-		if (transURL == null && InternalPlatform.DEBUG_PREFERENCES)
+		if (transURL == null && InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Preference translation file not found for bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
 		applyDefaults(name(), loadProperties(url), loadProperties(transURL));
 	}
@@ -100,11 +100,11 @@ public class DefaultPreferences extends EclipsePreferences {
 	private void applyCommandLineDefaults() {
 		String filename = InternalPlatform.pluginCustomizationFile;
 		if (filename == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Command-line preferences customization file not specified."); //$NON-NLS-1$
 			return;
 		}
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Using command-line preference customization file: " + filename); //$NON-NLS-1$
 		applyDefaults(null, loadProperties(filename), null);
 	}
@@ -131,7 +131,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			}
 			if (name().equals(localQualifier)) {
 				value = translatePreference(value, translations);
-				if (InternalPlatform.DEBUG_PREFERENCES)
+				if (InternalPlatform.DEBUG_PREFERENCE_SET)
 					Policy.debug("Setting default preference: " + (new Path(absolutePath()).append(childPath).append(key)) + '=' + value); //$NON-NLS-1$
 				((EclipsePreferences) internalNode(childPath.toString(), false, null)).internalPut(key, value);
 			}
@@ -169,7 +169,7 @@ public class DefaultPreferences extends EclipsePreferences {
 		// access the extension point
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
 		if (point == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("No extensions for " + Platform.PI_RUNTIME + '.' + Platform.PT_PREFERENCES + " extension point. Skipping runtime default preference customization."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
@@ -180,7 +180,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			for (int j = 0; j < elements.length; j++)
 				if (ELEMENT_INITIALIZER.equals(elements[j].getName())) {
 					if (name().equals(elements[j].getDeclaringExtension().getNamespace())) {
-						if (InternalPlatform.DEBUG_PREFERENCES)
+						if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 							Policy.debug("Running default preference customization as defined by: " + elements[j].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
 						runInitializer(elements[j]);
 						// don't return yet in case we have multiple initializers registered
@@ -196,11 +196,11 @@ public class DefaultPreferences extends EclipsePreferences {
 		if (plugin == null && InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
 			plugin = Platform.getPlugin(name());
 		if (plugin == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("No plug-in object available to set plug-in default preference overrides for:" + name()); //$NON-NLS-1$
 			return;
 		}
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Applying plug-in default preference overrides for plug-in: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 		plugin.internalInitializeDefaultPluginPreferences();
 	}
@@ -215,19 +215,19 @@ public class DefaultPreferences extends EclipsePreferences {
 	private void applyProductDefaults() {
 		IProduct product = Platform.getProduct();
 		if (product == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Product not available to set product default preference overrides."); //$NON-NLS-1$
 			return;
 		}
 		String id = product.getId();
 		if (id == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Product ID not available to apply product-level preference defaults."); //$NON-NLS-1$
 			return;
 		}
 		Bundle bundle = product.getDefiningBundle();
 		if (bundle == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
 			return;
 		}
@@ -235,7 +235,7 @@ public class DefaultPreferences extends EclipsePreferences {
 		URL url = null;
 		URL transURL = null;
 		if (value == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Product : " + id + " does not define preference customization file. Using legacy file: plugin_customization.ini"); //$NON-NLS-1$//$NON-NLS-2$
 			value = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
 			url = Platform.find(bundle, new Path(LEGACY_PRODUCT_CUSTOMIZATION_FILENAME));
@@ -252,11 +252,11 @@ public class DefaultPreferences extends EclipsePreferences {
 			}
 		}
 		if (url == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Product preference customization file: " + value + " not found for bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		if (transURL == null && InternalPlatform.DEBUG_PREFERENCES)
+		if (transURL == null && InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + value); //$NON-NLS-1$
 		applyDefaults(null, loadProperties(url), loadProperties(transURL));
 	}
@@ -314,7 +314,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			input = url.openStream();
 			result.load(input);
 		} catch (IOException e) {
-			if (InternalPlatform.DEBUG_PREFERENCES) {
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL) {
 				Policy.debug("Problem opening stream to preference customization file: " + url); //$NON-NLS-1$
 				e.printStackTrace();
 			}
@@ -336,7 +336,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			input = new BufferedInputStream(new FileInputStream(filename));
 			result.load(input);
 		} catch (FileNotFoundException e) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference customization file not found: " + filename); //$NON-NLS-1$
 		} catch (IOException e) {
 			String message = Policy.bind("preferences.loadException", filename); //$NON-NLS-1$

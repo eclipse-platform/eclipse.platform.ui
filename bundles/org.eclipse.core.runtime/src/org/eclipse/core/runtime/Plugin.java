@@ -317,12 +317,12 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Plugin preferences already loaded for: " + bundle.getSymbolicName()); //$NON-NLS-1$
 			return preferences;
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCES)
+		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
 		preferences = new PreferenceForwarder(this, bundle.getSymbolicName());
 		return preferences;

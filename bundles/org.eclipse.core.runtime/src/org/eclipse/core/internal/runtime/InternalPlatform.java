@@ -54,7 +54,9 @@ public final class InternalPlatform {
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
-	public static boolean DEBUG_PREFERENCES = false;
+	public static boolean DEBUG_PREFERENCE_GENERAL = false;
+	public static boolean DEBUG_PREFERENCE_GET = false;
+	public static boolean DEBUG_PREFERENCE_SET = false;
 	public static boolean DEBUG_REGISTRY = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_SHUTDOWN = false;
@@ -86,7 +88,9 @@ public final class InternalPlatform {
 
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCE_GENERAL = Platform.PI_RUNTIME + "/preferences/general"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCE_GET = Platform.PI_RUNTIME + "/preferences/get"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCE_SET = Platform.PI_RUNTIME + "/preferences/set"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
@@ -708,7 +712,9 @@ public final class InternalPlatform {
 			DEBUG_SHUTDOWN = getBooleanOption(OPTION_DEBUG_SHUTDOWN, false);
 			DEBUG_REGISTRY = getBooleanOption(OPTION_DEBUG_REGISTRY, false);
 			DEBUG_REGISTRY_DUMP = getOption(OPTION_DEBUG_REGISTRY_DUMP);
-			DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
+			DEBUG_PREFERENCE_GENERAL = getBooleanOption(OPTION_DEBUG_PREFERENCE_GENERAL, false);
+			DEBUG_PREFERENCE_GET = getBooleanOption(OPTION_DEBUG_PREFERENCE_GET, false);
+			DEBUG_PREFERENCE_SET = getBooleanOption(OPTION_DEBUG_PREFERENCE_SET, false);
 		}
 	}
 
