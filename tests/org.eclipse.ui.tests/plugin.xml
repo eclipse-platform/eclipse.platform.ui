@@ -334,6 +334,11 @@
             category="org.eclipse.ui.tests.tableViewerViews"
             name="Lazy Virtual Table View test"
             id="org.eclipse.ui.tests.lazyView"/>
+       <view
+            class="org.eclipse.jface.tests.viewers.interactive.LazyDeferredVirtualTableView"
+            category="org.eclipse.ui.tests.tableViewerViews"
+            name="Lazy Virtual Table with Deferred Updates and Ranges"
+            id="org.eclipse.ui.tests.lazyViewDeferred"/>
       <category
             name="Table Viewer Tests"
             id="org.eclipse.ui.tests.tableViewerViews"/>      
