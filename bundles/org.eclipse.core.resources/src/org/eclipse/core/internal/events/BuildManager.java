@@ -46,7 +46,7 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 		// inside an operation, the tree should be open.
 		workspace.newWorkingTree();
 		try {
-			// ResourceStats.startBuild(builderName);
+			//ResourceStats.startBuild(builder.getClass().getName());
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					IProject[] builders = currentBuilder.build(trigger, args, monitor);
@@ -72,7 +72,7 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 			};
 			Platform.run(code);
 		} finally {
-			// ResourceStats.endBuild();
+			//ResourceStats.endBuild();
 			// Always remember the current state as the last built state.
 			// If the build went ok, commit it, otherwise abort.  Be sure to clean
 			// up after ourselves.

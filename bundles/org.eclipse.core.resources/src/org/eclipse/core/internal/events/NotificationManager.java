@@ -34,6 +34,7 @@ public void addListener(IResourceChangeListener listener, int eventMask) {
 	synchronized (listeners) {
 		listeners.add(listener, eventMask);
 	}
+	ResourceStats.listenerAdded(listener);
 }
 private void broadcastChanges(ResourceChangeListenerList.ListenerEntry[] resourceListeners, int type, IResourceDelta delta, boolean lockTree) {
 	// if the delta is empty the root's change is undefined, there is nothing to do
@@ -156,6 +157,7 @@ public void removeListener(IResourceChangeListener listener) {
 	synchronized (listeners) {
 		listeners.remove(listener);
 	}
+	ResourceStats.listenerRemoved(listener);
 }
 public void shutdown(IProgressMonitor monitor) {
 }
