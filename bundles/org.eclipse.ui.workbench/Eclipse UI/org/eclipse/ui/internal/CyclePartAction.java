@@ -185,9 +185,7 @@ private void openDialog(WorkbenchPage page) {
 	table.setBounds(tableBounds);
 	dialog.pack();
 
- 	tc.setWidth(table.getClientArea().width);
- 	if (tableItemCount > 1)
-		table.showSelection();	
+ 	tc.setWidth(table.getClientArea().width);	
 	table.setFocus();
 	table.addFocusListener(new FocusListener() {
 		public void focusGained(FocusEvent e){}
