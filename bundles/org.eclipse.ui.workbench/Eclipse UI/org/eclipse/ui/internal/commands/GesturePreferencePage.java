@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -68,10 +66,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
+public class GesturePreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 
-	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeyPreferencePage.class.getName());
+	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(GesturePreferencePage.class.getName());
 
 	private final static String COMMAND_CONFLICT = Util.getString(resourceBundle, "commandConflict"); //$NON-NLS-1$
 	private final static String COMMAND_NOTHING = Util.getString(resourceBundle, "commandNothing"); //$NON-NLS-1$
@@ -154,7 +152,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 		public Object[] getChildren(Object parentElement) {
 			List children = new ArrayList();
-			List commands = new ArrayList(KeyPreferencePage.this.commands);
+			List commands = new ArrayList(GesturePreferencePage.this.commands);
 			Collections.sort(commands, Command.nameComparator());
 
 			if (parentElement instanceof Category) {
@@ -167,7 +165,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 						children.add(command);											
 				}
 			} else if (parentElement == null) {
-				List categories = new ArrayList(KeyPreferencePage.this.categories);
+				List categories = new ArrayList(GesturePreferencePage.this.categories);
 				Collections.sort(categories, Category.nameComparator());
 				children.addAll(categories);
 	
@@ -257,27 +255,27 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private SortedMap scopesById;
 	private SortedMap scopesByName;
 
-	private List coreActiveKeyConfigurations;
-	private List coreKeyBindings;
-	private List coreKeyConfigurations;
+	private List coreActiveGestureConfigurations;
+	private List coreGestureBindings;
+	private List coreGestureConfigurations;
 
-	private List localActiveKeyConfigurations;
-	private List localKeyBindings;
-	private List localKeyConfigurations;
+	private List localActiveGestureConfigurations;
+	private List localGestureBindings;
+	private List localGestureConfigurations;
 
-	private List preferenceActiveKeyConfigurations;
-	private List preferenceKeyBindings;
-	private List preferenceKeyConfigurations;
+	private List preferenceActiveGestureConfigurations;
+	private List preferenceGestureBindings;
+	private List preferenceGestureConfigurations;
 
-	private ActiveConfiguration activeKeyConfiguration;	
-	private List activeKeyConfigurations;
-	private List keyConfigurations;
-	private SortedMap keyConfigurationsById;
-	private SortedMap keyConfigurationsByName;	
+	private ActiveConfiguration activeGestureConfiguration;	
+	private List activeGestureConfigurations;
+	private List gestureConfigurations;
+	private SortedMap gestureConfigurationsById;
+	private SortedMap gestureConfigurationsByName;	
 	private SortedMap tree;
 	private List commandRecords = new ArrayList();	
-	private List keySequenceRecords = new ArrayList();
-	private SortedMap keySequencesByName;
+	private List gestureSequenceRecords = new ArrayList();
+	private SortedMap gestureSequencesByName;
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
@@ -288,18 +286,18 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		} catch (IOException eIO) {
 		}
 	
-		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
-		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
-		Manager.validateSequenceBindings(preferenceKeyBindings);		
-		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
+		preferenceActiveGestureConfigurations = new ArrayList(preferenceRegistry.getActiveGestureConfigurations());
+		preferenceGestureBindings = new ArrayList(preferenceRegistry.getGestureBindings());
+		Manager.validateSequenceBindings(preferenceGestureBindings);		
+		preferenceGestureConfigurations = new ArrayList(preferenceRegistry.getGestureConfigurations());
 	}
 
 	public boolean performOk() {
 		copyFromUI();
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
-		preferenceRegistry.setActiveKeyConfigurations(preferenceActiveKeyConfigurations);
-		preferenceRegistry.setKeyBindings(preferenceKeyBindings);
-		preferenceRegistry.setKeyConfigurations(preferenceKeyConfigurations);
+		preferenceRegistry.setActiveGestureConfigurations(preferenceActiveGestureConfigurations);
+		preferenceRegistry.setGestureBindings(preferenceGestureBindings);
+		preferenceRegistry.setGestureConfigurations(preferenceGestureConfigurations);
 		
 		try {
 			preferenceRegistry.save();
@@ -309,7 +307,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		Manager.getInstance().reset();
 
 		if (workbench instanceof Workbench)
-			((Workbench) workbench).updateActiveKeyBindingService();
+			((Workbench) workbench).updateActiveGestureBindingService();
 
 		return super.performOk();
 	}
@@ -398,15 +396,15 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				comboScope.setItems((String[]) names.toArray(new String[names.size()]));
 			}		
 
-			coreActiveKeyConfigurations = new ArrayList(coreRegistry.getActiveKeyConfigurations());
-			coreKeyBindings = new ArrayList(coreRegistry.getKeyBindings());
-			Manager.validateSequenceBindings(coreKeyBindings);
-			coreKeyConfigurations = new ArrayList(coreRegistry.getKeyConfigurations());
+			coreActiveGestureConfigurations = new ArrayList(coreRegistry.getActiveGestureConfigurations());
+			coreGestureBindings = new ArrayList(coreRegistry.getGestureBindings());
+			Manager.validateSequenceBindings(coreGestureBindings);
+			coreGestureConfigurations = new ArrayList(coreRegistry.getGestureConfigurations());
 
-			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
-			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
-			Manager.validateSequenceBindings(localKeyBindings);
-			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
+			localActiveGestureConfigurations = new ArrayList(localRegistry.getActiveGestureConfigurations());
+			localGestureBindings = new ArrayList(localRegistry.getGestureBindings());
+			Manager.validateSequenceBindings(localGestureBindings);
+			localGestureConfigurations = new ArrayList(localRegistry.getGestureConfigurations());
 
 			copyToUI();
 			update();
@@ -431,65 +429,65 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		restoreDefaultsMessageBox.setMessage(Util.getString(resourceBundle, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
 		
 		if (restoreDefaultsMessageBox.open() == SWT.YES) {
-			preferenceActiveKeyConfigurations = new ArrayList();
-			preferenceKeyBindings = new ArrayList();
-			preferenceKeyConfigurations = new ArrayList();
+			preferenceActiveGestureConfigurations = new ArrayList();
+			preferenceGestureBindings = new ArrayList();
+			preferenceGestureConfigurations = new ArrayList();
 			copyToUI();
 		}
 	}
 
 	private void copyFromUI() {
-		activeKeyConfiguration = null; 		
-		preferenceActiveKeyConfigurations = new ArrayList();
-		String activeKeyConfigurationId = getActiveKeyConfigurationId();		
+		activeGestureConfiguration = null; 		
+		preferenceActiveGestureConfigurations = new ArrayList();
+		String activeGestureConfigurationId = getActiveGestureConfigurationId();		
 
-		if (activeKeyConfigurationId != null) {
-			activeKeyConfiguration = ActiveConfiguration.create(null, activeKeyConfigurationId);
-			preferenceActiveKeyConfigurations.add(activeKeyConfiguration);
+		if (activeGestureConfigurationId != null) {
+			activeGestureConfiguration = ActiveConfiguration.create(null, activeGestureConfigurationId);
+			preferenceActiveGestureConfigurations.add(activeGestureConfiguration);
 		}
 
-		preferenceKeyBindings = new ArrayList(solve(tree));
+		preferenceGestureBindings = new ArrayList(solve(tree));
 	}
 
 	private void copyToUI() {	
-		List activeKeyConfigurations = new ArrayList();
-		activeKeyConfigurations.addAll(coreActiveKeyConfigurations);
-		activeKeyConfigurations.addAll(localActiveKeyConfigurations);
-		activeKeyConfigurations.addAll(preferenceActiveKeyConfigurations);
+		List activeGestureConfigurations = new ArrayList();
+		activeGestureConfigurations.addAll(coreActiveGestureConfigurations);
+		activeGestureConfigurations.addAll(localActiveGestureConfigurations);
+		activeGestureConfigurations.addAll(preferenceActiveGestureConfigurations);
 
-		if (!Util.equals(activeKeyConfigurations, this.activeKeyConfigurations)) {
-			this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
+		if (!Util.equals(activeGestureConfigurations, this.activeGestureConfigurations)) {
+			this.activeGestureConfigurations = Collections.unmodifiableList(activeGestureConfigurations);
 			
-			if (this.activeKeyConfigurations.size() >= 1)			
-				activeKeyConfiguration = (ActiveConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);
+			if (this.activeGestureConfigurations.size() >= 1)
+				activeGestureConfiguration = (ActiveConfiguration) this.activeGestureConfigurations.get(this.activeGestureConfigurations.size() - 1);
 			else
-				activeKeyConfiguration = null;				
+				activeGestureConfiguration = null;				
 		}
 		
-		List keyConfigurations = new ArrayList();
-		keyConfigurations.addAll(coreKeyConfigurations);
-		keyConfigurations.addAll(localKeyConfigurations);
-		keyConfigurations.addAll(preferenceKeyConfigurations);
+		List gestureConfigurations = new ArrayList();
+		gestureConfigurations.addAll(coreGestureConfigurations);
+		gestureConfigurations.addAll(localGestureConfigurations);
+		gestureConfigurations.addAll(preferenceGestureConfigurations);
 
-		if (!Util.equals(keyConfigurations, this.keyConfigurations)) {
-			this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
-			keyConfigurationsById = Collections.unmodifiableSortedMap(Configuration.sortedMapById(this.keyConfigurations));
-			keyConfigurationsByName = Collections.unmodifiableSortedMap(Configuration.sortedMapByName(this.keyConfigurations));
+		if (!Util.equals(gestureConfigurations, this.gestureConfigurations)) {
+			this.gestureConfigurations = Collections.unmodifiableList(gestureConfigurations);
+			gestureConfigurationsById = Collections.unmodifiableSortedMap(Configuration.sortedMapById(this.gestureConfigurations));
+			gestureConfigurationsByName = Collections.unmodifiableSortedMap(Configuration.sortedMapByName(this.gestureConfigurations));
 			List names = new ArrayList();
-			Iterator iterator = this.keyConfigurations.iterator();
+			Iterator iterator = this.gestureConfigurations.iterator();
 				
 			while (iterator.hasNext()) {
-				Configuration keyConfiguration = (Configuration) iterator.next();
+				Configuration gestureConfiguration = (Configuration) iterator.next();
 					
-				if (keyConfiguration != null) {
-					String name = keyConfiguration.getName();
-					String parent = keyConfiguration.getParent();
+				if (gestureConfiguration != null) {
+					String name = gestureConfiguration.getName();
+					String parent = gestureConfiguration.getParent();
 					
 					if (parent != null) {
-						keyConfiguration = (Configuration) keyConfigurationsById.get(parent);
+						gestureConfiguration = (Configuration) gestureConfigurationsById.get(parent);
 						
-						if (keyConfiguration != null)
-							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, keyConfiguration.getName() }); //$NON-NLS-1$
+						if (gestureConfiguration != null)
+							name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, gestureConfiguration.getName() }); //$NON-NLS-1$
 					}	
 
 					names.add(name);
@@ -501,30 +499,30 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			comboConfiguration.setItems((String[]) names.toArray(new String[names.size()]));
 		}		
 
-		setActiveKeyConfigurationId(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : null);
+		setActiveGestureConfigurationId(activeGestureConfiguration != null ? activeGestureConfiguration.getValue() : null);
 
-		SortedSet keyBindingSet = new TreeSet();
-		keyBindingSet.addAll(coreKeyBindings);
-		keyBindingSet.addAll(localKeyBindings);
-		keyBindingSet.addAll(preferenceKeyBindings);
+		SortedSet gestureBindingSet = new TreeSet();
+		gestureBindingSet.addAll(coreGestureBindings);
+		gestureBindingSet.addAll(localGestureBindings);
+		gestureBindingSet.addAll(preferenceGestureBindings);
 
-		tree = build(keyBindingSet);	
+		tree = build(gestureBindingSet);	
 
-		keySequencesByName = new TreeMap();
+		gestureSequencesByName = new TreeMap();
 		Iterator iterator = tree.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
 			if (object instanceof Sequence) {
-				Sequence keySequence = (Sequence) object;
-				String name = KeySupport.formatSequence(keySequence, false);
-				keySequencesByName.put(name, keySequence);
+				Sequence gestureSequence = (Sequence) object;
+				String name = GestureSupport.formatSequence(gestureSequence, false);
+				gestureSequencesByName.put(name, gestureSequence);
 			}
 		}		
 
-		Set keySequenceNameSet = keySequencesByName.keySet();
-		comboSequence.setItems((String[]) keySequenceNameSet.toArray(new String[keySequenceNameSet.size()]));
+		Set gestureSequenceNameSet = gestureSequencesByName.keySet();
+		comboSequence.setItems((String[]) gestureSequenceNameSet.toArray(new String[gestureSequenceNameSet.size()]));
 		selectedTreeViewerCommands();
 	}
 
@@ -536,26 +534,26 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 
-		Composite compositeActiveKeyConfiguration = new Composite(composite, SWT.NULL);
-		compositeActiveKeyConfiguration.setFont(composite.getFont());
+		Composite compositeActiveGestureConfiguration = new Composite(composite, SWT.NULL);
+		compositeActiveGestureConfiguration.setFont(composite.getFont());
 		gridLayout = new GridLayout();
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.numColumns = 5;
-		compositeActiveKeyConfiguration.setLayout(gridLayout);
+		compositeActiveGestureConfiguration.setLayout(gridLayout);
 
-		labelActiveConfiguration = new Label(compositeActiveKeyConfiguration, SWT.LEFT);
-		labelActiveConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		labelActiveConfiguration = new Label(compositeActiveGestureConfiguration, SWT.LEFT);
+		labelActiveConfiguration.setFont(compositeActiveGestureConfiguration.getFont());
 		labelActiveConfiguration.setText(Util.getString(resourceBundle, "labelActiveConfiguration")); //$NON-NLS-1$
 
-		comboActiveConfiguration = new Combo(compositeActiveKeyConfiguration, SWT.READ_ONLY);
-		comboActiveConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		comboActiveConfiguration = new Combo(compositeActiveGestureConfiguration, SWT.READ_ONLY);
+		comboActiveConfiguration.setFont(compositeActiveGestureConfiguration.getFont());
 		GridData gridData = new GridData();
 		gridData.widthHint = 200;
 		comboActiveConfiguration.setLayoutData(gridData);
 
-		//buttonNew = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
-		//buttonNew.setFont(compositeActiveKeyConfiguration.getFont());
+		//buttonNew = new Button(compositeActiveGestureConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonNew.setFont(compositeActiveGestureConfiguration.getFont());
 		//gridData = new GridData();
 		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		//int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -564,8 +562,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//buttonNew.setLayoutData(gridData);
 		//buttonNew.setVisible(false);	
 
-		//buttonRename = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
-		//buttonRename.setFont(compositeActiveKeyConfiguration.getFont());
+		//buttonRename = new Button(compositeActiveGestureConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonRename.setFont(compositeActiveGestureConfiguration.getFont());
 		//gridData = new GridData();
 		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		//widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -574,8 +572,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//buttonRename.setLayoutData(gridData);		
 		//buttonRename.setVisible(false);	
 		
-		//buttonDelete = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
-		//buttonDelete.setFont(compositeActiveKeyConfiguration.getFont());
+		//buttonDelete = new Button(compositeActiveGestureConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonDelete.setFont(compositeActiveGestureConfiguration.getFont());
 		//gridData = new GridData();
 		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		//widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -583,16 +581,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//gridData.widthHint = Math.max(widthHint, buttonDelete.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		//buttonDelete.setLayoutData(gridData);	
 		//buttonDelete.setVisible(false);	
-
-		Button buttonTest = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
-		buttonTest.setFont(compositeActiveKeyConfiguration.getFont());
-		gridData = new GridData();
-		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonTest.setText("Test" /*Util.getString(resourceBundle, "buttonTest")*/); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonTest.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
-		buttonTest.setLayoutData(gridData);
-		buttonTest.setVisible(false);
 
 		Label labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		labelSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -712,9 +700,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));	
 		
-		//tableViewerKeySequencesForCommand = new TableViewer(tableKeySequencesForCommand);
-		//tableViewerKeySequencesForCommand.setContentProvider(new TableViewerKeySequencesForCommandContentProvider());
-		//tableViewerKeySequencesForCommand.setLabelProvider(new TableViewerKeySequencesForCommandLabelProvider());
+		//tableViewerGestureSequencesForCommand = new TableViewer(tableGestureSequencesForCommand);
+		//tableViewerGestureSequencesForCommand.setContentProvider(new TableViewerGestureSequencesForCommandContentProvider());
+		//tableViewerGestureSequencesForCommand.setLabelProvider(new TableViewerGestureSequencesForCommandLabelProvider());
 
 		Composite compositeAssignmentChange = new Composite(compositeAssignmentRight, SWT.NULL);
 		compositeAssignmentChange.setFont(compositeAssignmentRight.getFont());
@@ -782,7 +770,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		buttonAdd.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonAdd.setText(Util.getString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);		
@@ -856,13 +844,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));		
 		
-		//tableViewerCommandsForKeySequence = new TableViewer(tableCommandsForKeySequence);
-		//tableViewerCommandsForKeySequence.setContentProvider(new TableViewerCommandsForKeySequenceContentProvider());
-		//tableViewerCommandsForKeySequence.setLabelProvider(new TableViewerCommandsForKeySequenceLabelProvider());
+		//tableViewerCommandsForGestureSequence = new TableViewer(tableCommandsForGestureSequence);
+		//tableViewerCommandsForGestureSequence.setContentProvider(new TableViewerCommandsForGestureSequenceContentProvider());
+		//tableViewerCommandsForGestureSequence.setLabelProvider(new TableViewerCommandsForGestureSequenceLabelProvider());
 
 		comboActiveConfiguration.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboActiveKeyConfiguration();
+				selectedComboActiveGestureConfiguration();
 			}	
 		});
 
@@ -880,12 +868,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	public void widgetSelected(SelectionEvent selectionEvent) {
 		//	}	
 		//});
-
-		buttonTest.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				dumpCommandsByCategory();
-			}	
-		});
 
 		treeViewerCommands.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -906,35 +888,35 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		tableSequencesForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				doubleClickedTableKeySequencesForCommand();	
+				doubleClickedTableGestureSequencesForCommand();	
 			}			
 		});		
 
 		tableSequencesForCommand.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableKeySequencesForCommand();
+				selectedTableGestureSequencesForCommand();
 			}	
 		});
 	
-		//tableViewerKeySequencesForCommand.addDoubleClickListener(new IDoubleClickListener() {
+		//tableViewerGestureSequencesForCommand.addDoubleClickListener(new IDoubleClickListener() {
 		//	public void doubleClick(DoubleClickEvent event) {
 		//	}
 		//});
 
-		//tableViewerKeySequencesForCommand.addSelectionChangedListener(new ISelectionChangedListener() {
+		//tableViewerGestureSequencesForCommand.addSelectionChangedListener(new ISelectionChangedListener() {
 		//	public void selectionChanged(SelectionChangedEvent event) {
 		//	}
 		//});
 
 		comboSequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {
-				modifiedComboKeySequence();
+				modifiedComboGestureSequence();
 			}	
 		});
 
 		comboSequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboKeySequence();
+				selectedComboGestureSequence();
 			}	
 		});
 
@@ -946,7 +928,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 		comboConfiguration.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboKeyConfiguration();
+				selectedComboGestureConfiguration();
 			}	
 		});
 
@@ -970,31 +952,31 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		tableCommandsForSequence.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				doubleClickedTableCommandsForKeySequence();	
+				doubleClickedTableCommandsForGestureSequence();	
 			}			
 		});		
 
 		tableCommandsForSequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableCommandsForKeySequence();
+				selectedTableCommandsForGestureSequence();
 			}	
 		});
 
-		//tableViewerCommandsForKeySequence.addDoubleClickListener(new IDoubleClickListener() {
+		//tableViewerCommandsForGestureSequence.addDoubleClickListener(new IDoubleClickListener() {
 		//	public void doubleClick(DoubleClickEvent event) {
 		//	}
 		//});
 
-		//tableViewerCommandsForKeySequence.addSelectionChangedListener(new ISelectionChangedListener() {
+		//tableViewerCommandsForGestureSequence.addSelectionChangedListener(new ISelectionChangedListener() {
 		//	public void selectionChanged(SelectionChangedEvent event) {
 		//	}
 		//});
 				
-		// TODO: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEY_PREFERENCE_PAGE);
+		// TODO: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_GESTURE_PREFERENCE_PAGE);
 		return composite;	
 	}
 
-	private void selectedComboActiveKeyConfiguration() {		
+	private void selectedComboActiveGestureConfiguration() {		
 	}
 
 	private void doubleClickedTreeViewerCommands() {
@@ -1012,75 +994,75 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		buildTableCommand();
-		setKeySequence(null);
+		setGestureSequence(null);
 		// TODO: add 'globalScope' element to commands extension point to remove this.
 		setScopeId("org.eclipse.ui.globalScope"); //$NON-NLS-1$
-		setKeyConfigurationId(getActiveKeyConfigurationId());				
-		Sequence keySequence = getKeySequence();
+		setGestureConfigurationId(getActiveGestureConfigurationId());				
+		Sequence gestureSequence = getGestureSequence();
 		String scopeId = getScopeId();
-		String keyConfigurationId = getKeyConfigurationId();
-		selectTableCommand(scopeId, keyConfigurationId, keySequence);				
+		String gestureConfigurationId = getGestureConfigurationId();
+		selectTableCommand(scopeId, gestureConfigurationId, gestureSequence);				
 		update();
 	}
 
-	private void doubleClickedTableKeySequencesForCommand() {
+	private void doubleClickedTableGestureSequencesForCommand() {
 	}
 		
-	private void selectedTableKeySequencesForCommand() {
+	private void selectedTableGestureSequencesForCommand() {
 		CommandRecord commandRecord = (CommandRecord) getSelectedCommandRecord();
 		
 		if (commandRecord != null) {
 			setScopeId(commandRecord.scope);
-			setKeyConfigurationId(commandRecord.configuration);				
-			setKeySequence(commandRecord.sequence);
+			setGestureConfigurationId(commandRecord.configuration);				
+			setGestureSequence(commandRecord.sequence);
 		}
 		
 		update();
 	}
 
-	private void modifiedComboKeySequence() {
-		selectedComboKeySequence();
+	private void modifiedComboGestureSequence() {
+		selectedComboGestureSequence();
 	}
 
-	private void selectedComboKeySequence() {
-		Sequence keySequence = getKeySequence();
+	private void selectedComboGestureSequence() {
+		Sequence gestureSequence = getGestureSequence();
 		String scopeId = getScopeId();
-		String keyConfigurationId = getKeyConfigurationId();
-		selectTableCommand(scopeId, keyConfigurationId, keySequence);						
-		keySequenceRecords.clear();
-		buildSequenceRecords(tree, keySequence, keySequenceRecords);
-		buildTableKeySequence();	
-		selectTableKeySequence(scopeId, keyConfigurationId);		
+		String gestureConfigurationId = getGestureConfigurationId();
+		selectTableCommand(scopeId, gestureConfigurationId, gestureSequence);						
+		gestureSequenceRecords.clear();
+		buildSequenceRecords(tree, gestureSequence, gestureSequenceRecords);
+		buildTableGestureSequence();	
+		selectTableGestureSequence(scopeId, gestureConfigurationId);		
 		update();
 	}
 
 	private void selectedComboScope() {
-		Sequence keySequence = getKeySequence();
+		Sequence gestureSequence = getGestureSequence();
 		String scopeId = getScopeId();
-		String keyConfigurationId = getKeyConfigurationId();
-		selectTableCommand(scopeId, keyConfigurationId, keySequence);
-		selectTableKeySequence(scopeId, keyConfigurationId);
+		String gestureConfigurationId = getGestureConfigurationId();
+		selectTableCommand(scopeId, gestureConfigurationId, gestureSequence);
+		selectTableGestureSequence(scopeId, gestureConfigurationId);
 		update();
 	}
 
-	private void selectedComboKeyConfiguration() {
-		Sequence keySequence = getKeySequence();
+	private void selectedComboGestureConfiguration() {
+		Sequence gestureSequence = getGestureSequence();
 		String scopeId = getScopeId();
-		String keyConfigurationId = getKeyConfigurationId();
-		selectTableCommand(scopeId, keyConfigurationId, keySequence);
-		selectTableKeySequence(scopeId, keyConfigurationId);
+		String gestureConfigurationId = getGestureConfigurationId();
+		selectTableCommand(scopeId, gestureConfigurationId, gestureSequence);
+		selectTableGestureSequence(scopeId, gestureConfigurationId);
 		update();
 	}
 
 	private void selectedButtonChange() {
-		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
+		Sequence gestureSequence = getGestureSequence();
+		boolean validGestureSequence = gestureSequence != null && Manager.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
-		String keyConfigurationId = getKeyConfigurationId();
-		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
+		String gestureConfigurationId = getGestureConfigurationId();
+		boolean validGestureConfigurationId = gestureConfigurationId != null && gestureConfigurationsById.get(gestureConfigurationId) != null;
 	
-		if (validKeySequence && validScopeId && validKeyConfigurationId) {	
+		if (validGestureSequence && validScopeId && validGestureConfigurationId) {	
 			String commandId = null;
 			ISelection selection = treeViewerCommands.getSelection();
 		
@@ -1094,30 +1076,30 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			CommandRecord commandRecord = getSelectedCommandRecord();
 		
 			if (commandRecord == null)
-				set(tree, keySequence, scopeId, keyConfigurationId, commandId);			 
+				set(tree, gestureSequence, scopeId, gestureConfigurationId, commandId);			 
 			else {
 				if (!commandRecord.customSet.isEmpty())
-					clear(tree, keySequence, scopeId, keyConfigurationId);
+					clear(tree, gestureSequence, scopeId, gestureConfigurationId);
 				else
-					set(tree, keySequence, scopeId, keyConfigurationId, null);
+					set(tree, gestureSequence, scopeId, gestureConfigurationId, null);
 			}
 
 			commandRecords.clear();
 			buildCommandRecords(tree, commandId, commandRecords);
 			buildTableCommand();
-			selectTableCommand(scopeId, keyConfigurationId, keySequence);							
-			keySequenceRecords.clear();
-			buildSequenceRecords(tree, keySequence, keySequenceRecords);
-			buildTableKeySequence();	
-			selectTableKeySequence(scopeId, keyConfigurationId);
+			selectTableCommand(scopeId, gestureConfigurationId, gestureSequence);							
+			gestureSequenceRecords.clear();
+			buildSequenceRecords(tree, gestureSequence, gestureSequenceRecords);
+			buildTableGestureSequence();	
+			selectTableGestureSequence(scopeId, gestureConfigurationId);
 			update();
 		}
 	}
 
-	private void doubleClickedTableCommandsForKeySequence() {	
+	private void doubleClickedTableCommandsForGestureSequence() {	
 	}
 
-	private void selectedTableCommandsForKeySequence() {
+	private void selectedTableCommandsForGestureSequence() {
 	}
 
 	private void update() {
@@ -1133,12 +1115,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		boolean commandSelected = command != null;
 
-		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && Manager.validateSequence(keySequence);
+		Sequence gestureSequence = getGestureSequence();
+		boolean validGestureSequence = gestureSequence != null && Manager.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
-		String keyConfigurationId = getKeyConfigurationId();
-		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
+		String gestureConfigurationId = getGestureConfigurationId();
+		boolean validGestureConfigurationId = gestureConfigurationId != null && gestureConfigurationsById.get(gestureConfigurationId) != null;
 
 		labelName.setEnabled(commandSelected);
 		textName.setEnabled(commandSelected);
@@ -1155,8 +1137,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		buttonAdd.setEnabled(false);
 		buttonRemove.setEnabled(false);
 		buttonRestore.setEnabled(false);
-		labelCommandsForSequence.setEnabled(validKeySequence);		
-		tableCommandsForSequence.setEnabled(validKeySequence);		
+		labelCommandsForSequence.setEnabled(validGestureSequence);		
+		tableCommandsForSequence.setEnabled(validGestureSequence);		
 
 		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);
 		textDescription.setText(commandSelected ? command.getDescription() : Util.ZERO_LENGTH_STRING);
@@ -1164,16 +1146,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
 		if (commandRecord == null)
-			buttonAdd.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
+			buttonAdd.setEnabled(commandSelected && validGestureSequence && validScopeId && validGestureConfigurationId);
 		else {
 			if (!commandRecord.customSet.isEmpty() && !commandRecord.defaultSet.isEmpty()) {
-				buttonRestore.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
+				buttonRestore.setEnabled(commandSelected && validGestureSequence && validScopeId && validGestureConfigurationId);
 			} else
-				buttonRemove.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
+				buttonRemove.setEnabled(commandSelected && validGestureSequence && validScopeId && validGestureConfigurationId);
 		}
 
-		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, false) + '\''}); //$NON-NLS-1$
+		if (validGestureSequence) {
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ GestureSupport.formatSequence(gestureSequence, false) + '\''}); //$NON-NLS-1$
 			labelCommandsForSequence.setText(text);
 		} else 
 			labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
@@ -1341,13 +1323,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 			Scope scope = (Scope) scopesById.get(commandRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
-			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
+			Configuration gestureConfiguration = (Configuration) gestureConfigurationsById.get(commandRecord.configuration);			
+			tableItem.setText(2, gestureConfiguration != null ? gestureConfiguration.getName() : bracket(commandRecord.configuration));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (commandRecord.sequence != null)
-				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, false));
+				stringBuffer.append(GestureSupport.formatSequence(commandRecord.sequence, false));
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
@@ -1389,30 +1371,30 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}			
 	}
 	
-	private void buildTableKeySequence() {
+	private void buildTableGestureSequence() {
 		tableCommandsForSequence.removeAll();
 	
-		for (int i = 0; i < keySequenceRecords.size(); i++) {
-			SequenceRecord keySequenceRecord = (SequenceRecord) keySequenceRecords.get(i);
+		for (int i = 0; i < gestureSequenceRecords.size(); i++) {
+			SequenceRecord gestureSequenceRecord = (SequenceRecord) gestureSequenceRecords.get(i);
 			int difference = DIFFERENCE_NONE;
 			String commandId = null;
 			boolean commandConflict = false;
 			String alternateCommandId = null;
 			boolean alternateCommandConflict = false;
 
-			if (keySequenceRecord.customSet.isEmpty()) {
-				commandId = keySequenceRecord.defaultCommand;															
-				commandConflict = keySequenceRecord.defaultConflict;
+			if (gestureSequenceRecord.customSet.isEmpty()) {
+				commandId = gestureSequenceRecord.defaultCommand;															
+				commandConflict = gestureSequenceRecord.defaultConflict;
 			} else {
-				commandId = keySequenceRecord.customCommand;															
-				commandConflict = keySequenceRecord.customConflict;						
+				commandId = gestureSequenceRecord.customCommand;															
+				commandConflict = gestureSequenceRecord.customConflict;						
 
-				if (keySequenceRecord.defaultSet.isEmpty())
+				if (gestureSequenceRecord.defaultSet.isEmpty())
 					difference = DIFFERENCE_ADD;
 				else {
 					difference = DIFFERENCE_CHANGE;									
-					alternateCommandId = keySequenceRecord.defaultCommand;
-					alternateCommandConflict = keySequenceRecord.defaultConflict;																		
+					alternateCommandId = gestureSequenceRecord.defaultCommand;
+					alternateCommandConflict = gestureSequenceRecord.defaultConflict;																		
 				}
 			}
 
@@ -1436,10 +1418,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(keySequenceRecord.scope);
-			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
-			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
+			Scope scope = (Scope) scopesById.get(gestureSequenceRecord.scope);
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(gestureSequenceRecord.scope));
+			Configuration gestureConfiguration = (Configuration) gestureConfigurationsById.get(gestureSequenceRecord.configuration);			
+			tableItem.setText(2, gestureConfiguration != null ? gestureConfiguration.getName() : bracket(gestureSequenceRecord.configuration));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 			String commandName = null;
@@ -1497,13 +1479,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void selectTableCommand(String scopeId, String keyConfigurationId, Sequence keySequence) {	
+	private void selectTableCommand(String scopeId, String gestureConfigurationId, Sequence gestureSequence) {	
 		int selection = -1;
 		
 		for (int i = 0; i < commandRecords.size(); i++) {
 			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);			
 			
-			if (Util.equals(scopeId, commandRecord.scope) && Util.equals(keyConfigurationId, commandRecord.configuration) && Util.equals(keySequence, commandRecord.sequence)) {
+			if (Util.equals(scopeId, commandRecord.scope) && Util.equals(gestureConfigurationId, commandRecord.configuration) && Util.equals(gestureSequence, commandRecord.sequence)) {
 				selection = i;
 				break;			
 			}			
@@ -1520,13 +1502,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void selectTableKeySequence(String scopeId, String keyConfigurationId) {		
+	private void selectTableGestureSequence(String scopeId, String gestureConfigurationId) {		
 		int selection = -1;
 		
-		for (int i = 0; i < keySequenceRecords.size(); i++) {
-			SequenceRecord keySequenceRecord = (SequenceRecord) keySequenceRecords.get(i);			
+		for (int i = 0; i < gestureSequenceRecords.size(); i++) {
+			SequenceRecord gestureSequenceRecord = (SequenceRecord) gestureSequenceRecords.get(i);			
 			
-			if (Util.equals(scopeId, keySequenceRecord.scope) && Util.equals(keyConfigurationId, keySequenceRecord.configuration)) {
+			if (Util.equals(scopeId, gestureSequenceRecord.scope) && Util.equals(gestureConfigurationId, gestureSequenceRecord.configuration)) {
 				selection = i;
 				break;			
 			}			
@@ -1552,28 +1534,28 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			return null;
 	}
 
-	private SequenceRecord getSelectedKeySequenceRecord() {		
+	private SequenceRecord getSelectedGestureSequenceRecord() {		
 		int selection = tableCommandsForSequence.getSelectionIndex();
 		
-		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForSequence.getSelectionCount() == 1)
-			return (SequenceRecord) keySequenceRecords.get(selection);
+		if (selection >= 0 && selection < gestureSequenceRecords.size() && tableCommandsForSequence.getSelectionCount() == 1)
+			return (SequenceRecord) gestureSequenceRecords.get(selection);
 		else
 			return null;
 	}
 
-	private Sequence getKeySequence() {
-		Sequence keySequence = null;
+	private Sequence getGestureSequence() {
+		Sequence gestureSequence = null;
 		String name = comboSequence.getText();		
-		keySequence = (Sequence) keySequencesByName.get(name);
+		gestureSequence = (Sequence) gestureSequencesByName.get(name);
 			
-		if (keySequence == null)
-			keySequence = KeySupport.parseSequence(name);
+		if (gestureSequence == null)
+			gestureSequence = GestureSupport.parseSequence(name);
 
-		return keySequence;
+		return gestureSequence;
 	}
 
-	private void setKeySequence(Sequence keySequence) {
-		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence, false) : Util.ZERO_LENGTH_STRING);
+	private void setGestureSequence(Sequence gestureSequence) {
+		comboSequence.setText(gestureSequence != null ? GestureSupport.formatSequence(gestureSequence, false) : Util.ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {
@@ -1606,29 +1588,29 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private String getActiveKeyConfigurationId() {
+	private String getActiveGestureConfigurationId() {
 		int selection = comboActiveConfiguration.getSelectionIndex();
-		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+		List gestureConfigurations = new ArrayList(gestureConfigurationsByName.values());
 		
-		if (selection >= 0 && selection < keyConfigurations.size()) {
-			Configuration keyConfiguration = (Configuration) keyConfigurations.get(selection);
-			return keyConfiguration.getId();				
+		if (selection >= 0 && selection < gestureConfigurations.size()) {
+			Configuration gestureConfiguration = (Configuration) gestureConfigurations.get(selection);
+			return gestureConfiguration.getId();				
 		}
 		
 		return null;
 	}
 
-	private void setActiveKeyConfigurationId(String keyConfigurationId) {				
+	private void setActiveGestureConfigurationId(String gestureConfigurationId) {				
 		comboActiveConfiguration.clearSelection();
 		comboActiveConfiguration.deselectAll();
 		
-		if (keyConfigurationId != null) {
-			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+		if (gestureConfigurationId != null) {
+			List gestureConfigurations = new ArrayList(gestureConfigurationsByName.values());
 				
-			for (int i = 0; i < keyConfigurations.size(); i++) {
-				Configuration keyConfiguration = (Configuration) keyConfigurations.get(i);		
+			for (int i = 0; i < gestureConfigurations.size(); i++) {
+				Configuration gestureConfiguration = (Configuration) gestureConfigurations.get(i);		
 				
-				if (keyConfiguration.getId().equals(keyConfigurationId)) {
+				if (gestureConfiguration.getId().equals(gestureConfigurationId)) {
 					comboActiveConfiguration.select(i);
 					break;		
 				}
@@ -1636,29 +1618,29 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private String getKeyConfigurationId() {
+	private String getGestureConfigurationId() {
 		int selection = comboConfiguration.getSelectionIndex();
-		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+		List gestureConfigurations = new ArrayList(gestureConfigurationsByName.values());
 		
-		if (selection >= 0 && selection < keyConfigurations.size()) {
-			Configuration keyConfiguration = (Configuration) keyConfigurations.get(selection);
-			return keyConfiguration.getId();				
+		if (selection >= 0 && selection < gestureConfigurations.size()) {
+			Configuration gestureConfiguration = (Configuration) gestureConfigurations.get(selection);
+			return gestureConfiguration.getId();				
 		}
 		
 		return null;
 	}
 
-	private void setKeyConfigurationId(String keyConfigurationId) {				
+	private void setGestureConfigurationId(String gestureConfigurationId) {				
 		comboConfiguration.clearSelection();
 		comboConfiguration.deselectAll();
 		
-		if (keyConfigurationId != null) {
-			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
+		if (gestureConfigurationId != null) {
+			List gestureConfigurations = new ArrayList(gestureConfigurationsByName.values());
 				
-			for (int i = 0; i < keyConfigurations.size(); i++) {
-				Configuration keyConfiguration = (Configuration) keyConfigurations.get(i);		
+			for (int i = 0; i < gestureConfigurations.size(); i++) {
+				Configuration gestureConfiguration = (Configuration) gestureConfigurations.get(i);		
 				
-				if (keyConfiguration.getId().equals(keyConfigurationId)) {
+				if (gestureConfiguration.getId().equals(gestureConfigurationId)) {
 					comboConfiguration.select(i);
 					break;		
 				}
@@ -1889,71 +1871,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					}
 				}
 			}
-		}
-	}
-
-	private void dumpCommandsByCategory() {
-		try {
-			Writer writer = new FileWriter("c:\\commands.html");		
-			writer.write(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n" +
-				"<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n" +
-				"<head>\r\n" +
-				"<style type=\"text/css\"><!-- .text { font-family: Arial, Helvetica; font-size: 9pt; line-height: 16pt; color: #666666; text-decoration: none; font-weight: normal}--></style>\r\n" +
-				"<title>Key Assignments</title>\r\n" +
-				"</head>\r\n" +
-				"<body bgcolor=\"#ffffff\" text=\"#333333\" link=\"#006699\" vlink=\"#006699\" alink=\"#ff9900\">\r\n" +
-				"<span class=\"text\">\r\n");
-
-			List categories = new ArrayList(this.categories);
-			Collections.sort(categories, Category.nameComparator());
-			
-			List commands = new ArrayList(KeyPreferencePage.this.commands);				
-			Collections.sort(commands, Command.nameComparator());
-
-			Iterator iterator = categories.iterator();
-			
-			while (iterator.hasNext()) {
-				Category category = (Category) iterator.next();								
-				writer.write("<b>" + category.getName() + "</b>");
-				Iterator iterator2 = commands.iterator();
-				writer.write("<p>");
-				
-				while (iterator2.hasNext()) {
-					Command command = (Command) iterator2.next();
-
-					if (category.getId().equals(command.getCategory())) {
-						SequenceMachine sequenceMachine = Manager.getInstance().getKeyMachine();
-						SortedSet sequenceSet = (SortedSet) sequenceMachine.getCommandMap().get(command.getId());
-						StringBuffer sb = new StringBuffer();
-
-						if (sequenceSet != null && !sequenceSet.isEmpty()) {
-							Iterator iterator3 = sequenceSet.iterator();
-							
-							while (iterator3.hasNext()) {
-								Sequence sequence = (Sequence) iterator3.next();
-								sb.append(KeySupport.formatSequence(sequence, true));
-								sb.append(",&nbsp");																	
-							}							
-						}													
-
-						writer.write(command.getName() + "&nbsp&nbsp" + sb.toString() + "<br />");
-					}																												
-				}
-				
-				writer.write("</p>");
-			}
-				
-			writer.write(				
-				"</span>\r\n" +				
-				"</body>\r\n" +				
-				"</html>\r\n");
-				
-			writer.flush();
-			writer.close();
-		} catch (IOException eIO) {
-			System.out.println(eIO);
 		}
 	}
 }
