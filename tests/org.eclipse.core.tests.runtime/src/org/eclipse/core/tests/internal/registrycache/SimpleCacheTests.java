@@ -27,7 +27,7 @@ public SimpleCacheTests() {
 public SimpleCacheTests(String name) {
 	super(name);
 }
-public String[] extensionSetup() {
+public String[] setupExtensionTest() {
 	PluginDescriptorModel plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -115,14 +115,14 @@ public String[] extensionSetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  extensionTest
+/*  
  *  Tests to ensure we cache extension entries correctly.
  */
-public void extensionTest() { 
+public void testExtension() { 
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = extensionSetup();
+	String[] localXMLFiles = setupExtensionTest();
 	// Don't resolve this registry as we don't define all the extension
 	// points.
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
@@ -136,7 +136,7 @@ public void extensionTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] extExtPtLinkSetup() {
+public String[] setupExtExtPtLinkTest() {
 	PluginDescriptor[] pluginList = new PluginDescriptor[2];
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
@@ -206,15 +206,15 @@ public String[] extExtPtLinkSetup() {
 	}
 	return localXMLFiles;
 }
-/*  extExtPtLinkTest
+/*  
  *  Tests to ensure we cache cross links for extensions and extension
  *  points correctly.
  */
-public void extExtPtLinkTest() {
+public void testExtExtPtLink() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = extExtPtLinkSetup();
+	String[] localXMLFiles = setupExtExtPtLinkTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -226,7 +226,7 @@ public void extExtPtLinkTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentExtensionSetup() {
+public String[] setupFragmentExtensionTest() {
 	PluginDescriptorModel plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -328,14 +328,14 @@ public String[] fragmentExtensionSetup() {
 		
 	return localXMLFiles;
 }
-/*  fragmentExtensionTest
+/*  
  *  Tests to ensure we cache extension entries off a fragment correctly.
  */
-public void fragmentExtensionTest() {
+public void testFragmentExtension() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentExtensionSetup();
+	String[] localXMLFiles = setupFragmentExtensionTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
 
 	// write to a cache file and read it back in
@@ -349,7 +349,7 @@ public void fragmentExtensionTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentExtExtPtLinkSetup() {
+public String[] setupFragmentExtExtPtLinkTest() {
 	PluginDescriptor[] pluginList = new PluginDescriptor[2];
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
@@ -452,15 +452,15 @@ public String[] fragmentExtExtPtLinkSetup() {
 	}
 	return localXMLFiles;
 }
-/*  fragmentExtExtPtLinkTest
+/*  
  *  Tests to ensure we cache cross links for extensions and extension
  *  points within fragments correctly.
  */
-public void fragmentExtExtPtLinkTest() {
+public void testFragmentExtExtPtLink() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentExtExtPtLinkSetup();
+	String[] localXMLFiles = setupFragmentExtExtPtLinkTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 	// IStatus resolveStatus = registry.resolve(true, true);
 
@@ -473,7 +473,7 @@ public void fragmentExtExtPtLinkTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentLibrarySetup() {
+public String[] setupFragmentLibraryTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -513,14 +513,14 @@ public String[] fragmentLibrarySetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  fragmentLibraryTest
+/*  
  *  Tests to ensure we cache library entries off fragements correctly.
  */
-public void fragmentLibraryTest() {
+public void testFragmentLibrary() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentLibrarySetup();
+	String[] localXMLFiles = setupFragmentLibraryTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -532,7 +532,7 @@ public void fragmentLibraryTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentReadOnlySetup() {
+public String[] setupFragmentReadOnlyTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -604,15 +604,15 @@ public String[] fragmentReadOnlySetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  fragmentReadOnlyTest
+/*  
  *  This is a very basic test to make sure we are caching a very
  *  simple registry and reading it back in correctly.
  */
-public void fragmentReadOnlyTest() {
+public void testFragmentReadOnly() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentReadOnlySetup();
+	String[] localXMLFiles = setupFragmentReadOnlyTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 	registry.markReadOnly();
 
@@ -625,7 +625,7 @@ public void fragmentReadOnlyTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentSetup() {
+public String[] setupFragmentTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -659,17 +659,17 @@ public String[] fragmentSetup() {
 
 	return localXMLFiles;
 }
-/*  fragmentTest
+/*  
  *  This is a very basic test to make sure we are caching a very
  *  simple fragment (one plugin with attirbutes only and a fragment
  *  that causes the name to change) and reading
  *  it back in correctly.
  */
-public void fragmentTest() {
+public void testFragment() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentSetup();
+	String[] localXMLFiles = setupFragmentTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -681,7 +681,7 @@ public void fragmentTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentPluginSetup() {
+public String[] setupFragmentPluginTest() {
 	PluginDescriptor[] plugins = new PluginDescriptor[5];
 	
 	PluginDescriptor plugin = new PluginDescriptor();
@@ -804,15 +804,15 @@ public String[] fragmentPluginSetup() {
 
 	return localXMLFiles;
 }
-/*  fragmentPluginTest
+/*  
  *  This is a very basic test to make sure we are caching a plugin
  *  with one fragment and reading it back in correctly.
  */
-public void fragmentPluginTest() {
+public void testFragmentPlugin() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentPluginSetup();
+	String[] localXMLFiles = setupFragmentPluginTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -824,7 +824,7 @@ public void fragmentPluginTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentRegistrySetup() {
+public String[] setupfragmentRegistryTest() {
 	PluginDescriptor[] pluginList = new PluginDescriptor[5];
 
 	PluginDescriptor plugin = new PluginDescriptor();
@@ -932,14 +932,14 @@ public String[] fragmentRegistrySetup() {
 
 	return localXMLFiles;
 }
-/*  fragmentRegistryTest
+/*  
  *  Tests to ensure we cache a simple registry with fragments correctly.
  */
-public void fragmentRegistryTest() {
+public void testFragmentRegistry() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentRegistrySetup();
+	String[] localXMLFiles = setupfragmentRegistryTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -951,7 +951,7 @@ public void fragmentRegistryTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] fragmentRequiresSetup() {
+public String[] setupFragmentRequiresTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -1039,15 +1039,15 @@ public String[] fragmentRequiresSetup() {
 	
 	return localXMLFiles;
 }
-/*  fragmentRequiresTest
+/*  
  *  Tests to ensure we cache plugin prerequisite entries that hang
  *  off a fragment correctly.
  */
-public void fragmentRequiresTest() {
+public void testFragmentRequires() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = fragmentRequiresSetup();
+	String[] localXMLFiles = setupFragmentRequiresTest();
 	// Don't resolve the registry.  All the prerequisites are not there.
 	// XXX - THIS SHOULD FAIL BUT DOES NOT
 	// 1GDU4UP: ITPCORE:ALL - fragments - don't check for existence of prereq's
@@ -1062,7 +1062,7 @@ public void fragmentRequiresTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] librarySetup() {
+public String[] setupLibraryTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -1092,14 +1092,14 @@ public String[] librarySetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  libraryTest
+/*  
  *  Tests to ensure we cache library entries correctly.
  */
-public void libraryTest() {
+public void testLibrary() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = librarySetup();
+	String[] localXMLFiles = setupLibraryTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -1111,7 +1111,7 @@ public void libraryTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] pluginSetup() {
+public String[] setupPluginTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -1129,16 +1129,16 @@ public String[] pluginSetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  pluginTest
+/*  
  *  This is a very basic test to make sure we are caching a very
  *  simple registry (one plugin with attirbutes only) and reading
  *  it back in correctly.
  */
-public void pluginTest() {
+public void testPlugin() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = pluginSetup();
+	String[] localXMLFiles = setupPluginTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -1150,7 +1150,7 @@ public void pluginTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] readOnlySetup() {
+public String[] setupReadOnlyTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -1212,15 +1212,15 @@ public String[] readOnlySetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  readOnlyTest
+/*  
  *  This is a very basic test to make sure we are caching a very
  *  simple registry and reading it back in correctly.
  */
-public void readOnlyTest() {
+public void testReadOnly() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = readOnlySetup();
+	String[] localXMLFiles = setupReadOnlyTest();
 	// Don't resolve the registry as all the prerequisites aren't there
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
 	registry.markReadOnly();
@@ -1234,10 +1234,10 @@ public void readOnlyTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-/*  realRegistryTest
+/*  
  *  Tests to ensure we correctly cache the real plugin registry we are using.
  */
-public void realRegistryTest() {
+public void testRealRegistry() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
@@ -1279,7 +1279,7 @@ public void testRegistryEOF() {
 	factory = null;
 }
 
-public String[] registrySetup() {
+public String[] setupRegistryTest() {
 	PluginDescriptor[] pluginList = new PluginDescriptor[5];
 
 	PluginDescriptor plugin = new PluginDescriptor();
@@ -1332,14 +1332,14 @@ public String[] registrySetup() {
 
 	return localXMLFiles;
 }
-/*  registryTest
+/*  
  *  Tests to ensure we cache a simple registry correctly.
  */
-public void registryTest() {
+public void testRegistry() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = registrySetup();
+	String[] localXMLFiles = setupRegistryTest();
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, true);
 
 	// write to a cache file and read it back in
@@ -1351,7 +1351,7 @@ public void registryTest() {
 	registry = cachedRegistry = null;
 	factory = null;
 }
-public String[] requiresSetup() {
+public String[] setupRequiresTest() {
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
 	plugin.setId("org.eclipse.webdav");
@@ -1391,14 +1391,14 @@ public String[] requiresSetup() {
 	localXMLFiles[0] = fs.toString();
 	return localXMLFiles;
 }
-/*  requiresTest
+/*  
  *  Tests to ensure we cache plugin prerequisite entries correctly.
  */
-public void requiresTest() {
+public void testRequires() {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	String[] localXMLFiles = requiresSetup();
+	String[] localXMLFiles = setupRequiresTest();
 	// Don't resolve the registry.  All the prerequisites aren't there
 	PluginRegistryModel registry = doInitialParsing(factory, localXMLFiles, false);
 
@@ -1412,24 +1412,6 @@ public void requiresTest() {
 	factory = null;
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite("SimpleCacheTests");
-	suite.addTest(new SimpleCacheTests("pluginTest"));
-	suite.addTest(new SimpleCacheTests("requiresTest"));
-	suite.addTest(new SimpleCacheTests("libraryTest"));
-	suite.addTest(new SimpleCacheTests("extensionTest"));
-	suite.addTest(new SimpleCacheTests("readOnlyTest"));
-	suite.addTest(new SimpleCacheTests("registryTest"));
-	suite.addTest(new SimpleCacheTests("extExtPtLinkTest"));
-	suite.addTest(new SimpleCacheTests("realRegistryTest"));
-	suite.addTest(new SimpleCacheTests("fragmentTest"));
-	suite.addTest(new SimpleCacheTests("fragmentPluginTest"));
-	suite.addTest(new SimpleCacheTests("fragmentExtensionTest"));
-	suite.addTest(new SimpleCacheTests("fragmentExtExtPtLinkTest"));
-	suite.addTest(new SimpleCacheTests("fragmentLibraryTest"));
-	suite.addTest(new SimpleCacheTests("fragmentReadOnlyTest"));
-	suite.addTest(new SimpleCacheTests("fragmentRequiresTest"));
-	suite.addTest(new SimpleCacheTests("fragmentRegistryTest"));
-	suite.addTest(new SimpleCacheTests("testRegistryEOF"));
-	return suite;
+	return new TestSuite(SimpleCacheTests.class);
 }
 }
