@@ -164,15 +164,6 @@ public class CVSProvider implements ICVSProvider {
 		try {
 			for (int i = 0; i < projects.length; i++) {
 				IProject project = projects[i];
-				
-				// Create, open and/or refresh the project
-				if (!project.exists())
-					project.create(Policy.subMonitorFor(monitor, 40));
-				if (!project.isOpen())
-					project.open(Policy.subMonitorFor(monitor, 40));
-				else
-					project.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 40));
-							
 				// Register the project with Team
 				// (unless the project already has the proper nature from the project meta-information)
 				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
@@ -274,7 +265,7 @@ public class CVSProvider implements ICVSProvider {
 								}
 								
 								// Bring the project into the workspace
-								//refreshProjects((IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
+								refreshProjects((IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
 
 							} finally {
 								session.close();
