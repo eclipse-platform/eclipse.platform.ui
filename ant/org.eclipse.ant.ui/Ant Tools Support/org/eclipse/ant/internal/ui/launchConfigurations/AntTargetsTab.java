@@ -94,11 +94,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Sort direction constants.
 	 */
-	public static int SORT_NONE= 0;
-	public static int SORT_NAME= 1;
-	public static int SORT_NAME_REVERSE= -1;
-	public static int SORT_DESCRIPTION= 2;
-	public static int SORT_DESCRIPTION_REVERSE= -2;
+	public final static int SORT_NONE= 0;
+	public final static int SORT_NAME= 1;
+	public final static int SORT_NAME_REVERSE= -1;
+	public final static int SORT_DESCRIPTION= 2;
+	public final static int SORT_DESCRIPTION_REVERSE= -2;
 	
 	/**
 	 * A sorter which can sort targets by name or description, in

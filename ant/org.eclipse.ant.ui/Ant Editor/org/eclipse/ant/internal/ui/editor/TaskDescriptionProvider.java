@@ -49,18 +49,18 @@ public class TaskDescriptionProvider {
     /**
      * The file that contains all task descriptions.
      */
-    public static String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.6.0.xml"; //$NON-NLS-1$
+    public static final String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.6.0.xml"; //$NON-NLS-1$
 
-    public static String XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
-    public static String XML_TAG_TASK = "task"; //$NON-NLS-1$
-    public static String XML_TAG_ELEMENTS = "elements"; //$NON-NLS-1$
-    public static String XML_TAG_ATTRIBUTE = "attribute"; //$NON-NLS-1$
-    public static String XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
-    public static String XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
-    public static String XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
-    public static String XML_TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-    public static String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-    public static String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
+    public static final String XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
+    public static final String XML_TAG_TASK = "task"; //$NON-NLS-1$
+    public static final String XML_TAG_ELEMENTS = "elements"; //$NON-NLS-1$
+    public static final String XML_TAG_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+    public static final String XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
+    public static final String XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
+    public static final String XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
+    public static final String XML_TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+    public static final String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+    public static final String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
     
     private static TaskDescriptionProvider fgDefault;
 
