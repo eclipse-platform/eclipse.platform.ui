@@ -398,4 +398,14 @@ public interface IDebugUIConstants {
 	 * Identifier for a property group in a menu (value <code>"propertyGroup"</code>).
 	 */
 	public static final String PROPERTY_GROUP = "propertyGroup";
+	
+	/**
+	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
+	 */
+	public static final String VARIABLE_VIEW_VARIABLE_ID = "org.eclipse.debug.ui.VariableView.variables";
+	
+	/**
+	 * Id for the popup menu associated with the detail (text viewer) part of the VariableView
+	 */
+	public static final String VARIABLE_VIEW_DETAIL_ID = "org.eclipse.debug.ui.VariableView.detail";
 }

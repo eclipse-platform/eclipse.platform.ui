@@ -56,4 +56,5 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT"; //$NON-NLS-1$
 	public static final String IMG_ELCL_RELAUNCH= "IMG_ELCL_RELAUNCH"; //$NON-NLS-1$
 	public static final String IMG_ELCL_COPY= "IMG_ELCL_COPY"; //$NON-NLS-1$
+	public static final String IMG_ELCL_DETAIL_PANE= "IMG_ELCL_DETAIL_PANE"; //$NON-NLS-1$
 }
