@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -136,7 +137,7 @@ public class ReopenEditorMenu extends ContributionItem {
 	 * Fills the given menu with
 	 * menu items for all windows.
 	 */
-	public void fill(Menu menu, int index) {
+	public void fill(final Menu menu, int index) {
 		if (fWindow.getActivePage() == null
 			|| fWindow.getActivePage().getPerspective() == null)
 			return;
@@ -155,25 +156,29 @@ public class ReopenEditorMenu extends ContributionItem {
 			++index;
 		}
 
+		final int menuIndex[] = new int[]{index};
 		// Add one item for each item.
 		for (int i = 0; i < array.length; i++) {
 			final EditorHistoryItem item = array[i];
-			try {
-				String text = calcText(i, item);
-				MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
-				++index;
-				mi.setText(text);
-				mi.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						open(item);
-					}
-				});
-			}
-			catch (RuntimeException e) {
-				// just skip the item if there's an error,
-				// e.g. in the calculation of the shortened name
-				WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1
-			}
+			final int historyIndex = i;
+			Platform.run(new SafeRunnableAdapter() {
+				public void run() throws Exception {
+					String text = calcText(historyIndex, item);
+					MenuItem mi = new MenuItem(menu, SWT.PUSH, menuIndex[0]);
+					++menuIndex[0];
+					mi.setText(text);
+					mi.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							open(item);
+						}
+					});
+				}
+				public void handleException(Throwable e) {
+					// just skip the item if there's an error,
+					// e.g. in the calculation of the shortened name
+					WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1
+				}
+			});
 		}
 	}
 	/**
