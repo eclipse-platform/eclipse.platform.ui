@@ -69,7 +69,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	/** Private lock no one else will synchronize on. */
 	private final Object fLock= new Object();
 	/** The document lock for non-IResources. */
-	private Object fDocumentAccessorLock;
+	private final Object fDocumentAccessorLock= new Object();
 	/** Document lock state, protected by <code>fDocumentAccessorLock</code>. */
 	private boolean fDocumentLocked;
 	/**
