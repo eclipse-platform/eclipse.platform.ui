@@ -35,7 +35,8 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_PROVIDER = "FeaturePage.provider";
 	private static final String KEY_VERSION = "FeaturePage.version";
 	private static final String KEY_IVERSION = "FeaturePage.installedVersion";
-	private static final String KEY_PENDING_VERSION = "FeaturePage.pendingVersion";
+	private static final String KEY_PENDING_VERSION =
+		"FeaturePage.pendingVersion";
 	private static final String KEY_SIZE = "FeaturePage.size";
 	private static final String KEY_OS = "FeaturePage.os";
 	private static final String KEY_WS = "FeaturePage.ws";
@@ -45,29 +46,38 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DESC = "FeaturePage.description";
 	private static final String KEY_INFO_LINK = "FeaturePage.infoLink";
 	private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink";
-	private static final String KEY_COPYRIGHT_LINK = "FeaturePage.copyrightLink";
+	private static final String KEY_COPYRIGHT_LINK =
+		"FeaturePage.copyrightLink";
 	private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
 	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
 		"FeaturePage.unknownSizeValue";
 	private static final String KEY_DO_UNCONFIGURE =
 		"FeaturePage.doButton.unconfigure";
-	private static final String KEY_DO_CONFIGURE = "FeaturePage.doButton.configure";
+	private static final String KEY_DO_CONFIGURE =
+		"FeaturePage.doButton.configure";
 	private static final String KEY_DO_UPDATE = "FeaturePage.doButton.update";
 	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install";
-	private static final String KEY_DO_UNINSTALL = "FeaturePage.doButton.uninstall";
+	private static final String KEY_DO_UNINSTALL =
+		"FeaturePage.doButton.uninstall";
 	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
 	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
 	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle";
-	private static final String KEY_DIALOG_UCTITLE = "FeaturePage.dialog.uctitle";
-	private static final String KEY_DIALOG_UMESSAGE = "FeaturePage.dialog.umessage";
-	private static final String KEY_DIALOG_MESSAGE = "FeaturePage.dialog.message";
-	private static final String KEY_DIALOG_CMESSAGE = "FeaturePage.dialog.cmessage";
+	private static final String KEY_DIALOG_UCTITLE =
+		"FeaturePage.dialog.uctitle";
+	private static final String KEY_DIALOG_UMESSAGE =
+		"FeaturePage.dialog.umessage";
+	private static final String KEY_DIALOG_MESSAGE =
+		"FeaturePage.dialog.message";
+	private static final String KEY_DIALOG_CMESSAGE =
+		"FeaturePage.dialog.cmessage";
 	private static final String KEY_DIALOG_UCMESSAGE =
 		"FeaturePage.dialog.ucmessage";
 	private static final String KEY_MISSING_TITLE = "FeaturePage.missing.title";
-	private static final String KEY_MISSING_MESSAGE = "FeaturePage.missing.message";
-	private static final String KEY_MISSING_SEARCH = "FeaturePage.missing.search";
+	private static final String KEY_MISSING_MESSAGE =
+		"FeaturePage.missing.message";
+	private static final String KEY_MISSING_SEARCH =
+		"FeaturePage.missing.search";
 	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort";
 	private static final String KEY_SEARCH_OBJECT_NAME =
 		"FeaturePage.missing.searchObjectName";
@@ -194,7 +204,9 @@ public class DetailsForm extends PropertyWebForm {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(modelListener);
 		providerImage.dispose();
-		for (Enumeration enum = imageCache.elements(); enum.hasMoreElements();) {
+		for (Enumeration enum = imageCache.elements();
+			enum.hasMoreElements();
+			) {
 			Image image = (Image) enum.nextElement();
 			image.dispose();
 		}
@@ -209,7 +221,8 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private void configureSectionHandler(FormWidgetFactory factory) {
-		sectionHandler.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_NEVER);
+		sectionHandler.setHyperlinkUnderlineMode(
+			HyperlinkHandler.UNDERLINE_NEVER);
 		sectionHandler.setBackground(factory.getBackgroundColor());
 		sectionHandler.setForeground(
 			factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
@@ -231,22 +244,44 @@ public class DetailsForm extends PropertyWebForm {
 		glayout.verticalSpacing = 0;
 
 		providerLabel =
-			createProperty(properties, UpdateUIPlugin.getResourceString(KEY_PROVIDER));
+			createProperty(
+				properties,
+				UpdateUIPlugin.getResourceString(KEY_PROVIDER));
 		versionLabel =
-			createProperty(properties, UpdateUIPlugin.getResourceString(KEY_VERSION));
+			createProperty(
+				properties,
+				UpdateUIPlugin.getResourceString(KEY_VERSION));
 		installedVersionLabel =
-			createProperty(properties, UpdateUIPlugin.getResourceString(KEY_IVERSION));
+			createProperty(
+				properties,
+				UpdateUIPlugin.getResourceString(KEY_IVERSION));
 		sizeLabel =
-			createProperty(properties, UpdateUIPlugin.getResourceString(KEY_SIZE));
+			createProperty(
+				properties,
+				UpdateUIPlugin.getResourceString(KEY_SIZE));
 		supportedPlatformsGroup = new ReflowGroup() {
-			public void fillExpansion(Composite expansion, FormWidgetFactory factory) {
+			public void fillExpansion(
+				Composite expansion,
+				FormWidgetFactory factory) {
 				GridLayout layout = new GridLayout();
 				expansion.setLayout(layout);
 				layout.marginWidth = 0;
-				osLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_OS));
-				wsLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_WS));
-				nlLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_NL));
-				archLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_ARCH));
+				osLabel =
+					createProperty(
+						expansion,
+						UpdateUIPlugin.getResourceString(KEY_OS));
+				wsLabel =
+					createProperty(
+						expansion,
+						UpdateUIPlugin.getResourceString(KEY_WS));
+				nlLabel =
+					createProperty(
+						expansion,
+						UpdateUIPlugin.getResourceString(KEY_NL));
+				archLabel =
+					createProperty(
+						expansion,
+						UpdateUIPlugin.getResourceString(KEY_ARCH));
 			}
 		};
 		supportedPlatformsGroup.setText(
@@ -262,7 +297,9 @@ public class DetailsForm extends PropertyWebForm {
 		imageLabel.setLayoutData(td);
 
 		Label label =
-			createHeading(container, UpdateUIPlugin.getResourceString(KEY_DESC));
+			createHeading(
+				container,
+				UpdateUIPlugin.getResourceString(KEY_DESC));
 		td = new TableData();
 		td.colspan = 2;
 		label.setLayoutData(td);
@@ -309,7 +346,8 @@ public class DetailsForm extends PropertyWebForm {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		licenseLink.getControl().setLayoutData(gd);
 		copyrightLink = new InfoLink((DetailsView) getPage().getView());
-		copyrightLink.setText(UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
+		copyrightLink.setText(
+			UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
 		copyrightLink.createControl(footer, factory);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		copyrightLink.getControl().setLayoutData(gd);
@@ -321,10 +359,13 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 		gd =
-			new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_END
+					| GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.grabExcessHorizontalSpace = true;
 		uninstallButton.setVisible(false);
-		uninstallButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
+		uninstallButton.setText(
+			UpdateUIPlugin.getResourceString(KEY_DO_UNINSTALL));
 		uninstallButton.setLayoutData(gd);
 
 		doButton = factory.createButton(footer, "", SWT.PUSH);
@@ -334,7 +375,9 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 		gd =
-			new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_END
+					| GridData.VERTICAL_ALIGN_BEGINNING);
 		//gd.grabExcessHorizontalSpace = true;
 		doButton.setLayoutData(gd);
 	}
@@ -372,7 +415,8 @@ public class DetailsForm extends PropertyWebForm {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < installedFeatures.length; i++) {
 			IFeature installedFeature = installedFeatures[i];
-			VersionedIdentifier ivid = installedFeature.getVersionedIdentifier();
+			VersionedIdentifier ivid =
+				installedFeature.getVersionedIdentifier();
 			if (buf.length() > 0)
 				buf.append(", ");
 			PluginVersionIdentifier iversion = ivid.getVersion();
@@ -389,7 +433,9 @@ public class DetailsForm extends PropertyWebForm {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 			PendingChange change = model.findRelatedPendingChange(feature);
 			if (change != null) {
-				return UpdateUIPlugin.getFormattedMessage(KEY_PENDING_VERSION, versionText);
+				return UpdateUIPlugin.getFormattedMessage(
+					KEY_PENDING_VERSION,
+					versionText);
 			} else
 				return versionText;
 		} else
@@ -429,10 +475,12 @@ public class DetailsForm extends PropertyWebForm {
 
 		setHeadingText(feature.getLabel());
 		providerLabel.setText(feature.getProvider());
-		versionLabel.setText(feature.getVersionedIdentifier().getVersion().toString());
+		versionLabel.setText(
+			feature.getVersionedIdentifier().getVersion().toString());
 		String installedVersion = getInstalledVersion(feature);
 		if (installedVersion == null)
-			installedVersion = UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
+			installedVersion =
+				UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
 		long size = feature.getInstallSize();
 		String format = null;
@@ -476,13 +524,15 @@ public class DetailsForm extends PropertyWebForm {
 	private boolean getDoButtonVisibility() {
 		if (currentFeature instanceof MissingFeature)
 			return false;
-		if (currentAdapter==null || currentAdapter.isIncluded()) return false;
+		if (currentAdapter == null || currentAdapter.isIncluded())
+			return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.findRelatedPendingChange(currentFeature) != null)
 			return false;
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			// part of the local configuration
-			IConfiguredSiteContext context = (IConfiguredSiteContext) currentAdapter;
+			IConfiguredSiteContext context =
+				(IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
 			else
@@ -514,9 +564,11 @@ public class DetailsForm extends PropertyWebForm {
 
 	private boolean isConfigured() {
 		if (currentAdapter instanceof IConfiguredSiteContext) {
-			IConfiguredSiteContext context = (IConfiguredSiteContext) currentAdapter;
+			IConfiguredSiteContext context =
+				(IConfiguredSiteContext) currentAdapter;
 			IConfiguredSite csite = context.getConfigurationSite();
-			IFeatureReference fref = csite.getSite().getFeatureReference(currentFeature);
+			IFeatureReference fref =
+				csite.getSite().getFeatureReference(currentFeature);
 			IFeatureReference[] cfeatures = csite.getConfiguredFeatures();
 			for (int i = 0; i < cfeatures.length; i++) {
 				if (cfeatures[i].equals(fref))
@@ -530,9 +582,11 @@ public class DetailsForm extends PropertyWebForm {
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			boolean configured = isConfigured();
 			if (configured)
-				doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
+				doButton.setText(
+					UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
 			else
-				doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_CONFIGURE));
+				doButton.setText(
+					UpdateUIPlugin.getResourceString(KEY_DO_CONFIGURE));
 		} else if (update) {
 			doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UPDATE));
 		} else
@@ -618,7 +672,7 @@ public class DetailsForm extends PropertyWebForm {
 			wsLabel.setText(buf.toString());
 		}
 	}
-	
+
 	private void setArch(String arch) {
 		if (arch == null)
 			archLabel.setText("");
@@ -679,16 +733,23 @@ public class DetailsForm extends PropertyWebForm {
 					return;
 			}
 			final PendingChange job = createPendingChange(mode);
-			IStatus validationStatus = ActivityConstraints.validatePendingChange(job);
-			if (validationStatus!=null) {
-		   		ErrorDialog.openError(UpdateUIPlugin.getActiveWorkbenchShell(), null, null, validationStatus);
-		   		return;
+			IStatus validationStatus =
+				ActivityConstraints.validatePendingChange(job);
+			if (validationStatus != null) {
+				ErrorDialog.openError(
+					UpdateUIPlugin.getActiveWorkbenchShell(),
+					null,
+					null,
+					validationStatus);
+				return;
 			}
 			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					InstallWizard wizard = new InstallWizard(job);
 					WizardDialog dialog =
-						new InstallWizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
+						new InstallWizardDialog(
+							UpdateUIPlugin.getActiveWorkbenchShell(),
+							wizard);
 					dialog.create();
 					dialog.getShell().setSize(600, 500);
 					dialog.open();
@@ -759,7 +820,9 @@ public class DetailsForm extends PropertyWebForm {
 		} else
 			return true;
 	}
-	private boolean isOnTheList(IImport iimport, IConfiguredSite[] configSites) {
+	private boolean isOnTheList(
+		IImport iimport,
+		IConfiguredSite[] configSites) {
 		for (int i = 0; i < configSites.length; i++) {
 			IConfiguredSite csite = configSites[i];
 			ISite site = csite.getSite();
@@ -771,10 +834,18 @@ public class DetailsForm extends PropertyWebForm {
 	}
 	private boolean isOnTheList(IImport iimport, IPluginEntry[] entries) {
 		VersionedIdentifier importId = iimport.getVersionedIdentifier();
+		PluginVersionIdentifier version = importId.getVersion();
+		boolean noVersion =
+			version.getMajorComponent() == 0
+				&& version.getMinorComponent() == 0
+				&& version.getServiceComponent() == 0;
 		for (int i = 0; i < entries.length; i++) {
 			IPluginEntry entry = entries[i];
 			VersionedIdentifier entryId = entry.getVersionedIdentifier();
-			if (entryId.equals(importId))
+			if (noVersion) {
+				if (importId.getIdentifier().equals(entryId.getIdentifier()))
+					return true;
+			} else if (entryId.equals(importId))
 				return true;
 		}
 		return false;
@@ -799,12 +870,14 @@ public class DetailsForm extends PropertyWebForm {
 		search.getSettings().put("imports", value);
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		try {
-			UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_UPDATES);
+			UpdateUIPlugin.getActivePage().showView(
+				UpdatePerspective.ID_UPDATES);
 		} catch (PartInitException e) {
 		}
 		model.addBookmark(search);
 		try {
-			UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_DETAILS);
+			UpdateUIPlugin.getActivePage().showView(
+				UpdatePerspective.ID_DETAILS);
 		} catch (PartInitException e) {
 		}
 	}
@@ -820,7 +893,6 @@ public class DetailsForm extends PropertyWebForm {
 	private void showRestartMessage(PendingChange job) {
 		String titleKey;
 		String messageKey;
-
 		switch (job.getJobType()) {
 			case PendingChange.INSTALL :
 				titleKey = KEY_DIALOG_TITLE;
