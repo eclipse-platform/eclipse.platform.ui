@@ -212,10 +212,8 @@ public class CVSLightweightDecorator
 		}
 
 		// determine a if resource has outgoing changes (e.g. is dirty).
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		boolean isDirty = false;
-		boolean computeDeepDirtyCheck =
-			store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+		boolean computeDeepDirtyCheck = isDeepDirtyCalculationEnabled();
 		int type = resource.getType();
 		if (type == IResource.FILE || computeDeepDirtyCheck) {
 			isDirty = CVSLightweightDecorator.isDirty(resource);
@@ -229,7 +227,12 @@ public class CVSLightweightDecorator
 		}
 	}
 
-//todo the showRevisions flag is temp, a better solution is DecoratorStrategy classes which have most the code below
+	private boolean isDeepDirtyCalculationEnabled() {
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		return store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+	}
+
+	//todo the showRevisions flag is temp, a better solution is DecoratorStrategy classes which have most the code below
 	public static void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty, boolean showRevisions) {
 		try {
 			Map bindings = new HashMap(3);
@@ -515,7 +518,7 @@ public class CVSLightweightDecorator
 		//System.out.println(">> State Change Event");
 		Set resourcesToUpdate = new HashSet();
 
-		boolean showingDeepDirtyIndicators = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+		boolean showingDeepDirtyIndicators = isDeepDirtyCalculationEnabled();
 
 		for (int i = 0; i < changedResources.length; i++) {
 			IResource resource = changedResources[i];
@@ -555,6 +558,7 @@ public class CVSLightweightDecorator
 			}
 		});
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
