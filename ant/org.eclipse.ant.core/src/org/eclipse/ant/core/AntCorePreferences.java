@@ -32,10 +32,9 @@ public class AntCorePreferences {
 	protected URL[] customURLs;
 	protected URL[] defaultCustomURLs;
 	
-	protected Map defaultObjects;
 	protected List pluginClassLoaders;
 
-	public AntCorePreferences(Map defaultTasks, Map defaultExtraClasspath, Map defaultTypes) {
+	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes) {
 		initializePluginClassLoaders();
 		defaultURLs = new ArrayList(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
@@ -140,13 +139,12 @@ public class AntCorePreferences {
 		return defaultCustomURLs;
 	}
 
-	protected List computeDefaultTasks(Map tasks) {
-		List result = new ArrayList(10);
-		for (Iterator iterator = tasks.entrySet().iterator();iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
+	protected List computeDefaultTasks(List tasks) {
+		List result = new ArrayList(tasks.size());
+		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = (IConfigurationElement) iterator.next();
 			Task task = new Task();
-			task.setTaskName((String) entry.getKey());
-			IConfigurationElement element =(IConfigurationElement) entry.getValue();
+			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			if (library == null) {
@@ -171,13 +169,12 @@ public class AntCorePreferences {
 		return result;
 	}
 
-	protected List computeDefaultTypes(Map types) {
-		List result = new ArrayList(10);
-		for (Iterator iterator = types.entrySet().iterator();iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
+	protected List computeDefaultTypes(List types) {
+		List result = new ArrayList(types.size());
+		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = (IConfigurationElement) iterator.next();
 			Type type = new Type();
-			type.setTypeName((String) entry.getKey());
-			IConfigurationElement element =(IConfigurationElement) entry.getValue();
+			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			if (library == null) {
@@ -205,11 +202,10 @@ public class AntCorePreferences {
 	/**
 	 * Computes the extra classpath entries defined plugins and fragments.
 	 */
-	protected void computeDefaultExtraClasspathEntries(Map entries) {
-		for (Iterator iterator = entries.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String library = (String) entry.getKey();
-			IConfigurationElement element =(IConfigurationElement) entry.getValue();
+	protected void computeDefaultExtraClasspathEntries(List entries) {
+		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = (IConfigurationElement) iterator.next();
+			String library = (String) element.getAttribute(AntCorePlugin.LIBRARY);
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
@@ -414,12 +410,12 @@ public class AntCorePreferences {
 
 	protected void updateURLs(Preferences prefs) {
 		//see if the custom URLS are just the default URLS
-		URL[] defaultUrls= getDefaultCustomURLs();
+		URL[] dcUrls= getDefaultCustomURLs();
 		boolean dflt= false;
-		if (defaultUrls.length == customURLs.length) {
+		if (dcUrls.length == customURLs.length) {
 			dflt= true;
 			for (int i = 0; i < customURLs.length; i++) {
-				if (!customURLs[i].equals(defaultUrls[i])) {
+				if (!customURLs[i].equals(dcUrls[i])) {
 					dflt= false;
 					break;
 				}
