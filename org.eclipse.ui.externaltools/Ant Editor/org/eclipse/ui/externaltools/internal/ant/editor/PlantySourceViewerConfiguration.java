@@ -1,3 +1,5 @@
+package org.eclipse.ui.externaltools.internal.ant.editor;
+
 /**********************************************************************
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -10,7 +12,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
-package org.eclipse.ui.externaltools.internal.ant.editor;
 
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -31,7 +32,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.derived.HTMLTextPresenter;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.NonRuleBasedDamagerRepairer;
-import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyPartitionScanner;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyProcInstrScanner;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyTagScanner;
@@ -46,9 +47,9 @@ import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyTagScanner;
  */
 public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
 
-    // (IBM)
     private PlantyTagScanner tagScanner;
-    private PlantyProcInstrScanner pdeScanner;
+    private PlantyProcInstrScanner instructionScanner;
+	private NonRuleBasedDamagerRepairer damageRepairer;
         
     /**
      * Creates an instance with the specified color manager.
@@ -85,23 +86,6 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         };
     }
 
-
-//    /*
-//     * @see SourceViewerConfiguration#getContentFormatter(ISourceViewer)
-//     */
-//    public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-//        
-//        ContentFormatter formatter= new ContentFormatter();
-//        IFormattingStrategy strategy= new JavaFormattingStrategy(sourceViewer);
-//        
-//        formatter.setFormattingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
-//        formatter.enablePartitionAwareFormatting(false);        
-//        formatter.setPartitionManagingPositionCategories(fJavaTextTools.getPartitionManagingPositionCategories());
-//        
-//        return formatter;
-//    }
-    
-
     /* (non-Javadoc)
      * Method declared on SourceViewerConfiguration
      */
@@ -120,22 +104,21 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         return PlantyEditor.TAB_WIDTH;
     }
     
-
-    // (IBM)
-    protected PlantyProcInstrScanner getDefaultScanner() {
-        if (pdeScanner == null) {
-            pdeScanner = new PlantyProcInstrScanner();
-            pdeScanner.setDefaultReturnToken(
+    private PlantyProcInstrScanner getDefaultScanner() {
+        if (instructionScanner == null) {
+            instructionScanner = new PlantyProcInstrScanner();
+            instructionScanner.setDefaultReturnToken(
                 new Token(
-                    new TextAttribute(ExternalToolsPlugin.getPreferenceColor(PlantyColorConstants.P_DEFAULT))));
+                    new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
         }
-        return pdeScanner;
+        return instructionScanner;
     }
-    protected PlantyTagScanner getTagScanner() {
+    
+	private PlantyTagScanner getTagScanner() {
         if (tagScanner == null) {
             tagScanner = new PlantyTagScanner();
             tagScanner.setDefaultReturnToken(
-                new Token(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(PlantyColorConstants.P_TAG))));
+                new Token(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
         }
         return tagScanner;
     }
@@ -152,13 +135,27 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         reconciler.setDamager(dr, PlantyPartitionScanner.XML_TAG);
         reconciler.setRepairer(dr, PlantyPartitionScanner.XML_TAG);
 
-        NonRuleBasedDamagerRepairer ndr =
-            new NonRuleBasedDamagerRepairer(
-                new TextAttribute(ExternalToolsPlugin.getPreferenceColor(PlantyColorConstants.P_XML_COMMENT)));
-        reconciler.setDamager(ndr, PlantyPartitionScanner.XML_COMMENT);
-        reconciler.setRepairer(ndr, PlantyPartitionScanner.XML_COMMENT);
+		damageRepairer= new NonRuleBasedDamagerRepairer(
+                new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));
+        reconciler.setDamager(damageRepairer, PlantyPartitionScanner.XML_COMMENT);
+        reconciler.setRepairer(damageRepairer, PlantyPartitionScanner.XML_COMMENT);
 
         return reconciler;
     }
 
+
+	/**
+	 * Preference colors have changed.  
+	 * Update the default tokens of the scanners.
+	 */
+	public void updateScanners() {
+		tagScanner.setDefaultReturnToken(
+				new Token(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
+				
+		instructionScanner.setDefaultReturnToken(
+			   new Token(
+				   new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
+				   
+		damageRepairer.setDefaultTextAttribute(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
+	}
 }
