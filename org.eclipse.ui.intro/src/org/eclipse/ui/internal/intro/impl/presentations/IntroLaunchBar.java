@@ -283,7 +283,7 @@ public class IntroLaunchBar {
 	}
 
 	private boolean isPlain() {
-		return !"org.eclipse.ui.presentations.default".equals(presentationId);
+		return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {

@@ -25,9 +25,9 @@ import org.w3c.dom.Element;
  * @since 3.1
  */
 public class LaunchBarElement extends AbstractIntroElement {
-    private static final String LOC_LEFT = "left";
-    private static final String LOC_BOTTOM = "bottom";
-    private static final String LOC_RIGHT = "right";
+    private static final String LOC_LEFT = "left"; //$NON-NLS-1$
+    private static final String LOC_BOTTOM = "bottom"; //$NON-NLS-1$
+    private static final String LOC_RIGHT = "right"; //$NON-NLS-1$
 
     private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
     private static final String ATT_BG = "bg"; //$NON-NLS-1$
@@ -103,7 +103,7 @@ public class LaunchBarElement extends AbstractIntroElement {
 		IConfigurationElement handle = getHandleElement();
 		if (handle!=null) {
 			String value = handle.getAttribute(ATT_CLOSE);
-			return value==null || value.equals("true");
+			return value==null || value.equals("true"); //$NON-NLS-1$
 		}
 		return true;
 	}

@@ -199,10 +199,10 @@ public class Util {
             support.getExternalBrowser().openURL(url);
             return true;
         } catch (PartInitException e) {
-            Log.error("Intro failed to get Browser support.", e);
+            Log.error("Intro failed to get Browser support.", e); //$NON-NLS-1$
             return false;
         } catch (MalformedURLException e) {
-            Log.error("Intro failed to display: " + href, e);
+            Log.error("Intro failed to display: " + href, e); //$NON-NLS-1$
             return false;
         }
     }

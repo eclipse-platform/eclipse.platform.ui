@@ -27,7 +27,7 @@ import org.osgi.framework.Constants;
  */
 public class BundleUtil {
 
-    private static String NL_TAG = "$nl$/";
+    private static String NL_TAG = "$nl$/"; //$NON-NLS-1$
 
 
     /**
@@ -142,7 +142,7 @@ public class BundleUtil {
             // we need to resolve this URL.
             String copyResource = resource;
             if (force$nl$lResolve && !copyResource.startsWith(NL_TAG)) {
-                if (copyResource.startsWith("/"))
+                if (copyResource.startsWith("/")) //$NON-NLS-1$
                     copyResource = resource.substring(1);
                 copyResource = NL_TAG + copyResource;
             }

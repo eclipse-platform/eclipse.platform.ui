@@ -390,10 +390,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
             success = load3_0ExtensionContent(extensionContent);
 
         if (success) {
-            if (extensionContentElement.hasAttribute("failed"))
-                extensionContentElement.removeAttribute("failed");
+            if (extensionContentElement.hasAttribute("failed")) //$NON-NLS-1$
+                extensionContentElement.removeAttribute("failed"); //$NON-NLS-1$
         } else
-            extensionContentElement.setAttribute("failed", "true");
+            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return extensionContentElement;
     }

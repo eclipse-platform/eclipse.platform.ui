@@ -56,7 +56,7 @@ public class IntroContentParser {
      */
     private static Hashtable dtdMap = new Hashtable();
     {
-        String dtdBaseLocation = "dtds/xhtml1-20020801/";
+        String dtdBaseLocation = "dtds/xhtml1-20020801/"; //$NON-NLS-1$
 
         String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
         URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation,

@@ -220,7 +220,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      */
     protected String[] getAttributeList(Element element, String att) {
         if (element.hasAttribute(att))
-            return element.getAttribute(att).split(",");
+            return element.getAttribute(att).split(","); //$NON-NLS-1$
         else
             return null;
     }
