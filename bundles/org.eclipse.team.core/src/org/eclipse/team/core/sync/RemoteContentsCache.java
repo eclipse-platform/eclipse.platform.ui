@@ -236,6 +236,19 @@ public class RemoteContentsCache {
 	}
 	
 	/**
+	 * Return whether the cache contains an entry for the given id. Register a hit if it does.
+	 * @param id the id of the cache entry
+	 * @return true if there are contents cached for the id
+	 */
+	public boolean hasContents(String id) {
+		boolean contains = cacheFileNames.containsKey(id);
+		if (contains) {
+			registerHit(id);
+		} 
+		return contains;
+	}
+	
+	/**
 	 * Purge the cache entry for the given id.
 	 * @param id
 	 */

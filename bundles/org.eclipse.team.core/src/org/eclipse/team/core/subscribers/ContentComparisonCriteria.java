@@ -32,8 +32,8 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 
 	private boolean ignoreWhitespace = false;
 	
-	final public static String ID_IGNORE_WS = "org.eclipse.team.comparisoncriteria.content.ignore";
-	final public static String ID_DONTIGNORE_WS = "org.eclipse.team.comparisoncriteria.content";
+	final public static String ID_IGNORE_WS = "org.eclipse.team.comparisoncriteria.content.ignore"; //$NON-NLS-1$
+	final public static String ID_DONTIGNORE_WS = "org.eclipse.team.comparisoncriteria.content"; //$NON-NLS-1$
 
 	public String getName() {
 		return "Comparing content"  + (ignoreWhitespace ? " ignore whitespace": "");
@@ -162,5 +162,12 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 		} catch (CoreException e) {
 			throw TeamException.asTeamException(e);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ComparisonCriteria#usesFileContents()
+	 */
+	public boolean usesFileContents() {
+		return true;
 	}
 }
