@@ -43,7 +43,8 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * <code>openEditor</code> is called.
 	 *
 	 * @see #openEditor
-	 * @deprecated Not applicable for generic workbench. Use IDE.EDITOR_ID_ATTR is IDE project.
+	 * @deprecated in 3.0 since the notion of markers this is not generally
+	 * applicable. Use the IDE-specific constant <code>IDE.EDITOR_ID_ATTR</code>.
  	 */	
 	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
@@ -357,7 +358,8 @@ public void reuseEditor(IReusableEditor editor,IEditorInput input);
  *
  * @param input the editor input
  * @param editorId the id of the editor extension to use
- * @return an open and active editor or <code>null</code> if external editor open
+ * @return an open and active editor, or <code>null</code> if an external editor
+ * was opened
  * @exception PartInitException if the editor could not be created or initialized
  */
 public IEditorPart openEditor(IEditorInput input, String editorId) throws PartInitException;
@@ -381,7 +383,7 @@ public IEditorPart openEditor(IEditorInput input, String editorId) throws PartIn
  * @param input the editor input
  * @param editorId the id of the editor extension to use
  * @param activate if <code>true</code> the editor will be activated
- * @return an open editor or <code>null</code> if external editor open
+ * @return an open editor, or <code>null</code> if an external editor was opened
  * @exception PartInitException if the editor could not be created or initialized
  */
 public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate)

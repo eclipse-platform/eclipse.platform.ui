@@ -808,16 +808,16 @@ public class EditorRegistry implements IEditorRegistry {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorRegistry#systemInPlaceEditorAvailable(String)
+	 * @see org.eclipse.ui.IEditorRegistry#isSystemInPlaceEditorAvailable(String)
 	 */
-	public boolean systemInPlaceEditorAvailable(String filename) {
+	public boolean isSystemInPlaceEditorAvailable(String filename) {
 		return ComponentSupport.inPlaceEditorAvailable(filename);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorRegistry#systemExternalEditorAvailable(String)
+	 * @see org.eclipse.ui.IEditorRegistry#isSystemExternalEditorAvailable(String)
 	 */
-	public boolean systemExternalEditorAvailable(String filename) {
+	public boolean isSystemExternalEditorAvailable(String filename) {
 		int nDot = filename.lastIndexOf('.');
 		if (nDot >= 0) {
 			String strName = filename.substring(nDot);

@@ -60,7 +60,9 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 	 * Returns whether this editor descriptor will open an editor
 	 * part inside the editor area.
 	 * 
-	 * @return <code>true</code> if editor is inside editor area, <code>false</code> otherwise
+	 * @return <code>true</code> if editor is inside editor area, and
+	 * <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public boolean isOpenInternal();
 	
@@ -68,7 +70,9 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 	 * Returns whether this editor descriptor will open an editor
 	 * in-place inside the editor area.
 	 * 
-	 * @return <code>true</code> if editor is in-place, <code>false</code> otherwise
+	 * @return <code>true</code> if editor is in-place, and <code>false</code>
+	 * otherwise
+	 * @since 3.0
 	 */
 	public boolean isOpenInPlace();
 
@@ -76,7 +80,9 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 	 * Returns whether this editor descriptor will open an editor
 	 * in a new window outside the workbench.
 	 * 
-	 * @return <code>true</code> if editor is external, <code>false</code> otherwise
+	 * @return <code>true</code> if editor is external, and <code>false</code>
+	 * otherwise
+	 * @since 3.0
 	 */
 	public boolean isOpenExternal();
 }

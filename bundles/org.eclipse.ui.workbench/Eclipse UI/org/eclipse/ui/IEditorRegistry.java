@@ -44,18 +44,25 @@ public interface IEditorRegistry {
 
 	/**
 	 * The identifier for the system external editor descriptor. This descriptor 
-	 * is always present in the registry on all platforms. This editor requires 
-	 * an input which implements <code>IPathEditorInput</code>. To access the
-	 * editor descriptor for this identifier, use <code>findEditor(String)</code>.
+	 * is always present in the registry on all platforms.
+	 * This editor requires an input which implements
+	 * {@link org.eclipse.ui.IPathEditorInput IPathEditorInput}.
+	 * Use {@link #findEditor findEditor} to access the editor descriptor for
+	 * this identifier.
+	 * 
+	 * @since 3.0
 	 */
 	public static final String SYSTEM_EXTERNAL_EDITOR_ID = "org.eclipse.ui.systemExternalEditor"; //$NON-NLS-1$
 	
 	/**
 	 * The identifier for the system in-place editor descriptor. This descriptor 
 	 * is only present in the registry on platforms that support in-place editing
-	 * (for example Win32). This editor requires an input which implements 
-	 * <code>IPathEditorInput</code>. To access the editor descriptor for this 
-	 * identifier, use <code>findEditor(String)</code>.
+	 * (for example Win32). This editor requires an input which implements
+	 * {@link org.eclipse.ui.IPathEditorInput IPathEditorInput}. Use 
+	 * {@link #findEditor findEditor} to access the editor descriptor for this
+	 * identifier.
+	 * 
+	 * @since 3.0
 	 */
 	public static final String SYSTEM_INPLACE_EDITOR_ID = "org.eclipse.ui.systemInPlaceEditor"; //$NON-NLS-1$
 	
@@ -87,7 +94,9 @@ public interface IEditorRegistry {
 	 * Returns the default editor. The default editor always exist.
 	 *
 	 * @return the descriptor of the default editor
-	 * @deprecated 
+	 * @deprecated The system external editor is the default editor.
+	 * Use <code>findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)</code>
+	 * instead.
 	 */
 	public IEditorDescriptor getDefaultEditor();
 	
@@ -164,28 +173,35 @@ public interface IEditorRegistry {
 	public void setDefaultEditor(String fileNameOrExtension, String editorId);
 	
 	/**
-	 * Returns whether the system has an in-place editor that could handle
-	 * the file.
+	 * Returns whether there is an in-place editor that could handle a file
+	 * with the given name.
 	 * 
-	 * @param filename the file name in the system
-	 * @return <code>true</code> if an in-place editor available, <code>false</code> otherwise
+	 * @param filename the file name
+	 * @return <code>true</code> if an in-place editor is available, and
+	 * <code>false</code> otherwise
+	 * @since 3.0
 	 */
-	public boolean systemInPlaceEditorAvailable(String filename);
+	public boolean isSystemInPlaceEditorAvailable(String filename);
 	
 	/**
-	 * Returns whether the system has an editor that could handle the file.
+	 * Returns whether the system has an editor that could handle a file
+	 * with the given name.
 	 * 
-	 * @param filename the file name in the system
-	 * @return <code>true</code> if an external editor available, <code>false</code> otherwise
+	 * @param filename the file name
+	 * @return <code>true</code> if an external editor available, and
+	 * <code>false</code> otherwise
+	 * @since 3.0
 	 */
-	public boolean systemExternalEditorAvailable(String filename);
+	public boolean isSystemExternalEditorAvailable(String filename);
 	
 	/**
 	 * Returns the image descriptor associated with the system editor that
 	 * would be used to edit this file externally.
 	 *
-	 * @param filename the file name in the system
-	 * @return the descriptor of the external editor image or <code>null</code>
+	 * @param filename the file name
+	 * @return the descriptor of the external editor image, or <code>null</code>
+	 * if none
+	 * @since 3.0
 	 */
 	public ImageDescriptor getSystemExternalEditorImageDescriptor(String filename);
 }
