@@ -26,7 +26,6 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -79,7 +78,7 @@ public class XmlFormatter {
 
 	private static void format(FormattingPreferences prefs, IDocument doc, int indent) {
 		MultiPassContentFormatter formatter = new MultiPassContentFormatter(
-                IDocumentExtension3.DEFAULT_PARTITIONING,
+                AntDocumentSetupParticipant.ANT_PARTITIONING,
                 IDocument.DEFAULT_CONTENT_TYPE);
 
         formatter.setMasterStrategy(new XmlDocumentFormattingStrategy(prefs, indent));

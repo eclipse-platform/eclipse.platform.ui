@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
@@ -36,17 +37,13 @@ import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
-/*
- * This file originates from an internal package of Eclipse's 
- * Manifest Editor. It has been copied by GEBIT to here in order to
- * permanently use those features. It has been renamed and edited by GEBIT 
- * after copying.
- */
 public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 
 	protected class AntAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
@@ -330,7 +327,10 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	private XMLCore fCore;
 
 	public AntEditorDocumentProvider(XMLCore core) {
-		super(new TextFileDocumentProvider(new AntStorageDocumentProvider()));
+		IDocumentProvider provider= new TextFileDocumentProvider(new AntStorageDocumentProvider());
+		provider= new ForwardingDocumentProvider(AntDocumentSetupParticipant.ANT_PARTITIONING, new AntDocumentSetupParticipant(), provider);
+		setParentDocumentProvider(provider);
+		
 		fCore= core;
 	}
 

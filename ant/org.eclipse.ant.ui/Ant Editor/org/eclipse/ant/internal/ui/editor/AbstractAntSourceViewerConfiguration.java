@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorProcInstrScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorTagScanner;
@@ -58,7 +59,8 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 	    PresentationReconciler reconciler = new PresentationReconciler();
-	
+	    reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+	    
 		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getDefaultScanner(), null);
 	    reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 	    reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
@@ -147,7 +149,8 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    return new String[] {
 	        IDocument.DEFAULT_CONTENT_TYPE,
 	        AntEditorPartitionScanner.XML_COMMENT,
-	        AntEditorPartitionScanner.XML_TAG };
+	        AntEditorPartitionScanner.XML_TAG,
+			AntEditorPartitionScanner.XML_CDATA};
 	}
 
 	/* (non-Javadoc)
@@ -164,5 +167,12 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 			property.startsWith(IAntEditorColorConstants.STRING_COLOR) ||
 			property.startsWith(IAntEditorColorConstants.TAG_COLOR) ||
 			property.startsWith(IAntEditorColorConstants.XML_COMMENT_COLOR);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return AntDocumentSetupParticipant.ANT_PARTITIONING;
 	}
 }

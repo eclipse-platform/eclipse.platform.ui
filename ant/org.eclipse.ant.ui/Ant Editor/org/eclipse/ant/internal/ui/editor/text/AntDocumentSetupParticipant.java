@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 
@@ -20,6 +21,12 @@ import org.eclipse.jface.text.rules.DefaultPartitioner;
  */
 public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 
+	/**
+	 * The name of the Ant partitioning.
+	 * @since 3.0
+	 */
+	public final static String ANT_PARTITIONING= "___ant_partitioning";  //$NON-NLS-1$
+	
 	public AntDocumentSetupParticipant() {
 	}
 	
@@ -29,7 +36,12 @@ public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 	public void setup(IDocument document) {
 		if (document != null) {
 			IDocumentPartitioner partitioner = createDocumentPartitioner();
-			document.setDocumentPartitioner(partitioner);
+			if (document instanceof IDocumentExtension3) {
+				IDocumentExtension3 extension3= (IDocumentExtension3) document;
+				extension3.setDocumentPartitioner(ANT_PARTITIONING, partitioner);
+			} else {
+				document.setDocumentPartitioner(partitioner);
+			}
 			partitioner.connect(document);
 		}
 	}
@@ -38,6 +50,7 @@ public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 		return new DefaultPartitioner(
 				new AntEditorPartitionScanner(), new String[]{
 						AntEditorPartitionScanner.XML_TAG,
-						AntEditorPartitionScanner.XML_COMMENT});
+						AntEditorPartitionScanner.XML_COMMENT, 
+						AntEditorPartitionScanner.XML_CDATA});
 	}
 }
