@@ -17,29 +17,30 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 
 /**
+ * Interface providing special access for configuring the action bars
+ * of a workbench window.
+ * <p>
+ * Note that these objects are only available to the main application
+ * (the plug-in that creates and owns the workbench).
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
- * @see WorkbenchAdviser#fillActionBars
+ * @see org.eclipse.ui.application.WorkbenchAdviser#fillActionBars
  * @since 3.0
  */
 public interface IActionBarConfigurer {
 	/**
-	 * Returns the menu manager for the main menu bar of the workbench window.
-	 * <p>
-	 * Note that every workbench window has a menu bar, even though it may not
-	 * be showing.
-	 * </p>
+	 * Returns the menu manager for the main menu bar of a workbench window.
 	 * 
 	 * @return the menu manager
 	 */
 	public IMenuManager getMenuManager();
 		
 	/**
-	 * Adds a tool bar item with the given id to the tool bar of the workbench
+	 * Adds a tool bar item with the given id to the tool bar of a workbench
 	 * window. The new tool bar item is added after any existing ones.
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
 	 * 
 	 * @param id the id assigned to this tool bar
 	 * @return the tool bar manager for the new tool bar item
@@ -47,12 +48,8 @@ public interface IActionBarConfigurer {
 	public IToolBarManager addToolBar(String id);
 	
 	/**
-	 * Removes the tool bar item with the given id from the tool bar of the
+	 * Removes the tool bar item with the given id from the tool bar of a
 	 * workbench window. Ignored if there is no tool bar item with the given id. 
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
 	 * 
 	 * @param id the tool bar id
 	 */
@@ -60,12 +57,8 @@ public interface IActionBarConfigurer {
 	
 	/**
 	 * Returns the tool bar manager for the tool bar item with the given id
-	 * to the tool bar of the workbench window. The new tool bar item is added
+	 * to the tool bar of a workbench window. The new tool bar item is added
 	 * after any existing ones.
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
 	 * 
 	 * @param id the id of the tool bar item
 	 * @return the tool bar manager for the tool bar item with the given id
@@ -73,12 +66,8 @@ public interface IActionBarConfigurer {
 	public IToolBarManager getToolBar(String id);
 
 	/**
-	 * Adds a group to the tool bar of the workbench window. The new group is 
+	 * Adds a group to the tool bar of a workbench window. The new group is 
 	 * added after any existing contributions to the tool bar.
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
 	 *
 	 * @param toolBarMgr the tool bar manager to add the group to 
 	 * @param id the unique group identifier
@@ -87,7 +76,7 @@ public interface IActionBarConfigurer {
 	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator);
 	
 	/**
-	 * Register the action as a global action with the workbench
+	 * Register the action as a global action with a workbench
 	 * window.
 	 * <p>
 	 * For a workbench retarget action 
@@ -103,39 +92,26 @@ public interface IActionBarConfigurer {
 	public void registerGlobalAction(IAction action);
 	
 	/**
-	 * Adds a menu item to the tool bar of the workbench menu.
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
+	 * Adds a menu item to the tool bar of a workbench menu.
 	 * 
 	 * @param menuItem the action contribution item to add to the menu
 	 */
 	public void addToToolBarMenu(ActionContributionItem menuItem);
 	
 	/**
-	 * Adds the special editor tool bar group to the tool bar of the workbench
+	 * Adds the special editor tool bar group to the tool bar of a workbench
 	 * window. The new tool bar item is added after any existing ones. The id
 	 * of editor tool bar item is always 
 	 * {@link EDITOR_TOOLBAR_ID EDITOR_TOOLBAR_ID}, and consists of a canned
 	 * arrangement of buttons pre-bound to editor-specific commands.
-	 * <p>
-	 * Note that every workbench window has a tool bar, even though it may not
-	 * be showing.
-	 * </p>
 	 * 
 	 * @return the tool bar manager for the new tool bar item
 	 * @issue where is EDITOR_TOOLBAR_ID defined?
-	 * @see EDITOR_TOOLBAR_ID;
 	 */
 	public void addEditorToolbarGroup();
 	
 	/**
-	 * Returns the status line manager of the workbench window.
-	 * <p>
-	 * Note that every workbench window has a status line, even though it may
-	 * not be showing.
-	 * </p>
+	 * Returns the status line manager of a workbench window.
 	 * 
 	 * @return the status line manager
 	 */

@@ -69,7 +69,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * has been recreated from a previously saved state; use to adjust the
  * restored workbench</li>
  * <li><code>preWindowOpen</code> - called as each window is being opened; 
- *  use to configure the window</li>
+ *  use to configure aspects of the window other than actions bars </li>
+ * <li><code>fillActionBars</code> - called after <code>preWindowOpen</code> to
+ * configure a window's action bars</li>
  * <li><code>postWindowRestore</code> - called after a window has been
  * recreated from a previously saved state; use to adjust the restored
  * window</li>
@@ -95,9 +97,32 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class WorkbenchAdviser {
 	
+	/**
+	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
+	 * operation is not filling the action bars of an actual workbench window,
+	 * but rather a proxy (used for perspective customization).
+	 */
 	public static final int FILL_PROXY = 0x01;
-	public static final int FILL_MENUS = 0x02;
-	public static final int FILL_TOOLBARS = 0x04;
+
+	/**
+	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
+	 * operation is supposed to fill (or describe) the workbench window's menu
+	 * bar.
+	 */
+	public static final int FILL_MENU_BAR = 0x02;
+	
+	/**
+	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
+	 * operation is supposed to fill (or describe) the workbench window's tool
+	 * bar.
+	 */
+	public static final int FILL_TOOL_BAR = 0x04;
+
+	/**
+	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
+	 * operation is supposed to fill (or describe) the workbench window's status
+	 * line.
+	 */
 	public static final int FILL_STATUS_LINE = 0x08;
 
 	/**
@@ -297,7 +322,10 @@ public abstract class WorkbenchAdviser {
 	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * Typical clients will use the configurer passed in to tweak the
-	 * workbench window in an application-specific way.
+	 * workbench window in an application-specific way; however, filling the
+	 * window's menu bar, tool bar, and status line must be done in 
+	 * {@link #fillActionBars fillActionBars}, which is called immediately
+	 * after this method is called.
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench
@@ -309,6 +337,41 @@ public abstract class WorkbenchAdviser {
 		// do nothing
 	}
 	
+	/**
+	 * Configures the action bars using the given action bar configurer.
+	 * Under normal circumstances, <code>flags</code> does not include
+	 * <code>FILL_PROXY</code>, meaning this is a request to fill the actions\
+	 * bars of the given workbench window; the
+	 * remaining flags indicate which combination of
+	 * the menu bar (<code>FILL_MENU_BAR</code>),
+	 * the tool bar (<code>FILL_TOOL_BAR</code>),
+	 * and the status line (<code>FILL_STATUS_LINE</code>) are to be filled.
+	 * <p>
+	 * If <code>flags</code> does include <code>FILL_PROXY</code>, then this
+	 * is a request to describe the actions bars of the given workbench window
+	 * (which will already have been filled);
+	 * again, the remaining flags indicate which combination of the menu bar,
+	 * the tool bar, and the status line are to be described.
+	 * </p>
+	 * <p>
+	 * This method is called just after {@link #preWindowOpen preWindowOpen}.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override.
+	 * </p>
+	 * 
+	 * @param window the workbench window
+	 * @param configurer the action bar configurer object
+	 * @param flags bit mask composed from the constants
+	 * {@link #FILL_MENU_BAR FILL_MENU_BAR}</code>,
+	 * {@link #FILL_TOOL_BAR FILL_TOOL_BAR}</code>,
+	 * {@link #FILL_STATUS_LINE FILL_STATUS_LINE}</code>,
+	 * and {@link #FILL_PROXY FILL_PROXY}</code>
+	 * @issue should 1st param be IWorkbenchWindowConfigurer to be more consistent with other methods?
+	 */
+	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
+		  // do nothing by default
+	}
+
 	/**
 	 * Performs arbitrary actions after the given workbench window has been
 	 * restored, but before it is opened.
@@ -427,17 +490,5 @@ public abstract class WorkbenchAdviser {
 		// default: no initial perspective
 		return null;
 	}
-	
-	/**
-	 * 
-	 * @param window
-	 * @param configurer
-	 * @param flags
-	 */
-	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
-		  // do nothing by default
-	}
-
-	
 }
 

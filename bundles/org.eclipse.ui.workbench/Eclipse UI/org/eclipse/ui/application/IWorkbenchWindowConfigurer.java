@@ -79,7 +79,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Returns whether the underlying workbench window has a title bar.
 	 * <p>
 	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR SHOULD_SHOW_TITLE_BAR}
+	 * {@link IWorkbenchPreferences#SHOULD_SHOW_TITLE_BAR IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR}
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a title bar, and <code>false</code>
@@ -99,7 +99,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Returns whether the underlying workbench window has a title bar.
 	 * <p>
 	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR SHOULD_SHOW_MENU_BAR}
+	 * {@link IWorkbenchPreferences#SHOULD_SHOW_MENU_BAR IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR}
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a title bar, and <code>false</code>
