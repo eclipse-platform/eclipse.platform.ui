@@ -119,7 +119,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public String getLabel() {
-		return getResourceString((String) bundleOsgi.getHeaders().get(Constants.BUNDLE_NAME));
+		String key = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_NAME);
+		if (key == null)
+			return "";
+		return getResourceString(key);
 	}
 
 	/**
