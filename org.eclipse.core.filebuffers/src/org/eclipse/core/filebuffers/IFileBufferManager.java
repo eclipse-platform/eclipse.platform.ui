@@ -76,7 +76,7 @@ public interface IFileBufferManager {
 	 * 
 	 * @param location the location
 	 */
-	void requestSynchronizationContext(IPath path);
+	void requestSynchronizationContext(IPath location);
 
 	/**
 	 * No longer requests the synchronization context for the filebuffer for
