@@ -72,7 +72,6 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showInPartIds = new ArrayList(3);
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ViewFactory viewFactory;
-	private String theme;
 	
 	/**
 	 * Constructs a new PageLayout for other purposes.
@@ -394,7 +393,7 @@ public class PageLayout implements IPageLayout {
 			if (WorkbenchActivityHelper.filterItem(viewDescriptor))
 				return null;
 			// @issue view should refer to current perspective for theme setting
-			return LayoutHelper.createView(getViewFactory(), partID, theme);
+			return LayoutHelper.createView(getViewFactory(), partID);
 		}
 	}
 
@@ -718,14 +717,6 @@ public class PageLayout implements IPageLayout {
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
-	}
-	
-	void setTheme(String theme) {
-		this.theme = theme;
-	}
-	
-	String getTheme() {
-		return this.theme;
 	}
 	
 	/**

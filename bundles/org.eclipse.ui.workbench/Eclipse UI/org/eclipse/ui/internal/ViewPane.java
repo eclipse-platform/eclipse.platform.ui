@@ -94,7 +94,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
 	private boolean showMenuButton = false;
-	private String theme;
 
 	//Created in o.e.ui.Perspective, disposed there.
 	private Sash fastViewSash;
@@ -251,16 +250,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public ViewPane(IViewReference ref, WorkbenchPage page) {
 		super(ref, page);
 		fast = ref.isFastView();
-	}
-	/**
-	 * Constructs a view pane for a view part with a theme id.
-	 * 
-	 * @issue the theme should be obtained from the current perspective as needed, 
-	 *   not bound to the view, since the view may be shared across multiple perspectives
-	 */
-	public ViewPane(IViewReference ref, WorkbenchPage page, String theme) {
-		this(ref, page);
-		this.theme = theme;
 	}
 
 	/**
@@ -1019,15 +1008,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 		}
 		*/
-	}
-
-	/**
-	 * Sets the theme.
-	 * 
-	 * @param theme the theme id
-	 */
-	void setTheme(String theme) {
-		this.theme = theme;
 	}
 
 	/* (non-Javadoc)

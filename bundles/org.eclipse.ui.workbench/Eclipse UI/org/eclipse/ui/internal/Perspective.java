@@ -555,7 +555,6 @@ private void loadPredefinedPersp(
 	// Create layout factory.
 	RootLayoutContainer container = new RootLayoutContainer(page);
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
-	layout.setTheme(getDesc().getTheme());
 	layout.setFixed(descriptor.getFixed());
 
 	// add the placeholder for the intro view
@@ -801,7 +800,6 @@ public IStatus restoreState() {
 		}
 		if(ref.getPane() == null) {
 			ViewPane vp = new ViewPane((IViewReference)ref,page);
-			vp.setTheme(getDesc().getTheme());
 			ref.setPane(vp);
 		}
 		page.addPart(ref);

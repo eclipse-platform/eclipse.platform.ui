@@ -194,7 +194,7 @@ class LayoutHelper {
 		ViewPane newPart = (ViewPane) ref.getPane();
 		if (newPart == null) {
 			WorkbenchPage page = (WorkbenchPage) ref.getPage();
-			newPart = new ViewPane((IViewReference)ref, page, theme);
+			newPart = new ViewPane((IViewReference)ref, page);
 			ref.setPane(newPart);
 		}
 		return newPart;

@@ -236,7 +236,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 				PartPane pane = ((ViewReference) ref).getPane();
 				if (pane == null) {
-					pane = new ViewPane(ref, page, page.getPerspective().getTheme());
+					pane = new ViewPane(ref, page);
 					((ViewReference) ref).setPane(pane);
 				}
 				site.setPane(pane);
