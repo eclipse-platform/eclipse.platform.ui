@@ -40,7 +40,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
 import org.eclipse.team.internal.core.SaveContext;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * A CVSMergeSubscriber is responsible for maintaining the remote trees for a merge into

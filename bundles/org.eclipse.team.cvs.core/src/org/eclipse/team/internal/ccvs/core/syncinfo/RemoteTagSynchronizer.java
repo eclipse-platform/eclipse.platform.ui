@@ -34,16 +34,13 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This RemoteSynchronizr uses a CVS Tag to fetch the remote tree
  */
 public class RemoteTagSynchronizer extends RemoteSynchronizer {
 
-	private static final byte[] NO_REMOTE = new byte[0];
 	private CVSTag tag;
 	
 	public RemoteTagSynchronizer(String id, CVSTag tag) {
@@ -52,9 +49,12 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	}
 
 	public void collectChanges(IResource local, ICVSRemoteResource remote, int depth, IProgressMonitor monitor) throws TeamException {
-		byte[] remoteBytes = getRemoteBytes(local, remote);
-		if (remoteBytes == null) return;
-		setSyncBytes(local, remoteBytes);
+		byte[] remoteBytes = getRemoteSyncBytes(local, remote);
+		if (remoteBytes == null) {
+			setRemoteDoesNotExist(local);
+		} else {
+			setSyncBytes(local, remoteBytes);
+		}
 		if (depth == IResource.DEPTH_ZERO) return;
 		Map children = mergedMembers(local, remote, monitor);	
 		for (Iterator it = children.keySet().iterator(); it.hasNext();) {
@@ -73,14 +73,6 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 				// These sync bytes are stale. Purge them
 				removeSyncBytes(resource, IResource.DEPTH_INFINITE, true /* silent*/);
 			}
-		}
-	}
-	
-	protected byte[] getRemoteBytes(IResource local, ICVSRemoteResource remote) throws CVSException {
-		if (remote != null) {
-			return ((RemoteResource)remote).getSyncBytes();
-		} else {
-			return NO_REMOTE;
 		}
 	}
 	
@@ -210,33 +202,6 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 		} else {
 			return ((IContainer) parent).getFile(new Path(childName));
 		}
-	}
-	
-	/**
-	 * Return true if remote bytes for the resource have been fetched during
-	 * a refresh. This will also return true for remote resources that do not exist
-	 * (i.e. they have no sync bytes but did not exist remotely at the time of the
-	 * last refresh.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public boolean hasRemoteBytesFor(IResource resource) throws CVSException {
-		return super.getSyncBytes(resource) != null;
-	}
-	
-	/**
-	 * This method will return null in both cases when the remote has never been fetched
-	 * or when the remote does not exist. Use <code>hasRemoteBytesFor</code> to
-	 * differentiate these cases.  
-	 */
-	public byte[] getSyncBytes(IResource resource) throws CVSException {
-		byte[] syncBytes = internalGetSyncBytes(resource);
-		if (syncBytes != null && Util.equals(syncBytes, NO_REMOTE)) {
-			// If it is known that there is no remote, return null
-			return null;
-		}
-		return syncBytes;
 	}
 
 	/**

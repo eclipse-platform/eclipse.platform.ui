@@ -215,6 +215,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 	
 	private boolean hasIncomingChange(IResource resource) throws CVSException {
-		return remoteSynchronizer.getRemoteBytes(resource) != null;
+		return remoteSynchronizer.isRemoteKnown(resource);
 	}
 }

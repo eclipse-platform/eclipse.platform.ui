@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -24,19 +25,20 @@ public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 	// The local synchronizer is used for cases where the remote is unknown
 	private BaseSynchronizer baseSynchronizer = new BaseSynchronizer();
 	
-	/**
-	 * @param id
-	 */
 	public OptimizedRemoteSynchronizer(String id) {
-		super(id, null /* use the tag in the local workspace resources */);
+		this(id, null /* use the tag in the local workspace resources */);
+	}
+
+	public OptimizedRemoteSynchronizer(String id, CVSTag tag) {
+		super(id, tag);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#getSyncBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getSyncBytes(IResource resource) throws CVSException {
-		byte[] bytes = getRemoteBytes(resource);
-		if ((bytes == null) && !hasRemoteBytesFor(resource)) {
+		byte[] bytes = internalGetSyncBytes(resource);
+		if ((bytes == null) && !isRemoteKnown(resource)) {
 			// The remote was never known so use the base		
 			bytes = baseSynchronizer.getSyncBytes(resource);
 		}
@@ -56,34 +58,27 @@ public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 		}		
 	}
 
-	/**
-	 * @return
-	 */
 	public BaseSynchronizer getBaseSynchronizer() {
 		return baseSynchronizer;
 	}
 
-	/**
+	/*
 	 * Return the bytes for the remote resource if there is a remote that differs
 	 * from the local.
-	 * 
-	 * @param resource
-	 * @return
-	 * @throws CVSException
 	 */
-	public byte[] getRemoteBytes(IResource resource) throws CVSException {
+	private byte[] internalGetSyncBytes(IResource resource) throws CVSException {
 		return super.getSyncBytes(resource);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer#getRemoteBytes(org.eclipse.core.resources.IResource, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer#getRemoteSyncBytes(org.eclipse.core.resources.IResource, org.eclipse.team.internal.ccvs.core.ICVSRemoteResource)
 	 */
-	protected byte[] getRemoteBytes(IResource local, ICVSRemoteResource remote) throws CVSException {
+	protected byte[] getRemoteSyncBytes(IResource local, ICVSRemoteResource remote) throws CVSException {
 		if (remote == null && local.getType() == IResource.FOLDER) {
 			// If there is no remote, use the local sync for the folder
 			return baseSynchronizer.getSyncBytes(local);
 		}
-		return super.getRemoteBytes(local, remote);
+		return super.getRemoteSyncBytes(local, remote);
 	}
 
 }
