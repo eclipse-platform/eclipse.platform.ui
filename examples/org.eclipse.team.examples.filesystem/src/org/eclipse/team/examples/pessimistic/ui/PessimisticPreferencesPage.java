@@ -270,18 +270,26 @@ public class PessimisticPreferencesPage
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
-		store.setValue(
-			IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED,
-			EDIT_OPTION_KEYS[filesAreEditedCombo.getSelectionIndex()]);
-		store.setValue(
-			IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED_NOPROMPT,
-			SAVE_OPTION_KEYS[filesAreEditedNoPromptCombo.getSelectionIndex()]);
-		store.setValue(
-			IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_SAVED,
-			SAVE_OPTION_KEYS[filesAreSavedCombo.getSelectionIndex()]);
-		store.setValue(
-			IPessimisticFilesystemConstants.PREF_ADD_TO_CONTROL,
-			ADD_TO_CONTROL_OPTION_KEYS[addToControlCombo.getSelectionIndex()]);
+		int selectionIndex = filesAreEditedCombo.getSelectionIndex();
+		if (selectionIndex != -1)
+	        store.setValue(
+				IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED,
+				EDIT_OPTION_KEYS[selectionIndex]);
+		selectionIndex = filesAreEditedNoPromptCombo.getSelectionIndex();
+		if (selectionIndex != -1)
+			store.setValue(
+				IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED_NOPROMPT,
+				SAVE_OPTION_KEYS[selectionIndex]);
+		selectionIndex = filesAreSavedCombo.getSelectionIndex();
+		if (selectionIndex != -1)
+			store.setValue(
+				IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_SAVED,
+				SAVE_OPTION_KEYS[selectionIndex]);
+		selectionIndex = addToControlCombo.getSelectionIndex();
+		if (selectionIndex != -1)
+			store.setValue(
+				IPessimisticFilesystemConstants.PREF_ADD_TO_CONTROL,
+				ADD_TO_CONTROL_OPTION_KEYS[selectionIndex]);
 		store.setValue(
 			IPessimisticFilesystemConstants.PREF_FAIL_VALIDATE_EDIT, 
 			failValidateEdit.getSelection());		
