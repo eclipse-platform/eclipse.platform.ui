@@ -416,6 +416,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			   to delete so just return. */
 			if (!exists())
 				return;
+
 			workspace.beginOperation(true);
 			message = Policy.bind("resources.deleteProblem");
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
@@ -431,14 +432,17 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
 					break;
 				case IResource.PROJECT:
+					workspace.deleting((IProject) this);
 					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
 						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
 					break;
 				case IResource.ROOT:
 					IProject[] projects = ((IWorkspaceRoot) this).getProjects();
-					for (int i = 0; i < projects.length; i++)
+					for (int i = 0; i < projects.length; i++) {
+						workspace.deleting(projects[i]);
 						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2)))
 							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2));
+					}
 					// need to clear out the root info
 					workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
 					getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
@@ -814,8 +818,14 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
-			if (!hook.moveProject(tree, (IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-				tree.standardMoveProject((IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			// if there is a name change then we are deleting the source so notify
+			IProject project = (IProject) this;
+			if (!getName().equals(description.getName())) {
+				workspace.changing(project);
+				workspace.deleting(project);
+			}
+			if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
 			if (!tree.getStatus().isOK())
@@ -878,9 +888,16 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 						tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
 				case IResource.PROJECT:
-					IProjectDescription description = workspace.newProjectDescription(path.lastSegment());
-					if (!hook.moveProject(tree, (IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-						tree.standardMoveProject((IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+					IProject project = (IProject) this;
+					// if there is a change in name, then we are deleting the source project so notify
+					if (!getName().equals(path.lastSegment())) {
+						workspace.changing(project);
+						workspace.deleting(project);
+					}
+					IProjectDescription description = project.getDescription();
+					description.setName(path.lastSegment());
+					if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+						tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
 				case IResource.ROOT:
 					message = Policy.bind("resources.moveRoot");
