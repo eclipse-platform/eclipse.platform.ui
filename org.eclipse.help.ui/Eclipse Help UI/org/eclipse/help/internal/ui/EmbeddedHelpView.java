@@ -157,7 +157,7 @@ public class EmbeddedHelpView extends ViewPart {
 			// now handle worst case scenario. Should never be here!
 			viewContainer.dispose();
 			Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
-			text.setText("Help View Failed to Launch");
+			text.setText(WorkbenchResources.getString("WE007"));
 
 			// capture that the view was not created successfully
 			creationSuccessful = false;
