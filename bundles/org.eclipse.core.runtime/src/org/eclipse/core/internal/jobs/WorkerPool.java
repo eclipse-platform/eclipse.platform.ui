@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -9,6 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -106,9 +107,13 @@ class WorkerPool {
 		}
 	}
 	private synchronized void decrementBusyThreads() {
-		busyThreads--;
+		//impossible to have less than zero busy threads
+		if (--busyThreads < 0) {
+			if (JobManager.DEBUG)
+				Assert.isTrue(false, Integer.toString(busyThreads));
+			busyThreads = 0;
+		}
 	}
-
 	/**
 	 * Signals the end of a job.  Note that this method can be called under
 	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
@@ -132,7 +137,12 @@ class WorkerPool {
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	private synchronized void incrementBusyThreads() {
-		busyThreads++;
+		//impossible to have more busy threads than there are threads
+		if (++busyThreads > numThreads) {
+			if (JobManager.DEBUG)
+				Assert.isTrue(false, Integer.toString(busyThreads) + ',' + numThreads);
+			busyThreads = numThreads;
+		}
 	}
 	/**
 	 * Notfication that a job has been added to the queue. Wake a worker,
@@ -149,7 +159,7 @@ class WorkerPool {
 		int threadCount = numThreads;
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
-		if (busyThreads >= threadCount && (threadCount < MAX_THREADS || (job != null && job.getPriority() == Job.INTERACTIVE))) {
+		if (busyThreads >= threadCount) {
 			Worker worker = new Worker(this);
 			add(worker);
 			if (JobManager.DEBUG)
@@ -200,7 +210,7 @@ class WorkerPool {
 	protected InternalJob startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
-			if (!manager.isActive() || numThreads > MAX_THREADS) {
+			if (!manager.isActive()) {
 				//must remove the worker immediately to prevent all threads from expiring
 				endWorker(worker);
 				return null;
