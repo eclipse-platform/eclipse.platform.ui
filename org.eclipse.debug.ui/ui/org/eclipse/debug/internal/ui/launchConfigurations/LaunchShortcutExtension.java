@@ -332,7 +332,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			// iconPath may be null because imageIcon is optional
 			if (iconPath != null) {
 				try {
-					Bundle bundle = Platform.getBundle(getConfigurationElement().getDeclaringExtension().getNamespace());
+					Bundle bundle = Platform.getBundle(getConfigurationElement().getNamespace());
 					URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 					iconURL = new URL(iconURL, iconPath);
 					fImageDescriptor = ImageDescriptor.createFromURL(iconURL);
@@ -445,7 +445,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return fConfig.getDeclaringExtension().getNamespace();
+		return fConfig.getNamespace();
 	}
 }
 

@@ -102,7 +102,7 @@ public class SourceLookupUIUtils {
 	}
 	
 	private void registerContainerImages(IConfigurationElement configElement){
-		Bundle bundle = Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+		Bundle bundle = Platform.getBundle(configElement.getNamespace());
 		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		String iconPath = configElement.getAttribute(ICON_ATTRIBUTE);
 		ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();

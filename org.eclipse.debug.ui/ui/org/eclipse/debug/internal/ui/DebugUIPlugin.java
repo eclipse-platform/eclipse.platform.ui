@@ -271,7 +271,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+		Bundle bundle = Platform.getBundle(element.getNamespace());
 		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} 

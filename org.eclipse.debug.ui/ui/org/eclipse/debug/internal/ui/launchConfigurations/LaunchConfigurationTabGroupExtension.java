@@ -215,7 +215,7 @@ public class LaunchConfigurationTabGroupExtension {
 	    if (fBannerImage == null) {
 	        String path = getConfigurationElement().getAttribute("bannerImage"); //$NON-NLS-1$
 	        if (path != null) {
-				Bundle bundle = Platform.getBundle(getConfigurationElement().getDeclaringExtension().getNamespace());
+				Bundle bundle = Platform.getBundle(getConfigurationElement().getNamespace());
 				URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 				try {
 					iconURL = new URL(iconURL, path);

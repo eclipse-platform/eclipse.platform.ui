@@ -795,7 +795,7 @@ public class DebugPlugin extends Plugin {
 					fProcessFactories.put(id, configurationElement);
 			} else {
 				// invalid process factory
-				String badDefiner= infos[i].getDeclaringExtension().getNamespace();
+				String badDefiner= infos[i].getNamespace();
 				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.31"), new String[] {badDefiner, id}), null)); //$NON-NLS-1$
 			}
 		}			

@@ -119,7 +119,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fConfig.getDeclaringExtension().getNamespace();
+        return fConfig.getNamespace();
     }
 
     public String getQuickPattern() {

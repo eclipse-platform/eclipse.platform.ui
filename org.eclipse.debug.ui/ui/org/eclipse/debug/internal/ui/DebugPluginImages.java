@@ -204,7 +204,7 @@ public class DebugPluginImages {
 		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configElements.length; i++) {
 			IConfigurationElement configElement = configElements[i];
-			Bundle bundle = Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+			Bundle bundle = Platform.getBundle(configElement.getNamespace());
 			URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 			String iconPath = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ICON);
 			ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();

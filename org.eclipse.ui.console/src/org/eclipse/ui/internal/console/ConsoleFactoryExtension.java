@@ -53,7 +53,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return fConfig.getDeclaringExtension().getNamespace();
+        return fConfig.getNamespace();
     }
 
     public boolean isEnabled() {

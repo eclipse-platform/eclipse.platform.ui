@@ -144,7 +144,7 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * @return ImageDescriptor
 	 */
 	protected ImageDescriptor createImageDescriptor(String attribute) {
-		Bundle bundle = Platform.getBundle(getConfigurationElement().getDeclaringExtension().getNamespace());
+		Bundle bundle = Platform.getBundle(getConfigurationElement().getNamespace());
 		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		String iconPath = getConfigurationElement().getAttribute(attribute);
 		if (iconPath != null) {

@@ -138,7 +138,7 @@ public class BreakpointContainerFactory implements IBreakpointContainerFactory {
 		// iconPath may be null because icon is optional
 		if (iconPath != null) {
 			try {
-				Bundle bundle = Platform.getBundle(fConfigurationElement.getDeclaringExtension().getNamespace());
+				Bundle bundle = Platform.getBundle(fConfigurationElement.getNamespace());
 				URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 				iconURL = new URL(iconURL, iconPath);
 				descriptor = ImageDescriptor.createFromURL(iconURL);

@@ -1186,7 +1186,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getNamespace()} ), null);  //$NON-NLS-1$
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getNamespace()} ), null);  //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -1210,7 +1210,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getNamespace()}), null); //$NON-NLS-1$
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getNamespace()}), null); //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
