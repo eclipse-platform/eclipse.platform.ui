@@ -92,7 +92,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @return the current stack frames in the thread
 	 */
 	private synchronized void getStackFrames0() {
-		fTarget.getStackFrames();
+		getAntDebugTarget().getStackFrames();
         if (fFrames.size() > 0) {
             //frames set..no need to wait
             return;
@@ -419,17 +419,18 @@ public class AntThread extends AntDebugElement implements IThread {
 	}
 
 	private void initializePropertyGroups() {
-		fUserProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.0")); //$NON-NLS-1$
-		fUserProperties.setValue(new AntPropertiesValue(fTarget));
-		fSystemProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.1")); //$NON-NLS-1$
-		fSystemProperties.setValue(new AntPropertiesValue(fTarget));
-		fRuntimeProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.2")); //$NON-NLS-1$
-		fRuntimeProperties.setValue(new AntPropertiesValue(fTarget));
+        AntDebugTarget target= getAntDebugTarget();
+		fUserProperties= new AntProperties(target, DebugModelMessages.getString("AntThread.0")); //$NON-NLS-1$
+		fUserProperties.setValue(new AntPropertiesValue(target));
+		fSystemProperties= new AntProperties(target, DebugModelMessages.getString("AntThread.1")); //$NON-NLS-1$
+		fSystemProperties.setValue(new AntPropertiesValue(target));
+		fRuntimeProperties= new AntProperties(target, DebugModelMessages.getString("AntThread.2")); //$NON-NLS-1$
+		fRuntimeProperties.setValue(new AntPropertiesValue(target));
 	}
     
     protected synchronized IVariable[] getVariables() {
         if (fRefreshProperties) {
-            fTarget.getProperties();
+            getAntDebugTarget().getProperties();
             if (fRefreshProperties) { 
             //properties have not been set; need to wait
                 try {

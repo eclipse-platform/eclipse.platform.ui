@@ -73,7 +73,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	public AntDebugTarget(ILaunch launch, IProcess process, IAntDebugController controller) {
 		super(null);
 		fLaunch = launch;
-		fTarget = this;
 		fProcess = process;
 		
 		fController= controller;
@@ -452,5 +451,5 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
                 breakpointRemoved(breakpoint, null);
             }
         }
-    }
+    }   
 }
