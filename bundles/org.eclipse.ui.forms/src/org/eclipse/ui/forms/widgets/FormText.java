@@ -69,6 +69,8 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * </li>
  * <li><b>b</b> - the enclosed text will use bold font.
  * </li>
+ * <li><b>br</b> - forced line break (no attributes).
+ * </li>
  * <li><b>span</b> - the enclosed text will have the color and font
  * specified in the element attributes. Color is provided using 'color'
  * attribute and is a key to the Color object set by 'setColor' method.
@@ -204,7 +206,7 @@ public class FormText extends Canvas {
 				if (segments.length > 0) {
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
-						segment.advanceLocator(gc, wHint, loc, resourceTable);
+						segment.advanceLocator(gc, wHint, loc, resourceTable, false);
 						width = Math.max(width, loc.width);
 					}
 					loc.y += loc.rowHeight;

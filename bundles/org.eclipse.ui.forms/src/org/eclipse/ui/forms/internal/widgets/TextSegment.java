@@ -130,11 +130,12 @@ public class TextSegment extends ParagraphSegment {
 		return new Rectangle(x, y, width, height);
 	}
 
-	public void advanceLocator(
+	public boolean advanceLocator(
 		GC gc,
 		int wHint,
 		Locator locator,
-		Hashtable objectTable) {
+		Hashtable objectTable,
+		boolean computeHeightOnly) {
 		Font oldFont = null;
 		if (fontId != null) {
 			oldFont = gc.getFont();
@@ -144,6 +145,7 @@ public class TextSegment extends ParagraphSegment {
 		}
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
+		boolean newLine=false;
 
 		if (wHint == SWT.DEFAULT || !wrapAllowed) {
 			Point extent = gc.textExtent(text);
@@ -152,7 +154,11 @@ public class TextSegment extends ParagraphSegment {
 				// new line
 				locator.x = isSelectable()?locator.indent+1:locator.indent;
 				locator.y += locator.rowHeight;
+				if (computeHeightOnly)
+					locator.collectHeights(true);
 				locator.rowHeight = 0;
+				locator.leading = 0;
+				newLine = true;
 			}
 			int width = extent.x;
 			if (isSelectable()) width+=2;
@@ -160,7 +166,8 @@ public class TextSegment extends ParagraphSegment {
 			locator.width = width;
 			locator.height = extent.y;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
-			return;
+			locator.leading = Math.max(locator.leading, fm.getLeading());
+			return newLine;
 		}
 
 		BreakIterator wb = BreakIterator.getLineInstance();
@@ -187,10 +194,14 @@ public class TextSegment extends ParagraphSegment {
 
 				saved = last;
 				locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
+				locator.leading = Math.max(locator.leading, fm.getLeading());
+				if (computeHeightOnly) locator.collectHeights(true);
 				locator.x = isSelectable()?locator.indent+1:locator.indent;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
+				locator.leading = 0;
 				width = Math.max(width, lineWidth);
+				newLine = true;
 			}
 			last = loc;
 			lastExtent = extent;
@@ -203,9 +214,11 @@ public class TextSegment extends ParagraphSegment {
 		locator.width = width;
 		locator.height = lineHeight;
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
+		locator.leading = Math.max(locator.leading, fm.getLeading());
 		if (oldFont != null) {
 			gc.setFont(oldFont);
 		}
+		return newLine;
 	}
 	
 	public void paint(
@@ -245,14 +258,16 @@ public class TextSegment extends ParagraphSegment {
 				if (isSelectable()) locator.x += 1;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
+				locator.rowCounter++;
 			}
-			gc.drawString(text, locator.x, locator.y);
+			int ly = locator.getBaseline(fm.getHeight()-fm.getLeading());
+			gc.drawString(text, locator.x, ly);
 			if (underline) {
-				int lineY = locator.y + lineHeight - descent + 1;
+				int lineY = ly + lineHeight - descent + 1;
 				gc.drawLine(locator.x, lineY, locator.x + extent.x, lineY);
 			}
 			Rectangle br =
-				new Rectangle(locator.x - 1, locator.y, extent.x + 2, lineHeight - descent + 3);
+				new Rectangle(locator.x - 1, ly, extent.x + 2, lineHeight - descent + 3);
 			areaRectangles.add(new AreaRectangle(br, 0, -1));
 			if (selected) {
 				if (colorId != null)
@@ -290,19 +305,20 @@ public class TextSegment extends ParagraphSegment {
 			if (locator.x + ewidth > width) {
 				// overflow
 				String prevLine = text.substring(saved, last);
-				gc.drawString(prevLine, locator.x, locator.y, true);
+				int ly = locator.getBaseline(lineHeight-fm.getLeading());
+				gc.drawString(prevLine, locator.x, ly, true);
 				Point prevExtent = gc.textExtent(prevLine);
 				int prevWidth = prevExtent.x;
 				if (isSelectable()) prevWidth += 2;
 
 				if (underline) {
-					int lineY = locator.y + lineHeight - descent + 1;
+					int lineY = ly + lineHeight - descent + 1;
 					gc.drawLine(locator.x, lineY, locator.x + prevWidth, lineY);
 				}
 				Rectangle br =
 					new Rectangle(
 						locator.x - 1,
-						locator.y,
+						ly,
 						prevExtent.x + 2,
 						lineHeight - descent + 3);
 				if (selected) {
@@ -319,6 +335,7 @@ public class TextSegment extends ParagraphSegment {
 				locator.resetCaret();
 				if (isSelectable()) locator.x +=1;
 				locator.y += locator.rowHeight;
+				locator.rowCounter++;
 				locator.rowHeight = 0;
 				saved = last;
 			}
@@ -326,19 +343,20 @@ public class TextSegment extends ParagraphSegment {
 		}
 		// paint the last line
 		String lastLine = text.substring(saved, last);
-		gc.drawString(lastLine, locator.x, locator.y, true);
+		int ly = locator.getBaseline(lineHeight-fm.getLeading());
+		gc.drawString(lastLine, locator.x, ly, true);
 		Point lastExtent = gc.textExtent(lastLine);
 		int lastWidth = lastExtent.x;
 		if (isSelectable()) lastWidth += 2;
 		Rectangle br =
 			new Rectangle(
 				locator.x - 1,
-				locator.y,
+				ly,
 				lastExtent.x + 2,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, saved, last));
 		if (underline) {
-			int lineY = locator.y + lineHeight - descent + 1;
+			int lineY = ly + lineHeight - descent + 1;
 			gc.drawLine(locator.x, lineY, locator.x + lastExtent.x, lineY);
 		}
 		if (selected) {

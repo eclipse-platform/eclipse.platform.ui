@@ -122,6 +122,18 @@ public class Paragraph {
 			if (segments[0] instanceof TextSegment
 				&& ((TextSegment) segments[0]).isSelectable())
 				loc.x += 1;
+			// compute heights
+			Locator hloc = loc.create();
+			ArrayList heights = new ArrayList();
+			hloc.heights = heights;
+			hloc.rowCounter = 0;
+			for (int j = 0; j<segments.length; j++) {
+				ParagraphSegment segment = segments[j];
+				segment.advanceLocator(gc, width, hloc, resourceTable, true);
+			}
+			hloc.collectHeights(false);
+			loc.heights = heights;
+			loc.rowCounter = 0;
 			for (int j = 0; j < segments.length; j++) {
 				ParagraphSegment segment = segments[j];
 				boolean doSelect = false;
@@ -129,6 +141,7 @@ public class Paragraph {
 					doSelect = true;
 				segment.paint(gc, width, loc, resourceTable, doSelect);
 			}
+			loc.heights = null;
 			loc.y += loc.rowHeight;
 		} else {
 			loc.y += lineHeight;

@@ -234,6 +234,8 @@ public class FormTextModel {
 						expandURLs,
 						getHyperlinkSettings(),
 						fontId);
+				} else if (name.equalsIgnoreCase("br")) {
+					segment = new BreakSegment();
 				}
 			}
 			if (segment != null) {

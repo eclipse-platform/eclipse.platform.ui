@@ -65,7 +65,7 @@ public class SectionPart implements IFormPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.ManagedForm)
+	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;

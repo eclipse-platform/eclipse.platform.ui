@@ -51,10 +51,12 @@ public class ImageSegment extends ParagraphSegment {
 		this.imageId = imageId;
 	}
 	
-	public void advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable) {
+	public boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable, boolean computeHeightOnly) {
 		Image image = getImage(objectTable);
 		int iwidth = 0;
 		int iheight = 0;
+		boolean newLine=false;
+		
 		if (image!=null) {
 			Rectangle rect = image.getBounds();
 			iwidth = rect.width;
@@ -65,12 +67,17 @@ public class ImageSegment extends ParagraphSegment {
 			loc.x = loc.indent + iwidth;
 			loc.width = loc.x;
 			loc.y += loc.rowHeight;
+			if (computeHeightOnly)
+				loc.collectHeights(true);
 			loc.rowHeight = iheight;
+			loc.leading = 0;
+			newLine=true;
 		}
 		else {
 			loc.x += iwidth;
 			loc.rowHeight = Math.max(loc.rowHeight, iheight);
 		}
+		return newLine;
 	}
 
 	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected) {
@@ -86,19 +93,17 @@ public class ImageSegment extends ParagraphSegment {
 		loc.width = iwidth;
 		loc.height = iheight;
 		
-		int ix = loc.x;
-		int iy = loc.y;
-		
-		if (ix + iwidth > width) {
+		if (loc.x + iwidth > width) {
 			// new row
-			ix = loc.indent + loc.marginWidth;
-			iy += loc.rowHeight;
+			loc.x = loc.indent + loc.marginWidth;
+			loc.y += loc.rowHeight;
 			loc.rowHeight = 0;
+			loc.rowCounter++;
 		}
-		
+		int ix = loc.x;
+		int iy = loc.getBaseline(iheight, false);		
 		gc.drawImage(image, ix, iy);
-		loc.x = ix + iwidth;
-		loc.y = iy;
+		loc.x += iwidth;
 		loc.rowHeight = Math.max(loc.rowHeight, iheight);
 	}
 }
