@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.*;
  */
 public class CreateLinkedResourceGroup {	
 	private Listener listener;
-	private String linkTarget;
+	private String linkTarget = "";
 	private int type;
 	private boolean createLink = false;
 
@@ -213,8 +213,8 @@ public void dispose() {
  * 	chose not to create a link.
  */
 public String getLinkTarget() {
-	if (createLink && linkTargetField != null && linkTargetField.isDisposed() == false)
-		return linkTargetField.getText();
+	if (createLink)
+		return linkTarget;
 
 	return null;
 }
@@ -222,12 +222,11 @@ public String getLinkTarget() {
  * Opens a file or directory browser depending on the link type.
  */
 private void handleLinkTargetBrowseButtonPressed() {
-	String linkTargetName = linkTargetField.getText();
 	File file = null;
 	String selection = null;
 	
-	if ("".equals(linkTargetName) == false) {	//$NON-NLS-1$
-		file = new File(linkTargetName);
+	if ("".equals(linkTarget) == false) {	//$NON-NLS-1$
+		file = new File(linkTarget);
 		if (file.exists() == false)
 			file = null;
 	}
@@ -235,19 +234,20 @@ private void handleLinkTargetBrowseButtonPressed() {
 		FileDialog dialog = new FileDialog(linkTargetField.getShell());
 		if (file != null) {
 			if (file.isFile())
-				dialog.setFileName(linkTargetName);
+				dialog.setFileName(linkTarget);
 			else
-				dialog.setFilterPath(linkTargetName);
+				dialog.setFilterPath(linkTarget);
 		}
 		selection = dialog.open();		
 	}
 	else {
 		DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
 		if (file != null) {
+			String path = linkTarget;
 			if (file.isFile())
-				linkTargetName = file.getParent();
-			if (linkTargetName != null)
-				dialog.setFilterPath(linkTargetName);
+				path = file.getParent();
+			if (path != null)
+				dialog.setFilterPath(path);
 		}
 		dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 		selection = dialog.open();
@@ -298,7 +298,7 @@ protected void initializeDialogUnits(Control control) {
  */
 private void resolveVariable() {
 	IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-	IPath path = new Path(linkTargetField.getText());
+	IPath path = new Path(linkTarget);
 	IPath resolvedPath = pathVariableManager.resolvePath(path);
 	
 	if (path.equals(resolvedPath)) {
@@ -368,8 +368,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return createStatus(IStatus.OK, "");	//$NON-NLS-1$
 	
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-	String linkTargetName = linkTargetField.getText();
-	IPath path = new Path(linkTargetName);
+	IPath path = new Path(linkTarget);
 	
 	if (createLink == false)
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
@@ -379,9 +378,9 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return locationStatus;
 
 	// use the resolved link target name
-	linkTargetName = resolvedPathLabelData.getText();
-	path = new Path(linkTargetName);
-	File linkTargetFile = new Path(linkTargetName).toFile();
+	String resolvedLinkTarget = resolvedPathLabelData.getText();
+	path = new Path(resolvedLinkTarget);
+	File linkTargetFile = new Path(resolvedLinkTarget).toFile();
 	if (linkTargetFile.exists()) {
 		IStatus fileTypeStatus = validateFileType(linkTargetFile);
 		if (fileTypeStatus.isOK() == false)
