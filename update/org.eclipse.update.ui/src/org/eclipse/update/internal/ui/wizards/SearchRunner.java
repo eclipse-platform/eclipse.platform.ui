@@ -63,7 +63,9 @@ public class SearchRunner {
 			context.run(true, true, getSearchOperation(collector));
 			newSearchNeeded=false;
 		} catch (InterruptedException e) {
-			UpdateUI.logException(e);
+			if (!"cancel".equals(e.getMessage()))
+				UpdateUI.logException(e);
+			newSearchNeeded=true;
 			return;
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
@@ -89,15 +91,17 @@ public class SearchRunner {
 		final UpdateSearchRequest request = searchProvider.getSearchRequest();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress () {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					request.performSearch(collector, monitor);
-				}
-				catch (CoreException e) {
+				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
-				}
-				finally {
+				} finally {
 					monitor.done();
+					if (monitor.isCanceled()) {
+						newSearchNeeded = true;
+						throw new InterruptedException("cancel");
+					}
 				}
 			}
 		};
