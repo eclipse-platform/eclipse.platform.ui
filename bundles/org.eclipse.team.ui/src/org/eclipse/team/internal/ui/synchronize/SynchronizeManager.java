@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.*;
@@ -217,7 +216,6 @@ public class SynchronizeManager implements ISynchronizeManager {
 				return participant;
 			} catch (TeamException e) {
 				TeamUIPlugin.log(e);
-				// TODO: Temporary handling of bad participant
 				participantReferences.remove(key);
 				throw new TeamException(Policy.bind("SynchronizeManager.8"), e); //$NON-NLS-1$
 			}
@@ -488,7 +486,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		if(perspectiveDescriptor != null) {
 			String perspectiveName = perspectiveDescriptor.getLabel();
 			
-			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Display.getDefault().getActiveShell(),
+			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null),
 						Policy.bind("SynchronizeManager.27"),  //$NON-NLS-1$
 						Policy.bind("SynchronizeManager.30", perspectiveDescriptor.getLabel()), //$NON-NLS-1$
 						Policy.bind("SynchronizeManager.31"),  //$NON-NLS-1$
