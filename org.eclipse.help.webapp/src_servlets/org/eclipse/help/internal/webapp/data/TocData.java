@@ -23,8 +23,13 @@ import org.eclipse.help.internal.webapp.servlet.*;
  * Helper class for tocView.jsp initialization
  */
 public class TocData extends RequestData {
+	// maximum number of topics in a book for generating all topics at once
 	private static int loadBookAtOnceLimit;
+	// suggested number of topic levels for large books
 	private static int dynamicLoadDepths;
+	// maximum number of topics generated when loading levels dynamically
+	// above which dynamicLoadDepths is ignored, the rest of branches will be 1 deep 
+	private static int honorLevelsLimit;
 
 	// Request parameters
 	private String tocHref;
@@ -38,6 +43,8 @@ public class TocData extends RequestData {
 	private int[] rootPath = null;
 	// path from TOC to the selected topic, excluding TOC;
 	private ITopic[] topicPath = null;
+	// Number of topics generated so far
+	private int topicsGenerated = 0;
 
 	// List of TOC's
 	private IToc[] tocs;
@@ -56,6 +63,7 @@ public class TocData extends RequestData {
 			WebappPreferences pref = new WebappPreferences();
 			loadBookAtOnceLimit = pref.getBookAtOnceLimit();
 			dynamicLoadDepths = pref.getLoadDepth();
+			honorLevelsLimit = loadBookAtOnceLimit / 4;
 		}
 
 		this.tocHref = request.getParameter("toc");
@@ -294,6 +302,12 @@ public class TocData extends RequestData {
 		if (maxLevels == 0) {
 			return;
 		}
+
+		topicsGenerated++;
+		if (maxLevels > 1 && topicsGenerated > honorLevelsLimit) {
+			maxLevels = 1;
+		}
+
 		boolean hasNodes = topic.getSubtopics().length > 0;
 
 		if (hasNodes) {
