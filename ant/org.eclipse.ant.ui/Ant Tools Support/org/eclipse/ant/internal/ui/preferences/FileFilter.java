@@ -27,46 +27,48 @@ public class FileFilter extends ViewerFilter {
 	/**
 	 * Objects to filter
 	 */
-	protected List fFilter;
+	private List fFilter;
 	
 	/**
-	 * Collection of property files and containers to display
+	 * Collection of files and containers to display
 	 */
-	private Set fPropertyFiles;
+	private Set fFiles;
 	
 	private String fExtension;
+
+    private boolean fConsiderExtension= true;
 
 	/**
 	 * Creates a new filter that filters the given 
 	 * objects.
+	 * Note: considerExtension must be called to initialize the filter
 	 */
 	public FileFilter(List objects, String extension) {
 		fFilter = objects;
 		fExtension= extension;
-		init();
 	}
 
-	/**
-	 * @see ViewerFilter#select(Viewer, Object, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		return fPropertyFiles.contains(element) && !fFilter.contains(element);
+		return fFiles.contains(element) && !fFilter.contains(element);
 	}
 	
 	/**
-	 * Search for all archives in the workspace.
+	 * Search for all the matching files in the workspace.
 	 */
 	private void init() {
 		BusyIndicator.showWhile(AntUIPlugin.getStandardDisplay(), new Runnable() {
 			public void run() {
-				fPropertyFiles = new HashSet();
-				traverse(ResourcesPlugin.getWorkspace().getRoot(), fPropertyFiles);
+				fFiles = new HashSet();
+				traverse(ResourcesPlugin.getWorkspace().getRoot(), fFiles);
 			}
 		});
 	}
 
 	/**
-	 * Traverse the given container, adding property file to the given set.
+	 * Traverse the given container, adding files to the given set.
 	 * Returns whether any files were added
 	 */
 	private boolean traverse(IContainer container, Set set) {
@@ -78,7 +80,7 @@ public class FileFilter extends ViewerFilter {
 				if (resource instanceof IFile) {
 					IFile file = (IFile) resource;
 					String ext = file.getFileExtension();
-					if (ext != null && ext.equalsIgnoreCase(fExtension)) {
+					if (!fConsiderExtension || (ext != null && ext.equalsIgnoreCase(fExtension))) {
 						set.add(file);
 						added = true;
 					}
@@ -92,5 +94,14 @@ public class FileFilter extends ViewerFilter {
 		} catch (CoreException e) {
 		}
 		return added;
+	}
+	
+	/**
+	 * Sets whether this filter will filter based on extension.
+	 * @param considerExternsion whether to consider a file's extension when filtering
+	 */
+	public void considerExtension(boolean considerExtension) {
+	    fConsiderExtension= considerExtension;
+	    init();
 	}
 }

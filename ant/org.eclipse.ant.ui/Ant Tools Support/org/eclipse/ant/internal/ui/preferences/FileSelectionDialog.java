@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,17 +35,17 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class FileSelectionDialog extends ElementTreeSelectionDialog {
 	
-	private ViewerFilter fFilter;
+	private FileFilter fFilter;
 	private String fFilterMessage;
 	private boolean fShowAll= false;
 	private final static String DIALOG_SETTING= "AntPropertiesFileSelectionDialog.showAll";  //$NON-NLS-1$
 	
-	public FileSelectionDialog(Shell parent, List propertyFiles, String title, String message, String filterExtension, String filterMessage) {
+	public FileSelectionDialog(Shell parent, List files, String title, String message, String filterExtension, String filterMessage) {
 		super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		
-		setTitle(title);  //$NON-NLS-1$
-		setMessage(message); //$NON-NLS-1$
-		fFilter= new FileFilter(propertyFiles, filterExtension);
+		setTitle(title);
+		setMessage(message);
+		fFilter= new FileFilter(files, filterExtension);
 		fFilterMessage= filterMessage;
 		setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		setSorter(new ResourceSorter(ResourceSorter.NAME));
@@ -82,8 +81,9 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		button.setLayoutData(data);
 		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
 		fShowAll= settings.getBoolean(DIALOG_SETTING);
+		fFilter.considerExtension(!fShowAll);
+		getTreeViewer().addFilter(fFilter);
 		if (!fShowAll) {
-			getTreeViewer().addFilter(fFilter);
 			button.setSelection(true);
 		}
 		
@@ -91,11 +91,11 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 			public void widgetSelected(SelectionEvent event) {
 				if (button.getSelection()) {
 					fShowAll= false;
-					getTreeViewer().addFilter(fFilter);
 				} else {
 					fShowAll= true;
-					getTreeViewer().removeFilter(fFilter);
 				}
+				fFilter.considerExtension(!fShowAll);
+				getTreeViewer().refresh();
 			}
 		});
 		applyDialogFont(result);		
