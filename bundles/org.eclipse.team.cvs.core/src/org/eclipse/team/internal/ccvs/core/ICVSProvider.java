@@ -26,6 +26,16 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 public interface ICVSProvider {
 
 	/**
+	 * Register to receive notification of repository creation and disposal
+	 */
+	public void addRepositoryListener(ICVSListener listener);
+
+	/**
+	 * De-register a listener
+	 */
+	public void removeRepositoryListener(ICVSListener listener);
+	
+	/**
 	 * Checkout a CVS module.
 	 * 
 	 * The provided project represents the target project. Any existing contents
@@ -83,9 +93,12 @@ public interface ICVSProvider {
 	 * 
 	 * The created instance will be cached with the provider as a result of the
 	 * invokation of this method. When the client is done with the instance, disposeRepository
-	 * should be called
+	 * should be called.
+	 * 
+	 * If validate is true then a connection will be made to the repository to ensure connection is possible.
+	 * If validation fails, an exception is thrown and the location is not cached.
 	 */
-	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException;
+	public ICVSRepositoryLocation createRepository(Properties configuration, boolean validate) throws CVSException;
 	
 	/**
 	 * Dispose of the repository location

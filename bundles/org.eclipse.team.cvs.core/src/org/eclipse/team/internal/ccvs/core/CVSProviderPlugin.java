@@ -142,8 +142,26 @@ public class CVSProviderPlugin extends Plugin {
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
+		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
 		CVSProvider.initialize();
+		try {
+			((CVSProvider)getProvider()).startup();
+		} catch (TeamException e) {
+			throw new CoreException(e.getStatus());
+		}
+	}
+	
+	/**
+	 * @see Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		try {
+			((CVSProvider)getProvider()).shutdown();
+		} catch (TeamException e) {
+			throw new CoreException(e.getStatus());
+		}
 	}
 	
 	/*

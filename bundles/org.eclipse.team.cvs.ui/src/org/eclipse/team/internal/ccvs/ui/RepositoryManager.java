@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -32,6 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSListener;
+import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -53,7 +56,6 @@ import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 public class RepositoryManager {
 	private static final String STATE_FILE = ".repositoryManagerState";
 	
-	Hashtable repositories = new Hashtable();
 	// Map ICVSRepositoryLocation -> List of Tags
 	Hashtable branchTags = new Hashtable();
 	// Map ICVSRepositoryLocation -> Hashtable of (Project name -> Set of CVSTags)
@@ -68,8 +70,13 @@ public class RepositoryManager {
 	 * Answer an array of all known remote roots.
 	 */
 	public ICVSRepositoryLocation[] getKnownRoots() {
-		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[0]);
+		return getCVSProvider().getKnownRepositories();
 	}
+	
+	private ICVSProvider getCVSProvider() {
+		return CVSProviderPlugin.getProvider();
+	}
+	
 	/**
 	 * Answer the root corresponding with the given properties.
 	 * If the root is in the list of known roots, it is returned.
@@ -77,29 +84,11 @@ public class RepositoryManager {
 	 * added.
 	 */
 	public ICVSRepositoryLocation getRoot(Properties properties) {
-		StringBuffer keyBuffer = new StringBuffer();
-		keyBuffer.append(":");
-		keyBuffer.append(properties.getProperty("connection"));
-		keyBuffer.append(":");
-		keyBuffer.append(properties.getProperty("user"));
-		keyBuffer.append("@");
-		keyBuffer.append(properties.getProperty("host"));
-		String port = properties.getProperty("port");
-		if (port != null) {
-			keyBuffer.append("#");
-			keyBuffer.append(port);
-		}
-		keyBuffer.append(":");
-		keyBuffer.append(properties.getProperty("root"));
-		String key = keyBuffer.toString();
-		
-		ICVSRepositoryLocation result = (ICVSRepositoryLocation)repositories.get(key);
-		if (result != null) {
-			return result;
-		}
+		ICVSRepositoryLocation result;
 		try {
-			result = CVSProviderPlugin.getProvider().createRepository(properties);
-			addRoot(result);
+			// The create will generate an event that will add the repo location to the RepositoryManager
+			// XXX Is create a good name for this?
+			result = getCVSProvider().createRepository(properties, true);
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return null;
@@ -181,18 +170,42 @@ public class RepositoryManager {
 		}
 	}
 	/**
-	 * Add the given repository location to the list of known repository
-	 * locations. Listeners are notified.
+	 * A repository root has been added. Notify any listeners.
 	 */
-	public void addRoot(ICVSRepositoryLocation root) {
-		if (repositories.get(root.getLocation()) != null) return;
-		repositories.put(root.getLocation(), root);
+	public void rootAdded(ICVSRepositoryLocation root) {
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
 			listener.repositoryAdded(root);
 		}
 	}
+	
+	/**
+	 * A repository root has been removed.
+	 * Remove the tags defined for this root and notify any listeners
+	 */
+	public void rootRemoved(ICVSRepositoryLocation root) {
+		BranchTag[] branchTags = getKnownBranchTags(root);
+		Hashtable vTags = (Hashtable)this.versionTags.get(root);
+		this.branchTags.remove(root);
+		this.versionTags.remove(root);
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			IRepositoryListener listener = (IRepositoryListener)it.next();
+			listener.branchTagsRemoved(branchTags, root);
+			if (vTags != null) {
+				Iterator keyIt = vTags.keySet().iterator();
+				while (keyIt.hasNext()) {
+					String projectName = (String)keyIt.next();
+					Set tagSet = (Set)vTags.get(projectName);
+					CVSTag[] versionTags = (CVSTag[])tagSet.toArray(new CVSTag[0]);
+					listener.versionTagsRemoved(versionTags, root);
+				}
+			}
+			listener.repositoryRemoved(root);
+		}
+	}
+	
 	/**
 	 * Add the given version tags to the list of known tags for the given
 	 * remote project.
@@ -252,36 +265,25 @@ public class RepositoryManager {
 			listener.versionTagsRemoved(tags, resource.getRepository());
 		}
 	}
-	/**
-	 * Remove the given root from the list of known remote roots.
-	 * Also removed the tags defined for this root.
-	 */
-	public void removeRoot(ICVSRepositoryLocation root) {
-		BranchTag[] branchTags = getKnownBranchTags(root);
-		Hashtable vTags = (Hashtable)this.versionTags.get(root);
-		Object o = repositories.remove(root.getLocation());
-		if (o == null) return;
-		this.branchTags.remove(root);
-		this.versionTags.remove(root);
-		Iterator it = listeners.iterator();
-		while (it.hasNext()) {
-			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.branchTagsRemoved(branchTags, root);
-			if (vTags != null) {
-				Iterator keyIt = vTags.keySet().iterator();
-				while (keyIt.hasNext()) {
-					String projectName = (String)keyIt.next();
-					Set tagSet = (Set)vTags.get(projectName);
-					CVSTag[] versionTags = (CVSTag[])tagSet.toArray(new CVSTag[0]);
-					listener.versionTagsRemoved(versionTags, root);
-				}
-			}
-			listener.repositoryRemoved(root);
-		}
-	}
 	
 	public void startup() throws TeamException {
 		loadState();
+		CVSProviderPlugin.getProvider().addRepositoryListener(new ICVSListener() {
+			/*
+			 * @see ICVSListener#repositoryAdded(ICVSRepositoryLocation)
+			 */
+			public void repositoryAdded(ICVSRepositoryLocation root) {
+				rootAdded(root);
+			}
+
+			/*
+			 * @see ICVSListener#repositoryRemoved(ICVSRepositoryLocation)
+			 */
+			public void repositoryRemoved(ICVSRepositoryLocation root) {
+				rootRemoved(root);
+			}
+
+		});
 	}
 	
 	public void shutdown() throws TeamException {
@@ -294,28 +296,13 @@ public class RepositoryManager {
 		if (file.exists()) {
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(file));
-				readState(dis);
-				dis.close();
+				try {
+					readState(dis);
+				} finally {
+					dis.close();
+				}
 			} catch (IOException e) {
 				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e));
-			}
-		} else {
-			// If the file did not exist, then prime the list of repositories with
-			// the providers with which the projects in the workspace are shared.
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			ITeamManager manager = TeamPlugin.getManager();
-			for (int i = 0; i < projects.length; i++) {
-				ITeamProvider provider = manager.getProvider(projects[i]);
-				if (provider instanceof CVSTeamProvider) {
-					CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
-					ICVSRepositoryLocation result = cvsProvider.getRemoteResource(projects[i]).getRepository();
-					repositories.put(result.getLocation(), result);
-					Iterator it = listeners.iterator();
-					while (it.hasNext()) {
-						IRepositoryListener listener = (IRepositoryListener)it.next();
-						listener.repositoryAdded(result);
-					}
-				}
 			}
 		}
 	}
@@ -326,8 +313,11 @@ public class RepositoryManager {
 		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
-			writeState(dos);
-			dos.close();
+			try {
+				writeState(dos);
+			} finally {
+				dos.close();
+			}
 			if (stateFile.exists()) {
 				stateFile.delete();
 			}
@@ -341,16 +331,12 @@ public class RepositoryManager {
 	}
 	private void writeState(DataOutputStream dos) throws IOException {
 		// Write the repositories
-		Collection repos = repositories.values();
+		Collection repos = Arrays.asList(getKnownRoots());
 		dos.writeInt(repos.size());
 		Iterator it = repos.iterator();
 		while (it.hasNext()) {
 			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
-			dos.writeUTF(root.getMethod().getName());
-			dos.writeUTF(root.getUsername());
-			dos.writeUTF(root.getHost());
-			dos.writeUTF("" + root.getPort());
-			dos.writeUTF(root.getRootDirectory());
+			dos.writeUTF(root.getLocation());
 			BranchTag[] branchTags = getKnownBranchTags(root);
 			dos.writeInt(branchTags.length);
 			for (int i = 0; i < branchTags.length; i++) {
@@ -379,19 +365,10 @@ public class RepositoryManager {
 			}
 		}
 	}
-	private void readState(DataInputStream dis) throws IOException {
+	private void readState(DataInputStream dis) throws IOException, TeamException {
 		int repoSize = dis.readInt();
 		for (int i = 0; i < repoSize; i++) {
-			Properties properties = new Properties();
-			properties.setProperty("connection", dis.readUTF());
-			properties.setProperty("user", dis.readUTF());
-			properties.setProperty("host", dis.readUTF());
-			String port = dis.readUTF();
-			if (!port.equals("" + ICVSRepositoryLocation.USE_DEFAULT_PORT)) {
-				properties.setProperty("port", port);
-			}
-			properties.setProperty("root", dis.readUTF());
-			ICVSRepositoryLocation root = getRoot(properties);
+			ICVSRepositoryLocation root = CVSProviderPlugin.getProvider().getRepository(dis.readUTF());
 			int tagsSize = dis.readInt();
 			BranchTag[] branchTags = new BranchTag[tagsSize];
 			for (int j = 0; j < tagsSize; j++) {

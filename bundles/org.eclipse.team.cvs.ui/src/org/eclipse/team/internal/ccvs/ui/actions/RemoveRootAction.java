@@ -14,9 +14,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -65,9 +68,14 @@ public class RemoveRootAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length == 0) return;
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+				ICVSProvider provider = CVSProviderPlugin.getProvider();
 				for (int i = 0; i < roots.length; i++) {
-					manager.removeRoot(roots[i]);
+					try {
+						// This will notify the RepositoryManager of the removal
+						provider.disposeRepository(roots[i]);
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
 				}
 			}
 		}, Policy.bind("RemoveRootAction.removeRoot"), this.PROGRESS_DIALOG);

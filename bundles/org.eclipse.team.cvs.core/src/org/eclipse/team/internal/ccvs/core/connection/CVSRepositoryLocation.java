@@ -28,6 +28,7 @@ import org.eclipse.team.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
@@ -255,6 +256,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (authenticator == null) {
 			throw new CVSAuthenticationException(this.getLocation(), Policy.bind("Client.noAuthenticator"));
 		}
+		
+		// Get the repository in order to ensure that the location is known by CVS.
+		// (The get will record the location if it's not already recorded.
+		// XXX Perhaps a custom method that accepts an ICVSRepositoryLocation would be better
+		CVSProvider.getInstance().getRepository(getLocation());
 		
 		// If we tried above and failed, this is a retry.
 		boolean retry = (message != null);

@@ -35,12 +35,16 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSListener;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
 import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
 import org.eclipse.team.core.IFileTypeRegistry;
+import org.eclipse.team.core.ITeamManager;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -77,7 +81,7 @@ public class CVSProvider implements ICVSProvider {
 	 */
 	private CVSRepositoryLocation buildRepository(Properties configuration, boolean cachePassword) throws CVSException {
 		// We build a string to allow validation of the components that are provided to us
-		// NOTE: This is a bit strange. We should call the constrructor directly
+		// XXX This is a bit strange. We should call the constrructor directly
 		StringBuffer repository = new StringBuffer(":");
 		String connection = configuration.getProperty("connection");
 		if (connection == null)
@@ -108,10 +112,12 @@ public class CVSProvider implements ICVSProvider {
 		else 
 			repository.append(root);
 		
-		// NOTE: Check the cache to see if the instance already exists
-		
-		CVSRepositoryLocation location  = CVSRepositoryLocation.fromString(repository.toString());
-		
+		// Check the cache before creating a new repository
+		CVSRepositoryLocation location  = (CVSRepositoryLocation)repositories.get(repository.toString());
+		if (location == null) {
+			location = CVSRepositoryLocation.fromString(repository.toString());
+		}
+			
 		String password = configuration.getProperty("password");
 		if (password != null) {
 			if (cachePassword)
@@ -128,6 +134,22 @@ public class CVSProvider implements ICVSProvider {
 	 */
 	private void addToCache(ICVSRepositoryLocation repository) {
 		repositories.put(repository.getLocation(), repository);
+	}
+	
+	private void repositoryAdded(ICVSRepositoryLocation repository) {
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			ICVSListener listener = (ICVSListener)it.next();
+			listener.repositoryAdded(repository);
+		}
+	}
+	
+	public void addRepositoryListener(ICVSListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeRepositoryListener(ICVSListener listener) {
+		listeners.remove(listener);
 	}
 	
 	/**
@@ -217,6 +239,7 @@ public class CVSProvider implements ICVSProvider {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
 		boolean alreadyExists = isCached(location);
+		addToCache(location);
 		try {
 			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
 		} catch (TeamException e) {
@@ -226,9 +249,11 @@ public class CVSProvider implements ICVSProvider {
 				disposeRepository(location);
 			throw e;
 		}
-		// We succeeded so we should cache the password and the location
+		// We succeeded so we should cache the password ...
 		location.updateCache();
-		addToCache(location);
+		// and notify listeners if the location wasn't cached before
+		if (! alreadyExists)
+			repositoryAdded(location);
 	}
 
 	/**
@@ -275,9 +300,22 @@ public class CVSProvider implements ICVSProvider {
 	/**
 	 * @see ICVSProvider#createRepository(Properties)
 	 */
-	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException {
+	public ICVSRepositoryLocation createRepository(Properties configuration, boolean validate) throws CVSException {
 		ICVSRepositoryLocation repository = buildRepository(configuration, true);
+		boolean alreadyExists = isCached(repository);
 		addToCache(repository);
+		if (validate) {
+			try {
+				repository.validateConnection();
+			} catch (CVSException e) {
+				if (! alreadyExists)
+					disposeRepository(repository);
+				throw e;
+			}
+		}
+		// Notify listeners if the location wasn't cached before
+		if (! alreadyExists)
+			repositoryAdded(repository);
 		return repository;
 	}
 
@@ -335,7 +373,7 @@ public class CVSProvider implements ICVSProvider {
 	 * @see ICVSProvider#getKnownRepositories()
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositories() {
-		return (ICVSRepositoryLocation[])repositories.entrySet().toArray(new ICVSRepositoryLocation[repositories.size()]);
+		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[repositories.size()]);
 	}
 
 
@@ -358,6 +396,7 @@ public class CVSProvider implements ICVSProvider {
 		if (repository == null) {
 			repository = CVSRepositoryLocation.fromString(location);
 			addToCache(repository);
+			repositoryAdded(repository);
 		}
 		return repository;
 	}
@@ -384,6 +423,7 @@ public class CVSProvider implements ICVSProvider {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
 		boolean alreadyExists = isCached(location);
+		addToCache(location);
 		try {
 			importProject(location, project, configuration, monitor);
 			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
@@ -394,9 +434,11 @@ public class CVSProvider implements ICVSProvider {
 				disposeRepository(location);
 			throw e;
 		}
-		// We succeeded so we should cache the password and the location
+		// We succeeded so we should cache the password ...
 		location.updateCache();
-		addToCache(location);
+		// and notify listeners if the location wasn't cached before
+		if (! alreadyExists)
+			repositoryAdded(location);
 	}
 		
 	private CVSTag getTagFromProperties(Properties configuration) {
@@ -488,6 +530,11 @@ public class CVSProvider implements ICVSProvider {
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {
 		repositories.remove(repository.getLocation());
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			ICVSListener listener = (ICVSListener)it.next();
+			listener.repositoryRemoved(repository);
+		}
 	}
 	
 	/**
@@ -552,6 +599,20 @@ public class CVSProvider implements ICVSProvider {
 				dis.close();
 			} catch (IOException e) {
 				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));
+			}
+		}  else {
+			// If the file did not exist, then prime the list of repositories with
+			// the providers with which the projects in the workspace are shared.
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			ITeamManager manager = TeamPlugin.getManager();
+			for (int i = 0; i < projects.length; i++) {
+				ITeamProvider provider = manager.getProvider(projects[i]);
+				if (provider instanceof CVSTeamProvider) {
+					CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+					ICVSRepositoryLocation result = cvsProvider.getRemoteResource(projects[i]).getRepository();
+					addToCache(result);
+					repositoryAdded(result);
+				}
 			}
 		}
 	}

@@ -63,9 +63,8 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 					if (properties.getProperty("module") == null) {
 						properties.setProperty("module", project.getName());
 					}
+					// The import will generate an event that will add the repo location to the RepositoryManager
 					CVSProviderPlugin.getProvider().importAndCheckout(project, properties, monitor);
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
-					CVSUIPlugin.getPlugin().getRepositoryManager().addRoot(provider.getRemoteResource(project).getRepository());
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}		

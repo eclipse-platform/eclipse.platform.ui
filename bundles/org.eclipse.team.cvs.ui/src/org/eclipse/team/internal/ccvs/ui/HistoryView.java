@@ -458,6 +458,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	 */
 	public void showHistory(ICVSRemoteFile file) {
 		this.file = null;
+		init(file);
 	}
 	private void init(ICVSRemoteFile file) {
 		this.remoteFile = file;

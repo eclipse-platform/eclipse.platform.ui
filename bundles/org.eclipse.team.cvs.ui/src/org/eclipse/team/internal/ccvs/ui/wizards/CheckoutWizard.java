@@ -67,9 +67,8 @@ public class CheckoutWizard extends ConnectionWizard {
 					if (project.exists()) {
 						// Make sure the user understands they will overwrite the project.
 					}
+					// The checkout will generate an event that will add the repo location to the RepositoryManager
 					CVSProviderPlugin.getProvider().checkout(project, properties, monitor);
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
-					CVSUIPlugin.getPlugin().getRepositoryManager().addRoot(provider.getRemoteResource(project).getRepository());
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
