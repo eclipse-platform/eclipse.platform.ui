@@ -154,7 +154,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private void restoreAntHomeEntries(Preferences prefs) {
 		String entries = prefs.getString("ant_urls"); //old constant //$NON-NLS-1$
 		if (entries.equals("")) {//$NON-NLS-1$
-			prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
+			entries= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
 			antHomeEntries = getDefaultAntHomeEntries();
@@ -170,7 +170,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
 			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
-			if (toolsJarEntry != null) {
+			if (toolsJarEntry == null) {
+				additionalEntries = new IAntClasspathEntry[]{};
+			} else {
 				additionalEntries = new IAntClasspathEntry[] { toolsJarEntry };
 			}
 		} else {
@@ -1146,8 +1148,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	protected void updateAdditionalEntries(Preferences prefs) {
+		prefs.setValue("urls", ""); //old constant removed
 		String serialized= null;
-		if (additionalEntries.length == 1 && additionalEntries[0].getLabel().equals(getToolsJarEntry().getLabel())) {
+		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
+		if (additionalEntries.length == 1 && toolsJarEntry != null && additionalEntries[0].getLabel().equals(toolsJarEntry.getLabel())) {
 			serialized= ""; //$NON-NLS-1$
 		} else {
 			StringBuffer entries = new StringBuffer();
@@ -1168,6 +1172,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	protected void updateAntHomeEntries(Preferences prefs) {
+		prefs.setValue("ant_urls", ""); //old constant removed
+		
 		//see if the custom entries are just the default entries
 		IAntClasspathEntry[] defaultEntries= getDefaultAntHomeEntries();
 		boolean dflt= false;
