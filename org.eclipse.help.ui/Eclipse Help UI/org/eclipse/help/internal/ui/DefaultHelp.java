@@ -9,7 +9,6 @@ import org.eclipse.help.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.internal.navigation.NavigationModel;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.contributions.InfoSet;
@@ -100,33 +99,27 @@ public class DefaultHelp implements IHelp {
 	/**
 	  * Display help.
 	  */
-	public void displayHelp(String url) {
-
-		if (url != null && !"".equals(url)) {
-			// Verify if this url is a views id or a real url
-			NavigationModel navModel =
-				HelpSystem.getNavigationManager().getNavigationModel(url);
-			if (navModel == null) {
-				// external URL
-				try {
-					String cmd[] = { "rundll32.exe", "url.dll,FileProtocolHandler", url };
-					Runtime.getRuntime().exec(cmd);
-				} catch (Exception ioe) {
-				}
-				return;
-			} else {
-				HelpSystem.getNavigationManager().setCurrentInfoSet(url);
-				HelpSystem.getNavigationManager().setCurrentNavigationModel(navModel);
-			}
-
+	public void displayHelp(String infosetId) {
+		// get the new infoset
+		InfoSet infoset = HelpSystem.getNavigationManager().getInfoSet(infosetId);
+		if (infoset != null)
+			// make this infoset current
+			HelpSystem.getNavigationManager().setCurrentInfoSet(infosetId);
+		else
+		{
+			// infoset not found, or no infoset specified, so use current.
+			infoset = HelpSystem.getNavigationManager().getCurrentInfoSet();
+			// if infoset not found, log it
+			if (infosetId != null && infosetId.trim().length() != 0)
+				Logger.logWarning(WorkbenchResources.getString("WE008", infosetId));
 		}
-
+		
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getNavigationManager().getCurrentInfoSet() == null) {
+		if (infoset == null) {
 			Util.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			return;
 		}
-
+			
 		// First check the current perspective
 		EmbeddedHelpView helpView = getHelpViewInCurrentPerpective();
 		if (helpView == null) {
@@ -136,7 +129,11 @@ public class DefaultHelp implements IHelp {
 		if (helpView == null)
 			return;
 		else
+		{
 			activateHelpPage();
+			// switch to infoset
+			helpView.displayHelp(infoset, null);
+		}
 	}
 	/**
 	 * Computes context information for a given context ID.

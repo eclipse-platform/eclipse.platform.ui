@@ -129,12 +129,8 @@ public class EmbeddedHelpView extends ViewPart {
 				}
 			});
 			
-			// update parts
-			navigationViewer.setInput(infoSet);
-
-			// navigate to specific topic if known from memento
-			if (lastTopicUrl != null)
-				navigationViewer.setSelection(new StructuredSelection(lastTopicUrl));
+			// show help
+			displayHelp(infoSet, lastTopicUrl);
 
 			// if any errors or parsing errors have occurred, display them in a pop-up
 			Util.displayStatus();
@@ -158,6 +154,20 @@ public class EmbeddedHelpView extends ViewPart {
 				text.setText(errorMessage);
 			}
 		}
+	}
+	
+	/**
+	 * Show the specified infoset and (optional) topic
+	 */
+	public void displayHelp(InfoSet infoset, String topicURL)
+	{
+		// update parts
+		if (navigationViewer == null) 
+			return;
+			
+		navigationViewer.setInput(infoset);
+		if (topicURL != null)
+			navigationViewer.setSelection(new StructuredSelection(topicURL));
 	}
 	
 	/**

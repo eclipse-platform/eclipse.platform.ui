@@ -152,6 +152,10 @@ public class NavigationViewer implements ISelectionProvider {
 	 */
 	public void setInput(Object input) {
 		if (input instanceof InfoSet) {
+			// do nothing if asked to display the same infoset
+			if (input == currentInfoset)
+				return;
+				
 			currentInfoset = (InfoSet) input;
 
 			// set global infoset and navigation model

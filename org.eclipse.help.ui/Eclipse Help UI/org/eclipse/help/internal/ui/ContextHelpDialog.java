@@ -432,8 +432,9 @@ public class ContextHelpDialog implements Runnable {
 			SelectionListener l = new MenuItemsListener();
 			for (int i = 0; i < farRelatedTopics.length; i++) {
 				MenuItem item = new MenuItem(menu, SWT.CASCADE);
-				item.setText(((IHelpTopic) farRelatedTopics[i]).getLabel());
-				menuItems.put(item, (IHelpTopic) farRelatedTopics[i]);
+				item.setText(farRelatedTopics[i].getLabel());
+				item.setImage(ElementLabelProvider.getDefault().getImage(farRelatedTopics[i]));
+				menuItems.put(item, farRelatedTopics[i]);
 				item.addSelectionListener(l);
 			}
 		}
