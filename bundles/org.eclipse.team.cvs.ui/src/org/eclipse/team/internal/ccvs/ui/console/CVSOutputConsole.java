@@ -6,17 +6,22 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-public class CVSOutputConsole extends MessageConsole implements IConsoleListener {
+public class CVSOutputConsole extends MessageConsole implements IConsoleListener, IPropertyChangeListener {
 
 	private Color commandColor;
 	private Color messageColor;
@@ -31,24 +36,48 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
 	
 	public CVSOutputConsole() {
-		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE));
+		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
 		commandStream = newMessageStream();
 		errorStream = newMessageStream();
 		messageStream = newMessageStream();
+		
+		// install colors
+		commandColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
+		commandStream.setColor(commandColor);
+		
+		messageColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
+		messageStream.setColor(messageColor);
+		
+		errorColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
+		errorStream.setColor(errorColor);
+		
+		// install font
+		setFont(JFaceResources.getFont(getPreferenceStore().getString(ICVSUIConstants.PREF_CONSOLE_FONT)));
+		
 		CVSProviderPlugin.getPlugin().setConsoleListener(this);
+		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
 	}
 		
+	public void shutdown() {
+		commandColor.dispose();
+		messageColor.dispose();
+		errorColor.dispose();
+	}
+	
 	public void commandInvoked(String line) {
 		commandStarted = System.currentTimeMillis();
 		commandStream.println(Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
 		commandStream.println(line);
 	}
+	
 	public void messageLineReceived(String line) {
 		messageStream.println("  " + line); //$NON-NLS-1$
 	}
+	
 	public void errorLineReceived(String line) {
 		errorStream.println("  " + line); //$NON-NLS-1$
 	}
+	
 	public void commandCompleted(IStatus status, Exception exception) {
 		long commandRuntime = System.currentTimeMillis() - commandStarted;
 		String time;
@@ -103,5 +132,44 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
 		}
 		return status.getMessage();
+	}
+	
+	/**
+	 * Returns a color instance based on data from a preference field.
+	 */
+	private Color createColor(Display display, String preference) {
+		RGB rgb = PreferenceConverter.getColor(getPreferenceStore(), preference);
+		return new Color(display, rgb);
+	}
+	
+	private IPreferenceStore getPreferenceStore() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		String property = event.getProperty();		
+		// colors
+		if(property.equals(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR)) {
+			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
+			commandStream.setColor(newColor);
+			commandColor.dispose();
+			commandColor = newColor;
+		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR)) {
+			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
+			messageStream.setColor(newColor);
+			messageColor.dispose();
+			messageColor = newColor;
+		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR)) {
+			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
+			errorStream.setColor(newColor);
+			errorColor.dispose();
+			errorColor = newColor;
+		// font
+		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
+			setFont(JFaceResources.getFont(getPreferenceStore().getString(ICVSUIConstants.PREF_CONSOLE_FONT)));
+		}
 	}
 }
