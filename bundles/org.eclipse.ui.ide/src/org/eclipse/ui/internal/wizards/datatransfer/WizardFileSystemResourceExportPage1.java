@@ -171,7 +171,7 @@ public class WizardFileSystemResourceExportPage1 extends
      * @param optionsGroup
      * @param font
      */
-    protected void createDirectoryStructureOptions(Group optionsGroup, Font font) {
+    protected void createDirectoryStructureOptions(Composite optionsGroup, Font font) {
         // create directory structure radios
         createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO
                 | SWT.LEFT);

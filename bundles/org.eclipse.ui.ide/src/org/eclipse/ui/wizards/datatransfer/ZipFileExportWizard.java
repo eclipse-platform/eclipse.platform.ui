@@ -24,10 +24,9 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
-import org.eclipse.ui.internal.wizards.datatransfer.WizardZipFileResourceExportPage1;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExportPage1;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard workbench wizard for exporting resources from the workspace
@@ -53,7 +52,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardZipFileResourceExportP
 public class ZipFileExportWizard extends Wizard implements IExportWizard {
     private IStructuredSelection selection;
 
-    private WizardZipFileResourceExportPage1 mainPage;
+    private WizardArchiveFileResourceExportPage1 mainPage;
 
     /**
      * Creates a wizard for exporting workspace resources to a zip file.
@@ -74,7 +73,7 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
      */
     public void addPages() {
         super.addPages();
-        mainPage = new WizardZipFileResourceExportPage1(selection);
+        mainPage = new WizardArchiveFileResourceExportPage1(selection);
         addPage(mainPage);
     }
 

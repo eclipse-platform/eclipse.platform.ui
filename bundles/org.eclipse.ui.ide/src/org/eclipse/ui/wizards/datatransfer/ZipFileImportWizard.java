@@ -24,10 +24,9 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
-import org.eclipse.ui.internal.wizards.datatransfer.WizardZipFileResourceImportPage1;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceImportPage1;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard workbench wizard for importing resources from a zip file
@@ -55,7 +54,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
 
     private IStructuredSelection selection;
 
-    private WizardZipFileResourceImportPage1 mainPage;
+    private WizardArchiveFileResourceImportPage1 mainPage;
 
     /**
      * Creates a wizard for importing resources into the workspace from
@@ -77,7 +76,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
      */
     public void addPages() {
         super.addPages();
-        mainPage = new WizardZipFileResourceImportPage1(workbench, selection);
+        mainPage = new WizardArchiveFileResourceImportPage1(workbench, selection);
         addPage(mainPage);
     }
 

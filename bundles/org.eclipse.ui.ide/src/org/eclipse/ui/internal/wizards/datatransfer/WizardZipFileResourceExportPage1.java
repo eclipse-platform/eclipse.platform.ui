@@ -160,7 +160,7 @@ public class WizardZipFileResourceExportPage1 extends
      *  Export the passed resource and recursively export all of its child resources
      *  (iff it's a container).  Answer a boolean indicating success.
      */
-    protected boolean executeExportOperation(ZipFileExportOperation op) {
+    protected boolean executeExportOperation(ArchiveFileExportOperation op) {
         op.setCreateLeadupStructure(createDirectoryStructureButton
                 .getSelection());
         op.setUseCompression(compressContentsCheckbox.getSelection());
@@ -205,7 +205,7 @@ public class WizardZipFileResourceExportPage1 extends
         saveWidgetValues();
 
         if (resourcesToExport.size() > 0)
-            return executeExportOperation(new ZipFileExportOperation(null,
+            return executeExportOperation(new ArchiveFileExportOperation(null,
                     resourcesToExport, getDestinationValue()));
 
         MessageDialog.openInformation(getContainer().getShell(),

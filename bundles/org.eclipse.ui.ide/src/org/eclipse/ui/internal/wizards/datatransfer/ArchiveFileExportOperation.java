@@ -27,14 +27,16 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- *	Operation for exporting a resource and its children to a new .zip file
+ *	Operation for exporting a resource and its children to a new .zip or
+ *  .tar.gz file.
+ *  
+ *  @since 3.1
  */
-public class ZipFileExportOperation implements IRunnableWithProgress {
-    private ZipFileExporter exporter;
+public class ArchiveFileExportOperation implements IRunnableWithProgress {
+    private IFileExporter exporter;
 
     private String destinationFilename;
 
@@ -47,10 +49,10 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
     private List errorTable = new ArrayList(1); //IStatus
 
     private boolean useCompression = true;
+    
+    private boolean useTarFormat = false;
 
     private boolean createLeadupStructure = true;
-
-    private boolean generateManifestFile = false;
 
     /**
      *	Create an instance of this class.  Use this constructor if you wish to
@@ -59,7 +61,7 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      *	@param resources java.util.Vector
      *	@param filename java.lang.String
      */
-    public ZipFileExportOperation(List resources, String filename) {
+    public ArchiveFileExportOperation(List resources, String filename) {
         super();
 
         // Eliminate redundancies in list of resources being exported
@@ -81,7 +83,7 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      *  @param res org.eclipse.core.resources.IResource;
      *  @param filename java.lang.String
      */
-    public ZipFileExportOperation(IResource res, String filename) {
+    public ArchiveFileExportOperation(IResource res, String filename) {
         super();
         resource = res;
         destinationFilename = filename;
@@ -96,7 +98,7 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      *  @param resources java.util.Vector
      *  @param filename java.lang.String
      */
-    public ZipFileExportOperation(IResource res, List resources, String filename) {
+    public ArchiveFileExportOperation(IResource res, List resources, String filename) {
         this(res, filename);
         resourcesToExport = resources;
     }
@@ -160,8 +162,8 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      *  Export the passed resource to the destination .zip
      *
      *  @param exportResource org.eclipse.core.resources.IResource
-     *  @param depth - the number of resource levels to be included in
-     *   				the path including the resourse itself.
+     *  @param leadupDepth the number of resource levels to be included in
+     *                     the path including the resourse itself.
      */
     protected void exportResource(IResource exportResource, int leadupDepth)
             throws InterruptedException {
@@ -263,9 +265,11 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      *	@exception java.io.IOException
      */
     protected void initialize() throws IOException {
-        exporter = new ZipFileExporter(destinationFilename, useCompression,
-                generateManifestFile);
-
+    	if(useTarFormat) {
+    		exporter = new TarFileExporter(destinationFilename, useCompression);
+    	} else {
+        	exporter = new ZipFileExporter(destinationFilename, useCompression, false);
+    	}
     }
 
     /**
@@ -347,17 +351,6 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
     }
 
     /**
-     *	Set this boolean indicating whether a manifest.mf file based upon
-     *	the exported contents should be created and included in the final
-     *	archive
-     *
-     *	@param value boolean
-     */
-    public void setGenerateManifestFile(boolean value) {
-        generateManifestFile = value;
-    }
-
-    /**
      *	Set this boolean indicating whether exported resources should
      *	be compressed (as opposed to simply being stored)
      *
@@ -365,5 +358,15 @@ public class ZipFileExportOperation implements IRunnableWithProgress {
      */
     public void setUseCompression(boolean value) {
         useCompression = value;
+    }
+    
+    /**
+     * Set this boolean indicating whether the file should be output
+     * in tar.gz format rather than .zip format.
+     * 
+     * @param value boolean
+     */
+    public void setUseTarFormat(boolean value) {
+    	useTarFormat = value;
     }
 }

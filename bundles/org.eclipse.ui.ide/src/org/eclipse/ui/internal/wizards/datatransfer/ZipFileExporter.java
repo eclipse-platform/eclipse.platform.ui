@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  *	Exports resources to a .zip file
  */
-public class ZipFileExporter {
+public class ZipFileExporter implements IFileExporter {
     private ZipOutputStream outputStream;
 
     private StringBuffer manifestContents;
