@@ -14,6 +14,9 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -163,7 +166,19 @@ public abstract class TargetProvider {
 	 * Calls to this method are nestable and it is up to the target provider to ensure that this is 
 	 * supported.
 	 */
-	public void run(ITargetRunnable runnable, IProgressMonitor monitor) throws TeamException {
-		runnable.run(monitor);
+	public void run(final ITargetRunnable runnable, IProgressMonitor monitor) throws TeamException {
+		try {
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						runnable.run(monitor);
+					} catch (TeamException e) {
+						throw new CoreException(e.getStatus());
+					}
+				}
+			}, monitor);
+		} catch (CoreException e) {
+			throw new TeamException(e.getStatus());
+		}
 	}
 }
