@@ -994,7 +994,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected boolean isErrorStatus(IStatus status) {
 		// see bug 42230
-		return status != null && !status.isOK() && status.getCode() != IResourceStatus.READ_ONLY_LOCAL;
+		return super.isErrorStatus(status) && status.getCode() != IResourceStatus.READ_ONLY_LOCAL && status.getSeverity() != IStatus.CANCEL;
 	}
 	
 	/*
