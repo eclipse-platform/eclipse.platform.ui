@@ -41,41 +41,56 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Empty Perspective"
+            name="UI Test Empty Perspective"
             class="org.eclipse.ui.tests.util.EmptyPerspective"
             id="org.eclipse.ui.tests.util.EmptyPerspective">
       </perspective>
       <perspective
-            name="Empty Perspective 2"
+            name="UI Test Empty Perspective 2"
             class="org.eclipse.ui.tests.util.EmptyPerspective"
             id="org.eclipse.ui.tests.util.EmptyPerspective2">
       </perspective>
       <perspective
-            name="Drag Test Perspective"
+            name="UI Test Drag Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
             id="org.eclipse.ui.tests.dnd.dragdrop">
       </perspective>
       <perspective
-            name="View Arrangement Perspective"
+            name="UI Test View Arrangement Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.api.ViewPerspective"
             id="org.eclipse.ui.tests.api.ViewPerspective">
       </perspective>
-      <perspective
-            class="org.eclipse.ui.tests.util.PerspectiveWithFastView"
-            name="Perspective with Fast View"
-            id="org.eclipse.ui.tests.fastview_perspective">
-      </perspective>      
    </extension>
 <!-- Utils End -->
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Session Perspective"
+            name="UI Test Session Perspective"
             class="org.eclipse.ui.tests.api.SessionPerspective"
             id="org.eclipse.ui.tests.api.SessionPerspective">
       </perspective>
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithFastView"
+            name="UI Test Perspective with Fast View"
+            id="org.eclipse.ui.tests.fastview_perspective">
+      </perspective>      
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersAtTopLevel"
+            name="UI Test Perspective with Multi View Placeholders At Top Level"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersAtTopLevel">
+      </perspective>      
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder"
+            name="UI Test Perspective with Multi View Placeholders In Placeholder Folder"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder">
+      </perspective>      
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInFolder"
+            name="UI Test Perspective with Multi View Placeholders In Folder"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInFolder">
+      </perspective>      
    </extension>
    <extension
          point="org.eclipse.ui.views">
