@@ -115,8 +115,10 @@ public class ResourceNavigator
 				IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 				TreeViewer viewer = getTreeViewer();
 
-				if (newWorkingSet == null) {
+				if (oldWorkingSet != null) {
 					oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
+				}
+				if (newWorkingSet == null) {					
 					if (workingSetFilter != null) {
 						viewer.removeFilter(workingSetFilter);
 						workingSetFilter = null;
@@ -130,7 +132,6 @@ public class ResourceNavigator
 						newWorkingSet.addPropertyChangeListener(propertyChangeListener);	
 					}
 					else {
-						oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
 						newWorkingSet.addPropertyChangeListener(propertyChangeListener);
 						workingSetFilter.setWorkingSet(newWorkingSet);
 						getResourceViewer().refresh();
@@ -271,7 +272,14 @@ public class ResourceNavigator
 	 * Method declared on IWorkbenchPart.
 	 */
 	public void dispose() {
-		getSite().getPage().removePartListener(partListener);
+		IWorkbenchPage page = getSite().getPage();
+		IWorkingSet workingSet = page.getWorkingSet();
+		
+		page.removePartListener(partListener);
+		page.removePropertyChangeListener(propertyChangeListener);
+		if (workingSet != null) {
+			workingSet.removePropertyChangeListener(propertyChangeListener);
+		}		
 		if (actionGroup != null) {
 			actionGroup.dispose();
 		}
