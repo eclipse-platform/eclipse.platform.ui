@@ -57,7 +57,23 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 * are appended to this job.
 	 */
 	protected LabelJob fNextJob= null;
+	/**
+	 * A collection of threads that were resumed while their stack
+	 * frames' labels were being computed. By maintaining this collection,
+	 * the label decorator can refresh stack frame labels for these
+	 * threads when they suspend again.
+	 */
 	private Set resumedThreads= new HashSet();
+	/**
+	 * The stack frame whose label is currently being computed
+	 * or <code>null</code> if no stack frame label is being computed.
+	 */
+	private IStackFrame fCurrentStackFrame= null;
+	/**
+	 * An object to be used as a lock for thread-safe access to the
+	 * current frame.
+	 */
+	private Object fCurrentStackFrameLock= new Object();
 	
 	/**
 	 * Creates a new label decorator which will query the
@@ -134,6 +150,27 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 				handleSuspendEvent(event);
 			} else if (event.getKind() == DebugEvent.TERMINATE) {
 				handleTerminateEvent(event);
+			} else if (event.getKind() == DebugEvent.RESUME) {
+				handleResumeEvent(event);
+			}
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleResumeEvent(DebugEvent event) {
+		if (event.getSource() instanceof IThread && event.isEvaluation() || event.isStepStart()) {
+			IThread thread= (IThread) event.getSource();
+			IStackFrame frame;
+			synchronized (fCurrentStackFrameLock) {
+				if (!(fCurrentStackFrame instanceof IStackFrame)) {
+					return;
+				}
+				frame= (IStackFrame) fCurrentStackFrame;
+			}
+			if (thread == frame.getThread()) {
+				resumedThreads.add(thread);
 			}
 		}
 	}
@@ -248,7 +285,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 
 			int numElements= fElementQueue.size();
 			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
-			while (!fElementQueue.isEmpty()) {
+			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
 				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.1"), new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
 				if (fNextJob != null) {
 					message.append(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.2"), new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
@@ -263,11 +300,14 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 					Object element= fElementQueue.remove(0);
 					if (element != null) {
 						if (element instanceof IStackFrame) {
+							synchronized (fCurrentStackFrameLock) {
+								fCurrentStackFrame= (IStackFrame) element;
+							}
 							// If a stack frame's thread has been resumed, make sure it is added to the collection
 							// of resumed threads. There's a (small) chance of a race condition here if
 							// the thread manages to resume after we check its suspended status and then
 							// suspend before we check the status for the next frame.
-							IThread thread= ((IStackFrame) element).getThread();
+							IThread thread= fCurrentStackFrame.getThread();
 							synchronized(resumedThreads) {
 								if (!thread.isTerminated() && !thread.isSuspended()) {
 									resumedThreads.add(thread);
@@ -275,6 +315,9 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 							}
 						}
 						fLabelProvider.textComputed(element, fJobPresentation.getText(element));
+						synchronized (fCurrentStackFrameLock) {
+							fCurrentStackFrame= null;
+						}
 						computedElements.add(element);
 					}
 				}
