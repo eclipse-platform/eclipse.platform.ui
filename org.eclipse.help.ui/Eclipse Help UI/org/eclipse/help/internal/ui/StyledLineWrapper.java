@@ -55,8 +55,8 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * @see StyledTextContent#getLine(int)
 	 */
 	public String getLine(int i) {
-		//if (i < lines.size())
-			return (String)lines.get(i);
+		if ((i >= lines.size()) || (i < 0)) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		return (String)lines.get(i);
 	}
 
 	/**
@@ -163,14 +163,12 @@ public class StyledLineWrapper implements StyledTextContent {
 	{	
 		// Create the original lines with style stripped
 		lines = new ArrayList();
-		System.out.println(text);
 		char[] textChars = getUnstyledText(text).toCharArray();
 		int start = 0;
 		for (int i=start; i<textChars.length; i++)
 		{
 			char ch = textChars[i];				
 			if (ch == SWT.CR) {
-				System.err.println(start + "  "  + i);
 				lines.add(new String(textChars, start, i-start));
 				start = i+1;
 				// see if the next character is an LF
@@ -180,7 +178,6 @@ public class StyledLineWrapper implements StyledTextContent {
 						start++;
 				}
 			} else if (ch == SWT.LF) {
-				System.err.println(start + "  "  + i);
 				lines.add(new String(textChars, start, i-start));
 				start = i+1;
 			} 
