@@ -416,9 +416,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) {
 			InputSource source= super.resolveEntity(publicId, systemId);
-			
-			 String path = fu.fromURI(source.getSystemId());
-			 fAntModel.addEntity(currentEntityName, path);
+			if (source != null) {
+				String path = fu.fromURI(source.getSystemId());
+				fAntModel.addEntity(currentEntityName, path);
+			}
 			return source;
 		}
 	 }
