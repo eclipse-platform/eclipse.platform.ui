@@ -26,7 +26,7 @@ The active editor is passed to the delegate by invoking
 
    <include schemaLocation="commonAction.mxsd"/>
 
-   <include schemaLocation="commonExpression.mxsd"/>
+   <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
       <complexType>

@@ -10,7 +10,7 @@
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonExpression.mxsd"/>
+   <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
       <complexType>

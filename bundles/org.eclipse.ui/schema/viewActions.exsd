@@ -13,7 +13,7 @@ by clicking on the top right triangle button. Other plug-ins can contribute subm
 
    <include schemaLocation="commonAction.mxsd"/>
 
-   <include schemaLocation="commonExpression.mxsd"/>
+   <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
       <complexType>
