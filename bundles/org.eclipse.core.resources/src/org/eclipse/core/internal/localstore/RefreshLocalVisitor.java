@@ -13,6 +13,20 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	protected IProgressMonitor monitor;
 	protected Workspace workspace;
 	protected boolean resourceChanged;
+	
+	/*
+	 * Fields for progress monitoring algorithm.
+	 * Initially, give progress for every 4 resources, double
+	 * this value at halfway point, then reset halfway point
+	 * to be half of remaining work.  (this gives an infinite
+	 * series that converges at total work after an infinite
+	 * number of resources).
+	 */
+	public static final int TOTAL_WORK = 250;
+	private int halfWay = TOTAL_WORK / 2;
+	private int currentIncrement = 4;
+	private int nextProgress = currentIncrement;
+	private int worked = 0;
 
 	/** control constants */
 	protected static final int RL_UNKNOWN 		= 0;
@@ -128,7 +142,6 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 					if (!parent.exists())
 						return RL_NOT_IN_SYNC;
 				}
-				IPath location = node.getLocalLocation();
 				if (!target.getName().equals(node.getLocalName()))
 					return RL_IN_SYNC;
 			}
@@ -192,7 +205,19 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		synchronizeLastModified(node, target);
 		return true;
 	} finally {
-		monitor.worked(1);
+		if (--nextProgress <= 0) {
+			//we have exhausted the current increment, so report progress
+			monitor.worked(1);
+			worked++;
+			if (worked >= halfWay) {
+				//we have passed the current halfway point, so double the
+				//increment and reset the halfway point.
+				currentIncrement *= 2;
+				halfWay += (TOTAL_WORK - halfWay) / 2;				
+			}
+			//reset the progress counter to another full increment
+			nextProgress = currentIncrement;
+		}
 	}
 }
 }

@@ -205,7 +205,7 @@ public boolean refresh(IResource target, int depth, IProgressMonitor monitor) th
 }
 protected boolean refreshProject(IProject project, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
-	int totalWork = ((Project) project).countResources(depth, false) + 5000;
+	int totalWork = RefreshLocalVisitor.TOTAL_WORK;
 	String title = Policy.bind("localstore.refreshing", project.getFullPath().toString());
 	try {
 		monitor.beginTask(title, totalWork);
@@ -221,7 +221,7 @@ protected boolean refreshProject(IProject project, int depth, IProgressMonitor m
 }
 protected boolean refreshResource(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
-	int totalWork = ((Resource) target).countResources(depth, false) + 5000;
+	int totalWork = RefreshLocalVisitor.TOTAL_WORK;
 	String title = Policy.bind("localstore.refreshing", target.getFullPath().toString());
 	try {
 		monitor.beginTask(title, totalWork);
