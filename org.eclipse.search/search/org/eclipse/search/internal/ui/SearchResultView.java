@@ -72,6 +72,10 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		super.setTitle(title);
 	}
 	
+	protected void setTitleToolTip(String text) {
+		super.setTitleToolTip(text);
+	}
+	
 	//---- Adding Action to Toolbar -------------------------------------------
 	
 	private void fillToolBar(IToolBarManager tbm) {

@@ -51,9 +51,42 @@ class Search extends Object {
 		fOperation= operation;
 	}
 
-	/** Description of the search */
+	/**
+	 * Description of the search.
+	 * The description set by the client where
+	 * {0} will be replaced by the match count.
+	 */
 	String getDescription() {
-		return fDescription;
+		if (fDescription == null)
+			return "";
+
+		String text= fDescription;
+		int i= fDescription.lastIndexOf("{0}");
+		if (i != -1) {
+			// replace "{0}" with the match count
+			int count= getItemCount();
+			// minimize length infront of " - " to 20 and add ...
+			if (i > 20 + 3) {
+				if (fDescription.indexOf('"') == 0 && fDescription.indexOf('"', 1) == i - 4)
+					text= fDescription.substring(0, 21) + "\"... - ";
+				else
+					text= fDescription.substring(0, 20) + "... - ";
+			}
+			else
+				text= fDescription.substring(0, i);
+			text += count;
+			// cut away last 's' if count is 1
+			if (count == 1 && fDescription.lastIndexOf('s') == (fDescription.length() - 1))
+				text += fDescription.substring(i + 3, fDescription.length() - 1);
+			else
+			 	text += fDescription.substring(i + 3);
+		}
+		else {
+			// minimize length to 30 and add ...
+			if (fDescription.length() > 30)
+				text= fDescription.substring(0, 30) + "... ";
+		}
+		return text;
 	}
 
 	/** Image used when search is displayed in a list */

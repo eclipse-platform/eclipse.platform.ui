@@ -45,7 +45,7 @@ class GotoMarkerAction extends Action {
 			return;
 		IWorkbenchPage page= SearchPlugin.getActivePage();
 		try {
-			page.openEditor(marker);
+			page.openEditor(marker, false);
 		} catch (PartInitException ex) {
 			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.openEditor.");
 		}	

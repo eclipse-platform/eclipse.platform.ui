@@ -224,9 +224,24 @@ class SearchResultViewer extends TableViewer {
 		
 		// need to hook F5 to table
 		getTable().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.F5)
-					fSearchDropDownAction.run();
+			public void keyReleased(KeyEvent e) {
+				
+				if (e.keyCode == SWT.F5) {
+					fSearchAgainAction.run();
+					return;
+				}
+				/*
+				System.out.println("released keyCode: " + e.keyCode);
+				System.out.println("released char: " + e.character);
+				System.out.println("released mask: " + e.stateMask);
+				if (e.keyCode == 0 && (SWT.SHIFT ^ e.stateMask) == 0) {
+					char c= Character.toUpperCase(e.character);
+					if (c == 'P')
+						showPreviousResult();
+					if (c == 'N')
+						showNextResult();
+				}
+				*/
 			}
 		});
 	}	
@@ -348,16 +363,21 @@ class SearchResultViewer extends TableViewer {
 	}
 	
 	/**
-	 * Update the title
+	 * Update the title and the title's tooltip
 	 */
 	protected void updateTitle() {
 		int count= SearchManager.getDefault().getCurrentItemCount();
-		boolean showZero= SearchManager.getDefault().getCurrentSearch() != null;
+		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
 		String title= SearchPlugin.getResourceString("SearchResultView.title");
-		if (count > 0 || showZero)
-			title= title + " (" + count + " " + SearchPlugin.getResourceString("SearchResultView.matches") + ")";
+		if (count > 0 || hasCurrentSearch)
+		title= title + " (" + count + " " + SearchPlugin.getResourceString("SearchResultView.matches") + ")";
 		if (!title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
+		String toolTip= null;
+		if (hasCurrentSearch)
+			toolTip= SearchManager.getDefault().getCurrentSearch().getDescription();
+		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
+			fOuterPart.setTitleToolTip(toolTip);
 	}
 
 	/**
