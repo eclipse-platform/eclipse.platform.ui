@@ -280,7 +280,7 @@ public class AntEditor extends TextEditor {
 	/** Preference key for the foreground color of the line numbers */
 	//private final static String LINE_NUMBER_COLOR= AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
 	/** Preference key for showing the overview ruler */
-	private final static String OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
+	//private final static String OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
 	/** Preference key for error indication in overview ruler */
 	private final static String ERROR_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER;
 	/** Preference key for warning indication in overview ruler */

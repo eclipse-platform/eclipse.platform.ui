@@ -184,14 +184,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	private Control fAutoInsertDelayText;
 	private Control fAutoInsertTriggerText;
 	private Label fAutoInsertDelayLabel;
-	private Label fAutoInsertJavaTriggerLabel;
-	private Label fAutoInsertJavaDocTriggerLabel;
-	private Control fAutoInsertJavaTriggerText;
-    private Control fAutoInsertJavaDocTriggerText;
-	private Button fCompletionInsertsRadioButton;
-	private Button fCompletionOverwritesRadioButton;
+	private Label fAutoInsertTriggerLabel;
 	
-   	
 	public AntEditorPreferencePage() {
 		setDescription(AntPreferencesMessages.getString("AntEditorPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
@@ -392,8 +386,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_tri&ggers__4"); //$NON-NLS-1$
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, false);
-		fAutoInsertJavaTriggerLabel= getLabelControl(labelledTextField);
-		fAutoInsertJavaTriggerText= getTextControl(labelledTextField);
+		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
+		fAutoInsertTriggerText= getTextControl(labelledTextField);
 		
 		Label label= new Label(contentAssistComposite, SWT.LEFT);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
@@ -472,8 +466,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	   fAutoInsertDelayText.setEnabled(autoactivation);
 	   fAutoInsertDelayLabel.setEnabled(autoactivation);
 
-	   fAutoInsertJavaTriggerText.setEnabled(autoactivation);
-	   fAutoInsertJavaTriggerLabel.setEnabled(autoactivation);
+	   fAutoInsertTriggerText.setEnabled(autoactivation);
+	   fAutoInsertTriggerLabel.setEnabled(autoactivation);
    }
 	
 	private Control createAnnotationsPage(Composite parent) {
