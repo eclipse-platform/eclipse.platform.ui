@@ -217,17 +217,19 @@
       </action>
       <action
             label="%RunWithConfigurationAction.label"
-            class="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction"
+            class="org.eclipse.debug.internal.ui.actions.RunAsAction"
             menubarPath="org.eclipse.ui.run/runGroup"
             helpContextId="run_with_configuration_action_context"
-            id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction">
+            id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction"
+            pulldown="true">
       </action>
       <action
             label="%RunHistoryMenuAction.label"
             class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
             menubarPath="org.eclipse.ui.run/runGroup"
             helpContextId="run_history_menu_action_context"
-            id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
+            id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
+            pulldown="true">
       </action>
        <action
             label="%DebugLastAction.label"
@@ -269,17 +271,19 @@
       </action>
       <action
             label="%DebugWithConfigurationAction.label"
-            class="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction"
+            class="org.eclipse.debug.internal.ui.actions.DebugAsAction"
     		menubarPath="org.eclipse.ui.run/debugGroup"
     		helpContextId="debug_with_configuration_action_context"
-            id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction">
+            id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction"
+            pulldown="true">
       </action>
       <action
             label="%DebugHistoryMenuAction.label"
             class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
     		menubarPath="org.eclipse.ui.run/debugGroup"
     		helpContextId="debug_history_menu_action_context"
-            id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
+            id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
+            pulldown="true">
       </action>
       <action
       		label="%DebugDropDownAction.label"

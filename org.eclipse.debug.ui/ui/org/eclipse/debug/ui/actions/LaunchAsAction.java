@@ -21,11 +21,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -33,7 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @since 2.1
  */
-public class LaunchAsAction extends Action implements IMenuCreator {
+public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 	
 	/**
 	 * Cascading menu 
@@ -205,5 +207,25 @@ public class LaunchAsAction extends Action implements IMenuCreator {
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}	
+	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	public void run(IAction action) {
+		// do nothing - this is just a menu
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
 }
 

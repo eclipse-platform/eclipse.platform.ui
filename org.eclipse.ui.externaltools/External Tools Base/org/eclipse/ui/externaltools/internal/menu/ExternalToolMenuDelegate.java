@@ -7,7 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
+import org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
@@ -16,7 +16,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  * an items to run last tool, favorite tools, and show the
  * external tools view.
  */
-public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction {
+public class ExternalToolMenuDelegate extends AbstractLaunchToolbarAction {
 	
 	/**
 	 * Creates the action delegate

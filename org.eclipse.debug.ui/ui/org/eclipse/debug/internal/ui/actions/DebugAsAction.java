@@ -8,15 +8,15 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction;
+import org.eclipse.debug.ui.actions.LaunchAsAction;
 
 /**
- * Run drop-down history/favorites action.
+ * "Debug As" action in the top level "Run" menu.
  */
-public class RunToolbarAction extends AbstractLaunchToolbarAction {
+public class DebugAsAction extends LaunchAsAction {
 
-	public RunToolbarAction() {
-		super(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+	public DebugAsAction() {
+		super(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
 
 }

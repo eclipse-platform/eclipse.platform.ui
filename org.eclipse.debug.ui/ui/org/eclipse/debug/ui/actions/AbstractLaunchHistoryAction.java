@@ -17,11 +17,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -178,8 +176,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	/**
 	 * Return the last launch in this action's launch history
 	 */
-	private ILaunchConfiguration getLastLaunch() {
-		return getLaunchConfigurationManager().getLastLaunch(fLaunchGroupIdentifier);
+	protected ILaunchConfiguration getLastLaunch() {
+		return getLaunchConfigurationManager().getLastLaunch(getLaunchGroupIdentifier());
 	}
 
 	/**
@@ -264,14 +262,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			addToMenu(menu, action, accelerator);
 			accelerator++;
 		}
-		
-		// Separator between history and common actions
-		if (historyList.length > 0) {
-			addSeparator(menu);
-		}
-
-		addToMenu(menu, new LaunchAsAction(fLaunchGroupIdentifier), -1);
-		addToMenu(menu, new OpenLaunchDialogAction(fLaunchGroupIdentifier), -1);
 	}
 	
 	/**
@@ -287,12 +277,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		ILaunchConfiguration configuration = getLastLaunch();
-		if (configuration == null) {
-			DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), fLaunchGroupIdentifier);
-		} else {
-			DebugUITools.launch(configuration, getMode());
-		}
+		// do nothing - this is just a menu
 	}
 
 	/**
@@ -314,8 +299,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * Returns the launch history associated with this action's launch group.
 	 * 
 	 * @return the launch history associated with this action's launch group	 */
-	private LaunchHistory getLaunchHistory() {
-		return getLaunchConfigurationManager().getLaunchHistory(fLaunchGroupIdentifier);
+	protected LaunchHistory getLaunchHistory() {
+		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
 	} 
 		
 	/**
@@ -334,6 +319,17 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
+	
+	/**
+	 * Returns the identifier of the launch group this action is associated
+	 * with.
+	 * 
+	 * @return the identifier of the launch group this action is associated
+	 * with
+	 */
+	protected String getLaunchGroupIdentifier() {
+		return fLaunchGroupIdentifier;
 	}
 	
 }

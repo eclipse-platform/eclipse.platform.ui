@@ -8,12 +8,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
+import org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction;
 
 /**
  * Debug drop-down history/favorites action.
  */
-public class DebugToolbarAction extends AbstractLaunchHistoryAction {
+public class DebugToolbarAction extends AbstractLaunchToolbarAction {
 
 	public DebugToolbarAction() {
 		super(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
