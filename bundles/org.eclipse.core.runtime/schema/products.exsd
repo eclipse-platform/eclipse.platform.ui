@@ -150,6 +150,7 @@ There are two possible forms of product extension, static and dynamic.  Static p
           &lt;property name=&quot;aboutText&quot; value=&quot;%aboutText&quot;/&gt; 
           &lt;property name=&quot;appName&quot; value=&quot;CoolApp&quot;/&gt; 
           &lt;property name=&quot;welcomePage&quot; value=&quot;$nl$/welcome.xml&quot;/&gt; 
+          &lt;property name=&quot;preferenceCustomization&quot; value=&quot;plugin_customization.ini&quot;/&gt; 
       &lt;/product&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
