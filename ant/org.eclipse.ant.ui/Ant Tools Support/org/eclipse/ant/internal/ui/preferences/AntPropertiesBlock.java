@@ -172,6 +172,14 @@ public class AntPropertiesBlock {
 			}
 		});
 		
+		propertyTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (removeButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(propertyTableViewer);
+				}
+			}
+		});	
+		
 		createButtonGroup(top);
 
 		label = new Label(top, SWT.NONE);
@@ -182,6 +190,13 @@ public class AntPropertiesBlock {
 		label.setText(propertyFileLabel);
 
 		fileTableViewer= createTableViewer(top);
+		fileTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (removeFileButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(fileTableViewer);
+				}
+			}
+		});	
 		createButtonGroup(top);
 	}
 	
@@ -210,18 +225,11 @@ public class AntPropertiesBlock {
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
 		
-		final TableViewer tableViewer= new TableViewer(table);
+		TableViewer tableViewer= new TableViewer(table);
 		tableViewer.setContentProvider(new AntContentProvider());
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.addSelectionChangedListener(tableListener);
 		
-		table.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (editButton.isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
-					remove(tableViewer);
-				}
-			}
-		});	
 		return tableViewer;
 	}
 	
