@@ -417,13 +417,7 @@ public final class XMLMemento implements IMemento {
         catch (TransformerConfigurationException e) {
             throw (IOException) (new IOException().initCause(e));
         }
-        catch (TransformerFactoryConfigurationError e) {
-            throw (IOException) (new IOException().initCause(e));
-        }
         catch (TransformerException e) {
-            throw (IOException) (new IOException().initCause(e));
-        }        
-        catch (FactoryConfigurationError e) {
             throw (IOException) (new IOException().initCause(e));
         }
 	}
