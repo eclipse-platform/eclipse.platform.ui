@@ -20,6 +20,7 @@ public final class HelpSystem {
 	public final static String BANNER_KEY = "banner";
 	public final static String BANNER_HEIGHT_KEY = "banner_height";
 	public final static String LINKS_VIEW_KEY = "linksView";
+	public final static String BASE_TOCS_KEY = "baseTOCS";
 	
 	protected TocManager tocManager;
 	protected ContextManager contextManager;

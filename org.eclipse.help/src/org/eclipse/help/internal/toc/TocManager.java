@@ -3,12 +3,13 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
-import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IToc;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
+
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
  */
@@ -133,14 +134,8 @@ public class TocManager {
 	private ArrayList getPreferredTocOrder() {
 		ArrayList orderedTocs = new ArrayList();
 		try {
-			Plugin p = Platform.getPlugin("org.eclipse.sdk");
-			if (p == null)
-				return orderedTocs;
-			URL pURL = p.getDescriptor().getInstallURL();
-			URL productIniURL = new URL(pURL, "product.ini");
-			Properties prop = new Properties();
-			prop.load(productIniURL.openStream());
-			String preferredTocs = prop.getProperty("baseInfosets");
+			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+			String preferredTocs = pref.getString(HelpSystem.BASE_TOCS_KEY);
 			if (preferredTocs != null) {
 				StringTokenizer suggestdOrderedInfosets =
 					new StringTokenizer(preferredTocs, " ;,");
