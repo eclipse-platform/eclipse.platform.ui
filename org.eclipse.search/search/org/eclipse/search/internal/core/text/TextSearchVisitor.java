@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,7 +34,10 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.search.internal.core.ISearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -46,12 +47,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.core.ISearchScope;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 /**
  * The visitor that does the actual work.
  */
@@ -59,104 +54,30 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	protected static final int fgLF= '\n';
 	protected static final int fgCR= '\r';
 
-	private String fPatternStr;
 	private ISearchScope fScope;
 	private ITextSearchResultCollector fCollector;
 	private IEditorPart[] fEditors;
+	private MatchLocator fLocator;
 		
 	private IProgressMonitor fProgressMonitor;
-	private Matcher fMatcher;
 	private Integer[] fMessageFormatArgs;
 
 	private int fNumberOfScannedFiles;
 	private int fNumberOfFilesToScan;
-	private long fLastUpdateTime;
+	private long fLastUpdateTime;	
 	
-	protected int fPushbackChar;
-	protected boolean fPushback;
-	
-	
-	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
+	public TextSearchVisitor(MatchLocator locator, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		super(status);
-		fPatternStr= pattern;
 		fScope= scope;
 		fCollector= collector;
-		fPushback= false;
 
 		fProgressMonitor= collector.getProgressMonitor();
-		Pattern regExPattern;
-		if (options.indexOf('r') == -1)
-			pattern= asRegEx(pattern);
-		if (options.indexOf('i') != -1)
-			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-		else
-			regExPattern= Pattern.compile(pattern);
 
-		fMatcher= regExPattern.matcher(""); //$NON-NLS-1$
-			
+		fLocator= locator;
+		
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
 		fMessageFormatArgs= new Integer[] { new Integer(0), new Integer(fileCount) };
-	}
-	
-	/*
-	 * Converts '*' and '?' to regEx variables.
-	 */
-	private String asRegEx(String pattern) {
-		
-		StringBuffer out= new StringBuffer(pattern.length());
-		
-		boolean escaped= false;
-		boolean quoting= false;
-	
-		int i= 0;
-		while (i < pattern.length()) {
-			char ch= pattern.charAt(i++);
-	
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-	
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-	
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-	
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out.toString();
 	}
 	
 	public void process(Collection projects) {
@@ -210,7 +131,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		if (proxy.isDerived())
 			return false;
 
-		if (fPatternStr.length() == 0) {
+		if (fLocator.isEmtpy()) {
 			fCollector.accept(proxy, "", -1, 0, -1); //$NON-NLS-1$
 			updateProgressMonitor();
 			return true;
@@ -226,37 +147,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				InputStream stream= file.getContents(false);
 				reader= new BufferedReader(new InputStreamReader(stream, ResourcesPlugin.getEncoding()));
 			}
-			int lineCounter= 1;
-			int charCounter=0;
-			boolean eof= false;
-			try {
-				while (!eof) {
-					StringBuffer sb= new StringBuffer(200);
-					int eolStrLength= readLine(reader, sb);
-					int lineLength= sb.length();
-					int start= 0;
-					eof= eolStrLength == -1;
-					String line= sb.toString();
-					while (start < lineLength) {
-						fMatcher.reset(line);
-						if (fMatcher.find(start)) {
-							start= charCounter + fMatcher.start();
-							int length= fMatcher.end() - fMatcher.start();
-							fCollector.accept(proxy, line.trim(), start, length, lineCounter);
-							start= fMatcher.end();
-						}
-						else	// no match in this line
-							start= lineLength;
-					}
-					charCounter+= lineLength + eolStrLength;
-					lineCounter++;
-					if (fProgressMonitor.isCanceled())
-						throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
-				}
-			} finally {
-				if (reader != null)
-					reader.close();
-			}
+			fLocator.locateMatches(fProgressMonitor, proxy, reader, fCollector);
 		} catch (IOException e) {
 			String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
@@ -292,33 +183,6 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 			i++;
 		}
 		return null;
-	}
-	
-	protected int readLine(BufferedReader reader, StringBuffer sb) throws IOException {
-		int ch= -1;
-		if (fPushback) {
-			ch= fPushbackChar;
-			fPushback= false;
-		}
-		else
-			ch= reader.read();
-		while (ch >= 0) {
-			if (ch == fgLF)
-				return 1;
-			if (ch == fgCR) {
-				ch= reader.read();
-				if (ch == fgLF)
-					return 2;
-				else {
-					fPushbackChar= ch;
-					fPushback= true;
-					return 1;
-				}
-			}
-			sb.append((char)ch);
-			ch= reader.read();
-		}
-		return -1;
 	}
 	
 	/*

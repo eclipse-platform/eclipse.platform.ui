@@ -10,19 +10,20 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
 import org.eclipse.search.internal.core.ISearchScope;
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
+import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * An operation to perform a regular text search.
@@ -32,8 +33,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	public static final int NO_PRIORITY_CHANGE= -1;
 	
 	private IWorkspace fWorkspace;
-	private String fPattern;
-	private String fOptions;
+	private MatchLocator fMatchLocator;
 	private ISearchScope fScope;
 	private TextSearchResultCollector fCollector;
 	private IStatus fStatus;
@@ -42,11 +42,11 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	 * Creates a new text search operation.
 	 */
 	public TextSearchOperation(IWorkspace workspace,  String pattern, String options, 
-			ISearchScope scope, TextSearchResultCollector collector)  {
+		ISearchScope scope, TextSearchResultCollector collector)  {
+		super(null);
 		Assert.isNotNull(collector);
 		fWorkspace= workspace;
-		fPattern= pattern;
-		fOptions= options;
+		fMatchLocator= new MatchLocator(pattern, options);
 		fScope= scope;
 		fCollector= collector;
 		fCollector.setOperation(this);
@@ -58,21 +58,31 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) {
 		fCollector.setProgressMonitor(monitor);		
 		TextSearchEngine engine= new TextSearchEngine();
-		fStatus= engine.search(fWorkspace, fPattern, fOptions, fScope, fCollector);
+		fStatus= engine.search(fWorkspace, fScope, fCollector, fMatchLocator);
 	}	
+	
+	void searchInFile(IFile file, ITextSearchResultCollector collector) {
+		TextSearchEngine engine= new TextSearchEngine();
+		TextSearchScope scope= new TextSearchScope(""); //$NON-NLS-1$
+		scope.add(file);
+		scope.addExtension("*"); //$NON-NLS-1$
+		fStatus= engine.search(fWorkspace, scope, collector, fMatchLocator);
+	}
 
 	String getSingularLabel() {
-		if (fPattern == null || fPattern.length() < 1)
+		String pattern= fMatchLocator.getPattern();
+		if (pattern == null || pattern.length() < 1)
 			return SearchMessages.getFormattedString("FileSearchOperation.singularLabelPostfix", new String[] {fScope.getDescription()}); //$NON-NLS-1$
 		else
-			return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-1$
+			return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fMatchLocator.getPattern(), fScope.getDescription()}); //$NON-NLS-1$
 	}
 
 	String getPluralLabelPattern() {
-		if (fPattern == null || fPattern.length() < 1)
+		String pattern= fMatchLocator.getPattern();
+		if (pattern == null || pattern.length() < 1)
 			return SearchMessages.getFormattedString("FileSearchOperation.pluralLabelPatternPostfix", new String[] {"{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
 		else
-			return SearchMessages.getFormattedString("TextSearchOperation.pluralLabelPatternPostfix", new String[] {fPattern, "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+			return SearchMessages.getFormattedString("TextSearchOperation.pluralLabelPatternPostfix", new String[] {fMatchLocator.getPattern(), "{0}", fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
 	ImageDescriptor getImageDescriptor() {
@@ -84,6 +94,6 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}
 	
 	String getPattern() {
-		return fPattern;
+		return fMatchLocator.getPattern();
 	}
 }

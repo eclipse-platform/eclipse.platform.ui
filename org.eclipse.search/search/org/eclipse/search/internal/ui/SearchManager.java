@@ -86,7 +86,7 @@ public class SearchManager implements IResourceChangeListener {
 
 	void removeAllSearches() {
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
-		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+		WorkspaceModifyOperation op= new WorkspaceModifyOperation(null) {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(SearchMessages.getString("SearchManager.updating"), 100); //$NON-NLS-1$
 				SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
@@ -131,7 +131,7 @@ public class SearchManager implements IResourceChangeListener {
 			return;
 			
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
-		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+		WorkspaceModifyOperation op= new WorkspaceModifyOperation(null) {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				internalSetCurrentSearch(search, monitor);
 			}

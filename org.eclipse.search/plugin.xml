@@ -14,6 +14,7 @@
 
 	<requires>
 	  <import plugin="org.eclipse.core.resources"/>
+	  <import plugin="org.eclipse.core.filebuffers"/>
 	  <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
@@ -147,6 +148,7 @@
 			tabPosition="1"
 			extensions="*:1"
 			showScopeSection="true"		
+			showReplaceButton="true"
 			canSearchEnclosingProjects="true"
 			class="org.eclipse.search.internal.ui.text.TextSearchPage">
 		</page>

@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="search"/>
 	<classpathentry kind="src" path="/org.eclipse.core.resources"/>
+	<classpathentry kind="src" path="/org.eclipse.core.filebuffers"/>
 	<classpathentry kind="src" path="/org.eclipse.ui"/>
 	<classpathentry kind="src" path="/org.eclipse.ui.ide"/>
 	<classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>

@@ -12,7 +12,21 @@ package org.eclipse.search.internal.ui.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
@@ -24,29 +38,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.wizard.ProgressMonitorPart;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-
 
 public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableContext {
 	
 	private Control fContents;
 	private Button fCancelButton;
-	private Button fSearchButton;
-	
-	private String fPerformActionLabel= JFaceResources.getString("finish"); //$NON-NLS-1$
+	private Set fActionButtons;
 	
 	// The number of long running operation executed from the dialog.	
 	private long fActiveRunningOperations;
@@ -61,6 +58,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 
 	public ExtendedDialogWindow(Shell shell) {
 		super(shell);
+		fActionButtons= new HashSet();
 	}
 	
 	//---- Hooks to reimplement in subclasses -----------------------------------
@@ -70,8 +68,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * the dialog's action. If the method returns <code>false</code>
 	 * the dialog stays open. Otherwise the dialog is going to be closed.
 	 */
-	protected boolean performAction() {
-		return true;
+	protected void performAction(int buttonId) {
+		return;
 	}
 	 
 	/**
@@ -98,9 +96,14 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * @param parent the button bar composite
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		
-		fSearchButton= createButton(parent, IDialogConstants.FINISH_ID, fPerformActionLabel, true);
 		fCancelButton= createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	}
+	
+	protected Button createActionButton(Composite parent, int id, String label,
+			boolean defaultButton) {
+		Button actionButton= createButton(parent, id, label, defaultButton);
+		fActionButtons.add(actionButton);
+		return actionButton;
 	}
 	 
 	/**
@@ -136,32 +139,25 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
-			case IDialogConstants.FINISH_ID:
-				if (performAction())
-					close();
-				break;
 			case IDialogConstants.CANCEL_ID:
 				if (fActiveRunningOperations == 0)
 					close();
 				break;	
+			default:
+				performAction(buttonId);
 		}
 	}
 	
 	//---- Setters and Getters --------------------------------------------------
 	
 	/**
-	 * Sets the label text of the perform action button.
-	 */
-	public void setPerformActionLabel(String label) {
-		fPerformActionLabel= label;
-	} 
-
-	/**
 	 * Set the enable state of the perform action button.
 	 */
 	public void setPerformActionEnabled(boolean state) {
-		if (fSearchButton != null)
-			fSearchButton.setEnabled(state);
+		for (Iterator buttons = fActionButtons.iterator(); buttons.hasNext(); ) {
+			Button element = (Button) buttons.next();
+			element.setEnabled(state);
+		}
 	} 
 
 	//---- Operation stuff ------------------------------------------------------
@@ -272,8 +268,11 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	//---- UI state save and restoring ---------------------------------------------
 	
 	private void restoreUIState(HashMap state) {
-		restoreEnableState(fCancelButton, state, "cancel"); //$NON-NLS-1$
-		restoreEnableState(fSearchButton, state, "search"); //$NON-NLS-1$
+		restoreEnableState(fCancelButton, state); //$NON-NLS-1$
+		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
+			Button button = (Button) actionButtons.next();
+			restoreEnableState(button, state);
+		}
 		ControlEnableState pageState= (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
 		pageState.restore();
 	}
@@ -282,9 +281,9 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * Restores the enable state of the given control.
 	 * @private
 	 */
-	protected void restoreEnableState(Control w, HashMap h, String key) {
+	protected void restoreEnableState(Control w, HashMap h) {
 		if (!w.isDisposed()) {
-			Boolean b= (Boolean)h.get(key);
+			Boolean b= (Boolean)h.get(w);
 			if (b != null)
 				w.setEnabled(b.booleanValue());
 		}
@@ -292,16 +291,19 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	
 	private HashMap saveUIState(boolean keepCancelEnabled) {
 		HashMap savedState= new HashMap(10);
-		saveEnableStateAndSet(fCancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
-		saveEnableStateAndSet(fSearchButton, savedState, "search", false); //$NON-NLS-1$
+		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled); //$NON-NLS-1$
+		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
+			Button button = (Button) actionButtons.next();
+			saveEnableStateAndSet(button, savedState, false);
+		}
 		savedState.put("tabForm", ControlEnableState.disable(fContents)); //$NON-NLS-1$
 		
 		return savedState;
 	}
 	
-	private void saveEnableStateAndSet(Control w, HashMap h, String key, boolean enabled) {
+	private void saveEnableStateAndSet(Control w, HashMap h, boolean enabled) {
 		if (!w.isDisposed()) {
-			h.put(key, new Boolean(w.isEnabled()));
+			h.put(w, new Boolean(w.isEnabled()));
 			w.setEnabled(enabled);
 		}	
 	}	

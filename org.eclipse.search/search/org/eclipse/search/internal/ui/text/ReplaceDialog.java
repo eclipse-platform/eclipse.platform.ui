@@ -10,20 +10,37 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchResultView;
+import org.eclipse.search.internal.ui.SearchResultViewEntry;
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,347 +50,649 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
-import org.eclipse.search.ui.ISearchResultView;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchResultView;
-import org.eclipse.search.internal.ui.SearchResultViewEntry;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
-public class ReplaceDialog extends Dialog {
-
-	private static final int REPLACE_NEXT= IDialogConstants.CLIENT_ID;
-	private static final int REPLACE= IDialogConstants.CLIENT_ID + 1;
-	private static final int NEXT= IDialogConstants.CLIENT_ID + 2;
-
-	private String fSearchPattern;
-
-	private IWorkbenchWindow fWindow;
-	private boolean fAutobuild;
-	private boolean fFatalError;
-	
-	// UI
-	private Text fTextField;
-	private Button fSaveButton;
-	private Button fReplaceNextButton;
-	private Button fReplaceButton;
-	private Button fNextButton;
-
+class ReplaceDialog extends ExtendedDialogWindow {
 		
-	private boolean fSaved;
-	private ITextEditor fEditor;
-	private boolean fCloseEditor;
-	private IDocument fDocument;
-	private AbstractMarkerAnnotationModel fAnnotationModel;
-
-	
-	private List fElements;
-	private int fElementIndex;
-	private SearchResultViewEntry fCurrentEntry;
-	private List fCurrentMarkers;
-	private int fMarkerIndex;
-	private IMarker fCurrentMatch;
-	
-	private static class MarkerNotPresentableException extends Exception {
-		private IFile fFile;
-		MarkerNotPresentableException(IFile file) {
-			fFile= file;
+	/**
+	 * A class wrapping a resource marker, adding a position.
+	 */
+	private static class ReplaceMarker {
+		private Position fPosition;
+		private IMarker fMarker;
+		
+		ReplaceMarker(IMarker marker) {
+			fMarker= marker;
 		}
+		
 		public IFile getFile() {
-			return fFile;
+			return (IFile)fMarker.getResource();
+		}
+		
+		public void deletePosition(IDocument doc) {
+			if (fPosition != null) {
+				MarkerUtilities.setCharStart(fMarker, fPosition.getOffset());
+				MarkerUtilities.setCharEnd(fMarker, fPosition.getOffset()+fPosition.getLength());
+				doc.removePosition(fPosition);
+				fPosition= null;
+			}
+		}
+		
+		public void delete() throws CoreException {
+			fMarker.delete();
+		}
+		
+		public void createPosition(IDocument doc) throws BadLocationException {
+			if (fPosition == null) {
+				int charStart= MarkerUtilities.getCharStart(fMarker);
+				fPosition= new Position(charStart, MarkerUtilities.getCharEnd(fMarker)-charStart);
+				doc.addPosition(fPosition);
+			}
+		}
+		
+		public int getLength() {
+			if (fPosition != null)
+				return fPosition.getLength();
+			return MarkerUtilities.getCharEnd(fMarker)-MarkerUtilities.getCharStart(fMarker);
+		}
+		
+		public int getOffset() {
+			if (fPosition != null)
+				return fPosition.getOffset();
+			return MarkerUtilities.getCharStart(fMarker);
 		}
 	}
 	
-	protected ReplaceDialog(Shell parentShell, List elements, IWorkbenchWindow window, String searchPattern) {
-		super(parentShell);
-		Assert.isNotNull(elements);
-		Assert.isNotNull(searchPattern);
-		fElements= new ArrayList(elements);
-		Assert.isNotNull(window);
-		fWindow= window;
-		fSearchPattern= searchPattern;
+	private abstract static class ReplaceOperation extends WorkspaceModifyOperation {
+		public void execute(IProgressMonitor monitor) throws InvocationTargetException {
+			try {
+				doReplace(monitor);
+			} catch (BadLocationException e) {
+				throw new InvocationTargetException(e);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
+			} catch (IOException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		
+		protected abstract void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException, IOException;
 	}
-
+	
+	private abstract class ReplaceMarkersRunnable implements Runnable {
+		public CoreException fCoreException;
+		public BadLocationException fBadLocationException;
+		public OperationCanceledException fOperationCanceled;
+	}
+	
+	// various widget related constants
+	private static final int REPLACE= IDialogConstants.CLIENT_ID + 1;
+	private static final int REPLACE_ALL_IN_FILE= IDialogConstants.CLIENT_ID + 2;
+	private static final int REPLACE_ALL= IDialogConstants.CLIENT_ID + 3;
+	private static final int SKIP= IDialogConstants.CLIENT_ID + 4;
+	private static final int SKIP_FILE= IDialogConstants.CLIENT_ID + 5;
+	private static final int SKIP_ALL= IDialogConstants.CLIENT_ID + 6;
+	
+	// Widgets
+	private Text fTextField;
+	private Button fReplaceButton;
+	private Button fReplaceAllInFileButton;
+	private Button fReplaceAllButton;
+	private Button fSkipButton;
+	private Button fSkipFileButton;
+	private Label fFileLabel;
+	
+	private List fMarkers;
+	private TextSearchOperation fOperation;
+	private boolean fSkipReadonly= false;
+	private int fInitialFileCount;
+	
+	// reuse editors stuff
+	private IReusableEditor fEditor;
+	
+	protected ReplaceDialog(Shell parentShell, List entries, TextSearchOperation operation) {
+		super(parentShell);
+		Assert.isNotNull(entries);
+		Assert.isNotNull(operation);
+		fInitialFileCount= entries.size();
+		fMarkers= new ArrayList();
+		initializeMarkers(entries);
+		fOperation= operation;
+	}
+	
+	private void initializeMarkers(List entries) {
+		for (Iterator elements= entries.iterator(); elements.hasNext(); ) {
+			SearchResultViewEntry element= (SearchResultViewEntry)elements.next();
+			List markerList= element.getMarkers();
+			for (Iterator markers= markerList.iterator(); markers.hasNext(); ) {
+				IMarker marker= (IMarker)markers.next();
+				fMarkers.add(new ReplaceMarker(marker));
+			}
+		}
+	}
+	
+	// widget related stuff -----------------------------------------------------------
 	public void create() {
 		super.create();
 		Shell shell= getShell();
 		shell.setText(getDialogTitle());
-		updateButtons();
+		gotoCurrentMarker();
+		enableButtons();
+		updateProgressLabel();
 	}
-
-	public int open() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		fAutobuild= workspace.isAutoBuilding();
-		if (fAutobuild) {
-			IWorkspaceDescription description= workspace.getDescription();
-			description.setAutoBuilding(false);
-			try {
-				workspace.setDescription(description);
-			} catch (CoreException e) {
-				ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.auto_building")); //$NON-NLS-1$
-				fFatalError= true;
-			}
+	
+	/**
+	 * 
+	 */
+	private void updateProgressLabel() {
+		if (fMarkers.size() == 0) {
+			fFileLabel.setText(""); //$NON-NLS-1$
+			return;
 		}
-		try {
-			fCurrentMatch= getNextMatch(false);
-		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.no_matches")); //$NON-NLS-1$
-			fFatalError= true;
-		} catch (MarkerNotPresentableException e) {
-			handleMarkerNotPresentableException(e);
-			fFatalError= true;
-		}
-		return super.open();
+		ReplaceMarker firstMarker= getCurrentMarker();
+		int resourceCount= countResources();
+		String message= SearchMessages.getFormattedString("ReplaceDialog.progress.message", new Object[] {firstMarker.getFile().getName(), new Integer(fInitialFileCount-resourceCount +1), new Integer(fInitialFileCount)}); //$NON-NLS-1$
+		fFileLabel.setText(message);
 	}
 
-	public boolean close() {
-		boolean result= super.close();
-		restoreAutoBuildState();
-		return result;
-	}
-
-	protected Control createDialogArea(Composite parent) {
-		Composite result= (Composite)super.createDialogArea(parent);
-		GridLayout layout= (GridLayout)result.getLayout();
+	protected Control createPageArea(Composite parent) {
+		Composite result= new Composite(parent, SWT.NULL);
+		GridLayout layout= new GridLayout();
+		result.setLayout(layout);
 		layout.numColumns= 2;
 		
 		initializeDialogUnits(result);
 		
 		Label label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.replace_label")); //$NON-NLS-1$
-		
-		CLabel clabel= new CLabel(result, SWT.NONE);
-		clabel.setText(fSearchPattern);
+		Text clabel= new Text(result, SWT.BORDER);
+		clabel.setEnabled(false);
+		clabel.setText(fOperation.getPattern());
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		clabel.setLayoutData(gd);
 		
 		label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
-		
 		fTextField= new Text(result, SWT.BORDER);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
 		
-		fSaveButton= new Button(result, SWT.CHECK);
-		fSaveButton.setText(SearchMessages.getString("ReplaceDialog.save_changes")); //$NON-NLS-1$
-		fSaveButton.setSelection(true);
+		new Label(result, SWT.NONE);
+		
+		Composite actionButtons= createActionButtons(result);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan= 1;
+		actionButtons.setLayoutData(gd);
+		
+		fFileLabel= new Label(result, SWT.NONE);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan= 2;
-		fSaveButton.setLayoutData(gd);
+		fFileLabel.setLayoutData(gd);
 		
 		applyDialogFont(result);
 		return result;
 	}
-
-	protected void createButtonsForButtonBar(Composite parent) {
-		fReplaceNextButton= createButton(parent, REPLACE_NEXT, SearchMessages.getString("ReplaceDialog.replace_next"), false); //$NON-NLS-1$
-		fReplaceButton= createButton(parent, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), false); //$NON-NLS-1$
-		fNextButton= createButton(parent, NEXT, SearchMessages.getString("ReplaceDialog.next"), false); //$NON-NLS-1$
-		createButton(parent, IDialogConstants.CANCEL_ID, SearchMessages.getString("ReplaceDialog.close"), false); //$NON-NLS-1$
+	
+	protected Button createActionButton(Composite parent, int id, String label, boolean defaultButton) {
+		
+		Button button= new Button(parent, SWT.PUSH);
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		button.setText(label);
+		
+		button.setData(new Integer(id));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				buttonPressed(((Integer)event.widget.getData()).intValue());
+			}
+		});
+		if (defaultButton) {
+			Shell shell= parent.getShell();
+			if (shell != null) {
+				shell.setDefaultButton(button);
+			}
+		}
+		
+		return button;
 	}
-
+	
+	protected Composite createActionButtons(Composite parent) {
+		Composite buttonContainer= new Composite(parent, SWT.NONE);
+		GridLayout gl= new GridLayout();
+		gl.numColumns= 2;
+		gl.makeColumnsEqualWidth= true;
+		buttonContainer.setLayout(gl);
+		
+		fReplaceButton= createActionButton(buttonContainer, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
+		fSkipButton= createActionButton(buttonContainer, SKIP, SearchMessages.getString("ReplaceDialog.skip"), //$NON-NLS-1$
+				false); //$NON-NLS-1$
+		fReplaceAllInFileButton= createActionButton(buttonContainer, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
+		fSkipFileButton= createActionButton(buttonContainer, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
+		fReplaceAllButton= createActionButton(buttonContainer, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
+		return buttonContainer;
+	}
+	
 	protected Point getInitialLocation(Point initialSize) {
 		SearchResultView view= (SearchResultView)SearchPlugin.getSearchResultView();
 		if (view == null)
 			return super.getInitialLocation(initialSize);
-		Point result= new Point(0,0);
+		Point result= new Point(0, 0);
 		Control control= view.getViewer().getControl();
 		Point size= control.getSize();
 		Point location= control.toDisplay(control.getLocation());
 		result.x= Math.max(0, location.x + size.x - initialSize.x);
-		result.y= Math.max(0, location.y + size. y - initialSize.y);
+		result.y= Math.max(0, location.y + size.y - initialSize.y);
 		return result;
 	}
-
+	
+	private void enableButtons() {
+		fSkipButton.setEnabled(hasNextMarker());
+		fSkipFileButton.setEnabled(hasNextFile());
+		fReplaceButton.setEnabled(canReplace());
+		fReplaceAllInFileButton.setEnabled(canReplace());
+		fReplaceAllButton.setEnabled(canReplace());
+	}
+	
 	protected void buttonPressed(int buttonId) {
+		final String replaceText= fTextField.getText();
 		try {
-			boolean save= fSaveButton.getSelection();
-			String text= fTextField.getText();
-			switch(buttonId) {
-				case REPLACE_NEXT:
-					replace(fCurrentMatch, text, save);
-					fCurrentMatch= getNextMatch(save);
+			switch (buttonId) {
+				case SKIP :
+					skip();
 					break;
-				case REPLACE:
-					replace(fCurrentMatch, text, save);
-					fCurrentMatch= null;
+				case SKIP_FILE :
+					skipFile();
 					break;
-				case NEXT:
-					fCurrentMatch= getNextMatch(save);
+				case REPLACE :
+					run(true, true, new ReplaceOperation() {
+					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+						replace(pm, replaceText);
+					}
+				});
+					if (hasNextMarker())
+						gotoCurrentMarker();
 					break;
-				case IDialogConstants.CANCEL_ID:
-					saveEditor(save);
+				case REPLACE_ALL_IN_FILE :
+					run(true, true, new ReplaceOperation() {
+					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+						replaceInFile(pm, replaceText);
+						
+					}
+				});
+					if (hasNextFile())
+						gotoCurrentMarker();
 					break;
+				case REPLACE_ALL :
+					run(true, true, new ReplaceOperation() {
+					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+						replaceAll(pm, replaceText);
+					}
+				});
+					if (hasNextFile())
+						gotoCurrentMarker();
+					break;
+				default :
+					{
+					super.buttonPressed(buttonId);
+					return;
+				}
 			}
-		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.unexpected_exception")); //$NON-NLS-1$
-			fFatalError= true;
-		} catch (BadLocationException e) {
-			MessageDialog.openError(getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.different_content")); //$NON-NLS-1$
-			fFatalError= true;
-		} catch (MarkerNotPresentableException e) {
-			handleMarkerNotPresentableException(e);
-			fFatalError= true;
+		} catch (InvocationTargetException e) {
+			SearchPlugin.log(e);
+			String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_replace", getCurrentMarker().getFile().getName()); //$NON-NLS-1$
+			MessageDialog.openError(getParentShell(), getDialogTitle(), message);
+		} catch (InterruptedException e) {
+			// means operation canceled
 		}
-		updateButtons();
-		super.buttonPressed(buttonId);
+		if (!hasNextMarker() && !hasNextFile() && !canReplace())
+			close();
+		else {
+			enableButtons();
+			updateProgressLabel();
+		}
 	}
 	
-	private void replace(IMarker source, String text, boolean save) throws CoreException, BadLocationException {
-		Position position= fAnnotationModel.getMarkerPosition(source);
-		fDocument.replace(position.getOffset(), position.getLength(), text);
-		SearchPlugin.getWorkspace().deleteMarkers(new IMarker[] {source});
+	private ReplaceMarker getCurrentMarker() {
+		return (ReplaceMarker)fMarkers.get(0);
 	}
 	
-	private boolean hasNextMatch() {
-		if (fCurrentMarkers != null)
-			return true;
-		return fElementIndex < fElements.size();
+	private void replace(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
+		ReplaceMarker marker= getCurrentMarker();
+		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace"), 10); //$NON-NLS-1$
+		replaceInFile(pm, marker.getFile(), replacementText, new ReplaceMarker[]{marker});
 	}
 	
-	private IMarker getNextMatch(boolean save) throws CoreException, MarkerNotPresentableException {
-		if (fCurrentMarkers == null) {
-			if (fElementIndex >= fElements.size())
-				return null;
-			saveEditor(save);
-			fCurrentEntry= (SearchResultViewEntry)fElements.get(fElementIndex++);
-			fCurrentMarkers= new ArrayList(fCurrentEntry.getMarkers());
-			fMarkerIndex= 0;
-		}
-		IMarker result= (IMarker)fCurrentMarkers.get(fMarkerIndex);
-		if (fEditor == null) {
-			IWorkbenchPage activePage = fWindow.getActivePage();
-			int openEditors= activePage.getEditorReferences().length;
-			
-			fEditor= openFile(result, activePage);
-			IDE.gotoMarker(fEditor, result);
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			IEditorInput input = fEditor.getEditorInput();
-			fDocument= provider.getDocument(input);
-			fAnnotationModel= (AbstractMarkerAnnotationModel)provider.getAnnotationModel(input);
-			fCloseEditor= openEditors < activePage.getEditorReferences().length;
-		} else {
-			IDE.gotoMarker(fEditor, result);
-		}
-		if (fMarkerIndex == fCurrentMarkers.size() - 1) {
-			fCurrentMarkers= null;
-		} else {
-			fMarkerIndex++;
-		}
-		return result;
+	private void replaceInFile(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
+		ReplaceMarker firstMarker= getCurrentMarker();
+		ReplaceMarker[] markers= collectMarkers(firstMarker.getFile());
+		pm.beginTask(SearchMessages.getFormattedString("ReplaceDialog.task.replaceInFile", firstMarker.getFile().getFullPath().toOSString()), 4); //$NON-NLS-1$
+		replaceInFile(pm, firstMarker.getFile(), replacementText, markers);
 	}
-
-	private ITextEditor openFile(IMarker marker, IWorkbenchPage activePage) throws MarkerNotPresentableException, PartInitException {
-		IFile markerFile= marker.getResource() instanceof IFile ? (IFile)marker.getResource() : null;
-		if (markerFile == null)
-			throw new MarkerNotPresentableException(null);
-			
-		String currentEditorId= null;
-		IEditorDescriptor desc= IDE.getDefaultEditor(markerFile);
-		if (desc != null)
-			currentEditorId= desc.getId();
+	
+	private void replaceAll(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
+		int resourceCount= countResources();
+		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace.replaceAll"), resourceCount); //$NON-NLS-1$
+		while (fMarkers.size() > 0) {
+			replaceInFile(new SubProgressMonitor(pm, 1, 0), replacementText);
+		}
+		pm.done();
+	}
+	
+	private void replaceInFile(final IProgressMonitor pm, final IFile file, final String replacementText, final ReplaceMarker[] markers) throws BadLocationException, CoreException {
+		if (pm.isCanceled())
+			throw new OperationCanceledException();
+		ReplaceMarkersRunnable rmr= new ReplaceMarkersRunnable() {
+			public void run() {
+				try {
+					doReplaceInFile(pm, file, replacementText, markers);
+				} catch (BadLocationException e) {
+					fBadLocationException= e;
+				} catch (CoreException e) {
+					fCoreException= e;
+				} catch (OperationCanceledException e) {
+					fOperationCanceled= e;
+				}
+			}
+		};
+		getShell().getDisplay().syncExec(rmr);
+		if (rmr.fCoreException != null)
+			throw rmr.fCoreException;
+		if (rmr.fBadLocationException != null)
+			throw rmr.fBadLocationException;
+		if (rmr.fOperationCanceled != null)
+			throw rmr.fOperationCanceled;
+	}
+	
+	private void doReplaceInFile(IProgressMonitor pm, IFile file, String replacementText, final ReplaceMarker[] markers) throws BadLocationException, CoreException {
 		try {
-			IEditorPart result= activePage.openEditor(new FileEditorInput(markerFile), "org.eclipse.ui.DefaultTextEditor", false); //$NON-NLS-1$
-			if (!(result instanceof ITextEditor))
-				throw new MarkerNotPresentableException(markerFile);
-			return (ITextEditor)result;
-		} finally {
-			if (currentEditorId != null)
-				IDE.setDefaultEditor(markerFile, currentEditorId);
-		}
-	}
-
-	private void saveEditor(boolean save) throws CoreException {
-		if (fEditor == null)
-			return;
-			
-		save= save && fEditor.isDirty();
-		if (save) {
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			IEditorInput input = fEditor.getEditorInput();
+			if (file.isReadOnly()) {
+				file.getWorkspace().validateEdit(new IFile[]{file}, null);
+			}
+			if (file.isReadOnly()) {
+				if (fSkipReadonly) {
+					skipFile();
+					return;
+				}
+				int rc= askForSkip(file);
+				switch (rc) {
+					case CANCEL :
+						throw new OperationCanceledException();
+					case SKIP_FILE :
+						skipFile();
+						return;
+					case SKIP_ALL :
+						fSkipReadonly= true;
+						skipFile();
+						return;
+				}
+			}
+			ITextFileBufferManager bm= FileBuffers.getTextFileBufferManager();
 			try {
-				provider.aboutToChange(input);
-				provider.saveDocument(new NullProgressMonitor(), input, fDocument, true);
-				fSaved= true;
+				bm.connect(file.getFullPath(), new SubProgressMonitor(pm, 1));
+				ITextFileBuffer fb= bm.getTextFileBuffer(file.getFullPath());
+				boolean wasDirty= fb.isDirty();
+				IDocument doc= fb.getDocument();
+				try {
+					createPositionsInFile(file, doc);
+					for (int i= 0; i < markers.length; i++) {
+						doc.replace(markers[i].getOffset(), markers[i].getLength(), replacementText);
+						fMarkers.remove(0);
+						markers[i].delete();
+					}
+				} finally {
+					removePositonsInFile(file, doc);
+				}
+				if (!wasDirty)
+					fb.commit(new SubProgressMonitor(pm, 1), true);
 			} finally {
-				provider.changed(input);
+				bm.disconnect(file.getFullPath(), new SubProgressMonitor(pm, 1));
 			}
+		} finally {
+			pm.done();
 		}
-		if (fCloseEditor && !fEditor.isDirty())
-			fEditor.close(false);
-		fEditor= null;
-		fDocument= null;
-		fAnnotationModel= null;
-		fCloseEditor= false;
+	}
+	
+	private void removePositonsInFile(IFile file, IDocument doc) {
+		for (Iterator markers= fMarkers.iterator(); markers.hasNext(); ) {
+			ReplaceMarker marker= (ReplaceMarker)markers.next();
+			if (!marker.getFile().equals(file))
+				return;
+			marker.deletePosition(doc);
+		}
+	}
+	
+	private void createPositionsInFile(IFile file, IDocument doc) throws BadLocationException {
+		for (Iterator markers= fMarkers.iterator(); markers.hasNext(); ) {
+			ReplaceMarker marker= (ReplaceMarker)markers.next();
+			if (!marker.getFile().equals(file))
+				return;
+			marker.createPosition(doc);
+		}
+	}
+	
+	private int askForSkip(final IFile file) {
 		
-	}
-	
-	private void updateButtons() {
-		boolean hasNext= hasNextMatch();
-		fReplaceNextButton.setEnabled(!fFatalError && fCurrentMatch != null);
-		fReplaceButton.setEnabled(!fFatalError && fCurrentMatch != null);
-		fNextButton.setEnabled(!fFatalError && hasNext);
-	}
-	
-	private void restoreAutoBuildState() {
-		if (!fAutobuild)
-			return;
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceDescription description= workspace.getDescription();
-		description.setAutoBuilding(true);
-		try {
-			workspace.setDescription(description);
-		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.reenable_auto_build_failed")); //$NON-NLS-1$
-			return;
+		String message= SearchMessages.getFormattedString("ReadOnlyDialog.message", file.getFullPath().toOSString()); //$NON-NLS-1$
+		String[] buttonLabels= null;
+		boolean showSkip= countResources() > 1;
+		if (showSkip) {
+			String skipLabel= SearchMessages.getString("ReadOnlyDialog.skipFile"); //$NON-NLS-1$
+			String skipAllLabel= SearchMessages.getString("ReadOnlyDialog.skipAll"); //$NON-NLS-1$
+			buttonLabels= new String[]{skipLabel, skipAllLabel, IDialogConstants.CANCEL_LABEL};
+		} else {
+			buttonLabels= new String[]{IDialogConstants.CANCEL_LABEL};
+			
 		}
 		
-		ISearchResultView view= SearchPlugin.getSearchResultView();
-		if (fSaved && view != null) {
-			new GlobalBuildAction(
-				view.getSite().getWorkbenchWindow(),
-				IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
+		MessageDialog msd= new MessageDialog(getShell(), getShell().getText(), null, message, MessageDialog.ERROR, buttonLabels, 0);
+		int rc= msd.open();
+		switch (rc) {
+			case 0 :
+				return showSkip ? SKIP_FILE : CANCEL;
+			case 1 :
+				return SKIP_ALL;
+			default :
+				return CANCEL;
 		}
 	}
-	
+		
 	private String getDialogTitle() {
 		return SearchMessages.getString("ReplaceDialog.dialog.title"); //$NON-NLS-1$
 	}
 	
-	private void handleMarkerNotPresentableException(MarkerNotPresentableException e) {
-		IFile file= e.getFile();
-		String message;
-		if (file == null) {
-			message= SearchMessages.getString("ReplaceDialog.error.no_file_for_marker"); //$NON-NLS-1$
-		} else {
-			message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_open_text_editor", file.getName()); //$NON-NLS-1$
+	private void skip() {
+		fMarkers.remove(0);
+		Assert.isTrue(fMarkers.size() > 0);
+		gotoCurrentMarker();
+	}
+	
+	private void skipFile() {
+		ReplaceMarker currentMarker= getCurrentMarker();
+		if (currentMarker == null)
+			return;
+		IResource currentFile= currentMarker.getFile();
+		while (fMarkers.size() > 0 && getCurrentMarker().getFile().equals(currentFile))
+			fMarkers.remove(0);
+		if (fMarkers.size() > 0)
+			gotoCurrentMarker();
+	}
+	
+	private void gotoCurrentMarker() {
+		if (fMarkers.size() > 0) {
+			ReplaceMarker marker= getCurrentMarker();
+			try {
+				ITextEditor editor= null;
+				if (SearchUI.reuseEditor())
+					editor= openEditorReuse(marker);
+				else
+					editor= openEditorNoReuse(marker);
+				editor.selectAndReveal(marker.getOffset(), marker.getLength());
+			} catch (PartInitException e) {
+				String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_open_text_editor", marker.getFile().getName()); //$NON-NLS-1$
+				MessageDialog.openError(getParentShell(), getDialogTitle(), message);
+			}
 		}
-		MessageDialog.openError(getParentShell(), getDialogTitle(), message);
+	}
+	
+	// opening editors ------------------------------------------
+	private ITextEditor openEditorNoReuse(ReplaceMarker marker) throws PartInitException {
+		IFile file= marker.getFile();
+		IWorkbenchPage activePage= SearchPlugin.getActivePage();
+		if (activePage == null)
+			return null;
+		ITextEditor textEditor= showOpenTextEditor(activePage, file);
+		if (textEditor != null)
+			return textEditor;
+		return openNewTextEditor(file, activePage);
+	}
+	
+	private ITextEditor openNewTextEditor(IFile file, IWorkbenchPage activePage) throws PartInitException {
+		IEditorDescriptor desc= IDE.getDefaultEditor(file);
+		if (desc != null) {
+			String editorID= desc.getId();
+			IEditorPart editor;
+			if (desc.isInternal()) {
+				editor= activePage.openEditor(new FileEditorInput(file), editorID);
+				if (editor instanceof ITextEditor) {
+					if (editor instanceof IReusableEditor)
+						fEditor= (IReusableEditor) editor;
+					return (ITextEditor)editor;
+				} else
+					activePage.closeEditor(editor, false);
+			}
+		}
+		IEditorPart editor= activePage.openEditor(new FileEditorInput(file), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+		return (ITextEditor)editor;
+	}
+
+	private ITextEditor openEditorReuse(ReplaceMarker marker) throws PartInitException {
+		IWorkbenchPage page= SearchPlugin.getActivePage();
+		IFile file= marker.getFile();
+		if (page == null)
+			return null;
+
+		ITextEditor textEditor= showOpenTextEditor(page, file);
+		if (textEditor != null)
+			return textEditor;
+
+		String editorId= null;
+		IEditorDescriptor desc= IDE.getDefaultEditor(file);
+		if (desc != null && desc.isInternal())
+			editorId= desc.getId();
+
+		boolean isOpen= isEditorOpen(page, fEditor);
+
+		boolean canBeReused= isOpen && !fEditor.isDirty() && !isPinned(fEditor);
+		boolean showsSameInputType= fEditor != null && (editorId == null || fEditor.getSite().getId().equals(editorId));
+
+		if (canBeReused) {
+			if (showsSameInputType) {
+				fEditor.setInput(new FileEditorInput(file));
+				page.bringToTop(fEditor);
+				return (ITextEditor) fEditor;
+			} else {
+				page.closeEditor(fEditor, false);
+				fEditor= null;
+			}
+		}
+		return openNewTextEditor(file, page);
+	}
+
+	private boolean isEditorOpen(IWorkbenchPage page, IEditorPart editor) {
+		if (editor != null) {
+			IEditorReference[] parts= page.getEditorReferences();
+			int i= 0;
+			for (int j = 0; j < parts.length; j++) {
+				if (editor == parts[i++].getEditor(false))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private ITextEditor showOpenTextEditor(IWorkbenchPage page, IFile file) {
+		IEditorPart editor= page.findEditor(new FileEditorInput(file));
+		if (editor instanceof ITextEditor) {
+			page.bringToTop(editor);
+			return (ITextEditor) editor;
+		}
+		return null;
+	}
+
+	private boolean isPinned(IEditorPart editor) {
+		if (editor == null)
+			return false;
+		
+		IEditorReference[] editorRefs= editor.getEditorSite().getPage().getEditorReferences();
+		int i= 0;
+		while (i < editorRefs.length) {
+			if (editor.equals(editorRefs[i].getEditor(false)))
+				return editorRefs[i].isPinned();
+			i++;
+		}
+		return false;
+	}
+	
+	// resource related  -------------------------------------------------------------
+	/**
+	 * @return the number of resources referred to in fMarkers
+	 */
+	private int countResources() {
+		IResource r= null;
+		int count= 0;
+		for (Iterator elements= fMarkers.iterator(); elements.hasNext(); ) {
+			ReplaceMarker element= (ReplaceMarker)elements.next();
+			if (!element.getFile().equals(r)) {
+				count++;
+				r= element.getFile();
+			}
+		}
+		return count;
+	}
+	
+	private ReplaceMarker[] collectMarkers(IResource resource) {
+		List matching= new ArrayList();
+		for (int i= 0; i < fMarkers.size(); i++) {
+			ReplaceMarker marker= (ReplaceMarker)fMarkers.get(i);
+			if (!marker.getFile().equals(resource))
+				break;
+			matching.add(marker);
+		}
+		ReplaceMarker[] markers= new ReplaceMarker[matching.size()];
+		return (ReplaceMarker[])matching.toArray(markers);
+	}
+	
+	
+	// some queries -------------------------------------------------------------
+	private boolean hasNextMarker() {
+		return fMarkers.size() > 1;
+	}
+	
+	private boolean hasNextFile() {
+		if (!hasNextMarker())
+			return false;
+		IResource currentFile= getCurrentMarker().getFile();
+		for (int i= 0; i < fMarkers.size(); i++) {
+			if (!((ReplaceMarker)fMarkers.get(i)).getFile().equals(currentFile))
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean canReplace() {
+		return fMarkers.size() > 0;
 	}
 }

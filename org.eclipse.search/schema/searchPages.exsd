@@ -168,6 +168,14 @@ If the attribute &quot;showScopeSection&quot; is missing or set to &quot;false&q
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="showReplaceButton" type="boolean">
+            <annotation>
+               <documentation>
+                  If this attribute is set to true, a &quot;Replace&quot; button will be shown on the search dialog.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

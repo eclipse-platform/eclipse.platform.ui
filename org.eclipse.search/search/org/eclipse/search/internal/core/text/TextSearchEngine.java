@@ -32,12 +32,11 @@ public class TextSearchEngine {
 	/**
 	 * Search for the given pattern.
 	 */
-	public IStatus search(IWorkspace workspace, String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector) {
+	public IStatus search(IWorkspace workspace, ISearchScope scope, ITextSearchResultCollector collector, MatchLocator matchLocator) {
 		Assert.isNotNull(workspace);
-		Assert.isNotNull(pattern);
 		Assert.isNotNull(scope);
 		Assert.isNotNull(collector);
-		
+		Assert.isNotNull(matchLocator);
 		IProgressMonitor monitor= collector.getProgressMonitor();
 		
 		IProject[] projects= workspace.getRoot().getProjects();
@@ -58,7 +57,7 @@ public class TextSearchEngine {
 					monitor.setTaskName(SearchMessages.getFormattedString("TextSearchEngine.scanning", args)); //$NON-NLS-1$
 				}				
 				collector.aboutToStart();
-				TextSearchVisitor visitor= new TextSearchVisitor(pattern, options, scope, collector, status, amountOfWork);
+				TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, collector, status, amountOfWork);
 				visitor.process(openProjects);	
 			} catch (CoreException ex) {
 				status.add(ex.getStatus());

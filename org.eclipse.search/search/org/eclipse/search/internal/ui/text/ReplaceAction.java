@@ -10,38 +10,38 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
-
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.Search;
 import org.eclipse.search.internal.ui.SearchManager;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchResultViewEntry;
-import org.eclipse.search.internal.ui.util.ListDialog;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /* package */ class ReplaceAction extends Action {
 	
@@ -68,157 +68,132 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 	}
 	
 	public void run() {
-		if (validateResources()) {
-			Search search= SearchManager.getDefault().getCurrentSearch();
-			IRunnableWithProgress operation= search.getOperation();
-			if (operation instanceof TextSearchOperation) {
-				ReplaceDialog dialog= new ReplaceDialog(fSite.getShell(), fElements, fSite.getWorkbenchWindow(), ((TextSearchOperation)operation).getPattern());
+		Search search= SearchManager.getDefault().getCurrentSearch();
+		IRunnableWithProgress operation= search.getOperation();
+		if (operation instanceof TextSearchOperation) {
+			if (validateResources((TextSearchOperation) operation)) {
+				ReplaceDialog dialog= new ReplaceDialog(fSite.getShell(), fElements, (TextSearchOperation)operation);
 				dialog.open();
-			} else {
-				MessageDialog.openError(fSite.getShell(), getDialogTitle(), SearchMessages.getString("ReplaceAction.error.only_on_text_search")); //$NON-NLS-1$
 			}
+		} else {
+			MessageDialog.openError(fSite.getShell(), getDialogTitle(), SearchMessages.getString("ReplaceAction.error.only_on_text_search")); //$NON-NLS-1$
 		}
 	}
 	
-	private boolean validateResources() {
-		List modifiedFiles= new ArrayList();
-		List openedFilesInNonTextEditor= new ArrayList();
-		List notFiles= new ArrayList();
-		IWorkbenchPage activePage =  fSite.getWorkbenchWindow().getActivePage();
-
-		for (Iterator iter = fElements.iterator(); iter.hasNext();) {
-			SearchResultViewEntry entry= (SearchResultViewEntry) iter.next();
-			IResource resource= entry.getResource();
-			if (resource instanceof IFile) {
-				IFile file= (IFile)resource;
-				if (file.getModificationStamp() != entry.getModificationStamp() || !file.isSynchronized(IResource.DEPTH_ZERO)) {
-					modifiedFiles.add(resource);
-				} else if (activePage != null) {
-					IEditorPart part= activePage.findEditor(new FileEditorInput(file));
-					if (part != null && !(part instanceof ITextEditor))
-						openedFilesInNonTextEditor.add(file);
+	/**
+	 * @return
+	 */
+	private boolean validateResources(final TextSearchOperation operation) {
+		final List outOfDateEntries= new ArrayList();
+		for (Iterator elements = fElements.iterator(); elements.hasNext();) {
+			SearchResultViewEntry entry = (SearchResultViewEntry) elements.next();
+			if (isOutOfDate(entry)) {
+				outOfDateEntries.add(entry);
+			}
+		}
+	
+		final List outOfSyncEntries= new ArrayList();
+		for (Iterator elements = fElements.iterator(); elements.hasNext();) {
+			SearchResultViewEntry entry = (SearchResultViewEntry) elements.next();
+			if (isOutOfSync(entry)) {
+				outOfSyncEntries.add(entry);
+			}
+		}
+		
+		if (outOfDateEntries.size() > 0 || outOfSyncEntries.size() > 0) {
+			if (askForResearch(outOfDateEntries, outOfSyncEntries)) {
+				ProgressMonitorDialog pmd= new ProgressMonitorDialog(fSite.getShell());
+				try {
+					pmd.run(true, true, new WorkspaceModifyOperation(null) {
+						protected void execute(IProgressMonitor monitor) throws CoreException {
+							research(monitor, outOfDateEntries, operation);
+						}
+					});
+					return true;
+				} catch (InvocationTargetException e) {
+					ExceptionHandler.handle(e, fSite.getShell(), SearchMessages.getString("ReplaceAction.label"), SearchMessages.getString("ReplaceAction.research.error")); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (InterruptedException e) {
+					// canceled
 				}
-			} else {
-				if (resource != null)
-					notFiles.add(resource);
 			}
-		}
-		if (!modifiedFiles.isEmpty()) {
-			showModifiedFileDialog(modifiedFiles);
-			return false;
-		}
-		if (!openedFilesInNonTextEditor.isEmpty()) {
-			showOpenedFileDialog(openedFilesInNonTextEditor);
-			return false;
-		}
-		if (!notFiles.isEmpty()) {
-			showNotFilesDialog(openedFilesInNonTextEditor);
-			return false;
-		}
-		IFile[] readOnlyFiles= getReadOnlyFiles();
-		if (readOnlyFiles.length == 0)
-			return true;
-		Map currentStamps= createModificationStampMap(readOnlyFiles);
-		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(readOnlyFiles, fSite.getShell());
-		if (!status.isOK()) {
-			ErrorDialog.openError(fSite.getShell(), getDialogTitle(), SearchMessages.getString("ReplaceAction.error.unable_to_perform"), status); //$NON-NLS-1$
-			return false;
-		}
-		modifiedFiles= new ArrayList();
-		Map newStamps= createModificationStampMap(readOnlyFiles);
-		for (Iterator iter= currentStamps.keySet().iterator(); iter.hasNext();) {
-			IFile file= (IFile) iter.next();
-			if (! currentStamps.get(file).equals(newStamps.get(file))) {
-				modifiedFiles.add(file);
-			}
-		}
-		if (!modifiedFiles.isEmpty()) {
-			showModifiedFileDialog(modifiedFiles);
 			return false;
 		}
 		return true;
 	}
 
-	private void showModifiedFileDialog(List modifiedFiles) {
-		String message= (modifiedFiles.size() == 1
-			? SearchMessages.getString("ReplaceAction.error.changed_file")  //$NON-NLS-1$
-			: SearchMessages.getString("ReplaceAction.error.changed_files"));  //$NON-NLS-1$
-		ListDialog dialog= new ListDialog(fSite.getShell(), modifiedFiles, getDialogTitle(), 
-			message,
-			new IStructuredContentProvider() {
-				public Object[] getElements(Object inputElement) {
-					return ((List)inputElement).toArray();
-				}
-				public void dispose() {
-				}
-				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				}
-			}, 
-			new WorkbenchLabelProvider());
-		dialog.setCreateCancelButton(false);
-		dialog.open();
-	}
-	
-	private IFile[] getReadOnlyFiles() {
-		List result= new ArrayList();
-		for (Iterator iter = fElements.iterator(); iter.hasNext();) {
-			IResource resource= ((SearchResultViewEntry) iter.next()).getResource();
-			if (resource instanceof IFile && resource.isReadOnly())
-				result.add(resource);
+	private void research(IProgressMonitor monitor, List outOfDateEntries, TextSearchOperation operation) throws CoreException {
+		IStatus status= null;
+		for (Iterator elements = outOfDateEntries.iterator(); elements.hasNext();) {
+			SearchResultViewEntry entry = (SearchResultViewEntry) elements.next();
+				status = research(operation, monitor, entry);
+			if (status != null && !status.isOK()) {
+				throw new CoreException(status);
+			}
 		}
-		return (IFile[]) result.toArray(new IFile[result.size()]);
 	}
-	
-	private static Map createModificationStampMap(IFile[] files){
-		Map map= new HashMap();
-		for (int i= 0; i < files.length; i++) {
-			IFile file= files[i];
-			map.put(file, new Long(file.getModificationStamp()));
-		}
-		return map;
+
+	/**
+	 * @return
+	 */
+	private boolean askForResearch(List outOfDateEntries, List outOfSyncEntries) {
+		ResearchSelectionDialog dialog= new ResearchSelectionDialog(fSite.getShell(), outOfSyncEntries, outOfDateEntries);
+		return dialog.open() == IDialogConstants.OK_ID;
 	}
-	
+
 	private String getDialogTitle() {
 		return SearchMessages.getString("ReplaceAction.dialog.title"); //$NON-NLS-1$
-	}
-	
-	private void showOpenedFileDialog(List openedFilesInNonTextEditor) {
-		String message= (openedFilesInNonTextEditor.size() == 1
-			? SearchMessages.getString("ReplaceAction.error.opened_file")  //$NON-NLS-1$
-			: SearchMessages.getString("ReplaceAction.error.opened_files"));  //$NON-NLS-1$
-		ListDialog dialog= new ListDialog(fSite.getShell(), openedFilesInNonTextEditor, getDialogTitle(), 
-			message,
-			new IStructuredContentProvider() {
-				public Object[] getElements(Object inputElement) {
-					return ((List)inputElement).toArray();
-				}
-				public void dispose() {
-				}
-				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				}
-			}, 
-			new WorkbenchLabelProvider());
-		dialog.setCreateCancelButton(false);
-		dialog.open();
-	}
-	
-	private void showNotFilesDialog(List notFiles) {
-		String message= (notFiles.size() == 1
-			? SearchMessages.getString("ReplaceAction.error.not_file")  //$NON-NLS-1$
-			: SearchMessages.getString("ReplaceAction.error.not_files"));  //$NON-NLS-1$
-		ListDialog dialog= new ListDialog(fSite.getShell(), notFiles, getDialogTitle(), 
-			message,
-			new IStructuredContentProvider() {
-				public Object[] getElements(Object inputElement) {
-					return ((List)inputElement).toArray();
-				}
-				public void dispose() {
-				}
-				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				}
-			}, 
-			new WorkbenchLabelProvider());
-		dialog.setCreateCancelButton(false);
-		dialog.open();
 	}		
+	
+	private boolean isOutOfDate(SearchResultViewEntry entry) {
+		IResource resource= entry.getResource();
+		if (entry.getModificationStamp() != resource.getModificationStamp())
+			return true;
+		ITextFileBufferManager bm= FileBuffers.getTextFileBufferManager();
+		ITextFileBuffer fb= bm.getTextFileBuffer(resource.getFullPath());
+		if (fb != null && fb.isDirty())
+			return true;
+		return false;
+	}
+
+	private boolean isOutOfSync(SearchResultViewEntry entry) {
+		return !entry.getResource().isSynchronized(IResource.DEPTH_ZERO); 
+	}
+		
+	private IStatus research(TextSearchOperation operation, final IProgressMonitor monitor, SearchResultViewEntry entry) throws CoreException {
+		List markers= new ArrayList();
+		markers.addAll(entry.getMarkers());
+		operation.searchInFile((IFile) entry.getResource(), new ITextSearchResultCollector() {
+			public IProgressMonitor getProgressMonitor() {
+				return monitor;
+			}
+			
+			public void aboutToStart() {
+			}
+			
+			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) throws CoreException {
+				IFile file= (IFile)proxy.requestResource();
+				if (start < 0 || length < 1)
+					return;
+				IMarker marker= file.createMarker(SearchUI.SEARCH_MARKER);
+				HashMap attributes= new HashMap(4);
+				attributes.put(SearchUI.LINE, line);
+				attributes.put(IMarker.CHAR_START, new Integer(start));
+				attributes.put(IMarker.CHAR_END, new Integer(start + length));
+				attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+				marker.setAttributes(attributes);
+			}
+			
+			public void done(){
+			}
+		});
+		IStatus status = operation.getStatus();
+		if (status == null || status.isOK()) {
+			for (Iterator markerIter = markers.iterator(); markerIter.hasNext();) {
+				IMarker marker = (IMarker) markerIter.next();
+				marker.delete();
+			}
+		}
+		return status;
+	}
+	
 }

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -22,23 +22,25 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
-
+import org.eclipse.search.internal.ui.SearchManager;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchResultView;
+import org.eclipse.search.internal.ui.SearchResultViewer;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.SearchManager;
-import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
  * Action group that adds the Text search actions to a context menu and
@@ -85,7 +87,7 @@ class TextSearchActionGroup extends ActionGroup {
 		
 		addOpenWithMenu(menu, selection);
 			
-		ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)getContext().getInput());
+		ReplaceAction replaceAll= new ReplaceAction(view.getSite(), getSearchResultEntries());
 		if (replaceAll.isEnabled())
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
 		ReplaceAction replaceSelected= new ReplaceAction(view.getSite(), selection);
@@ -96,6 +98,19 @@ class TextSearchActionGroup extends ActionGroup {
 			menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
 	}
 	
+	private List getSearchResultEntries() {
+		SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
+		// we can assume we have a view, how else would we be called?
+		SearchResultViewer viewer= view.getViewer();
+		Table table= viewer.getTable();
+		TableItem[] items= table.getItems();
+		List elements = new ArrayList(items.length);
+		for (int i = 0; i < items.length; i++) {
+			elements.add(items[i].getData());
+		}
+		return elements;
+	}
+
 	private boolean isTextSearch() {
 		IRunnableWithProgress operation= SearchManager.getDefault().getCurrentSearch().getOperation();
 		if (operation instanceof TextSearchOperation) {
@@ -134,6 +149,6 @@ class TextSearchActionGroup extends ActionGroup {
 	}
 	
 	private void setGlobalActionHandlers(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, fOpenPropertiesDialog);		
+		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);		
 	}
 }	

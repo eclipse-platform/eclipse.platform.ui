@@ -53,6 +53,20 @@ public interface ISearchPageContainer {
 	 * @since 3.0
 	 */	
 	public static final int SELECTED_PROJECTS_SCOPE= 3;
+
+	/**
+	 * Action to perform is "replace"
+	 * 
+	 * @since 3.0
+	 */
+	public static final int ACTION_REPLACE= 1;
+
+	/**
+	 * Action to perform is "search"
+	 * 
+	 * @since 3.0
+	 */
+	public static final int ACTION_SEARCH= 0;
 	/**
 	 * Returns the selection with which this container was opened.
 	 *
@@ -118,4 +132,18 @@ public interface ISearchPageContainer {
 	 * @since 2.0
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets);
+
+	/**
+	 * Returns the action a search page should perform in it's performAction() method.
+	 * @return ACTION_SEARCH or ACTION_REPLACE
+	 * @since 3.0
+	 */
+	public int getActionId();
+	/**
+	 * Tells the container what to do after the action has been performed.
+	 * The runnable will be executed by the search page container
+	 * if <code>performAction()</code> returns true.
+	 * @since 3.0
+	 */
+	public void setPostPerformRunnable(Runnable runnable);
 }
