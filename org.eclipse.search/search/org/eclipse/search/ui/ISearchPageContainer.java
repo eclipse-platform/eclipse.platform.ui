@@ -79,7 +79,7 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Returns search container's selected scope.
-	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * 
 	 * @return the selected scope
 	 * @since 2.0
@@ -88,7 +88,7 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Sets the selected scope of this search page container.
-	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * 
 	 * @return the selected scope
  	 * @since 2.0
