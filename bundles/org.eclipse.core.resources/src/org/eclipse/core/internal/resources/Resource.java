@@ -566,7 +566,7 @@ public PropertyManager getPropertyManager() {
 	return workspace.getPropertyManager();
 }
 /**
- * Returns the resource info.  This resource must exist.
+ * Returns the resource info.  Returns null if the resource doesn't exist.
  * If the phantom flag is true, phantom resources are considered.
  * If the mutable flag is true, a mutable info is returned.
  */
