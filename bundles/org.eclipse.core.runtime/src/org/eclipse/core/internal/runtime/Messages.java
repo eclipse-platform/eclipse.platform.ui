@@ -118,10 +118,13 @@ public class Messages extends NLS {
 	public static String parse_validMatch;
 	public static String parse_xmlParserNotAvailable;
 	public static String plugin_deactivatedLoad;
+
+	// performance events
+	public static String perf_failure;
+	
+	// plugins
 	public static String plugin_eventListenerError;
 	public static String plugin_extDefNoClass;
-
-	// plugins
 	public static String plugin_extDefNotFound;
 	public static String plugin_initObjectError;
 	public static String plugin_instantiateClassError;

@@ -10,9 +10,8 @@
  **********************************************************************/
 package org.eclipse.core.tools;
 
-import java.util.Enumeration;
 import java.util.Iterator;
-import org.eclipse.core.internal.events.EventStats;
+import org.eclipse.core.runtime.EventStats;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -66,11 +65,12 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 
 		StringBuffer copyText = new StringBuffer();
 		copyText.append(headerPluginStats());
+		copyText.append('\n');
 		for (Iterator selectionIter = structuredSelection.iterator(); selectionIter.hasNext();) {
 			Object obj = selectionIter.next();
 			if (obj instanceof EventStats) {
 				copyText.append(prettyPluginStats((EventStats) obj));
-				copyText.append("\n"); //$NON-NLS-1$
+				copyText.append('\n');
 			}
 		}
 		return new StructuredSelection(copyText);
@@ -79,30 +79,21 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 
 	private String headerPluginStats() {
 		String retString = ""; //$NON-NLS-1$
-		retString += Policy.bind("stats.statIdHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.numberOfNotificationsHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.notifcationTimeHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.numberOfBuildsHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.buildTimeHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.numberOfErrorsHeader") + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Policy.bind("stats.eventHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Policy.bind("stats.blameHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Policy.bind("stats.contextHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Policy.bind("stats.countHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Policy.bind("stats.timeHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
 		return retString;
 	}
 
 	private String prettyPluginStats(EventStats stats) {
 		String retString = ""; //$NON-NLS-1$
-		retString += stats.getName() + "\t"; //$NON-NLS-1$
-		retString += stats.getNotifyCount() + "\t"; //$NON-NLS-1$
-		retString += stats.getNotifyRunningTime() + "\t"; //$NON-NLS-1$
-		retString += stats.getBuildCount() + "\t"; //$NON-NLS-1$
-		retString += stats.getBuildRunningTime() + "\t"; //$NON-NLS-1$
-		for (Enumeration excepts = stats.getRuntimeExceptions(); excepts.hasMoreElements();) {
-			Exception next = (Exception) excepts.nextElement();
-			retString += next.toString() + "\n"; //$NON-NLS-1$
-		}
-		for (Enumeration excepts = stats.getCoreExceptions(); excepts.hasMoreElements();) {
-			Exception next = (Exception) excepts.nextElement();
-			retString += next.toString() + "\n"; //$NON-NLS-1$
-		}
+		retString += stats.getEvent() + "\t\t"; //$NON-NLS-1$
+		retString += stats.getBlame() + "\t\t"; //$NON-NLS-1$
+		retString += stats.getContext() + "\t\t"; //$NON-NLS-1$
+		retString += stats.getRunCount() + "\t"; //$NON-NLS-1$
+		retString += stats.getRunningTime() + "\t"; //$NON-NLS-1$
 		return retString;
 	}
 

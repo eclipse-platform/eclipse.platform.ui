@@ -132,7 +132,11 @@
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.ContentTypeView"
             id="org.eclipse.core.tools.runtime.ContentTypeView"/>            
-
-
+      <view
+            name="Event Spy"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.EventsView"
+            id="org.eclipse.core.tools.runtime.EventsView"/>
    </extension>
 </plugin>

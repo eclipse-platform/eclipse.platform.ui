@@ -18,11 +18,11 @@ org.eclipse.core.runtime/jobs/locks=false
 # Throws an IllegalStateException when deadlock occurs
 org.eclipse.core.runtime/jobs/errorondeadlock=false
 
-# Prints time taken by Plugin constructors and startup() methods.
+# Prints time taken by Plugin constructors and startup() and shutdown() methods.
 org.eclipse.core.runtime/timing/startup=false
 
-# Prints time taken by Plugin.shutdown() methods.
-org.eclipse.core.runtime/timing/shutdown=false
+# Logs performance events that take longer than specified threshold value
+org.eclipse.core.runtime/trace/logfailure=false
 
 # Turn on debugging for the compatibility layer
 org.eclipse.core.runtime/compatibility/debug=false
