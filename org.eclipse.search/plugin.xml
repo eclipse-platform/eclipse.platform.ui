@@ -54,7 +54,7 @@
 <extension point="org.eclipse.ui.views">
 	<view
 	   id="org.eclipse.search.SearchResultView"
-	   name="%searchResults"
+	   name="%searchResultViewName"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.search.internal.ui.SearchResultView"
 	   icon="icons/full/cview16/searchres.gif">
