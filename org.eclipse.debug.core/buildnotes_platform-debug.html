@@ -11,9 +11,33 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Platform Debug</h1>
-July 15, 2003
-<h3>
-Problem Reports Fixed</h3>
+July 15, 2003 
+<h3>New Features in Milestone 2 (release 3.0)</h3>
+<h4>Extensible Debug Events</h4>
+<p>The debug platform supports an extensible set of debug events. A debug event 
+  kind of <code>MODEL_SPECIFIC</code> has been added in the 3.0 release to indicate 
+  an application specific debug event. When a debug event of kind <code>MODEL_SPECIFIC</code> 
+  is created, the detail code in the event is client defined. The source of the 
+  event (debug element that generated the event) identifies the debug model from 
+  which the event was generated. The debug platform and user interface ignores 
+  model specific debug events.</p>
+<p>A data field has been added to debug events to allow clients to store application 
+  specific data in debug events.</p>
+<h4>Extensible Instruction Pointer Images</h4>
+<p>When a stack frame is selected in the debug view, the debugger opens a corresponding 
+  editor and displays an image in the editor ruler on the line that corresponds 
+  to the selected stack frame. In releases prior to 3.0, the images were provided 
+  by the debug plug-in and could not be overridden by a debug model. In release 
+  3.0, a debug model presentation (<code>IDebugModelPresentation</code>) can provide 
+  specialized images by implementing the debug editor presentation interface (<code>IDebugEditorPresentation</code>).</p>
+<h4>Editor Positioning and Custom Decorations</h4>
+<p>In release 3.0, debug model presentations can control the positioning of editors 
+  opened by the debugger for a stack frame, and may add extra decorations to the 
+  editor for a stack frame (for example, custom background coloring, etc.). This 
+  can be acheived by having a debug model presentation implement the new interface 
+  <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
+  - <code>selectAndReveal</code>,<code> decorateEditor</code>, and <code>removeDecorations</code>.</p>
+<h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=33598">33598</a>: Need to dynamically set icon for current line<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38976">38976</a>: Cancelling on launch var pref page does not work<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38980">38980</a>: var descriptions not persisted.<br>
