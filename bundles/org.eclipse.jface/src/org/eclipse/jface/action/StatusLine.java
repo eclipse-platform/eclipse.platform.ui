@@ -334,7 +334,7 @@ import org.eclipse.swt.widgets.ToolItem;
             fProgressBar.sendRemainingWork();
             fProgressBar.done();
         }
-        setMessage("");//$NON-NLS-1$
+        setMessage(null);
 
         hideProgress();
     }
