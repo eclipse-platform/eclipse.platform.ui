@@ -52,17 +52,25 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			 */
 			protected void execute() throws Exception {
 			}
+			
+			/**
+			 * Does everything necessary prior to execution.
+			 */
+			public void preRun() {
+				fManager.fireStateChanging(ResourceFileBuffer.this);
+			}
 				
 			/*
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
 				
-				if (isDisposed())
+				if (isDisposed()) {
+					fManager.fireStateChangeFailed(ResourceFileBuffer.this);
 					return;
-					
+				}
+				
 				try {
-					fManager.fireStateChanging(ResourceFileBuffer.this);
 					execute();
 				} catch (Exception x) {
 					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "Exception when synchronizing", x)); //$NON-NLS-1$
@@ -155,8 +163,10 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							break;
 					}
 						
-					if (fileChange != null)
+					if (fileChange != null) {
+						fileChange.preRun();
 						fManager.execute(fileChange, fSynchronizationContextCount > 0);
+					}
 				}
 					
 				return true; // because we are sitting on files anyway
