@@ -12,14 +12,15 @@ package org.eclipse.ui.part;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * Adapter for making a file resource a suitable input for an editor.
@@ -100,8 +101,9 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
      * Method declared on IEditorInput.
      */
     public ImageDescriptor getImageDescriptor() {
-        return PlatformUI.getWorkbench().getEditorRegistry()
-                .getImageDescriptor(file.getName());
+        IContentType contentType = IDE.getContentType(file);
+		return PlatformUI.getWorkbench().getEditorRegistry()
+                .getImageDescriptor(file.getName(), contentType);
     }
 
     /* (non-Javadoc)
@@ -121,7 +123,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
     /* (non-Javadoc)
      * Method declared on IStorageEditorInput.
      */
-    public IStorage getStorage() throws CoreException {
+    public IStorage getStorage() {
         return file;
     }
 

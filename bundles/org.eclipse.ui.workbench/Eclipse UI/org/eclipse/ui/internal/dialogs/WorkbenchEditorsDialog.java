@@ -701,6 +701,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                     IEditorRegistry registry = WorkbenchPlugin.getDefault()
                             .getEditorRegistry();
                     image = registry.getImageDescriptor(input.getName());
+					//TODO: how can this honour content types?  Guessing at the content type perhaps?
+					
                     if (image == null) {
                         // @issue what should be the default image?
                         // image = registry.getDefaultEditor().getImageDescriptor();

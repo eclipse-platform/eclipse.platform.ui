@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -101,30 +102,67 @@ public interface IEditorRegistry {
     public IEditorDescriptor getDefaultEditor();
 
     /**
-     * Returns the default editor for a given file name.  
+	 * Returns the default editor for a given file name. This method assumes an
+	 * unknown content type for the given file.
+	 * <p>
+	 * The default editor is determined by taking the file extension for the
+	 * file and obtaining the default editor for that extension.
+	 * </p>
+	 * 
+	 * @param fileName
+	 *            the file name in the system
+	 * @return the descriptor of the default editor, or <code>null</code> if
+	 *         not found
+	 */
+    public IEditorDescriptor getDefaultEditor(String fileName);
+    
+    /**
+     * Returns the default editor for a given file name and with the given content type.  
      * <p>
      * The default editor is determined by taking the file extension for the
      * file and obtaining the default editor for that extension.
      * </p>
      *
      * @param fileName the file name in the system
+     * @param contentType the content type or <code>null</code> for the unknown content type
      * @return the descriptor of the default editor, or <code>null</code> if not
      *   found
+     * @since 3.1
      */
-    public IEditorDescriptor getDefaultEditor(String fileName);
+    public IEditorDescriptor getDefaultEditor(String fileName, IContentType contentType);
 
     /**
-     * Returns the list of file editors registered to work against the file
-     * with the given file name. 
-     * <p>
-     * Note: Use <code>getDefaultEditor(String)</code> if you only the need the default
-     * editor rather than all candidate editors.
-     * </p>
-     *
-     * @param fileName the file name in the system
-     * @return a list of editor descriptors
-     */
+	 * Returns the list of file editors registered to work against the file with
+	 * the given file name. This method assumes an unknown content type for the
+	 * given file.
+	 * <p>
+	 * Note: Use <code>getDefaultEditor(String)</code> if you only the need
+	 * the default editor rather than all candidate editors.
+	 * </p>
+	 * 
+	 * @param fileName
+	 *            the file name in the system
+	 * @return a list of editor descriptors
+	 */
     public IEditorDescriptor[] getEditors(String fileName);
+ 
+    /**
+	 * Returns the list of file editors registered to work against the file with
+	 * the given file name and with the given content type.
+	 * <p>
+	 * Note: Use <code>getDefaultEditor(String)</code> if you only the need
+	 * the default editor rather than all candidate editors.
+	 * </p>
+	 * 
+	 * @param fileName
+	 *            the file name in the system
+	 * @param contentType
+	 *            the content type or <code>null</code> for the unknown
+	 *            content type
+	 * @return a list of editor descriptors
+	 * @since 3.1
+	 */
+    public IEditorDescriptor[] getEditors(String fileName, IContentType contentType);
 
     /**
      * Returns a list of mappings from file type to editor.  The resulting list
@@ -141,18 +179,39 @@ public interface IEditorRegistry {
     public IFileEditorMapping[] getFileEditorMappings();
 
     /**
-     * Returns the image descriptor associated with a given file.  This image
-     * is usually displayed next to the given file.
-     * <p>
-     * The image is determined by taking the file extension of the file and 
-     * obtaining the image for the default editor associated with that extension.
-     * A default image is returned if no default editor is available.
-     * </p>
-     *
-     * @param filename the file name in the system
-     * @return the descriptor of the image to display next to the file
-     */
+	 * Returns the image descriptor associated with a given file. This image is
+	 * usually displayed next to the given file. This method assumes an unknown
+	 * content type for the given file.
+	 * <p>
+	 * The image is determined by taking the file extension of the file and
+	 * obtaining the image for the default editor associated with that
+	 * extension. A default image is returned if no default editor is available.
+	 * </p>
+	 * 
+	 * @param filename
+	 *            the file name in the system
+	 * @return the descriptor of the image to display next to the file
+	 */
     public ImageDescriptor getImageDescriptor(String filename);
+	
+    /**
+	 * Returns the image descriptor associated with a given file. This image is
+	 * usually displayed next to the given file.
+	 * <p>
+	 * The image is determined by taking the file extension of the file and
+	 * obtaining the image for the default editor associated with that
+	 * extension. A default image is returned if no default editor is available.
+	 * </p>
+	 * 
+	 * @param filename
+	 *            the file name in the system
+	 * @param contentType
+	 *            the content type of the file or <code>null</code> for the
+	 *            unknown content type
+	 * @return the descriptor of the image to display next to the file
+	 * @since 3.1
+	 */
+    public ImageDescriptor getImageDescriptor(String filename, IContentType contentType);
 
     /**
      * Removes the given property listener from this registry.

@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
@@ -70,7 +72,32 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
  * Provides access to the collection of defined editors for resource types.
  */
 public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
+	
+	private final static Object [] EMPTY = new Object[0];
+	
+	class RelatedRegistry implements IContentTypeManager.IRelatedRegistry {
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry#getRelatedObjects(org.eclipse.core.runtime.content.IContentType)
+		 */
+		public Object[] getRelatedObjects(IContentType type) {			
+			Object[] relatedObjects = (Object[]) contentTypeToEditorMappings.get(type);
+			if (relatedObjects == null)
+				return EMPTY;
+			return relatedObjects;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry#getRelatedObjects(java.lang.String)
+		 */
+		public Object[] getRelatedObjects(String fileName) {
+			return getEditors(fileName);
+		}
+		
+	}
+	
+	private Map contentTypeToEditorMappings = new HashMap();
+	
     /*
      * Cached images - these include images from registered editors (via
      * plugins) and others hence this table is not one to one with the mappings
@@ -111,6 +138,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         }
     };
 
+	private RelatedRegistry relatedRegistry;
+
     /**
      * Return an instance of the receiver. Adds listeners into the extension
      * registry for dynamic UI purposes.
@@ -121,7 +150,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(
 				this);
         PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(
-				this);        
+				this);
+		relatedRegistry = new RelatedRegistry();
     }
 
     /**
@@ -135,6 +165,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      *            Collection of file extensions the editor applies to
      * @param filenames
      *            Collection of filenames the editor applies to
+     * @param contentTypeVector 
      * @param bDefault
      *            Indicates whether the editor should be made the default editor
      *            and hence appear first inside a FileEditorMapping
@@ -143,7 +174,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      * code.
      */
     public void addEditorFromPlugin(EditorDescriptor editor, List extensions,
-            List filenames, boolean bDefault) {
+            List filenames, List contentTypeVector, boolean bDefault) {
 
     	PlatformUI.getWorkbench().getExtensionTracker().registerObject(
 				editor.getConfigurationElement().getDeclaringExtension(),
@@ -196,6 +227,28 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
                     mapping.setDefaultEditor(editor);
             }
         }
+		
+		
+		itr = contentTypeVector.iterator();
+		while(itr.hasNext()) {
+			String contentTypeId = (String) itr.next();
+			if (contentTypeId != null && contentTypeId.length() > 0) {
+				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+				if (contentType != null) {
+					Object [] editorArray = (Object[]) contentTypeToEditorMappings.get(contentType);
+					if (editorArray == null) {
+						editorArray = new Object[] {editor};
+						contentTypeToEditorMappings.put(contentType, editorArray);
+					}
+					else {
+						Object [] newArray = new Object[editorArray.length + 1];
+						System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
+						newArray[editorArray.length] = editor;
+						contentTypeToEditorMappings.put(contentType, newArray);
+					}
+				}
+			}
+		}
 
         // Update editor map.
         mapIDtoEditor.put(editor.getId(), editor);
@@ -266,17 +319,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor getDefaultEditor(String filename) {
-        FileEditorMapping[] mapping = getMappingForFilename(filename);
-        IEditorDescriptor desc = null;
-        if (mapping[0] != null)
-            desc = mapping[0].getDefaultEditor();
-        if (desc == null && mapping[1] != null)
-            desc = mapping[1].getDefaultEditor();
-
-        if (WorkbenchActivityHelper.filterItem(desc))
-            return null;
-
-        return desc;
+		return getDefaultEditor(filename, null);
     }
 
     /**
@@ -293,43 +336,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor[] getEditors(String filename) {
-        IEditorDescriptor[] editors = new IEditorDescriptor[0];
-        IEditorDescriptor[] filenameEditors = editors;
-        IEditorDescriptor[] extensionEditors = editors;
-
-        FileEditorMapping mapping[] = getMappingForFilename(filename);
-        if (mapping[0] != null) {
-            editors = mapping[0].getEditors();
-            if (editors != null)
-                filenameEditors = editors;
-        }
-        if (mapping[1] != null) {
-            editors = mapping[1].getEditors();
-            if (editors != null)
-                extensionEditors = editors;
-        }
-
-        editors = new IEditorDescriptor[filenameEditors.length
-                + extensionEditors.length];
-        System
-                .arraycopy(filenameEditors, 0, editors, 0,
-                        filenameEditors.length);
-        System.arraycopy(extensionEditors, 0, editors, filenameEditors.length,
-                extensionEditors.length);
-
-        ArrayList list = new ArrayList(Arrays.asList(editors));
-        ArrayList filtered = new ArrayList();
-        for (Iterator i = list.iterator(); i.hasNext();) {
-            Object next = i.next();
-            if (WorkbenchActivityHelper.filterItem(next))
-                continue;
-            filtered.add(next);
-        }
-        editors = (IEditorDescriptor[]) filtered
-                .toArray(new IEditorDescriptor[filtered.size()]);
-
-        return editors;
-    }
+		return getEditors(filename, null);
+	}
 
     /*
      * (non-Javadoc) Method declared on IEditorRegistry.
@@ -355,45 +363,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public ImageDescriptor getImageDescriptor(String filename) {
-        if (filename == null)
-            return getDefaultImage();
+		return getImageDescriptor(filename, null);
+	}
 
-        // Lookup in the cache first...
-        String key = mappingKeyFor(filename);
-        ImageDescriptor anImage = (ImageDescriptor) extensionImages.get(key);
-        if (anImage != null)
-            return anImage;
-
-        // See if we have a mapping for the filename or extension
-        FileEditorMapping[] mapping = getMappingForFilename(filename);
-        for (int i = 0; i < 2; i++) {
-            if (mapping[i] != null) {
-                // Lookup in the cache first...
-                String mappingKey = mappingKeyFor(mapping[i]);
-                ImageDescriptor mappingImage = (ImageDescriptor) extensionImages
-                        .get(key);
-                if (mappingImage != null)
-                    return mappingImage;
-                // Create it and cache it
-                IEditorDescriptor editor = mapping[i].getDefaultEditor();
-                if (editor != null) {
-                    mappingImage = editor.getImageDescriptor();
-                    extensionImages.put(mappingKey, mappingImage);
-                    return mappingImage;
-                }
-            }
-        }
-
-        // Nothing - time to look externally for the icon
-        anImage = getSystemExternalEditorImageDescriptor(filename);
-        if (anImage == null)
-            anImage = getDefaultImage();
-        //	for dynamic UI - comment out the next line
-        //extensionImages.put(key, anImage);
-        return anImage;
-    }
-
-    /**
+	/**
      * Find the file editor mapping for the file extension. Returns
      * <code>null</code> if not found.
      * 
@@ -1222,6 +1195,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
                 mapIDtoEditor.values().remove(desc);
                 removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
                 removeEditorFromMapping(typeEditorMappings.map, desc);
+				//TODO remove from content type mappings
             }
 
         }
@@ -1246,5 +1220,150 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 	 */
 	public IExtensionPoint getExtensionPointFilter() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorRegistry#getDefaultEditor(java.lang.String, org.eclipse.core.runtime.content.IContentType)
+	 */
+	public IEditorDescriptor getDefaultEditor(String fileName, IContentType contentType) {
+        FileEditorMapping[] mapping = getMappingForFilename(fileName);
+        IEditorDescriptor desc = null;
+		if (contentType != null)
+			desc = getEditorForContentType(fileName, contentType);
+        if (desc == null && mapping[0] != null)
+            desc = mapping[0].getDefaultEditor();
+        if (desc == null && mapping[1] != null)
+            desc = mapping[1].getDefaultEditor();
+
+        if (WorkbenchActivityHelper.filterItem(desc))
+            return null;
+
+        return desc;	
+	}
+
+	/**
+	 * Return the editor for a file with a given content type.
+	 * 
+	 * @param filename the file name
+	 * @param contentType the content type
+	 * @return the editor for a file with a given content type
+	 * @since 3.1
+	 */
+	private IEditorDescriptor getEditorForContentType(String filename,
+			IContentType contentType) {
+		IEditorDescriptor desc = null;
+		Object[] contentTypeResults = Platform.getContentTypeManager()
+				.findRelatedObjects(contentType, filename, relatedRegistry);
+		if (contentTypeResults != null && contentTypeResults.length > 0) {
+			desc = (IEditorDescriptor) contentTypeResults[0];
+		}
+		return desc;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorRegistry#getEditors(java.lang.String, org.eclipse.core.runtime.content.IContentType)
+	 */
+	public IEditorDescriptor[] getEditors(String fileName, IContentType contentType) {
+        IEditorDescriptor[] editors = new IEditorDescriptor[0];
+        IEditorDescriptor[] filenameEditors = editors;
+        IEditorDescriptor[] extensionEditors = editors;
+
+        FileEditorMapping mapping[] = getMappingForFilename(fileName);
+        if (mapping[0] != null) {
+            editors = mapping[0].getEditors();
+            if (editors != null)
+                filenameEditors = editors;
+        }
+        if (mapping[1] != null) {
+            editors = mapping[1].getEditors();
+            if (editors != null)
+                extensionEditors = editors;
+        }
+
+        editors = new IEditorDescriptor[filenameEditors.length
+                + extensionEditors.length];
+        System
+                .arraycopy(filenameEditors, 0, editors, 0,
+                        filenameEditors.length);
+        System.arraycopy(extensionEditors, 0, editors, filenameEditors.length,
+                extensionEditors.length);
+
+        ArrayList list = new ArrayList(editors.length);
+		if (contentType != null) {
+			Object [] editorsByForContentType = Platform.getContentTypeManager().findRelatedObjects(contentType, fileName, relatedRegistry);
+			if (editorsByForContentType != null && editorsByForContentType.length > 0) 
+				list.addAll(Arrays.asList(editorsByForContentType));
+		}
+		
+		// remove duplicates - something may be bound by content type and traditional filename bindings
+		for (int i = 0; i < editors.length; i++) {
+			if (!list.contains(editors[i]))
+				list.add(editors[i]);
+		}
+        ArrayList filtered = new ArrayList();
+        for (Iterator i = list.iterator(); i.hasNext();) {
+            Object next = i.next();
+            if (WorkbenchActivityHelper.filterItem(next))
+                continue;
+            filtered.add(next);
+        }
+        editors = (IEditorDescriptor[]) filtered
+                .toArray(new IEditorDescriptor[filtered.size()]);
+
+        return editors;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorRegistry#getImageDescriptor(java.lang.String, org.eclipse.core.runtime.content.IContentType)
+	 */
+	public ImageDescriptor getImageDescriptor(String filename, IContentType contentType) {
+        if (filename == null)
+            return getDefaultImage();
+
+		if (contentType != null) {
+			IEditorDescriptor desc = getEditorForContentType(filename, contentType);
+			if (desc != null) {
+				ImageDescriptor anImage = (ImageDescriptor) extensionImages.get(desc);	
+				if (anImage != null)
+					return anImage;
+				anImage = desc.getImageDescriptor();
+				extensionImages.put(desc, anImage);
+				return anImage;				
+			}
+		}
+        // Lookup in the cache first...
+        String key = mappingKeyFor(filename);
+        ImageDescriptor anImage = (ImageDescriptor) extensionImages.get(key);
+        if (anImage != null)
+            return anImage;
+
+        // See if we have a mapping for the filename or extension
+        FileEditorMapping[] mapping = getMappingForFilename(filename);
+        for (int i = 0; i < 2; i++) {
+            if (mapping[i] != null) {
+                // Lookup in the cache first...
+                String mappingKey = mappingKeyFor(mapping[i]);
+                ImageDescriptor mappingImage = (ImageDescriptor) extensionImages
+                        .get(key);
+                if (mappingImage != null)
+                    return mappingImage;
+                // Create it and cache it
+                IEditorDescriptor editor = mapping[i].getDefaultEditor();
+                if (editor != null) {
+                    mappingImage = editor.getImageDescriptor();
+                    extensionImages.put(mappingKey, mappingImage);
+                    return mappingImage;
+                }
+            }
+        }
+
+        // Nothing - time to look externally for the icon
+        anImage = getSystemExternalEditorImageDescriptor(filename);
+        if (anImage == null)
+            anImage = getDefaultImage();
+        //	for dynamic UI - comment out the next line
+        //extensionImages.put(key, anImage);
+        return anImage;
+
 	}
 }

@@ -83,6 +83,7 @@ public class FileSystemElement implements IAdaptable {
             } else {
                 return WorkbenchPlugin.getDefault().getEditorRegistry()
                         .getImageDescriptor(name);
+				//TODO: what are the implications for content types?  Should I guess?
             }
         }
     };

@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
@@ -97,12 +99,6 @@ public final class IDE {
      * lazily initialized on fist access.
      */
     private static MarkerHelpRegistry markerHelpRegistry = null;
-
-    /**
-     * An empty unmodifiable list. Used to avoid garbage creation.
-     */
-    private static final List emptyUnmodifiableList = Collections
-            .unmodifiableList(new ArrayList(0));
 
     /**
      * Standard shared images defined by the IDE. These are over and above the
@@ -269,7 +265,9 @@ public final class IDE {
     }
 
     /**
-     * Opens an editor on the given file resource.
+     * Opens an editor on the given file resource.  This method will attempt to
+	 * resolve the editor based on content-type bindings as well as traditional
+	 * name/extension bindings.
      * <p>
      * If the page already has an editor open on the target object then that
      * editor is brought to front; otherwise, a new editor is opened. If
@@ -290,18 +288,51 @@ public final class IDE {
      */
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             boolean activate) throws PartInitException {
+		return openEditor(page, input, activate, true);
+    }
+	
+	/**
+     * Opens an editor on the given file resource.  This method will attempt to
+	 * resolve the editor based on content-type bindings as well as traditional
+	 * name/extension bindings if <code>determineContentType</code> is
+	 * <code>true</code>.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened. If
+     * <code>activate == true</code> the editor will be activated.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param activate
+     * 			  if <code>true</code> the editor will be activated
+     * @param determineContentType
+     * 			  attempt to resolve the content type for this file
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
+     *      String, boolean)
+     * @since 3.1
+     */
+	public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
+            boolean activate, boolean determineContentType) throws PartInitException {
         //sanity checks
         if (page == null)
             throw new IllegalArgumentException();
 
         // open the editor on the file
-        IEditorDescriptor editorDesc = getEditorDescriptor(input);
+        IEditorDescriptor editorDesc = getEditorDescriptor(input, determineContentType);
         return page.openEditor(new FileEditorInput(input), editorDesc.getId(),
                 activate);
     }
 
     /**
-     * Opens an editor on the given file resource.
+     * Opens an editor on the given file resource.  This method will attempt to
+	 * resolve the editor based on content-type bindings as well as traditional
+	 * name/extension bindings.
      * <p>
      * If the page already has an editor open on the target object then that
      * editor is brought to front; otherwise, a new editor is opened.
@@ -387,29 +418,73 @@ public final class IDE {
     }
 
     /**
-     * Returns an editor descriptor appropriate for opening the given file resource.
-     * <p>
-     * The editor descriptor is determined using a multistep process.
-     * </p>
-     * <ol>
-     *   <li>The file is consulted for a persistent property named
-     *       <code>IDE.EDITOR_KEY</code> containing the preferred editor id
-     *       to be used.</li>
-     *   <li>The workbench editor registry is consulted to determine if an editor 
-     *			extension has been registered for the file type.  If so, an 
-     *			instance of the editor extension is opened on the file.  
-     *			See <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
-     *   <li>The operating system is consulted to determine if an in-place
-     *       component editor is available (e.g. OLE editor on Win32 platforms).</li>
-     *   <li>The operating system is consulted to determine if an external
-     * 		editor is available.</li>
-     * </ol>
-     * </p>
-     * @param file the file
-     * @return an editor descriptor, appropriate for opening the file
-     * @throws PartInitException if no editor can be found
-     */
+	 * Returns an editor descriptor appropriate for opening the given file
+	 * resource.  
+	 * <p>
+	 * The editor descriptor is determined using a multistep process. This
+	 * method will attempt to resolve the editor based on content-type bindings
+	 * as well as traditional name/extension bindings.
+	 * </p>
+	 * <ol>
+	 * <li>The file is consulted for a persistent property named
+	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
+	 * used.</li>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param file
+	 *            the file
+	 * @return an editor descriptor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 */
     public static IEditorDescriptor getEditorDescriptor(IFile file)
+            throws PartInitException {
+		return getEditorDescriptor(file, true);
+	}
+
+    /**
+	 * Returns an editor descriptor appropriate for opening the given file
+	 * resource.
+	 * <p>
+	 * The editor descriptor is determined using a multistep process. This
+	 * method will attempt to resolve the editor based on content-type bindings
+	 * as well as traditional name/extension bindings if
+	 * <code>determineContentType</code>is <code>true</code>.
+	 * </p>
+	 * <ol>
+	 * <li>The file is consulted for a persistent property named
+	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
+	 * used.</li>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param file
+	 *            the file
+	 * @param determineContentType
+	 *            query the content type system for the content type of the file
+	 * @return an editor descriptor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 * @since 3.1
+	 */
+    public static IEditorDescriptor getEditorDescriptor(IFile file, boolean determineContentType)
             throws PartInitException {
 
 		if (file == null) {
@@ -417,14 +492,15 @@ public final class IDE {
 		}
 
 		return getEditorDescriptor(file.getName(), PlatformUI.getWorkbench()
-				.getEditorRegistry(), getDefaultEditor(file));
+				.getEditorRegistry(), getDefaultEditor(file, determineContentType));
 	}
 
 	/**
 	 * Returns an editor descriptor appropriate for opening a file resource with
 	 * the given name.
 	 * <p>
-	 * The editor descriptor is determined using a multistep process.
+	 * The editor descriptor is determined using a multistep process. This
+	 * method will attempt to infer content type from the file name.
 	 * </p>
 	 * <ol>
 	 * <li>The file is consulted for a persistent property named
@@ -447,18 +523,57 @@ public final class IDE {
 	 * @throws PartInitException
 	 *             if no editor can be found
 	 */
-	public static IEditorDescriptor getEditorDescriptor(String name)
+	public static IEditorDescriptor getEditorDescriptor(String name) throws PartInitException {
+		return getEditorDescriptor(name, true);
+	}
+	
+	/**
+	 * Returns an editor descriptor appropriate for opening a file resource with
+	 * the given name.
+	 * <p>
+	 * The editor descriptor is determined using a multistep process. This
+	 * method will attempt to infer the content type of the file if
+	 * <code>inferContentType</code> is <code>true</code>.
+	 * </p>
+	 * <ol>
+	 * <li>The file is consulted for a persistent property named
+	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
+	 * used.</li>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param name
+	 *            the file name
+	 * @param inferContentType
+	 *            attempt to infer the content type from the file name if this
+	 *            is <code>true</code>
+	 * @return an editor descriptor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 * @since 3.1
+	 */
+	public static IEditorDescriptor getEditorDescriptor(String name, boolean inferContentType)
 			throws PartInitException {
 
 		if (name == null) {
 			throw new IllegalArgumentException();
 		}
 
+		IContentType contentType = inferContentType ? Platform
+				.getContentTypeManager().findContentTypeFor(name) : null;
 		IEditorRegistry editorReg = PlatformUI.getWorkbench()
 				.getEditorRegistry();
 
 		return getEditorDescriptor(name, editorReg, editorReg
-				.getDefaultEditor(name));
+				.getDefaultEditor(name, contentType));
 	}
 
 	/**
@@ -688,20 +803,48 @@ public final class IDE {
     }
 
     /**
-     * Returns the default editor for a given file.
-     * <p>
-     * A default editor id may be registered for a specific file using
-     * <code>setDefaultEditor</code>.  If the given file has a registered
-     * default editor id the default editor will derived from it.  If not, 
-     * the default editor is determined by taking the file name for the 
-     * file and obtaining the default editor for that name.
-     * </p>
-     *
-     * @param file the file
-     * @return the descriptor of the default editor, or <code>null</code> if not
-     *   found
-     */
+	 * Returns the default editor for a given file. This method will attempt to
+	 * resolve the editor based on content-type bindings as well as traditional
+	 * name/extension bindings.
+	 * <p>
+	 * A default editor id may be registered for a specific file using
+	 * <code>setDefaultEditor</code>. If the given file has a registered
+	 * default editor id the default editor will derived from it. If not, the
+	 * default editor is determined by taking the file name for the file and
+	 * obtaining the default editor for that name.
+	 * </p>
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the descriptor of the default editor, or <code>null</code> if
+	 *         not found
+	 */
     public static IEditorDescriptor getDefaultEditor(IFile file) {
+		return getDefaultEditor(file, true);
+    }
+	
+    /**
+	 * Returns the default editor for a given file. This method will attempt to
+	 * resolve the editor based on content-type bindings as well as traditional
+	 * name/extension bindings if <code>determineContentType</code> is
+	 * <code>true</code>.
+	 * <p>
+	 * A default editor id may be registered for a specific file using
+	 * <code>setDefaultEditor</code>. If the given file has a registered
+	 * default editor id the default editor will derived from it. If not, the
+	 * default editor is determined by taking the file name for the file and
+	 * obtaining the default editor for that name.
+	 * </p>
+	 * 
+	 * @param file
+	 *            the file
+	 * @param determineContentType
+	 *            determine the content type for the given file
+	 * @return the descriptor of the default editor, or <code>null</code> if
+	 *         not found
+	 * @since 3.1
+	 */
+    public static IEditorDescriptor getDefaultEditor(IFile file, boolean determineContentType) {
         // Try file specific editor.
         IEditorRegistry editorReg = PlatformUI.getWorkbench()
                 .getEditorRegistry();
@@ -715,9 +858,12 @@ public final class IDE {
         } catch (CoreException e) {
             // do nothing
         }
-
+        
+		IContentType contentType = null;
+		if (determineContentType)
+			contentType = getContentType(file);    
         // Try lookup with filename
-        return editorReg.getDefaultEditor(file.getName());
+        return editorReg.getDefaultEditor(file.getName(), contentType);
     }
 
     /**
@@ -749,10 +895,27 @@ public final class IDE {
             }
         }
         if (resources == null) {
-            return emptyUnmodifiableList;
+            return Collections.EMPTY_LIST;
         }
         return resources;
         
     }
 
+	/**
+	 * Return the content type for the given file.
+	 * 
+	 * @param file the file to test
+	 * @return the content type, or null if it cannot be determined.
+	 * @since 3.1
+	 */
+	public static IContentType getContentType(IFile file) {
+		try {
+			IContentDescription contentDescription = file.getContentDescription();
+			if (contentDescription == null)
+				return null;
+			return contentDescription.getContentType();
+		} catch (CoreException e) {
+			return null;		
+		}
+	}
 }

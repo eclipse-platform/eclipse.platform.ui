@@ -79,6 +79,9 @@ with it by any means except through the file system.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="contentTypeBinding" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -179,6 +182,26 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
             <annotation>
                <documentation>
                   the symbolic name of a font. The symbolic font name must be the id of a defined font (see org.eclipse.ui.fontDefinitions). If this attribute is missing or invalid then the font name is the value of &quot;org.eclipse.jface.textfont&quot; in the editor&apos;s preferences store. If there is no preference store or the key is not defined then the JFace text font will be used. The editor implementation decides if it uses this symbolic font name to set the font.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentTypeBinding">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="contentTypeId"/>
+         </appInfo>
+         <documentation>
+            Advertises that the containing editor understands the given content type and is suitable for editing files of that type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the content type identifier
                </documentation>
             </annotation>
          </attribute>

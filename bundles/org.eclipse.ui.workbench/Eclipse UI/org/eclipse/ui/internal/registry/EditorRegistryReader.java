@@ -72,6 +72,7 @@ public class EditorRegistryReader extends RegistryReader {
         
         List extensionsVector = new ArrayList();
         List filenamesVector = new ArrayList();
+		List contentTypeVector = new ArrayList();
         boolean defaultEditor = false;
 
         // Get editor name (required field).
@@ -106,6 +107,14 @@ public class EditorRegistryReader extends RegistryReader {
             }
         }
         
+		IConfigurationElement [] bindings = element.getChildren(IWorkbenchRegistryConstants.TAG_CONTENT_TYPE_BINDING);
+		for (int i = 0; i < bindings.length; i++) {
+			String contentTypeId = bindings[i].getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_TYPE_ID);
+			if (contentTypeId == null)
+				continue;
+			contentTypeVector.add(contentTypeId);
+		}
+		
         // Is this the default editor?
         String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
         if (def != null)
@@ -113,7 +122,7 @@ public class EditorRegistryReader extends RegistryReader {
 
         // Add the editor to the manager.	
         editorRegistry.addEditorFromPlugin(editor, extensionsVector,
-                filenamesVector, defaultEditor);
+                filenamesVector, contentTypeVector, defaultEditor);
         return true;
     }
 

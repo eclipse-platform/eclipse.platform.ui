@@ -136,6 +136,7 @@ public class OpenWithMenu extends ContributionItem {
         if (editorDesc == null) {
             imageDesc = registry
                     .getImageDescriptor(getFileResource().getName());
+			//TODO: is this case valid, and if so, what are the implications for content-type editor bindings?
         } else {
             imageDesc = editorDesc.getImageDescriptor();
         }
@@ -194,7 +195,7 @@ public class OpenWithMenu extends ContributionItem {
                 .findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
         IEditorDescriptor preferredEditor = IDE.getDefaultEditor(file); // may be null
 
-        Object[] editors = registry.getEditors(file.getName());
+        Object[] editors = registry.getEditors(file.getName(), IDE.getContentType(file));
         Collections.sort(Arrays.asList(editors), comparer);
 
         boolean defaultFound = false;
@@ -236,6 +237,7 @@ public class OpenWithMenu extends ContributionItem {
         }
         createDefaultMenuItem(menu, file);
     }
+	
 
     /**
      * Converts the IAdaptable file to IFile or null.
@@ -243,13 +245,13 @@ public class OpenWithMenu extends ContributionItem {
     private IFile getFileResource() {
         if (this.file instanceof IFile) {
             return (IFile) this.file;
-        } else {
-            IResource resource = (IResource) this.file
-                    .getAdapter(IResource.class);
-            if (resource instanceof IFile) {
-                return (IFile) resource;
-            }
         }
+        IResource resource = (IResource) this.file
+                .getAdapter(IResource.class);
+        if (resource instanceof IFile) {
+            return (IFile) resource;
+        }
+       
         return null;
     }
 
@@ -288,7 +290,6 @@ public class OpenWithMenu extends ContributionItem {
      *
      * @param menu the menu to add the item to
      * @param file the file bing edited
-     * @param registry the editor registry
      */
     private void createDefaultMenuItem(Menu menu, final IFile file) {
         final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);

@@ -177,4 +177,14 @@ public interface IWorkbenchRegistryConstants {
      * Editor filenames attribute.  Value <code>filenames</code>.
      */
     public static final String ATT_FILENAMES = "filenames";//$NON-NLS-1$
+	
+	/**
+	 * Editor content type binding tag.  Value <code>contentTypeBinding</code>.
+	 */
+	public static final String TAG_CONTENT_TYPE_BINDING = "contentTypeBinding"; //$NON-NLS-1$
+
+	/**
+	 * Editor content type id binding attribute.  Value <code>contentTypeId</code>.
+	 */
+	public static final String ATT_CONTENT_TYPE_ID = "contentTypeId"; //$NON-NLS-1$
 }

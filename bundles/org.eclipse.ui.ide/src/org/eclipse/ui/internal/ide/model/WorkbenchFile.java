@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * An IWorkbenchAdapter that represents IFiles.
@@ -25,9 +28,14 @@ public class WorkbenchFile extends WorkbenchResource {
      *	passed resource
      */
     protected ImageDescriptor getBaseImage(IResource resource) {
+		IContentType contentType = null;
+		// do we need to worry about checking here?
+		if (resource instanceof IFile) {
+			contentType = IDE.getContentType((IFile)resource);
+		}
         // @issue move IDE specific images
         ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()
-                .getImageDescriptor(resource.getName());
+                .getImageDescriptor(resource.getName(), contentType);
         if (image == null)
             image = PlatformUI.getWorkbench().getSharedImages()
                     .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
