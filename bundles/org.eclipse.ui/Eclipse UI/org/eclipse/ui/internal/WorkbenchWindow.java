@@ -230,19 +230,11 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	builder.buildActions(this);
 	
 	// include the workspace location in the title 
-	// if it is NOT the default location and the command line
-	// option -showlocation is specified
+	// if the command line option -showlocation is specified
 	String[] args = Platform.getCommandLineArgs();
-	boolean show = false;
-	String location = null;
 	for (int i = 0; i < args.length; i++) {
 		if ("-showlocation".equals(args[i])) { //$NON-NLS-1$
-			show = true;
-		} else if ("-data".equals(args[i])) { //$NON-NLS-1$
-			location = Platform.getLocation().toOSString();
-		}
-		if (show && location != null) {
-			workspaceLocation = location;
+			workspaceLocation = Platform.getLocation().toOSString();
 			break;
 		}
 	}
