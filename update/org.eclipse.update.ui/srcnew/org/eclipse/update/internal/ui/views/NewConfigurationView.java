@@ -75,6 +75,7 @@ public class NewConfigurationView
 	private SiteStateAction2 siteStateAction;
 	private Action installationHistoryAction;
 	private Action newExtensionLocationAction;
+	private FindUpdatesAction findUpdatesAction;
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
@@ -485,6 +486,8 @@ public class NewConfigurationView
 
 		swapVersionAction = new SwapVersionAction("&Another Version...");
 
+		findUpdatesAction = new FindUpdatesAction("Find Updates...");
+		
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
@@ -584,6 +587,7 @@ public class NewConfigurationView
 		Object obj = getSelectedObject();
 
 		if (obj instanceof ILocalSite) {
+			manager.add(findUpdatesAction);
 			manager.add(revertAction);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
@@ -597,6 +601,9 @@ public class NewConfigurationView
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
+				manager.add(findUpdatesAction);
+				manager.add(new Separator());
+				
 				MenuManager mgr = new MenuManager("Replace with");
 				mgr.add(swapVersionAction);
 				manager.add(mgr);
@@ -915,8 +922,17 @@ public class NewConfigurationView
 				boolean missing = feature instanceof MissingFeature;
 
 				swapVersionAction.setEnabled(enable && !missing);
+				
 				featureStateAction.setFeature(adapter);
 				featureStateAction.setEnabled(enable && !missing);
+				
+				if (enable && !missing && adapter.isConfigured()) {
+					findUpdatesAction.setEnabled(true);
+					findUpdatesAction.setFeature(feature);
+				} else {
+					findUpdatesAction.setEnabled(false);
+				}
+				
 				if (missing) {
 					MissingFeature mf = (MissingFeature) feature;
 					installOptFeatureAction.setEnabled(
@@ -937,6 +953,8 @@ public class NewConfigurationView
 		}
 		if (obj instanceof ILocalSite) {
 			propertiesAction.setEnabled(true);
+			findUpdatesAction.setEnabled(true);
+			findUpdatesAction.setFeature(null);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(
 				((IConfiguredSiteAdapter) obj).getConfiguredSite());
@@ -955,6 +973,11 @@ public class NewConfigurationView
 		ArrayList array = new ArrayList();
 		// local site tasks
 		key = ILocalSite.class;
+		array.add(
+			new PreviewTask(
+				"Scan for Updates",
+				"Search for updates for all the installed features.",
+				findUpdatesAction));
 		array.add(
 			new PreviewTask(
 				"Revert to Previous",
@@ -996,6 +1019,11 @@ public class NewConfigurationView
 		// feature adapter tasks
 		array.clear();
 		key = IFeatureAdapter.class;
+		array.add(
+			new PreviewTask(
+				"Scan for Updates",
+				"Search for updates for this feature.",
+				findUpdatesAction));
 		array.add(
 			new PreviewTask(
 				"Replace With Another Version",
