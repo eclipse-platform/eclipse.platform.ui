@@ -30,7 +30,7 @@ public class SharedConfigExtensionsManager {
     // IntroStandbyContentPart.
     private Hashtable standbyParts = new Hashtable();
 
-    // Holds all command extensions. Key is name, value is IntroURLCommand.
+    // Holds all command extensions. Key is name, value is IntroURLAction.
     private Hashtable commands = new Hashtable();
 
     /*
@@ -53,13 +53,13 @@ public class SharedConfigExtensionsManager {
             if (!ModelLoaderUtil.isValidElementName(element,
                     IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)
                     && !ModelLoaderUtil.isValidElementName(element,
-                            IntroURLCommand.TAG_COMMAND))
+                            IntroURLAction.TAG_ACTION))
                 // if extension is not a standbypart or command, ignore.
                 continue;
             createModelClass(element);
         }
     }
-
+   
 
     /**
      * Create an intro standby part or an intro command model class.
@@ -76,9 +76,9 @@ public class SharedConfigExtensionsManager {
                 return;
             standbyParts.put(standbyPartContent.getId(), standbyPartContent);
         } else {
-            IntroURLCommand introURLCommand = new IntroURLCommand(element);
+            IntroURLAction introURLCommand = new IntroURLAction(element);
             if (introURLCommand.getName() == null
-                    || introURLCommand.getResolvedValue() == null)
+                    || introURLCommand.getReplaceValue() == null)
                 // no name or resolvedValue, ignore.
                 return;
             commands.put(introURLCommand.getName(), introURLCommand);
@@ -99,10 +99,10 @@ public class SharedConfigExtensionsManager {
     /**
      * @return Returns the command from its name.
      */
-    public IntroURLCommand getCommand(String commandName) {
+    public IntroURLAction getCommand(String commandName) {
         if (commandName == null)
             return null;
-        return (IntroURLCommand) commands.get(commandName);
+        return (IntroURLAction) commands.get(commandName);
     }
 
 }

@@ -15,7 +15,7 @@
          <sequence>
             <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="standbyContentPart" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="command" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -100,10 +100,10 @@ http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.config.conte
       </complexType>
    </element>
 
-   <element name="command">
+   <element name="action">
       <annotation>
          <documentation>
-            Command registration. This can be used to create new Intro URL commands. It can be used to create a shortCut commands or create custom commands.
+            Custom Intro URL action registration. This can be used to create new Intro URL actions. It can be used to create a shortCut action or create custom actions.
 For example: 
 a short cut command is: 
 
@@ -118,7 +118,7 @@ a custom command is:
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="resolvedValue" type="string" use="required">
+         <attribute name="replaces" type="string" use="required">
             <annotation>
                <documentation>
                   

@@ -18,25 +18,25 @@ import org.eclipse.core.runtime.*;
  * child under any of the other model classes. It is returned by the
  * SharedConfigExtensionsManager when asked for commands.
  */
-public class IntroURLCommand extends AbstractIntroElement {
+public class IntroURLAction extends AbstractIntroElement {
 
-    public static final String TAG_COMMAND = "command"; //$NON-NLS-1$
+    public static final String TAG_ACTION = "action"; //$NON-NLS-1$
 
     private static final String ATT_NAME = "name"; //$NON-NLS-1$
-    private static final String ATT_RESOLVED_VALUE = "resolvedValue"; //$NON-NLS-1$
+    private static final String ATT_REPLACES = "replaces"; //$NON-NLS-1$
 
     private String name;
-    private String resolvedValue;
+    private String replaces;
 
 
     /**
      * Note: model class with public constructor because it is not instantiated
      * by the model root.
      */
-    public IntroURLCommand(IConfigurationElement element) {
+    public IntroURLAction(IConfigurationElement element) {
         super(element);
         name = element.getAttribute(ATT_NAME);
-        resolvedValue = element.getAttribute(ATT_RESOLVED_VALUE);
+        replaces = element.getAttribute(ATT_REPLACES);
     }
 
     /**
@@ -49,8 +49,8 @@ public class IntroURLCommand extends AbstractIntroElement {
     /**
      * @return Returns the pluginId.
      */
-    public String getResolvedValue() {
-        return resolvedValue;
+    public String getReplaceValue() {
+        return replaces;
     }
 
     /*

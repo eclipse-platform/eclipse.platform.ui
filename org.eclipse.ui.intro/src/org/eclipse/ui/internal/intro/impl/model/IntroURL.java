@@ -350,7 +350,7 @@ public class IntroURL implements IIntroURL {
     }
 
     private void handleCustomAction() {
-        IntroURLCommand command = ExtensionPointManager.getInst()
+        IntroURLAction command = ExtensionPointManager.getInst()
                 .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
             DialogUtil.displayInfoMessage(null, "IntroURL.badCommand", //$NON-NLS-1$
@@ -361,8 +361,8 @@ public class IntroURL implements IIntroURL {
         // custom command. execute it.
         StringBuffer url = new StringBuffer();
         url.append("http://org.eclipse.ui.intro/"); //$NON-NLS-1$
-        url.append(command.getResolvedValue().trim());
-        if (command.getResolvedValue().indexOf("?") == -1) //$NON-NLS-1$
+        url.append(command.getReplaceValue().trim());
+        if (command.getReplaceValue().indexOf("?") == -1) //$NON-NLS-1$
             // command does not have parameters.
             url.append("?"); //$NON-NLS-1$
         else

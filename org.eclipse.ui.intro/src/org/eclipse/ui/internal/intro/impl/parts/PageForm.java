@@ -101,7 +101,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         formContent.getBody().setLayout(layout);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        Util.highlight(formContent.getBody(), SWT.COLOR_RED);
+        //Util.highlight(formContent.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
