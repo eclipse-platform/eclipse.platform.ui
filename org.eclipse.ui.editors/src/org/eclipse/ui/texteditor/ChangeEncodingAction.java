@@ -21,7 +21,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
 
+import org.eclipse.ui.editors.text.IEncodingSupport;
+
+import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 /**
@@ -41,6 +47,7 @@ import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 public class ChangeEncodingAction extends TextEditorAction {
 
 	private String fDialogTitle;
+	private static final String ENCODING_PREF_KEY= "encoding"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new action for the given text editor. The action configures its
@@ -68,8 +75,9 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 */
 	public void run() {
 		final IResource resource= getResource();
+		final Shell parentShell= getTextEditor().getSite().getShell();
 		if (resource != null) {
-			Dialog dialog= new Dialog(getTextEditor().getSite().getShell()) {
+			Dialog dialog= new Dialog(parentShell) {
 				private ResourceEncodingFieldEditor fEncodingEditor;
 				/*
 				 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
@@ -101,6 +109,54 @@ public class ChangeEncodingAction extends TextEditorAction {
 				}
 			};
 			dialog.open();
+		} else {
+			final IEncodingSupport encodingSupport= getEncodingSupport();
+			if (encodingSupport == null) {
+				MessageDialog.openInformation(parentShell, fDialogTitle, "No encoding support installed");
+				return;
+			}
+			
+			final IPreferenceStore store= new PreferenceStore();
+			
+			Dialog dialog= new Dialog(parentShell) {
+				private EncodingFieldEditor fEncodingEditor;
+				/*
+				 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+				 */
+				protected void configureShell(Shell newShell) {
+					super.configureShell(newShell);
+					newShell.setText(fDialogTitle);
+				}
+				/*
+				 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+				 */
+				protected Control createDialogArea(Composite parent) {
+					Control composite= super.createDialogArea(parent);
+					if (!(composite instanceof Composite)) {
+						composite.dispose();
+						composite= new Composite(parent, SWT.NONE);
+					}
+					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", (Composite)composite); //$NON-NLS-1$
+					store.setDefault(ENCODING_PREF_KEY, encodingSupport.getDefaultEncoding());
+					fEncodingEditor.setPreferenceStore(store);
+					String encoding= encodingSupport.getEncoding();
+					if (encoding != null)
+						store.setValue(ENCODING_PREF_KEY, encoding);
+					fEncodingEditor.load();
+					
+					return composite;
+				}
+				/*
+				 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+				 */
+				protected void okPressed() {
+					fEncodingEditor.store();
+					String encoding= fEncodingEditor.getPreferenceStore().getString(fEncodingEditor.getPreferenceName());
+					encodingSupport.setEncoding(encoding);
+					super.okPressed();
+				}
+			};
+			dialog.open();
 		}
 	}
 	
@@ -108,7 +164,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		setEnabled(getResource() != null);
+		setEnabled(getResource() != null || getEncodingSupport() != null);
 	}
 	
 	/**
@@ -120,6 +176,18 @@ public class ChangeEncodingAction extends TextEditorAction {
 		if (getTextEditor() != null && getTextEditor().getEditorInput() != null)
 			return (IResource)getTextEditor().getEditorInput().getAdapter(IResource.class);
 		
+		return null;
+	}
+	
+	/**
+	 * Gets the editor's encoding support.
+	 * 
+	 * @return the resource being edited or <code>null</code>s
+	 */
+	private IEncodingSupport getEncodingSupport() {
+		if (getTextEditor() != null)
+			return (IEncodingSupport)getTextEditor().getAdapter(IEncodingSupport.class);
+
 		return null;
 	}
 }

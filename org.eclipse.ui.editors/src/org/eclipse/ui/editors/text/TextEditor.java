@@ -215,6 +215,8 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	 * @since 2.0
 	 */
 	protected void createActions() {
+		installEncodingSupport();
+		
 		super.createActions();
 		
 		ResourceAction action= new ConvertLineDelimitersAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows.", this, "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -236,8 +238,6 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
-
-		installEncodingSupport();
 	}
 	
 	/*
