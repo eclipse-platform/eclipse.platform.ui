@@ -15,7 +15,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract base implementation of all workbench editors.
@@ -173,20 +172,6 @@ public boolean isSaveOnCloseNeeded() {
  */
 protected void setInput(IEditorInput input) {
 	editorInput = input;
-}
-
-/* (non-Javadoc)
- * 
- * @see WorkbenchPart
- */
-protected void setTitle(String title) {
-	title = Util.safeString(title);
-	
-	super.setTitle(title);
-	
-	if (!title.equals("")) {
-		internalSetPartName(title); //$NON-NLS-1$
-	}
 }
 
 }

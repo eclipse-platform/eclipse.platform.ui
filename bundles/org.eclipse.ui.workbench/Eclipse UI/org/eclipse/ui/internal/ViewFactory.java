@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,14 +19,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
-
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -33,11 +31,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The ViewFactory is used to control the creation and disposal of views.  
@@ -68,6 +66,9 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 			
 			if (memento != null) {
 				name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
+			}
+			if (name == null) {
+				name = title;
 			}
 			
 			init(id, title, null, iDesc, name, null);
@@ -118,14 +119,56 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		 * @see org.eclipse.ui.internal.WorkbenchPartReference#getRegisteredName()
 		 */
 		public String getRegisteredName() {
-			if (part != null)
+			if (part != null && part.getSite() != null) {
 				return part.getSite().getRegisteredName();
+			}
 
 			IViewRegistry reg = viewReg;
 			IViewDescriptor desc = reg.find(getId());
 			if (desc != null)
 				return desc.getLabel();
 			return getTitle();
+		}
+		
+		protected String computePartName() {
+			String result = super.computePartName();
+			
+			if (result.equals("")) { //$NON-NLS-1$
+				result = getRegisteredName();
+			}
+			
+			return result;
+		}
+		
+		protected String computeTitle() {
+			String result = super.computeTitle();
+			String registeredName = getRegisteredName();
+			
+			if (result.equals("") || result.equals(registeredName)) { //$NON-NLS-1$
+				String description = getRawContentDescription();
+				result = computePartName();
+				
+				if (!Util.equals(description, "")) { //$NON-NLS-1$
+					result = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {result, description}); //$NON-NLS-1$
+				}
+			}
+			
+			return result;
+		}
+		
+		protected String computeContentDescription() {
+			String result = super.computeContentDescription();
+			
+			if (result.equals("")) { //$NON-NLS-1$
+				String title = getRawTitle();
+				String partName = computePartName();
+				
+				if (!Util.equals(title, partName)) {
+					result = title;
+				}
+			}
+			
+			return result;
 		}
 		
 		/* (non-Javadoc)

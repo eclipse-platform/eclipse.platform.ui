@@ -14,7 +14,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract base implementation of all workbench views.
@@ -95,18 +94,4 @@ public void saveState(IMemento memento){
     // do nothing
 }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
- */
-protected void setTitle(String title) {
-	title = Util.safeString(title);
-	
-	super.setTitle(title);
-	
-	if (title.equals("") || title.equals(getPartName()) ) //$NON-NLS-1$
-		return;
-	
-	internalSetContentDescription(title);
-	
-}
 }

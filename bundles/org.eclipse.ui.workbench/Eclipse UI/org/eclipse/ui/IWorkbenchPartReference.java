@@ -65,7 +65,7 @@ public interface IWorkbenchPartReference {
 	public IWorkbenchPage getPage();
 	
 	/**
-	 * Returns the name of the part, as it should be shown in tabs
+	 * Returns the name of the part, as it should be shown in tabs.
 	 * 
 	 * @return the part name
 	 * 

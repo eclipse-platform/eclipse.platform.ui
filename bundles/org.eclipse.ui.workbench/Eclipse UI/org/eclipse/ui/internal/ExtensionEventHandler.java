@@ -688,7 +688,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		boolean changed = false;
 		for(int i = 0; i < editorRefs.length; i++) {
 			if (editorRefs[i].getId().equals(id)) {
-				IEditorPart editor = editorRefs[i].getEditor(true);
+				IEditorReference e = editorRefs[i];
+				IEditorPart editor = e.getEditor(true);
 				EditorManager editorManager = ((WorkbenchPage)page).getEditorManager();
 				if(editor == null) {
 					IMemento mem = editorManager.getMemento(editorRefs[i]);
@@ -697,7 +698,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 						editorMem.putMemento(mem);
 					}
 				} else
-					editorManager.saveEditorState(memento, editor, result);
+					editorManager.saveEditorState(memento, e, result);
 				//((WorkbenchPage)page).getStateMap().put(id, memento);
 				page.closeEditor(editor, true);
 				changed = true;

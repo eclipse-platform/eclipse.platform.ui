@@ -55,7 +55,6 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -66,6 +65,7 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -1024,9 +1024,9 @@ public class EditorManager {
 			for (int i = 0; i < editorPanes.length; i++) {
 				// Save each open editor.
 				IEditorReference editorReference = editorPanes[i].getEditorReference();
+				Editor e = (Editor)editorReference;
 				final IEditorPart editor = editorReference.getEditor(false);
 				if (editor == null) {
-					Editor e = (Editor)editorReference;
 					if (e.getMemento() != null) {
 						IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
 						editorMem.putMemento(e.getMemento());
@@ -1035,7 +1035,7 @@ public class EditorManager {
 				}
 				
 				//for dynamic UI - add the next line to replace the subsequent code which is commented out
-				saveEditorState(memento, editor, result);
+				saveEditorState(memento, e, result);
 			}
 		}
 		return result;
@@ -1062,7 +1062,12 @@ public class EditorManager {
 	private class Editor extends WorkbenchPartReference implements IEditorReference {
 
 		private IMemento editorMemento;
+		
+		/**
+		 * User-readable name of the editor's input
+		 */
 		private String name;
+		
 		private String factoryId;
 		private boolean pinned = false;
 		private IEditorInput restoredInput;
@@ -1081,11 +1086,14 @@ public class EditorManager {
 			this.editorMemento = memento;
 			String id = memento.getString(IWorkbenchConstants.TAG_ID);
 			String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
-			String tooltip = memento.getString(IWorkbenchConstants.TAG_TOOLTIP);
+			String tooltip = Util.safeString(memento.getString(IWorkbenchConstants.TAG_TOOLTIP));
 			String partName = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
-			if (tooltip == null) {
-				tooltip = ""; //$NON-NLS-1$
+			
+			// For compatibility set the part name to the title if not found
+			if (partName == null) {
+				partName = title;
 			}
+			
 			// Get the editor descriptor.
 			EditorDescriptor desc = null;
 			if (id != null) {
@@ -1096,15 +1104,19 @@ public class EditorManager {
 			String location = memento.getString(IWorkbenchConstants.TAG_PATH);	
 			IPath path = location == null ? null : new Path(location);
 			ImageDescriptor iDesc = findImage(desc, path);
-			init(id, title, tooltip, iDesc, partName, null);
 			
 			this.name = memento.getString(IWorkbenchConstants.TAG_NAME);
+			if (this.name == null) {
+				this.name = title;
+			}
 			this.pinned = "true".equals(memento.getString(IWorkbenchConstants.TAG_PINNED));  //$NON-NLS-1$
 
 			IMemento inputMem = memento.getChild(IWorkbenchConstants.TAG_INPUT);
 			if (inputMem != null) {
 				this.factoryId = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 			}
+			
+			init(id, title, tooltip, iDesc, partName, null);
 		}
 
 		public String getFactoryId() {
@@ -1117,16 +1129,33 @@ public class EditorManager {
 			}
 			return factoryId;
 		}
+		
+		protected String computePartName() {
+			String result = super.computePartName();
+			
+			if (result.equals("")) { //$NON-NLS-1$
+				result = computeTitle();
+			}
+			
+			return result;
+		}
+		
+		protected String computeTitle() {
+			String result = super.computeTitle();
+			
+			if (result.equals("")) { //$NON-NLS-1$
+				result = getRawPartName();
+			}
+			
+			return result;
+		}
+		
 		public String getName() {
 			if(part != null)
 				return getEditor(false).getEditorInput().getName();
 			return name;
 		}
-		public String getRegisteredName() {
-			if(part != null)
-				return part.getSite().getRegisteredName();
-			return getName();
-		}
+		
 		public IWorkbenchPart getPart(boolean restore) {
 			return getEditor(restore);
 		}
@@ -1269,7 +1298,7 @@ public class EditorManager {
 				WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
 			}
 			
-			if (e.getTitle() == null) { //backward compatible format of workbench.xml
+			if (editorMem.getString(IWorkbenchConstants.TAG_TITLE) == null) { //backward compatible format of workbench.xml
 				result.add(restoreEditor(e));
 				IEditorPart editor = (IEditorPart) e.getPart(true);
 				if(editor == null) {
@@ -1279,10 +1308,6 @@ public class EditorManager {
 				}
 				page.addPart(e);
 			} else {
-				//make it backward compatible.
-				if (e.getName() == null) {
-					e.setName(e.getTitle());
-				}
 				//if the editor is not visible, ensure it is put in the correct workbook. PR 24091
 				String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 				editorPresentation.setActiveEditorWorkbookFromID(workbookID);
@@ -1297,8 +1322,9 @@ public class EditorManager {
 		}
 	}
 	//for dynamic UI
-	protected void saveEditorState(IMemento mem, IEditorPart ed, MultiStatus res) {
-		final IEditorPart editor = ed;
+	protected void saveEditorState(IMemento mem, IEditorReference ed, MultiStatus res) {
+		final Editor editorRef = (Editor)ed;
+		final IEditorPart editor = ed.getEditor(false);
 		final IMemento memento = mem;
 		final MultiStatus result = res;
 		final EditorSite site = (EditorSite)editor.getEditorSite();
@@ -1315,15 +1341,12 @@ public class EditorManager {
 				
 				// Save editor.
 				IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
-				editorMem.putString(IWorkbenchConstants.TAG_TITLE,editor.getTitle());
-				editorMem.putString(IWorkbenchConstants.TAG_NAME,input.getName());
-				editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
-				editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
+				editorMem.putString(IWorkbenchConstants.TAG_TITLE, editorRef.getTitle());
+				editorMem.putString(IWorkbenchConstants.TAG_NAME, editorRef.getName());
+				editorMem.putString(IWorkbenchConstants.TAG_ID, editorRef.getId());
+				editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editorRef.getTitleToolTip()); //$NON-NLS-1$
 				
-				if (editor instanceof IWorkbenchPart2) {
-					IWorkbenchPart2 part2 = (IWorkbenchPart2)editor;
-					editorMem.putString(IWorkbenchConstants.TAG_PART_NAME, part2.getPartName());
-				}
+				editorMem.putString(IWorkbenchConstants.TAG_PART_NAME, editorRef.getPartName());
 				
 				if(!site.getReuseEditor())
 					editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true"); //$NON-NLS-1$
@@ -1350,7 +1373,7 @@ public class EditorManager {
 			public void handleException(Throwable e) {
 				result.add(new Status(
 						IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-						WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}), //$NON-NLS-1$
+						WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editorRef.getTitle()}), //$NON-NLS-1$
 						e));
 			}
 		});

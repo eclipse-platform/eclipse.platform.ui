@@ -564,14 +564,16 @@ public class DefaultPartPresentation extends StackPresentation {
 			    	getThemeManager().getCurrentTheme().
 			    		getFontRegistry();
 	     	
-	       	if(!getCurrent().equals(part))//Set bold if it does currently have focus
+	       	if(getCurrent() != part)//Set bold if it does currently have focus
 				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 	        break;
 	     case IPresentablePart.PROP_CONTENT_DESCRIPTION:
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
 		 case IPresentablePart.PROP_TITLE:
-		 	setControlSize();
+		 	if (getCurrent() == part) {
+		 		setControlSize();
+		 	}
 		 	break;
 		}
 	}

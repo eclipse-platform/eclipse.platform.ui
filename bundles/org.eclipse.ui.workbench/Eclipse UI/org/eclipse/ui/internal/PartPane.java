@@ -122,6 +122,17 @@ protected void createChildControl() {
 			try {
 				UIStats.start(UIStats.CREATE_PART_CONTROL,id);
 				part[0].createPartControl(content);
+				
+				Rectangle oldBounds = control.getBounds();
+				
+				((WorkbenchPartReference)getPartReference()).refreshFromPart();
+				
+				// Unless refreshing the part has somehow triggered a layout, 
+				// we need to force a layout now. (SWT only triggers a layout if the
+				// bounds change, so check that case here).
+				if (oldBounds.equals(control.getBounds())) {
+					control.layout(true);
+				}
 			} finally {
 				UIStats.end(UIStats.CREATE_PART_CONTROL,id);
 			}
@@ -148,7 +159,6 @@ protected void createChildControl() {
 	});
 	page.addPart(partReference);
 	page.firePartOpened(part[0]);
-
 }
 
 public void addSizeMenuItem (Menu menu, int index) {

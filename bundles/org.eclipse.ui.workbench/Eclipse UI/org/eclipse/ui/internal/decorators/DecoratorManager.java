@@ -224,7 +224,7 @@ public class DecoratorManager
 		}
 
 		WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages
-				.getString("DecorationScheduler.UpdateJobName")) {
+				.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 

@@ -1669,17 +1669,17 @@ public void describeLayout(StringBuffer buf) {
 	IViewReference[] fastViews = getFastViews();
 	
 	if (fastViews.length != 0) {
-		buf.append("fastviews (");
+		buf.append("fastviews ("); //$NON-NLS-1$
 		for (int idx = 0; idx < fastViews.length; idx++) {
 			IViewReference ref = fastViews[idx];
 			
 			if (idx > 0) {
-				buf.append(", ");
+				buf.append(", "); //$NON-NLS-1$
 			}
 			
 			buf.append(ref.getPartName());
 		}
-		buf.append("), ");
+		buf.append("), "); //$NON-NLS-1$
 	}
 	
 	getPresentation().getLayout().describeLayout(buf);

@@ -241,12 +241,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		
 		int activeState = getActive();
 		if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
-			buf.append("active ");
+			buf.append("active "); //$NON-NLS-1$
 		} else if (activeState == StackPresentation.AS_ACTIVE_NOFOCUS) {
-			buf.append("active_nofocus ");
+			buf.append("active_nofocus "); //$NON-NLS-1$
 		}
 		
-		buf.append("(");
+		buf.append("("); //$NON-NLS-1$
 		
 		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
 		
@@ -261,7 +261,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 				}
 				
 				if (next == current) {
-					buf.append("*");
+					buf.append("*"); //$NON-NLS-1$
 				}
 				
 				next.describeLayout(buf);
@@ -270,7 +270,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			}
 		}
 		
-		buf.append(")");
+		buf.append(")"); //$NON-NLS-1$
 	}
 	
     /**
