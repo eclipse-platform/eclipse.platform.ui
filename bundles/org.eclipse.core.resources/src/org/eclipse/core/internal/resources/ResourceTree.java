@@ -98,7 +98,7 @@ public void movedFile(IFile source, IFile destination) {
 
 	// Generate the marker deltas.
 	try {
-		workspace.getMarkerManager().removeMarkers(source, IResource.DEPTH_ZERO);
+		workspace.getMarkerManager().moved(source, destination, IResource.DEPTH_ZERO);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString());
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -148,7 +148,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 	
 	// Generate the marker deltas.
 	try {
-		workspace.getMarkerManager().removeMarkers(source, depth);
+		workspace.getMarkerManager().moved(source, destination, depth);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString());
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
