@@ -4,10 +4,11 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The primary interface between a workbench part and the outside world.
@@ -16,6 +17,34 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * </p>
  */
 public interface IWorkbenchPartSite {
+	
+/**
+ * Returns the decorator manager.
+ * This site's part can ask the decorator manager to apply decorations 
+ * (text and image modifications) to elements it displays.
+ * <p>
+ * The part should come up with the text and image for the element (including
+ * any of the part's own decorations) before calling the decorator manager.
+ * It should also hook a listener to be notified when decorations change.
+ * </p>
+ * <p>
+ * Note that if the element implements <code>IAdaptable</code>, decorators may use this
+ * mechanism to obtain an adapter (for example an <code>IResource</code>), and derive the
+ * decoration from the adapter rather than the element.
+ * Since the adapter may differ from the part's element, the part should be prepared 
+ * to handle notification that the decoration for the adapter has changed, in addition to 
+ * handling notification that the decoration for the element has changed.
+ * That is, it needs to be able to map back from the adapter to the element.
+ * </p>
+ * 
+ * @return the decorator manager
+ * <p>
+ * NOTE: This is experimental API, which may be changed or removed at any point in time.
+ * This API should not be called, overridden or otherwise used in production code.
+ * </p>
+ */
+public ILabelDecorator getDecoratorManager();
+
 /**
  * Returns the part registry extension id for this workbench site's part.
  * <p>
@@ -103,8 +132,8 @@ public void registerContextMenu(String menuId, MenuManager menuManager,
  *			with <code>id == part id</code>.  This can be done easily by calling
  *			<code>registerContextMenu(MenuManager, ISelectionProvider).  
  *		<li>If the target part has more than one context menu a unique id should be
- *			defined for each.  Prefix each id with the view id and publish these 
- *			id's within the javadoc for the target part.  Register each menu at 
+ *			defined for each.  Prefix each menu id with the part id and publish these
+ *			ids within the javadoc for the target part.  Register each menu at 
  *			runtime by calling <code>registerContextMenu(String, MenuManager, 
  *			ISelectionProvider)</code>.  </li>
  * </ol>

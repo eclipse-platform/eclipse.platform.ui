@@ -16,23 +16,16 @@ public class ViewSite extends PartSite
 	implements IViewSite
 {
 /**
- * ViewSite constructor comment.
+ * Creates a new ViewSite.
  */
 public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
 	super(view, page);
 	setConfigurationElement(desc.getConfigurationElement());
 }
 /**
- * Returns the view
+ * Returns the view.
  */
 public IViewPart getViewPart() {
 	return (IViewPart)getPart();
 }
-/*
- * @see IViewSite#getDecoratorManager()
- */
-public ILabelDecorator getDecoratorManager() {
-	return WorkbenchPlugin.getDefault().getDecoratorManager();
-}
-
 }

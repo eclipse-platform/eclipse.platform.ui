@@ -7,6 +7,7 @@ package org.eclipse.ui.part;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -65,6 +66,16 @@ public MultiPageEditorSite(MultiPageEditorPart multiPageEditor, IEditorPart edit
 public IEditorActionBarContributor getActionBarContributor() {
 	return null;
 }
+
+/**
+ * The <code>MultiPageEditorSite</code> implementation of this 
+ * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
+ * return the decorator manager.
+ */
+public ILabelDecorator getDecoratorManager() {
+	return getMultiPageEditor().getSite().getDecoratorManager();
+}
+
 /**
  * Returns the nested editor.
  *

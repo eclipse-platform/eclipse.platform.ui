@@ -23,13 +23,4 @@ public interface IViewSite extends IWorkbenchPartSite {
  */
 public IActionBars getActionBars();
 
-/**
- * Get the decorator manager the receiver is using.
- * @return ILabelDecorator
- * <p>
- * NOTE: This is experimental API, which may be changed or removed at any point in time.
- * This API should not be called, overridden or otherwise used in production code.
- * </p>
- */
-public ILabelDecorator getDecoratorManager();
 }
