@@ -1,9 +1,15 @@
 package org.eclipse.ui.views.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import java.text.Collator;
 import java.util.*;
 
@@ -92,10 +98,17 @@ public void addPropertySheetEntryListener(IPropertySheetEntryListener listener) 
  * Method declared on IPropertySheetEntry.
  */
 public void applyEditorValue() {
-	// Check if editor has a valid value
-	if (editor == null || !editor.isValueValid()) 
+	if (editor == null) 
 		return;
-
+		
+	// Check if editor has a valid value
+	if (!editor.isValueValid()) {
+		setErrorText(editor.getErrorMessage());
+		return;
+	} else {
+		setErrorText(null);
+	}
+		
 	// See if the value changed and if so update
 	Object newValue = editor.getValue();
 	boolean changed = false;
