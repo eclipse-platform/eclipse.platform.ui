@@ -227,9 +227,9 @@ void createAttributesArea(Composite parent) {
 
 	String[] filters = {TaskListMessages.getString("TaskList.contains"), TaskListMessages.getString("TaskList.doesNotContain")}; //$NON-NLS-2$ //$NON-NLS-1$
 	descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.getString("TaskList.whereDescription"), filters, "", 200);//$NON-NLS-2$ //$NON-NLS-1$
-	severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.severity"), severityType); //$NON-NLS-1$
-	priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.priority"), priorityType); //$NON-NLS-1$
-	completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.status"), completionType); //$NON-NLS-1$
+	severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.severity.label"), severityType); //$NON-NLS-1$
+	priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.priority.label"), priorityType); //$NON-NLS-1$
+	completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.status.label"), completionType); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -472,24 +472,24 @@ int getTypeIndex(String markerType) {
 void initTypes() {
 	severityType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(IMarker.SEVERITY_ERROR, TaskListMessages.getString("TaskList.error"), MarkerUtil.getImage("error")),//$NON-NLS-2$ //$NON-NLS-1$
-			new EnumValue(IMarker.SEVERITY_WARNING, TaskListMessages.getString("TaskList.warning"), MarkerUtil.getImage("warn")),//$NON-NLS-2$ //$NON-NLS-1$
-			new EnumValue(IMarker.SEVERITY_INFO, TaskListMessages.getString("TaskList.info"), MarkerUtil.getImage("info"))//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.SEVERITY_ERROR, TaskListMessages.getString("TaskList.severity.error"), MarkerUtil.getImage("error")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.SEVERITY_WARNING, TaskListMessages.getString("TaskList.severity.warning"), MarkerUtil.getImage("warn")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.SEVERITY_INFO, TaskListMessages.getString("TaskList.severity.info"), MarkerUtil.getImage("info"))//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	);
 	
 	priorityType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(IMarker.PRIORITY_HIGH, TaskListMessages.getString("TaskList.high"), MarkerUtil.getImage("hprio")),//$NON-NLS-2$ //$NON-NLS-1$
-			new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.getString("TaskList.normal"), null), //$NON-NLS-1$
-			new EnumValue(IMarker.PRIORITY_LOW, TaskListMessages.getString("TaskList.low"), MarkerUtil.getImage("lprio"))//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.PRIORITY_HIGH, TaskListMessages.getString("TaskList.priority.high"), MarkerUtil.getImage("hprio")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.getString("TaskList.priority.normal"), null), //$NON-NLS-1$
+			new EnumValue(IMarker.PRIORITY_LOW, TaskListMessages.getString("TaskList.priority.low"), MarkerUtil.getImage("lprio"))//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	);
 
 	completionType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(1, TaskListMessages.getString("TaskList.completed"), null), //$NON-NLS-1$
-			new EnumValue(0, TaskListMessages.getString("TaskList.notCompleted"), null) //$NON-NLS-1$
+			new EnumValue(1, TaskListMessages.getString("TaskList.status.completed"), null), //$NON-NLS-1$
+			new EnumValue(0, TaskListMessages.getString("TaskList.status.notCompleted"), null) //$NON-NLS-1$
 		}
 	);
 }
