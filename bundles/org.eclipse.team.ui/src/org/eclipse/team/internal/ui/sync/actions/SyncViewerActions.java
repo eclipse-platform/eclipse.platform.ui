@@ -22,11 +22,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.UIConstants;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.sync.AndSyncInfoFilter;
 import org.eclipse.team.ui.sync.PseudoConflictFilter;
 import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
@@ -69,9 +68,9 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	
 	class CollapseAllAction extends Action {
 		public CollapseAllAction() {
-			super("Collapse All", TeamImages.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED));
+			super("Collapse All", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED));
 			setToolTipText("Collapse all entries in the view");
-			setHoverImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL));
+			setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL));
 		}
 		public void run() {
 			getSyncView().collapseAll();
@@ -110,7 +109,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			super(actionGroup);
 			setText("Select Subscriber");
 			setToolTipText("Refresh with remote");
-			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SITE_ELEMENT));
+			setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT));
 		}		
 	}
 	
@@ -129,7 +128,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			this.filters = filters;
 			setText("Select a change filter");
 			setToolTipText("Enable all change filters");
-			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_CHANGE_FILTER));
+			setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CHANGE_FILTER));
 		}		
 	}
 	
@@ -285,8 +284,13 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
 		refreshSelectionAction.setEnabled(input != null);
-		cancelSubscription.setEnabled(input.getSubscriber().isCancellable());
+
 		cancelSubscription.updateTitle(input);
+		if(input == null) {
+			cancelSubscription.setEnabled(false);
+		} else {
+			cancelSubscription.setEnabled(input.getSubscriber().isCancellable());
+		}
 		// This is invoked before the subscriber input is initialized
 		if (input.getWorkingSet() == null) {
 			// set the input to use the last selected working set

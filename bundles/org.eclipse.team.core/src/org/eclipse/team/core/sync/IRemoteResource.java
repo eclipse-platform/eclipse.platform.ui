@@ -63,5 +63,11 @@ public interface IRemoteResource extends IAdaptable {
 	 * <code>false</code> otherwise.
 	 */
 	public boolean isContainer();
+	
+	public String getComment() throws TeamException;
+	
+	public String getContentIdentifier() throws TeamException;
+	
+	public String getCreatorDisplayName() throws TeamException;
 }
 

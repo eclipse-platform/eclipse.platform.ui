@@ -21,10 +21,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.UIConstants;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
@@ -81,32 +81,32 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 		// Create the actions
 		DirectionFilterAction incomingMode = new DirectionFilterAction(
 			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED),
 			SyncInfo.INCOMING,
 			Policy.bind("SyncView.incomingModeTitle"));
 		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
-		incomingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_DISABLED));
-		incomingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP));
+		incomingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED));
+		incomingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP));
 		actions.add(incomingMode);
 					
 		DirectionFilterAction outgoingMode = new DirectionFilterAction(
 			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED),
 			SyncInfo.OUTGOING,
 			Policy.bind("SyncView.outgoingModeTitle"));
 		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
-		outgoingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_DISABLED));
-		outgoingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE));
+		outgoingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED));
+		outgoingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE));
 		actions.add(outgoingMode);
 		
 		DirectionFilterAction conflictsMode = new DirectionFilterAction(
 			Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED),
 			SyncInfo.CONFLICTING,
 			"Synchronize - Conflict Mode");
 		conflictsMode.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction")); //$NON-NLS-1$
-		conflictsMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING_DISABLED));
-		conflictsMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING));
+		conflictsMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED));
+		conflictsMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING));
 		actions.add(conflictsMode);
 		
 		updateCheckedState(DEFAULT_FILTER);

@@ -12,12 +12,16 @@ package org.eclipse.team.internal.ui;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -27,12 +31,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -44,10 +51,22 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class TeamUIPlugin extends AbstractUIPlugin {
 
 	private static TeamUIPlugin instance;
+	
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	public static final String PT_SUBSCRIBER_MENUS = "subscriberMenus"; //$NON-NLS-1$
 	
+	//	plugin id
+	public static final String PLUGIN_ID = "org.eclipse.team.ui"; //$NON-NLS-1$
+	
+	 // extension points
+	 public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
+	 public static final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
+	 public static final String PT_DECORATORS = "decorators"; //$NON-NLS-1$	
+	
 	private static List propertyChangeListeners = new ArrayList(5);
+	
+	private static Hashtable imageDescriptors = new Hashtable(20);
+	private static List disposeOnShutdownImages= new ArrayList();
 
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -57,6 +76,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	public TeamUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		instance = this;
+		initializeImages();
 	}
 	/**
 	 * Creates an extension.  If the extension plugin has not
@@ -119,7 +139,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setDefault(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING, false);
+		store.setDefault(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING, false);
 	}
 	
 	/**
@@ -308,6 +328,13 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		disposeImages();
+	}
+
 	/**
 	 * Register for changes made to Team properties.
 	 */
@@ -329,6 +356,135 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
 			IPropertyChangeListener listener = (IPropertyChangeListener)it.next();			
 			listener.propertyChange(event);
+		}
+	}
+
+	/**
+	 * Registers the given image for being disposed when this plug-in is shutdown.
+	 *
+	 * @param image the image to register for disposal
+	 */
+	public static void disposeOnShutdown(Image image) {
+		if (image != null)
+			disposeOnShutdownImages.add(image);
+	}
+	
+	/**
+	 * Creates an image and places it in the image registry.
+	 * 
+	 * @param id  the identifier for the image
+	 * @param baseURL  the base URL for the image
+	 */
+	protected static void createImageDescriptor(String id, URL baseURL) {
+		URL url = null;
+		try {
+			url = new URL(baseURL, ISharedImages.ICON_PATH + id);
+		} catch (MalformedURLException e) {
+		}
+		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		imageDescriptors.put(id, desc);
+	}
+	/**
+	 * Returns the image descriptor for the given image ID.
+	 * Returns null if there is no such image.
+	 * 
+	 * @param id  the identifier for the image to retrieve
+	 * @return the image associated with the given ID
+	 */
+	public static ImageDescriptor getImageDescriptor(String id) {
+		return (ImageDescriptor)imageDescriptors.get(id);
+	}	
+	/**
+	 * Convenience method to get an image descriptor for an extension
+	 * 
+	 * @param extension  the extension declaring the image
+	 * @param subdirectoryAndFilename  the path to the image
+	 * @return the image
+	 */
+	public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
+		IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
+		URL path = pluginDescriptor.getInstallURL();
+		URL fullPathString = null;
+		try {
+			fullPathString = new URL(path,subdirectoryAndFilename);
+			return ImageDescriptor.createFromURL(fullPathString);
+		} catch (MalformedURLException e) {
+		}
+		return null;
+	}
+	/**
+	 * Initializes the table of images used in this plugin.
+	 */
+	private void initializeImages() {
+		URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
+
+		// View decoration overlays
+		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_VIEW, baseURL);
+		
+		// Collapse all
+		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL, baseURL);
+		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
+		
+		// Target Management Icons
+		createImageDescriptor(ISharedImages.IMG_SITE_ELEMENT, baseURL);
+		
+		// Sync View Icons
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING, baseURL);
+		createImageDescriptor(ISharedImages.IMG_REFRESH, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CHANGE_FILTER, baseURL);
+		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CONTENTS, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_REFRESH_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CONTENTS_DISABLED, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_REFRESH_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_CONTENTS_ENABLED, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_DISABLED, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
+
+		createImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE, baseURL);
+		
+		// Wizard banners
+		createImageDescriptor(ISharedImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
+		createImageDescriptor(ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
+	}
+
+	/**
+	 * Dispose of images
+	 */
+	public static void disposeImages() {
+		if (disposeOnShutdownImages != null) {
+			Iterator i= disposeOnShutdownImages.iterator();
+			while (i.hasNext()) {
+				Image img= (Image) i.next();
+				if (!img.isDisposed())
+					img.dispose();
+			}
+			imageDescriptors= null;
 		}
 	}
 }

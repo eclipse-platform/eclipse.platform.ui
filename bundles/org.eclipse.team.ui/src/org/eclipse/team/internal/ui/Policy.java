@@ -66,6 +66,20 @@ public class Policy {
 	}
 	
 	/**
+	 * Lookup the message with the given ID in this catalog and bind its
+	 * substitution locations with the given strings.
+	 * 
+	 * @param id  the id to look up
+	 * @param binding1  the first string to bind to the result
+	 * @param binding2  the second string to bind to the result
+ 	 * @param binding3  the third string to bind to the result
+	 * @return the bound string
+	 */
+	public static String bind(String id, String binding1, String binding2,String binding3) {
+		return bind(id, new String[] { binding1, binding2, binding3 });
+	}
+	
+	/**
 	 * Gets a string from the resource bundle. We don't want to crash because of a missing String.
 	 * Returns the key if not found.
 	 * 

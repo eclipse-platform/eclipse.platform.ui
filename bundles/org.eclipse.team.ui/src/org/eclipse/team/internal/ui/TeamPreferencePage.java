@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -92,7 +93,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	protected void performDefaults() {
 		super.performDefaults();
 		IPreferenceStore store = getPreferenceStore();
-		syncModeButton.setSelection(store.getDefaultBoolean(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING));
+		syncModeButton.setSelection(store.getDefaultBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING));
 	}
 	/**
 	 * OK was clicked. Store the CVS preferences.
@@ -101,7 +102,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING, syncModeButton.getSelection());
+		store.setValue(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING, syncModeButton.getSelection());
 		TeamUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
@@ -110,7 +111,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
-		syncModeButton.setSelection(store.getBoolean(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING));
+		syncModeButton.setSelection(store.getBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING));
 	}
    /**
 	* @see IWorkbenchPreferencePage#init(IWorkbench)

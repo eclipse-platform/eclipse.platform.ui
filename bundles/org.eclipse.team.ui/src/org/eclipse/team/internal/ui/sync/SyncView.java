@@ -44,8 +44,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISaveablePart;
@@ -204,30 +203,30 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 		// Create the actions
 		incomingMode = new SyncModeAction(
 			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED),
 			SYNC_INCOMING);
 		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
 		incomingMode.setChecked(false);
-		incomingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP_DISABLED));
-		incomingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP));
+		incomingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED));
+		incomingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP));
 		
 		outgoingMode = new SyncModeAction(
 			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED),
 			SYNC_OUTGOING);
 		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
 		outgoingMode.setChecked(false);
-		outgoingMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE_DISABLED));
-		outgoingMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE));
+		outgoingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED));
+		outgoingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE));
 		
 		freeMode = new SyncModeAction(
 			Policy.bind("SyncView.freeModeAction"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_ENABLED),
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_ENABLED),
 			SYNC_BOTH);
 		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip")); //$NON-NLS-1$
 		freeMode.setChecked(false);
-		freeMode.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE_DISABLED));
-		freeMode.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE));
+		freeMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_DISABLED));
+		freeMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE));
 		
 		// Set up global actions for next and previous
 		next = new NavigationAction(true);
@@ -423,7 +422,7 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 		top.layout();
 		
 		// Set the sync mode depending on user preference
-		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING)) {
+		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING)) {
 			freeMode.run();
 		} else {
 			if (input.hasIncomingChanges()) {

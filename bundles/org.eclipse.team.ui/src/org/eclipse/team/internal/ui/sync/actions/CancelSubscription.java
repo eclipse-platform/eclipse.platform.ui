@@ -18,6 +18,8 @@ class CancelSubscription extends Action {
 		setText("Cancel");
 		this.actions = actions;
 		setToolTipText("Cancel the active synchronization target");
+		// don't enable until necessary
+		setEnabled(false);
 	}
 	public void run() {
 		ActionContext context = actions.getContext();

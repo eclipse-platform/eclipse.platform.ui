@@ -30,8 +30,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.ProjectSetImportWizard;
-import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -180,7 +180,7 @@ public class TargetSiteExportWizard extends Wizard implements IExportWizard {
 	public void addPages() {
 		mainPage = new ExportTargetSiteMainPage("targetSiteMainPage", //$NON-NLS-1$
 			Policy.bind("TargetSiteExportWizard.Export_a_Target_Site"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_PROJECTSET_EXPORT_BANNER) //TODO: We need our own banner...
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_PROJECTSET_EXPORT_BANNER) //TODO: We need our own banner...
 		);
 		Site[] sites = (Site[]) selection.toList().toArray(new Site[0]);
 		mainPage.setSelectedSites(sites);

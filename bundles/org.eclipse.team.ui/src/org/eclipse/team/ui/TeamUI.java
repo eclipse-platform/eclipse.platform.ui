@@ -12,6 +12,7 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality
@@ -19,7 +20,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 public class TeamUI {
 	// property change types
 	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
-
+		
 	/**
 	 * Register for changes made to Team properties.
 	 * 

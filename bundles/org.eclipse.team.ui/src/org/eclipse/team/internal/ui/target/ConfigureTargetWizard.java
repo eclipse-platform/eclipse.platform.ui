@@ -37,9 +37,8 @@ import org.eclipse.team.internal.ui.ConfigurationWizardElement;
 import org.eclipse.team.internal.ui.ConfigureProjectWizardMainPage;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.model.AdaptableList;
 
@@ -51,7 +50,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	protected ConfigureProjectWizardMainPage mainPage;
 	protected static MappingSelectionPage mappingPage;
 	
-	private String pluginId = UIConstants.PLUGIN_ID;
+	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 	
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 	protected final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -72,7 +71,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	 * @see ConfigureProjectWizard#getExtensionPoint()
 	 */
 	protected String getExtensionPoint() {
-		return UIConstants.PT_TARGETCONFIG;
+		return TeamUIPlugin.PT_TARGETCONFIG;
 	}
 	
 	/**
@@ -114,12 +113,12 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			} catch (TeamException e) {
 				TeamUIPlugin.log(e);
 			}			
-			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), provider); //$NON-NLS-1$ //$NON-NLS-2$			
+			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE), provider); //$NON-NLS-1$ //$NON-NLS-2$			
 			addPage(siteSelectionPage);
 		}
 		
 		if(project != null) {
-			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("MappingSelectionPage.mappingTitle"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$
+			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("MappingSelectionPage.mappingTitle"), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE)); //$NON-NLS-1$
 			mappingPage.setWizard(this);	
 		}	
 		
@@ -137,7 +136,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 					}
 				}
 			} else {
-				mainPage = new ConfigureProjectWizardMainPage("target-selection-page", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards, Policy.bind("ConfigureProjectWizardMainPage.selectTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+				mainPage = new ConfigureProjectWizardMainPage("target-selection-page", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE), wizards, Policy.bind("ConfigureProjectWizardMainPage.selectTarget")); //$NON-NLS-1$ //$NON-NLS-2$
 				mainPage.setDescription(getWizardDescription());
 				mainPage.setProject(project);
 				mainPage.setWorkbench(workbench);
@@ -380,7 +379,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		String iconName = config.getAttribute(ATT_ICON);
 		if (iconName != null) {
 			IExtension extension = config.getDeclaringExtension();
-			element.setImageDescriptor(TeamImages.getImageDescriptorFromExtension(extension, iconName));
+			element.setImageDescriptor(TeamUIPlugin.getImageDescriptorFromExtension(extension, iconName));
 		}
 		// ensure that a class was specified
 		if (element.getConfigurationElement() == null) {

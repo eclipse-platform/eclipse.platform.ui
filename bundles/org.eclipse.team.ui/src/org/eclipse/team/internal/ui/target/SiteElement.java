@@ -16,8 +16,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 
 /**
  * Used to show Site instances in the UI. Sites are really just remote
@@ -47,7 +46,7 @@ public class SiteElement extends RemoteResourceElement {
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return TeamImages.getImageDescriptor(UIConstants.IMG_SITE_ELEMENT);
+		return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT);
 	}
 	
 	public String getLabel(Object o) {

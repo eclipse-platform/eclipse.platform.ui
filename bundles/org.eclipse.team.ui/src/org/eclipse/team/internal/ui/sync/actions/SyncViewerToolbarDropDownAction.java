@@ -68,7 +68,7 @@ public class SyncViewerToolbarDropDownAction extends Action implements IMenuCrea
 
 	private void fillMenu() {
 		for (int i = 0; i < actionGroup.length; i++) {
-			if(i != 0 && i < (actionGroup.length)) {
+			if(i != 0 && i < (actionGroup.length) && getMenu().getItemCount() > 0) {
 				new Separator().fill(getMenu(), -1);	
 			}
 			actionGroup[i].fillMenu(this);

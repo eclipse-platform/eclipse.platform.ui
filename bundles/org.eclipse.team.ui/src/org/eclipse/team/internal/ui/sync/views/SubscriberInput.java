@@ -12,9 +12,14 @@ package org.eclipse.team.internal.ui.sync.views;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IWorkingSet;
 
@@ -22,7 +27,7 @@ import org.eclipse.ui.IWorkingSet;
  * SubscriberInput encapsulates the UI model for synchronization changes associated
  * with a TeamSubscriber. 
  */
-public class SubscriberInput {
+public class SubscriberInput implements IPropertyChangeListener {
 
 	/*
 	 * The subscriberInput manages a sync set that contains all of the out-of-sync elements
@@ -45,7 +50,8 @@ public class SubscriberInput {
 	SubscriberInput(TeamSubscriber subscriber) {
 		this.subscriber = subscriber;
 		subscriberInput = new SyncSetInputFromSubscriberWorkingSet();
-		filteredInput = new SyncSetInputFromSyncSet(); 
+		filteredInput = new SyncSetInputFromSyncSet();
+		TeamUI.addPropertyChangeListener(this);
 	}
 	
 	/*
@@ -80,7 +86,8 @@ public class SubscriberInput {
 
 	public void dispose() {
 		subscriberInput.disconnect();
-		filteredInput.disconnect();		
+		filteredInput.disconnect();
+		TeamUI.removePropertyChangeListener(this);		
 	}
 
 	public IWorkingSet getWorkingSet() {
@@ -93,5 +100,18 @@ public class SubscriberInput {
 
 	public IResource[] roots() throws TeamException {
 		return subscriberInput.getRoots();
+	}
+
+	/* (non-Javadoc)
+	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
+			try {
+				subscriberInput.reset(new NullProgressMonitor());
+			} catch (TeamException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
 	}	
 }

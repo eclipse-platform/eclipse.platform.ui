@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.model.AdaptableList;
 
@@ -34,7 +34,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	protected IConfigurationWizard wizard;
 	
 	protected ConfigureProjectWizardMainPage mainPage;
-	private String pluginId = UIConstants.PLUGIN_ID;
+	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 	
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 	protected final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	}
 	
 	protected String getExtensionPoint() {
-		return UIConstants.PT_CONFIGURATION;
+		return TeamUIPlugin.PT_CONFIGURATION;
 	}
 	
 	protected String getWizardWindowTitle() {
@@ -90,7 +90,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
 		mainPage.setDescription(getWizardDescription());
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
@@ -214,7 +214,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		String iconName = config.getAttribute(ATT_ICON);
 		if (iconName != null) {
 			IExtension extension = config.getDeclaringExtension();
-			element.setImageDescriptor(TeamImages.getImageDescriptorFromExtension(extension, iconName));
+			element.setImageDescriptor(TeamUIPlugin.getImageDescriptorFromExtension(extension, iconName));
 		}
 		// ensure that a class was specified
 		if (element.getConfigurationElement() == null) {

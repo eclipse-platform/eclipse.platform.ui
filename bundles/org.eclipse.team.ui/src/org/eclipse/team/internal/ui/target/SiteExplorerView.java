@@ -21,7 +21,19 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -46,8 +58,7 @@ import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -376,7 +387,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		// Create actions
 		
 		// Refresh (toolbar)
-		addSiteAction = new Action(Policy.bind("SiteExplorerView.addSiteAction"), TeamImages.getImageDescriptor(UIConstants.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
+		addSiteAction = new Action(Policy.bind("SiteExplorerView.addSiteAction"), TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
 			public void run() {
 				ConfigureTargetWizard wizard = new ConfigureTargetWizard();
 				wizard.init(null, null);

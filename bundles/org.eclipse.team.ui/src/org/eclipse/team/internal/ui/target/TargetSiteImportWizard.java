@@ -33,8 +33,8 @@ import org.eclipse.team.internal.core.target.ISiteFactory;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.xml.sax.InputSource;
@@ -67,7 +67,7 @@ public class TargetSiteImportWizard extends Wizard implements IImportWizard {
 		mainPage = new ImportTargetSiteMainPage(
 			"targetSiteMainPage", //$NON-NLS-1$
 			Policy.bind("TargetSiteImportWizard.Import_Target_Site"), //$NON-NLS-1$
-			TeamImages.getImageDescriptor(UIConstants.IMG_PROJECTSET_IMPORT_BANNER)
+			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_PROJECTSET_IMPORT_BANNER)
 		); 
 		mainPage.setFileName(lastFile);
 		addPage(mainPage);

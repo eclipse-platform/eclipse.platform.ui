@@ -826,4 +826,25 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			return null;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getComment()
+	 */
+	public String getComment() throws TeamException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getContentIdentifier()
+	 */
+	public String getContentIdentifier() throws TeamException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
+	 */
+	public String getCreatorDisplayName() throws TeamException {
+		return null;
+	}
 }

@@ -15,11 +15,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.ui.UIConstants;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.actions.ActionContext;
 
 class RefreshAction extends Action {
@@ -31,9 +31,9 @@ class RefreshAction extends Action {
 		this.actions = actions;
 		setText("Refresh with Repository");
 		setToolTipText("Refresh with the repository");
-		setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_ENABLED));
-		setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_DISABLED));
-		setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH));
+		setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH_ENABLED));
+		setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH_DISABLED));
+		setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH));
 	}
 	
 	public void run() {
@@ -43,14 +43,16 @@ class RefreshAction extends Action {
 				try {
 					monitor.beginTask(null, 100);
 					ActionContext context = actions.getContext();
-					getResources(context.getSelection());
-					SubscriberInput input = (SubscriberInput)context.getInput();
-					IResource[] resources = getResources(context.getSelection());
-					if (refreshAll || resources.length == 0) {
-						// If no resources are selected, refresh all the subscriber roots
-						resources = input.roots();
+					if(context != null) {
+						getResources(context.getSelection());
+						SubscriberInput input = (SubscriberInput)context.getInput();
+						IResource[] resources = getResources(context.getSelection());
+						if (refreshAll || resources.length == 0) {
+							// If no resources are selected, refresh all the subscriber roots
+							resources = input.roots();
+						}
+						input.getSubscriber().refresh(resources, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
 					}
-					input.getSubscriber().refresh(resources, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
