@@ -624,10 +624,15 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		IStructuredSelection selection= (IStructuredSelection)getProjectViewer().getSelection();
 		if (selection.size() == 1) {
 			Object element= selection.getFirstElement(); 
+			ProjectNode projectNode= null;
 			if (element instanceof ProjectNode) {
-				return AntUtil.getFile(((ProjectNode)element).getBuildFileName());
-				
-			} 
+				projectNode= (ProjectNode)element;
+			} else if (element instanceof TargetNode) {
+				projectNode= ((TargetNode)element).getProject();
+			}
+			if (projectNode != null) {
+				return AntUtil.getFile(projectNode.getBuildFileName());
+			}
 		}
 		return null;		
 	}
