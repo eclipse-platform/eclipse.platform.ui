@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Code Plugin Test B"
+  id="codePluginB"
+  version="1.0"
+  vendor-name="OTI"
+  class="org.eclipse.core.tests.internal.runtimetests.SampleB">
+
+ <runtime>
+    <library name="codePluginB.jar">
+      <export name="org.eclipse.core.tests.internal.runtimetests.*"/>
+    </library>
+  </runtime>
+
+</plugin>

@@ -155,6 +155,9 @@
       <run class="org.eclipse.core.tests.internal.plugins.JarPluginPathTest"/>
     </test>
    
+   <test id="org.eclipse.core.tests.plugintests.LibraryLookupTests">
+      <run class="org.eclipse.core.tests.plugintests.LibraryLookupTests"/>
+    </test>
   </extension>
 
 </plugin>

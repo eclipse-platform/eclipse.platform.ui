@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Test Fragment I"
+  id="fragmenti"
+  version="1.0.0"
+  plugin-id="plugini"
+  plugin-version="1.0">
+
+</fragment>

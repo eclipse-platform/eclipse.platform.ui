@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Code Plugin Test F"
+  id="codePluginF"
+  version="1.0"
+  vendor-name="OTI"
+  class="org.eclipse.core.tests.internal.runtimetests.SampleFFR">
+
+ <runtime>
+    <library name="codePluginF.jar">
+      <export name="org.eclipse.core.tests.internal.runtimetests.*"/>
+    </library>
+  </runtime>
+
+</plugin>
