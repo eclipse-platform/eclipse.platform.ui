@@ -177,19 +177,39 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 3;
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label label = new Label(client, SWT.NULL);
+		Composite leftPanel = new Composite(client, SWT.NULL);
+		GridLayout leftLayout = new GridLayout();
+		leftLayout.numColumns = 1;
+		leftLayout.marginWidth = leftLayout.marginHeight = 0;
+		leftPanel.setLayout(leftLayout);
+		leftPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label label = new Label(leftPanel, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.TargetPage.jobsLabel")); //$NON-NLS-1$
+		createJobViewer(leftPanel);
 
-		label = new Label(client, SWT.NULL);
+		Composite centerPanel = new Composite(client, SWT.NULL);
+		GridLayout centerLayout = new GridLayout();
+		centerLayout.numColumns = 1;
+		centerLayout.marginWidth = centerLayout.marginHeight = 0;
+		centerPanel.setLayout(centerLayout);
+		centerPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		label = new Label(centerPanel, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.TargetPage.siteLabel")); //$NON-NLS-1$
+		createSiteViewer(centerPanel);
 
-		new Label(client, SWT.NULL);
+		Composite rightPanel = new Composite(client, SWT.NULL);
+		GridLayout rightLayout = new GridLayout();
+		rightLayout.numColumns = 1;
+		rightLayout.marginWidth = rightLayout.marginHeight = 0;
+		rightPanel.setLayout(rightLayout);
+		rightPanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-		createJobViewer(client);
-		createSiteViewer(client);
-
-		Composite buttonContainer = new Composite(client, SWT.NULL);
+		new Label(rightPanel, SWT.NULL);
+		Composite buttonContainer = new Composite(rightPanel, SWT.NULL);
 		GridLayout blayout = new GridLayout();
 		blayout.marginWidth = blayout.marginHeight = 0;
 		buttonContainer.setLayout(blayout);
