@@ -43,6 +43,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 
@@ -114,6 +115,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * additions, changes, and removals.
 	 */
 	private static BreakpointManagerVisitor fgVisitor;
+	
+	/**
+	 * Whether or not this breakpoint manager is enabled.
+	 */
+	private boolean fEnabled= true;
+	
+	/**
+	 * Collection of breakpoint manager listeners which are
+	 * notified when this manager's enablement changes.
+	 */
+	private ListenerList fBreakpointManagerListeners= new ListenerList(2);
 
 	/**
 	 * Constructs a new breakpoint manager.
@@ -711,6 +723,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public boolean hasBreakpoints() {
 		return !getBreakpoints0().isEmpty();
 	}
+	
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointManager#addBreakpointListener(org.eclipse.debug.core.IBreakpointsListener)
 	 */
@@ -849,6 +862,77 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fNotifierBreakpoints = null;
 			fListener = null;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return fEnabled;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		fEnabled= enabled;
+		new BreakpointManagerNotifier().notify(enabled);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#addBreakpointManagerListener(org.eclipse.debug.core.IBreakpointManagerListener)
+	 */
+	public void addBreakpointManagerListener(IBreakpointManagerListener listener) {
+		fBreakpointManagerListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#removeBreakpointManagerListener(org.eclipse.debug.core.IBreakpointManagerListener)
+	 */
+	public void removeBreakpointManagerListener(IBreakpointManagerListener listener) {
+		fBreakpointManagerListeners.remove(listener);
 	}	
+	
+	/**
+	 * Notifies breakpoint manager listeners in a safe runnable to
+	 * handle exceptions.
+	 */
+	class BreakpointManagerNotifier implements ISafeRunnable {
+		
+		private IBreakpointManagerListener fListener;
+		private boolean fEnabled;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("BreakpointManager.An_exception_occurred_during_breakpoint_change_notification._5"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			fListener.breakpointManagerEnablementChanged(fEnabled);
+		}
+
+		/**
+		 * Notifies the listeners of the adds/changes/removes
+		 * 
+		 * @param breakpoints the breakpoints that changed
+		 * @param deltas the deltas associated with the changed breakpoints
+		 * @param update the type of change
+		 */
+		public void notify(boolean enabled) {
+			fEnabled= enabled;
+			Object[] copiedListeners = fBreakpointManagerListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (IBreakpointManagerListener)copiedListeners[i];
+				Platform.run(this);
+			}
+			fListener = null;
+		}
+	}
 }
 

@@ -195,7 +195,47 @@ public interface IBreakpointManager {
 	 * @param listener the listener to remove	
 	 * @since 2.1
 	 */
-	public void removeBreakpointListener(IBreakpointsListener listener);	
+	public void removeBreakpointListener(IBreakpointsListener listener);
+	
+	/**
+	 * Adds the given listener to the collection of registered breakpoint manager
+	 * listeners. Has no effect if an identical listener is already registered.
+	 * 
+	 * @param listener the listener to add
+	 * @since 3.0
+	 */
+	public void addBreakpointManagerListener(IBreakpointManagerListener listener);
+	
+	/**
+	 * Removes the given listener from the collection of registered breakpoint manager
+	 * listeners. Has no effect if an identical listener is not already registered.
+	 * 
+	 * @param listener the listener to remove
+	 * @since 3.0
+	 */
+	public void removeBreakpointManagerListener(IBreakpointManagerListener listener);
+	
+	/**
+	 * Returns whether or not this breakpoint manager is enabled.
+	 * When a breakpoint manager is enabled, all breakpoints
+	 * should be honored. When it is disabled, breakpoints should
+	 * not be honored, regardless of each breakpoint's enabled state.
+	 * 
+	 * @return whether or not this breakpoint manager is enabled
+	 * @since 3.0
+	 */
+	public boolean isEnabled();
+	
+	/**
+	 * Sets the enabled state of this breakpoint manager. When
+	 * enabled, breakpoints should be honored. When disabled, all
+	 * breakpoints should be ignored.
+	 * 
+	 * @param enabled whether this breakpoint manager should be
+	 *  enabled
+	 * @since 3.0
+	 */
+	public void setEnabled(boolean enabled);
 	
 }
 
