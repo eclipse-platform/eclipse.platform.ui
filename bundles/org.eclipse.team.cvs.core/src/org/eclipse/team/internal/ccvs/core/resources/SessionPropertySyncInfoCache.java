@@ -249,7 +249,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			// a delta.			
 			if(di == null) {
 				byte [] diBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(FOLDER_DIRTY_STATE_KEY, container);
-				if(diBytes != null) {
+				if(diBytes != null && !CVSProviderPlugin.getPlugin().crashOnLastRun()) {
 					di = new String(diBytes);
 					if(di.equals(NOT_DIRTY_INDICATOR)) {
 						di = NOT_DIRTY_INDICATOR;

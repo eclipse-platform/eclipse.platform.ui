@@ -127,7 +127,7 @@ public class CVSProviderPlugin extends Plugin {
 	private static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
 
 	// File used to idicate if the workbench was shut down properly or not
-	private static final String CRASH_INDICATION_FILE  = ".crash"; //$NON-NLS-1$
+	private static final String CRASH_INDICATION_FILE  = ".running"; //$NON-NLS-1$
 	private boolean crash;
 
 	public synchronized CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
