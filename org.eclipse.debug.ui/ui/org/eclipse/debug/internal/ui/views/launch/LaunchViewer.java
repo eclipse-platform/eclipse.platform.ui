@@ -27,7 +27,6 @@ import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -220,7 +219,7 @@ public class LaunchViewer extends TreeViewer {
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared in AbstractTreeViewer.
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse.swt.widgets.Item, java.lang.Object)
 	 */
 	protected void doUpdateItem(Item item, Object element) {
 		// update icon and label
@@ -244,8 +243,8 @@ public class LaunchViewer extends TreeViewer {
 		}
 	}
 	
-	/**
-	 * @see StructuredViewer#refresh(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
 	 */
 	public void refresh(Object element) {
 		//@see bug 7965 - Debug view refresh flicker
@@ -314,4 +313,3 @@ public class LaunchViewer extends TreeViewer {
 	    }	    
 	}
 }
-
