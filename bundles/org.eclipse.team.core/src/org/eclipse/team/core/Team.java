@@ -229,7 +229,7 @@ public final class Team {
 		while (e.hasNext()) {
 			String extension = (String)e.next();
 			boolean isCustom = (!pluginTypes.containsKey(extension)) ||
-				!((Integer)pluginTypes.get(extension)).equals(pluginTypes.get(extension));
+				!((Integer)pluginTypes.get(extension)).equals(globalTypes.get(extension));
 			if (isCustom) {
 				buf.append(extension);
 				buf.append(PREF_TEAM_SEPARATOR);
