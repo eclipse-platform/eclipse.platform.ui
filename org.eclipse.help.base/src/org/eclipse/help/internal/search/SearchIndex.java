@@ -18,7 +18,6 @@ import java.util.zip.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
-import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
@@ -57,7 +56,7 @@ public class SearchIndex {
 		this(
 			locale,
 			analyzerDesc,
-			InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".helpIx").append(locale).toFile()
+			Platform.getConfigurationMetadataLocation().append(".helpIx").append(locale).toFile()
 			);
 	}
 	/**

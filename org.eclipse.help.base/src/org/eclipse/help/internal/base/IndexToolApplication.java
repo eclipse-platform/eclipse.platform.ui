@@ -14,8 +14,6 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
-
-import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -74,7 +72,7 @@ public class IndexToolApplication
 
 	private void preindex(String outputDir, Locale locale) throws Exception {
 		File indexPath =
-			InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".helpIx").append(locale.toString()).toFile();
+			Platform.getConfigurationMetadataLocation().append(".helpIx").append(locale.toString()).toFile();
 		// clean
 		if (indexPath.exists()) {
 			delete(indexPath);
