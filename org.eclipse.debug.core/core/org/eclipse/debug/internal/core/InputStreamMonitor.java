@@ -71,7 +71,6 @@ public class InputStreamMonitor implements IStreamMonitor {
 	 */
 	protected void close() {
 		if (fThread != null) {
-			fListeners= null;
 			Thread thread= fThread;
 			fThread= null;
 			try {
