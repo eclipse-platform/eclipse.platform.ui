@@ -221,5 +221,12 @@ public class MissingFeature implements IFeature {
 		throws CoreException {
 	}
 
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }
 
