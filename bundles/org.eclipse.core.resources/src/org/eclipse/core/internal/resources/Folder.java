@@ -59,7 +59,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 						} else {
 							// The file system is not case sensitive and there is already a file
 							// under this location.
-							String msg = Policy.bind("resources.existsDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}
@@ -70,7 +70,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 					if (!CoreFileSystemLibrary.isCaseSensitive()) {
 						String name = getLocalManager().getLocalName(localFile);
 						if (!localFile.getName().equals(name)) {
-							String msg =  Policy.bind("resources.existsDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
 					}

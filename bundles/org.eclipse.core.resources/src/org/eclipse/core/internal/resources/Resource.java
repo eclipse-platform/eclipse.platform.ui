@@ -954,15 +954,18 @@ public void touch(IProgressMonitor monitor) throws CoreException {
  */
 protected void checkDoesNotExist() throws CoreException {
 	// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
+	
+	//first check the tree for an exact case match
+	checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
 	if (CoreFileSystemLibrary.isCaseSensitive()) {
-		checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
 		return;
 	}
+	//now look for a matching case variant in the tree
 	IResource variant = findExistingResourceVariant(getFullPath());
 	if (variant == null)
 		return;
-	String message = Policy.bind("resources.mustNotExist", variant.getFullPath().toString());
-	throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, variant.getFullPath(), message, null);
+	String msg = Policy.bind("resources.existsDifferentCase", variant.getFullPath().toString());
+	throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
 }
 /**
  * Helper method for case insensitive file systems.  Returns
