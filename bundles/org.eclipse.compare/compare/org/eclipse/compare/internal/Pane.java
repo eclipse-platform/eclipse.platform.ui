@@ -28,7 +28,7 @@ public class Pane extends ViewForm {
 	private ToolBarManager fToolBarManager;
 
 	public Pane(Composite parent, int style) {
-		super(parent, SWT.BORDER);
+		super(parent, SWT.BORDER | SWT.FLAT);	// added style bits SWT.FLAT for PR 1GEV8R3
 		
 		marginWidth= 0;
 		marginHeight= 0;
