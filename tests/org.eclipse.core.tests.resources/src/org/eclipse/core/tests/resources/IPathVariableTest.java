@@ -10,19 +10,13 @@
  **********************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.events.PathVariableChangeEvent;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import org.eclipse.core.tests.resources.IPathVariableTest.PathVariableChangeVerifier.VerificationFailedException;
 
 /**
  * Tests path variables.
@@ -302,7 +296,7 @@ public void testListeners() {
 		listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_CREATED, "one", pathOne);
 		try {
 			listener.verify();
-		} catch (VerificationFailedException e) {
+		} catch (PathVariableChangeVerifier.VerificationFailedException e) {
 			fail("0.0", e);
 		}
 		
@@ -312,7 +306,7 @@ public void testListeners() {
 		listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_CHANGED, "one", pathOneEdit);
 		try {
 			listener.verify();
-		} catch (VerificationFailedException e) {
+		} catch (PathVariableChangeVerifier.VerificationFailedException e) {
 			fail("2.0", e);
 		}
 		
@@ -322,7 +316,7 @@ public void testListeners() {
 		listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_DELETED, "one", null);
 		try {
 			listener.verify();
-		} catch (VerificationFailedException e) {
+		} catch (PathVariableChangeVerifier.VerificationFailedException e) {
 			fail("3.0", e);
 		}
 		
