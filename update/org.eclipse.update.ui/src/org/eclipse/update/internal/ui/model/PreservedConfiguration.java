@@ -19,4 +19,13 @@ public class PreservedConfiguration extends UIModelObject {
 	public String toString() {
 		return config.getLabel();
 	}
+	
+	public boolean equals(Object object) {
+		if (object==null) return false;
+		if (object==this) return true;
+		if (object instanceof PreservedConfiguration) {
+			return ((PreservedConfiguration)object).getConfiguration().equals(config);
+		}
+		return false;
+	}
 }
