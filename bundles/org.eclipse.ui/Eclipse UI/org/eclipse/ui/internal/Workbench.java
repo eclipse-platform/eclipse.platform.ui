@@ -230,6 +230,28 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return newWindow;
 	}
 
+	/**
+	 * Check if the -newUpdates command line argument is present
+	 * and if so, open the udpates dialog
+	 */
+	private void checkUpdates() {
+		boolean newUpdates = false;
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) {//$NON-NLS-1$
+				newUpdates = true;
+				break;
+			}
+		}
+		
+		if (newUpdates) {		
+			Shell shell = null;
+			IWorkbenchWindow window = getActiveWorkbenchWindow();
+			if (window != null) // should never be null
+				shell = window.getShell();
+			// Temp dialog code, will need a custom dialog to directly open the update manager
+			MessageDialog.openInformation(shell, "Updates", "You have updates.\nRun the Update Manager by going to Help>Update Manager.");
+		}
+	}
 
 	/*
 	 * @see IWorkbench#clonePage(IWorkbenchPage)
@@ -529,12 +551,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		initializeSingleClickOption();
 
 		boolean avoidDeadlock = true;
-		boolean newUpdates = false;
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
-			else if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) //$NON-NLS-1$
-				newUpdates = true;
 		}
 
 		// deadlock code
@@ -557,15 +576,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			
 		openWelcomeDialog();
 		
-		if (newUpdates) {
-			Shell shell = null;
-			IWorkbenchWindow window = getActiveWorkbenchWindow();
-			if (window != null) // should never be null
-				shell = window.getShell();
-			// Temp dialog code, will need a custom dialog to directly open the update manager
-			MessageDialog.openInformation(shell, "Updates", "You have updates.\nRun the Update Manager by going to Help>Update Manager.");
-		}
-
 		isStarting = false;
 		return true;
 	}
@@ -1015,6 +1025,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			Window.setExceptionHandler(handler);
 			boolean initOK = init(commandLineArgs);
 			Platform.endSplash();
+			if (initOK) 
+				checkUpdates();
 			if (initOK) {
 				runEventLoop();
 			}
