@@ -50,6 +50,6 @@ public class OpenFileSearchPageAction implements IWorkbenchWindowActionDelegate 
 
 	public static void logErrorMessage(String message) {
 		IStatus status= new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, IStatus.ERROR, message, null);
-		SearchPlugin.getDefault().log(status);
+		SearchPlugin.log(status);
 	}
 }

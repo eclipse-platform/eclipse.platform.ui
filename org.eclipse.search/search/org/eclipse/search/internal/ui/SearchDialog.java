@@ -204,7 +204,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			};
 		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ListSelectionDialog.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
 			Display display= getShell().getDisplay();
 			close();			

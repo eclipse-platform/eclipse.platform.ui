@@ -97,7 +97,7 @@ public class SearchResultViewer extends TableViewer {
 		Assert.isNotNull(fOuterPart);
 
 		if (SearchPreferencePage.arePotentialMatchesEmphasized())
-			fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
@@ -520,7 +520,7 @@ public class SearchResultViewer extends TableViewer {
 			fPotentialMatchFgColor.dispose();
 		fPotentialMatchFgColor= null;
 		if (SearchPreferencePage.arePotentialMatchesEmphasized())
-			fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		refresh();
 	}
 

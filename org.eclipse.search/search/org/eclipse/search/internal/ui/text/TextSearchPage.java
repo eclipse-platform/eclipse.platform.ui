@@ -275,8 +275,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		
 		RowLayouter layouter= new RowLayouter(layout.numColumns);
 		gd= new GridData();
-		gd.horizontalAlignment= gd.FILL;
-		gd.verticalAlignment= gd.VERTICAL_ALIGN_BEGINNING | gd.VERTICAL_ALIGN_FILL;
+		gd.horizontalAlignment= GridData.FILL;
+		gd.verticalAlignment= GridData.VERTICAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_FILL;
 	
 		layouter.setDefaultGridData(gd, 0);
 		layouter.setDefaultGridData(gd, 1);

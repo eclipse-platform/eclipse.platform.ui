@@ -185,10 +185,10 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	static void setAutoBuilding(boolean state) {
-		IWorkspaceDescription workspaceDesc= getDefault().getWorkspace().getDescription();
+		IWorkspaceDescription workspaceDesc= getWorkspace().getDescription();
 		workspaceDesc.setAutoBuilding(state);
 		try {
-			getDefault().getWorkspace().setDescription(workspaceDesc);
+			getWorkspace().setDescription(workspaceDesc);
 		}
 		catch (CoreException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
