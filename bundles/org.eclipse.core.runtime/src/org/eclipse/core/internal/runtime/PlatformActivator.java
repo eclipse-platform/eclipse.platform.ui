@@ -95,7 +95,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
 				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache(registryStamp);
 			}
-			if (InternalPlatform.DEBUG)
+			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start));
 
 			if (InternalPlatform.DEBUG_REGISTRY) {
