@@ -224,9 +224,7 @@ public class IPartServiceTest extends UITestCase {
 	 * Includes regression test for: 
 	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
 	 */
-	public void testPartHiddenUnshared() throws Throwable {
-		// From Javadoc: "Notifies this listener that the given part is hidden."
-		
+	public void testPartHiddenWhenClosedAndUnshared() throws Throwable {
 	    IPartListener2 listener = new TestPartListener2() {
             public void partHidden(IWorkbenchPartReference ref) {
                 super.partHidden(ref);
@@ -249,9 +247,7 @@ public class IPartServiceTest extends UITestCase {
 	 * Includes regression test for: 
 	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
 	 */
-	public void testPartHiddenShared() throws Throwable {
-		// From Javadoc: "Notifies this listener that the given part is hidden."
-		
+	public void testPartHiddenWhenClosedAndShared() throws Throwable {
 	    IPartListener2 listener = new TestPartListener2() {
             public void partHidden(IWorkbenchPartReference ref) {
                 super.partHidden(ref);
@@ -265,7 +261,7 @@ public class IPartServiceTest extends UITestCase {
 		IPerspectiveDescriptor emptyPerspDesc2 = fWindow.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2);
 		fPage.setPerspective(emptyPerspDesc2);
 		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID);
-		assertEquals(view, view2);
+		assertTrue(view == view2);
 	    fPage.addPartListener(listener);
 		clearEventState();
 		fPage.hideView(view);
@@ -273,5 +269,104 @@ public class IPartServiceTest extends UITestCase {
 		assertEquals(getRef(view), eventPartRef);
 	}
 
+	/**
+	 * Tests the partHidden method by activating another view in the same folder.
+	 */
+	public void testPartHiddenWhenObscured() throws Throwable {
+	    final boolean[] eventReceived = { false };
+	    IPartListener2 listener = new TestPartListener2() {
+            public void partHidden(IWorkbenchPartReference ref) {
+                super.partHidden(ref);
+                // ensure that the notification is for the view that was obscured
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view can still be found
+                assertNotNull(fPage.findView(MockViewPart.ID));
+                eventReceived[0] = true;
+            }
+	    };
+		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID2);
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		assertEquals(view, fPage.getActivePart());
+	    fPage.addPartListener(listener);
+		clearEventState();
+		fPage.activate(view2);
+		assertTrue(eventReceived[0]);
+	}
+	
+	/**
+	 * Tests the partVisible method by showing a view when it is not
+	 * open in any other perspectives.
+	 */
+	public void testPartVisibleWhenOpenedUnshared() throws Throwable {
+	    final boolean[] eventReceived = { false };
+	    IPartListener2 listener = new TestPartListener2() {
+            public void partVisible(IWorkbenchPartReference ref) {
+                super.partVisible(ref);
+                // ensure that the notification is for the view we opened
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view can be found
+                assertNotNull(fPage.findView(MockViewPart.ID));
+                eventReceived[0] = true;
+            }
+	    };
+	    fPage.addPartListener(listener);
+		clearEventState();
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		assertEquals(view, fPage.getActivePart());
+		assertTrue(eventReceived[0]);
+	}
+	
+	/**
+	 * Tests the partVisible method by showing a view when it is already
+	 * open in another perspective.
+	 */
+	public void testPartVisibleWhenOpenedShared() throws Throwable {
+	    final boolean[] eventReceived = { false };
+	    IPartListener2 listener = new TestPartListener2() {
+            public void partVisible(IWorkbenchPartReference ref) {
+                super.partVisible(ref);
+                // ensure that the notification is for the view we opened
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view can be found
+                assertNotNull(fPage.findView(MockViewPart.ID));
+                eventReceived[0] = true;
+            }
+	    };
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		IPerspectiveDescriptor emptyPerspDesc2 = fWindow.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2);
+		fPage.setPerspective(emptyPerspDesc2);
+	    fPage.addPartListener(listener);
+		clearEventState();
+		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID);
+		assertTrue(view == view2);
+		assertEquals(view2, fPage.getActivePart());
+		assertTrue(eventReceived[0]);
+	}
+	
+	/**
+	 * Tests the partVisible method by activating a view obscured by
+	 * another view in the same folder.
+	 */
+	public void testPartVisibleWhenObscured() throws Throwable {
+	    final boolean[] eventReceived = { false };
+	    IPartListener2 listener = new TestPartListener2() {
+            public void partVisible(IWorkbenchPartReference ref) {
+                super.partVisible(ref);
+                // ensure that the notification is for the view we revealed
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view can still be found
+                assertNotNull(fPage.findView(MockViewPart.ID));
+                eventReceived[0] = true;
+            }
+	    };
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID2);
+		assertEquals(view2, fPage.getActivePart());
+	    fPage.addPartListener(listener);
+		clearEventState();
+		fPage.activate(view);
+		assertTrue(eventReceived[0]);
+	}
+	
 	
 }
