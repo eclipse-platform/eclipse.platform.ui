@@ -11,19 +11,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This interface has been replaced by IPageBookViewPage but is preserved for
- * backward compatibility.
- * <p>
  * Interface for a page in a pagebook view.
- * </p>
- * This class is not intended to be directly implemented by clients; clients
- * should instead subclass <code>Page</code>.
- * </p>
+ * This is a replacement for the IPage interface.
  *
  * @see PageBookView
  * @see Page
  */
-public interface IPage {
+public interface IPageBookViewPage {
 /**
  * Creates the SWT control for this page under the given parent 
  * control.
@@ -44,16 +38,17 @@ public void dispose();
  */
 public Control getControl();
 /**
- * Allows the page to make contributions to the given action bars.
- * The contributions will be visible when the page is visible.
+ * Initializes this page with the given page site.  
  * <p>
- * This method is automatically called shortly after 
- * <code>createControl</code> is called
+ * This method is automatically called by the workbench shortly after page 
+ * construction.  It marks the start of the pages's lifecycle. Clients must 
+ * not call this method.
  * </p>
  *
- * @param actionBars the action bars for this page
+ * @param site the page site
+ * @exception PartInitException if this page was not initialized successfully
  */
-public void setActionBars(IActionBars actionBars);
+public void init(IPageSite site) throws PartInitException;
 /**
  * Asks this page to take focus within its pagebook view.
  */

@@ -29,13 +29,14 @@ import org.eclipse.swt.widgets.Composite;
  *   <li><code>setFocus</code> - reimplement to accept focus</li>
  *   <li><code>setActionBars</code> - reimplement to make contributions</li>
  *   <li><code>makeContributions</code> - this method exists to support previous versions</li>
+ *   <li><code>setActionBars</code> - this method exists to support previous versions</li>
  *   <li><code>init</code> - extend to provide additional setup</li>
  * </ul>
  * </p>
  *
  * @see PageBookView
  */
-public abstract class Page implements IPage {
+public abstract class Page implements IPage, IPageBookViewPage {
 /**
 * The site which contains this page
 */

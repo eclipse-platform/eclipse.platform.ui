@@ -265,10 +265,15 @@ private void initPage(PageRec rec) {
 	mapPageToSite.put(rec.page, site);
 	rec.subActionBars = (SubActionBars)site.getActionBars();
 	rec.subActionBars.addPropertyChangeListener(actionBarPropListener);
-	try {
-		rec.page.init(site);
-	} catch (PartInitException e) {
-		WorkbenchPlugin.log(e.getMessage());
+	if (rec.page instanceof IPageBookViewPage) {
+		try {
+			((IPageBookViewPage)rec.page).init(site);
+		} catch (PartInitException e) {
+			WorkbenchPlugin.log(e.getMessage());
+		}
+	} else {
+		// for backward compability with IPage
+		rec.page.setActionBars(rec.subActionBars);
 	}
 }
 /**
