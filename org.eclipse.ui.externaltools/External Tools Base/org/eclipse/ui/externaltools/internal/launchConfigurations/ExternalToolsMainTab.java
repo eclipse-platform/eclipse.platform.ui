@@ -350,7 +350,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
 	public boolean canSave() {
-		return validateLocation() && validateWorkDirectory() && isDirty();
+		return validateLocation() && validateWorkDirectory();
 	}
 	
 	/**
