@@ -1,5 +1,7 @@
 package org.eclipse.core.tests.resources.regression;
 
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -17,7 +19,8 @@ public static Test suite() {
 protected void tearDown() throws Exception {
 	super.tearDown();
 	getWorkspace().getRoot().delete(true, null);
-}/**
+}
+/**
  * 1GDKIHD: ITPCORE:WINNT - API - IWorkspace.move needs to keep history
  */
 public void testMultiMove_1GDKIHD() {
@@ -194,6 +197,35 @@ public void testMultiDelete_1GDGRIZ() {
 		project.delete(true, getMonitor());
 	} catch (CoreException e) {
 		fail("20.0", e);
+	}
+}
+public void test_8974() {
+	IProject one = getWorkspace().getRoot().getProject("One");
+	IPath oneLocation = new Path(System.getProperty("user.dir")).append(one.getName() + Long.toString(System.currentTimeMillis()));
+	IProjectDescription oneDescription = getWorkspace().newProjectDescription(one.getName());
+	oneDescription.setLocation(oneLocation);
+
+	try {
+		one.create(oneDescription, getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	try {
+		IProject two = getWorkspace().getRoot().getProject("Two");
+		IPath twoLocation = new Path(System.getProperty("user.dir")).append(oneLocation.lastSegment().toLowerCase());
+		
+		IStatus result = getWorkspace().validateProjectLocation(two, twoLocation);
+		if (CoreFileSystemLibrary.isCaseSensitive()) {
+			assertTrue("1.0", result.isOK());
+		} else {
+			assertTrue("1.1", !result.isOK());
+		}
+		// cleanup
+		ensureDoesNotExistInWorkspace(one);
+	} finally {
+		// ensure that the project directory is cleaned up.
+		Workspace.clear(oneLocation.toFile());
 	}
 }
 }
