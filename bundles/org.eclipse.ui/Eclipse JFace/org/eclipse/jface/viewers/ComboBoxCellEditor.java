@@ -120,8 +120,8 @@ protected void doSetFocus() {
  * strings.
  */
 public LayoutData getLayoutData() {
-	LayoutData layoutData = new LayoutData();
-	layoutData.minimumWidth = 30;
+	LayoutData layoutData = super.getLayoutData();
+	layoutData.minimumWidth = Math.max(30, layoutData.minimumWidth);
 	return layoutData;
 }
 /**
