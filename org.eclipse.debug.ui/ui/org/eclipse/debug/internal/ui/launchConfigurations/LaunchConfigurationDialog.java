@@ -119,19 +119,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Control fEditArea;
 	
 	/**
-	 * The 'new' button to create a new configuration
+	 * The 'New/Copy button to create a new configuration
 	 */
-	private Button fNewButton;
+	private Button fNewCopyButton;
 	
 	/**
 	 * The 'delete' button to delete selected configurations
 	 */
 	private Button fDeleteButton;
-	
-	/**
-	 * The 'copy' button to create a copy of the selected config
-	 */
-	private Button fCopyButton;
 	
 	/**
 	 * The 'save' button
@@ -761,19 +756,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @return the composite used for launch configuration selection
 	 */ 
 	protected Composite createLaunchConfigurationSelectionArea(Composite parent) {
-		Composite c = new Composite(parent, SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
-		c.setLayout(layout);
+		comp.setLayout(layout);
 		
 		GridData gd;
 		
-		TreeViewer tree = new TreeViewer(c);
+		TreeViewer tree = new TreeViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		gd.heightHint = 375;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
@@ -789,17 +784,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				handleKeyPressed(e);
 			}
 		});
-		Button newButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
-		setNewButton(newButton);
-		newButton.addSelectionListener(
+		Button newButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
+		setNewCopyButton(newButton);
+		getNewCopyButton().addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
-					handleNewPressed();
+					handleNewCopyPressed();
 				}
 			}
 		);				
 		
-		Button deleteButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
+		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		setDeleteButton(deleteButton);
 		deleteButton.addSelectionListener(
 			new SelectionAdapter() { 
@@ -809,17 +804,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);			
 		
-		Button copyButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cop&y_15"), null); //$NON-NLS-1$
-		setCopyButton(copyButton);		
-		copyButton.addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					handleCopyPressed();
-				}
-			}
-		);			
-		
-		return c;
+		return comp;
 	}	
 	
 	/**
@@ -1165,8 +1150,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * 
  	 * @param button the 'new' button.
  	 */	
- 	private void setNewButton(Button button) {
- 		fNewButton = button;
+ 	private void setNewCopyButton(Button button) {
+ 		fNewCopyButton = button;
  	} 	
  	
   	/**
@@ -1174,8 +1159,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * 
  	 * @return the 'new' button
  	 */
- 	protected Button getNewButton() {
- 		return fNewButton;
+ 	protected Button getNewCopyButton() {
+ 		return fNewCopyButton;
  	}
  	
  	/**
@@ -1196,24 +1181,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		return fDeleteButton;
  	}
  	 	
- 	/**
- 	 * Sets the 'copy' button.
- 	 * 
- 	 * @param button the 'copy' button.
- 	 */	
- 	private void setCopyButton(Button button) {
- 		fCopyButton = button;
- 	} 	
- 	
- 	/**
- 	 * Returns the 'copy' button
- 	 * 
- 	 * @return the 'copy' button
- 	 */
- 	protected Button getCopyButton() {
- 		return fCopyButton;
- 	} 	
- 	
  	/**
  	 * Sets the configuration to display/edit.
  	 * Updates the tab folder to contain the appropriate pages.
@@ -1638,31 +1605,48 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 
 	/**
-	 * Notification the 'new' button has been pressed
+	 * Notification the 'New/Copy' button has been pressed.
 	 */
-	protected void handleNewPressed() {
+	protected void handleNewCopyPressed() {
 		
 		// Take care of any unsaved changes
 		if (!canReplaceCurrentConfig()) {
 			return;
 		}
 		
-		// Retrieve the config type from the current selection and construct a config from it
-		try {
-			ILaunchConfigurationType configType = null;
-			Object obj = getTreeViewerFirstSelectedElement();
-			if (obj instanceof ILaunchConfiguration) {
-				configType = ((ILaunchConfiguration)obj).getType();
-			} else {
-				configType = (ILaunchConfigurationType)obj;
-			}
-			constructNewConfig(configType);
-			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
-		} catch(CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_getting_configuration_type_for_new_launch_configuration_43"), ce); //$NON-NLS-1$ //$NON-NLS-2$
- 			clearLaunchConfiguration();
+		// If the selection is a configuration type, take the 'New' path, if the selection
+		// is a configuration, take the 'Copy' path.
+		Object selectedElement = getTreeViewerFirstSelectedElement();
+		if (selectedElement instanceof ILaunchConfigurationType) {
+			doHandleNewConfiguration((ILaunchConfigurationType)selectedElement);
+		} else if (selectedElement instanceof ILaunchConfiguration) {
+			doHandleCopyConfiguration((ILaunchConfiguration)selectedElement);
 		}		
 	}	
+	
+	/**
+	 * Create a new configuration of the specified type and select it in the tree.
+	 */
+	protected void doHandleNewConfiguration(ILaunchConfigurationType configType) {
+		constructNewConfig(configType);
+		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));		
+	}
+	
+	/**
+	 * Make a copy of the specified configuration and select it in the tree.
+	 */
+	protected void doHandleCopyConfiguration(ILaunchConfiguration copyFromConfig) {
+		String newName = generateUniqueNameFrom(copyFromConfig.getName());
+		try {
+			ILaunchConfigurationWorkingCopy newWorkingCopy = copyFromConfig.copy(newName);
+			setLaunchConfiguration(newWorkingCopy, false);
+			doSave();
+			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);			
+		}			
+		
+	}
 	
 	/** 
 	 * If a config type is selected, create a new config of that type initialized to 
@@ -1722,25 +1706,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (firstSelectedConfigType != null) {
 			IStructuredSelection newSelection = new StructuredSelection(firstSelectedConfigType);
 			getTreeViewer().setSelection(newSelection);
-		}
-	}	
-	
-	/**
-	 * Notification the 'copy' button has been pressed
-	 */
-	protected void handleCopyPressed() {
-		Object selectedElement = getTreeViewerFirstSelectedElement();
-		if (selectedElement instanceof ILaunchConfiguration) {
-			ILaunchConfiguration selectedConfig = (ILaunchConfiguration) selectedElement;
-			String newName = generateUniqueNameFrom(selectedConfig.getName());
-			try {
-				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
-				setLaunchConfiguration(newWorkingCopy, false);
-				doSave();
-				getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
-			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce);			
-			}			
 		}
 	}	
 	
@@ -2071,9 +2036,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private Map saveUIState(boolean keepCancelEnabled) {
 		Map savedState= new HashMap(10);
-		saveEnableStateAndSet(getNewButton(), savedState, "new", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getNewCopyButton(), savedState, "new", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getCopyButton(), savedState, "copy", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getSaveButton(), savedState, "save", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(IDialogConstants.CANCEL_ID), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
@@ -2110,9 +2074,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see #saveUIState
 	 */
 	private void restoreUIState(Map state) {
-		restoreEnableState(getNewButton(), state, "new");//$NON-NLS-1$
+		restoreEnableState(getNewCopyButton(), state, "new");//$NON-NLS-1$
 		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
-		restoreEnableState(getCopyButton(), state, "copy");//$NON-NLS-1$
 		restoreEnableState(getSaveButton(), state, "save");//$NON-NLS-1$
 		restoreEnableState(getButton(IDialogConstants.CANCEL_ID), state, "cancel");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
@@ -2239,8 +2202,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// new, copy, delete buttons
 		IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
 		
- 		getNewButton().setEnabled(sel.size() == 1);
-		getCopyButton().setEnabled(sel.size() == 1 && sel.getFirstElement() instanceof ILaunchConfiguration);
+ 		getNewCopyButton().setEnabled(sel.size() == 1);
 		
 		if (sel.isEmpty()) {
 			getDeleteButton().setEnabled(false); 		
@@ -2404,7 +2366,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object firstSelected = structuredSelection.getFirstElement();
 			if (firstSelected instanceof ILaunchConfigurationType) {
-				handleNewPressed();
+				handleNewCopyPressed();
 			} else if (firstSelected instanceof ILaunchConfiguration) {
 				if (canLaunch()) {
 					handleLaunchPressed();
