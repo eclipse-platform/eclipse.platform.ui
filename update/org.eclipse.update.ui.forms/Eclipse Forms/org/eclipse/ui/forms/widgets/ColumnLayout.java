@@ -51,7 +51,8 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int cheight = 0;
 		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
-			sizes[i] = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			ColumnLayoutData cd = (ColumnLayoutData)children[i].getLayoutData();
+			sizes[i] = computeControlSize(children[i]);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}
@@ -72,10 +73,16 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 			int childHeight = sizes[i].y;
 			if (colHeight + childHeight > perColHeight) {
 				ncol++;
-				colHeight = 0;
+				if (ncol==ncolumns) {
+					// overflow - start filling in
+					ncol = findShortestColumn(heights);
+					colHeight = heights[ncol];
+				}
+				else
+					colHeight = 0;
 			}
 			colHeight += childHeight;
-			if (heights[ncol] == 0)
+			if (heights[ncol] > 0)
 				heights[ncol] += verticalSpacing;
 			heights[ncol] += childHeight;
 		}
@@ -87,6 +94,24 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		size.x += leftMargin + rightMargin;
 		size.y += topMargin + bottomMargin;
 		return size;
+	}
+	
+	private Point computeControlSize(Control c) {
+		ColumnLayoutData cd = (ColumnLayoutData)c.getLayoutData();
+		int widthHint=cd!=null?cd.widthHint:SWT.DEFAULT;
+		int heightHint = cd!=null?cd.heightHint:SWT.DEFAULT;
+		return c.computeSize(widthHint, heightHint);
+	}
+	private int findShortestColumn(int [] heights) {
+		int result = 0;
+		int height = Integer.MAX_VALUE;
+		for (int i=0; i<heights.length; i++) {
+			if (height > heights[i]) {
+				height = heights[i];
+				result = i;
+			}
+		}
+		return result;
 	}
 	/*
 	 * (non-Javadoc)
@@ -101,7 +126,7 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int cheight = 0;
 		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
-			sizes[i] = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			sizes[i] = computeControlSize(children[i]);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}
@@ -111,21 +136,24 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		ncolumns = Math.min(ncolumns, maxNumColumns);
 		int realWidth = (carea.width - leftMargin - rightMargin + horizontalSpacing)
 				/ ncolumns - horizontalSpacing;
-		System.out.println("ncolumns="+ncolumns);
-		System.out.println("cwidth="+cwidth);
-		System.out.println("childWidth="+realWidth);
+		int childrenPerColumn = children.length/ncolumns;
+		if (children.length % ncolumns != 0)
+			childrenPerColumn++;
 		int colWidth = 0;
 		int colHeight = 0;
 		int ncol = 0;
 		int x = leftMargin, y = topMargin;
+		int ccolCount=0;
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			Point csize = sizes[i];
-			if (y + csize.y + bottomMargin > carea.height) {
+			ccolCount++;
+			if (y + csize.y + bottomMargin > carea.height || ccolCount>childrenPerColumn) {
 				// wrap
 				x += horizontalSpacing + realWidth;
 				y = topMargin;
 				ncol++;
+				ccolCount=1;
 			}
 			int childWidth = realWidth;
 			if (ncol == ncolumns - 1) {

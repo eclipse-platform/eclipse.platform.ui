@@ -231,7 +231,8 @@ public class FormUtil {
 		if (controlOrigin.y < y) {
 			y = controlOrigin.y;
 		}
-		scomp.setOrigin(x, y);
+		if (scompOrigin.x!=x || scompOrigin.y!=y)
+			scomp.setOrigin(x, y);
 	}
 
 	static Point getControlLocation(ScrolledComposite scomp, Control control) {
