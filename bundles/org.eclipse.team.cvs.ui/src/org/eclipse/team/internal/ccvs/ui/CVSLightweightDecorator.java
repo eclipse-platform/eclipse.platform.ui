@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -81,6 +82,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		ImageDescriptor descriptor;
 		ImageData data;
 		public CachedImageDescriptor(ImageDescriptor descriptor) {
+			Assert.isNotNull(descriptor);
 			this.descriptor = descriptor;
 		}
 		public ImageData getImageData() {
