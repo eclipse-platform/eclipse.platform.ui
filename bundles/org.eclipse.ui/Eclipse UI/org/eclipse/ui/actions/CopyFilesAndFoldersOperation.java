@@ -7,34 +7,18 @@ package org.eclipse.ui.actions;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -372,26 +356,44 @@ public class CopyFilesAndFoldersOperation {
 	 * @return the new full path for the copy, or <code>null</code> if the resource
 	 *   should not be copied
 	 */
-	private IPath getNewNameFor(IPath originalName, IWorkspace workspace) {
-		int counter = 1;
-		String resourceName = originalName.lastSegment();
-		IPath leadupSegment = originalName.removeLastSegments(1);
+	private IPath getNewNameFor(IPath originalName, final IWorkspace workspace) {
+		final IResource resource = workspace.getRoot().findMember(originalName);
+		final IPath prefix = resource.getFullPath().removeLastSegments(1);
+		final String returnValue[] = {""};
 
-		while (true) {
-			String nameSegment;
+		parentShell.getDisplay().syncExec(new Runnable() {
+			public void run() {	
+				IInputValidator validator = new IInputValidator() {
+					public String isValid(String string) {
+						if (resource.getName().equals(string)) {
+							return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.nameMustBeDifferent"); //$NON-NLS-1$
+						}
+						IStatus status = workspace.validateName(string, resource.getType());
+						if (!status.isOK()) {
+							return status.getMessage();
+						}
+						if (workspace.getRoot().exists(prefix.append(string))) {
+							return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.nameExists"); //$NON-NLS-1$
+						}
+						return null;
+					}
+				};
 
-			if (counter > 1)
-				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameTwoArgs", new Object[] { new Integer(counter), resourceName }); //$NON-NLS-1$
-			else
-				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameOneArg", new Object[] { resourceName }); //$NON-NLS-1$
-
-			IPath pathToTry = leadupSegment.append(nameSegment);
-
-			if (!workspace.getRoot().exists(pathToTry))
-				return pathToTry;
-
-			counter++;
-		}
+				InputDialog dialog = new InputDialog(
+					parentShell,
+					WorkbenchMessages.getString("CopyFilesAndFoldersOperation.inputDialogTitle"),  //$NON-NLS-1$
+					WorkbenchMessages.format("CopyFilesAndFoldersOperation.inputDialogMessage", new String[]{resource.getName()}), //$NON-NLS-1$
+					resource.getName(), 
+					validator); 
+				dialog.setBlockOnOpen(true);
+				dialog.open();
+				if (dialog.getReturnCode() == Window.CANCEL) {
+					throw new OperationCanceledException();
+				}
+				returnValue[0] = dialog.getValue();
+			}
+		});
+		return prefix.append(returnValue[0]);
 	}
 
 	/**
