@@ -33,11 +33,18 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -95,6 +102,11 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * the specified config type will appear in each specified perspective.
 	 */
 	protected Map fLaunchConfigurationShortcuts;
+	
+	/**
+	 * Cache of launch configuration tab images with error overlays
+	 */
+	protected ImageRegistry fErrorImages = null;
 		
 	/**
 	 * The name of the file used to persist the launch history.
@@ -849,6 +861,29 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);			
 		}		
+	}
+	
+	/**
+	 * Returns the image used to display an error in the given tab
+	 */
+	public Image getErrorTabImage(ILaunchConfigurationTab tab) {
+		if (fErrorImages == null) {
+			fErrorImages = new ImageRegistry();
+		}
+		String key = tab.getClass().getName();
+		Image image = fErrorImages.get(key);
+		if (image == null) {
+			// create image
+			Image base = tab.getImage();
+			if (base == null) {
+				base = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT);
+			}
+			base = new Image(Display.getCurrent(), base, SWT.IMAGE_COPY);
+			LaunchConfigurationTabImageDescriptor desc = new LaunchConfigurationTabImageDescriptor(base, LaunchConfigurationTabImageDescriptor.ERROR);
+			image = desc.createImage();
+			fErrorImages.put(key, image);
+		}
+		return image;
 	}
 
 }

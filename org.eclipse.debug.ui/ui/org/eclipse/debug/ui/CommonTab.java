@@ -22,6 +22,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -698,6 +699,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	public boolean canSave() {
 		return validateLocalShared();
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return DebugUITools.getImage(IDebugUIConstants.IMG_PERSPECTIVE_DEBUG);
 	}
 
 }

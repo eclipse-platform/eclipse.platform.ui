@@ -8,6 +8,7 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
  
@@ -191,5 +192,12 @@ public interface ILaunchConfigurationTab {
 	 * @return the name of this tab
 	 */
 	public String getName();
+	
+	/**
+	 * Returns the image for this tab, or <code>null</code> if none
+	 * 
+	 * @return the image for this tab, or <code>null</code> if none
+	 */
+	public Image getImage();	
 }
 

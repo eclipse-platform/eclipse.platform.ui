@@ -56,6 +56,7 @@ public class DebugPluginImages {
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	private final static String VIEW= "cview16/"; // views //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -78,6 +79,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_DETAIL_PANE, LOCALTOOL + "toggledetailpane_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_TYPE_NAMES, LOCALTOOL + "tnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_DISCONNECT, LOCALTOOL + "disconnect_co.gif"); //$NON-NLS-1$
 			
 		// disabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$
@@ -107,13 +109,23 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED, OBJECT + "osprct_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_EXPRESSION, OBJECT + "expression_obj.gif"); //$NON-NLS-1$
 		
+		// Views
+		declareRegistryImage(IDebugUIConstants.IMG_VIEW_BREAKPOINTS, VIEW + "breakpoint_view.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_VIEW_CONSOLE, VIEW + "console_view.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_VIEW_EXPRESSIONS, VIEW + "watchlist_view.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_VIEW_LAUNCHES, VIEW + "debug_view.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_VIEW_VARIABLES, VIEW + "variable_view.gif"); //$NON-NLS-1$
+		
+		// Perspectives
+		declareRegistryImage(IDebugUIConstants.IMG_PERSPECTIVE_DEBUG, VIEW + "debug_persp.gif"); //$NON-NLS-1$
+		
 		//Wizard Banners
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif"); //$NON-NLS-1$
 			
 		// Overlays
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
 				
 		// launch configuration types
 		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();

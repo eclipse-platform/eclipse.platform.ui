@@ -264,6 +264,13 @@ public interface IDebugUIConstants {
 	public static final String IMG_LCL_CHANGE_VARIABLE_VALUE= "IMG_LCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
 	
 	/**
+	 * Disconnect action image identifier
+	 * 
+	 * @since 2.0
+	 */
+	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT"; //$NON-NLS-1$
+	
+	/**
 	 * Content assist action image identifier.
 	 */
 	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
@@ -328,6 +335,51 @@ public interface IDebugUIConstants {
 	 */
 	public static final String IMG_OBJS_VARIABLE= "IMG_OBJS_VARIABLE"; //$NON-NLS-1$
 
+	// views
+	
+	/** 
+	 * Launches view image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_VIEW_LAUNCHES= "IMG_VIEW_LAUNCHES"; //$NON-NLS-1$
+	
+	/** 
+	 * Breakpoints view image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_VIEW_BREAKPOINTS= "IMG_VIEW_BREAKPOINTS"; //$NON-NLS-1$	
+
+	/** 
+	 * Variables view image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_VIEW_VARIABLES= "IMG_VIEW_VARIABLES"; //$NON-NLS-1$
+	
+	/** 
+	 * Expressions view image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_VIEW_EXPRESSIONS= "IMG_VIEW_EXPRESSIONS"; //$NON-NLS-1$	
+
+	/** 
+	 * Console view image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_VIEW_CONSOLE= "IMG_VIEW_CONSOLE"; //$NON-NLS-1$
+	
+	// perspective
+	/** 
+	 * Debug perspective image identifier
+	 * 
+	 * @ since 2.0
+	 */
+	public static final String IMG_PERSPECTIVE_DEBUG= "IMG_PERSPECTIVE_DEBUG"; //$NON-NLS-1$			
+			
 	// wizard banners
 	/** Debug wizard banner image identifier. */
 	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG"; //$NON-NLS-1$
@@ -338,9 +390,6 @@ public interface IDebugUIConstants {
 	// overlays
 	/** Error overlay image identifier. */
 	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR";  //$NON-NLS-1$
-
-	/** Transparent overlay image identifier. */
-	public static final String IMG_OVR_TRANSPARENT = "IMG_OVR_TRANSPARENT";  //$NON-NLS-1$
 
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).

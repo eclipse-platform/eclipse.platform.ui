@@ -214,5 +214,12 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		gd.horizontalSpan = colSpan;
 		label.setLayoutData(gd);
 	}	
+	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return null;
+	}
+
 }
 

@@ -1396,6 +1396,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  				name = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.unspecified_28"); //$NON-NLS-1$
  			}
  			tab.setText(name);
+ 			tab.setImage(tabs[i].getImage());
  			tabs[i].createControl(tab.getParent());
  			Control control = tabs[i].getControl();
  			if (control != null) {
@@ -2573,7 +2574,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// for all tabs according to whether they contain errors.
 		String errorMessage = checkTabForError(activeTab);
 		boolean errorOnActiveTab = errorMessage != null;
-		setTabIcon(getActiveTabItem(), errorOnActiveTab);
+		setTabIcon(getActiveTabItem(), errorOnActiveTab, activeTab);
 		
 		ILaunchConfigurationTab[] allTabs = getTabs();
 		for (int i = 0; i < allTabs.length; i++) {
@@ -2583,7 +2584,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			String tabError = checkTabForError(allTabs[i]);				
 			TabItem tabItem = getTabFolder().getItem(i);
 			boolean errorOnTab = tabError != null;
-			setTabIcon(tabItem, errorOnTab);
+			setTabIcon(tabItem, errorOnTab, allTabs[i]);
 			if (errorOnTab && !errorOnActiveTab) {
 				errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError; //$NON-NLS-1$
 			}
@@ -2603,12 +2604,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Set the specified tab item's icon to an error icon if <code>error</code> is true,
 	 * or a transparent icon of the same size otherwise.
 	 */
-	protected void setTabIcon(TabItem tabItem, boolean error) {
+	protected void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
+		Image image = null;
 		if (error) {			
-			tabItem.setImage(DebugUITools.getImage(IDebugUIConstants.IMG_OVR_ERROR));
+			image = LaunchConfigurationManager.getDefault().getErrorTabImage(tab);
 		} else {
-			tabItem.setImage(DebugUITools.getImage(IDebugUIConstants.IMG_OVR_TRANSPARENT));								
+			image = tab.getImage();
 		}
+		tabItem.setImage(image);								
 	}
 	
 	/**
