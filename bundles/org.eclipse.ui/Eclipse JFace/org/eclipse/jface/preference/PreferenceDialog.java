@@ -7,7 +7,7 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT Dialog
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // disambiguate from SWT List
+
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -113,6 +114,11 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * The current tree item.
 	 */
 	private TreeItem currentTreeItem;
+	
+	/**
+	 * The font property change listener
+	 */
+	private IPropertyChangeListener fontListener;
 
 	/**
 	 * Layout for the page container.
@@ -331,6 +337,24 @@ private Composite createTitleArea(Composite parent) {
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" ");//$NON-NLS-1$
+	
+	fontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+				updateMessage();
+			}
+		}
+	};
+	
+	messageLabel.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent event) {
+			JFaceResources.getFontRegistry().removeListener(fontListener);
+		}
+	});
+	
+	JFaceResources.getFontRegistry().addListener(fontListener);
+	
+	
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	messageLabel.setLayoutData(gd);
 
@@ -344,6 +368,8 @@ private Composite createTitleArea(Composite parent) {
 
 	return titleArea;
 }
+
+
 /**
  * Creates a Tree/TreeItem structure that reflects the page hierarchy.
  */
@@ -726,9 +752,7 @@ public void updateMessage() {
 	// Adjust the font
 	if (pageMessage == null && pageErrorMessage == null)
 		messageLabel.setFont(JFaceResources.getBannerFont());
-	else
-		messageLabel.setFont(JFaceResources.getDialogFont());
-
+	
 	// Set the message and error message	
 	if (pageMessage == null) {
 		setMessage(currentPage.getTitle());

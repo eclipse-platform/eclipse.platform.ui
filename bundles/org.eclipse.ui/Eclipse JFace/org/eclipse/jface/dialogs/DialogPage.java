@@ -185,14 +185,7 @@ protected String getDialogFontName() {
 public String getErrorMessage() {
 	return errorMessage;
 }
-/**
- * Returns the default font to use for this dialog page.
- *
- * @return the font
- */
-protected Font getFont() {
-	return JFaceResources.getFontRegistry().get(getDialogFontName());
-}
+
 /* (non-Javadoc)
  * Method declared on IDialogPage.
  */
