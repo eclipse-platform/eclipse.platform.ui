@@ -13,7 +13,7 @@ public interface IResourcePropertyConstants {
 	/** 
 	 * The <code>IResource</code> property key for name.
 	 */
-	public static final String	P_LABEL_RES = "name";
+	public static final String	P_LABEL_RES = PropertiesMessages.getString("IResourcePropertyConstants.name");
 
 	/** 
 	 * The <code>IResource</code> property key for path.
@@ -23,7 +23,7 @@ public interface IResourcePropertyConstants {
 	/** 
 	 * The <code>IResource</code> property key for display path.
 	 */
-	public static final String  P_DISPLAYPATH_RES = "path";
+	public static final String  P_DISPLAYPATH_RES = PropertiesMessages.getString("IResourcePropertyConstants.path");
 
 	/** 
 	 * The <code>IResource</code> property key for read-only.
@@ -33,12 +33,12 @@ public interface IResourcePropertyConstants {
 	/** 
 	 * The <code>IResource</code> property key for display read-only.
 	 */
-	public static final String  P_DISPLAYEDITABLE_RES = "editable";
+	public static final String  P_DISPLAYEDITABLE_RES = PropertiesMessages.getString("IResourcePropertyConstants.editable");
 
 	/**
 	 * The <code>IResource</code> category for the base values
 	 */
-	public static final String P_FILE_SYSTEM_CATEGORY = "Info";
+	public static final String P_FILE_SYSTEM_CATEGORY = PropertiesMessages.getString("IResourcePropertyConstants.info");
 
 	/** 
 	 * The <code>IResource</code> property key for path.
@@ -48,7 +48,7 @@ public interface IResourcePropertyConstants {
 	/**
 	 * The <code>IResource</code> property key for displaying size
 	 */
-	public static final String P_DISPLAY_SIZE = "size";
+	public static final String P_DISPLAY_SIZE = PropertiesMessages.getString("IResourcePropertyConstants.size");
 
 	/** 
 	 * The <code>IResource</code> property key for path.
@@ -58,6 +58,6 @@ public interface IResourcePropertyConstants {
 	/**
 	 * The <code>IResource</code> category for last modified
 	 */
-	public static final String P_DISPLAY_LAST_MODIFIED = "last modified";
+	public static final String P_DISPLAY_LAST_MODIFIED = PropertiesMessages.getString("IResourcePropertyConstants.lastModified");
 	
 }
