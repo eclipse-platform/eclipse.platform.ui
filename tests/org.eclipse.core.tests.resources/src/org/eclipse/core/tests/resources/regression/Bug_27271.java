@@ -57,26 +57,26 @@ public class Bug_27271 extends ResourceTest {
 
 	public void testBug() {
 		//this bug is only relevant on Windows
-		if (Platform.getOS() != Platform.OS_WIN32)
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 		IPathVariableManager pvm = getWorkspace().getPathVariableManager();
 		Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 
 		assertEquals("1.0", 0, pvm.getPathVariableNames().length);
-		prefs.setValue(VARIABLE_PREFIX + "VALID_VAR", new Path("c:/temp").toString());
+		prefs.setValue(VARIABLE_PREFIX + "VALID_VAR", new Path("c:/temp").toPortableString());
 		assertEquals("1.1", 1, pvm.getPathVariableNames().length);
 		assertEquals("1.2", "VALID_VAR", pvm.getPathVariableNames()[0]);
 
 		//sets invalid value (relative path)
 		IPath relativePath = new Path("temp");
-		prefs.setValue(VARIABLE_PREFIX + "INVALID_VAR", relativePath.toString());
+		prefs.setValue(VARIABLE_PREFIX + "INVALID_VAR", relativePath.toPortableString());
 		assertEquals("2.0", 1, pvm.getPathVariableNames().length);
 		assertEquals("2.1", "VALID_VAR", pvm.getPathVariableNames()[0]);
 
 		//sets invalid value (invalid path)
 		IPath invalidPath = new Path("c:\\a\\:\\b");
-		prefs.setValue(VARIABLE_PREFIX + "ANOTHER_INVALID_VAR", invalidPath.toString());
-		assertTrue("3.0", !Path.EMPTY.isValidPath(invalidPath.toString()));
+		prefs.setValue(VARIABLE_PREFIX + "ANOTHER_INVALID_VAR", invalidPath.toPortableString());
+		assertTrue("3.0", !Path.EMPTY.isValidPath(invalidPath.toPortableString()));
 		assertEquals("3.1", 1, pvm.getPathVariableNames().length);
 		assertEquals("3.2", "VALID_VAR", pvm.getPathVariableNames()[0]);
 	}
