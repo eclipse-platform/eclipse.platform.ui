@@ -836,7 +836,7 @@ public class ProgressManager extends ProgressProvider
 				return Status.OK_STATUS;
 			}
 		};
-		
+		updateJob.setSystem(true);
 		updateJob.schedule(getLongOperationTime());
 		
 	}

@@ -245,7 +245,9 @@ public class DeferredTreeContentManager {
 				return Status.OK_STATUS;
 			}
 		};
+		updateJob.setSystem(true);
 		updateJob.schedule();
+		
 	}
 	/**
 	 * Return whether or not the element is or adapts to an
