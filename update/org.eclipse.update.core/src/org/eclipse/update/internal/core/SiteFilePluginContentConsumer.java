@@ -65,5 +65,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#close()
 	 */
 	public void close() {
+		((Site)site).addPluginEntry(pluginEntry);		
 	}
+	
+	
+	
 }

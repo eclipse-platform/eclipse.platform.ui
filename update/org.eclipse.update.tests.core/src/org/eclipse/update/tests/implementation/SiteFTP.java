@@ -86,7 +86,7 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#getArchives()
 	 */
-	public IArchiveEntry[] getArchives() {
+	public IArchiveReference[] getArchives() {
 		return null;
 	}
  
@@ -117,24 +117,19 @@ public class SiteFTP implements ISite {
 	}
 
 	/*
-	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
+	 * @see ISite#getDownloadSize(IFeature)
 	 */
-	public long getDownloadSize(IPluginEntry entry) {
+	public long getDownloadSize(IFeature feature) {
 		return 0;
 	}
 
 	/*
-	 * @see IPluginContainer#getInstallSize(IPluginEntry)
+	 * @see ISite#getInstallSize(IFeature)
 	 */
-	public long getInstallSize(IPluginEntry entry) {
+	public long getInstallSize(IFeature feature) {
 		return 0;
 	}
 
-	/*
-	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
-	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-	}
 
 	/*
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)

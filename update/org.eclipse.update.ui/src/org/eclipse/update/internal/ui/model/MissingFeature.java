@@ -165,16 +165,16 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#getDownloadSize(ISite)
+	 * @see IFeature#getDownloadSize()
 	 */
-	public long getDownloadSize(ISite site) {
+	public long getDownloadSize() {
 		return 0;
 	}
 
 	/*
 	 * @see IFeature#getInstallSize(ISite)
 	 */
-	public long getInstallSize(ISite site) {
+	public long getInstallSize() {
 		return 0;
 	}
 

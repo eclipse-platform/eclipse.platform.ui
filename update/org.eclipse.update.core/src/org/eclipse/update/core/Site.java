@@ -5,16 +5,22 @@ package org.eclipse.update.core;
  */
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.eclipse.core.internal.boot.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Writer;
-import org.eclipse.core.internal.boot.Policy;
 
 public class Site extends SiteMapModel implements ISite, IWritable {
+
+
+
+	/**
+	 * plugin entries 
+	 */
+	private List pluginEntries = new ArrayList(0);
 
 	/**
 	 * default path under the site where features will be installed
@@ -50,11 +56,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	private ISiteContentProvider siteContentProvider;
 
-	/**
-	 * plugin entries 
-	 */
-	private List pluginEntries = new ArrayList(0);
-
+	
 	/**
 	 * Constructor for Site
 	 */
@@ -136,14 +138,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return localFeatureReference;
 	}
 
-	/**
-	 * adds a feature reference
-	 * @param feature The feature reference to add
-	 */
-	private void addFeatureReference(IFeatureReference feature) {
-		addFeatureReferenceModel((FeatureReferenceModel) feature);
-	}
-
+	
 	/*
 	 * @see ISite#remove(IFeature, IProgressMonitor)
 	 */
@@ -200,39 +195,9 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 	}
 
-	private void remove(IFeature feature, IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 
-		if (pluginEntry == null)
-			return;
-
-		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
-		for (int i = 0; i < references.length; i++) {
-			try {
-				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private IFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
-		String executableFeatureType = getDefaultExecutableFeatureType();
-		IFeature result = null;
-		if (executableFeatureType != null) {
-			IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(executableFeatureType);
-			result = factory.createFeature(this);
-
-			// at least set the version identifier to be the same
-			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionIdentifier().getIdentifier());
-			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionIdentifier().getVersion().toString());
-		}
-		return result;
-	}
+	
+	
 
 	/*
 	 * @see ISite#getURL()
@@ -261,12 +226,12 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	/*
 	 * @see ISite#getArchives()
 	 */
-	public IArchiveEntry[] getArchives() {
+	public IArchiveReference[] getArchives() {
 		ArchiveReferenceModel[] result = getArchiveReferenceModels();
 		if (result.length == 0)
-			return new IArchiveEntry[0];
+			return new IArchiveReference[0];
 		else
-			return (IArchiveEntry[]) result;
+			return (IArchiveReference[]) result;
 	}
 
 	/*
@@ -327,6 +292,19 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		}
 		return result;
 	}
+
+	/**
+	 * Adds a plugin entry 
+	 * Either from parsing the file system or 
+	 * installing a feature
+	 * 
+	 * We cannot figure out the list of plugins by reading the Site.xml as
+	 * the archives tag are optionals
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {
+		pluginEntries.add(pluginEntry);
+	}
+
 
 	/*
 	 * @see ISite#getContentConsumer(IFeature)
@@ -389,9 +367,9 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		}
 		w.println(""); //$NON-NLS-1$
 
-		IArchiveEntry[] archives = getArchives();
+		IArchiveReference[] archives = getArchives();
 		for (int index = 0; index < archives.length; index++) {
-			IArchiveEntry element = (IArchiveEntry) archives[index];
+			IArchiveReference element = (IArchiveReference) archives[index];
 			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
 			w.println(gap + "<archive " + "path = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
@@ -431,27 +409,69 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
 	}
-
-	/*
-	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
+	/**
+	 * returns the download size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the download size is unknown.
+	 * 
+	 * @see ISite#getDownloadSize(IFeature)
+	 * 
 	 */
-	public long getDownloadSize(IPluginEntry entry) {
-		return 0;
+	public long getDownloadSize(IFeature feature) {
+		long result = 0;
+		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
+		IPluginEntry[] siteEntries = this.getPluginEntries();
+		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
+
+		if (entriesToInstall == null || entriesToInstall.length == 0) {
+			result = -1;
+		} else {
+			long pluginSize = 0;
+			int i = 0;
+			while (i < entriesToInstall.length && pluginSize != -1) {
+				pluginSize = ((PluginEntry)entriesToInstall[i]).getDownloadSize();
+				result = pluginSize == -1 ? -1 : result + pluginSize;
+				i++;
+			}
+		}
+		return result;
 	}
 
-	/*
-	 * @see IPluginContainer#getInstallSize(IPluginEntry)
+	/**
+	 * returns the download size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the download size is unknown.
+	 * 
+	 * @see ISite#getDownloadSize(IFeature)
+	 * 
 	 */
-	public long getInstallSize(IPluginEntry entry) {
-		return 0;
+	public long getInstallSize(IFeature feature) {
+		long result = 0;
+		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
+		IPluginEntry[] siteEntries = this.getPluginEntries();
+		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
+
+		if (entriesToInstall == null || entriesToInstall.length == 0) {
+			result = -1;
+		} else {
+			long pluginSize = 0;
+			int i = 0;
+			while (i < entriesToInstall.length && pluginSize != -1) {
+				pluginSize = ((PluginEntry)entriesToInstall[i]).getInstallSize();
+				result = pluginSize == -1 ? -1 : result + pluginSize;
+				i++;
+			}
+		}
+		return result;
 	}
 
-	/*
-	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
-	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-		pluginEntries.add(pluginEntry);
-	}
+
 
 	/*
 	 * @see IAdaptable#getAdapter(Class)
@@ -497,5 +517,54 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	public IURLEntry getDescription() {
 		return (IURLEntry)getDescriptionModel();
 	}
+
+	/**
+	 * adds a feature reference
+	 * @param feature The feature reference to add
+	 */
+	private void addFeatureReference(IFeatureReference feature) {
+		addFeatureReferenceModel((FeatureReferenceModel) feature);
+	}
+
+	/**
+	 * 
+	 */
+	private void remove(IFeature feature, IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
+
+		if (pluginEntry == null)
+			return;
+
+		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
+		for (int i = 0; i < references.length; i++) {
+			try {
+				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+			} catch (IOException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
+				throw new CoreException(status);
+			}
+		}
+	}
+
+
+	/**
+	 * 
+	 */
+	private IFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
+		String executableFeatureType = getDefaultExecutableFeatureType();
+		IFeature result = null;
+		if (executableFeatureType != null) {
+			IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(executableFeatureType);
+			result = factory.createFeature(/*URL*/null,this);
+
+			// at least set the version identifier to be the same
+			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionIdentifier().getIdentifier());
+			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionIdentifier().getVersion().toString());
+		}
+		return result;
+	}
+
+
+	
 
 }

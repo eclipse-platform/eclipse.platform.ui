@@ -37,34 +37,9 @@ public interface IPluginContainer extends IAdaptable {
 
 	int getPluginEntryCount() ;
 	
-	/**
-	 * Size of the archives in Kilo-Bytes
-	 * @return the size of the archive to be downloaded
-	 * @since 2.0 
-	 * @deprecated
-	 */
-
-	long getDownloadSize(IPluginEntry entry) ;
+		
 	
-	/**
-	 * Size of the plug-in in KiloBytes
-	 * @return the size of the plug-in when installed
-	 * @since 2.0 
-	 * @deprecated 
-	 */
-
-	long getInstallSize(IPluginEntry entry) ;
-
-	/**
-	 * Adds a pluginEntry to the list of managed pluginEntry
-	 * 
-	 * @param entry the plugin entry
-	 * @since 2.0 
-	 * @deprecated
-	 */
-	
-	void addPluginEntry(IPluginEntry pluginEntry);
-	
+		
 
 		
 	

@@ -87,7 +87,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		String key = ref.toString();
 		File localFile = UpdateManagerUtils.lookupLocalFile(key);
 		if (localFile != null)
-			return ref.newContentReference(ref.getIdentifier(), localFile);
+			return ref.createContentReference(ref.getIdentifier(), localFile);
 			
 		// download the referenced file into local temporary area
 		localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(), key, null/*name*/);
@@ -112,7 +112,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			if (os != null) try { os.close(); } catch(IOException e) {}
 			if (monitor != null) monitor.restoreState();
 		}
-		return ref.newContentReference(ref.getIdentifier(), localFile);
+		return ref.createContentReference(ref.getIdentifier(), localFile);
 	}
 		
 	/**

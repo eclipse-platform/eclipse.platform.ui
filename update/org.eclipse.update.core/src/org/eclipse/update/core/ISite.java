@@ -113,7 +113,7 @@ public interface ISite extends IPluginContainer {
 	 * @since 2.0 
 	 */
 
-	IArchiveEntry[] getArchives();
+	IArchiveReference[] getArchives();
 	
 		
 		
@@ -131,6 +131,30 @@ public interface ISite extends IPluginContainer {
 	 */
 	String getDefaultExecutableFeatureType();
 	
+	/**
+	 * returns the install size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the install size is unknown and equal to <code>-1</code>.
+	 * @since 2.0 
+	 */
+	long getInstallSize(IFeature site) ;
+
+	/**
+	 * returns the download size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the download size is unknown and equal to <code>-1</code>
+	 * 
+	 * @since 2.0 
+	 */
+	long getDownloadSize(IFeature site);
+	
+	
 	
 	/**
 	 * Saves the site in a persitent form
@@ -140,7 +164,7 @@ public interface ISite extends IPluginContainer {
 	void save() throws CoreException;
 	
 	/**
-	 *Returns the ISiteContentConsumer for this site
+	 *Returns the ISiteContentConsumer for a feature on this site
 	 * @param feature
 	 * @throws CoreException when the Site does not allow storage.
 	 * @since 2.0

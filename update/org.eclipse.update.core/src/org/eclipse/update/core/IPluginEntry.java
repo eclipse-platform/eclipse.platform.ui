@@ -18,16 +18,7 @@ public interface IPluginEntry {
 
 	boolean isFragment();
 	
-	/**
-	 * Returns the container fo this plugin
-	 * 
-	 * @see IPluginContainer
-	 * @return the plugin container
-	 * @since 2.0 
-	 */
-
-	IPluginContainer getContainer();
-	
+		
 	/** 
 	 * Returns the identifier of this plugin entry
 	 * 
@@ -89,19 +80,6 @@ public interface IPluginEntry {
 	String getNL();
 	
 	
-	/**
-	 * Returns the downloadSize
-	 * optional hint supplied by the feature
-	 *  packager, indicating the download size
-	 *  in KBytes of the referenced data archive.
-	 *  If not specified, the download size is not known 
-	 * @return Returns a int
-	 * @since 2.0 
-	 */
-
-	long getDownloadSize();
-
-
 	/**
 	 * Returns the installSize
 	 * optional hint supplied by the feature

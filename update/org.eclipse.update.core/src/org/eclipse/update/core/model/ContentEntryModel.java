@@ -37,10 +37,15 @@ public abstract class ContentEntryModel extends ModelObject {
 	/**
 	 * Returns the total download size for the entry.
 	 *
+	 * optional hint supplied by the feature
+	 *  packager, indicating the download size
+	 *  in KBytes of the referenced data archive.
+	 *  If not specified, the download size is not known 
+	 * @since 2.0 
 	 * @return the entry download size in KBytes
 	 * 		or <code>-1</code> if not known
-	 * @since 2.0
 	 */
+
 	public long getDownloadSize() {
 		return downloadSize;
 	}
@@ -52,6 +57,8 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * 		or <code>-1</code> if not known
 	 * @since 2.0
 	 */
+	
+	
 	public long getInstallSize() {
 		return installSize;
 	}

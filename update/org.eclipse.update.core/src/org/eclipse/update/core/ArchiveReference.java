@@ -3,20 +3,16 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.net.URL;
-import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.model.ArchiveReferenceModel;
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.*;
 
 /**
- * Default implementation of IURLEntry
+ * Default implementation of IArchiveReference
  */
 
-public class ArchiveReference extends ArchiveReferenceModel implements IArchiveEntry{
+public class ArchiveReference extends ArchiveReferenceModel implements IArchiveReference{
 
 	/**
-	 * Constructor for URLEntry
+	 * Constructor for ArchiveReference
 	 */
 	public ArchiveReference() {
 		super();
@@ -26,7 +22,7 @@ public class ArchiveReference extends ArchiveReferenceModel implements IArchiveE
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String result = "IURLEntry: "; //$NON-NLS-1$
+		String result = "IArchiveReference: "; //$NON-NLS-1$
 		 result = result +( (getPath()==null)?getURL().toExternalForm():getPath() + " : "+getURL().toExternalForm()); //$NON-NLS-1$
 		return result;
 	}

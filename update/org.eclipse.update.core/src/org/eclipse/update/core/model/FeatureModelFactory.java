@@ -63,8 +63,8 @@ public class FeatureModelFactory {
 	 *
 	 * @return a new feature install handler model
 	 */
-	public InstallHandlerModel createInstallHandlerModel() {
-		return new InstallHandlerModel();
+	public InstallHandlerEntryModel createInstallHandlerEntryModel() {
+		return new InstallHandlerEntryModel();
 	}
 
 	/**

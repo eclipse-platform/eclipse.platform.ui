@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  
 public interface IFeature extends IPluginContainer {
 
+
 	/**
 	 * Returns the Identifier of this DefaultFeature.
 	 * The Identifier is not intended to be the key of the DefaultFeature.
@@ -291,38 +292,24 @@ public interface IFeature extends IPluginContainer {
 	 */
 	INonPluginEntry[] getNonPluginEntries();
 	
+		
 	/**
-	 * Adds a dataEntry to the list of managed dataEntry
-	 * 
-	 * @param entry the data entry
+	 * Download Size of the feature in Kilo-Bytes
+	 * @return the size of the archive to be downloaded
 	 * @since 2.0 
-	 */
-	void addNonPluginEntry(INonPluginEntry dataEntry);
-	
-	/**
-	 * returns the download size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
-	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the download size is unknown and equal to <code>-1</code>
-	 * 
-	 * @since 2.0 
+	 * @deprecated
 	 */
 
-	long getDownloadSize(ISite site);
+	long getDownloadSize() ;
 	
 	/**
-	 * returns the install size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
-	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the install size is unknown and equal to <code>-1</code>.
+	 * Install Size of the feature in KiloBytes
+	 * @return the size of the plug-in when installed
 	 * @since 2.0 
+	 * @deprecated 
 	 */
 
-	long getInstallSize(ISite site) ;
+	long getInstallSize() ;
 	
 	/**
 	 * optional identifier of the Eclipse application that is to be used during
@@ -348,12 +335,7 @@ public interface IFeature extends IPluginContainer {
 	 */
 	IFeatureContentProvider getFeatureContentProvider() throws CoreException;	
 	
-	/**
-	 * Sets the IFeatureContentConsumer for this feature
-	 * @since 2.0
-	 */
-	void setContentConsumer(IFeatureContentConsumer contentConsumer);
-
+	
 	/**
 	 *Returns the IFeatureContentConsumer for this feature
 	 * @throws CoreException when the DefaultFeature does not allow storage.

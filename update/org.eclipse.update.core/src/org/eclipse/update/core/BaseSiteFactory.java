@@ -5,17 +5,11 @@ package org.eclipse.update.core;
  */
 import java.io.IOException;
 import java.net.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.internal.core.URLEncoder;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Default implementation of a Site Factory

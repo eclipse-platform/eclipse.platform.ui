@@ -71,7 +71,7 @@ public class JarContentReference extends ContentReference {
 	/*
 	 * @see ContentReference#newContentReference(String, File)
 	 */
-	public ContentReference newContentReference(String id, File file) {
+	public ContentReference createContentReference(String id, File file) {
 		return new JarContentReference(id, file);
 	}
 

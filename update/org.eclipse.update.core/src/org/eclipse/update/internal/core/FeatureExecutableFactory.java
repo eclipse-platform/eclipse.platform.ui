@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureModelFactory;
 
 public class FeatureExecutableFactory extends BaseFeatureFactory {
@@ -16,10 +17,13 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	/*
 	 * @see IFeatureFactory#createFeature(URL,ISite)
 	 */
+
 	public IFeature createFeature(URL url, ISite site) throws CoreException {
 
-		Feature feature = null;
+		TargetFeature feature = null;
 		InputStream featureStream = null;
+		
+		if (url==null) return createFeature(site);
 		
 		// the URL should point to a directory, we will add the feature.xml
 		url = validate(url);
@@ -32,8 +36,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream =resolvedURL.openStream();
 			
-			FeatureModelFactory factory = (FeatureModelFactory) this;
-			feature = (Feature)factory.parseFeature(featureStream);
+			feature = (TargetFeature)this.parseFeature(featureStream);
 			feature.setSite(site);
 			
 			feature.setFeatureContentProvider(contentProvider);
@@ -62,24 +65,28 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	}
 
 	/*
-	 * @see IFeatureFactory#createFeature(ISite)
+	 * @see FeatureModelFactory#createFeatureModel()
 	 */
-	public IFeature createFeature(ISite site) throws CoreException {
-		Feature feature = null;
+	public FeatureModel createFeatureModel() {
+		return new TargetFeature();
+	}
+
+	private IFeature createFeature(ISite site) throws CoreException {
+		TargetFeature feature = null;
 		
 		IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(null);
 		IFeatureContentConsumer contentConsumer = new FeatureExecutableContentConsumer();
 			
-		feature = (Feature)createFeatureModel();
-		feature.setSite(site);
+		feature = (TargetFeature)createFeatureModel();
+		feature.setSite(site); 
 			
 		feature.setFeatureContentProvider(contentProvider);
 		feature.setContentConsumer(contentConsumer);
 		
 		// do not mark read only yet...	
-
 		return feature;	
 	}
+
 
 	/**
 	 * validates a URL as a directory URL

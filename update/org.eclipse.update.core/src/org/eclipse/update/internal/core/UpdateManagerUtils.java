@@ -8,7 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
 
 public class UpdateManagerUtils {
@@ -342,6 +344,38 @@ public class UpdateManagerUtils {
 		path.deleteOnExit();			
 	}
 
-	
+	/**
+	 * Returns the plugin entries that are in source array and
+	 * missing from target array
+	 */
+	public static IPluginEntry[] intersection(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
+
+		// No pluginEntry to Install, return Nothing to instal
+		if (sourceArray == null || sourceArray.length == 0) {
+			return new IPluginEntry[0];
+		}
+
+		// No pluginEntry installed, Install them all
+		if (targetArray == null || targetArray.length == 0) {
+			return sourceArray;
+		}
+
+		// if a IPluginEntry from sourceArray is NOT in
+		// targetArray, add it to the list
+		List list1 = Arrays.asList(targetArray);
+		List result = new ArrayList(0);
+		for (int i = 0; i < sourceArray.length; i++) {
+			if (!list1.contains(sourceArray[i]))
+				result.add(sourceArray[i]);
+		}
+
+		IPluginEntry[] resultEntry = new IPluginEntry[result.size()];
+		if (result.size() > 0)
+			result.toArray(resultEntry);
+
+		return resultEntry;
+	}
+
+
 
 }

@@ -291,14 +291,13 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-		// tranform each Plugin and Fragment in an Archive for the Site
-		// and a pluginEntry
+		// tranform each Plugin and Fragment in an ArchiveEntry
+		// and a PluginEntry for the Site
 		String location = null;
 		try {
 			if (plugin != null) {
 				URLEntry info;
 				PluginEntry entry = new PluginEntry();
-				entry.setContainer(site);
 				entry.setPluginIdentifier(plugin.getIdentifier());
 				entry.setPluginVersion(plugin.getVersion().toString());
 				((Site) site).addPluginEntry(entry);

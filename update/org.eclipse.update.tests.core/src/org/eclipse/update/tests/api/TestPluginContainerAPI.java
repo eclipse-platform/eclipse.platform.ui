@@ -52,7 +52,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 		PluginEntry pluginEntry = new PluginEntry();
 		pluginEntry.setIdentifier(new VersionedIdentifier("id", "ver"));
 		Feature _feature = getFeature();
-		_feature.addPluginEntry(pluginEntry);
+		((DefaultFeature)_feature).addPluginEntry(pluginEntry);
 		assertEquals(_feature.getPluginEntryCount(), 1);
 		assertEquals(_feature.getPluginEntries()[0], pluginEntry);
 

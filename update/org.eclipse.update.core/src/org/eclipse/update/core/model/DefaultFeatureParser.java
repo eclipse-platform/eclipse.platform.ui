@@ -490,7 +490,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * process URL info with element text
 	 */
 	private void processHandler(Attributes attributes) {
-		InstallHandlerModel handler = factory.createInstallHandlerModel();
+		InstallHandlerEntryModel handler = factory.createInstallHandlerEntryModel();
 
 		String handlerURL = attributes.getValue("url");
 		handler.setURLString(handlerURL);
@@ -729,8 +729,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_HANDLER :
 				stateStack.pop();
-				if (objectStack.peek() instanceof InstallHandlerModel) {
-					InstallHandlerModel handlerModel = (InstallHandlerModel) objectStack.pop();
+				if (objectStack.peek() instanceof InstallHandlerEntryModel) {
+					InstallHandlerEntryModel handlerModel = (InstallHandlerEntryModel) objectStack.pop();
 					featureModel = (FeatureModel) objectStack.peek();
 					if (featureModel.getInstallHandlerModel() != null)
 						internalError("Install Handler already set for the Feature");

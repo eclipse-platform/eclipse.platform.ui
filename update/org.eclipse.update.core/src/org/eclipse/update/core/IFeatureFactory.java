@@ -1,7 +1,7 @@
 package org.eclipse.update.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -26,6 +26,7 @@ public interface IFeatureFactory {
 	
 	/**
 	 * Returns a feature based on the URL and the site in which the DefaultFeature is.
+	 * URL can be null.
 	 * @return a feature
 	 * @since 2.0 
 	 */
@@ -36,7 +37,6 @@ public interface IFeatureFactory {
 	//     available
 	IFeature createFeature(URL url,ISite site) throws CoreException;
 	
-	IFeature createFeature(ISite site) throws CoreException;
 		
 }
 

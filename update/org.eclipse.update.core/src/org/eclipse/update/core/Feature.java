@@ -4,32 +4,19 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.core.internal.boot.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
  */
 public class Feature extends FeatureModel implements IFeature {
 
-	/**
-	 * 
-	 */
-	public static CoreException CANCEL_EXCEPTION;
 
 	/**
 	 * 
@@ -40,11 +27,11 @@ public class Feature extends FeatureModel implements IFeature {
 	 * 
 	 */
 	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
-	
+
 	/**
 	 * 
 	 */
-	public static final String EMPTY_STRING = "";	 //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Site in which teh feature resides
@@ -55,24 +42,6 @@ public class Feature extends FeatureModel implements IFeature {
 	 * The content provider of the DefaultFeature
 	 */
 	private IFeatureContentProvider featureContentProvider;
-
-	/**
-	 * The content consumer of the DefaultFeature
-	 */
-	private IFeatureContentConsumer contentConsumer;
-
-	/**
-	 * Static block to initialize the possible CANCEL ERROR
-	 * thrown when the USER cancels teh operation
-	 */
-	static {
-		//	in case we throw a cancel exception
-		Plugin um = UpdateManagerPlugin.getPlugin();
-		String pluginId = um==null ? Policy.bind("Feature.UndefinedPluginID") : um.getDescriptor().getUniqueIdentifier(); //$NON-NLS-1$
-		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, Policy.bind("Feature.InstallHasBeenCancelled"), null); //$NON-NLS-1$
-		//		IStatus cancelStatus = new Status(IStatus.ERROR, "org.eclipse.update", IStatus.OK, "Install has been Cancelled", null);
-		CANCEL_EXCEPTION = new CoreException(cancelStatus);
-	}
 
 	/**
 	 * Constructor
@@ -172,27 +141,15 @@ public class Feature extends FeatureModel implements IFeature {
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING; 
+			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING;
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.SiteAlreadySet", featureURLString), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		this.site = site;
 	}
 
-	/**
-	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
-	 */
-	public long getDownloadSize(IPluginEntry entry) {
-		return entry.getDownloadSize();
-	}
-
-	/**
-	 * @see IPluginContainer#getInstallSize(IPluginEntry)
-	 */
-	public long getInstallSize(IPluginEntry entry) {
-		return entry.getInstallSize();
-	}
-	/**
+	
+		/**
 	 * returns the download size
 	 * of the feature to be installed on the site.
 	 * If the site is <code>null</code> returns the maximum size
@@ -200,16 +157,12 @@ public class Feature extends FeatureModel implements IFeature {
 	 * If one plug-in entry has an unknown size.
 	 * then the download size is unknown.
 	 * 
-	 * @see IFeature#getDownloadSize(ISite)
+	 * @see IFeature#getDownloadSize()
 	 * 
 	 */
-	public long getDownloadSize(ISite site) {
+	public long getDownloadSize() {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-		if (site != null) {
-			IPluginEntry[] siteEntries = site.getPluginEntries();
-			entriesToInstall = intersection(entriesToInstall, siteEntries);
-		}
 
 		if (entriesToInstall == null || entriesToInstall.length == 0) {
 			result = -1;
@@ -217,7 +170,7 @@ public class Feature extends FeatureModel implements IFeature {
 			long pluginSize = 0;
 			int i = 0;
 			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = getDownloadSize(entriesToInstall[i]);
+				pluginSize = ((PluginEntry)entriesToInstall[i]).getDownloadSize();
 				result = pluginSize == -1 ? -1 : result + pluginSize;
 				i++;
 			}
@@ -232,22 +185,19 @@ public class Feature extends FeatureModel implements IFeature {
 	 * If one plug-in entry has an unknown size.
 	 * then the install size is unknown.
 	 * 
-	 * @see IFeature#getInstallSize(ISite)
+	 * @see IFeature#getInstallSize()
 	 */
-	public long getInstallSize(ISite site) {
+	public long getInstallSize() {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-		if (site != null) {
-			IPluginEntry[] siteEntries = site.getPluginEntries();
-			entriesToInstall = intersection(entriesToInstall, siteEntries);
-		}
+
 		if (entriesToInstall == null || entriesToInstall.length == 0) {
 			result = -1;
 		} else {
 			long pluginSize = 0;
 			int i = 0;
 			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = getInstallSize(entriesToInstall[i]);
+				pluginSize = ((PluginEntry)entriesToInstall[i]).getInstallSize();
 				result = pluginSize == -1 ? -1 : result + pluginSize;
 				i++;
 			}
@@ -291,15 +241,15 @@ public class Feature extends FeatureModel implements IFeature {
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
 			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? site.getPluginEntries() : new IPluginEntry[0];
-			IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
+			IPluginEntry[] pluginsToInstall = UpdateManagerUtils.intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
 
 			// determine number of monitor tasks
 				int taskCount = 1 // one task for all feature files (already downloaded)
-		+pluginsToInstall.length // one task for each plugin to install
-	+getNonPluginEntries().length; // one task for each non-plugin file to install
+					+pluginsToInstall.length // one task for each plugin to install
+					+getNonPluginEntries().length; // one task for each non-plugin file to install
 
 			if (monitor != null)
-				monitor.beginTask(EMPTY_STRING, taskCount); 
+				monitor.beginTask(EMPTY_STRING, taskCount);
 
 			//finds the contentReferences for this IFeature
 			if (monitor != null)
@@ -324,7 +274,6 @@ public class Feature extends FeatureModel implements IFeature {
 						monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
-				targetFeature.getSite().addPluginEntry(pluginsToInstall[i]);
 				pluginConsumer.close();
 				if (monitor != null)
 					monitor.worked(1);
@@ -348,12 +297,12 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 		} catch (CoreException e) {
 			// an error occured, abort 
-			consumer.abort();
+			if (consumer!=null) consumer.abort();
 			throw e;
 		} finally {
-			if (monitor != null)
-				monitor.done();
+			if (monitor != null) monitor.done();
 		}
+		
 		return consumer.close();
 
 	}
@@ -386,23 +335,6 @@ public class Feature extends FeatureModel implements IFeature {
 			return (IPluginEntry[]) result;
 	}
 
-	/*
-	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
-	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-		if (pluginEntry != null) {
-			addPluginEntryModel((PluginEntryModel) pluginEntry);
-		}
-	}
-
-	/*
-	 * @see IFeature#addNonPluginEntry(INonPluginEntry)
-	 */
-	public void addNonPluginEntry(INonPluginEntry dataEntry) {
-		if (dataEntry != null) {
-			addNonPluginEntryModel((NonPluginEntryModel) dataEntry);
-		}
-	}
 
 	/*
 	 * @see IFeature#getDataEntries()
@@ -449,14 +381,6 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#setContentConsumer(IFeatureContentConsumer)
-	 */
-	public void setContentConsumer(IFeatureContentConsumer contentConsumer) {
-		this.contentConsumer = contentConsumer;
-		contentConsumer.setFeature(this);
-	}
-
-	/*
 	 * @see IFeature#getFeatureContentProvider(IFeatureContentConsumer)
 	 */
 	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
@@ -472,44 +396,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see IFeature#getContentConsumer()
 	 */
 	public IFeatureContentConsumer getContentConsumer() throws CoreException {
-		if (this.contentConsumer == null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$
-			throw new CoreException(status);
-		}
-		return contentConsumer;
+		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Returns the plugin entries that are in source array and
-	 * missing from target array
-	 */
-	private IPluginEntry[] intersection(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
-
-		// No pluginEntry to Install, return Nothing to instal
-		if (sourceArray == null || sourceArray.length == 0) {
-			return new IPluginEntry[0];
-		}
-
-		// No pluginEntry installed, Install them all
-		if (targetArray == null || targetArray.length == 0) {
-			return sourceArray;
-		}
-
-		// if a IPluginEntry from sourceArray is NOT in
-		// targetArray, add it to the list
-		List list1 = Arrays.asList(targetArray);
-		List result = new ArrayList(0);
-		for (int i = 0; i < sourceArray.length; i++) {
-			if (!list1.contains(sourceArray[i]))
-				result.add(sourceArray[i]);
-		}
-
-		IPluginEntry[] resultEntry = new IPluginEntry[result.size()];
-		if (result.size() > 0)
-			result.toArray(resultEntry);
-
-		return resultEntry;
-	}
 
 }

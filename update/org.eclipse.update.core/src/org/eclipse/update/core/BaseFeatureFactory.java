@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.InstallHandlerEntry;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -24,13 +25,6 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 	 * @see IFeatureFactory#createFeature(URL,ISite)
 	 */
 	public abstract IFeature createFeature(URL url, ISite site) throws CoreException;
-
-	/*
-	 * @see IFeatureFactory#createFeature(ISite)
-	 */
-	public IFeature createFeature(ISite site) throws CoreException {
-		return createFeature(null/*URL*/, site);
-	}
 
 	/**
 	 * return the appropriate resource bundle for this feature
@@ -62,10 +56,10 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 	}
 
 	/*
-	 * @see FeatureModelFactory#createInstallHandlerModel()
+	 * @see FeatureModelFactory#createInstallHandlerEntryModel()
 	 */
-	public InstallHandlerModel createInstallHandlerModel() {
-		return null;
+	public InstallHandlerEntryModel createInstallHandlerEntryModel() {
+		return new InstallHandlerEntry();
 	}
 
 	/*

@@ -5,17 +5,12 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */ 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.eclipse.update.internal.core.URLEncoder;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.URLEncoder;
 
 /**
  * Default content reference. 
@@ -24,17 +19,19 @@ import org.eclipse.update.internal.core.Policy;
  * @since 2.0
  */
 public class ContentReference {
+
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String FILE_URL_PROTOCOL = "file";	 //$NON-NLS-1$
 	
 	private String id;
 	private URL url;	// reference is either URL reference *OR*
 	private File file;	//    local file reference
-		
 	private URLConnection connection;
 	
+	/**
+	 * 
+	 */
 	public static final long UNKNOWN_SIZE = -1;
-	
-	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	public static final String FILE_URL_PROTOCOL = "file";	 //$NON-NLS-1$
 
 	/**
 	 * Constructor for ContentRef.
@@ -64,7 +61,7 @@ public class ContentReference {
 	 * 
 	 * @since 2.0
 	 */
-	public ContentReference newContentReference(String id, File file) {
+	public ContentReference createContentReference(String id, File file) {
 		return new ContentReference(id, file);
 	}
 	

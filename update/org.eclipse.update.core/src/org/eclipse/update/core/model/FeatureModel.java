@@ -35,7 +35,7 @@ public class FeatureModel extends ModelObject {
 	private String ws;
 	private String nl;
 	private String application;
-	private InstallHandlerModel installHandler;
+	private InstallHandlerEntryModel installHandler;
 	private URLEntryModel description;
 	private URLEntryModel copyright;
 	private URLEntryModel license;
@@ -161,7 +161,7 @@ public class FeatureModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */	
-	public InstallHandlerModel getInstallHandlerModel() {
+	public InstallHandlerEntryModel getInstallHandlerModel() {
 		return installHandler;
 	}
 
@@ -321,7 +321,7 @@ public class FeatureModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */	
-	public void setInstallHandlerModel(InstallHandlerModel installHandler) {
+	public void setInstallHandlerModel(InstallHandlerEntryModel installHandler) {
 		assertIsWriteable();
 		this.installHandler = installHandler;
 	}

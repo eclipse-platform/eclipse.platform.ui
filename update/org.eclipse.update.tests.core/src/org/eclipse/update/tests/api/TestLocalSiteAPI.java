@@ -26,7 +26,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	public void testFileParsing() throws Exception {
 
 		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"));
-		IArchiveEntry[] info = site.getArchives();
+		IArchiveReference[] info = site.getArchives();
 		
 		if (info.length<=0){
 			fail("no plugins in site: "+site.getURL().toExternalForm());

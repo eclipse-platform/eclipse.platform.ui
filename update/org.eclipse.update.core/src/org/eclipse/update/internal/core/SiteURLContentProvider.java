@@ -80,7 +80,7 @@ public class SiteURLContentProvider extends SiteContentProvider {
 		URL result = null;
 		boolean found = false;
 
-		IArchiveEntry[] siteArchives = getSite().getArchives();
+		IArchiveReference[] siteArchives = getSite().getArchives();
 		if (siteArchives.length > 0) {
 			for (int i = 0; i < siteArchives.length; i++) {
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {

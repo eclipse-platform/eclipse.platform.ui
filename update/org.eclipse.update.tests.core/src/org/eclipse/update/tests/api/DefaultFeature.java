@@ -7,8 +7,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.FeatureExecutableContentProvider;
 /**
  * Abstract Class that implements most of the behavior of a feature
@@ -143,5 +142,24 @@ public class DefaultFeature extends Feature {
 			contentProvider.setFeature(this);
 		//}
 	}
+	
+	
+	/*
+	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {
+		if (pluginEntry != null) {
+			addPluginEntryModel((PluginEntryModel) pluginEntry);
+		}
+	}
+
+	/*
+	 * @see IFeature#addNonPluginEntry(INonPluginEntry)
+	 */
+	public void addNonPluginEntry(INonPluginEntry dataEntry) {
+		if (dataEntry != null) {
+			addNonPluginEntryModel((NonPluginEntryModel) dataEntry);
+		}
+	}	
 
 	}
