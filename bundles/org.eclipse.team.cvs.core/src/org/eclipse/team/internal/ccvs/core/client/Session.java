@@ -261,11 +261,6 @@ public class Session {
 				String readLocation = location.getReadLocation();
 				if (readLocation != null) {
 					return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(readLocation);
-				} else {
-					// TODO: Temporary measure to increase performance for Eclipse developers
-					if (location.getHost().equals("dev.eclipse.org")) {
-						return (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(":pserver:anonymous@dev.eclipse.org:/home/eclipse");
-					}
 				}
 			}
 		} catch (CVSException e) {
