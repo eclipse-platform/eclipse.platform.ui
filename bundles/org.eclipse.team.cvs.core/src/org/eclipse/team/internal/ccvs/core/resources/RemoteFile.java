@@ -18,6 +18,7 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -100,13 +101,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 	 */
 	public String getRevision() {
 		return tag;
-	}
-	
-	/**
-	 * @see ICVSRemoteResource#getType()
-	 */
-	public int getType() {
-		return FILE;
 	}
 	
 	public RemoteFile toRevision(String revision) {
@@ -257,6 +251,26 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 		InputStream is = new ByteArrayInputStream(bos.toByteArray());
 		bos = null;
 		return is;
+	}
+	/*
+	 * @see IRemoteResource#members(IProgressMonitor)
+	 */
+	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+		return new IRemoteResource[0];
+	}
+
+	/*
+	 * @see IRemoteResource#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
+
+	/*
+	 * @see IManagedResource#isFolder()
+	 */
+	public boolean isFolder() {
+		return false;
 	}
 }
 

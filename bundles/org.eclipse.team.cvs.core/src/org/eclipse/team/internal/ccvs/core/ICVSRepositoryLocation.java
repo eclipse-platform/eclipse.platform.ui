@@ -6,7 +6,8 @@ package org.eclipse.team.ccvs.core;
  */
  
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
@@ -54,12 +55,12 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public String getLocation();
 
 	/**
-	 * Return a remote folder for the given repository and 
-	 * repositoryRelativePath which can be used to query the server about the folder 
-	 * for the given tag. If repositoryRelativePath is null, the resulting remote
-	 * folder represents the root of the repository. If tag is null, the HEAD trunk is assumed
+	 * Returns the immediate children of this location. If tag is <code>null</code> the
+	 * HEAD branch is assumed.
+	 * 
+	 * @param tag the context in which to return the members (e.g. branch or version).
 	 */
-	public ICVSRemoteFolder getRemoteFolder(IPath repositoryRelativePath, String tag)  throws CVSException;
+	public IRemoteResource[] members(String tag, IProgressMonitor progress)  throws CVSException;
 	
 	/**
 	 * Return the conection timeout value in milliseconds.

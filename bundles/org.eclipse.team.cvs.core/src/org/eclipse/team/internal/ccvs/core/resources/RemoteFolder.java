@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,13 +185,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 	}
 
 	/**
-	 * @see ICVSRemoteResource#getType()
-	 */
-	public int getType() {
-		return FOLDER;
-	}
-
-	/**
 	 * @see IManagedFolder#getFolders()
 	 */
 	public IManagedFolder[] getFolders() throws CVSException {
@@ -353,13 +347,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 		return getRepository().getRootDirectory() + Client.SERVER_SEPARATOR + getRemotePath();
 	}
 	
-	/*
-	 * @see IRemoteResource#isContainer()
-	 */
-	public boolean isContainer() {
-		return true;
-	}
-
 	/**
 	 * @see IManagedFolder#isCVSFolder()
 	 */
@@ -374,15 +361,11 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
 	}
 	
-	protected ICVSRemoteResource[] getChildren() {
-		return children;
-	}
-	
-	/**
-	 * Returns a new instance that is the same as the receiver except for the tag.
+	/*
+	 * @see IRemoteResource#isContainer()
 	 */
-	public ICVSRemoteFolder forTag(String tagName) {
-		return new RemoteFolder(repository, repositoryRelativePath, tagName);
+	public boolean isContainer() {
+		return true;
 	}
 	
 	/*
@@ -390,5 +373,33 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 	 */
 	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		return getMembers(progress);
+	}
+
+	/*
+	 * @see IRemoteResource#getContents(IProgressMonitor)
+	 */
+	public InputStream getContents(IProgressMonitor progress) throws TeamException {
+		return null;
+	}
+
+	/*
+	 * Answers the immediate cached children of this remote folder or null if the remote folder
+	 * handle has not yet queried the server for the its children.
+	 */	
+	protected ICVSRemoteResource[] getChildren() {
+		return children;
+	}
+	/*
+	 * @see ICVSRemoteFolder#setTag(String)
+	 */
+	public void setTag(String tagName) {
+		tag = tagName;
+	}
+
+	/*
+	 * @see ICVSRemoteFolder#getTag()
+	 */
+	public String getTag() {
+		return tag;
 	}
 }

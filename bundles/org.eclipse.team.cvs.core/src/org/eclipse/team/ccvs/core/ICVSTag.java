@@ -25,6 +25,5 @@ public interface ICVSTag {
 	 * Return true if the tag is a version tag
 	 */
 	public boolean isVersion();
-
 }
 

@@ -15,28 +15,18 @@ import org.eclipse.team.core.TeamException;
   * Clients are not expected to implement this interface.
   */
 public interface ICVSRemoteFolder extends ICVSRemoteResource {
+
+	/**
+	 * Allows a client to change the context of a remote folder handle.  For
+	 * example, if a remote folder was created with the HEAD context (e.g. can
+	 * be used to browse the main branch) use this method to change the
+	 * context to another branch tag or to a version tag.
+	 */
+	public void setTag(String tagName);
 	
 	/**
-	 * Get the members of the remote folder. 
-	 * 
-	 * <p>
-	 * In the case of a simple folder, the <code>getMembers()</code> would return <code>ICVSRemoteResource</code>
-	 * instances for each of the files and folders contained in the remote folder.
-	 * </p>
-	 * 
-	 * @return an array of <code>ICVSRemoteResource</code> instances which can be cast to
-	 * the appropriate sub-interface (<code>ICVSRemoteFolder</code> or <code>ICVSRemoteFile</code>) 
-	 * based on the type of the resource returned by <code>getType()</code>.
-	 * 
-	 * @throws TeamException if problems occur contacting the server.
+	 * Return the context of this handle. The returned tag can be a branch or
+	 * version tag.
 	 */
-	public ICVSRemoteResource[] getMembers(IProgressMonitor monitor) throws TeamException;
-	
-	/**
-	 * Returns a new instance that is the same as the receiver except for the tag.
-	 */
-	public ICVSRemoteFolder forTag(String tagName);
-
-
+	public String getTag();
 }
-

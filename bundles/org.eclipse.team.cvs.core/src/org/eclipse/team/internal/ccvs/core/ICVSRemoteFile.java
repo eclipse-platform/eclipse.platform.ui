@@ -22,16 +22,6 @@ import org.eclipse.team.core.TeamException;
 public interface ICVSRemoteFile extends ICVSRemoteResource {
 
 	/**
-	 * Get the contents of the remote file.
-	 * 
-	 * @return an <code>InputStream</code> from which the contents of
-	 * the file can be read.
-	 * 
-	 * @throws TeamException if problems occur contacting the server.
-	 */
-	public InputStream getContents(IProgressMonitor monitor) throws TeamException;
-
-	/**
 	 * Get the log entries of the remote file
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;

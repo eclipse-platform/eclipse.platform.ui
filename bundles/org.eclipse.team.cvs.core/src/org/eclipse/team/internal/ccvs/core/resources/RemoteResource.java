@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource, IRemoteResource {
+public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource {
 
 	protected String name;
 	protected String tag;
@@ -64,22 +64,18 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public abstract ICVSRepositoryLocation getRepository();
 	
 	/*
-	 * @see IManagedResource#isFolder()
-	 */
-	public boolean isFolder() {
-		return getType() != FILE;
-	}
-
-	/*
 	 * @see IManagedResource#delete()
 	 */
 	public void delete() {
+		// XXX we should know how to delete a remote?
 	}
 
 	/*
 	 * @see IManagedResource#exists()
 	 */
 	public boolean exists() {
+		// XXX perform silent checkout to test if this remote handle actually has a corresponding remote
+		// resource
 		return true;
 	}
 
@@ -162,27 +158,4 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public String getRelativePath(IManagedFolder ancestor) throws CVSException {
 		return null;
 	}
-
-	/*
-	 * @see IRemoteResource#members(IProgressMonitor)
-	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
-		return new IRemoteResource[0];
-	}
-	
-
-	/*
-	 * @see IRemoteResource#getContents(IProgressMonitor)
-	 */
-	public InputStream getContents(IProgressMonitor progress) {
-		return null;
-	}
-
-	/*
-	 * @see IRemoteResource#isContainer()
-	 */
-	public boolean isContainer() {
-		return false;
-	}
 }
-

@@ -16,35 +16,11 @@ import org.eclipse.team.core.sync.IRemoteResource;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ICVSRemoteResource extends IAdaptable, IRemoteResource {
-	
-	public static int FILE = IResource.FILE;
-	public static int FOLDER = IResource.FOLDER;
-	public static int ROOT = IResource.PROJECT;
-	
-	/**
-	 * Return the name of the remote resource. 
-	 * <p>
-	 * For regular files and folders, <code>getName()</code> returns the 
-	 * unqualified name of the resource. For other remote
-	 * resources, such as a repository, name will be more complicated.
-	 * 
-	 * @return the name of the remote resource.
-	 */
-	public String getName();
-	
-	/**
-	 * Return the type of the resource. 
-	 * 
-	 * @return the type of the remote resource
-	 * (either <code>ROOT</code>, <code>FILE</code> or <code>FOLDER</code>)
-	 */
-	public int getType();
+public interface ICVSRemoteResource extends IRemoteResource {
 	
 	/**
 	 * Return the repository
 	 */
 	public ICVSRepositoryLocation getRepository();
-
 }
 
