@@ -154,10 +154,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
 				// Ignore the 
-				if (oldBytes == null 
-						|| !Util.equals(
-								ResourceSyncInfo.convertToDeletion(syncBytes), 
-								ResourceSyncInfo.convertToDeletion(oldBytes))) {
+				if (oldBytes == null || !equals(syncBytes, oldBytes)) {
 					if (canModifyWorkspace) {
 						getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 						pendingCacheWrites.remove(resource);
@@ -171,6 +168,19 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		}
 	}
 
+	/*
+	 * Convert file sync bytes to deletions to ensure proper comparison
+	 */
+	private boolean equals(byte[] syncBytes, byte[] oldBytes) throws CVSException {
+		if (!ResourceSyncInfo.isFolder(syncBytes)) {
+			syncBytes = ResourceSyncInfo.convertToDeletion(syncBytes);
+		}
+		if (!ResourceSyncInfo.isFolder(oldBytes)) {
+			oldBytes = ResourceSyncInfo.convertToDeletion(oldBytes);
+		}
+		return Util.equals(syncBytes, oldBytes);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
 	 */
