@@ -33,6 +33,9 @@ import org.eclipse.ui.internal.dialogs.PathVariableSelectionDialog;
  * level. The widgets used to specify a link target are disabled 
  * if the supplied container is not a project.
  * </p>
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
  */
 public class NewFolderDialog extends SelectionDialog {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
