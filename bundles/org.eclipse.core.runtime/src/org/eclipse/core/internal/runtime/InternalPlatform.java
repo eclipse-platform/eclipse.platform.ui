@@ -849,9 +849,15 @@ public final class InternalPlatform {
 	}
 
 	public Bundle getBundle(String symbolicName) {
-		Bundle[] result = getBundles(symbolicName, null);
-		if (result != null)
-			return result[0];
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
+		if (bundles == null)
+			return null;
+		//Return the first bundle that is not installed or uninstalled
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundles[i];
+			}
+		}
 		return null;
 	}
 
@@ -859,7 +865,9 @@ public final class InternalPlatform {
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
 		if (bundles == null)
 			return null;
-
+		// optimize for common case; length==1
+		if (bundles.length == 1 && (bundles[0].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
+			return bundles;
 		//Remove all the bundes that are installed or uninstalled
 		Bundle[] selectedBundles = new Bundle[bundles.length];
 		int added = 0;
