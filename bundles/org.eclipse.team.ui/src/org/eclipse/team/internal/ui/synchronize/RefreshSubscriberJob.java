@@ -93,6 +93,11 @@ public final class RefreshSubscriberJob extends Job {
 	private static final int DONE = 2;
 	
 	/*
+	 * Lock used to sequence refresh jobs
+	 */
+	private static final ILock lock = Platform.getJobManager().newLock(); 
+	
+	/*
 	 * Constant used for postponement
 	 */
 	private static final IStatus POSTPONED = new Status(IStatus.CANCEL, TeamUIPlugin.ID, 0, "Scheduled refresh postponed due to conflicting operation", null); //$NON-NLS-1$
@@ -229,8 +234,17 @@ public final class RefreshSubscriberJob extends Job {
 		// NOTE: It would be cleaner if this was done by a scheduling
 		// rule but at the time of writting, it is not possible due to
 		// the scheduling rule containment rules.
-		// Synchronized to ensure only one refresh job is running at a particular time
-		synchronized (getFamily()) {	
+		// Acquiring lock to ensure only one refresh job is running at a particular time
+		boolean acquired = false;
+		try {
+			while (!acquired) {
+				try {
+					acquired = lock.acquire(1000);
+				} catch (InterruptedException e1) {
+					acquired = false;
+				}
+				Policy.checkCanceled(monitor);
+			}
 			Subscriber subscriber = getSubscriber();
 			IResource[] roots = getResources();
 			
@@ -278,6 +292,8 @@ public final class RefreshSubscriberJob extends Job {
 			event.setChanges(changeListener.getChanges());
 			notifyListeners(DONE, event);
 			return event.getStatus();
+		} finally {
+			if (acquired) lock.release();
 		}
 	}
 	
