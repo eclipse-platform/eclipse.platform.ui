@@ -2103,7 +2103,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		boolean oldValue = coolBarVisible;
 		coolBarVisible = visible;
 		if (oldValue != coolBarVisible) {
-			updateLayoutDataForContents(true);
+			updateLayoutDataForContents();
 		}
 	}
 	
@@ -2127,7 +2127,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		boolean oldValue = perspectiveBarVisible;
 		perspectiveBarVisible = visible;
 		if (oldValue != perspectiveBarVisible) {
-			updateLayoutDataForContents(true);
+			updateLayoutDataForContents();
 		}
 	}
 	
@@ -2151,7 +2151,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		boolean oldValue = statusLineVisible;
 		statusLineVisible = visible;
 		if (oldValue != statusLineVisible) {
-			updateLayoutDataForContents(true);
+			updateLayoutDataForContents();
 		}
 	}
 	
@@ -2164,11 +2164,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public boolean getStatusLineVisible() {
 		return statusLineVisible;
 	}	
-	/**
-	 * @param refresh whether to refresh the layout
+	/** 
 	 * @since 3.0
 	 */
-	private void updateLayoutDataForContents(boolean refresh) {
+	private void updateLayoutDataForContents() {
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		//   separately configurable
 		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar()) || (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar())) {
@@ -2205,16 +2204,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			animationItem.getControl().setVisible(false);
 		}
 		layout.setCenterControl(getClientComposite());	
-		if (refresh) {
-			getShell().layout();
-		}
 	}
 	
 	/**
 	 * Set the layout data for the contents of the window.
 	 */
 	private void setLayoutDataForContents() {
-		updateLayoutDataForContents(false);
+		updateLayoutDataForContents();
 		
 		if (getWindowConfigurer().getShowFastViewBars()) {
 			fastViewBar.addDockingListener(new IChangeListener() {

@@ -59,6 +59,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 						window.setCoolBarVisible(false);
 						window.setPerspectiveBarVisible(false);						
 					}
+					window.getShell().layout();
 				}
 			}
 		});
