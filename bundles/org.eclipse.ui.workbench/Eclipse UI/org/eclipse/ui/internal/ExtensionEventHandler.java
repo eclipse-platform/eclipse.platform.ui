@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -76,21 +77,32 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
-public class ExtensionEventHandler implements IRegistryChangeListener {
+class ExtensionEventHandler implements IRegistryChangeListener {
+	
+	private class ChangeRecord {
+		public ChangeRecord(String pluginId, String contribution) {
+			this.pluginId = pluginId;
+			this.contribution = contribution;
+		}
+		public String pluginId;
+		public String contribution;
+	}
 	private static final String TAG_CATEGORY="category";//$NON-NLS-1$
 	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
 	private static final String TAG_PART="part";//$NON-NLS-1$
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
-	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation"; //$NON-NLS-1$
-
+	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation"; //$NON-NLS-1$	
+	
 	private Workbench workbench;
+	private List changeList = new ArrayList(10);
 	
 	public ExtensionEventHandler(Workbench workbench) {
 		this.workbench = workbench;
 	}
 	
 	public void registryChanged(IRegistryChangeEvent event) {
+		changeList.clear();
 		IExtensionDelta delta[] = event.getExtensionDeltas(WorkbenchPlugin.PI_WORKBENCH);
 		IExtension ext;
 		IExtensionPoint extPt;
@@ -145,7 +157,10 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 //			extPt = extDelta.getExtensionPoint();
 //			ext = extDelta.getExtension();
 //			asyncRevoke(display, extPt, ext);
-//		}	
+//		}
+		
+		resetCurrentPerspective();
+		
 	}
 	private void asyncAppear(Display display, final IExtensionPoint extpt, final IExtension ext) {
 		Runnable run = new Runnable() {
@@ -285,9 +300,8 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		}
 		// We may need to reset this perspective as new wizards are added
 		// to the menu.
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		MessageDialog.openInformation(window.getShell(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtensionTitle"), //$NON-NLS-1$
-				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards"));  //$NON-NLS-1$
+		
+		changeList.add(new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards"))); //$NON-NLS-1$
 	}
 	
 	private void loadPropertyPages(IExtension ext) {
@@ -781,9 +795,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 				continue;
 			if (id.equals(currentId)) {
 				// Display message
-				MessageDialog.openInformation(window.getShell(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtensionTitle"), //$NON-NLS-1$
-						ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension"));  //$NON-NLS-1$
-				// don't bother outputing this message more than once.
+				changeList.add(new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension"))); //$NON-NLS-1$
 				break;
 			}
 		}
@@ -816,7 +828,8 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		for(int i=0; i<elements.length; i++)
 			reader.readElement(elements[i]);
 		
-		resetCurrentPerspective(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set")); //$NON-NLS-1$
+		ChangeRecord record = new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set"));
+		changeList.add(record);		
 /*
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
@@ -842,19 +855,42 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 */
 	}
 	
-	private void resetCurrentPerspective(String message) {
+	private void resetCurrentPerspective() {
+		if (changeList.isEmpty()) 
+			return;
 		Shell parentShell = null;
 		IWorkbenchWindow window =workbench.getActiveWorkbenchWindow();
-		if (window != null)
-			parentShell = window.getShell();
-
-		message +=  ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_reset"); //$NON-NLS-1$
-		if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.reset_perspective"), message)) { //$NON-NLS-1$
-			IWorkbenchPage page = window.getActivePage();
-			if (page == null)
+		if (window == null) {
+			if (workbench.getWorkbenchWindowCount() == 0)
 				return;
-			page.resetPerspective();
-		}		
+			window = workbench.getWorkbenchWindows()[0];
+		}
+
+		parentShell = window.getShell();
+
+		StringBuffer message = new StringBuffer(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.following_changes")); //$NON-NLS-1$
+		
+		MessageFormat lineFormat = new MessageFormat(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format")); //$NON-NLS-1$
+		for (Iterator i = changeList.iterator(); i.hasNext();) {
+			ChangeRecord record = (ChangeRecord) i.next();
+			lineFormat.format(new Object[] {record.pluginId, record.contribution}, message, null);
+		}
+		message.append(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_reset")); //$NON-NLS-1$
+		resetCurrentPerspective(parentShell, window, message.toString());
+	}
+
+
+	private void resetCurrentPerspective(final Shell parentShell, final IWorkbenchWindow window, final String message) {
+		parentShell.getDisplay().asyncExec(new Runnable() {
+			public void run() {		
+				if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.reset_perspective"), message)) { //$NON-NLS-1$
+					IWorkbenchPage page = window.getActivePage();
+					if (page == null)
+						return;
+					page.resetPerspective();
+				}
+			}
+		});
 	}
 
 	private void unloadActionSets(IExtension ext) {
