@@ -227,6 +227,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 * This method can be used on incoming folder additions to set the folder sync info properly
 	 * without hitting the server again. It also applies to conflicts that involves unmanaged
 	 * local resources.
+	 * 
+	 * If the local folder is already managed and is a cvs folder, this operation
+	 * will throw an exception if the mapping does not match that of the remote.
 	 */
 	 public void makeInSync(IProgressMonitor monitor) throws TeamException {
 	 	
@@ -248,17 +251,27 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			local.mkdir();
 		} else {
 			// If the folder already has CVS info, check that the remote and local match
-			if(local.isManaged() && local.isCVSFolder() && ! remote.getFolderSyncInfo().equals(local.getFolderSyncInfo())) {
-				throw new CVSException(IStatus.ERROR, 0, Policy.bind("CVSRemoteSyncElement.alreadyManaged"));//$NON-NLS-1$
+			if(local.isManaged() && local.isCVSFolder()) {
+				// Verify that the root and repository are the same
+				FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
+				FolderSyncInfo localInfo = local.getFolderSyncInfo();
+				if ( ! localInfo.getRoot().equals(remoteInfo.getRoot())) {
+					throw new CVSException(Policy.bind("CVSRemoteSyncElement.rootDiffers", new Object[] {local.getName(), remoteInfo.getRoot(), localInfo.getRoot()}));//$NON-NLS-1$
+				} else if ( ! localInfo.getRepository().equals(remoteInfo.getRepository())) {
+					throw new CVSException(Policy.bind("CVSRemoteSyncElement.repositoryDiffers", new Object[] {local.getName(), remoteInfo.getRepository(), localInfo.getRepository()}));//$NON-NLS-1$
+				}
+				// The folders are in sync so just return
+				return;
 			}
 		}
 		
 		// Since the parent is managed, this will also set the resource sync info. It is
 		// impossible for an incoming folder addition to map to another location in the
-		// repo, so we assume that using the parent's folder sync as a basis is safe.		
+		// repo, so we assume that using the parent's folder sync as a basis is safe.
+		// It is also impossible for an incomming folder to be static.		
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
-		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), localInfo.getIsStatic()));
+		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), false));
 	 }	 	
 	/*
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
