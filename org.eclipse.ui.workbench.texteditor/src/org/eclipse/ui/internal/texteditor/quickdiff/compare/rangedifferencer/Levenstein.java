@@ -22,11 +22,11 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * Levenstein distance and edit script computation using a dynamic algorithm.
+ * Levenstein distance and edit script computation using a dynamic programming algorithm.
  * The algorithm is O(n*m) in time where n and m are the number of elements in 
  * the two ranges to compare. It does not implement the greedy Ukkonen algorithm.  
  * 
- * @since 3.0
+ * @since 3.1
  */
 public final class Levenstein {
 	/* debug output */

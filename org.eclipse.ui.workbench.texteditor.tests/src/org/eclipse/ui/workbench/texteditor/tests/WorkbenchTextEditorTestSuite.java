@@ -13,7 +13,7 @@ package org.eclipse.ui.workbench.texteditor.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.DiffTestSuite;
+import org.eclipse.ui.workbench.texteditor.quickdiff.tests.DiffTestSuite;
 
 /**
  * Test Suite for org.eclipse.ui.workbench.texteditor.

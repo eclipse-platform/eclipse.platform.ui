@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
+package org.eclipse.ui.workbench.texteditor.quickdiff.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

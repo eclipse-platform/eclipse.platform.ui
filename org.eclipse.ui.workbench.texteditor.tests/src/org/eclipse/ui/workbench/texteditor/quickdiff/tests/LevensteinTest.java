@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
+package org.eclipse.ui.workbench.texteditor.quickdiff.tests;
 
 
 import java.util.Arrays;
@@ -17,11 +17,15 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.text.Assert;
 
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LevensteinTestHelper;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
 
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public class LevensteinTest extends TestCase {
 	
@@ -122,47 +126,49 @@ public class LevensteinTest extends TestCase {
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
 		Levenstein levenstein= createLevenstein(c1, c2);
-		levenstein.initRows();
+		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		helper.initRows();
 		
 		// full compare
-		levenstein.internalEditDistance(1, 4, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(1, 4, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, helper.getPreviousRow()));
 
 		// partial compare
-		levenstein.internalEditDistance(1, 2, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(1, 2, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, helper.getPreviousRow()));
 		
-		levenstein.internalEditDistance(3, 4, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 2, 2, 2, 3, 2 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(3, 4, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 2, 2, 2, 3, 2 }, helper.getPreviousRow()));
 		
-		levenstein.internalEditDistance(1, 4, 1, 2);
-		assertEquals(4, levenstein.fPreviousRow[0]);
-		assertEquals(3, levenstein.fPreviousRow[1]);
-		assertEquals(2, levenstein.fPreviousRow[2]);
+		helper.internalEditDistance(1, 4, 1, 2);
+		assertEquals(4, helper.getPreviousRow()[0]);
+		assertEquals(3, helper.getPreviousRow()[1]);
+		assertEquals(2, helper.getPreviousRow()[2]);
 		
 		// empty right
-		levenstein.internalEditDistance(1, 0, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(1, 0, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, helper.getPreviousRow()));
 		
 		// empty left
-		levenstein.internalEditDistance(1, 4, 1, 0);
-		assertEquals(4, levenstein.fPreviousRow[0]);
+		helper.internalEditDistance(1, 4, 1, 0);
+		assertEquals(4, helper.getPreviousRow()[0]);
 		
 		// empty both
-		levenstein.internalEditDistance(1, 0, 1, 0);
-		assertEquals(0, levenstein.fPreviousRow[0]);
+		helper.internalEditDistance(1, 0, 1, 0);
+		assertEquals(0, helper.getPreviousRow()[0]);
 		
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
 		levenstein= createLevenstein(c1, c2);
-		levenstein.initRows();
+		helper= new LevensteinTestHelper(levenstein);
+		helper.initRows();
 
-		levenstein.internalEditDistance(1, 1, 1, 1);
-		assertTrue(Arrays.equals(new int[] { 1, 0 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(1, 1, 1, 1);
+		assertTrue(Arrays.equals(new int[] { 1, 0 }, helper.getPreviousRow()));
 
-		levenstein.internalEditDistance(2, 2, 1, 1);
-		assertTrue(Arrays.equals(new int[] { 1, 1 }, levenstein.fPreviousRow));
+		helper.internalEditDistance(2, 2, 1, 1);
+		assertTrue(Arrays.equals(new int[] { 1, 1 }, helper.getPreviousRow()));
 	}
 	
 	protected Levenstein createLevenstein(IRangeComparator left, IRangeComparator right) {
@@ -174,52 +180,54 @@ public class LevensteinTest extends TestCase {
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
 		Levenstein levenstein= createLevenstein(c1, c2);
-		levenstein.initRows();
+		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		helper.initRows();
 		
 		// full compare
-		levenstein.internalReverseEditDistance(1, 4, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(1, 4, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, helper.getPreviousRow()));
 
 		// partial compare
-		levenstein.internalReverseEditDistance(1, 2, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 2, 3, 2, 2, 2 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(1, 2, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 2, 3, 2, 2, 2 }, helper.getPreviousRow()));
 		
-		levenstein.internalReverseEditDistance(3, 4, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(3, 4, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, helper.getPreviousRow()));
 		
-		levenstein.internalReverseEditDistance(1, 4, 1, 2);
-		assertEquals(4, levenstein.fPreviousRow[2]);
-		assertEquals(3, levenstein.fPreviousRow[1]);
-		assertEquals(2, levenstein.fPreviousRow[0]);
+		helper.internalReverseEditDistance(1, 4, 1, 2);
+		assertEquals(4, helper.getPreviousRow()[2]);
+		assertEquals(3, helper.getPreviousRow()[1]);
+		assertEquals(2, helper.getPreviousRow()[0]);
 		
 		// empty right
-		levenstein.internalReverseEditDistance(1, 0, 1, 4);
-		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(1, 0, 1, 4);
+		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, helper.getPreviousRow()));
 		
 		// empty left
-		levenstein.internalReverseEditDistance(1, 4, 5, 4);
-		assertEquals(4, levenstein.fPreviousRow[4]);
-		levenstein.internalReverseEditDistance(1, 4, 1, 0);
-		assertEquals(4, levenstein.fPreviousRow[0]);
+		helper.internalReverseEditDistance(1, 4, 5, 4);
+		assertEquals(4, helper.getPreviousRow()[4]);
+		helper.internalReverseEditDistance(1, 4, 1, 0);
+		assertEquals(4, helper.getPreviousRow()[0]);
 		
 		// empty both
-		levenstein.internalReverseEditDistance(1, 0, 1, 0);
-		assertEquals(0, levenstein.fPreviousRow[0]);
+		helper.internalReverseEditDistance(1, 0, 1, 0);
+		assertEquals(0, helper.getPreviousRow()[0]);
 
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
 		levenstein= createLevenstein(c1, c2);
-		levenstein.initRows();
+		helper= new LevensteinTestHelper(levenstein);
+		helper.initRows();
 
-		levenstein.internalReverseEditDistance(1, 1, 1, 1);
-		assertTrue(Arrays.equals(new int[] { 0, 1 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(1, 1, 1, 1);
+		assertTrue(Arrays.equals(new int[] { 0, 1 }, helper.getPreviousRow()));
 
-		levenstein.internalReverseEditDistance(2, 2, 1, 1);
-		assertTrue(Arrays.equals(new int[] { 1, 1 }, levenstein.fPreviousRow));
+		helper.internalReverseEditDistance(2, 2, 1, 1);
+		assertTrue(Arrays.equals(new int[] { 1, 1 }, helper.getPreviousRow()));
 	}
 	
-	public void testEditScriptHirschberg() throws LowMemoryException {
+	public void testEditScriptHirschberg() {
 		assertEditScriptHirschberg("abc", "abc");
 		
 		assertEditScriptHirschberg("a", "b");
