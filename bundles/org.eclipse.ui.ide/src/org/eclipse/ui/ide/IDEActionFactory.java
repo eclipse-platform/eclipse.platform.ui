@@ -85,7 +85,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addBookMark.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.addBookMark"); //$NON-NLS-1$
 			return action;
@@ -104,7 +104,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.addTask")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addTask.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.addTaskToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.addTask"); //$NON-NLS-1$
 			return action;
@@ -123,7 +123,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.openProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.openProject.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.openProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.project.openProject"); //$NON-NLS-1$
 			return action;
@@ -142,7 +142,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.closeProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.closeProject.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.closeProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.project.closeProject"); //$NON-NLS-1$
 			return action;
@@ -161,7 +161,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.rebuildProject")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.rebuildProject.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.rebuildProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.project.rebuildProject"); //$NON-NLS-1$
 			return action;

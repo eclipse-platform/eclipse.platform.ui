@@ -666,7 +666,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			LabelRetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.undo.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.undoToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
@@ -692,7 +692,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			LabelRetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.redo.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.redoToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
@@ -718,7 +718,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.cut")); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.cut.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.cutToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
@@ -744,7 +744,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.copy.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.copyToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
@@ -770,7 +770,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.paste.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.pasteToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
@@ -796,7 +796,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.selectAll.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
 			return action;
@@ -815,7 +815,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.move")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.move.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.moveToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.move"); //$NON-NLS-1$
 			return action;
@@ -834,7 +834,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.rename")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.rename.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.renameToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.rename"); //$NON-NLS-1$
 			return action;
@@ -853,7 +853,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.print.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.printToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.file.print"); //$NON-NLS-1$
 			action.setImageDescriptor(
@@ -881,7 +881,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.findReplace.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.findReplaceToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.edit.findReplace"); //$NON-NLS-1$
 			// Find's images are commented out due to a conflict with Search.
@@ -905,7 +905,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.revert")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.revert.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.revertToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.file.revert"); //$NON-NLS-1$
 			return action;
@@ -924,7 +924,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.refresh")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.refresh.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.refreshToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
 			return action;
@@ -943,7 +943,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), WorkbenchMessages.getString("Workbench.properties")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.properties.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.propertiesToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
 			return action;
@@ -992,7 +992,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.goInto")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.goInto.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.goIntoToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.goInto"); //$NON-NLS-1$
 			return action;
@@ -1011,7 +1011,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.up")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.up.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.upToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.up"); //$NON-NLS-1$
 			return action;
@@ -1030,7 +1030,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.forward")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.forward.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.forwardToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.forward"); //$NON-NLS-1$
 			return action;
@@ -1049,7 +1049,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.back")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.back.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.backToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.back"); //$NON-NLS-1$
 			return action;
@@ -1068,7 +1068,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.next")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.next.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.nextToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
 			return action;
@@ -1087,7 +1087,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.previous")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.previous.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.getString("Workbench.previousToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
 			return action;
