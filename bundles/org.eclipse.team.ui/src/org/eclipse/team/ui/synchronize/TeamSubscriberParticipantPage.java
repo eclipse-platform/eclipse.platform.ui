@@ -20,6 +20,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,6 +36,7 @@ import org.eclipse.team.internal.ui.synchronize.views.*;
 import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
@@ -175,7 +178,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	
 	private void hookContextMenu() {
 		if(getViewer() != null) {
-			MenuManager menuMgr = new MenuManager(participant.getId()); //$NON-NLS-1$
+			final MenuManager menuMgr = new MenuManager(participant.getId()); //$NON-NLS-1$
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
@@ -183,12 +186,32 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 				}
 			});
 			Menu menu = menuMgr.createContextMenu(viewer.getControl());
+			menu.addMenuListener(new MenuListener() {
+				public void menuHidden(MenuEvent e) {
+				}
+				// Hack to allow action contributions to update their
+				// state before the menu is shown. This is required when
+				// the state of the selection changes and the contributions
+				// need to update enablement based on this. 
+				public void menuShown(MenuEvent e) {
+					IContributionItem[] items = menuMgr.getItems();
+					for (int i = 0; i < items.length; i++) {
+						IContributionItem item = items[i];
+						if(item instanceof ActionContributionItem) {
+							IAction actionItem = ((ActionContributionItem)item).getAction();
+							if(actionItem instanceof PluginAction) {
+								((PluginAction)actionItem).selectionChanged(TeamSubscriberParticipantPage.this.viewer.getSelection());
+							}
+						}
+					}
+				}
+			});
 			viewer.getControl().setMenu(menu);			
 			getSite().registerContextMenu(participant.getId(), menuMgr, viewer);
 		}
 	}	
 
-	private void setContextMenu(IMenuManager manager) {
+	private void setContextMenu(IMenuManager manager) {	
 		openWithActions.fillContextMenu(manager);
 		refactorActions.fillContextMenu(manager);
 		manager.add(refreshSelectionAction);
