@@ -542,7 +542,7 @@ public class FormTextModel {
 				.toArray(new IFocusSelectable[result.size()]);
 		return selectableSegments;
 	}
-
+	
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (int i = 0; i < selectables.length; i++) {
@@ -620,15 +620,20 @@ public class FormTextModel {
 			selectedSegmentIndex = -1;
 		}
 		else {
-			IFocusSelectable[] selectables = getFocusSelectableSegments();
-			selectedSegmentIndex = -1;
-			if (selectables == null)
-				return;
-			for (int i = 0; i < selectables.length; i++) {
-				if (selectables[i].equals(link)) {
-					selectedSegmentIndex = i;
-					break;
-				}
+			select(link);
+
+		}
+	}
+	
+	public void select(IFocusSelectable selectable) {
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		selectedSegmentIndex = -1;
+		if (selectables == null)
+			return;
+		for (int i = 0; i < selectables.length; i++) {
+			if (selectables[i].equals(selectable)) {
+				selectedSegmentIndex = i;
+				break;
 			}
 		}
 	}

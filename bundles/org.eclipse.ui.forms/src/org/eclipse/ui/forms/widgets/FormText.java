@@ -592,6 +592,7 @@ public final class FormText extends Canvas {
 			model.parseTaggedText(text, expandURLs);
 		else
 			model.parseRegularText(text, expandURLs);
+		//hookControlSegmentFocus();
 		layout();
 		redraw();
 	}
@@ -611,8 +612,42 @@ public final class FormText extends Canvas {
 		entered = null;
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
+		//hookControlSegmentFocus();
 		layout();
 		redraw();
+	}
+	
+	private void hookControlSegmentFocus() {
+		Paragraph [] paragraphs = model.getParagraphs();
+		if (paragraphs==null)
+			return;
+		final String key = "__segment__";
+		Listener listener = new Listener() {
+			public void handleEvent(Event e) {
+				//recapture focus
+				e.doit = false;
+				Control c = (Control)e.widget;
+				ControlSegment segment = (ControlSegment)c.getData(key);
+				hasFocus = true;
+				setFocus();
+				model.select(segment);
+				advance(true);
+			}
+		};
+		for (int i = 0; i < paragraphs.length; i++) {
+			Paragraph p = paragraphs[i];
+			ParagraphSegment[] segments = p.getSegments();
+			for (int j = 0; j < segments.length; j++) {
+				if (segments[j] instanceof ControlSegment) {
+					ControlSegment cs = (ControlSegment)segments[j];
+					Control c = cs.getControl(resourceTable);
+					if (c!=null) {
+						c.addListener(SWT.Deactivate, listener);
+						c.setData(key, cs);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -655,10 +690,8 @@ public final class FormText extends Canvas {
 	 *         otherwise.
 	 */
 	public boolean setFocus() {
-		/*
-		 * if (!model.hasFocusSegments()) return false;
-		 */
 		return super.setFocus();
+		//return super.forceFocus();
 	}
 
 	public void setMenu(Menu menu) {
