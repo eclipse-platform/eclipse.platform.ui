@@ -145,11 +145,17 @@ public boolean resourcesChanged() {
  */
 protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
 	boolean existsInWorkspace = node.existsInWorkspace();
-	if (!existsInWorkspace && !CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
-		// do we have any alphabetic variants or gender variants on the workspace?
-		IResource variant = target.findExistingResourceVariant(target.getFullPath());
-		if (variant != null)
-			return RL_UNKNOWN;
+	if (!existsInWorkspace) {
+		if (!CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
+			// do we have any alphabetic variants on the workspace?
+			IResource variant = target.findExistingResourceVariant(target.getFullPath());
+			if (variant != null)
+				return RL_UNKNOWN;
+		}
+		// do we have a gender variant in the workspace?
+		IResource genderVariant = workspace.getRoot().findMember(target.getFullPath());
+		if (genderVariant != null)
+				return RL_UNKNOWN;		
 	}
 	
 	if (existsInWorkspace) {
@@ -226,7 +232,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 			return true;
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
 			/* for folders we only care about updating local status */
-			if (node.isFolder() && targetType == IResource.FOLDER) {
+			if (targetType == IResource.FOLDER && node.isFolder()) {
 				// if not local, mark as local
 				if (!target.isLocal(IResource.DEPTH_ZERO)) {
 					ResourceInfo info = target.getResourceInfo(false, true);
@@ -237,9 +243,11 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 				return true;
 			} 
 			/* compare file last modified */
-			long lastModifed = target.getResourceInfo(false, false).getLocalSyncInfo();
-			if (lastModifed == node.getLastModified())
-				return true;
+			if (targetType == IResource.FILE && node.isFile()) {
+				long lastModifed = target.getResourceInfo(false, false).getLocalSyncInfo();
+				if (lastModifed == node.getLastModified())
+					return true;
+			}
 		} else {
 			int state = synchronizeExistence(node, target, node.getLevel());
 			if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC) {
