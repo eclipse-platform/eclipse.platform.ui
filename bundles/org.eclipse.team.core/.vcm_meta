@@ -12,6 +12,4 @@
 	</builder>
 	<builder name="org.eclipse.pde.SchemaBuilder">
 	</builder>
-	<builder name="org.eclipse.jdt.debug.hcrbuilder">
-	</builder>
 </project-description>
