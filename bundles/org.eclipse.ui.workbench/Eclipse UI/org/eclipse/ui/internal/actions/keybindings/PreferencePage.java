@@ -17,6 +17,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,9 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -64,6 +62,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		composite.setLayout(gridLayoutComposite);
 
 		tabFolder = new TabFolder(composite, SWT.NULL);
+		tabFolder.setFont(composite.getFont());
 		GridData gridDataTabFolder = new GridData(GridData.FILL_BOTH);
 		tabFolder.setLayoutData(gridDataTabFolder);
 		
@@ -72,7 +71,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		tabItemGeneral.setImage(ImageFactory.getImage("key"));
 
 		Composite compositeGeneral = new Composite(tabFolder, SWT.NULL);
-		compositeGeneral.setFont(composite.getFont());
+		compositeGeneral.setFont(tabFolder.getFont());
 		GridLayout layoutGeneral = new GridLayout();
 		layoutGeneral.marginWidth = 8;
 		layoutGeneral.marginHeight = 8;
@@ -81,10 +80,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		tabItemGeneral.setControl(compositeGeneral);
 
 		Label label = new Label(compositeGeneral, SWT.LEFT);
-		label.setFont(parent.getFont());
+		label.setFont(compositeGeneral.getFont());
 		label.setText("Active Configuration:");
 
 		comboConfiguration = new Combo(compositeGeneral, SWT.READ_ONLY);
+		comboConfiguration.setFont(compositeGeneral.getFont());
 		GridData gridData = new GridData();
 		gridData.widthHint = 200;
 		comboConfiguration.setLayoutData(gridData);
@@ -106,7 +106,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		tabItemCustomize.setImage(ImageFactory.getImage("pencil"));
 
 		Composite compositeCustomize = new Composite(tabFolder, SWT.NULL);		
-		compositeCustomize.setFont(composite.getFont());
+		compositeCustomize.setFont(tabFolder.getFont());
 		GridLayout layoutCustomize = new GridLayout();
 		layoutCustomize.marginWidth = 8;
 		layoutCustomize.marginHeight = 8;
@@ -115,6 +115,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		tabItemCustomize.setControl(compositeCustomize);
 
 		buttonCustomize = new Button(compositeCustomize, SWT.LEFT | SWT.PUSH);
+		buttonCustomize.setFont(compositeCustomize.getFont());
 		buttonCustomize.setText("Customize Key Bindings...");
 		setButtonLayoutData(buttonCustomize);
 
