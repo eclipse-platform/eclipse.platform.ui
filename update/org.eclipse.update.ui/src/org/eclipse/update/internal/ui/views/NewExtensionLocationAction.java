@@ -46,8 +46,8 @@ public class NewExtensionLocationAction extends Action {
 
 		String dir = dialog.open();
 		while (dir != null) {
-			File dirFile = new File(dir);
-			if (isExtensionRoot(dirFile)) {
+			File dirFile = getExtensionSite(new File(dir));
+			if (dirFile != null) {
 				if (addExtensionLocation(dirFile))
 					return;
 				else {
@@ -71,24 +71,31 @@ public class NewExtensionLocationAction extends Action {
 
 	/**
 	 * @param directory
-	 * @return true when directory is an eclipse exstension
+	 * @return the site file (including "eclipse" path) when directory is an eclipse exstension, null otherwise
 	 */
-	static boolean isExtensionRoot(File directory) {
+	static File getExtensionSite(File directory) {
 		// Check the eclipse folder
-		File parent = new File(directory, "eclipse"); //$NON-NLS-1$
-		if (!parent.exists() || !parent.isDirectory())
-			return false;
+		if (directory.getName().equals("eclipse")) {
+			// if we picked up the eclipse directory, check if its parent is a site
+			File site = getExtensionSite(directory.getParentFile());
+			if (site != null)
+				return directory;
+			// otherwise, fall through
+		}
+		
+		File eclipse = new File(directory, "eclipse"); //$NON-NLS-1$
+		if (!eclipse.exists() || !eclipse.isDirectory())
+			return null;
 
 		// check the marker
-		File marker = new File(parent, ".eclipseextension"); //$NON-NLS-1$
+		File marker = new File(eclipse, ".eclipseextension"); //$NON-NLS-1$
 		if (!marker.exists() || marker.isDirectory())
-			return false;
-		return true;
+			return null;
+		return eclipse;
 	}
 
 	private boolean addExtensionLocation(File dir) {
 		try {
-			dir = new File(dir, "eclipse");
 			IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
 			IConfiguredSite csite = config.createLinkedConfiguredSite(dir);
 			config.addConfiguredSite(csite);
