@@ -235,15 +235,20 @@ public class CommitSetManager extends Object implements IResourceChangeListener,
      * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
      */
     public void resourceSyncInfoChanged(IResource[] changedResources) {
+        List toRemove = new ArrayList();
         for (Iterator iter = activeSets.iterator(); iter.hasNext();) {
             CommitSet set = (CommitSet) iter.next();
             if (!set.isEmpty()) {
                 // Don't forward the event if the set is empty
 	            set.resourceSyncInfoChanged(changedResources);
 	            if (set.isEmpty()) {
-	                remove(set);
+	                toRemove.add(set);
 	            }
             }
+        }
+        for (Iterator iter = toRemove.iterator(); iter.hasNext();) {
+            CommitSet set = (CommitSet) iter.next();
+            remove(set);
         }
     }
 
