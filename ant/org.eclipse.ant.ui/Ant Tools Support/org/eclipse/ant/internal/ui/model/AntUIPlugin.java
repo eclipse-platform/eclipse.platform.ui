@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -121,6 +122,8 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
+		EditorsUI.useAnnotationsPreferencePage(prefs);
+		EditorsUI.useQuickDiffPreferencePage(prefs);
 		if (isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, false);

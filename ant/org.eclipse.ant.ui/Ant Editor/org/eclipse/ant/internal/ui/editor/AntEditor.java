@@ -71,9 +71,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -366,7 +368,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 */
     protected void initializeEditor() {
 		super.initializeEditor();
-		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(createCombinedPreferenceStore());
 		setCompatibilityMode(false);
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
     }
@@ -833,5 +835,17 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	protected void doSetSelection(ISelection selection) {
 		super.doSetSelection(selection);
 		synchronizeOutlinePage(true);
+	}
+
+	/**
+	 * Creates a combined preference store, this store is read-only.
+	 * 
+	 * @return the combined preference store
+	 * @since 3.0
+	 */
+	private IPreferenceStore createCombinedPreferenceStore() {
+		IPreferenceStore antStore= AntUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
+		return new ChainedPreferenceStore(new IPreferenceStore[] { antStore, generalTextStore });
 	}
 }

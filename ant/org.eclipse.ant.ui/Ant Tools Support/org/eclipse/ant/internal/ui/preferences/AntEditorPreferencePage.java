@@ -23,7 +23,6 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -32,31 +31,25 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
 /*
  * The page for setting the editor options.
  */
 public class AntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	private String[][] fAnnotationColorListModel;
 	
 	private OverlayPreferenceStore fOverlayStore;
 	
@@ -85,15 +78,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		}
 	};
 	
-	
-	private List fAnnotationList;
-	private ColorEditor fAnnotationForegroundColorEditor;
-	
-	private Button fShowInTextCheckBox;
-	private Button fShowInOverviewRulerCheckBox;
-	private Button fHighlightInTextCheckBox;
-	private Button fShowInVerticalRulerCheckBox;
-	
 	private Control fAutoInsertDelayText;
 	private Control fAutoInsertTriggerText;
 	private Label fAutoInsertDelayLabel;
@@ -103,28 +87,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		setDescription(AntPreferencesMessages.getString("AntEditorPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
-		fOverlayStore= createOverlayStore(preferences);
-		fAnnotationColorListModel= createAnnotationTypeListModel(preferences);
+		fOverlayStore= createOverlayStore();
 	}
 	
-	private OverlayPreferenceStore createOverlayStore(MarkerAnnotationPreferences preferences) {
+	private OverlayPreferenceStore createOverlayStore() {
 		
 		ArrayList overlayKeys= new ArrayList();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
-			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
-			if (info.getHighlightPreferenceKey() != null) {
-				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getHighlightPreferenceKey()));
-			}
-			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
-			if (info.getVerticalRulerPreferenceKey() != null) {
-				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getVerticalRulerPreferenceKey()));
-			}
-		}
-	
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
@@ -148,18 +117,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 	
-	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
-		ArrayList listModelItems= new ArrayList();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey()});
-		}
-		String[][] items= new String[listModelItems.size()][];
-		listModelItems.toArray(items);
-		return items;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -172,37 +129,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Text getTextControl(Control[] labelledTextField){
 		return (Text)labelledTextField[1];
-	}
-
-	private void handleAnnotationListSelection() {
-		int i= fAnnotationList.getSelectionIndex();
-		
-		String key= fAnnotationColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
-		fAnnotationForegroundColorEditor.setColorValue(rgb);
-		
-		key= fAnnotationColorListModel[i][2];
-		fShowInTextCheckBox.setSelection(fOverlayStore.getBoolean(key));
-		
-		key= fAnnotationColorListModel[i][3];
-		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
-		
-		key= fAnnotationColorListModel[i][4];
-		if (key != null) {
-			fHighlightInTextCheckBox.setSelection(fOverlayStore.getBoolean(key));
-			fHighlightInTextCheckBox.setEnabled(true);
-		} else {
-			fHighlightInTextCheckBox.setEnabled(false);
-		}
-		
-		key= fAnnotationColorListModel[i][5];
-		if (key != null) {
-			fShowInVerticalRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
-			fShowInVerticalRulerCheckBox.setEnabled(true);
-		} else {
-			fShowInVerticalRulerCheckBox.setSelection(true);
-			fShowInVerticalRulerCheckBox.setEnabled(false);
-		}		
 	}
 
 	private Control createAppearancePage(Composite parent) {
@@ -314,165 +240,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	   fAutoInsertTriggerLabel.setEnabled(autoactivation);
    }
 	
-	private Control createAnnotationsPage(Composite parent) {
-		Font font= parent.getFont();
-		Composite composite= new Composite(parent, SWT.NULL);
-		composite.setFont(font);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
-		composite.setLayout(layout);
-								
-		Label label= new Label(composite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationPresentationOptions")); //$NON-NLS-1$
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		label.setLayoutData(gd);
-
-		Composite editorComposite= new Composite(composite, SWT.NONE);
-		editorComposite.setFont(font);
-		layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		editorComposite.setLayout(layout);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
-
-		fAnnotationList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		fAnnotationList.setFont(font);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		int heightHint= fAnnotationColorListModel.length;
-		heightHint= Math.min(15, heightHint);
-		gd.heightHint= convertHeightInCharsToPixels(heightHint);
-		fAnnotationList.setLayoutData(gd);
-						
-		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
-		optionsComposite.setFont(font);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
-		optionsComposite.setLayout(layout);
-		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInTextCheckBox.setFont(font);
-		fShowInTextCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.showInText")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fShowInTextCheckBox.setLayoutData(gd);
-		
-		fHighlightInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fHighlightInTextCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.35")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fHighlightInTextCheckBox.setLayoutData(gd);
-		
-		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInOverviewRulerCheckBox.setFont(font);
-		fShowInOverviewRulerCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.showInOverviewRuler")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fShowInOverviewRulerCheckBox.setLayoutData(gd);
-		
-		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInVerticalRulerCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.36")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fShowInVerticalRulerCheckBox.setLayoutData(gd);
-		
-		label= new Label(optionsComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.color")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		label.setLayoutData(gd);
-
-		fAnnotationForegroundColorEditor= new ColorEditor(optionsComposite);
-		Button foregroundColorButton= fAnnotationForegroundColorEditor.getButton();
-		foregroundColorButton.setFont(font);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		foregroundColorButton.setLayoutData(gd);
-
-		fAnnotationList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				handleAnnotationListSelection();
-			}
-		});
-		
-		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][2];
-				fOverlayStore.setValue(key, fShowInTextCheckBox.getSelection());
-			}
-		});
-		
-		fHighlightInTextCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][4];
-				fOverlayStore.setValue(key, fHighlightInTextCheckBox.getSelection());
-			}
-		});
-		
-		fShowInOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][3];
-				fOverlayStore.setValue(key, fShowInOverviewRulerCheckBox.getSelection());
-			}
-		});
-		
-		fShowInVerticalRulerCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][5];
-				fOverlayStore.setValue(key, fShowInVerticalRulerCheckBox.getSelection());
-			}
-		});
-		
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][1];
-				PreferenceConverter.setValue(fOverlayStore, key, fAnnotationForegroundColorEditor.getColorValue());
-			}
-		});
-		
-		return composite;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -494,10 +261,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.codeAssistTab.title")); //$NON-NLS-1$
 		item.setControl(createContentAssistPage(folder));
 				
-		item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationsTab.title")); //$NON-NLS-1$
-		item.setControl(createAnnotationsPage(folder));
-		
 		initialize();
 		
 		applyDialogFont(folder);
@@ -508,17 +271,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		initializeFields();
 		
-		for (int i= 0; i < fAnnotationColorListModel.length; i++) {
-			fAnnotationList.add(fAnnotationColorListModel[i][0]);
-		}
-		fAnnotationList.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (fAnnotationList != null && !fAnnotationList.isDisposed()) {
-					fAnnotationList.select(0);
-					handleAnnotationListSelection();
-				}
-			}
-		});
 	}
 	
 	private void initializeFields() {
@@ -551,13 +303,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		
 		fOverlayStore.loadDefaults();
-
 		initializeFields();
-
-		handleAnnotationListSelection();
-
 		super.performDefaults();
 	}
 	
