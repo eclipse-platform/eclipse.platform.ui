@@ -19,10 +19,6 @@ import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
-import org.eclipse.ant.internal.ui.editor.text.AntEditorProcInstrScanner;
-import org.eclipse.ant.internal.ui.editor.text.AntEditorTagScanner;
-import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.editor.text.MultilineDamagerRepairer;
 import org.eclipse.ant.internal.ui.editor.text.NotifyingReconciler;
 import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
@@ -37,32 +33,23 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
-import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
  * The source viewer configuration for the Ant Editor.
  */
-public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguration {
-
-    private AntEditorTagScanner tagScanner;
-    private AntEditorProcInstrScanner instructionScanner;
-	private MultilineDamagerRepairer damageRepairer;
-        
+public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerConfiguration {
+    
     private AntEditor fEditor;
 
     private XMLTextHover fTextHover;
@@ -126,75 +113,6 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
             }
         };
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-        return new String[] {
-            IDocument.DEFAULT_CONTENT_TYPE,
-            AntEditorPartitionScanner.XML_COMMENT,
-            AntEditorPartitionScanner.XML_TAG };
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public int getTabWidth(ISourceViewer sourceViewer) {
-    	return AntUIPlugin.getDefault().getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
-    }
-    
-    private AntEditorProcInstrScanner getDefaultScanner() {
-        if (instructionScanner == null) {
-            instructionScanner = new AntEditorProcInstrScanner();
-        }
-        return instructionScanner;
-    }
-    
-	private AntEditorTagScanner getTagScanner() {
-        if (tagScanner == null) {
-            tagScanner = new AntEditorTagScanner();
-        }
-        return tagScanner;
-    }
-    
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-        PresentationReconciler reconciler = new PresentationReconciler();
-
-		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getDefaultScanner(), null);
-        reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-
-        dr = new MultilineDamagerRepairer(getTagScanner(), null);
-        reconciler.setDamager(dr, AntEditorPartitionScanner.XML_TAG);
-        reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
-
-		damageRepairer= new MultilineDamagerRepairer(null,
-                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.XML_COMMENT_COLOR)));
-        reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
-        reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
-
-        return reconciler;
-    }
-
-
-	/**
-	 * Preference colors have changed.  
-	 * Update the default tokens of the scanners.
-	 */
-	public void updateScanners() {
-		if (tagScanner == null) {
-			return; //property change before the editor is fully created
-		}
-		tagScanner.adaptToColorChange();
-		instructionScanner.adaptToColorChange();
-				   
-		damageRepairer.setDefaultTextAttribute(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.XML_COMMENT_COLOR)));				  
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)

@@ -139,6 +139,12 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 */
 	public static final String FORMATTER_WRAP_LONG= "formatter_wrap_long"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant editor should
+	 * format templates on insert.
+	 */
+	public static final String TEMPLATES_USE_CODEFORMATTER= "templates_use_codeformatter"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -157,5 +163,7 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_COMMENTS, false);
 		store.setDefault(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, false);
+		
+		store.setDefault(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER, true);
 	}
 }

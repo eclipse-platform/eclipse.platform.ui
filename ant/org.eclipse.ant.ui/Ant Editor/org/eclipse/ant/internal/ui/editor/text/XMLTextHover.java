@@ -179,8 +179,15 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+		if (textViewer != null) {
+			return getRegion(textViewer, offset);
+		}
+		return null;	
+	}
+
+	public static IRegion getRegion(ITextViewer textViewer, int offset) {
 		IDocument document= textViewer.getDocument();
-			
+		
 		int start= -1;
 		int end= -1;
 		
@@ -223,7 +230,6 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		
 		return null;
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
