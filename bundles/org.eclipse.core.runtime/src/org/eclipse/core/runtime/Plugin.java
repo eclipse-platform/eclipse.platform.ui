@@ -172,14 +172,6 @@ public abstract class Plugin  {
 	/** The plug-in descriptor.
 	 */
 	private IPluginDescriptor descriptor;
-	
-	/**
-	 * Internal name of the preference storage file (value
-	 * <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String PREFERENCES_FILE_NAME = "pref_store.ini";//$NON-NLS-1$
 
 	/**
 	 * The name of the file (value <code>"preferences.ini"</code>) in a
@@ -379,7 +371,7 @@ public final Preferences getPluginPreferences() {
 private void loadPluginPreferences() {
 	// the preferences file is located in the plug-in's state area at a well-known name
 	// don't need to create the directory if there are no preferences to load
-	File prefFile = InternalPlatform.getPluginStateLocation(descriptor, false).append(PREFERENCES_FILE_NAME).toFile();
+	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor).toFile();
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {
@@ -450,7 +442,7 @@ public final void savePluginPreferences() {
 	// preferences need to be saved
 	// the preferences file is located in the plug-in's state area
 	// at a well-known name (pref_store.ini)
-	File prefFile = getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
+	File prefFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor).toFile();
 	if (preferences.propertyNames().length == 0) {
 		// there are no preference settings
 		// rather than write an empty file, just delete any existing file

@@ -29,6 +29,12 @@ public class PlatformMetaArea {
 	/* package */ static final String F_OPTIONS = ".options";	 //$NON-NLS-1$
 	/* package */ static final String F_KEYRING = ".keyring"; //$NON-NLS-1$
 	/* package */ static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$
+	/**
+	 * Internal name of the preference storage file (value
+	 * <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
+	 */
+	/* package */ static final String PREFERENCES_FILE_NAME = "pref_store.ini";//$NON-NLS-1$
+
 /**
  * 
  */
@@ -86,6 +92,12 @@ public IPath getLogLocation() {
  */
 public IPath getOptionsLocation() {
 	return getLocation().append(F_OPTIONS);
+}
+/**
+ * Returns the read/write location of the file for storing plugin preferences.
+ */
+public IPath getPluginPreferenceLocation(IPluginDescriptor descriptor) {
+	return getPluginStateLocation(descriptor).append(PREFERENCES_FILE_NAME);
 }
 /**
  * Returns the read/write location in which the given plugin can manage
