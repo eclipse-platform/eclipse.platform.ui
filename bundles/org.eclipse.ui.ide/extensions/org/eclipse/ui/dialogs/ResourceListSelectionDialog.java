@@ -219,7 +219,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             });
         }
-    };
+    }
 
     class UpdateGatherThread extends Thread {
         boolean stop = false;
@@ -326,7 +326,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             });
         }
-    };
+    }
 
     /**
      * Creates a new instance of the class.
