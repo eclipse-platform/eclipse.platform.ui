@@ -58,6 +58,10 @@ public abstract class Page {
 		createTitleArea(cheatSheetComposite);
 		createInfoArea(cheatSheetComposite);
 	}
+	
+	public Control getControl() {
+		return cheatSheetComposite;
+	}
 
 	/**
 	 * Creates the main composite area of the view.

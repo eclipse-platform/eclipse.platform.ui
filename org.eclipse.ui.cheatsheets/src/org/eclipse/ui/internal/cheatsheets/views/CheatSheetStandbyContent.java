@@ -11,15 +11,14 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.internal.parts.*;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.internal.parts.IStandbyContentPart;
 
 
 
@@ -27,6 +26,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 
     private IIntroPart introPart;
     private CheatSheetView cheatSheet;
+    private Control control;
 
     class ViewSiteAdapter implements IViewSite {
 
@@ -153,9 +153,6 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
         }
     }
 
-    Composite container;
-
-
     /*
      * (non-Javadoc)
      * 
@@ -163,12 +160,10 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      *      org.eclipse.ui.forms.widgets.FormToolkit)
      */
     public void createPartControl(Composite parent, FormToolkit toolkit) {
-        container = toolkit.createComposite(parent);
-        container.setLayout(new GridLayout());
         cheatSheet = new CheatSheetView();
         try {
             cheatSheet.init(new ViewSiteAdapter());
-            cheatSheet.createPartControl(container);
+            cheatSheet.createPartControl(parent);
         } catch (PartInitException e) {
             return;
         }
@@ -180,7 +175,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#getControl()
      */
     public Control getControl() {
-        return container;
+        return cheatSheet.getControl();
     }
 
     /*

@@ -818,6 +818,14 @@ public class CheatSheetView extends ViewPart {
 		init(site);
 		this.memento = memento;
 	}
+	
+	public Control getControl() {
+		if (cheatSheetPage.getControl()!=null)
+			return cheatSheetPage.getControl();
+		if (errorPage.getControl()!=null)
+			return errorPage.getControl();
+		return null;
+	}
 
 	private void initCheatSheetView() {
 
