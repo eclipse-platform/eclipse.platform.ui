@@ -22,9 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.NewWizardAction;
-import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.navigator.*;
@@ -33,17 +31,13 @@ import org.eclipse.ui.views.navigator.*;
  * Implements the Resource Navigator view.
  */
 public class AdaptedResourceNavigator
-	extends ViewPart{
+	extends ViewPart {
 	private TreeViewer viewer;
 	private IDialogSettings settings;
 	private IMemento memento;
 	private NavigatorFrameSource frameSource;
 
-	protected PropertyDialogAction propertyDialogAction;
-	protected NewWizardAction newWizardAction;
-	
-	protected TestNavigatorActionFactory actionFactory;
-	
+	protected TestNavigatorActionGroup actionGroup;
 
 	/**
 	 * Preference name constant for linking editor switching to navigator selection.
@@ -147,7 +141,7 @@ public class AdaptedResourceNavigator
 		// Update the global action enable state to match
 		// the current selection.
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		actionFactory.updateGlobalActions(selection);
+		actionGroup.updateGlobalActions(selection);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -168,7 +162,7 @@ public class AdaptedResourceNavigator
 			}
 		});
 
-		actionFactory.fillActionBars(selection);
+		actionGroup.fillActionBars(selection);
 
 		getSite().setSelectionProvider(viewer);
 
@@ -209,25 +203,8 @@ public class AdaptedResourceNavigator
 	 * Called when the context menu is about to open.
 	 */
 	void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection =
-			(IStructuredSelection) getResourceViewer().getSelection();
-
-		propertyDialogAction.selectionChanged(selection);
-		actionFactory.updateGlobalActions(selection);
-
-		MenuManager newMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new")); //$NON-NLS-1$
-		menu.add(newMenu);
-		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-		
-		actionFactory.fillPopUpMenu(menu,selection);
-		
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
-		menu.add(new Separator());
-
-		if (propertyDialogAction.isApplicableForSelection())
-			menu.add(propertyDialogAction);
+		actionGroup.setContext(new ActionContext(getViewer().getSelection()));
+		actionGroup.fillContextMenu(menu);
 	}
 
 	/** 
@@ -271,22 +248,15 @@ public class AdaptedResourceNavigator
 	 * Returns the current sorter.
 	 * @since 2.0
 	 */
-	public ResourceSorter getResourceSorter() {
-		return (ResourceSorter) getTreeViewer().getSorter();
-	}
-	/**
-	 * Returns the resource viewer which shows the resource hierarchy.
-	 * @since 2.0
-	 */
-	public Viewer getResourceViewer() {
-		return getTreeViewer();
+	public ResourceSorter getSorter() {
+		return (ResourceSorter) getViewer().getSorter();
 	}
 	
 	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
 	 * @since 2.0
 	 */
-	public TreeViewer getTreeViewer() {
+	public TreeViewer getViewer() {
 		return viewer;
 	}
 	/**
@@ -333,7 +303,7 @@ public class AdaptedResourceNavigator
 				return path.makeRelative().toString();
 			}
 		} else {
-			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(
+			return ((ILabelProvider) getViewer().getLabelProvider()).getText(
 				element);
 		}
 	}
@@ -362,8 +332,8 @@ public class AdaptedResourceNavigator
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
-		actionFactory.updateGlobalActions(sel);
-		actionFactory.selectionChanged(sel);
+		actionGroup.updateGlobalActions(sel);
+		actionGroup.selectionChanged(sel);
 		linkToEditor(sel);
 	}
 	
@@ -450,17 +420,7 @@ public class AdaptedResourceNavigator
 	 *	Create self's action objects
 	 */
 	protected void makeActions() {
-		Shell shell = getShell();
-
-		newWizardAction = new NewWizardAction();
-		
-		actionFactory = 
-			new TestNavigatorActionFactory(shell);
-				
-		actionFactory.makeActions();
-		propertyDialogAction =
-			new PropertyDialogAction(getShell(), getResourceViewer());
-	
+		actionGroup = new TestNavigatorActionGroup(this);
 	}
 	
 	/**
@@ -477,14 +437,14 @@ public class AdaptedResourceNavigator
 	public void selectReveal(ISelection selection) {
 		StructuredSelection ssel = convertSelection(selection);
 		if (!ssel.isEmpty()) {
-			getResourceViewer().setSelection(ssel, true);
+			getViewer().setSelection(ssel, true);
 		}
 	}
 	/**
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		getTreeViewer().getTree().setFocus();
+		getViewer().getTree().setFocus();
 	}
 	/**
 	 * Note: For experimental use only.
@@ -494,7 +454,7 @@ public class AdaptedResourceNavigator
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		DecoratingLabelProvider provider =
-			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
+			(DecoratingLabelProvider) getViewer().getLabelProvider();
 		if(decorator == null)
 			provider.setLabelDecorator(getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager());
 		else
@@ -516,7 +476,7 @@ public class AdaptedResourceNavigator
 	 * Called whenever the input of the viewer changes.
 	 */
 	void updateTitle() {
-		Object input = getResourceViewer().getInput();
+		Object input = getViewer().getInput();
 		String viewName = getConfigurationElement().getAttribute("name");
 		//$NON-NLS-1$
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -527,7 +487,7 @@ public class AdaptedResourceNavigator
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
 			ILabelProvider labelProvider =
-				(ILabelProvider) getTreeViewer().getLabelProvider();
+				(ILabelProvider) getViewer().getLabelProvider();
 			setTitle(
 				ResourceNavigatorMessages.format(
 					"ResourceNavigator.title",
