@@ -481,7 +481,9 @@ public void removeProduct(IProductDescriptor productDescriptor) {
 	IComponentEntryDescriptor[] componentEntries = productDescriptor.getComponentEntries();
 
 	for (int i = 0; i < componentEntries.length; ++i) {
-		removeComponent(componentEntries[i].getComponentDescriptor(), productDescriptor);
+		IComponentDescriptor componentDescriptor = componentEntries[i].getComponentDescriptor();
+		if (componentDescriptor.isRemovable(productDescriptor))
+			removeComponent(componentDescriptor, productDescriptor);
 	}
 
 	// Product
