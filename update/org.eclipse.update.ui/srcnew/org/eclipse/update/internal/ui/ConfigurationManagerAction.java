@@ -13,6 +13,9 @@ package org.eclipse.update.internal.ui;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 
 /**
@@ -22,6 +25,7 @@ import org.eclipse.ui.*;
 public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegate {
 
 	IWorkbenchWindow window;
+	ConfigurationManagerWindow openedWindow;
 	/**
 	 * The constructor.
 	 */
@@ -42,12 +46,29 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 	}
 
 	private void openConfigurationManager() {
+		if (openedWindow!=null) {
+			restoreConfigurationWindow();
+			return;
+		}
 		ConfigurationManagerWindow cwindow = new ConfigurationManagerWindow(window.getShell());
 		cwindow.create();
 		cwindow.getShell().setText("Configuration Manager");
 		cwindow.getShell().setSize(800, 600);
+		cwindow.getShell().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				openedWindow = null;
+			}
+		});
 		cwindow.updateActionBars();
+		openedWindow = cwindow;
 		cwindow.open();
+	}
+	
+	private void restoreConfigurationWindow() {
+		Shell shell = openedWindow.getShell();
+		if (shell.getMinimized())
+			shell.setMinimized(false);
+		shell.open();
 	}
 
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.views.FeatureSorter;
 
 public class UnifiedReviewPage extends UnifiedBannerPage {
 	// NL keys
@@ -111,7 +112,9 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 			if (job.getJobType() != PendingOperation.INSTALL)
 				return false;
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
-			Object[] selected = tableViewer.getCheckedElements();
+			//Object[] selected = tableViewer.getCheckedElements();
+			if (jobs==null) return false;
+			Object [] selected = jobs;
 			for (int i = 0; i < selected.length; i++) {
 				PendingOperation candidate = (PendingOperation) selected[i];
 				if (candidate.equals(job))
@@ -374,6 +377,14 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleProperties();
+			}
+		});
+		tableViewer.setSorter(new FeatureSorter() {
+			public int category(Object obj) {
+				PendingOperation job = (PendingOperation)obj;
+				if (UpdateUI.isPatch(job.getFeature()))
+					return 1;
+				return 0;
 			}
 		});
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());

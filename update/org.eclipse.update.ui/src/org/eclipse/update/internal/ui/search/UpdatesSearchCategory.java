@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
@@ -164,18 +164,27 @@ public class UpdatesSearchCategory extends SearchCategory {
 	class Hit {
 		IFeature candidate;
 		IFeatureReference ref;
+		boolean patch;
 		public Hit(IFeature candidate, IFeatureReference ref) {
 			this.candidate = candidate;
 			this.ref = ref;
+		}
+		public Hit(IFeature candidate, IFeatureReference ref, boolean patch) {
+			this(candidate, ref);
+			this.patch = patch;
 		}
 
 		public PendingChange getJob() {
 			try {
 				IFeature feature = ref.getFeature(null);
-				return new PendingChange(candidate, feature);
+				return new PendingChange(patch?null:candidate, feature);
 			} catch (CoreException e) {
 				return null;
 			}
+		}
+		
+		public boolean isPatch() {
+			return patch;
 		}
 	}
 
@@ -279,10 +288,10 @@ public class UpdatesSearchCategory extends SearchCategory {
 			// see if we should allow same-version re-install.
 			if (!broken) 
 				missingOptionalChildren = isMissingOptionalChildren(candidate);
-			IFeatureReference[] refs = site.getFeatureReferences();
+			ISiteFeatureReference[] refs = site.getFeatureReferences();
 			monitor.beginTask("", refs.length + 1);
 			for (int i = 0; i < refs.length; i++) {
-				IFeatureReference ref = refs[i];
+				ISiteFeatureReference ref = refs[i];
 				try {
 					if (isNewerVersion(candidate.getVersionedIdentifier(),
 						ref.getVersionedIdentifier(), match)) {
@@ -294,6 +303,11 @@ public class UpdatesSearchCategory extends SearchCategory {
 							&& candidate.getVersionedIdentifier().equals(
 								ref.getVersionedIdentifier()))
 							hits.add(new Hit(candidate, ref));
+						else {
+							// check for patches
+							if (isPatch(candidate, ref))
+								hits.add(new Hit(candidate, ref, true));
+						}
 					}
 				} catch (CoreException e) {
 				}				
@@ -305,11 +319,14 @@ public class UpdatesSearchCategory extends SearchCategory {
 			if (hits.size() == 0)
 				result = new IFeature[0];
 			else {
+				/*
 				IFeature topHit = getFirstValid(hits);
 				if (topHit == null)
 					result = new IFeature[0];
 				else
 					result = new IFeature[] { topHit };
+				*/
+				result = getValidHits(hits);
 			}
 			monitor.worked(1);
 			monitor.done();
@@ -340,6 +357,33 @@ public class UpdatesSearchCategory extends SearchCategory {
 		}
 		// no valid hits
 		return null;
+	}
+	
+	private IFeature [] getValidHits(ArrayList hits) {
+		Object[] array = hits.toArray();
+		HitSorter sorter = new HitSorter();
+		sorter.sortInPlace(array);
+		IFeature topHit = null;
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < array.length; i++) {
+			Hit hit = (Hit) array[i];
+			PendingChange job = hit.getJob();
+			if (job == null)
+				continue;
+			// do not accept updates without a license
+			if (!UpdateModel.hasLicense(job))
+				continue;
+			IStatus status = ActivityConstraints.validatePendingChange(job);
+			if (status == null) {
+				if (hit.isPatch())
+					result.add(job.getFeature());
+				else if (topHit==null) {
+					topHit = job.getFeature();
+					result.add(topHit);
+				}
+			}
+		}
+		return (IFeature [])result.toArray(new IFeature[result.size()]);
 	}
 
 	public void initialize() {
@@ -476,6 +520,17 @@ public class UpdatesSearchCategory extends SearchCategory {
 			return cv.isCompatibleWith(fv);
 		else
 			return false;
+	}
+	
+	private boolean isPatch(IFeature candidate, ISiteFeatureReference ref) {
+		if (ref.isPatch()==false) return false;
+		try {
+			IFeature feature = ref.getFeature(null);
+			return UpdateUI.isPatch(candidate, feature);
+		}
+		catch (CoreException e) {
+			return false;
+		}
 	}
 
 	public void createControl(Composite parent, FormWidgetFactory factory) {
