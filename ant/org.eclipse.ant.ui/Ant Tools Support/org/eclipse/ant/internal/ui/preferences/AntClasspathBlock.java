@@ -576,9 +576,8 @@ public class AntClasspathBlock {
 			return;
 		}
 	
-		antHome.setText(path);
+		antHome.setText(path); //the container will be updated as a side effect of this call
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTANTHOME, path);
-		container.update();
 	}
 		
 	private void setAntHome(File rootDir) {
@@ -652,7 +651,6 @@ public class AntClasspathBlock {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			antTableViewer.setInput(prefs.getAntURLs());
 			userTableViewer.setInput(prefs.getCustomURLs());
-			initializing= true;
 			initializeAntHome(prefs.getAntHome());
 			antHome.setEnabled(false);
 			browseAntHomeButton.setEnabled(false);
@@ -660,6 +658,7 @@ public class AntClasspathBlock {
 	}
 	
 	public void initializeAntHome(String antHomeString) {
+		initializing= true;
 		antHomeButton.setSelection(antHomeString != null);
 		antHome.setEnabled(antHomeString != null);
 		browseAntHomeButton.setEnabled(antHomeString != null);
@@ -731,7 +730,7 @@ public class AntClasspathBlock {
 				suffix= JARPresent(userURLs, XERCES);
 			}
 			if (suffix != null) {
-				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new String[]{suffix}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.37"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new String[]{suffix}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
 				valid= true;
 			}
