@@ -41,7 +41,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			super(new URL[] {classpath});
 			updateCore = Platform.getBundle(EXT_PLUGIN);
 			eclipseUI = Platform.getBundle(UI_PLUGIN);
-			if (eclipseUI.getState() != Bundle.ACTIVE) 
+			if (eclipseUI != null && eclipseUI.getState() != Bundle.ACTIVE) 
 				eclipseUI = null;
 		}
 
