@@ -30,6 +30,7 @@ public class WWinPluginAction extends PluginAction
 	private IWorkbenchWindow window;
 	private String actionSetId;
 	private RetargetAction retargetAction;
+	private static String TRUE_VALUE = "true"; //$NON-NLS-1$
 	
 	private static ArrayList staticActionList = new ArrayList(50);
 
@@ -45,13 +46,13 @@ public class WWinPluginAction extends PluginAction
 
 		// If config specifies a retarget action, create it now
 		String retarget = actionElement.getAttribute(ActionDescriptor.ATT_RETARGET);
-		if (retarget != null && retarget.equals("true")) {
+		if (retarget != null && retarget.equals(TRUE_VALUE)) {
 			// create a retarget action
 			String allowLabelUpdate = actionElement.getAttribute(ActionDescriptor.ATT_ALLOW_LABEL_UPDATE);
 			String id = actionElement.getAttribute(ActionDescriptor.ATT_ID);
 			String label = actionElement.getAttribute(ActionDescriptor.ATT_LABEL);
 			
-			if (allowLabelUpdate != null && allowLabelUpdate.equals("true")) 
+			if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE)) 
 				retargetAction = new LabelRetargetAction(id, label);
 			else
 				retargetAction = new RetargetAction(id, label);
