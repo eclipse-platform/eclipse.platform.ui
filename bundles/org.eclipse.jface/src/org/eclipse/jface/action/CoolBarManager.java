@@ -416,7 +416,7 @@ public class CoolBarManager extends ContributionManager implements
         final int size = cbItemsCreationOrder.size();
         for (int i = 0; i < size; i++) {
             IContributionItem created = (IContributionItem) cbItemsCreationOrder.get(i);
-            if (created.getId().equals(item.getId())) {
+            if (created.getId() != null && created.getId().equals(item.getId())) {
                 cbItemsCreationOrder.set(i, item);
                 replaced = true;
                 break;
