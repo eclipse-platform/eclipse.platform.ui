@@ -94,6 +94,10 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
 				true);
+		
+		//Option to show user jobs in a dialog
+		node.putBoolean(IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND, false);
+
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

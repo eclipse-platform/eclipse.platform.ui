@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -83,9 +82,6 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, 0);
 		node.putBoolean(IPreferenceConstants.MULTI_KEY_ASSIST, true);
 		node.putInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
-
-		//Option to show user jobs in a dialog
-		node.putBoolean(IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND, false);
 
 		// Temporary option to enable wizard for project capability
 		node.putBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
