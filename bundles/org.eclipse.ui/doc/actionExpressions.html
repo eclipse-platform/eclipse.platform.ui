@@ -2,8 +2,9 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
-   <title>Eclipse Workbench Extension Point: Action Sets</title>
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="OTI Employee">
+   <title>Eclipse Workbench Extension Point: Expressions Support</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
@@ -63,6 +64,7 @@ system property.&nbsp; Under the covers, the value of the system property
 is determined by invoking System.getProperty.
 <p>A <i>pluginState</i> element is used to evaluate the state of a plugin.&nbsp;
 The state of the plugin may be installed or activated.
+<p><b><i>Since:</i></b> Release 2.0
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT visibility (and | or | not | objectClass
 | objectState | systemProperty</tt>
@@ -140,8 +142,8 @@ and then populates it with actions which are enabled by a selection of
 <tt>ListElements</tt>
 with various state.&nbsp; A <tt>ListElement</tt> has two attributes: <i>name</i>
 (a string) and <i>flag</i> (a boolean).&nbsp; In this example, the All
-action (<img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER>)
-is enabled whenever a ListElement is selected.&nbsp; The Red action (<img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER>)
+action (<img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER>) is enabled
+whenever a ListElement is selected.&nbsp; The Red action (<img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when a ListElement with name = red is selected.&nbsp; And the
 Not Red action (<img SRC="tag_c.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when a ListElement with name != red is selected.
@@ -329,7 +331,6 @@ True"</tt>
 have been defined for markers, resources, and projects.&nbsp; The name-value
 pairs for each are declared on <tt>IMarkerActionFilter</tt>, <tt>IResourceActionFilter</tt>,
 and <tt>IProjectActionFilter</tt>.
-<br>&nbsp;
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
