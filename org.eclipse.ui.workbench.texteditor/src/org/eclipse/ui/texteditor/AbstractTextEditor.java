@@ -2294,12 +2294,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (InvocationTargetException x) {
 			Throwable t= x.getTargetException();
 			if (t instanceof CoreException) {
-                CoreException e= (CoreException)t;
-                IStatus status= e.getStatus();
                 /*
                 /* XXX: Remove unpacking of CoreException once the following bug is
                  *		fixed: https://bugs.eclipse.org/bugs/show_bug.cgi?id=81640
                  */ 
+                CoreException e= (CoreException)t;
+                IStatus status= e.getStatus();
                 if (status.getException() != null)
                     throw new PartInitException(status);
                	throw new PartInitException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), t));
