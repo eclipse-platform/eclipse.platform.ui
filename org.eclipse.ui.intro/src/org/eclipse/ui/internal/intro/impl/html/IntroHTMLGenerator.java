@@ -182,16 +182,12 @@ public class IntroHTMLGenerator {
 		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
-			// check to see if this element should be filtered from the HTML 
-			// presentation
-			if(!filteredFromPresentation(child)){
-				// use indentLevel + 2 here, since this element is contained within
-				// the pageContentDiv
-				HTMLElement childElement = generateIntroElement(child,
-						indentLevel + 2);
-				if (childElement != null)
-					pageContentDiv.addContent(childElement);
-			}
+			// use indentLevel + 2 here, since this element is contained within
+			// the pageContentDiv
+			HTMLElement childElement = generateIntroElement(child,
+					indentLevel + 2);
+			if (childElement != null)
+				pageContentDiv.addContent(childElement);
 		}
 		body.addContent(pageContentDiv);
 		return body;
@@ -209,6 +205,10 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateIntroElement(AbstractIntroElement element,
 			int indentLevel) {
 		if (element == null)
+			return null;
+		// check to see if this element should be filtered from the HTML 
+		// presentation
+		if(filteredFromPresentation(element))
 			return null;
 		switch (element.getType()) {
 			case AbstractIntroElement.GROUP :
@@ -304,8 +304,9 @@ public class IntroHTMLGenerator {
 		}
 		// add link image, if one is specified
 		if(element.getImg() != null) {
-			HTMLElement img = generateIntroImage(element.getImg(), indentLevel + 1);
-			anchor.addContent(img);
+			HTMLElement img = generateIntroElement(element.getImg(), indentLevel + 1);
+			if(img != null)
+				anchor.addContent(img);
 		}
 		// add <SPAN class="link-label">linkLabel</SPAN>
 		if (element.getLabel() != null) {
@@ -316,12 +317,10 @@ public class IntroHTMLGenerator {
 		}
 		IntroText linkText = element.getIntroText();
 		if (linkText != null && linkText.getText() != null) {
-			String classId = (linkText.getStyleId() != null) ? linkText
-					.getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
-			HTMLElement text = generateTextElement(
-					IIntroHTMLConstants.ELEMENT_PARAGRAPH, linkText.getId(),
-					classId, element.getText(), indentLevel + 1);
-			anchor.addContent(text);
+			HTMLElement text = generateIntroElement(
+					linkText, indentLevel + 1);
+			if(text != null)
+				anchor.addContent(text);
 		}
 		return anchor;
 	}
