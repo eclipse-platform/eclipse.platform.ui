@@ -13,7 +13,6 @@ package org.eclipse.compare;
 import java.lang.reflect.InvocationTargetException;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
