@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-import org.eclipse.core.internal.properties.PropertyManager;
+import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */IPath path;
 	/* package */Workspace workspace;
-	
+
 	protected Resource(IPath path, Workspace workspace) {
 		this.path = path.removeTrailingSeparator();
 		this.workspace = workspace;
@@ -756,7 +756,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			project.internalSetDescription(description, true);
 			project.writeDescription(IResource.FORCE);
 		}
-		
+
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
 
@@ -823,8 +823,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 
 		// check if we deleted a preferences file 
-		ProjectPreferences.deleted(this);		
-		
+		ProjectPreferences.deleted(this);
+
 		if (!synchronizing(info)) {
 			workspace.deleteResource(this);
 			return;
@@ -957,7 +957,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getFullPath().removeFirstSegments(ICoreConstants.PROJECT_SEGMENT_LENGTH);
 	}
 
-	public PropertyManager getPropertyManager() {
+	public IPropertyManager getPropertyManager() {
 		return workspace.getPropertyManager();
 	}
 
@@ -1322,7 +1322,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		CoreFileSystemLibrary.setResourceAttributes(location.toOSString(), attributes);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IResource#setSessionProperty(QualifiedName, Object)
 	 */

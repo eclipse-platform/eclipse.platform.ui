@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,14 @@ package org.eclipse.core.internal.localstore;
 import java.io.*;
 import org.eclipse.core.internal.localstore.Bucket.Visitor;
 import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
 public class BucketTree {
-
+	private static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$
 	public static final int DEPTH_INFINITE = Integer.MAX_VALUE;
 	public static final int DEPTH_ONE = 1;
 	public static final int DEPTH_ZERO = 0;
@@ -26,25 +28,50 @@ public class BucketTree {
 	private final static int SEGMENT_LENGTH = 2;
 	private final static long SEGMENT_QUOTA = (long) Math.pow(2, 4 * SEGMENT_LENGTH); // 1 char = 2 ^ 4 = 0x10	
 
-	private final static String VERSION_FILE = "version"; //$NON-NLS-1$
+	private static final String VERSION_FILE_EXT = ".version"; //$NON-NLS-1$
 
-	private Bucket current;
+	protected Bucket current;
 
-	private File rootLocation;
+	private Workspace workspace;
 
-	public BucketTree(File rootLocation, Bucket bucket) {
-		this.rootLocation = rootLocation;
+	public BucketTree(Workspace workspace, Bucket bucket) {
 		this.current = bucket;
+		this.workspace = workspace;
 	}
 
 	/**
 	 * From a starting point in the tree, visit all nodes under it. 
 	 * @param visitor
-	 * @param root
+	 * @param base
 	 * @param depth
 	 */
-	public void accept(Bucket.Visitor visitor, IPath root, int depth) throws CoreException {
-		internalAccept(visitor, root, locationFor(root), depth, 0);
+	public void accept(Bucket.Visitor visitor, IPath base, int depth) throws CoreException {
+		if (Path.ROOT.equals(base)) {
+			current.load(null, locationFor(Path.ROOT));
+			if (current.accept(visitor, base, DEPTH_ZERO) != Visitor.CONTINUE)
+				return;
+			if (depth == DEPTH_ZERO)
+				return;
+			boolean keepVisiting = true;
+			depth--;
+			IProject[] projects = workspace.getRoot().getProjects();
+			for (int i = 0; keepVisiting && i < projects.length; i++) {
+				IPath projectPath = projects[i].getFullPath();
+				keepVisiting = internalAccept(visitor, projectPath, locationFor(projectPath), depth, 1);
+			}
+		} else
+			internalAccept(visitor, base, locationFor(base), depth, 0);
+	}
+
+	public void cleanUp(File toDelete) {
+		if (!toDelete.delete())
+			// if deletion didn't go well, don't bother trying to delete the parent dir			
+			return;
+		// don't try to delete beyond the root for bucket indexes
+		if (toDelete.getName().equals(INDEXES_DIR_NAME))
+			return;
+		// recurse to parent directory
+		cleanUp(toDelete.getParentFile());
 	}
 
 	public void close() throws CoreException {
@@ -56,54 +83,59 @@ public class BucketTree {
 		return current;
 	}
 
+	public File getVersionFile() {
+		return new File(locationFor(Path.ROOT), current.getFileName() + VERSION_FILE_EXT);
+	}
+
 	/**
+	 * This will never be called for a bucket for the workspace root.
+	 *  
 	 * @return whether to continue visiting other branches 
 	 */
-	private boolean internalAccept(Bucket.Visitor visitor, IPath root, File bucketDir, int depthRequested, int currentDepth) throws CoreException {
-		current.load(bucketDir);
-		int outcome = current.accept(visitor, root, depthRequested);
+	private boolean internalAccept(Bucket.Visitor visitor, IPath base, File bucketDir, int depthRequested, int currentDepth) throws CoreException {
+		current.load(base.segment(0), bucketDir);
+		int outcome = current.accept(visitor, base, depthRequested);
 		if (outcome != Visitor.CONTINUE)
 			return outcome == Visitor.RETURN;
-		if (depthRequested == currentDepth)
+		if (depthRequested <= currentDepth)
 			return true;
 		File[] subDirs = bucketDir.listFiles();
 		if (subDirs == null)
 			return true;
 		for (int i = 0; i < subDirs.length; i++)
 			if (subDirs[i].isDirectory())
-				if (!internalAccept(visitor, root, subDirs[i], depthRequested, currentDepth + 1))
+				if (!internalAccept(visitor, base, subDirs[i], depthRequested, currentDepth + 1))
 					return false;
 		return true;
 	}
 
 	public void loadBucketFor(IPath path) throws CoreException {
-		current.load(locationFor(path));
+		current.load(Path.ROOT.equals(path) ? null : path.segment(0), locationFor(path));
 	}
 
 	public File locationFor(IPath resourcePath) {
+		IPath baseLocation = workspace.getMetaArea().locationFor(resourcePath);
 		int segmentCount = resourcePath.segmentCount();
-		// the root
-		if (segmentCount == 0)
-			return rootLocation;
-		// a project
-		if (segmentCount == 1)
-			return new File(rootLocation, resourcePath.segment(0));
+		baseLocation = baseLocation.append(INDEXES_DIR_NAME);
+		// the root or a project
+		if (segmentCount <= 1)
+			return baseLocation.toFile();
 		// a folder or file
-		IPath location = new Path(resourcePath.segment(0));
+		IPath location = baseLocation;
 		// the last segment is ignored
 		for (int i = 1; i < segmentCount - 1; i++)
 			// translate all segments except the first one (project name)
 			location = location.append(translateSegment(resourcePath.segment(i)));
-		return new File(rootLocation, location.toOSString());
+		return location.toFile();
 	}
 
 	/**
 	 * Writes the version tag to a file on disk.
 	 */
 	private void saveVersion() throws CoreException {
-		if (!this.rootLocation.isDirectory())
-			return;
-		File versionFile = new File(this.rootLocation, VERSION_FILE);
+		File versionFile = getVersionFile();
+		if (!versionFile.getParentFile().exists())
+			versionFile.getParentFile().mkdirs();
 		FileOutputStream stream = null;
 		boolean failed = false;
 		try {
@@ -111,7 +143,7 @@ public class BucketTree {
 			stream.write(current.getVersion());
 		} catch (IOException e) {
 			failed = true;
-			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
+			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		} finally {
 			try {
@@ -119,14 +151,14 @@ public class BucketTree {
 					stream.close();
 			} catch (IOException e) {
 				if (!failed) {
-					String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
+					String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 				}
 			}
 		}
 	}
 
-	private String translateSegment(String segment) {
+	protected String translateSegment(String segment) {
 		// String.hashCode algorithm is API
 		return Long.toHexString(Math.abs(segment.hashCode()) % SEGMENT_QUOTA);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,10 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
+/**
+ * A bucket is a persistent dictionary having paths as keys. Values are determined
+ * by subclasses. 
+ */
 public abstract class Bucket {
 
 	public static abstract class Entry {
@@ -97,6 +101,9 @@ public abstract class Bucket {
 		}
 	}
 
+	/**
+	 * A visitor for bucket entries.
+	 */
 	public static abstract class Visitor {
 		// should continue the traversal
 		public final static int CONTINUE = 0;
@@ -105,20 +112,27 @@ public abstract class Bucket {
 		// should stop the traversal	
 		public final static int STOP = 1;
 
-		/** 
-		 * @return either STOP, CONTINUE or RETURN
-		 */
-		public abstract int visit(Entry entry);
-
 		/**
 		 * Called after the bucket has been visited (and saved). 
 		 */
 		public void afterSaving(Bucket bucket) throws CoreException {
 			// empty implementation, subclasses to override
 		}
+
+		public void beforeSaving(Bucket bucket) throws CoreException {
+			// empty implementation, subclasses to override
+		}
+
+		/** 
+		 * @return either STOP, CONTINUE or RETURN
+		 */
+		public abstract int visit(Entry entry);
 	}
 
-	private static final String BUCKET = "bucket.index"; //$NON-NLS-1$
+	/** 
+	 * The file extension for bucket index files. 
+	 */
+	private static final String INDEX_FILE_EXT = ".index"; //$NON-NLS-1$
 
 	/**
 	 * Map of the history entries in this bucket. Maps (String -> byte[][]),
@@ -134,14 +148,12 @@ public abstract class Bucket {
 	 * Whether the in-memory bucket is dirty and needs saving
 	 */
 	private boolean needSaving = false;
-
 	/**
-	 * The root directory of the bucket indexes on disk.
+	 * The project name for the bucket currently loaded. <code>null</code> if this is the root bucket. 
 	 */
-	private File root;
+	protected String projectName;
 
-	public Bucket(File root) {
-		this.root = root;
+	public Bucket() {
 		this.entries = new HashMap();
 	}
 
@@ -182,51 +194,80 @@ public abstract class Bucket {
 			}
 			return Visitor.CONTINUE;
 		} finally {
+			visitor.beforeSaving(this);
 			save();
 			visitor.afterSaving(this);
 		}
 	}
 
-	protected abstract Entry createEntry(IPath path, Object value);
-
 	/**
 	 * Tries to delete as many empty levels as possible.
 	 */
-	private void delete(File toDelete) {
-		// don't try to delete beyond the root for bucket indexes
-		if (toDelete.equals(root))
-			return;
+	private void cleanUp(File toDelete) {
 		if (toDelete.delete())
 			// if deletion went fine, try deleting the parent dir			
-			delete(toDelete.getParentFile());
+			cleanUp(toDelete.getParentFile());
 	}
 
+	/**
+	 * Factory method for creating entries. Subclasses to override.
+	 */
+	protected abstract Entry createEntry(IPath path, Object value);
+
+	/**
+	 * Returns how many entries there are in this bucket.
+	 */
 	public final int getEntryCount() {
 		return entries.size();
 	}
 
+	/**
+	 * Returns the value for entry corresponding to the given path (null if none found). 
+	 */
 	public final Object getEntryValue(String path) {
 		return entries.get(path);
 	}
 
+	/**
+	 * Returns the file name to be used to persist instances of this Bucket implementation.
+	 */
+	protected abstract String getFileName();
+
+	/**
+	 * Returns the directory where this bucket should be stored.
+	 */
 	public File getLocation() {
 		return location == null ? null : location.getParentFile();
 	}
 
+	/**
+	 * Returns the version number for the file format used to persist this bucket.
+	 */
 	protected abstract byte getVersion();
 
-	public final void load(File baseLocation) throws CoreException {
-		load(baseLocation, false);
+	/**
+	 * Loads the contents from a file under the given directory.
+	 */
+	public void load(String newProjectName, File baseLocation) throws CoreException {
+		load(newProjectName, baseLocation, false);
 	}
 
-	public final void load(File baseLocation, boolean force) throws CoreException {
+	/**
+	 * Loads the contents from a file under the given directory. If <code>force</code> is
+	 * <code>false</code>, if this bucket already contains the contents from the current location, 
+	 * avoids reloading.
+	 */
+	public void load(String newProjectName, File baseLocation, boolean force) throws CoreException {
 		try {
 			// avoid reloading
-			if (!force && this.location != null && baseLocation.equals(this.location.getParentFile()))
+			if (!force && this.location != null && baseLocation.equals(this.location.getParentFile()) && (projectName == null ? (newProjectName == null) : projectName.equals(newProjectName))) {
+				this.projectName = newProjectName;
 				return;
+			}
 			// previously loaded bucket may not have been saved... save before loading new one
 			save();
-			this.location = new File(baseLocation, BUCKET);
+			this.projectName = newProjectName;
+			this.location = new File(baseLocation, getFileName() + INDEX_FILE_EXT);
 			this.entries.clear();
 			if (!this.location.isFile())
 				return;
@@ -241,7 +282,7 @@ public abstract class Bucket {
 				}
 				int entryCount = source.readInt();
 				for (int i = 0; i < entryCount; i++)
-					this.entries.put(source.readUTF(), readEntryValue(source));
+					this.entries.put(readEntryKey(source), readEntryValue(source));
 			} finally {
 				source.close();
 			}
@@ -252,15 +293,27 @@ public abstract class Bucket {
 		}
 	}
 
-	protected abstract Object readEntryValue(DataInputStream source) throws IOException;
+	private String readEntryKey(DataInputStream source) throws IOException {
+		if (projectName == null)
+			return source.readUTF();
+		return IPath.SEPARATOR + projectName + source.readUTF();
+	}
 
-	public final void save() throws CoreException {
+	/**
+	 * Defines how data for a given entry is to be read from a bucket file. To be implemented by subclasses.
+	 */
+	protected abstract Object readEntryValue(DataInputStream source) throws IOException, CoreException;
+
+	/**
+	 * Saves this bucket's contents back to its location.
+	 */
+	public void save() throws CoreException {
 		if (!needSaving)
 			return;
 		try {
 			if (entries.isEmpty()) {
 				needSaving = false;
-				delete(location);
+				cleanUp(location);
 				return;
 			}
 			// ensure the parent location exists 
@@ -271,7 +324,7 @@ public abstract class Bucket {
 				destination.writeInt(entries.size());
 				for (Iterator i = entries.entrySet().iterator(); i.hasNext();) {
 					Map.Entry entry = (Map.Entry) i.next();
-					destination.writeUTF((String) entry.getKey());
+					writeEntryKey(destination, (String) entry.getKey());
 					writeEntryValue(destination, entry.getValue());
 				}
 			} finally {
@@ -285,6 +338,10 @@ public abstract class Bucket {
 		}
 	}
 
+	/**
+	 * Sets the value for the entry with the given path. If <code>value</code> is <code>null</code>,
+	 * removes the entry. 
+	 */
 	public final void setEntryValue(String path, Object value) {
 		if (value == null)
 			entries.remove(path);
@@ -293,5 +350,20 @@ public abstract class Bucket {
 		needSaving = true;
 	}
 
-	protected abstract void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException;
+	private void writeEntryKey(DataOutputStream destination, String path) throws IOException {
+		if (projectName == null) {
+			destination.writeUTF(path);
+			return;
+		}
+		// omit the project name
+		int pathLength = path.length();
+		int projectLength = projectName.length();
+		String key = (pathLength == projectLength + 1) ? "" : path.substring(projectLength + 1); //$NON-NLS-1$
+		destination.writeUTF(key);
+	}
+
+	/**
+	 * Defines how an entry is to be persisted to the bucket file.
+	 */
+	protected abstract void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException, CoreException;
 }

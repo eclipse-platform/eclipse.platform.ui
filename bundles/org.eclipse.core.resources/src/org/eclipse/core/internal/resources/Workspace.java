@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
+import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.utils.*;
@@ -41,7 +42,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected NotificationManager notificationManager;
 	protected FileSystemResourceManager fileSystemManager;
 	protected PathVariableManager pathVariableManager;
-	protected PropertyManager propertyManager;
+	protected IPropertyManager propertyManager;
 	protected MarkerManager markerManager;
 	protected ContentDescriptionManager contentDescriptionManager;
 	/**
@@ -220,7 +221,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private boolean canCreateExtensions() {
 		return Platform.getBundle("org.eclipse.osgi").getState() != Bundle.STOPPING; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#checkpoint(boolean)
 	 */
@@ -629,7 +630,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// preserve local sync info
 		ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 		newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
-		
+
 		// forget content-related caching flags
 		newInfo.clear(M_CONTENT_CACHE);
 
@@ -908,7 +909,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// At this time we need to rebalance the nested operations. It is necessary because
 				// build() and snapshot() should not fail if they are called.
 				workManager.rebalanceNestedOperations();
-				
+
 				//find out if any operation has potentially modified the tree
 				hasTreeChanges = workManager.shouldBuild();
 				//double check if the tree has actually changed
@@ -1007,15 +1008,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return buildOrder;
 	}
-	
+
 	public CharsetManager getCharsetManager() {
 		return charsetManager;
 	}
-	
+
 	public ContentDescriptionManager getContentDescriptionManager() {
 		return contentDescriptionManager;
-	}	
-	
+	}
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDanglingReferences()
@@ -1107,10 +1107,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return pathVariableManager;
 	}
 
-	public PropertyManager getPropertyManager() {
+	public IPropertyManager getPropertyManager() {
 		return propertyManager;
 	}
-	
+
 	/**
 	 * Returns the refresh manager for this workspace
 	 */
@@ -1834,8 +1834,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			_workManager.startup(null);
 			fileSystemManager = new FileSystemResourceManager(this);
 			fileSystemManager.startup(monitor);
-			propertyManager = new PropertyManager(this);
-			propertyManager.startup(monitor);
 			pathVariableManager = new PathVariableManager();
 			pathVariableManager.startup(null);
 			natureManager = new NatureManager();
@@ -1854,6 +1852,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			aliasManager.startup(null);
 			refreshManager = new RefreshManager(this);
 			refreshManager.startup(null);
+			propertyManager = PropertyManager.createPropertyManager(this);
+			propertyManager.startup(monitor);
 			charsetManager = new CharsetManager(this);
 			charsetManager.startup(null);
 			contentDescriptionManager = new ContentDescriptionManager();

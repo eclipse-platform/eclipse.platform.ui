@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.IPath;
 
 public class HistoryBucket extends Bucket {
+
+	private static final String HISTORY_FILE_NAME = "history"; //$NON-NLS-1$
 
 	/**
 	 * A entry in the bucket index. Each entry has one path and a collection
@@ -44,7 +46,7 @@ public class HistoryBucket extends Bucket {
 		// the length of a UUID in bytes
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
 		// the length of each component of the data array
-		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;		
+		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
 
 		/**
 		 * The history states. The first array dimension is the number of states. The
@@ -219,7 +221,19 @@ public class HistoryBucket extends Bucket {
 	/** 
 	 * Version number for the current implementation file's format.
 	 * <p>
-	 * Version 1:
+	 * Version 2 (3.1 M5):
+	 * <pre>
+	 * FILE ::= VERSION_ID ENTRY+
+	 * ENTRY ::= PATH STATE_COUNT STATE+
+	 * PATH ::= string (does not include project name)
+	 * STATE_COUNT ::= int
+	 * STATE ::= UUID LAST_MODIFIED
+	 * UUID	 ::= byte[16]
+	 * LAST_MODIFIED ::= byte[8]
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * Version 1 (3.1 M4):
 	 * <pre>
 	 * FILE ::= VERSION_ID ENTRY+
 	 * ENTRY ::= PATH STATE_COUNT STATE+
@@ -231,10 +245,10 @@ public class HistoryBucket extends Bucket {
 	 * </pre>
 	 * </p>
 	 */
-	public final static byte VERSION = 1;
+	public final static byte VERSION = 2;
 
-	public HistoryBucket(File root) {
-		super(root);
+	public HistoryBucket() {
+		super();
 	}
 
 	public void addBlob(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
@@ -273,6 +287,10 @@ public class HistoryBucket extends Bucket {
 		if (existing == null)
 			return null;
 		return new HistoryEntry(path, existing);
+	}
+
+	protected String getFileName() {
+		return HISTORY_FILE_NAME;
 	}
 
 	protected byte getVersion() {

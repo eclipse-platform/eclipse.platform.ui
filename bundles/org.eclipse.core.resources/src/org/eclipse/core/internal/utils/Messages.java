@@ -44,6 +44,8 @@ public class Messages extends NLS {
 	public static String history_corrupt;
 	public static String history_couldNotAdd;
 	public static String history_errorContentDescription;
+
+	public static String history_conversionTransitional;
 	public static String history_interalPathErrors;
 	public static String history_notValid;
 	public static String history_problemCopying;
@@ -83,6 +85,7 @@ public class Messages extends NLS {
 	public static String indexedStore_indexNotFound;
 	public static String indexedStore_indexNotRemoved;
 	public static String indexedStore_metadataRequestError;
+
 	public static String indexedStore_objectExists;
 	public static String indexedStore_objectIDInvalid;
 	public static String indexedStore_objectNotAcquired;
@@ -92,6 +95,7 @@ public class Messages extends NLS {
 	public static String indexedStore_objectNotRemoved;
 	public static String indexedStore_objectNotStored;
 	public static String indexedStore_objectNotUpdated;
+
 	public static String indexedStore_objectTypeError;
 	public static String indexedStore_storeEmpty;
 	public static String indexedStore_storeFormatError;
@@ -114,6 +118,7 @@ public class Messages extends NLS {
 	public static String links_locationOverlapsLink;
 	public static String links_locationOverlapsProject;
 	public static String links_moveNotProject;
+
 	public static String links_natureVeto;
 	public static String links_noPath;
 	public static String links_overlappingResource;
@@ -219,13 +224,17 @@ public class Messages extends NLS {
 	public static String projRead_whichKey;
 	public static String projRead_whichValue;
 
+	public static String properties_conversionFailed;
+	public static String properties_conversionSucceded;	
 	public static String properties_couldNotClose;
 	public static String properties_couldNotDeleteProp;
 	public static String properties_couldNotReadProp;
 	public static String properties_couldNotWriteProp;
 	public static String properties_invalidPropName;
+	public static String properties_readProperties;	
 	public static String properties_storeNotAvailable;
 	public static String properties_storeProblem;
+	public static String properties_valueTooLong;	
 
 	// auto-refresh
 	public static String refresh_installError;

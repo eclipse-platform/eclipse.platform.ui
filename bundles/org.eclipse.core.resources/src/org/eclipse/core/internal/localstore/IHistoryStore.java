@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,10 +100,11 @@ public interface IHistoryStore extends IManager {
 	 * 
 	 * @param source the resource containing the original copy of the history store information
 	 * @param destination the target resource where to copy the history
+	 * @param moving whether the history is being copied due to a resource move
 	 * 
 	 * TODO: should this method take a progress monitor?
 	 */
-	public void copyHistory(IResource source, IResource destination);
+	public void copyHistory(IResource source, IResource destination, boolean moving);
 
 	/**
 	 * Verifies existence of specified resource in the history store. Returns
@@ -175,12 +176,12 @@ public interface IHistoryStore extends IManager {
 	 *    reporting is not desired
 	 */
 	public void remove(IPath path, IProgressMonitor monitor);
-	
+
 	/**
 	 * Go through the history store and remove all of the unreferenced states.
- * 
+	 * 
 	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
 	 * store is garbage collected during the #clean method.
-	 */	
+	 */
 	public void removeGarbage();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -129,6 +130,10 @@ public class LocalMetaArea implements ICoreConstants {
 		return locationFor(resource).append(F_PROPERTIES);
 	}
 
+	public IPath getPropertyStoreLocation() {
+		return getLocation().append(F_PROPERTIES);
+	}
+
 	public IPath getSafeTableLocationFor(String pluginId) {
 		IPath prefix = getLocation().append(F_SAFE_TABLE);
 		// if the plugin is the resources plugin, we return the master table
@@ -202,6 +207,16 @@ public class LocalMetaArea implements ICoreConstants {
 
 	public boolean hasSavedWorkspace() {
 		return getLocation().toFile().exists() || getBackupLocationFor(getLocation()).toFile().exists();
+	}
+
+	/**
+	 * Returns the local filesystem location in which the meta data for the
+	 * resource with the given path is stored.
+	 */
+	public IPath locationFor(IPath resourcePath) {
+		if (Path.ROOT.equals(resourcePath))
+			return getLocation().append(F_ROOT);
+		return getLocation().append(F_PROJECTS).append(resourcePath.segment(0));
 	}
 
 	/**

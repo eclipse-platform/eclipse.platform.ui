@@ -35,10 +35,10 @@ public class HistoryBucketTest extends ResourceTest {
 	public void testDuplicates() {
 		IPath baseLocation = getRandomLocation();
 		try {
-			HistoryBucket index1 = new HistoryBucket(baseLocation.toFile());
+			HistoryBucket index1 = new HistoryBucket();
 			IPath location1 = baseLocation.append("location1");
 			try {
-				index1.load(location1.toFile());
+				index1.load("foo", location1.toFile());
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
@@ -63,10 +63,10 @@ public class HistoryBucketTest extends ResourceTest {
 	public void testPersistence() {
 		IPath baseLocation = getRandomLocation();
 		try {
-			HistoryBucket index1 = new HistoryBucket(baseLocation.toFile());
+			HistoryBucket index1 = new HistoryBucket();
 			IPath location = baseLocation.append("location");
 			try {
-				index1.load(location.toFile());
+				index1.load("foo", location.toFile());
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
@@ -81,9 +81,9 @@ public class HistoryBucketTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("2.1", e);
 			}
-			HistoryBucket index2 = new HistoryBucket(baseLocation.toFile());
+			HistoryBucket index2 = new HistoryBucket();
 			try {
-				index2.load(location.toFile(), false);
+				index2.load("foo", location.toFile(), false);
 			} catch (CoreException e) {
 				fail("3.0", e);
 			}
@@ -103,7 +103,7 @@ public class HistoryBucketTest extends ResourceTest {
 				fail("4.0", e);
 			}
 			try {
-				index1.load(location.toFile(), true);
+				index1.load("foo", location.toFile(), true);
 			} catch (CoreException e) {
 				fail("4.1", e);
 			}
@@ -127,7 +127,7 @@ public class HistoryBucketTest extends ResourceTest {
 			entry = index1.getEntry(path);
 			assertNull("5.1", entry);
 			try {
-				index2.load(location.toFile(), true);
+				index2.load("foo", location.toFile(), true);
 			} catch (CoreException e) {
 				fail("5.2", e);
 			}
@@ -138,49 +138,47 @@ public class HistoryBucketTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * This test does not cause any data to be written.
+	 */
 	public void testSort() {
-		IPath baseLocation = getRandomLocation();
-		try {
-			HistoryBucket index = new HistoryBucket(baseLocation.toFile());
-			IPath path = new Path("/foo");
-			assertNull("1.0", index.getEntry(path));
-			UniversalUniqueIdentifier uuid1 = new UniversalUniqueIdentifier();
-			long timestamp1 = 10;
-			index.addBlob(path, uuid1, timestamp1);
-			HistoryBucket.HistoryEntry entry = index.getEntry(path);
-			assertNotNull("2.0", entry);
-			assertEquals("2.1", 1, entry.getOccurrences());
-			assertEquals("2.2", uuid1, entry.getUUID(0));
-			assertEquals("2.3", timestamp1, entry.getTimestamp(0));
-			// adds a new state with a more recent timestamp
-			UniversalUniqueIdentifier uuid2 = new UniversalUniqueIdentifier();
-			long timestamp2 = timestamp1 + 1;
-			index.addBlob(path, uuid2, timestamp2);
-			entry = index.getEntry(path);
-			assertNotNull("3.0", entry);
-			// since it is newer, should appear first
-			assertEquals("3.1", 2, entry.getOccurrences());
-			assertEquals("3.2", uuid2, entry.getUUID(0));
-			assertEquals("3.3", timestamp2, entry.getTimestamp(0));
-			assertEquals("3.4", uuid1, entry.getUUID(1));
-			assertEquals("3.5", timestamp1, entry.getTimestamp(1));
-			// adds a 3rd state, with the same timestamp as the 1st 
-			UniversalUniqueIdentifier uuid3 = new UniversalUniqueIdentifier();
-			long timestamp3 = timestamp1;
-			index.addBlob(path, uuid3, timestamp3);
-			entry = index.getEntry(path);
-			assertNotNull("4.0", entry);
-			// its UUID was created later so it will be considered more recent
-			// even if it has the same timestamp
-			assertEquals("4.1", 3, entry.getOccurrences());
-			assertEquals("4.2", uuid2, entry.getUUID(0));
-			assertEquals("4.3", timestamp2, entry.getTimestamp(0));
-			assertEquals("4.4", uuid3, entry.getUUID(1));
-			assertEquals("4.5", timestamp3, entry.getTimestamp(1));
-			assertEquals("4.6", uuid1, entry.getUUID(2));
-			assertEquals("4.7", timestamp1, entry.getTimestamp(2));
-		} finally {
-			ensureDoesNotExistInFileSystem(baseLocation.toFile());
-		}
+		HistoryBucket index = new HistoryBucket();
+		IPath path = new Path("/foo");
+		assertNull("1.0", index.getEntry(path));
+		UniversalUniqueIdentifier uuid1 = new UniversalUniqueIdentifier();
+		long timestamp1 = 10;
+		index.addBlob(path, uuid1, timestamp1);
+		HistoryBucket.HistoryEntry entry = index.getEntry(path);
+		assertNotNull("2.0", entry);
+		assertEquals("2.1", 1, entry.getOccurrences());
+		assertEquals("2.2", uuid1, entry.getUUID(0));
+		assertEquals("2.3", timestamp1, entry.getTimestamp(0));
+		// adds a new state with a more recent timestamp
+		UniversalUniqueIdentifier uuid2 = new UniversalUniqueIdentifier();
+		long timestamp2 = timestamp1 + 1;
+		index.addBlob(path, uuid2, timestamp2);
+		entry = index.getEntry(path);
+		assertNotNull("3.0", entry);
+		// since it is newer, should appear first
+		assertEquals("3.1", 2, entry.getOccurrences());
+		assertEquals("3.2", uuid2, entry.getUUID(0));
+		assertEquals("3.3", timestamp2, entry.getTimestamp(0));
+		assertEquals("3.4", uuid1, entry.getUUID(1));
+		assertEquals("3.5", timestamp1, entry.getTimestamp(1));
+		// adds a 3rd state, with the same timestamp as the 1st 
+		UniversalUniqueIdentifier uuid3 = new UniversalUniqueIdentifier();
+		long timestamp3 = timestamp1;
+		index.addBlob(path, uuid3, timestamp3);
+		entry = index.getEntry(path);
+		assertNotNull("4.0", entry);
+		// its UUID was created later so it will be considered more recent
+		// even if it has the same timestamp
+		assertEquals("4.1", 3, entry.getOccurrences());
+		assertEquals("4.2", uuid2, entry.getUUID(0));
+		assertEquals("4.3", timestamp2, entry.getTimestamp(0));
+		assertEquals("4.4", uuid3, entry.getUUID(1));
+		assertEquals("4.5", timestamp3, entry.getTimestamp(1));
+		assertEquals("4.6", uuid1, entry.getUUID(2));
+		assertEquals("4.7", timestamp1, entry.getTimestamp(2));
 	}
 }

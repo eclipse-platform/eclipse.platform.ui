@@ -97,7 +97,11 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-		return new TestSuite(HistoryStoreTest.class);
+//		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
+//		suite.addTest(new HistoryStoreTest("testMoveProject"));
+//		suite.addTest(new HistoryStoreTest("testFindDeleted"));		
+//		return suite;
+				return new TestSuite(HistoryStoreTest.class);
 	}
 
 	/*
@@ -370,7 +374,7 @@ public class HistoryStoreTest extends ResourceTest {
 		assertEquals("2.0", 1, states.length);
 
 		// copy the data
-		store.copyHistory(folder, destinationFolder);
+		store.copyHistory(folder, destinationFolder, true);
 
 		states = store.getStates(destinationFile.getFullPath(), getMonitor());
 		assertEquals("3.0", 1, states.length);
@@ -742,7 +746,7 @@ public class HistoryStoreTest extends ResourceTest {
 		// Test with null source and/or destination
 		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(null, null);
+		store.copyHistory(null, null, false);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -751,7 +755,7 @@ public class HistoryStoreTest extends ResourceTest {
 		verifier.reset();
 
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(null, file2);
+		store.copyHistory(null, file2, false);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -760,7 +764,7 @@ public class HistoryStoreTest extends ResourceTest {
 		verifier.reset();
 
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(file, null);
+		store.copyHistory(file, null, false);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -770,7 +774,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Try to copy the history store stuff to the same location
 		verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
-		store.copyHistory(file, file);
+		store.copyHistory(file, file, false);
 		try {
 			verifier.verify();
 		} catch (VerificationFailedException e) {
@@ -783,7 +787,7 @@ public class HistoryStoreTest extends ResourceTest {
 		log.removeLogListener(verifier);
 
 		// Test a valid copy of a file
-		store.copyHistory(file, file2);
+		store.copyHistory(file, file2, false);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -844,7 +848,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Test a valid copy of a folder
 		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
-		store.copyHistory(folder, folder2);
+		store.copyHistory(folder, folder2, false);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -906,7 +910,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		// Test a valid copy of a folder
 		IHistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
-		store.copyHistory(project, project2);
+		store.copyHistory(project, project2, false);
 		IFileState[] states = null;
 		try {
 			states = file2.getHistory(getMonitor());
@@ -1611,9 +1615,9 @@ public class HistoryStoreTest extends ResourceTest {
 
 			// Check the local history of both files
 			states = file.getHistory(getMonitor());
-			assertEquals("2.0", 2, states.length);
-			assertTrue("2.1", compareContent(getContents(contents[1]), states[0].getContents()));
-			assertTrue("2.2", compareContent(getContents(contents[0]), states[1].getContents()));
+
+			// original file should not remember history when project is moved
+			assertEquals("2.0", 0, states.length);
 			states = file2.getHistory(getMonitor());
 			assertEquals("2.3", 4, states.length);
 			assertTrue("2.4", compareContent(getContents(contents[3]), states[0].getContents()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,17 +33,18 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 
 		public void afterSaving(Bucket bucket) throws CoreException {
-			saveChanges((HistoryBucket) bucket);
+			saveChanges();
 			changes.clear();
 		}
 
-		private void saveChanges(HistoryBucket bucket) throws CoreException {
+		private void saveChanges() throws CoreException {
 			if (changes.isEmpty())
 				return;
 			// make effective all changes collected
 			Iterator i = changes.iterator();
 			HistoryEntry entry = (HistoryEntry) i.next();
-			bucket.load(tree.locationFor(entry.getPath()));
+			tree.loadBucketFor(entry.getPath());
+			HistoryBucket bucket = (HistoryBucket) tree.getCurrent();
 			bucket.addBlobs(entry);
 			while (i.hasNext())
 				bucket.addBlobs((HistoryEntry) i.next());
@@ -60,10 +61,44 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
+	class HistoryMoveVisitor extends Bucket.Visitor {
+		private List changes = new ArrayList();
+		private IPath destination;
+		private IPath source;
+
+		public HistoryMoveVisitor(IPath source, IPath destination) {
+			this.source = source;
+			this.destination = destination;
+		}
+
+		private void applyChanges(HistoryBucket bucket) {
+			if (changes.isEmpty())
+				return;
+
+			for (Iterator i = changes.iterator(); i.hasNext();)
+				bucket.addBlobs((HistoryEntry) i.next());
+		}
+
+		public void beforeSaving(Bucket bucket) {
+			applyChanges((HistoryBucket) bucket);
+			changes.clear();
+		}
+
+		public int visit(Entry sourceEntry) {
+			IPath destinationPath = destination.append(sourceEntry.getPath().removeFirstSegments(source.segmentCount()));
+			HistoryEntry destinationEntry = new HistoryEntry(destinationPath, (HistoryEntry) sourceEntry);
+			// we may be copying to the same source bucket, collect to make change effective later
+			// since we cannot make changes to it while iterating
+			changes.add(destinationEntry);
+			// delete original entry
+			sourceEntry.delete();
+			return CONTINUE;
+		}
+	}
+
 	private static final String INDEX_STORE = ".buckets"; //$NON-NLS-1$
 	private BlobStore blobStore;
 	private Set blobsToRemove = new HashSet();
-	private File indexLocation;
 	private BucketTree tree;
 	private Workspace workspace;
 
@@ -71,8 +106,7 @@ public class HistoryStore2 implements IHistoryStore {
 		this.workspace = workspace;
 		location.toFile().mkdirs();
 		this.blobStore = new BlobStore(location, limit);
-		this.indexLocation = location.append(INDEX_STORE).toFile();
-		this.tree = new BucketTree(indexLocation, createBucketTable());
+		this.tree = new BucketTree(workspace, new HistoryBucket());
 	}
 
 	/**
@@ -86,9 +120,8 @@ public class HistoryStore2 implements IHistoryStore {
 		UniversalUniqueIdentifier uuid = null;
 		try {
 			uuid = blobStore.addBlob(localFile, moveContents);
-			File bucketDir = tree.locationFor(key);
+			tree.loadBucketFor(key);
 			HistoryBucket currentBucket = (HistoryBucket) tree.getCurrent();
-			currentBucket.load(bucketDir);
 			currentBucket.addBlob(key, uuid, lastModified);
 			currentBucket.save();
 		} catch (CoreException e) {
@@ -173,7 +206,7 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
-	public void copyHistory(IResource sourceResource, IResource destinationResource) {
+	public void copyHistory(IResource sourceResource, IResource destinationResource, boolean moving) {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
 		if (sourceResource == null || destinationResource == null) {
@@ -195,6 +228,11 @@ public class HistoryStore2 implements IHistoryStore {
 		Assert.isLegal(destination.segmentCount() > 0);
 		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
+		// special case: we are moving a project
+		if (moving && sourceResource.getType() == IResource.PROJECT)
+			// nothing to be done!
+			return;
+
 		try {
 			// copy history by visiting the source tree
 			HistoryCopyVisitor copyVisitor = new HistoryCopyVisitor(source, destination);
@@ -204,10 +242,6 @@ public class HistoryStore2 implements IHistoryStore {
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-	}
-
-	HistoryBucket createBucketTable() {
-		return new HistoryBucket(indexLocation);
 	}
 
 	public boolean exists(IFileState target) {
@@ -227,10 +261,9 @@ public class HistoryStore2 implements IHistoryStore {
 	}
 
 	public IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
-		File bucketDir = tree.locationFor(filePath);
 		try {
+			tree.loadBucketFor(filePath);
 			HistoryBucket currentBucket = (HistoryBucket) tree.getCurrent();
-			currentBucket.load(bucketDir);
 			HistoryEntry fileEntry = currentBucket.getEntry(filePath);
 			if (fileEntry == null || fileEntry.isEmpty())
 				return new IFileState[0];

@@ -24,6 +24,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(MarkerPerformanceTest.suite());
 		suite.addTest(LocalHistoryPerformanceTest.suite());
 		suite.addTest(WorkspacePerformanceTest.suite());
+		suite.addTest(PropertyManagerPerformanceTest.suite());		
 		return suite;
 	}
 

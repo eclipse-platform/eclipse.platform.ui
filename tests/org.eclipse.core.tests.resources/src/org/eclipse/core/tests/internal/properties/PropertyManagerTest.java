@@ -14,8 +14,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.properties.PropertyManager;
-import org.eclipse.core.internal.properties.StoredProperty;
+import org.eclipse.core.internal.properties.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,9 +31,9 @@ public class PropertyManagerTest extends LocalStoreTest {
 	}
 
 	public static Test suite() {
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new PropertyManagerTest("testConcurrentDelete"));
-		//	return suite;
+//			TestSuite suite = new TestSuite();
+//			suite.addTest(new PropertyManagerTest("testDeleteProperties"));
+//			return suite;
 		return new TestSuite(PropertyManagerTest.class);
 	}
 
@@ -185,7 +184,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 	}
 
 	public void testCopy() throws Throwable {
-		PropertyManager manager = new PropertyManager((Workspace) getWorkspace());
+		IPropertyManager manager = PropertyManager.createPropertyManager((Workspace) getWorkspace());
 		IProject source = projects[0];
 		IFolder sourceFolder = source.getFolder("myfolder");
 		IResource sourceFile = sourceFolder.getFile("myfile.txt");
@@ -253,7 +252,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 
 	public void testDeleteProperties() throws Throwable {
 		/* create common objects */
-		PropertyManager manager = new PropertyManager((Workspace) getWorkspace());
+		IPropertyManager manager = PropertyManager.createPropertyManager((Workspace) getWorkspace());
 		IFile target = projects[0].getFile("target");
 
 		/* server properties */
@@ -333,7 +332,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		IProgressMonitor monitor = null;
 
 		// create common objects
-		PropertyManager manager = new PropertyManager((Workspace) getWorkspace());
+		IPropertyManager manager = PropertyManager.createPropertyManager((Workspace) getWorkspace());
 		IFile target = projects[0].getFile("target");
 		target.create(null, false, monitor);
 
@@ -353,8 +352,15 @@ public class PropertyManagerTest extends LocalStoreTest {
 		for (Enumeration e = props.elements(); e.hasMoreElements();) {
 			StoredProperty prop = (StoredProperty) e.nextElement();
 			manager.setProperty(target, prop.getName(), prop.getStringValue());
-			assertTrue("1.0." + prop.getName(), prop.getStringValue().equals(manager.getProperty(target, prop.getName())));
+			assertEquals("1.0." + prop.getName(), prop.getStringValue(), manager.getProperty(target, prop.getName()));
 		}
+		// check properties are be appropriately deleted (when set to null)
+		for (Enumeration e = props.elements(); e.hasMoreElements();) {
+			StoredProperty prop = (StoredProperty) e.nextElement();
+			manager.setProperty(target, prop.getName(), null);
+			assertEquals("2.0." + prop.getName(), null, manager.getProperty(target, prop.getName()));
+		}
+		assertEquals("3.0", 0, manager.getProperties(target).size());
 		manager.deleteProperties(target, IResource.DEPTH_INFINITE);
 
 		// remove trash

@@ -11,10 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.properties.PropertyManager;
+import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.*;
@@ -84,7 +82,7 @@ class ResourceTree implements IResourceTree {
 	 * associated IFile under destination.
 	 */
 	private void copyLocalHistory(IResource source, IResource destination) {
-		((Resource) destination).getLocalManager().getHistoryStore().copyHistory(source, destination);
+		((Resource) destination).getLocalManager().getHistoryStore().copyHistory(source, destination, true);
 	}
 
 	/**
@@ -106,7 +104,7 @@ class ResourceTree implements IResourceTree {
 			}
 
 			// Move the resource's persistent properties.
-			PropertyManager propertyManager = ((Resource) source).getPropertyManager();
+			IPropertyManager propertyManager = ((Resource) source).getPropertyManager();
 			try {
 				propertyManager.copy(source, destination, IResource.DEPTH_ZERO);
 				propertyManager.deleteProperties(source, IResource.DEPTH_ZERO);
@@ -164,7 +162,7 @@ class ResourceTree implements IResourceTree {
 
 			// Move the folder properties.
 			int depth = IResource.DEPTH_INFINITE;
-			PropertyManager propertyManager = ((Resource) source).getPropertyManager();
+			IPropertyManager propertyManager = ((Resource) source).getPropertyManager();
 			try {
 				propertyManager.copy(source, destination, depth);
 				propertyManager.deleteProperties(source, depth);
@@ -616,7 +614,7 @@ class ResourceTree implements IResourceTree {
 				java.io.File folderLocation = folder.getLocation().toFile();
 				success = Workspace.clear(folderLocation);
 			} catch (CoreException ce) {
-				message = NLS.bind(Messages.localstore_couldnotDelete, folder.getFullPath());					
+				message = NLS.bind(Messages.localstore_couldnotDelete, folder.getFullPath());
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
 				if (ce.getStatus() != null)
 					status.merge(ce.getStatus());
@@ -774,7 +772,7 @@ class ResourceTree implements IResourceTree {
 						if (defaultLocation)
 							success = Workspace.clear(projectLocation);
 					} catch (CoreException ce) {
-						message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());					
+						message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());
 						MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
 						if (ce.getStatus() != null)
 							status.merge(ce.getStatus());

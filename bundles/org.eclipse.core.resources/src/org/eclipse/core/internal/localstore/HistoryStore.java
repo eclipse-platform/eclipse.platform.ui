@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class HistoryStore implements IHistoryStore {
 	IndexedStoreWrapper store;
 	Set blobsToRemove = new HashSet();
 
-	/* package */ final static String INDEX_FILE = ".index"; //$NON-NLS-1$
+	/* package */final static String INDEX_FILE = ".index"; //$NON-NLS-1$
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
@@ -283,12 +283,12 @@ public class HistoryStore implements IHistoryStore {
 	 * @see IHistoryStore#copyHistory(IResource, IResource)
 	 * @since  2.1
 	 */
-	public void copyHistory(final IResource sourceResource, final IResource destinationResource) {
+	public void copyHistory(final IResource sourceResource, final IResource destinationResource, boolean moving) {
 		// Note that if any states in the local history for destination
 		// have the same timestamp as a state for the local history
 		// for source, the local history for destination will appear 
 		// as an older state than the one for source.
-	
+
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
 		if (sourceResource == null || destinationResource == null) {
