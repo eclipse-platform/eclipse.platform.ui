@@ -12,18 +12,16 @@
 package org.eclipse.ant.internal.ui.editor.text;
 
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
-public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
+public class XMLReconcilingStrategy implements IReconcilingStrategy {
 
 	private ITextEditor fEditor;
 
@@ -59,18 +57,5 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see IReconcilingStrategy#setDocument(IDocument)
 	 */
 	public void setDocument(IDocument document) {
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void setProgressMonitor(IProgressMonitor monitor) {
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
-	 */
-	public void initialReconcile() {
-		internalReconcile(null);
 	}
 }
