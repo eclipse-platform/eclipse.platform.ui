@@ -78,9 +78,11 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		IPath stateLoc = HelpUIPlugin.getDefault().getStateLocation();
 		String fileName = stateLoc.append(USER_FILE).toOSString();
 		FileOutputStream fos = null;
+		OutputStreamWriter osw = null;
 		try {
 			fos = new FileOutputStream(fileName);
-			PrintWriter writer = new PrintWriter(fos);
+			osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
+			PrintWriter writer = new PrintWriter(osw);
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.println("<engines>");
 			for (int i = 0; i < descriptors.size(); i++) {
@@ -90,15 +92,22 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 				}
 			}
 			writer.println("</engines>");
+			writer.flush();
 		}
 		catch (IOException e) {
 			HelpUIPlugin.logError("Error while saving user searches", e);
 		}
 		finally {
+			if (osw!=null) {
+				try {
+					osw.close();
+				}
+				catch (IOException e) {
+				}
+			}
 			if (fos!=null) {
 				try {
 					fos.close();
-					fos=null;
 				}
 				catch (IOException e) {
 				}

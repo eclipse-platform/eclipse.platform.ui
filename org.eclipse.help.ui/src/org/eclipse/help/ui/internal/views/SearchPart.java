@@ -56,16 +56,18 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private Button goButton;
 
 	private Hyperlink scopeSetLink;
+	
+	private Hyperlink advancedLink;
 
 	private ScopeSetManager scopeSetManager;
-	
+
 	private EngineDescriptorManager descManager;
-	
 
 	private JobListener jobListener;
-	
+
 	private class JobListener implements IJobChangeListener, Runnable {
-		private boolean searchInProgress=false;
+		private boolean searchInProgress = false;
+
 		public void aboutToRun(IJobChangeEvent event) {
 		}
 
@@ -74,10 +76,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 		public void done(IJobChangeEvent event) {
 			if (event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
-				Job [] searchJobs = Platform.getJobManager().find(FederatedSearchJob.FAMILY);
-				if (searchJobs.length==0) {
+				Job[] searchJobs = Platform.getJobManager().find(
+						FederatedSearchJob.FAMILY);
+				if (searchJobs.length == 0) {
 					// search finished
-					searchInProgress=false;
+					searchInProgress = false;
 					container.getDisplay().asyncExec(this);
 				}
 			}
@@ -87,15 +90,16 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		}
 
 		public void scheduled(IJobChangeEvent event) {
-			if (!searchInProgress && event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
-				searchInProgress=true;
+			if (!searchInProgress
+					&& event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
+				searchInProgress = true;
 				container.getDisplay().asyncExec(this);
 			}
 		}
 
 		public void sleeping(IJobChangeEvent event) {
 		}
-		
+
 		public void run() {
 			searchWordCombo.setEnabled(!searchInProgress);
 			goButton.setEnabled(!searchInProgress);
@@ -124,12 +128,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 						}
 					});
 				} else
-					SearchPart.this.parent.showURL(HREF_SEARCH_HELP,
-							true);
+					SearchPart.this.parent.showURL(HREF_SEARCH_HELP, true);
 			}
 		});
-		searchWordText.setImage(IHelpUIConstants.IMAGE_HELP,
-				HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP));
+		searchWordText.setImage(IHelpUIConstants.IMAGE_HELP, HelpUIResources
+				.getImage(IHelpUIConstants.IMAGE_HELP));
 		updateSearchWordText();
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
@@ -194,19 +197,23 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 		toolkit.paintBordersFor(filteringGroup);
 		loadEngines(filteringGroup, toolkit);
-		Hyperlink advanced = toolkit
-				.createHyperlink(filteringGroup, HelpUIResources
+		createAdvancedLink(filteringGroup, toolkit);
+		jobListener = new JobListener();
+		Platform.getJobManager().addJobChangeListener(jobListener);
+	}
+
+	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
+		advancedLink = toolkit
+				.createHyperlink(parent, HelpUIResources
 						.getString("FederatedSearchPart.advanced"), SWT.NULL); //$NON-NLS-1$
-		advanced.addHyperlinkListener(new HyperlinkAdapter() {
+		advancedLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
 			}
 		});
-		td = new TableWrapData();
+		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
-		advanced.setLayoutData(td);
-		jobListener = new JobListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		advancedLink.setLayoutData(td);
 	}
 
 	private void createScopeSet(Section section, FormToolkit toolkit) {
@@ -279,7 +286,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			if (child instanceof Button) {
-				Button master = (Button)child;
+				Button master = (Button) child;
 				Object data = master.getData();
 				if (data != null && data instanceof EngineDescriptor) {
 					EngineDescriptor ed = (EngineDescriptor) data;
@@ -289,32 +296,34 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		}
 	}
 
-	private void loadEngines(final Composite container, final FormToolkit toolkit) {
+	private void loadEngines(final Composite container,
+			final FormToolkit toolkit) {
 		descManager = new EngineDescriptorManager();
-		EngineDescriptor [] descriptors = descManager.getDescriptors();
-		for (int i=0; i<descriptors.length; i++) {
+		EngineDescriptor[] descriptors = descManager.getDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
 			EngineDescriptor desc = descriptors[i];
 			loadEngine(desc, container, toolkit);
 		}
 		descManager.addObserver(new Observer() {
-		    public void update(Observable o, Object arg) {
-		    	EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent)arg;
-		    	int kind = event.getKind();
-		    	EngineDescriptor desc = event.getDescriptor();
-		    	if (kind==IHelpUIConstants.ADD) {
-		    		loadEngine(desc, container, toolkit);
-		    	}
-		    	else if (kind==IHelpUIConstants.REMOVE) {
-		    		removeEngine(desc);
-		    	}
-		    	else {
-		    		updateEngine(desc);
-		    	}
-		    }
-		});	
+			public void update(Observable o, Object arg) {
+				EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent) arg;
+				int kind = event.getKind();
+				EngineDescriptor desc = event.getDescriptor();
+				if (kind == IHelpUIConstants.ADD) {
+					advancedLink.dispose();
+					loadEngine(desc, container, toolkit);
+					createAdvancedLink(container, toolkit);
+					parent.reflow();
+				} else if (kind == IHelpUIConstants.REMOVE) {
+					removeEngine(desc);
+				} else {
+					updateEngine(desc);
+				}
+			}
+		});
 		updateMasters(scopeSetManager.getActiveSet());
 	}
-	
+
 	private EngineDescriptor loadEngine(final EngineDescriptor edesc,
 			Composite container, FormToolkit toolkit) {
 		Label ilabel = toolkit.createLabel(container, null);
@@ -333,7 +342,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		if (desc != null) {
 			toolkit.createLabel(container, null);
 			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
-			dlabel.setForeground(toolkit.getColors().getColor(
+			dlabel
+					.setForeground(toolkit.getColors().getColor(
 							FormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 			dlabel.setMenu(container.getMenu());
@@ -341,37 +351,39 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		}
 		return edesc;
 	}
-	
+
 	private void removeEngine(EngineDescriptor desc) {
-		boolean reflowNeeded=false;
-		Control [] children = container.getChildren();
-		for (int i=0; i<children.length; i++) {
+		boolean reflowNeeded = false;
+		Control[] children = container.getChildren();
+		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
-			EngineDescriptor ed = (EngineDescriptor)child.getData();
-			if (ed==desc) {
+			EngineDescriptor ed = (EngineDescriptor) child.getData();
+			if (ed == desc) {
 				child.dispose();
-				reflowNeeded=true;
+				reflowNeeded = true;
 			}
 		}
 		if (reflowNeeded)
 			parent.reflow();
 	}
+
 	private void updateEngine(EngineDescriptor desc) {
-		Control [] children = container.getChildren();
-		boolean reflowNeeded=false;
-		for (int i=0; i<children.length; i++) {
+		Control[] children = container.getChildren();
+		boolean reflowNeeded = false;
+		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
-			EngineDescriptor ed = (EngineDescriptor)child.getData();
-			if (ed==desc) {
-				Button b = (Button)children[i+1];
+			EngineDescriptor ed = (EngineDescriptor) child.getData();
+			if (ed == desc) {
+				Button b = (Button) children[i + 1];
 				b.setText(desc.getLabel());
-				Label d = (Label)children[i+2];
+				Label d = (Label) children[i + 2];
 				d.setText(desc.getDescription());
-				reflowNeeded=true;
+				reflowNeeded = true;
 				break;
 			}
 		}
-		if (reflowNeeded) parent.reflow();
+		if (reflowNeeded)
+			parent.reflow();
 	}
 
 	public void startSearch(String text) {
@@ -385,7 +397,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		final SearchResultsPart results = (SearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		ArrayList eds = new ArrayList();
-		EngineDescriptor [] engineDescriptors = descManager.getDescriptors();
+		EngineDescriptor[] engineDescriptors = descManager.getDescriptors();
 		for (int i = 0; i < engineDescriptors.length; i++) {
 			final EngineDescriptor ed = engineDescriptors[i];
 			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
@@ -421,11 +433,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void doAdvanced() {
 		ScopeSet set = scopeSetManager.getActiveSet();
-		PreferenceManager manager = new ScopePreferenceManager(
-				descManager, set);
-		PreferenceDialog dialog = new ScopePreferenceDialog(container.getShell(),
-				manager, descManager);
+		PreferenceManager manager = new ScopePreferenceManager(descManager, set);
+		PreferenceDialog dialog = new ScopePreferenceDialog(container
+				.getShell(), manager, descManager);
 		dialog.setPreferenceStore(set.getPreferenceStore());
+		dialog.create();
+		dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName()));
 		dialog.open();
 		updateMasters(set);
 	}
@@ -496,7 +509,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
 	 */
 	public boolean hasFocusControl(Control control) {
-		return control==searchWordText || control==searchWordCombo || scopeSection.getClient()==control;
+		return control == searchWordText || control == searchWordCombo
+				|| scopeSection.getClient() == control;
 	}
 
 	public void setFocus() {

@@ -145,5 +145,6 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			}
 			pendingOperations = null;
 		}
+		descManager.save();
 	}
 }

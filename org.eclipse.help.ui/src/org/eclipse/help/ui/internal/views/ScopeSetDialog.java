@@ -248,6 +248,8 @@ public class ScopeSetDialog extends ListDialog {
 			PreferenceManager manager = new ScopePreferenceManager(descManager, set);
 			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
+			dialog.create();
+			dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName()));
 			dialog.open();
 		}
 	}
