@@ -5,7 +5,6 @@
    version="2.1.0"
    provider-name="%providerName"
    class="org.eclipse.ui.internal.ViewsPlugin">
-
    <runtime>
       <library name="views.jar">
          <export name="*"/>
@@ -18,30 +17,4 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.workbench"/>
    </requires>
-
-	<extension point="org.eclipse.ui.popupMenus"> 
-		<viewerContribution 
-			id="org.eclipse.ui.views.tasklist.newbookmarkaction"
-			targetID="org.eclipse.ui.views.TaskList">
-			<action
-				id="org.eclipse.ui.views.tasklist.newbookmarkaction.action"
-				label="%CreateBookmark.text"
-				menubarPath="additions"
-				enablesFor="1" 
-				class="org.eclipse.ui.views.bookmarkexplorer.NewBookmarkAction"> 
-				<enablement>
-					<and>
-						<objectState
-							name="resourceType"
-							value="1">
-						</objectState>
-						<objectClass
-							name="org.eclipse.core.resources.IMarker">
-						</objectClass>
-					</and>
-				</enablement>
-			</action> 
-		</viewerContribution> 
-	</extension>
-
 </plugin>

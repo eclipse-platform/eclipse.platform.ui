@@ -430,107 +430,49 @@ public class TaskList extends ViewPart {
 	 * Returns a string that summarizes the contents of the
 	 * given markers.
 	 */
-	/*package*/
 	static String createMarkerReport(IMarker[] markers) {
-		String report = ""; //$NON-NLS-1$
-		String[] kinds = new String[markers.length];
-		String[] status = new String[markers.length];
-		String[] priorities = new String[markers.length];
-		String[] descriptions = new String[markers.length];
-		String[] resources = new String[markers.length];
-		String[] folders = new String[markers.length];
-		String[] locations = new String[markers.length];
-		String kindHeader = TaskListMessages.getString("TaskList.reportKind"); //$NON-NLS-1$
-		String statusHeader = TaskListMessages.getString("TaskList.reportStatus"); //$NON-NLS-1$
-		String priorityHeader = TaskListMessages.getString("TaskList.reportPriority"); //$NON-NLS-1$
-		String descriptionHeader = TaskListMessages.getString("TaskList.headerDescription"); //$NON-NLS-1$
-		String resourceHeader = TaskListMessages.getString("TaskList.headerResource"); //$NON-NLS-1$
-		String folderHeader = TaskListMessages.getString("TaskList.headerFolder"); //$NON-NLS-1$
-		String locationHeader = TaskListMessages.getString("TaskList.headerLocation"); //$NON-NLS-1$
-		int maxKind = kindHeader.length();
-		int maxStatus = statusHeader.length();
-		int maxPriority = priorityHeader.length();
-		int maxDescription = descriptionHeader.length();
-		int maxResource = resourceHeader.length();
-		int maxFolder = folderHeader.length();
-		
-		//gather marker info
+		StringBuffer buf = new StringBuffer();
+		// Create the header
+		buf.append(TaskListMessages.getString("TaskList.reportKind")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.reportStatus")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.reportPriority")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.headerDescription")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.headerResource")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.headerFolder")); //$NON-NLS-1$
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(TaskListMessages.getString("TaskList.headerLocation")); //$NON-NLS-1$
+		buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
+
+		// Create the report for the markers
 		for (int i = 0; i < markers.length; i++) {
-			//gather kind info
-			kinds[i] = MarkerUtil.getKindText(markers[i]);
-			if (kinds[i].length() > maxKind)
-				maxKind = kinds[i].length();
-			//gather status info
-			status[i] = MarkerUtil.getCompleteText(markers[i]);
-			if (status[i].length() > maxStatus)
-				maxStatus = status[i].length();	
-			//gather priority info
-			priorities[i] = MarkerUtil.getPriorityText(markers[i]);
-			if (priorities[i].length() > maxPriority)
-				maxPriority = priorities[i].length();	
-			//gather description info
-			descriptions[i] = MarkerUtil.getMessage(markers[i]);
-			if (descriptions[i].length() > maxDescription)
-				maxDescription = descriptions[i].length();
-			//gather resource info
-			resources[i] = MarkerUtil.getResourceName(markers[i]);
-			if (resources[i].length() > maxResource)
-				maxResource = resources[i].length();
-			//gather folder info
-			folders[i] = MarkerUtil.getContainerName(markers[i]);
-			if (folders[i].length() > maxFolder)
-				maxFolder = folders[i].length();
-			//gather location info
-			locations[i] = MarkerUtil.getLineAndLocation(markers[i]);
+			writeMarker(buf, markers[i]);
 		}
-		
-		//write header
-		report += kindHeader;
-		for (int i = kindHeader.length(); i <= maxKind; i++)
-			report += ' ';
-		report += statusHeader;
-		for (int i = statusHeader.length(); i <= maxStatus; i++)
-			report += ' ';
-		report += priorityHeader;
-		for (int i = priorityHeader.length(); i <= maxPriority; i++)
-			report += ' ';
-		report += descriptionHeader;
-		for (int i = descriptionHeader.length(); i <= maxDescription; i++)
-			report += ' ';
-		report += resourceHeader;
-		for (int i = resourceHeader.length(); i <= maxResource; i++)
-			report += ' ';
-		report += folderHeader;
-		for (int i = folderHeader.length(); i <= maxFolder; i++)
-			report += ' ';
-		report += locationHeader;
-		report += System.getProperty("line.separator"); //$NON-NLS-1$
-		
-		//write markers
-		for (int i = 0; i < markers.length; i++) {
-			report += kinds[i];
-			for (int j = kinds[i].length(); j <= maxKind; j++)
-				report += ' ';
-			report += status[i];
-			for (int j = status[i].length(); j <= maxStatus; j++)
-				report += ' ';
-			report += priorities[i];
-			for (int j = priorities[i].length(); j <= maxPriority; j++)
-				report += ' ';
-			report += descriptions[i];
-			for (int j = descriptions[i].length(); j <= maxDescription; j++)
-				report += ' ';
-			report += resources[i];
-			for (int j = resources[i].length(); j <= maxResource; j++)
-				report += ' ';
-			report += folders[i];
-			for (int j = folders[i].length(); j <= maxFolder; j++)
-				report += ' ';
-			report += locations[i];
-			report += System.getProperty("line.separator"); //$NON-NLS-1$
-		}
-		
-		return report;
+		return buf.toString();
+	}
+
+	/**
+	 * Writes a string representation of the given marker to the buffer.
+	 */
+	static void writeMarker(StringBuffer buf, IMarker marker) {
+		buf.append(MarkerUtil.getKindText(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getCompleteText(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getPriorityText(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getMessage(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getResourceName(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getContainerName(marker));
+		buf.append("\t"); //$NON-NLS-1$
+		buf.append(MarkerUtil.getLineAndLocation(marker));
+		buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 	}
 
 	/* package */
