@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 200, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -73,46 +78,32 @@ public class CVSPropertiesPage extends PropertyPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
-		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1);
+		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
 		methodType = createCombo(composite);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1); //$NON-NLS-1$
 		userText = createTextField(composite);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1); //$NON-NLS-1$
 		passwordText = createTextField(composite);
 		passwordText.setEchoChar('*');
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1);
-		hostLabel = createLabel(composite, "", 2);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
+		hostLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1);
-		portLabel = createLabel(composite, "", 2);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1); //$NON-NLS-1$
+		portLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1);
-		pathLabel = createLabel(composite, "", 2);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
+		pathLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"), 1);
-		moduleLabel = createLabel(composite, "", 2);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"), 1); //$NON-NLS-1$
+		moduleLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"), 1);
-		tagLabel = createLabel(composite, "", 1);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"), 1); //$NON-NLS-1$
+		tagLabel = createLabel(composite, "", 1); //$NON-NLS-1$
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		tagLabel.setLayoutData(data);
-		
-		Button changeTag = new Button(composite, SWT.PUSH);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		changeTag.setLayoutData(data);
-		changeTag.setText(Policy.bind("CVSPropertiesPage.update"));
-		changeTag.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				UpdateWizard wizard = new UpdateWizard();
-				wizard.setProject(project);
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				dialog.open();
-				initializeTag();
-			}
-		});
 		
 		initializeValues();
 		passwordText.addListener(SWT.Modify, new Listener() {
@@ -220,7 +211,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		} catch (TeamException e) {
 			handle(e);
 		}
-		passwordText.setText("*********");
+		passwordText.setText("*********"); //$NON-NLS-1$
 		
 		try {
 			ICVSRemoteResource resource = cvsRoot.getRemoteResourceFor(project);
@@ -228,9 +219,9 @@ public class CVSPropertiesPage extends PropertyPage {
 			hostLabel.setText(location.getHost());
 			int port = location.getPort();
 			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-				portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort"));
+				portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort")); //$NON-NLS-1$
 			} else {
-				portLabel.setText("" + port);
+				portLabel.setText("" + port); //$NON-NLS-1$
 			}
 			pathLabel.setText(location.getRootDirectory());
 			moduleLabel.setText(resource.getRepositoryRelativePath());
@@ -250,7 +241,7 @@ public class CVSPropertiesPage extends PropertyPage {
 			CVSTag tag = local.getFolderSyncInfo().getTag();
 			String tagName;
 			if (tag == null) {
-				tagName = "HEAD";
+				tagName = CVSTag.DEFAULT.getName();
 			} else {
 				tagName = tag.getName();
 			}
@@ -288,7 +279,7 @@ public class CVSPropertiesPage extends PropertyPage {
 			} else if (t instanceof CoreException) {
 				handle(((CoreException)t).getStatus());
 			} else {
-				IStatus status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, "Internal error occured", t);
+				IStatus status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
 				handle(status);
 				CVSUIPlugin.log(status);
 			}
