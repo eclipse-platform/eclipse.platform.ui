@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.Window;
@@ -18,8 +19,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -34,8 +37,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 2.0
  */
 public class FilterDialog extends ListSelectionDialog {
+	static final int SELECT_ID = IDialogConstants.CLIENT_ID + 1;
+
 	private Button workingSetButton;
 	private Combo mruList;
+	private Button selectButton;
 	private IWorkingSet workingSet;
 	
 	/**
@@ -51,6 +57,17 @@ public class FilterDialog extends ListSelectionDialog {
 	public FilterDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
 		super(parentShell, input, contentProvider, labelProvider, message);
 	}
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void buttonPressed(int buttonId) {
+		if (SELECT_ID == buttonId) {
+			handleWorkingSetSelection();
+		}
+		else {
+			super.buttonPressed(buttonId);
+		}
+	}
 	/**
 	 * Overrides method in Dialog
 	 * 
@@ -58,23 +75,36 @@ public class FilterDialog extends ListSelectionDialog {
 	 */	
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
+		Composite group = new Composite(composite, SWT.NONE);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		group.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;		
+		group.setLayout(layout);
 
-		workingSetButton = new Button(composite, SWT.CHECK);	
+		workingSetButton = new Button(group, SWT.CHECK);	
 		workingSetButton.setText(WorkbenchMessages.getString("FilterDialog.workingSet")); //$NON-NLS-1$
 		workingSetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleWorkingSetButtonSelection();
 			}
 		});
+		data = new GridData();
+		data.horizontalSpan = 2;
+		workingSetButton.setLayoutData(data);
 
-		mruList = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		group = new Composite(group, SWT.NONE);
+		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		group.setLayoutData(data);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		group.setLayout(layout);
+
+		mruList = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY);
+		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		mruList.setLayoutData(data);
-		mruList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleMruListSelection();
-			}
-		});
+		selectButton = createButton(group, SELECT_ID, WorkbenchMessages.getString("FilterDialog.workingSetOther"), false); //$NON-NLS-1$
+
 		initializeMru();
 		initializeWorkingSet();
 		return composite;
@@ -91,30 +121,29 @@ public class FilterDialog extends ListSelectionDialog {
 	 * Opens the working set selection dialog if the "Other..." item
 	 * is selected in the most recently used working set list.
 	 */
-	private void handleMruListSelection() {
-		if (WorkbenchMessages.getString("FilterDialog.workingSetOther").equals(mruList.getText())) { //$NON-NLS-1$
-			IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+	private void handleWorkingSetSelection() {
+		IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.getWorkingSet(mruList.getText());
 
-			if (workingSet != null) {
-				dialog.setSelection(new IWorkingSet[]{workingSet});
+		if (workingSet != null) {
+			dialog.setSelection(new IWorkingSet[]{workingSet});
+		}
+		if (dialog.open() == Window.OK) {
+			IWorkingSet[] result = dialog.getSelection();
+			if (result != null && result.length > 0) {
+				workingSet = result[0];
+				String workingSetName = workingSet.getName();
+				if (mruList.indexOf(workingSetName) != -1) {
+					mruList.remove(workingSetName);
+				}					
+				mruList.add(workingSetName, 0);
+				mruList.setText(workingSetName);
+				mruList.setData(workingSetName, workingSet);
 			}
-			if (dialog.open() == Window.OK) {
-				IWorkingSet[] result = dialog.getSelection();
-				if (result != null && result.length > 0) {
-					workingSet = result[0];
-					String workingSetName = workingSet.getName();
-					if (mruList.indexOf(workingSetName) != -1) {
-						mruList.remove(workingSetName);
-					}					
-					mruList.add(workingSetName, 0);
-					mruList.setText(workingSetName);
-					mruList.setData(workingSetName, workingSet);
-				}
-				else {
-					workingSet = null;
-				}				
-			}
-
+			else {
+				workingSet = null;
+			}				
 		}
 	}
 	/**
@@ -123,6 +152,7 @@ public class FilterDialog extends ListSelectionDialog {
 	 */
 	private void handleWorkingSetButtonSelection() {
 		mruList.setEnabled(workingSetButton.getSelection());
+		selectButton.setEnabled(workingSetButton.getSelection());
 	}
 	/**
 	 * Populates the most recently used working set list with MRU items from
@@ -140,7 +170,6 @@ public class FilterDialog extends ListSelectionDialog {
 		if (workingSets.length > 0) {
 			mruList.setText(workingSets[0].getName());
 		}
-		mruList.add(WorkbenchMessages.getString("FilterDialog.workingSetOther")); //$NON-NLS-1$
 	}
 	/**
 	 * Initializes the state of the working set part of the dialog.
