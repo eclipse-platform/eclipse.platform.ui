@@ -122,7 +122,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         if (widget == null)
             return;
 
-        Control tree = getControl();
+        internalAdd(widget, parentElement, childElements);
+    }
+
+	/**
+     * XXX: temporary API in support of Dirk's explorations
+     * into grouping by working sets, which requires viewers
+     * to support multiple equal elements.
+     */
+    protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+		Control tree = getControl();
 
         // optimization!
         // if the widget is not expanded we just invalidate the subtree
@@ -163,9 +172,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 createAddedElement(widget, filtered[i]);
             }
         }
-    }
+	}
 
-    /**
+	/**
      * Create the new element in the parent widget. If the
      * child already exists do nothing.
      * @param widget
@@ -1026,6 +1035,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * Refreshes the tree starting at the given widget.
+     *
+     * XXX: temporary API in support of Dirk's explorations
+     * into grouping by working sets, which requires viewers
+     * to support multiple equal elements.
      * 
      * @param widget
      *           the widget
@@ -1040,7 +1053,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *           <code>false</code> to only update labels as needed, assuming
      *           that labels for existing elements are unchanged.
      */
-    private void internalRefresh(Widget widget, Object element,
+    protected void internalRefresh(Widget widget, Object element,
             boolean doStruct, boolean updateLabels) {
 
         if (widget instanceof Item) {

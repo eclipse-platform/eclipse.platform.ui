@@ -1546,6 +1546,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (item == null)
 			return;
 
+		internalUpdate(item, element, properties);
+	}
+
+	/**
+     * XXX: temporary API in support of Dirk's explorations
+     * into grouping by working sets, which requires viewers
+     * to support multiple equal elements.
+     */
+	protected void internalUpdate(Widget item, Object element, String[] properties) {
 		boolean needsRefilter = false;
 		if (properties != null) {
 			for (int i = 0; i < properties.length; ++i) {
