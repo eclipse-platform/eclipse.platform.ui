@@ -146,24 +146,23 @@
 	    <action id="org.eclipse.ui.examples.readmetool.action1"
 	       label="%PopupMenus.action"
 	       icon="icons/basic/ctool16/openbrwsr.gif"
-	       menuBarPath="additions"
+	       menubarPath="additions"
 	       helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
 	       class="org.eclipse.ui.examples.readmetool.PopupMenuActionDelegate"	
 	       enablesFor="1">
 	    </action>
 	 </objectContribution>
-     <objectContribution
+     <viewerContribution
         id="org.eclipse.ui.examples.readmetool2"
-        objectClass="org.eclipse.ui.examples.readmetool.MarkElement">
+        targetID="org.eclipse.ui.examples.readmetool.outline">
 	    <action id="org.eclipse.ui.examples.readmetool.action1"
 	       label="%PopupMenus.action"
 	       icon="icons/basic/ctool16/openbrwsr.gif"
-	       menuBarPath="additions"
+	       menubarPath="additions"
 	       helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
-	       class="org.eclipse.ui.examples.readmetool.PopupMenuActionDelegate"	
-	       enablesFor="1">
+	       class="org.eclipse.ui.examples.readmetool.ViewActionDelegate">	
 	    </action>
-	 </objectContribution>
+	 </viewerContribution>
   </extension>
 
 <extension

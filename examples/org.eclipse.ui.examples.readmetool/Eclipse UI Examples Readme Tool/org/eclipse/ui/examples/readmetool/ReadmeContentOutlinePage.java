@@ -56,6 +56,7 @@ private IAdaptable getContentOutline(IAdaptable input) {
 }
 /**
  * Creates and registers the popup menu for this page
+ * Menu id "org.eclipse.ui.examples.readmetool.outline"
  */
 public void init(IPageSite pageSite) {
 	super.init(pageSite);
