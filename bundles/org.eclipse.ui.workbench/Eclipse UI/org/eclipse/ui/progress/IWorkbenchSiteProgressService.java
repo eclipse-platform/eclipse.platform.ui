@@ -10,10 +10,12 @@
 package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for 
- * jobs that change the state in a PartSite while they are being 
+ * jobs that change the state in a IWorkbenchPartSite while they are being 
  * run.
  * 
  * WorkbenchParts may access an instance of IWorkbenchSiteProgressService
@@ -22,8 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * 
  * This interface is not intended to be implemented by client
  * plug-ins.
- * 
- * @see WorkbenchPart.getJobChangeListener()
+ * @see IWorkbenchPartSite#getAdapter(Class)
  * @since 3.0
  */
 public interface IWorkbenchSiteProgressService extends IProgressService {
@@ -44,7 +45,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * @param delay. The delay in scheduling.
 	 * @param useHalfBusyCursor. A boolean to indicate if the half busy
 	 * 		cursor should be used while this job is running.
-	 * @see Job.schedule(long)
+	 * @see Job#schedule(long)
 	 */
 	public void schedule(Job job, long delay, boolean useHalfBusyCursor);
 	
@@ -55,7 +56,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * indication by overriding <code>WorkbenchPart.setBusy</code>.
 	 * @param job. The job to schedule
 	 * @param delay. The delay in scheduling.
-	 * @see Job.schedule(long)
+	 * @see Job#schedule(long)
 	 */
 	public void schedule(Job job, long delay);
 	
@@ -65,7 +66,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * state until the job completes. Parts can also add customized busy 
 	 * indication by overriding <code>WorkbenchPart.setBusy</code>.
 	 * @param job. The job to schedule
-	 * @see Job.schedule()
+	 * @see Job#schedule()
 	 */
 	public void schedule(Job job);
 	
@@ -73,7 +74,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * Show busy state if any job of the specified
 	 * family is running.
 	 * @param family Object
-	 * @see Job.belongsTo()
+	 * @see Job#belongsTo(Object)
 	 */
 	public void showBusyForFamily(Object family);
 	
@@ -81,7 +82,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * Warn that the content of the receiver has 
 	 * changed. The method of this is determined by
 	 * how the presentation shows this. 
-	 * @see IPresentablePart.PROP_HIGHLIGHT_IF_BACK
+	 * @see IPresentablePart#PROP_HIGHLIGHT_IF_BACK
 	 */
 	public void warnOfContentChange();
 	

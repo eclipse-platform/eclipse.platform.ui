@@ -30,7 +30,7 @@ public interface IProgressService extends IRunnableContext {
 	 * operation. Used to determine when the busy cursor will 
 	 * be replaced with a progress monitor.
 	 * @return int 
-	 * @see busyCursorWhile(IRunnableWithProgress)
+	 * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
 	 */
 	public int getLongOperationTime();
 	
@@ -39,7 +39,7 @@ public interface IProgressService extends IRunnableContext {
 	 * all jobs that belong to family within the workbench.
 	 * @param icon ImageDescriptor that will be used when the job is being displayed
 	 * @param family The family to associate with
-	 * @see Job.belongsTo(Object)
+	 * @see Job#belongsTo(Object)
 	 */
 	public void registerIconForFamily(ImageDescriptor icon, Object family);
 	
@@ -47,8 +47,9 @@ public interface IProgressService extends IRunnableContext {
 	 * Get the icon that has been registered for a Job by
 	 * checking if the job belongs to any of the registered 
 	 * families.
+	 * @param job
 	 * @return Icon or <code>null</code> if there isn't one.
-	 * @see registerIconForFamily
+	 * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)
 	 */
 	public Image getIconFor(Job job);
 
@@ -60,15 +61,12 @@ public interface IProgressService extends IRunnableContext {
 	 * dialog open.
 	 * 
 	 * @param runnable
-	 * @see getLongOperationTime()
+	 * @see IProgressService#getLongOperationTime
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	public void busyCursorWhile(IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException;
-	
-	/**
-	 * @deprecated. @see showInDialog(Shell,Job).
-	 */
-	public void showInDialog(Shell shell, Job job, boolean runImmediately);
 	
 	/**
 	 * Open a dialog on job when it starts to run and close it 

@@ -34,7 +34,6 @@ public abstract class WorkbenchJob extends UIJob {
 	 * @param jobDisplay Display. The display to run the
 	 * 		job with.
 	 * @param name String
-	 * @see WorkbenchJob(String)
 	 */
 	public WorkbenchJob(Display jobDisplay, String name) {
 		super(jobDisplay, name);

@@ -38,11 +38,11 @@ public class DeferredTreeContentManager {
 	IWorkbenchSiteProgressService progressService;
 	/**
 	 * Create a new instance of the receiver using the supplied content
-	 * provider and viewer. Run any jobs using the site
+	 * provider and viewer. Run any jobs using the site.
 	 * 
 	 * @param provider
 	 * @param viewer
-	 * @param partSite
+	 * @param site
 	 */
 	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer,
 			IWorkbenchPartSite site) {
@@ -295,6 +295,7 @@ public class DeferredTreeContentManager {
 	 * @param placeholder
 	 *            The adapter that will be used to indicate that results are
 	 *            pending.
+	 * @return IElementCollector
 	 */
 	protected IElementCollector createElementCollector(final Object parent,
 			final PendingUpdateAdapter placeholder) {
