@@ -226,7 +226,7 @@ public class EditorAreaHelper {
 		//pane.getWorkbook().reorderTab(pane, position);
 	}
 	/**
-	 * Opens an editor within the presentation.  
+	 * Opens an editor within the presentation but does not give it focus.
 	 * </p>
 	 * @param part the editor
 	 */
@@ -248,10 +248,10 @@ public class EditorAreaHelper {
 		// Show the editor.
 		editorArea.addEditor(pane);
 		if (setVisible)
-			setVisibleEditor(ref, true);
+			setVisibleEditor(ref, false);
 	}
 	/**
-	 * Opens an editor within the presentation.  
+	 * Opens an editor within the presentation but does not give it focus.
 	 * </p>
 	 * @param part the editor
 	 */
@@ -300,11 +300,11 @@ public class EditorAreaHelper {
 			activeWorkbook.showVisibleEditor();
 	}
 	/**
-	 * Brings an editor to the front and gives it focus.
+	 * Brings an editor to the front and optionally gives it focus.
 	 *
 	 * @param part the editor to make visible
 	 * @param setFocus whether to give the editor focus
-	 * @return true if the active editor was changed, false if not.
+	 * @return true if the visible editor was changed, false if not.
 	 */
 	public boolean setVisibleEditor(IEditorReference ref, boolean setFocus) {
 		IEditorReference visibleEditor = getVisibleEditor();
