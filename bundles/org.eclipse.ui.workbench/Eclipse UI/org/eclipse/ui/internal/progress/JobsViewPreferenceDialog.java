@@ -15,7 +15,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -60,11 +59,8 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		editArea.setLayout(new GridLayout());
 		editArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		
-		Label note = new Label(editArea,SWT.NONE);
-		note.setText(ProgressMessages.getString("JobsViewPreferenceDialog.Note")); //$NON-NLS-1$
-		
 		verboseEditor = new BooleanFieldEditor("verbose", ProgressMessages //$NON-NLS-1$
-				.getString("ProgressView.VerboseAction"), editArea); //$NON-NLS-1$
+		.getString("JobsViewPreferenceDialog.Note"), editArea); //$NON-NLS-1$
 		verboseEditor.setPreferenceName(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
 		verboseEditor.setPreferenceStore(PrefUtil.getAPIPreferenceStore());
 		verboseEditor.load();
