@@ -16,9 +16,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IMemento;
@@ -328,16 +330,40 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	protected abstract void initializeConfiguration(ISynchronizePageConfiguration configuration);
 	
 	/**
-	 * Update the labels in the given configuration using information from the provided
-	 * element. The configuration is used to configure the compare editor used to display
-	 * the given sync info.
+	 * Default implementation will update the labels in the given configuration using 
+	 * information from the provided element if it adapts to <code>SyncInfo</code>.
+	 * It will also cache the contents for the remote and base if the element is
+	 * sync info based.
 	 * @param element the sync model element whose contents are about to be displayed to the user
-	 * @param config the compare configuration that willbe used to configure the compare editor
-	 * @param monitor a progress monitor that can be used if contacting a server to configure the labels
+	 * 		in a compare editor or compare dialog
+	 * @param configuration the compare configuration that will be used to configure the compare editor or dialog
+	 * @param monitor a progress monitor that can be used if contacting a server to prepare the element and configuration
+	 * @throws TeamException if an error occurred that shoudl rpevent the display of the compare editor containing
+	 * the element
 	 * 
 	 * @since 3.1
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#prepareCompareInput(org.eclipse.team.ui.synchronize.ISynchronizeModelElement, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
-	    // Do nothing, by default
+	public void prepareCompareInput(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) throws TeamException {
+	    SyncInfo sync = getSyncInfo(element);
+	    if (sync != null)
+	        Utils.updateLabels(sync, config);
+	    if (element instanceof SyncInfoModelElement) {
+			SyncInfoModelElement node = (SyncInfoModelElement)element;
+            (node).cacheContents(monitor);
+	    }
+	}
+	
+	/*
+	 * Get the sync info node from the element using the adaptable mechanism.
+	 * A <code>null</code> is returned if the element doesn't have a sync info
+	 * @param element the sync model element
+	 * @return the sync info for the element or <code>null</code>
+	 */
+	private SyncInfo getSyncInfo(ISynchronizeModelElement element) {
+	    if (element instanceof IAdaptable) {
+		    return (SyncInfo)((IAdaptable)element).getAdapter(SyncInfo.class);
+	    }
+	    return null;
 	}
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -221,14 +222,20 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
 	
 	/**
-	 * Update the labels in the given configuration using information from the provided
-	 * element. The configuration is used to configure the compare editor used to display
-	 * the given sync info.
+	 * Prepare the given element and compare configuration for use with a compare editor
+	 * input.
 	 * @param element the sync model element whose contents are about to be displayed to the user
-	 * @param config the compare configuration that willbe used to configure the compare editor
-	 * @param monitor a progress monitor that can be used if contacting a server to configure the labels
+	 * 		in a compare editor or compare dialog
+	 * @param configuration the compare configuration that will be used to configure the compare editor or dialog
+	 * @param monitor a progress monitor that can be used if contacting a server to prepare the element and configuration
+	 * @throws TeamException if an error occurred that shoudl rpevent the display of the compare editor containing
+	 * 		the element
 	 * 
 	 * @since 3.1
 	 */
-	public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor);
+	public void prepareCompareInput(
+	        ISynchronizeModelElement element, 
+	        CompareConfiguration configuration, 
+	        IProgressMonitor monitor) 
+				throws TeamException;
 }

@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
@@ -609,4 +610,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		return super.isContentsCached();
 	}
 
+	/**
+	 * Cache the contents of the given IFile as the contents for this remote file handle.
+	 * The caller must ensure that the local file is mapped to the same revision and is
+	 * not modified since it was loaded from CVS.
+	 * @param file
+	 * @throws CoreException
+	 * @throws TeamException
+	 */
+	public void setContents(IFile file, IProgressMonitor monitor) throws TeamException, CoreException {
+	    setContents(file.getContents(), monitor);
+	}
 }

@@ -390,14 +390,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 								manager.busyCursorWhile(new IRunnableWithProgress() {
 									public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 										try {	
-											node.cacheContents(monitor);
+										    participant.prepareCompareInput(node, cc, monitor);
 											hookContentChangeListener(node);
 										} catch (TeamException e) {
 											Utils.handle(e);
-										} finally {
-											// Update the labels even if the content wasn't fetched correctly. This is
-											// required because the selection would still of changed.
-										    participant.updateLabels(node, cc, monitor);
 										}
 									}
 								});

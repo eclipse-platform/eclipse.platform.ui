@@ -13,7 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
@@ -173,8 +175,11 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	/* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#updateLabels(org.eclipse.team.ui.synchronize.ISynchronizeModelElement, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
-        super.updateLabels(element, config, monitor);
-        CVSParticipant.updateLabelsForCVS(element, config, monitor);
+    public void prepareCompareInput(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) throws TeamException {
+        monitor.beginTask(null, 100);
+        CVSParticipant.deriveBaseContentsFromLocal(element, Policy.subMonitorFor(monitor, 10));
+        super.prepareCompareInput(element, config, Policy.subMonitorFor(monitor, 80));
+        CVSParticipant.updateLabelsForCVS(element, config, Policy.subMonitorFor(monitor, 10));
+        monitor.done();
     }
 }

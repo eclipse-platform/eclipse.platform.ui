@@ -12,7 +12,6 @@ package org.eclipse.team.ui.synchronize;
 
 import java.util.Arrays;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -20,7 +19,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
@@ -421,34 +421,5 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public ISynchronizeScope getScope() {
 		return scope;
-	}
-	
-	/**
-	 * Update the labels in the given configuration using information from the provided
-	 * sync info. The configuration is used to configure the compare editor used to display
-	 * the given sync info.
-	 * @param sync the sync info node whose contents are about to be displayed to the user
-	 * @param config the compare configuration that willbe used to configure the compare editor
-	 * @param monitor a progress monitor that can be used if contacting a server to configure the labels
-	 * 
-	 * @since 3.1
-	 */
-	public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
-	    SyncInfo sync = getSyncInfo(element);
-	    if (sync != null)
-	        Utils.updateLabels(sync, config);
-	}
-	
-	/**
-	 * Get the sync info node from the element using the adaptable mechanism.
-	 * A <code>null</code> is returned if the element doesn't have a sync info
-	 * @param element the sync model element
-	 * @return the sync info for the element or <code>null</code>
-	 */
-	private SyncInfo getSyncInfo(ISynchronizeModelElement element) {
-	    if (element instanceof IAdaptable) {
-		    return (SyncInfo)((IAdaptable)element).getAdapter(SyncInfo.class);
-	    }
-	    return null;
 	}
 }

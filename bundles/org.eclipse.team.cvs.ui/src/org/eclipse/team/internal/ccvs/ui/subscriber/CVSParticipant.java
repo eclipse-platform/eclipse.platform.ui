@@ -11,17 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
@@ -42,9 +41,12 @@ public class CVSParticipant extends SubscriberParticipant {
 	/* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#updateLabels(org.eclipse.team.ui.synchronize.ISynchronizeModelElement, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
-        super.updateLabels(element, config, monitor);
-        updateLabelsForCVS(element, config, monitor);
+    public void prepareCompareInput(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) throws TeamException {
+        monitor.beginTask(null, 100);
+        deriveBaseContentsFromLocal(element, Policy.subMonitorFor(monitor, 10));
+        super.prepareCompareInput(element, config, Policy.subMonitorFor(monitor, 80));
+        updateLabelsForCVS(element, config, Policy.subMonitorFor(monitor, 10));
+        monitor.done();
     }
 
     /**
@@ -91,4 +93,40 @@ public class CVSParticipant extends SubscriberParticipant {
 	    }
 	    return null;
 	}
+
+    /**
+     * If the local is not modified and the base matches the local then 
+     * cache the local contents as the contents of the base.
+     * @param element
+     * @throws CoreException
+     * @throws TeamException
+     */
+    public static void deriveBaseContentsFromLocal(ISynchronizeModelElement element, IProgressMonitor monitor) throws TeamException {
+        SyncInfo info = getSyncInfo(element);
+        if (info == null) 
+            return;
+        
+        // We need a base that is a file and a local that is a file
+        IResource local = info.getLocal();
+        IResourceVariant base = info.getBase();
+        if (base == null || base.isContainer() || local.getType() != IResource.FILE || !local.exists())
+            return;
+        
+        // We can only use the local contents for incoming changes.
+        // Outgoing or conflicting changes imply that the local has changed
+        if ((info.getKind() & SyncInfo.DIRECTION_MASK) != SyncInfo.INCOMING)
+            return;
+        
+        try {
+            RemoteFile remoteFile = (RemoteFile)base;
+            if (!remoteFile.isContentsCached())
+                (remoteFile).setContents((IFile)local, monitor);
+        } catch (CoreException e) {
+            if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+                // The file must have just been deleted
+                return;
+            }
+            throw CVSException.wrapException(e);
+        }
+    }
 }
