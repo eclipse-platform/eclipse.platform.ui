@@ -1,15 +1,21 @@
 package org.eclipse.ui.internal;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp; 
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EditorCoolBar {
 	private CoolBar coolBar;
@@ -27,17 +33,21 @@ public class EditorCoolBar {
 	private EditorList editorList;
 	private IWorkbenchWindow window;
 	private EditorWorkbook workbook;
+	private ViewForm listComposite;
 	private int style;
+
 	private boolean onBottom;
 	private boolean firstResize = true; // infw cheezy workaround
 	private boolean mouseDownListenerAdded = false;
-	private boolean editorListIsOpen = false;
-
+	private boolean editorListLostFocusByButton = false;
 	private boolean singleClick = false;
 	private boolean dragEvent = false;
 	private boolean doubleClick = false;
 	
+	private int xAnchor = 0;
+	private int yAnchor = 0;
 	private static final int MAX_ITEMS = 11;
+	private static final int HYSTERESIS = 8;
 			
 	public EditorCoolBar(IWorkbenchWindow window, EditorWorkbook workbook, int style) {
 		this.window = window;
@@ -122,7 +132,7 @@ public class EditorCoolBar {
 					} catch (PartInitException e) {
 					}
 
-			}				
+			}			
 		});
 			
 		Point p1 = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -185,77 +195,61 @@ public class EditorCoolBar {
 //		return shellBounds;
 //	}
 	
-	private void displayEditorList() {
-		if (editorListIsOpen) {
+	private void closeEditorList() {
+		editorList.destroyControl();
+		Control focusControl = workbook.getParent().getDisplay ().getFocusControl();
+		editorListLostFocusByButton = (focusControl == dropDownButton);
+	}
+	private void openEditorList() {
+		if (listComposite != null && !listComposite.isDisposed()) {
 			return;
 		}
 		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
 		Display display = parent.getDisplay();
-		final Composite listComposite = new Composite(parent,SWT.BORDER);
-//		final Shell shell = new Shell (parent, SWT.ON_TOP | SWT.NO_TRIM);
-//		shell.setLayout(new FillLayout());	
-		editorList.createControl(listComposite);
+		listComposite = new ViewForm(parent, SWT.BORDER);
+		Control editorListControl = editorList.createControl(listComposite);
+		listComposite.setContent(editorListControl);
 		listComposite.pack();
 
 		Rectangle coolbarBounds = coolBar.getBounds();
-		Rectangle listCompositeBounds = listComposite.getBounds();
 		Point point = coolBar.getParent().toDisplay(new Point(coolbarBounds.x,coolbarBounds.y));
 		point = parent.toControl(point);
 		point.y += coolbarBounds.height + 1;
 		
-		listCompositeBounds.x = point.x;
-		listCompositeBounds.y = point.y;
-		listCompositeBounds.width = dropDownItem.getSize().x;
-		listCompositeBounds.height = Math.min(listCompositeBounds.height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
-		listComposite.setBounds(listCompositeBounds);
-		editorList.getControl().setBounds(listComposite.getClientArea());	 
+		int x = point.x;
+		int y = point.y;
+		int width = dropDownItem.getSize().x;
+		int height = Math.min(listComposite.getBounds().height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
+		 
+		listComposite.setBounds(listComposite.computeTrim(x, y, width, height));
 		listComposite.setVisible(true);
 		listComposite.moveAbove(null);
 		listComposite.setLocation(point);
-//		shell.pack();
 		
-		Table editorsTable = ((Table)editorList.getControl());
+		editorListLostFocusByButton = false;
+		Table editorsTable = ((Table)editorListControl);
 		TableItem[] items = editorsTable.getItems();
  		if (items.length == 0) {
  			updateEmptyEditorLabel();
  			return;
  		}
- 					
-//		shell.addShellListener(new ShellAdapter() {
-//			public void shellDeactivated(ShellEvent e) {
-//				shell.close();
-//			}
-//		}); 
-		editorList.getControl().addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e) {
-				listComposite.dispose();
-				editorListIsOpen = false;
+ 				 
+ 		editorList.getControl().addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event event) {
+				listComposite.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (singleClick) return;
+						if (listComposite != null && !listComposite.isDisposed()) {
+							closeEditorList();
+						}
+					}
+				});
+
 			}
-		});
-		
-		
-//		Point point = coolBar.getParent().toDisplay (coolBar.getLocation ());
-//		setShellBounds(shell, point);
-		
-		try {
-			editorListIsOpen = true;
-////			shell.setVisible(true);
-//			while (!listComposite.isDisposed()) {
-//				if (!display.readAndDispatch()) {
-//					display.sleep();
-//				}
-//			}
-		} finally {
-//			editorListIsOpen = false;
-//			listComposite.dispose();
-			// Should never happen
-//			if(!shell.isDisposed()) {
-//				shell.dispose();
-//			}
-		}	
+ 		});
 	}
 	
-	public void createControl(Composite parent) {	
+	public Control createControl(Composite parent) {	
 		coolBar = new CoolBar(parent, style);
 		coolBar.setLocked(false);
 		
@@ -271,6 +265,8 @@ public class EditorCoolBar {
 		dropDownComposite.setLayout(gridLayout);
 
 		dropDownLabel = new CLabel(dropDownComposite, SWT.NONE);
+		dropDownLabel.addKeyListener(new KeyAdapter() {
+		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);	
  		dropDownLabel.setLayoutData(gd);
  		
@@ -285,29 +281,44 @@ public class EditorCoolBar {
 		
 		dropDownLabel.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
+				xAnchor = e.x;
+				yAnchor = e.y;				
 				singleClick = true;
-				EditorPane visibleEditor = workbook.getVisibleEditor();
-				if (visibleEditor != null)
-					visibleEditor.getPage().activate(visibleEditor.getPartReference().getPart(false));
 			}
 			public void mouseDoubleClick(MouseEvent e) {
 				doubleClick = true;
 			}			
 			public void mouseUp(final MouseEvent e) {
 				final int doubleClickTime = dropDownLabel.getDisplay().getDoubleClickTime();
-				if (singleClick == doubleClick) {
+				final EditorPane visibleEditor = workbook.getVisibleEditor();
+				final boolean overImage = overImage(visibleEditor, e.x);
+
+				if (doubleClick) {
+					// double Click
 					doubleClick = false;
 					singleClick = false;
-	 				EditorPane visibleEditor = workbook.getVisibleEditor();
-	 				if (visibleEditor != null) {
+ 		
+	 				if ((visibleEditor != null) && !overImage) {
+	 					if (listComposite != null && !listComposite.isDisposed()) {
+							closeEditorList();
+						}
 	 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
 	 				}					
 				} else {
-					EditorPane visibleEditor = workbook.getVisibleEditor();
-					if (e.button == 3) {
+					// Could be a single click, need to wait, but first what we can do  ...	
+					if (listComposite != null && !listComposite.isDisposed() && overImage) {
+						singleClick = false;
+						return;
+					}
+					if ((e.button == 3)  && (listComposite == null || listComposite.isDisposed())) {
+						singleClick = false;
 						visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
-					} else if ((e.button == 1) && overImage(visibleEditor, e.x)) {
-							visibleEditor.showPaneMenu();
+						return;
+					}
+					if ((e.button == 1) && overImage && (listComposite == null || listComposite.isDisposed())) {
+						singleClick = false;
+						visibleEditor.showPaneMenu();
+						return;
 					} else {
 	 					Thread t = new Thread() {
 							public void run() {
@@ -316,14 +327,22 @@ public class EditorCoolBar {
 								} catch (InterruptedException e){}
 								if (singleClick) {
 									Display.getDefault().asyncExec(new Runnable() {
-										public void run() {
+										public void run() {						
 											if (singleClick) {
 												singleClick = false;
-//												if (dragEvent) {
-//													dragEvent = false;
-//													return;
-//												}
-												displayEditorList();
+												if (listComposite != null && !listComposite.isDisposed()) {
+													if (e.button == 1) {
+														closeEditorList();
+													}
+												} else {
+													if (e.button == 1) {
+														openEditorList();
+													} else {
+														visibleEditor.showPaneMenu();
+													}
+												}
+																								
+
 											}
 										}												
 									});
@@ -336,14 +355,18 @@ public class EditorCoolBar {
 			}	
 		});	
 		
+
 		dropDownLabel.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-//				if (singleClick) {
-//					if (!dragEvent) {					
-//					}
-//					dragEvent = true;
-//					return;
-//				}
+				if (!singleClick) {
+					return;
+				}
+				if (hasMovedEnough(e)) {
+					singleClick = false;
+					if (listComposite != null && !listComposite.isDisposed()) {
+						closeEditorList();
+					}					
+				}
 			}
 		});
 				
@@ -354,11 +377,17 @@ public class EditorCoolBar {
 			mouseDownListenerAdded = true;
 		}
 		
- 		dropDownButton.addMouseListener(new MouseAdapter() {
- 			public void mouseDown(MouseEvent e) {
- 				displayEditorList();
- 			}
- 		});
+		// button takes focus when it is hit, so the list is already
+		// closed.  Don't want the editorList open the second time ...
+		dropDownButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!editorListLostFocusByButton) {
+					openEditorList();
+				} else {
+					editorListLostFocusByButton = false;
+				}				
+			}
+		});
 
 		bookMarkItem = new CoolItem(coolBar, SWT.DROP_DOWN);
 //		bookMarkItem.setText("Links");
@@ -384,7 +413,6 @@ public class EditorCoolBar {
 				// infw: Need a good way to detect first real resize.
 				if (r.width > 7 && firstResize) {
 					dropDownItem.setSize(r.width / 4, dropDownItem.getSize().y);
-					
 					firstResize = false;
 				}
 				coolBar.getParent().layout();
@@ -395,16 +423,37 @@ public class EditorCoolBar {
 			public void mouseDown(MouseEvent e) {
 				popupCoolBarMenu(e);
 			}
+			public void mouseDoubleClick(MouseEvent e) {
+				ToolItem[] items = bookMarkToolBar.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].getBounds().contains(e.x, e.y)) {
+						EditorPane visibleEditor = workbook.getVisibleEditor();			
+						if (visibleEditor != null) {
+			 				visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
+			 			}
+						break;
+					}
+				}
+			}
 		});
+		return coolBar;
 	}
 	
 	public Control getControl() {
 		return coolBar;
 	}
 	
+	public void destroyControl() {
+		coolBar.dispose();
+		coolBar = null;
+	}
+	
 	public CLabel getDragControl() {
 		return dropDownLabel;
 	}
+//	public Control getDragControl() {
+//		return dropDownComposite;
+//	}
 	/**
 	 * Sets the parent for this part.
 	 */
@@ -415,6 +464,14 @@ public class EditorCoolBar {
 		}
 	}	
 
+	private boolean hasMovedEnough(MouseEvent e) {
+		int dx= e.x - xAnchor;
+		int dy= e.y - yAnchor;
+		if (Math.abs(dx) < HYSTERESIS && Math.abs(dy) < HYSTERESIS)
+			return false;
+		else
+			return true;	
+	}
 	/*
 	 * Return true if <code>x</code> is over the label image.
 	 */
@@ -473,7 +530,6 @@ public class EditorCoolBar {
 		if ((e.button != 3) || (bookMarkToolBar.getItemCount() == 0)){
 			return;
 		}
-		
 		Point pt = new Point(e.x, e.y);
 		ToolItem[] items = bookMarkToolBar.getItems();
 		int index = -1;
@@ -588,6 +644,7 @@ public class EditorCoolBar {
 	 */	
 	private class RenameBookMarkAction extends Action {
 		private ToolItem[] toolItems;
+		private String newValue;
 		/**
 		 *	Create an instance of this class
 		 */
@@ -601,13 +658,76 @@ public class EditorCoolBar {
 		 * Performs the save.
 		 */
 		public void run() {
+			Shell shell = workbook.getEditorArea().getWorkbenchWindow().getShell();
 			for (int i = 0; i < toolItems.length; i++) {			
 				EditorShortcut shortcut = (EditorShortcut) toolItems[i].getData();
-				//infw
-				shortcut.setTitle("NewName");			
-				toolItems[i].setText("NewName");
+				if (shortcut != null) {
+					if (askForLabel(shell, shortcut.getTitle())) {
+						ToolItem[] items = bookMarkToolBar.getItems();
+						boolean overWrite = true;
+						for (int j = 0; j < items.length; j++) {
+							if (items[j].getText().equals(newValue)) {
+								overWrite = checkOverwrite(shell);
+								if (overWrite) {
+									shortcut.dispose();	
+									items[j].dispose();								
+								}
+								break;					
+							}
+						}	
+						if (overWrite) {
+							shortcut.setTitle(newValue);			
+							toolItems[i].setText(newValue);
+						}	
+					}
+				}
+
 			}
 		}
-	}
+				
+		private boolean askForLabel(Shell shell, String oldValue) {
+			String proposal= oldValue;
+			if (proposal == null) {
+				proposal= ""; //$NON-NLS-1$
+			}
+
+			//String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$			
+			String title= "Rename Shortcut"; //$NON-NLS-1$
+			String message= "Enter new name"; //$NON-NLS-1$
+			IInputValidator inputValidator = new IInputValidator() {
+				public String isValid(String newText) {
+					return  (newText == null || newText.length() == 0) ? " " : null;  //$NON-NLS-1$
+				}
+			};		
+			
+			InputDialog dialog= new InputDialog(shell, title, message, proposal, inputValidator);
+			
+			newValue = null;
+			if (dialog.open() != Window.CANCEL) {
+				newValue= dialog.getValue();
+			}
+				
+			if (newValue == null) {
+				return false;
+			}
+				
+			newValue= newValue.trim();
+			return (newValue.length() != 0);
+		}
 		
+		/**
+		 * Check if the user wishes to overwrite the supplied resource
+		 * @returns true if there is no collision or delete was successful
+		 * @param shell the shell to create the dialog in 
+		 * @param destination - the resource to be overwritten
+		 */
+		private boolean checkOverwrite(Shell shell) {
+			final String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
+			final String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
+
+			return MessageDialog.openQuestion(shell, 
+				RESOURCE_EXISTS_TITLE,
+				MessageFormat.format(RESOURCE_EXISTS_MESSAGE,new Object[] {newValue}));
+		}		
+	}
 }

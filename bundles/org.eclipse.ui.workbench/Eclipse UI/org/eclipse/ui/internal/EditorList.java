@@ -8,8 +8,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -61,7 +62,77 @@ public class EditorList {
 	 	MRUSortAction = new SortAction(MRU_SORT);
 	  	bookMarkAction = new BookMarkAction();
 	}
-	
+
+	/**
+	 * Create the EditorList table and menu items.
+	 */
+	public Control createControl(Composite parent) {	
+		editorsTable = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
+		updateItems();
+		editorsTable.pack();
+		editorsTable.setFocus();
+
+//		// Create the context menu						
+		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				EditorList.this.fillContextMenu(manager);
+			}
+		});
+
+		editorsTable.setMenu(menuMgr.createContextMenu(editorsTable));
+		editorsTable.addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+				// would have preferred a selectionListener, but 
+				// desired functionality is to open the editor on 
+				// single click, but allow popup if right-click
+				// 
+				if (e.button == 1) {
+					TableItem[] items = editorsTable.getSelection();
+					if (items.length > 0) {
+						saveAction.setEnabled(true);
+						closeAction.setEnabled(true); 
+						
+						if (items.length == 1) {
+							Adapter selection = (Adapter)items[0].getData();
+							selection.activate(true);
+						}
+					} else {
+						saveAction.setEnabled(false);
+						closeAction.setEnabled(false);
+					}
+				}
+				
+			}
+		});
+//		editorsTable.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				TableItem[] items = editorsTable.getSelection();
+//				if (items.length > 0) {
+//					saveAction.setEnabled(true);
+//					closeAction.setEnabled(true); 
+//					
+//					if (items.length == 1) {
+//						Adapter selection = (Adapter)items[0].getData();
+//						selection.activate(true);
+//					}
+//				} else {
+//					saveAction.setEnabled(false);
+//					closeAction.setEnabled(false);
+//				}
+//			}
+//		});
+		return editorsTable; 
+	}
+
+	public void destroyControl() {
+		ViewForm parent = (ViewForm) editorsTable.getParent();
+		parent.setContent(null);
+		parent.dispose();
+		editorsTable = null;
+	}
+		
 	public Control getControl() {
 		return editorsTable;
 	}
@@ -167,59 +238,6 @@ public class EditorList {
 		menuMgr.add(sortMenuMgr);
 		menuMgr.add(bookMarkAction);
 	}
-	/**
-	 * Create the EditorList table and menu items.
-	 */
-	public void createControl(Composite parent) {	
-		editorsTable = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
-		updateItems();
-		editorsTable.pack();
-		editorsTable.setFocus();
-//		editorsTable.setVisible(true);
-
-//		// Create the context menu						
-		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				EditorList.this.fillContextMenu(manager);
-			}
-		});
-
-		editorsTable.setMenu(menuMgr.createContextMenu(editorsTable));
-		editorsTable.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				TableItem[] items = editorsTable.getSelection();
-				if (items.length > 0) {
-					saveAction.setEnabled(true);
-					closeAction.setEnabled(true); 
-					
-					if (items.length == 1) {
-						Adapter selection = (Adapter)items[0].getData();
-						selection.activate(false);
-					}
-				} else {
-					saveAction.setEnabled(false);
-					closeAction.setEnabled(false);
-				}
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				TableItem[] items = editorsTable.getSelection();
-				if (items.length > 0) {
-					saveAction.setEnabled(true);
-					closeAction.setEnabled(true);
-					
-					if (items.length == 1) {
-						Adapter selection = (Adapter)items[0].getData();
-						selection.activate(true);
-					}
-				} else {
-					saveAction.setEnabled(false);
-					closeAction.setEnabled(false);
-				}
-			}
-		});
-	}
 
 	private class SaveAction extends Action {
 		/**
@@ -246,7 +264,7 @@ public class EditorList {
 				updateItem(items[i], editor);
 			}
 			pmd.close();
-			updateItems();
+			destroyControl();
 		}
 	}
 
@@ -274,7 +292,7 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				e.close();
 			}
-			updateItems();
+			destroyControl();
 		}
 	}
 
@@ -302,7 +320,7 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				e.close();
 			}
-			updateItems();
+			destroyControl();
 		}
 	}
 	
@@ -411,8 +429,7 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
-			updateItems();
-			editorsTable.pack();
+			editorsTable.getParent().pack();
 		}
 	}
 
@@ -509,7 +526,7 @@ public class EditorList {
 			windowScopeAction.setChecked(showAllPersp);
 			pageScopeAction.setChecked(showAllPage);
 			tabGroupScopeAction.setChecked(showTabGroup);
-			updateItems();
+			destroyControl();
 		}
 	}
 	
@@ -534,6 +551,7 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				workbook.addBookMark(e.editorRef);
 			}
+			destroyControl();
 		}
 	}
 	/**
