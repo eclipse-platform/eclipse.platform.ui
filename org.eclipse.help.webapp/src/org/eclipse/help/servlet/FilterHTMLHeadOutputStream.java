@@ -83,8 +83,7 @@ public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 					// insert extra bytes here
 					out.write(toInsert);
 					state = STATE_DONE;
-				} else if (b == ' ' || b == '\t' || b == '\n' || b == '\r') {
-				} else {
+				} else if (b == '<') {
 					state = STATE_START;
 				}
 				break;
