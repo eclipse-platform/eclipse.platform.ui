@@ -154,8 +154,16 @@ public void runWithEvent(Event event) {
 	if (handler != null)
 		handler.runWithEvent(event);
 }
+
 /**
- * Set the action handler.  Update self.
+ * Returns the action handler.
+ */
+protected IAction getActionHandler() {
+	return handler;
+}
+
+/**
+ * Sets the action handler.
  */
 protected void setActionHandler(IAction newHandler) {
 	// Optimize.
