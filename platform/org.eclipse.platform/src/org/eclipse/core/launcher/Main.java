@@ -98,7 +98,7 @@ public class Main {
     private static final String SHOWSPLASH = "-showsplash"; //$NON-NLS-1$
     private static final String NAME = "-name"; //$NON-NLS-1$
     private static final String LAUNCHER = "-launcher"; //$NON-NLS-1$
-
+	private static final String NL = "-nl";  //$NON-NLS-1$
     private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
     private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
 
@@ -142,7 +142,8 @@ public class Main {
     private static final String PROP_REQUIRED_JAVA_VERSION = "osgi.requiredJavaVersion"; //$NON-NLS-1$
     private static final String PROP_PARENT_CLASSLOADER = "osgi.parentClassloader"; //$NON-NLS-1$
     private static final String PROP_EOF = "eof"; //$NON-NLS-1$
-
+	private static final String PROP_NL = "osgi.nl";  //$NON-NLS-1$
+	
     private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
     private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
 
@@ -1127,6 +1128,12 @@ public class Main {
                 found = true;
             }
 
+			//look for the nl setting
+			if (args[i - 1].equalsIgnoreCase(NL)) {
+				System.getProperties().put(PROP_NL, arg);
+				found = true;
+			}
+			
             // done checking for args.  Remember where an arg was found 
             if (found) {
                 configArgs[configArgIndex++] = i - 1;
@@ -1553,8 +1560,11 @@ public class Main {
         if (searchPath == null)
             return null;
 
-        // get current locale information
-        String localePath = Locale.getDefault().toString().replace('_', File.separatorChar);
+        // Get the splash screen for the specified locale
+		String localePath = (String) System.getProperties().get(PROP_NL);
+		if (localePath == null)
+			localePath = Locale.getDefault().toString();
+		localePath = localePath.replace('_', File.separatorChar);
 
         // search the specified path
         while (localePath != null) {
