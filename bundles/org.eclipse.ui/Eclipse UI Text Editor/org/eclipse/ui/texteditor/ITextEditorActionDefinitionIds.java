@@ -10,63 +10,47 @@ package org.eclipse.ui.texteditor;
  * i.e. navigation, selection, and modification.
  * This is not yet API.
  */
-public interface ITextEditorActionDefinitionIds {
+public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefinitionIds {
+	
 	// navigation
-	public static final String LINE_UP= "org.eclipse.edit.text.goto.line_up";
-	public static final String LINE_DOWN= "org.eclipse.edit.text.goto.line_down";
-	public static final String LINE_START= "org.eclipse.edit.text.goto.line_start";
-	public static final String LINE_END= "org.eclipse.edit.text.goto.line_end";
-	public static final String LINE_GOTO= "org.eclipse.edit.text.goto.line";
-	public static final String COLUMN_PREVIOUS= "org.eclipse.edit.text.goto.column_previous";
-	public static final String COLUMN_NEXT= "org.eclipse.edit.text.goto.column_next";
-	public static final String PAGE_UP= "org.eclipse.edit.text.goto.page_up";
-	public static final String PAGE_DOWN= "org.eclipse.edit.text.goto.page_down";
-	public static final String WORD_PREVIOUS= "org.eclipse.edit.text.goto.word_previous";
-	public static final String WORD_NEXT= "org.eclipse.edit.text.goto.word_next";
-	public static final String TEXT_START= "org.eclipse.edit.text.goto.text_start";
-	public static final String TEXT_END= "org.eclipse.edit.text.goto.text_end";
-	public static final String WINDOW_START= "org.eclipse.edit.text.goto.window_start";
-	public static final String WINDOW_END= "org.eclipse.edit.text.goto.window_end";
+	public static final String LINE_UP= "org.eclipse.ui.edit.text.goto.lineUp";
+	public static final String LINE_DOWN= "org.eclipse.ui.edit.text.goto.lineDown";
+	public static final String LINE_START= "org.eclipse.ui.edit.text.goto.lineStart";
+	public static final String LINE_END= "org.eclipse.ui.edit.text.goto.lineEnd";
+	public static final String LINE_GOTO= "org.eclipse.ui.edit.text.goto.line";
+	public static final String COLUMN_PREVIOUS= "org.eclipse.ui.edit.text.goto.columnPrevious";
+	public static final String COLUMN_NEXT= "org.eclipse.ui.edit.text.goto.columnNext";
+	public static final String PAGE_UP= "org.eclipse.ui.edit.text.goto.pageUp";
+	public static final String PAGE_DOWN= "org.eclipse.ui.edit.text.goto.pageDown";
+	public static final String WORD_PREVIOUS= "org.eclipse.ui.edit.text.goto.wordPrevious";
+	public static final String WORD_NEXT= "org.eclipse.ui.edit.text.goto.wordNext";
+	public static final String TEXT_START= "org.eclipse.ui.edit.text.goto.textStart";
+	public static final String TEXT_END= "org.eclipse.ui.edit.text.goto.textEnd";
+	public static final String WINDOW_START= "org.eclipse.ui.edit.text.goto.windowStart";
+	public static final String WINDOW_END= "org.eclipse.ui.edit.text.goto.windowEnd";
+	
 	// selection
-	public static final String SELECT_LINE_UP= "org.eclipse.edit.text.select.line_up";
-	public static final String SELECT_LINE_DOWN= "org.eclipse.edit.text.select.line_down";
-	public static final String SELECT_LINE_START= "org.eclipse.edit.text.select.line_start";
-	public static final String SELECT_LINE_END= "org.eclipse.edit.text.select.line_end";
-	public static final String SELECT_COLUMN_PREVIOUS= "org.eclipse.edit.text.select.column_previous";
-	public static final String SELECT_COLUMN_NEXT= "org.eclipse.edit.text.select.column_next";
-	public static final String SELECT_PAGE_UP= "org.eclipse.edit.text.select.page_up";
-	public static final String SELECT_PAGE_DOWN= "org.eclipse.edit.text.select.page_down";
-	public static final String SELECT_WORD_PREVIOUS= "org.eclipse.edit.text.select.word_previous";
-	public static final String SELECT_WORD_NEXT= "org.eclipse.edit.text.select.word_next";
-	public static final String SELECT_TEXT_START= "org.eclipse.edit.text.select.text_start";
-	public static final String SELECT_TEXT_END= "org.eclipse.edit.text.select.text_end";
-	public static final String SELECT_WINDOW_START= "org.eclipse.edit.text.select.window_start";
-	public static final String SELECT_WINDOW_END= "org.eclipse.edit.text.select.window_end";
+	public static final String SELECT_LINE_UP= "org.eclipse.ui.edit.text.select.lineUp";
+	public static final String SELECT_LINE_DOWN= "org.eclipse.ui.edit.text.select.lineDown";
+	public static final String SELECT_LINE_START= "org.eclipse.ui.edit.text.select.lineStart";
+	public static final String SELECT_LINE_END= "org.eclipse.ui.edit.text.select.lineEnd";
+	public static final String SELECT_COLUMN_PREVIOUS= "org.eclipse.ui.edit.text.select.columnPrevious";
+	public static final String SELECT_COLUMN_NEXT= "org.eclipse.ui.edit.text.select.columnNext";
+	public static final String SELECT_PAGE_UP= "org.eclipse.ui.edit.text.select.pageUp";
+	public static final String SELECT_PAGE_DOWN= "org.eclipse.ui.edit.text.select.pageDown";
+	public static final String SELECT_WORD_PREVIOUS= "org.eclipse.ui.edit.text.select.wordPrevious";
+	public static final String SELECT_WORD_NEXT= "org.eclipse.ui.edit.text.select.wordNext";
+	public static final String SELECT_TEXT_START= "org.eclipse.ui.edit.text.select.textStart";
+	public static final String SELECT_TEXT_END= "org.eclipse.ui.edit.text.select.textEnd";
+	public static final String SELECT_WINDOW_START= "org.eclipse.ui.edit.text.select.windowStart";
+	public static final String SELECT_WINDOW_END= "org.eclipse.ui.edit.text.select.windowEnd";
+	
 	// modification
-	public static final String DELETE_PREVIOUS= "org.eclipse.edit.text.delete_previous";
-	public static final String DELETE_NEXT= "org.eclipse.edit.text.delete_next";
-	public static final String SHIFT_RIGHT= "org.eclipse.edit.text.shift_right";
-	public static final String SHIFT_LEFT= "org.eclipse.edit.text.shift_left";
+	public static final String DELETE_PREVIOUS= "org.eclipse.ui.edit.text.deletePrevious";
+	public static final String DELETE_NEXT= "org.eclipse.ui.edit.text.deleteNext";
+	public static final String SHIFT_RIGHT= "org.eclipse.ui.edit.text.shiftRight";
+	public static final String SHIFT_LEFT= "org.eclipse.ui.edit.text.shiftLeft";
+	
 	// miscellaneous
-	public static final String TOGGLE_OVERWRITE= "org.eclipse.edit.text.toggle_overwrite";
-	
-	// workbench edit actions
-	public static final String CUT= "org.eclipse.edit.cut";
-	public static final String COPY= "org.eclipse.edit.copy";
-	public static final String PASTE= "org.eclipse.edit.paste";
-	public static final String UNDO= "org.eclipse.edit.undo";
-	public static final String REDO= "org.eclipse.edit.redo";
-	public static final String DELETE= "org.eclipse.edit.delete";
-	public static final String SELECT_ALL= "org.eclipse.edit.select_all";
-	public static final String PRINT= "org.eclipse.edit.print";
-	public static final String FIND_REPLACE= "org.eclipse.edit.find_replace";
-	public static final String FIND_NEXT= "org.eclipse.edit.find_next";
-	public static final String FIND_PREVIOUS= "org.eclipse.edit.find_previous";
-	public static final String FIND_INCREMENTAL= "org.eclipse.edit.find_incremental";
-	public static final String REVERT_TO_SAVED= "org.eclipse.edit.revert_to_saved";
-	public static final String ADD_BOOKMARK= "org.eclipse.edit.add_bookmark";
-	public static final String ADD_TASK= "org.eclipse.edit.add_task";
-	
-	// workbench file actions
-	public static final String SAVE= "org.eclipse.file.save";
+	public static final String TOGGLE_OVERWRITE= "org.eclipse.ui.edit.text.toggleOverwrite";
 }

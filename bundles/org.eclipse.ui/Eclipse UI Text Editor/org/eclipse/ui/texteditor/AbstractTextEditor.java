@@ -91,6 +91,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IStorageEditorInput;
@@ -284,7 +285,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	class ActivationCodeTrigger implements VerifyKeyListener {
 		
 		private boolean fIsInstalled= false;
-//		private IKeyBindingService fKeyBindingService;
+		private IKeyBindingService fKeyBindingService;
 		
 		/**
 		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
@@ -310,10 +311,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				}
 			}
-//			if (fKeyBindingService.processKey(event)) {
-//				/* mode handling not yet right */
-//				event.doit= false;
-//			}
+			if (fKeyBindingService.processKey(event)) {
+				/* mode handling not yet right */
+				event.doit= false;
+			}
 		}
 		
 		/**
@@ -323,7 +324,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (!fIsInstalled) {
 				StyledText text= fSourceViewer.getTextWidget();
 				text.addVerifyKeyListener(this);
-//				fKeyBindingService= getEditorSite().getKeyBindingService();
+				fKeyBindingService= getEditorSite().getKeyBindingService();
+				fKeyBindingService.enable(true);
 				fIsInstalled= true;
 			}
 		}
@@ -336,7 +338,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				StyledText text= fSourceViewer.getTextWidget();
 				text.removeVerifyKeyListener(fActivationCodeTrigger);
 				fIsInstalled= false;
-//				fKeyBindingService= null;
+				fKeyBindingService= null;
 			}
 		}
 		
@@ -344,8 +346,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * Registers the given action for key activation.
 		 */
 		public void registerActionForKeyActivation(IAction action) {
-//			if (action.getActionDefinitionId() != null)
-//				fKeyBindingService.registerAction(action);
+			if (action.getActionDefinitionId() != null)
+				fKeyBindingService.registerAction(action);
 		}
 		
 		/**
@@ -2093,7 +2095,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
+		// action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
 		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
@@ -2122,9 +2124,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
+//		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
+//		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
 	}
 	
 	/**

@@ -117,8 +117,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createSpace(composite);
 		createProjectPerspectiveGroup(composite);
 		
-		//createSpace(composite);
-		//createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+		createSpace(composite);
+		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
 
 		// Temporary option to enable wizard for project capability work
 		createSpace(composite);
