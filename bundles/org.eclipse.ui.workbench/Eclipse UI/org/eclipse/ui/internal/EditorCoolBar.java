@@ -182,30 +182,6 @@ public class EditorCoolBar {
 		}		
 	}
 	
-//	/**
-//	 * Sets the location for a hovering shell
-//	 * @param shell the object that is to hover
-//	 * @param position the position of a widget to hover over
-//	 */
-//	private Rectangle setShellBounds(Shell shell, Point position) {
-//		Control editorListControl = editorList.getControl();
-//		final int maxItems = 11; // displays x-1 items without a scrollbar
-//		Rectangle displayBounds = shell.getDisplay().getClientArea();
-//		Rectangle shellBounds = shell.getBounds();
-//		Point pullDownSize = dropDownItem.getSize();
-//	
-//		shellBounds.x = position.x;
-//		if (position.y + pullDownSize.y + shellBounds.height >  displayBounds.height) {
-//			shellBounds.y = position.y - shellBounds.height;
-//		} else {
-//			shellBounds.y = position.y + pullDownSize.y;
-//		}
-//		shellBounds.height = Math.min(shellBounds.height, maxItems*((Table) editorListControl).getItemHeight());
-//		shellBounds.width = dropDownItem.getSize().x;
-//		shell.setBounds(shellBounds);
-//		return shellBounds;
-//	}
-	
 	private void closeEditorList() {
 		editorList.destroyControl();
 		Control focusControl = workbook.getParent().getDisplay ().getFocusControl();
@@ -253,7 +229,7 @@ public class EditorCoolBar {
 		listComposite.moveAbove(null);
 		listComposite.setLocation(point);
 				 
- 		editorList.getControl().addListener(SWT.Deactivate, new Listener() {
+ 		editorListControl.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
 				listComposite.getDisplay().asyncExec(new Runnable() {
 					public void run() {
@@ -535,28 +511,14 @@ public class EditorCoolBar {
 		for (int i = visibleItemCount; i < toolCount; i++) { 
 			shortcuts[j++] = (EditorShortcut) tools[i].getData();
 		}	
-//		openShortcutList(new Point(0,0), shortcuts);
-//		openShortcutList(chevronPosition, shortcuts);
-		
-//		// Create a pop-up menu with items for each of the hidden buttons.
-//		if (chevronMenuManager != null) {
-//			chevronMenuManager.dispose();
-//		}
-		chevronMenuManager = new MenuManager();
-		for (int i = visibleItemCount; i < toolCount; i++) {
-			BookMarkAction contribution = new BookMarkAction(tools[i]);
-			chevronMenuManager.add(contribution);
-		}
-		Menu popUp = chevronMenuManager.createContextMenu(coolBar);
-		popUp.setLocation(chevronPosition.x, chevronPosition.y);
-		popUp.setVisible(true);
+		openShortcutList(shortcuts);
 	}
 
 	private void closeShortcutList() {
 		shortcutList.destroyControl();
 	}
 	
-	private void openShortcutList(Point point, EditorShortcut[] shortcuts) {		
+	private void openShortcutList(EditorShortcut[] shortcuts) {
 		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
 		Display display = parent.getDisplay();
 		shortcutListComposite = new ViewForm(parent, SWT.BORDER);
@@ -565,49 +527,28 @@ public class EditorCoolBar {
 				shortcutListComposite = null;
 			}
 		});
-		
 		Control shortcutListControl = shortcutList.createControl(shortcutListComposite, shortcuts);
-				
 		Table shortcutTable = ((Table)shortcutListControl);
 		TableItem[] items = shortcutTable.getItems();
  		if (items.length == 0) {
  			shortcutListComposite.dispose();
  			return;
  		}
- 	
-		shortcutListComposite.setContent(shortcutListControl);
+ 		shortcutListComposite.setContent(shortcutListControl);
 		shortcutListComposite.pack();
-
-////		Control editorListControl = editorList.getControl();
-//		final int maxItems = 11; // displays x-1 items without a scrollbar
-//		Rectangle displayBounds = shell.getDisplay().getClientArea();
-//		Rectangle shellBounds = shell.getBounds();
-//		Point pullDownSize = dropDownItem.getSize();
-//	
-//	//	shellBounds.x = Math.max(Math.min(position.x - editorListControl.getSize().x + pullDownSize.x, displayBounds.width - shellBounds.width), 0);
-//		shellBounds.y = Math.max(Math.min(position.y + pullDownSize.y, displayBounds.height - shellBounds.height), 0);
-//		shellBounds.x = Math.max(Math.min(position.x, displayBounds.width - shellBounds.width), 0);
-//		shellBounds.height = Math.min(shellBounds.height, maxItems*((Table) editorListControl).getItemHeight());
-//		shellBounds.width = Math.min(shellBounds.width, 500); // 500 pixels, whynot?
-//		shell.setBounds(shellBounds);
-		
-		
-		Rectangle coolbarBounds = coolBar.getBounds();
-//		Point point = coolBar.getParent().toDisplay(new Point(coolbarBounds.x,coolbarBounds.y));
-//		point = parent.toControl(point);
-//		point.y += coolbarBounds.height + 1;
-		int x = point.x;
-		int y = point.y;
-		int width = 100;
-		int height = 200;
-//		int width = dropDownItem.getSize().x;
-//		int height = Math.min(shortcutListComposite.getBounds().height, MAX_ITEMS * ((Table)shortcutList.getControl()).getItemHeight());
-		shortcutListComposite.setBounds(shortcutListComposite.computeTrim(x, y, width, height));
+ 	
+ 		Rectangle parentBounds = coolBar.getParent().getBounds(); 
+ 		Rectangle shortcutBounds = shortcutListComposite.getBounds();
+		int x = parentBounds.x + parentBounds.width - shortcutBounds.width;
+		int y = parentBounds.y + coolBar.getSize().y + 1;
+		Point point = new Point(x,y);
+		point = coolBar.getParent().toDisplay(point);
+		point = parent.toControl(point);
+		shortcutListComposite.setLocation(point);
 		shortcutListComposite.setVisible(true);
 		shortcutListComposite.moveAbove(null);
-		shortcutListComposite.setLocation(point);
-				 
- 		shortcutList.getControl().addListener(SWT.Deactivate, new Listener() {
+			 
+ 		shortcutListControl.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
 				shortcutListComposite.getDisplay().asyncExec(new Runnable() {
 					public void run() {
@@ -678,7 +619,7 @@ public class EditorCoolBar {
 	}
 	
 	/**
-	 * Open the selected bookmark.
+	 * Open the selected shortcut.
 	 */
 	private class OpenAction extends Action {
 		/**
@@ -690,11 +631,11 @@ public class EditorCoolBar {
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_ACTION);
 		}
 		/**
-		 * Open the selected editor.
+		 * Perform the open.
 		 */
 		public void run() {
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -711,7 +652,7 @@ public class EditorCoolBar {
 	}
 	
 	/**
-	 * Delete the selected bookmark.
+	 * Delete the selected shortcut.
 	 */	
 	private class DeleteAction extends Action {
 		/**
@@ -726,8 +667,8 @@ public class EditorCoolBar {
 		 * Performs the delete.
 		 */
 		public void run() {
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -740,7 +681,7 @@ public class EditorCoolBar {
 	}
 		
 	/**
-	 * Rename the selected bookmark.
+	 * Rename the selected shortcut.
 	 */	
 	private class RenameAction extends Action {
 		private String newValue;
@@ -757,9 +698,9 @@ public class EditorCoolBar {
 		 */
 		public void run() {
 			Shell shell = workbook.getEditorArea().getWorkbenchWindow().getShell();
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
-			EditorShortcut[] shortcuts = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getItems();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
+			EditorShortcut[] shortcuts = shortcutManager.getItems();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {

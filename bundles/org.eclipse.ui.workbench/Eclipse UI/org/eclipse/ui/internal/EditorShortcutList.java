@@ -10,7 +10,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -49,24 +48,9 @@ public class EditorShortcutList {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				EditorShortcutList.this.fillContextMenu(manager);
-				MenuManager menuMgr = (MenuManager) manager;
-				menuMgr.getMenu().addMenuListener(new MenuListener() {
-					public void menuHidden(MenuEvent e) {
-						destroyControl();
-					}
-					public void menuShown(MenuEvent e) {
-					}
-				});				
+				EditorShortcutList.this.fillContextMenu(manager);				
 			}
 		});
-//		menuMgr.getMenu().addMenuListener(new MenuListener() {
-//			public void menuHidden(MenuEvent e) {
-//				destroyControl();
-//			}
-//			public void menuShown(MenuEvent e) {
-//			}
-//		});
 
 		shortcutTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -116,7 +100,6 @@ public class EditorShortcutList {
 	 * Sorts the shortcuts
 	 */
 	private void sort() {
-		if (true) return;
 		Adapter a[] = new Adapter[elements.size()];
 		elements.toArray(a);
 		Arrays.sort(a);
@@ -148,7 +131,7 @@ public class EditorShortcutList {
 	}
 
 	/**
-	 * Open the selected bookmark.
+	 * Open the selected shortcut.
 	 */
 	private class OpenAction extends Action {
 		/**
@@ -160,11 +143,11 @@ public class EditorShortcutList {
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_ACTION);
 		}
 		/**
-		 * Open the selected editor.
+		 * Perform the open.
 		 */
 		public void run() {
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -177,11 +160,12 @@ public class EditorShortcutList {
 				}	
 			}
 			shortcutManager.setSelection(null);
+			destroyControl();
 		}			
 	}
 	
 	/**
-	 * Delete the selected bookmark.
+	 * Delete the selected shortcut.
 	 */	
 	private class DeleteAction extends Action {
 		/**
@@ -196,8 +180,8 @@ public class EditorShortcutList {
 		 * Performs the delete.
 		 */
 		public void run() {
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -206,11 +190,12 @@ public class EditorShortcutList {
 				}	
 			}
 			shortcutManager.setSelection(null);
+//			updateItems(shortcutManager.getItems());
 		}
 	}
 		
 	/**
-	 * Rename the selected bookmark.
+	 * Rename the selected shortcut.
 	 */	
 	private class RenameAction extends Action {
 		private String newValue;
@@ -227,9 +212,9 @@ public class EditorShortcutList {
 		 */
 		public void run() {
 			Shell shell = workbook.getEditorArea().getWorkbenchWindow().getShell();
-			EditorShortcut[] selection = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getSelection();
-			EditorShortcut[] shortcuts = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getItems();
 			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+			EditorShortcut[] selection = shortcutManager.getSelection();
+			EditorShortcut[] shortcuts = shortcutManager.getItems();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -249,6 +234,7 @@ public class EditorShortcutList {
 				}	
 			}
 			shortcutManager.setSelection(null);
+//			updateItems(shortcutManager.getItems());
 		}			
 				
 		private boolean askForLabel(Shell shell, String oldValue) {
@@ -330,7 +316,7 @@ public class EditorShortcutList {
 	
 		public int compareTo(Object another) {
 			Adapter adapter = (Adapter)another;
-			int  result = collator.compare(getText(),adapter.getText());
+			int  result = collator.compare(getText()[0],adapter.getText()[0]);
 			return result;
 		}
 	}
