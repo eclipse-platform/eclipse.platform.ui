@@ -400,7 +400,7 @@ public class CVSLightweightDecorator
 				ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 				try {
 					FolderSyncInfo folderSyncInfo = cvsFolder.getFolderSyncInfo();
-					if (folderSyncInfo != null && folderSyncInfo.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+					if (folderSyncInfo != null && folderSyncInfo.isVirtualDirectory()) {
 						return noRemoteDir;
 					}
 				} catch (CVSException e) {

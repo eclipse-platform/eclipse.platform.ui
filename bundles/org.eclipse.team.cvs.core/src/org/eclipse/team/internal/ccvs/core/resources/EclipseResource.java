@@ -132,7 +132,7 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		if (parent.isIgnored()) return true;
 		FolderSyncInfo info = parent.getFolderSyncInfo();
 		if (info == null) return false;
-		return info.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY);
+		return info.isVirtualDirectory();
 	}
 	
 	/*

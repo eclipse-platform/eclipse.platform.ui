@@ -104,6 +104,11 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		
 		// Do not send the same folder twice
 		if (isLastSent(mFolder)) return;
+		
+		// Do not send virtual directories
+		if (isCVSFolder && mFolder.getFolderSyncInfo().isVirtualDirectory()) {
+			return;
+		}
 
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
 		

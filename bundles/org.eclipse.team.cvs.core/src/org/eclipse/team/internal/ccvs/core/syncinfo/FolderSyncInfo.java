@@ -301,4 +301,15 @@ public class FolderSyncInfo {
 		}
 		return new FolderSyncInfo(repository, root, tag, isStatic);
 	}
+	
+	/**
+	 * Return whether the local directory is mapped to an existing remote 
+	 * directory or is just a local placeholder for child folders. a return type
+	 * of <code>true</code> indicates that the local folder is not mapped to a
+	 * remote folder.
+	 * @return whether the directory is a local placeholder
+	 */
+	public boolean isVirtualDirectory() {
+		return getRepository().equals(VIRTUAL_DIRECTORY);
+	}
 }
