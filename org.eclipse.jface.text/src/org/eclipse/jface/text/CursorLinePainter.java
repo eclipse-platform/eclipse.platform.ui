@@ -215,16 +215,20 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			return;
 		}
 		
+		StyledText textWidget= fViewer.getTextWidget();
+		
 		// check selection
-		Point selection= fViewer.getTextWidget().getSelectionRange();
-		if (selection.y > 0) {
+		Point selection= textWidget.getSelection();
+		int startLine= textWidget.getLineAtOffset(selection.x);
+		int endLine= textWidget.getLineAtOffset(selection.y);
+		if (startLine != endLine) {
 			deactivate(true);
 			return;
 		}
 		
 		// initialization
 		if (!fIsActive) {
-			fViewer.getTextWidget().addLineBackgroundListener(this);
+			textWidget.addLineBackgroundListener(this);
 			fPositionManager.managePosition(fCurrentLine);
 			fIsActive= true;
 		}
