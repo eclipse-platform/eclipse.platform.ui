@@ -4,7 +4,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.update.core"/>
-    <classpathentry exported="true" kind="src" path="/org.eclipse.update.core.linux"/>
     <classpathentry exported="true" kind="src" path="/org.eclipse.update.core.win32"/>
     <classpathentry kind="src" path="/org.eclipse.update.ui.forms"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
