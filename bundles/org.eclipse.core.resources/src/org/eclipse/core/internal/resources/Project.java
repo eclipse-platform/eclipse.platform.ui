@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class Project extends Container implements IProject {
 
@@ -788,8 +789,10 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork); //$NON-NLS-1$
+		ISchedulingRule rule = workspace.getRoot();
 		try {
-			workspace.prepareOperation(this, monitor);
+			//need to use root rule because nature configuration calls third party code
+			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			checkDescription(this, description, false);
@@ -823,7 +826,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
