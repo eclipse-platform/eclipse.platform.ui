@@ -97,7 +97,6 @@ public class NewUpdateSiteDialog extends Dialog {
 		try {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			SiteBookmark bookmark = new SiteBookmark(name.getText(), new URL(url.getText()), false);
-			bookmark.setSelected(true);
 			model.addBookmark(bookmark);
 			model.saveBookmarks();
 		} catch (MalformedURLException e) {
