@@ -617,7 +617,8 @@ public class EclipseWorkspaceTest extends TestCase {
 			IStatus status = ((CoreException) e).getStatus();
 			if (status.getChildren().length > 0)
 				write(status, 0);
-		}
+		} else
+			e.printStackTrace();
 		fail(message + ": " + e);
 	}
 
@@ -791,7 +792,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		String m = getClassName() + ".modifyInFileSystem(IFile): ";
 		String newContent = readStringInFileSystem(file) + "f";
 		IPath location = file.getLocation();
-		if (location == null) 
+		if (location == null)
 			fail("0.1 - null location for file: " + file);
 		java.io.File osFile = location.toFile();
 		try {
@@ -903,13 +904,13 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 	}
 
-//	/**
-//	 * Returns the test suite for this test class.
-//	 */
-//	public static Test suite() {
-//		// subclasses must provide their own suite method
-//		throw new UnsupportedOperationException("Every test class must provide a suite() method");
-//	}
+	//	/**
+	//	 * Returns the test suite for this test class.
+	//	 */
+	//	public static Test suite() {
+	//		// subclasses must provide their own suite method
+	//		throw new UnsupportedOperationException("Every test class must provide a suite() method");
+	//	}
 
 	/**
 	 * Copy the data from the input stream to the output stream.
@@ -966,7 +967,20 @@ public class EclipseWorkspaceTest extends TestCase {
 			//ignore
 		}
 	}
-	
+
+	/**
+	 * Blocks the calling thread until autobuild completes.
+	 */
+	protected void waitForRefresh() {
+		try {
+			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (OperationCanceledException e) {
+			//ignore
+		} catch (InterruptedException e) {
+			//ignore
+		}
+	}
+
 	public static void log(IStatus status) {
 		Platform.getLog(Platform.getBundle(PI_HARNESS)).log(status);
 	}
@@ -975,5 +989,4 @@ public class EclipseWorkspaceTest extends TestCase {
 		log(new Status(IStatus.ERROR, PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
-	
 }
