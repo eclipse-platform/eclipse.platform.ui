@@ -202,10 +202,11 @@ public class UpdatesView
 			}
 			if (parent instanceof SiteCategory) {
 				final SiteCategory category = (SiteCategory) parent;
+				category.touchFeatures(getViewSite().getWorkbenchWindow());
 				return category.getChildren();
 			}
 			if (parent instanceof IFeatureAdapter) {
-				return getIncludedFeatures((IFeatureAdapter)parent);
+				return getIncludedFeatures((IFeatureAdapter) parent);
 			}
 			return new Object[0];
 		}
@@ -470,6 +471,7 @@ public class UpdatesView
 
 	public void makeActions() {
 		super.makeActions();
+		initDrillDown();
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
@@ -674,6 +676,10 @@ public class UpdatesView
 	public void fillActionBars(IActionBars bars) {
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 		toolBarManager.add(refreshAction);
+		toolBarManager.add(new Separator());
+		addDrillDownAdapter(bars);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(collapseAllAction);
 		IMenuManager menuManager = bars.getMenuManager();
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());
@@ -721,6 +727,8 @@ public class UpdatesView
 			manager.add(showSearchResultAction);
 			manager.add(new Separator());
 		}
+		addDrillDownAdapter(manager);
+		manager.add(new Separator());
 
 		super.fillContextMenu(manager);
 		if (obj instanceof NamedModelObject)
@@ -1210,46 +1218,20 @@ public class UpdatesView
 	private IFeature getFeature(final IFeatureAdapter adapter) {
 		final IFeature[] result = new IFeature[1];
 
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
-				try {
-					monitor.beginTask("Downloading "+adapter.getFastLabel()+"...", 1);
-					result[0] = adapter.getFeature(new SubProgressMonitor(monitor, 1));
-				} catch (CoreException e) {
-					result[0] =
-						new MissingFeature(adapter.getSite(), adapter.getURL());
-				} finally {
-					monitor.done();
-				}
-			}
-		};
 		try {
-			getViewSite().getWorkbenchWindow().run(true, false, op);
-		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
-		} catch (InterruptedException e) {
+			result[0] = adapter.getFeature(null);
+		} catch (CoreException e) {
+			result[0] = new MissingFeature(adapter.getSite(), adapter.getURL());
 		}
 		return result[0];
 	}
-	
-	private Object[] getIncludedFeatures(final IFeatureAdapter adapter) {
-		final Object [][] result = new Object[1][];
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
-				monitor.beginTask("Downloading "+adapter.getFastLabel()+"...", 1);
-				result[0] = adapter.getIncludedFeatures(new SubProgressMonitor(monitor, 1));
-				monitor.done();
-			}
-		};
-		try {
-			getViewSite().getWorkbenchWindow().run(true, false, op);
-		} catch (InvocationTargetException e) {
-			UpdateUIPlugin.logException(e);
-		} catch (InterruptedException e) {
+
+	private Object[] getIncludedFeatures(IFeatureAdapter adapter) {
+		if (adapter instanceof FeatureReferenceAdapter) {
+			((FeatureReferenceAdapter) adapter).touchIncludedFeatures(
+				getViewSite().getWorkbenchWindow());
 		}
-		return result[0];
+		return adapter.getIncludedFeatures(null);
 	}
 
 }

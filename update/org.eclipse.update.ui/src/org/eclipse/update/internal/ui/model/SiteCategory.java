@@ -3,11 +3,17 @@ package org.eclipse.update.internal.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class SiteCategory extends UIModelObject {
@@ -17,6 +23,9 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	Vector children;
 	private ICategory category;
 	private String name;
+	private boolean touched;
+	private int featureCount;
+	private boolean canceled;
 	
 	class OtherCategory implements ICategory {
 		IURLEntry entry;
@@ -67,11 +76,11 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	}
 	
 	public Object [] getChildren() {
-		return children.toArray();
+		return canceled?new Object[0]:children.toArray();
 	}
 	
 	public int getChildCount() {
-		return children.size();
+		return canceled?0:children.size();
 	}
 	
 	public String getName() {
@@ -90,19 +99,46 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 	}
 	
 	void add(Object child) {
+		if (child instanceof IFeatureAdapter)
+			featureCount++;
 		children.add(child);
 	}
 	
-	public void touchFeatures() throws CoreException {
-		for (int i=0; i<children.size(); i++) {
-			Object child = children.get(i);
-			if (child instanceof FeatureReferenceAdapter) {
-				FeatureReferenceAdapter cf = (FeatureReferenceAdapter)child;
-				cf.getFeature(null);
+	public void touchFeatures(IRunnableContext context) {
+		if (children.size()==0 || touched || featureCount==0) return;
+		
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask("Downloading: ", featureCount);
+				for (int i=0; i<children.size(); i++) {
+					Object child = children.get(i);
+					if (monitor.isCanceled())
+						break;
+					if (child instanceof IFeatureAdapter) {
+						IFeatureAdapter adapter = (IFeatureAdapter)child;
+						monitor.subTask(adapter.getFastLabel());
+						try {
+							adapter.getFeature(null);
+						}
+						catch (CoreException e) {
+						}
+						finally {
+							monitor.worked(1);
+						}
+					}
+				}
+				monitor.done();
 			}
-			else if (child instanceof SiteCategory) {
-				((SiteCategory)child).touchFeatures();
-			}
+		};
+		
+		try {
+			context.run(true, true, op);
+			touched = true;
+		}
+		catch (InterruptedException e) {
+			canceled = true;
+		}
+		catch (InvocationTargetException e) {
 		}
 	}
 	

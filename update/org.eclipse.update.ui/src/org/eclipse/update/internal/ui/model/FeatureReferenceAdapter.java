@@ -3,14 +3,18 @@ package org.eclipse.update.internal.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.update.core.*;
 
 public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;
+	private boolean touched;
 
 	public FeatureReferenceAdapter(IFeatureReference featureRef) {
 		this.featureRef = featureRef;
@@ -36,6 +40,43 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 	public boolean isOptional() {
 		return featureRef instanceof IIncludedFeatureReference ? 
 			((IIncludedFeatureReference)featureRef).isOptional():false;
+	}
+	
+	public void touchIncludedFeatures(IRunnableContext context) {
+		if (touched) return;
+		final IFeatureReference [] included;
+		
+		try {
+			included = 	getFeature(null).getIncludedFeatureReferences();
+		}
+		catch (CoreException e) {
+			return;
+		}
+		if (included.length == 0) return;
+		IRunnableWithProgress op = new IRunnableWithProgress () {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask("Loading: ", included.length);
+				for (int i=0; i<included.length; i++) {
+					IFeatureReference ref = included[i];
+					try {
+						monitor.subTask(ref.getURL().toString());
+						ref.getFeature(null);
+						monitor.worked(1);
+					}
+					catch (CoreException e) {
+					}
+				}
+				monitor.done();
+			}
+		};
+		try {
+			context.run(true, false, op);
+			touched=true;
+		}
+		catch (InvocationTargetException e) {
+		}
+		catch (InterruptedException e) {
+		}
 	}
 
 	public IFeatureAdapter[] getIncludedFeatures(IProgressMonitor monitor) {

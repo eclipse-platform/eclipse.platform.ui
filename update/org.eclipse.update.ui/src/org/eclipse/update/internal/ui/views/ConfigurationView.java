@@ -3,12 +3,13 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -17,7 +18,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -58,7 +58,6 @@ public class ConfigurationView
 	private Action propertiesAction;
 	private Action showStatusAction;
 	private IUpdateModelChangedListener modelListener;
-	private DrillDownAdapter drillDownAdapter;
 	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
 	private static final String KEY_PRESERVE =
 		"ConfigurationView.Popup.preserve";
@@ -197,14 +196,11 @@ public class ConfigurationView
 				IConfiguredSiteAdapter adapter =
 					(IConfiguredSiteAdapter) parent;
 				boolean showUnconf = showUnconfFeaturesAction.isChecked();
-				if (showUnconf)
-					return getAllFeatures(adapter);
-				else
-					return getConfiguredFeatures(adapter);
+				return getFeatures(adapter, !showUnconf);
 			}
 			if (parent instanceof ConfiguredFeatureAdapter) {
-				return ((ConfiguredFeatureAdapter) parent)
-					.getIncludedFeatures(null);
+				return ((ConfiguredFeatureAdapter) parent).getIncludedFeatures(
+					null);
 			}
 			return new Object[0];
 		}
@@ -228,130 +224,13 @@ public class ConfigurationView
 			return bag[0];
 		}
 
-		private Object[] getConfiguredFeatures(final IConfiguredSiteAdapter adapter) {
-			final Object[][] bag = new Object[1][];
-
-			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-				public void run() {
-					IConfiguredSite csite = adapter.getConfigurationSite();
-					IFeatureReference[] refs = csite.getConfiguredFeatures();
-					ArrayList result = new ArrayList();
-					for (int i = 0; i < refs.length; i++) {
-						IFeatureReference ref = refs[i];
-						IFeature feature;
-						try {
-							feature = ref.getFeature();
-						} catch (CoreException e) {
-							feature =
-								new MissingFeature(ref.getSite(), ref.getURL());
-						}
-						result.add(
-							new ConfiguredFeatureAdapter(
-								adapter,
-								feature,
-								true,
-								false,
-								false));
-					}
-					bag[0] = getRootFeatures(result);
-				}
-			});
-			return bag[0];
-		}
-
-		private Object[] getAllFeatures(IConfiguredSiteAdapter adapter) {
-			IConfiguredSite csite = adapter.getConfigurationSite();
-			ISite site = csite.getSite();
-			IFeatureReference[] allRefs = site.getFeatureReferences();
-			ArrayList result = new ArrayList();
-
-			for (int i = 0; i < allRefs.length; i++) {
-				IFeature feature;
-				try {
-					feature = allRefs[i].getFeature();
-				} catch (CoreException e) {
-					feature = new MissingFeature(site, allRefs[i].getURL());
-				}
-				result.add(
-					new ConfiguredFeatureAdapter(
-						adapter,
-						feature,
-						csite.isConfigured(feature),
-						false,
-						false));
-			}
-			return getRootFeatures(result);
-		}
-
-		private Object[] getRootFeatures(ArrayList list) {
-			ArrayList children = new ArrayList();
-			ArrayList result = new ArrayList();
-			try {
-				for (int i = 0; i < list.size(); i++) {
-					ConfiguredFeatureAdapter cf =
-						(ConfiguredFeatureAdapter) list.get(i);
-					IFeature feature = cf.getFeature(null);
-					if (feature != null)
-						addChildFeatures(
-							feature,
-							cf.getConfigurationSite(),
-							children,
-							cf.isConfigured());
-				}
-				for (int i = 0; i < list.size(); i++) {
-					ConfiguredFeatureAdapter cf =
-						(ConfiguredFeatureAdapter) list.get(i);
-					IFeature feature = cf.getFeature(null);
-					if (feature != null
-						&& isChildFeature(feature, children) == false)
-						result.add(cf);
-				}
-			} catch (CoreException e) {
-				return list.toArray();
-			}
-			return result.toArray();
-		}
-
-		private void addChildFeatures(
-			IFeature feature,
-			IConfiguredSite csite,
-			ArrayList children,
-			boolean configured) {
-			try {
-				IIncludedFeatureReference[] included =
-					feature.getIncludedFeatureReferences();
-				for (int i = 0; i < included.length; i++) {
-					IFeature childFeature;
-					try {
-						childFeature =
-							included[i].getFeature(!configured, csite);
-					} catch (CoreException e) {
-						childFeature = new MissingFeature(included[i]);
-					}
-					children.add(childFeature);
-				}
-			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
-			}
-		}
-
-		private boolean isChildFeature(IFeature feature, ArrayList children) {
-			for (int i = 0; i < children.size(); i++) {
-				IFeature child = (IFeature) children.get(i);
-				if (feature
-					.getVersionedIdentifier()
-					.equals(child.getVersionedIdentifier()))
-					return true;
-			}
-			return false;
-		}
 		public Object getParent(Object child) {
 			return null;
 		}
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
-				return ((ConfiguredFeatureAdapter) parent)
-					.hasIncludedFeatures(null);
+				return ((ConfiguredFeatureAdapter) parent).hasIncludedFeatures(
+					null);
 			}
 			return true;
 		}
@@ -646,7 +525,7 @@ public class ConfigurationView
 			new StructuredSelection(getLocalSite()),
 			true);
 	}
-	
+
 	public void expandPreservedConfigurations() {
 		getTreeViewer().setExpandedState(savedFolder, true);
 	}
@@ -815,6 +694,7 @@ public class ConfigurationView
 
 	protected void makeActions() {
 		super.makeActions();
+		initDrillDown();
 		final IDialogSettings settings =
 			UpdateUIPlugin.getDefault().getDialogSettings();
 		boolean showUnconfState = settings.getBoolean(STATE_SHOW_UNCONF);
@@ -837,8 +717,8 @@ public class ConfigurationView
 		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
-		drillDownAdapter = new DrillDownAdapter(getTreeViewer());
 		super.makeActions();
+		initDrillDown();
 		revertAction = new Action() {
 			public void run() {
 				Object obj = getSelectedObject();
@@ -858,7 +738,8 @@ public class ConfigurationView
 				Object obj = getSelectedObject();
 				try {
 					if (obj instanceof IFeatureAdapter) {
-						IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
+						IFeature feature =
+							((IFeatureAdapter) obj).getFeature(null);
 						showFeatureStatus(feature);
 					}
 				} catch (CoreException e) {
@@ -980,9 +861,10 @@ public class ConfigurationView
 
 	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
-		drillDownAdapter.addNavigationActions(tbm);
+		addDrillDownAdapter(bars);
 		tbm.add(new Separator());
 		tbm.add(showUnconfFeaturesAction);
+		tbm.add(collapseAllAction);
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		Object obj = getSelectedObject();
@@ -1010,7 +892,7 @@ public class ConfigurationView
 			}
 		}
 		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
+		addDrillDownAdapter(manager);
 		manager.add(new Separator());
 		if (obj instanceof IConfiguredFeatureAdapter) {
 			IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter) obj;
@@ -1074,28 +956,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-																																						 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-																																						 */
+																																									 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+																																									 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-																																						 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-																																						 */
+																																									 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+																																									 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-																																						 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-																																						 */
+																																									 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+																																									 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-																																						 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-																																						 */
+																																									 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+																																									 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-																																						 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-																																						 */
+																																									 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+																																									 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**
@@ -1166,7 +1048,7 @@ public class ConfigurationView
 			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < irefs.length; i++) {
 				IFeatureReference iref = irefs[i];
-				IFeature ifeature = iref.getFeature();
+				IFeature ifeature = iref.getFeature(null);
 				IConfiguredSite csite =
 					ifeature.getSite().getCurrentConfiguredSite();
 				if (!csite.isConfigured(ifeature)) {
@@ -1230,6 +1112,118 @@ public class ConfigurationView
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	private Object[] getFeatures(
+		final IConfiguredSiteAdapter siteAdapter,
+		final boolean configuredOnly) {
+		final IConfiguredSite csite = siteAdapter.getConfigurationSite();
+		final Object[][] bag = new Object[1][];
+
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				ArrayList result = new ArrayList();
+				IFeatureReference[] refs;
+
+				if (configuredOnly)
+					refs = csite.getConfiguredFeatures();
+				else {
+					ISite site = csite.getSite();
+					refs = site.getFeatureReferences();
+				}
+				monitor.beginTask("Loading: ", refs.length);
+
+				for (int i = 0; i < refs.length; i++) {
+					IFeatureReference ref = refs[i];
+					IFeature feature;
+					try {
+						monitor.subTask(ref.getURL().toString());
+						feature = ref.getFeature(null);
+					} catch (CoreException e) {
+						feature =
+							new MissingFeature(ref.getSite(), ref.getURL());
+					}
+					monitor.worked(1);
+					result.add(
+						new ConfiguredFeatureAdapter(
+							siteAdapter,
+							feature,
+							configuredOnly,
+							false,
+							false));
+				}
+				monitor.done();
+				bag[0] = getRootFeatures(result);
+			}
+		};
+		try {
+			getViewSite().getWorkbenchWindow().run(true, false, op);
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {
+		}
+		return bag[0];
+	}
+
+	private Object[] getRootFeatures(ArrayList list) {
+		ArrayList children = new ArrayList();
+		ArrayList result = new ArrayList();
+		try {
+			for (int i = 0; i < list.size(); i++) {
+				ConfiguredFeatureAdapter cf =
+					(ConfiguredFeatureAdapter) list.get(i);
+				IFeature feature = cf.getFeature(null);
+				if (feature != null)
+					addChildFeatures(
+						feature,
+						cf.getConfigurationSite(),
+						children,
+						cf.isConfigured());
+			}
+			for (int i = 0; i < list.size(); i++) {
+				ConfiguredFeatureAdapter cf =
+					(ConfiguredFeatureAdapter) list.get(i);
+				IFeature feature = cf.getFeature(null);
+				if (feature != null
+					&& isChildFeature(feature, children) == false)
+					result.add(cf);
+			}
+		} catch (CoreException e) {
+			return list.toArray();
+		}
+		return result.toArray();
+	}
+	
+	private void addChildFeatures(
+		IFeature feature,
+		IConfiguredSite csite,
+		ArrayList children,
+		boolean configured) {
+		try {
+			IIncludedFeatureReference[] included =
+				feature.getIncludedFeatureReferences();
+			for (int i = 0; i < included.length; i++) {
+				IFeature childFeature;
+				try {
+					childFeature = included[i].getFeature(!configured, csite, null);
+				} catch (CoreException e) {
+					childFeature = new MissingFeature(included[i]);
+				}
+				children.add(childFeature);
+			}
+		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+		}
+	}
+
+	private boolean isChildFeature(IFeature feature, ArrayList children) {
+		for (int i = 0; i < children.size(); i++) {
+			IFeature child = (IFeature) children.get(i);
+			if (feature
+				.getVersionedIdentifier()
+				.equals(child.getVersionedIdentifier()))
+				return true;
 		}
 		return false;
 	}

@@ -137,7 +137,7 @@ public abstract class BaseView extends ViewPart {
 
 	protected void initDragAndDrop() {
 	}
-
+	
 	protected void deleteKeyPressed(Widget widget) {
 	}
 

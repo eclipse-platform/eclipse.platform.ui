@@ -127,6 +127,7 @@ public class DetailsForm extends PropertyWebForm {
 	private Label nlLabel;
 	private Label archLabel;
 	private Label descriptionText;
+	private Label groupUpdatesLabel;
 	private URL infoLinkURL;
 	private SelectableFormLabel infoLinkLabel;
 	private SelectableFormLabel itemsLink;
@@ -429,13 +430,13 @@ public class DetailsForm extends PropertyWebForm {
 		td.align = TableData.FILL;
 		td.grabHorizontal = true;
 		batch.setLayoutData(td);
-		label =
+		groupUpdatesLabel =
 			createHeading(
 				batch,
 				UpdateUIPlugin.getResourceString("Group Updates"));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		groupUpdatesLabel.setLayoutData(gd);
 		addButton =
 			factory.createButton(
 				batch,
@@ -627,6 +628,7 @@ public class DetailsForm extends PropertyWebForm {
 		doButton.setVisible(getDoButtonVisibility(false, relatedJob));
 		addButton.setVisible(getDoButtonVisibility(true, relatedJob));
 		itemsLink.setVisible(addButton.isVisible());
+		groupUpdatesLabel.setVisible(addButton.isVisible());
 		if (addButton.isVisible()) {
 			if (relatedJob != null) {
 				IFeature relatedFeature = relatedJob.getFeature();
@@ -1044,7 +1046,7 @@ public class DetailsForm extends PropertyWebForm {
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					ISite site = SiteManager.getSite(siteURL);
+					ISite site = SiteManager.getSite(siteURL, null);
 					IFeatureReference[] refs = site.getFeatureReferences();
 					result[0] = findFeature(vid, refs);
 				} catch (CoreException e) {
@@ -1090,10 +1092,10 @@ public class DetailsForm extends PropertyWebForm {
 			try {
 				VersionedIdentifier refVid = ref.getVersionedIdentifier();
 				if (refVid.equals(vid)) {
-					return ref.getFeature();
+					return ref.getFeature(null);
 				}
 				// Try children
-				IFeature feature = ref.getFeature();
+				IFeature feature = ref.getFeature(null);
 				IFeatureReference[] irefs =
 					feature.getIncludedFeatureReferences();
 				IFeature result = findFeature(vid, irefs);
