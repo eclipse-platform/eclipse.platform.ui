@@ -848,8 +848,8 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 		throw new InvocationTargetException(e);
 	} finally {
 		shutdown();
-		return result;
 	}
+	return result;
 }
 /**
  * Setup the debug flags for the given debug options.  This method will likely
