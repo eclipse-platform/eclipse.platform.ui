@@ -32,7 +32,7 @@ public class WorkingSetData extends RequestData {
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request,
 	HttpServletResponse response) {
-		super(context, request);
+		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		AdaptableTocsArray adaptableTocs =
 			wsmgr.getRoot();

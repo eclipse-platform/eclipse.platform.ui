@@ -33,7 +33,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request, null));
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -51,7 +51,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, String replace0, HttpServletRequest request) {
-		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request), replace0);
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request, null), replace0);
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -70,7 +70,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getLabel(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request, null));
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -91,7 +91,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getAccessKey(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request, null));
 		if (property == null || property.length() <= 0) {
 			return null;
 		}

@@ -161,9 +161,17 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent").toLowerCase();
 		return agent.indexOf("opera") >= 0;
 	}
-
-	public static Locale getLocaleObj(HttpServletRequest request) {
-		String localeStr = getLocale(request);
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response HttpServletResponse or null (locale will not be persisted in session cookie)
+	 * @return
+	 */
+	public static Locale getLocaleObj(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		String localeStr = getLocale(request, response);
 		if (localeStr.length() >= 5) {
 			return new Locale(
 				localeStr.substring(0, 2),
@@ -174,8 +182,15 @@ public class UrlUtil {
 			return Locale.getDefault();
 		}
 	}
-	
-	public static String getLocale(HttpServletRequest request) {
+	/**
+	 * 
+	 * @param request
+	 * @param response HttpServletResponse or null (locale will not be persisted in session cookie)
+	 * @return
+	 */
+	public static String getLocale(
+		HttpServletRequest request,
+		HttpServletResponse response) {
 		if (defaultLocale == null) {
 			initializeLocales();
 		}
@@ -183,12 +198,33 @@ public class UrlUtil {
 			|| request == null) {
 			return defaultLocale;
 		}
-		if (locales == null) {
-			// serving in client locale
-			return request.getLocale().toString();
+
+		// use locale passed in a request in current user session
+		String forcedLocale = getForcedLocale(request, response);
+		if (forcedLocale != null) {
+			if (locales == null) {
+				// infocenter set up to serve any locale
+				return forcedLocale;
+			}
+			// match forced locale with one of infocenter locales
+			if (locales.contains(forcedLocale)) {
+				return forcedLocale;
+			}
+			// match language of forced locale with one of infocenter locales
+			if (forcedLocale.length() > 2) {
+				String ll = forcedLocale.substring(0, 2);
+				if (locales.contains(ll)) {
+					return ll;
+				}
+			}
 		}
 
-		// match client locales with one of infocenter locales
+		// use one of the browser locales
+		if (locales == null) {
+			// infocenter set up to serve any locale
+			return request.getLocale().toString();
+		}
+		// match client browser locales with one of infocenter locales
 		for (Enumeration e = request.getLocales(); e.hasMoreElements();) {
 			String locale = ((Locale) e.nextElement()).toString();
 			if (locale.length() >= 5) {
@@ -208,6 +244,49 @@ public class UrlUtil {
 		}
 		// no match
 		return defaultLocale;
+	}
+
+	/**
+	 * Obtains locale passed as lang parameter with a request during user session
+	 * @param request
+	 * @param response response or null;
+	 * if null, locale will not be persisted (in session cookie)
+	 * @return ll_CC or ll or null
+	 */
+	private static String getForcedLocale(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		// get locale passed in this request
+		String forcedLocale = request.getParameter("lang");
+		if (forcedLocale != null) {
+			// save locale (in session cookie) for later use in a user session
+			if (response != null) {
+				Cookie cookieTest = new Cookie("lang", forcedLocale);
+				response.addCookie(cookieTest);
+			}
+		} else {
+			// check if locale was passed earlier in this session
+			Cookie[] cookies = request.getCookies();
+			for (int c = 0; cookies != null && c < cookies.length; c++) {
+				if ("lang".equals(cookies[c].getName())) {
+					forcedLocale = cookies[c].getValue();
+					break;
+				}
+			}
+		}
+
+		// format forced locale
+		if (forcedLocale != null) {
+			if (forcedLocale.length() >= 5) {
+				forcedLocale =
+					forcedLocale.substring(0, 2)
+						+ "_"
+						+ forcedLocale.substring(3, 5);
+			} else if (forcedLocale.length() >= 2) {
+				forcedLocale = forcedLocale.substring(0, 2);
+			}
+		}
+		return forcedLocale;
 	}
 	/**
 	 * If locales for infocenter specified in prefernces

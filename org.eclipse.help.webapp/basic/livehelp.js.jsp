@@ -16,7 +16,7 @@
 function liveActionInternal(topHelpWindow, pluginId, className, argument)
 {
 <%
-	RequestData data = new RequestData(application,request);
+	RequestData data = new RequestData(application,request, response);
 	if(data.getMode() == RequestData.MODE_INFOCENTER){
 %>
 	alert("<%=UrlUtil.JavaScriptEncode(ServletResources.getString("noLiveHelpInInfocenter", request))%>");

@@ -12,7 +12,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 
-	TocData data = new TocData(application,request);
+	TocData data = new TocData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
-
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 /**
  * Control for a toolbar.
@@ -23,8 +20,11 @@ public class ToolbarData extends RequestData {
 
 	ToolbarButton[] buttons;
 
-	public ToolbarData(ServletContext context, HttpServletRequest request) {
-		super(context, request);
+	public ToolbarData(
+		ServletContext context,
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		super(context, request, response);
 		loadButtons();
 	}
 
@@ -62,14 +62,16 @@ public class ToolbarData extends RequestData {
 	public ToolbarButton[] getButtons() {
 		return buttons;
 	}
-	
+
 	public String getTitle() {
 		if (request.getParameter("view") == null)
 			return "";
-		else 
-			return ServletResources.getString(request.getParameter("view"), request);
+		else
+			return ServletResources.getString(
+				request.getParameter("view"),
+				request);
 	}
-	
+
 	public String getScript() {
 		return request.getParameter("script");
 	}

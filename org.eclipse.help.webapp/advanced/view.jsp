@@ -11,7 +11,7 @@
 <%@ include file="fheader.jsp"%>
 
 <% 
-	LayoutData data = new LayoutData(application,request);
+	LayoutData data = new LayoutData(application,request, response);
 	View view = data.getCurrentView();
 	if (view == null) return;
 %>

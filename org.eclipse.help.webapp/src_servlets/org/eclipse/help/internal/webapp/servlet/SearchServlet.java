@@ -38,7 +38,7 @@ public class SearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 
-		locale = UrlUtil.getLocale(req);
+		locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8");
 
 		resp.setContentType("application/xml; charset=UTF-8");

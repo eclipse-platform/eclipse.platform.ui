@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 	
-	LinksData data = new LinksData(application, request);
+	LinksData data = new LinksData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

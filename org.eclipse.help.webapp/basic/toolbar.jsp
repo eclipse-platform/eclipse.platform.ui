@@ -12,7 +12,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 
-	ToolbarData data = new ToolbarData(application,request);
+	ToolbarData data = new ToolbarData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

@@ -56,8 +56,8 @@ public class TocData extends RequestData {
 	 * @param context
 	 * @param request
 	 */
-	public TocData(ServletContext context, HttpServletRequest request) {
-		super(context, request);
+	public TocData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+		super(context, request, response);
 		if (dynamicLoadDepths < 1) {
 			WebappPreferences pref = new WebappPreferences();
 			loadBookAtOnceLimit = pref.getBookAtOnceLimit();

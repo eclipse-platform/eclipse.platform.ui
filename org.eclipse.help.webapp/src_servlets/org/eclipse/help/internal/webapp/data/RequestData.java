@@ -25,6 +25,7 @@ public class RequestData {
 
 	protected ServletContext context;
 	protected HttpServletRequest request;
+	protected HttpServletResponse response;
 	protected String locale;
 	protected WebappPreferences preferences;
 	/**
@@ -32,12 +33,13 @@ public class RequestData {
 	 * @param context
 	 * @param request
 	 */
-	public RequestData(ServletContext context, HttpServletRequest request) {
+	public RequestData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
 		this.context = context;
 		this.request = request;
+		this.response = response;
 		preferences = new WebappPreferences();
 
-		locale = UrlUtil.getLocale(request);
+		locale = UrlUtil.getLocale(request, response);
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class WorkingSetManagerData extends RequestData {
 		ServletContext context,
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		super(context, request);
+		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		name = request.getParameter("workingSet");
 		try {

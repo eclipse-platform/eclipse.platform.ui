@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	RequestData data = new RequestData(application,request);
+	RequestData data = new RequestData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 
 	// It looks like we cannot put the if statement just around the extra button

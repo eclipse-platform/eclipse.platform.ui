@@ -12,7 +12,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 	
-	LinksData data = new LinksData(application, request);
+	LinksData data = new LinksData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

@@ -26,7 +26,6 @@ import org.eclipse.help.internal.workingset.*;
  * Helper class for searchView.jsp initialization
  */
 public class SearchData extends RequestData {
-	private HttpServletResponse response;
 	private WebappWorkingSetManager wsmgr;
 
 	// Request parameters
@@ -52,8 +51,7 @@ public class SearchData extends RequestData {
 		ServletContext context,
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		super(context, request);
-		this.response = response;
+		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		this.topicHref = request.getParameter("topic");
 		if (topicHref != null && topicHref.length() == 0)
@@ -126,7 +124,7 @@ public class SearchData extends RequestData {
 		try {
 			float score = hits[i].getScore();
 			NumberFormat percentFormat =
-				NumberFormat.getPercentInstance(UrlUtil.getLocaleObj(request));
+				NumberFormat.getPercentInstance(UrlUtil.getLocaleObj(request, response));
 			return percentFormat.format(score);
 		} catch (NumberFormatException nfe) {
 			// will display original score string
@@ -165,7 +163,7 @@ public class SearchData extends RequestData {
 		String[] books = request.getParameterValues("scope");
 		if (books == null) {
 			// select all books
-			TocData tocData = new TocData(context, request);
+			TocData tocData = new TocData(context, request, response);
 			books = new String[tocData.getTocCount()];
 			for (int i = 0; i < books.length; i++)
 				books[i] = tocData.getTocHref(i);
@@ -177,7 +175,7 @@ public class SearchData extends RequestData {
 	 * Returns true if book is within a search scope
 	 */
 	public boolean isTocSelected(int toc) {
-		TocData tocData = new TocData(context, request);
+		TocData tocData = new TocData(context, request, response);
 		String href = tocData.getTocHref(toc);
 		String[] books = request.getParameterValues("scope");
 		if (books == null)

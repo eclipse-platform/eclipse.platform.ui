@@ -28,8 +28,8 @@ public class BookmarksData extends RequestData {
 	public final static int REMOVE = 2;
 	public final static int REMOVE_ALL = 3;
 
-	public BookmarksData(ServletContext context, HttpServletRequest request) {
-		super(context, request);
+	public BookmarksData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+		super(context, request, response);
 
 		switch (getOperation()) {
 			case ADD :

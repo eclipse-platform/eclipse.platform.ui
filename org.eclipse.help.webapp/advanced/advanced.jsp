@@ -200,7 +200,7 @@ function onloadHandler()
 		<tr><td>
 			<div id="booksContainer">
 <% 
-TocData tocData = new TocData(application, request);
+TocData tocData = new TocData(application, request, response);
 for (int i=0; i<tocData.getTocCount(); i++)
 {
 	String label = tocData.getTocLabel(i);

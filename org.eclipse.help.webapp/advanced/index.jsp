@@ -11,7 +11,7 @@
 <%@ include file="fheader.jsp"%>
 
 <% 
-	LayoutData data = new LayoutData(application,request);
+	LayoutData data = new LayoutData(application,request, response);
 	// Initiate test for persisted cookies
 	if(data.getMode() == LayoutData.MODE_INFOCENTER){
 		Cookie cookieTest=new Cookie("cookiesEnabled", "yes");

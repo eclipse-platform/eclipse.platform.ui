@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	ToolbarData data = new ToolbarData(application,request);
+	ToolbarData data = new ToolbarData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

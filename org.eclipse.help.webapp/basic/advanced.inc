@@ -38,7 +38,7 @@
 		</tr>
   				
 <% 
-TocData tocData = new TocData(application, request);
+TocData tocData = new TocData(application, request, response);
 for (int toc=0; toc<tocData.getTocCount(); toc++)
 {
 	String label = tocData.getTocLabel(toc);

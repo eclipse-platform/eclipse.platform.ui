@@ -10,7 +10,7 @@
 --%>
 <%@ include file="header.jsp"%>
 <% 
-	TocData data = new TocData(application,request);
+	TocData data = new TocData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 <html>

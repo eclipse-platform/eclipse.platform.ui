@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	LayoutData data = new LayoutData(application,request);
+	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 	View[] views = data.getViews();
 %>

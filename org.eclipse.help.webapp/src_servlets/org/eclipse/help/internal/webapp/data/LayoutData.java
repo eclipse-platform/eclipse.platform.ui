@@ -20,8 +20,8 @@ public class LayoutData extends RequestData {
 	private String query = "";
 	private View[] views;
 
-	public LayoutData(ServletContext context, HttpServletRequest request) {
-		super(context, request);
+	public LayoutData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+		super(context, request, response);
 
 		// initialize the query string
 		String qs = request.getQueryString();
@@ -56,7 +56,7 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getContentURL() {
-		TocData tocData = new TocData(context, request);
+		TocData tocData = new TocData(context, request, response);
 		String topic = tocData.getSelectedTopic();
 		String help_home = preferences.getHelpHome();
 

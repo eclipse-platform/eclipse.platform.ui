@@ -42,15 +42,6 @@ public class EclipseConnector {
 		this.context = context;
 	}
 
-	public InputStream openStream(String url, HttpServletRequest request) {
-		try {
-			URLConnection con = openConnection(url, request);
-			return con.getInputStream();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException {
 
@@ -72,7 +63,7 @@ public class EclipseConnector {
 			} else
 				url = "help:" + url;
 
-			URLConnection con = openConnection(url, req);
+			URLConnection con = openConnection(url, req, resp);
 			resp.setContentType(con.getContentType());
 
 			long maxAge = 0;
@@ -146,14 +137,15 @@ public class EclipseConnector {
 	 */
 	private URLConnection openConnection(
 		String url,
-		HttpServletRequest request)
+		HttpServletRequest request,
+		HttpServletResponse response)
 		throws Exception {
 		//System.out.println("help content for: " + url);
 
 		URLConnection con = null;
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
-			String locale = UrlUtil.getLocale(request);
+			String locale = UrlUtil.getLocale(request, response);
 			if (url.indexOf('?') >= 0) {
 				url = url + "&lang=" + locale;
 			} else {

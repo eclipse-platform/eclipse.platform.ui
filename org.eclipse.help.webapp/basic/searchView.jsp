@@ -14,7 +14,7 @@
 <% 
 	SearchData data = new SearchData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
-	LayoutData ldata = new LayoutData(application,request);
+	LayoutData ldata = new LayoutData(application,request, response);
 %>
 
 <html>

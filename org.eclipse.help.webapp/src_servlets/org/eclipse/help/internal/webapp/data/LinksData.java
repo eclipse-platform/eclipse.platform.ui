@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 
 /**
  * Helper class for linksView.jsp initialization
@@ -32,8 +32,8 @@ public class LinksData extends RequestData {
 	 * @param context
 	 * @param request
 	 */
-	public LinksData(ServletContext context, HttpServletRequest request) {
-		super(context, request);
+	public LinksData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+		super(context, request, response);
 		this.topicHref = request.getParameter("topic");
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;

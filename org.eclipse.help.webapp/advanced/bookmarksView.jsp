@@ -11,7 +11,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
-	BookmarksData data = new BookmarksData(application,request);
+	BookmarksData data = new BookmarksData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

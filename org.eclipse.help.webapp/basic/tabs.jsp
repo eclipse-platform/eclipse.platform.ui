@@ -12,7 +12,7 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*"%>
 
 <% 
-	LayoutData data = new LayoutData(application,request);
+	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 	View[] views = data.getViews();
 %>
