@@ -25,10 +25,13 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.tests.util.UITestCase;
+
+import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * Tests Bug 36420
@@ -41,7 +44,7 @@ public class Bug36420Test extends UITestCase {
 	 * Constructor for Bug36420Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug36420Test(String name) {
 		super(name);
@@ -51,17 +54,18 @@ public class Bug36420Test extends UITestCase {
 	 * Tests that importing key preferences actually has an effect.
 	 * 
 	 * @throws CoreException
-	 *            If the preferences can't be imported.
+	 *             If the preferences can't be imported.
 	 * @throws FileNotFoundException
-	 *            If the temporary file is removed after it is created, but
-	 *            before it is opened. (Wow)
+	 *             If the temporary file is removed after it is created, but
+	 *             before it is opened. (Wow)
 	 * @throws IOException
-	 *            If something fails during output of the preferences file.
+	 *             If something fails during output of the preferences file.
 	 * @throws NotDefinedException
-	 *            If the command for which the preference is stored is not
-	 *            defined.
+	 *             If the command for which the preference is stored is not
+	 *             defined.
 	 */
-	public void testImportKeyPreferences() throws CoreException, FileNotFoundException, IOException, NotDefinedException {
+	public void testImportKeyPreferences()
+		throws CoreException, FileNotFoundException, IOException, NotDefinedException {
 		String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
 		String keySequenceText = "F S C K"; //$NON-NLS-1$
 
@@ -73,11 +77,13 @@ public class Bug36420Test extends UITestCase {
 		// Set up the preferences.
 		Properties preferences = new Properties();
 		String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
-		String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\"></activeKeyConfiguration><keyBinding	keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\"" + IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID + "\"></activeKeyConfiguration><keyBinding	keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		preferences.put(key, value);
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			preferences.put(descriptors[i].getUniqueIdentifier(), descriptors[i].getVersionIdentifier().toString());
+			preferences.put(
+				descriptors[i].getUniqueIdentifier(),
+				descriptors[i].getVersionIdentifier().toString());
 		}
 
 		// Export the preferences.
