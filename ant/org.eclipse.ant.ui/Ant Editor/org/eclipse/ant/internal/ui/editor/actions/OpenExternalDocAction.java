@@ -12,6 +12,9 @@ package org.eclipse.ant.internal.ui.editor.actions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.apache.tools.ant.AntTypeDefinition;
+import org.apache.tools.ant.ComponentHelper;
+import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
@@ -20,12 +23,9 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
@@ -55,7 +55,7 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 	}
 	
 	public URL getExternalLocation(AntElementNode node) throws MalformedURLException {
-		URL baseLocation= getBaseLocation(node);
+		URL baseLocation= getBaseLocation();
 		if (baseLocation == null) {
 			return null;
 		}
@@ -72,48 +72,35 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 		} else if (node instanceof AntTargetNode) {
 			pathBuffer.append("using.html#targets"); //$NON-NLS-1$
 		} else if (node instanceof AntTaskNode) {
-			appendCoreTaskPath((AntTaskNode) node, pathBuffer);
+			appendTaskPath((AntTaskNode) node, pathBuffer);
 		} 
 
 		try {
 			return new URL(pathBuffer.toString());
 		} catch (MalformedURLException e) {
-			JavaPlugin.log(e);
+			AntUIPlugin.log(e);
 		}
 		return null;
 	}
-	
-	private void appendCoreTaskPath(AntTaskNode node, StringBuffer buffer) {
-		buffer.append("CoreTasks"); //$NON-NLS-1$
+
+	private void appendTaskPath(AntTaskNode node, StringBuffer buffer) {
+		String taskPart= getTaskTypePart(node);
+		if (taskPart == null) {
+			return;
+		}
+		buffer.append(taskPart);
 		buffer.append('/');
 		String typePath= node.getTask().getTaskName();
 		buffer.append(typePath);
 		buffer.append(".html"); //$NON-NLS-1$	
 	}
 
-	/**
-	 * @param node
-	 * @return
-	 */
-	private static URL getBaseLocation(AntElementNode node) throws MalformedURLException {
+	private URL getBaseLocation() throws MalformedURLException {
 		// TODO allow user to set location
 		return new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
 	}
-
-	//TODO this will be used once we are attempting to correctly resolve a URL based on the selection
-	private static void showMessage(final Shell shell, final String message, final boolean isError) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				if (isError) {
-					MessageDialog.openError(shell, getTitle(), message); //$NON-NLS-1$
-				} else {
-					MessageDialog.openInformation(shell, getTitle(), message); //$NON-NLS-1$
-				}
-			}
-		});
-	}
 	
-	private static String getTitle() {
+	private String getTitle() {
 		return AntEditorActionMessages.getString("OpenExternalDocAction.0"); //$NON-NLS-1$
 	}
 
@@ -149,5 +136,24 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
     public void selectionChanged(IAction action, ISelection selection) {        
-    }	
+    }
+    
+    
+    private String getTaskTypePart(AntTaskNode node) {
+		AntProjectNode projectNode= node.getProjectNode();
+    	if (projectNode != null) {
+    		Project antProject= projectNode.getProject();
+    		AntTypeDefinition definition= ComponentHelper.getComponentHelper(antProject).getDefinition(node.getTask().getTaskName());
+    		if (definition == null) {
+    			return null;
+    		}
+    		String className= definition.getClassName();
+    		if (className.indexOf("optional") != -1) { //$NON-NLS-1$
+    			return "OptionalTasks"; //$NON-NLS-1$
+    		} 
+    		return "CoreTasks"; //$NON-NLS-1$
+    	}
+    	
+        return null;
+    }
 }
