@@ -356,20 +356,17 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave	
 			case SWT.ARROW_LEFT:
 			case SWT.ARROW_RIGHT:
-			case SWT.ARROW_UP:
-			case SWT.ARROW_DOWN:
 			case SWT.HOME:
 			case SWT.END:
 			case SWT.PAGE_DOWN:
 			case SWT.PAGE_UP:
 				leave();
 				break;
-/*
+
 			case SWT.ARROW_DOWN:
 				saveState();
 				setDirection(true);
 				repeatSearch(fForward);
-				updateStatus();
 				event.doit= false;				
 				break;
 
@@ -377,10 +374,8 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				saveState();
 				setDirection(false);
 				repeatSearch(fForward);
-				updateStatus();
 				event.doit= false;				
 				break;			
-*/
 			}
 	
 		// event.character != 0
