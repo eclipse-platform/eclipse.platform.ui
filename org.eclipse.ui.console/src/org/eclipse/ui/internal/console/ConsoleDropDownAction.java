@@ -16,11 +16,9 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -86,20 +84,25 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		IConsole current = fView.getConsole();
 		for (int i = 0; i < consoles.length; i++) {
 			IConsole console = consoles[i];
-			Action action = new ShowConsoleAction(fView, console);  
+			Action action = new ShowConsoleAction(fView, console);
 			action.setChecked(console.equals(current));
-			addActionToMenu(fMenu, action);
+			addActionToMenu(fMenu, action, i + 1);
 		}
 		return fMenu;
 	}
 	
-	protected void addActionToMenu(Menu parent, Action action) {
+	private void addActionToMenu(Menu parent, Action action, int accelerator) {
+	    if (accelerator < 10) {
+		    StringBuffer label= new StringBuffer();
+			//add the numerical accelerator
+			label.append('&');
+			label.append(accelerator);
+			label.append(' ');
+			label.append(action.getText());
+			action.setText(label.toString());
+		}
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
-	}
-
-	protected void addMenuSeparator() {
-		new MenuItem(fMenu, SWT.SEPARATOR);		
 	}
 
 	/* (non-Javadoc)

@@ -59,13 +59,23 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
             if (!WorkbenchActivityHelper.filterItem(extension) && extension.isEnabled()) {
                 String label = extension.getLabel();
                 ImageDescriptor image = extension.getImageDescriptor();
-                addActionToMenu(fMenu, new ConsoleFactoryAction(label, image, extension));
+                addActionToMenu(fMenu, new ConsoleFactoryAction(label, image, extension), i + 1);
             }
         }
         return fMenu;
     }
     
-	protected void addActionToMenu(Menu parent, Action action) {
+	private void addActionToMenu(Menu parent, Action action, int accelerator) {
+		if (accelerator < 10) {
+		    StringBuffer label= new StringBuffer();
+			//add the numerical accelerator
+			label.append('&');
+			label.append(accelerator);
+			label.append(' ');
+			label.append(action.getText());
+			action.setText(label.toString());
+		}
+		
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
