@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
@@ -30,8 +31,16 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.WorkbenchWindow;
+
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.WorkbenchWindow;
+
+/**
+ * The AnimationItem is the class that manages the animation
+ * for the progress.
+ */
 public class AnimationItem {
 	WorkbenchWindow window;
 	private ProgressFloatingWindow floatingWindow;
@@ -203,7 +212,7 @@ public class AnimationItem {
 				if (AnimationManager.getInstance().isAnimated())
 					return true;
 				synchronized(windowLock){
-					closeAndClearFloatingWindow();
+					closeWindowInUI();
 					return false;
 				}
 			}
@@ -229,8 +238,26 @@ public class AnimationItem {
 	 */
 	void closeFloatingWindow() {
 		synchronized (windowLock) {
-			closeAndClearFloatingWindow();
+			closeWindowInUI();
+			
 		}
+	}
+	/**
+	 * Close the window the UI Thread.
+	 */
+	private void closeWindowInUI() {
+		UIJob closeJob = new UIJob(ProgressMessages.getString("AnimationItem.CloseWindowJob")){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				closeAndClearFloatingWindow();
+				return Status.OK_STATUS;
+			}
+		};
+		
+		closeJob.setSystem(true);
+		closeJob.schedule();
 	}
 	/**
 	 * Get the preferred width of the receiver.

@@ -9,16 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -26,11 +24,20 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
@@ -39,20 +46,23 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 class ProgressFloatingWindow extends AssociatedWindow {
 	TableViewer viewer;
 	WorkbenchWindow window;
+	final int borderSize = 1;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param workbenchWindow
+	 *            the workbench window.
 	 * @param associatedControl
+	 *            the associated control.
 	 */
 	ProgressFloatingWindow(WorkbenchWindow workbenchWindow,
 			Control associatedControl) {
-		super(workbenchWindow.getShell(), associatedControl);
+		super(workbenchWindow.getShell(), associatedControl,
+				AssociatedWindow.TRACK_OUTER_BOTTOM_RHS);
 		this.window = workbenchWindow;
-		
 		//Workaround for Bug 50917
-		if("carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-			setShellStyle(SWT.NO_TRIM | SWT.ON_TOP );
+		if ("carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+			setShellStyle(SWT.NO_TRIM | SWT.ON_TOP);
 		else
 			setShellStyle(SWT.NO_TRIM);
 	}
@@ -86,7 +96,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		Control buttonBar = createButtons(root);
 		viewer = new TableViewer(root, SWT.MULTI) {
 			/*
-			 * (non-Javadoc)
+			 * * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.jface.viewers.TableViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
 			 *      java.lang.Object, boolean)
@@ -102,21 +112,39 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		setBackground(viewer.getControl());
 		FormData tableData = new FormData();
 		tableData.left = new FormAttachment(0);
-		tableData.right = new FormAttachment(buttonBar,0);
+		tableData.right = new FormAttachment(buttonBar, 0);
 		tableData.top = new FormAttachment(0);
 		viewer.getTable().setLayoutData(tableData);
 		initContentProvider();
 		viewer.setLabelProvider(viewerLabelProvider());
+		root.addListener(SWT.Traverse, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.detail == SWT.TRAVERSE_ESCAPE) {
+					event.doit = false;
+				}
+			}
+		});
+		viewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.DEL) {
+					TableItem[] tableItem = viewer.getTable().getSelection();
+					for (int index = 0; index < tableItem.length; index++)
+						((JobTreeElement) tableItem[index].getData()).cancel();
+					viewer.refresh();
+				}
+			}
+		});
 		return viewer.getControl();
 	}
 	/**
 	 * Return the label provider for the viewer.
 	 * 
-	 * @return LabelProvider
+	 * @return LabelProvider the shortened text.
 	 */
 	private LabelProvider viewerLabelProvider() {
 		return new LabelProvider() {
-			private String ellipsis = ProgressMessages.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
+			private String ellipsis = ProgressMessages
+					.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -159,7 +187,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 					start--;
 					end++;
 				}
-				//If for some reason we fall through abort
 				gc.dispose();
 				return textValue;
 			}
@@ -169,67 +196,39 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * Adjust the size of the viewer.
 	 */
 	private void adjustSize() {
-		Point size = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		size.x += 5;
-		size.y += 5;
-		int maxSize = getMaximumSize(viewer.getTable().getDisplay());
-		if (size.x > maxSize)
-			size.x = maxSize;
-		getShell().setSize(size);
-		moveShell(getShell());
-		setRegion();
+		getShell().setSize(getMaximumSize(viewer.getTable().getDisplay()));
+		addRoundBorder(borderSize);
+		moveShell(getShell(), AssociatedWindow.ALWAYS_VISIBLE);
 	}
 	/**
-	 * Set the region of the shell.
+	 * Get the maximum size of the window based on the display.
+	 * 
+	 * @param display
+	 * @return int
 	 */
-	private void setRegion() {
-		Region oldRegion = getShell().getRegion();
-		Point shellSize = getShell().getSize();
-		Region r = new Region(getShell().getDisplay());
-		Rectangle rect = new Rectangle(0, 0, shellSize.x, shellSize.y);
-		r.add(rect);
-		Region cornerRegion = new Region(getShell().getDisplay());
-		//top right corner region
-		cornerRegion.add(new Rectangle(shellSize.x - 5, 0, 5, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 3, 1, 3, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 2, 2, 2, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 1, 3, 1, 2));
-		//bottom right corner region
-		int y = shellSize.y;
-		cornerRegion.add(new Rectangle(shellSize.x - 5, y - 1, 5, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 3, y - 2, 3, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 2, y - 3, 2, 1));
-		cornerRegion.add(new Rectangle(shellSize.x - 1, y - 5, 1, 2));
-		//top left corner region
-		cornerRegion.add(new Rectangle(0, 0, 5, 1));
-		cornerRegion.add(new Rectangle(0, 1, 3, 1));
-		cornerRegion.add(new Rectangle(0, 2, 2, 1));
-		cornerRegion.add(new Rectangle(0, 3, 1, 2));
-		//bottom left corner region
-		cornerRegion.add(new Rectangle(0, y - 5, 1, 2));
-		cornerRegion.add(new Rectangle(0, y - 3, 2, 1));
-		cornerRegion.add(new Rectangle(0, y - 2, 3, 1));
-		cornerRegion.add(new Rectangle(0, y - 1, 5, 1));
-		r.subtract(cornerRegion);
-		getShell().setRegion(r);
-		if (oldRegion != null)
-			oldRegion.dispose();
+	private Point getMaximumSize(Display display) {
+		GC gc = new GC(viewer.getTable());
+		FontMetrics fm = gc.getFontMetrics();
+		int charWidth = fm.getAverageCharWidth();
+		int charHeight = fm.getHeight();
+		int maxWidth = display.getBounds().width / 6;
+		int maxHeight = display.getBounds().height / 6;
+		int fontWidth = charWidth * 34;
+		int fontHeight = charHeight * 4;
+		if (maxWidth < fontWidth)
+			fontWidth = maxWidth;
+		if (maxHeight < fontHeight)
+			fontHeight = maxHeight;
+		gc.dispose();
+		return new Point(fontWidth, fontHeight);
 	}
 	/**
-	 * Sets the content provider for the viewer.
+	 * Set the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
 		IContentProvider provider = new ProgressTableContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.AssociatedWindow#getTransparencyValue()
-	 */
-	protected int getTransparencyValue() {
-		return 50;
 	}
 	/*
 	 * (non-Javadoc)
@@ -252,37 +251,58 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	public int open() {
 		if (getShell() == null) {
-			// create the window
 			create();
 		}
-		// limit the shell size to the display size
 		constrainShellSize();
-		// open the window
+		animateVertical();
 		getShell().setVisible(true);
 		return getReturnCode();
 	}
 	/**
-	 * Get the maximum size of the window based on the display.
-	 * 
-	 * @param display
-	 * @return int
+	 * Animate the shell vertically.
 	 */
-	private int getMaximumSize(Display display) {
-		return display.getBounds().width / 5;
+	private void animateVertical() {
+		if (getShell() == null || getShell().isDisposed())
+			return;
+		final int initShellSize = getShell().getSize().y;
+		final int time = 10;
+		if (getShell() == null || getShell().isDisposed())
+			return;
+		getShell().setSize(getShell().getSize().x, 0);
+		final Runnable timer = new Runnable() {
+			public void run() {
+				if (getShell() == null || getShell().isDisposed())
+					return;
+				if (getShell().getSize().y == initShellSize)
+					return;
+				getShell().setSize(getShell().getSize().x,
+						getShell().getSize().y + 1);
+				getShell().getDisplay().timerExec(time, this);
+			}
+		};
+		if (getShell() == null || getShell().isDisposed())
+			return;
+		getShell().getDisplay().timerExec(time, timer);
 	}
 	/**
 	 * Set the background color of the control to the info background.
 	 * 
 	 * @param control
+	 *            the shell's control.
 	 */
 	private void setBackground(Control control) {
 		control.setBackground(control.getDisplay().getSystemColor(
 				SWT.COLOR_INFO_BACKGROUND));
 	}
+	/**
+	 * Create the buttons for the progress floating window.
+	 * 
+	 * @param parent
+	 *            the parent composite.
+	 */
 	private Control createButtons(Composite parent) {
 		ToolBar buttonBar = new ToolBar(parent, SWT.HORIZONTAL);
 		setBackground(buttonBar);
-		
 		ToolItem minimize = new ToolItem(buttonBar, SWT.NONE);
 		minimize
 				.setImage(JFaceResources.getImage(ProgressManager.MINIMIZE_KEY));
@@ -297,15 +317,14 @@ class ProgressFloatingWindow extends AssociatedWindow {
 				//If the minimize failed to close the floating
 				//window do a close anyways
 				Shell remainingShell = getShell();
-				if(remainingShell == null || remainingShell.isDisposed())
+				if (remainingShell == null || remainingShell.isDisposed())
 					return;
 				close();
 			}
 		});
-		
-		minimize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.CloseToolTip")); //$NON-NLS-1$
-		
-		createMaximizeButton(buttonBar);		
+		minimize.setToolTipText(ProgressMessages
+				.getString("ProgressFloatingWindow.CloseToolTip")); //$NON-NLS-1$
+		createMaximizeButton(buttonBar);
 		FormData barData = new FormData();
 		barData.right = new FormAttachment(100);
 		barData.top = new FormAttachment(0);
@@ -313,17 +332,15 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		return buttonBar;
 	}
 	/**
-	 * Create the maximize button if there is a progress
-	 * view we can open.
+	 * Create the maximize button if there is a progress view we can open.
+	 * 
 	 * @param buttonBar
 	 */
 	private void createMaximizeButton(ToolBar buttonBar) {
-		
 		//If there is no progress view do not create the
 		//button.
-		if(ProgressManagerUtil.missingProgressView(window))
+		if (ProgressManagerUtil.missingProgressView(window))
 			return;
-		
 		ToolItem maximize = new ToolItem(buttonBar, SWT.NONE);
 		maximize
 				.setImage(JFaceResources.getImage(ProgressManager.MAXIMIZE_KEY));
@@ -338,8 +355,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 				ProgressManagerUtil.openProgressView(window);
 			}
 		});
-		
-		maximize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.OpenToolTip")); //$NON-NLS-1$
-
+		maximize.setToolTipText(ProgressMessages
+				.getString("ProgressFloatingWindow.OpenToolTip")); //$NON-NLS-1$
 	}
 }
