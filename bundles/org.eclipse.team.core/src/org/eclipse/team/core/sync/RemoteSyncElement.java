@@ -252,7 +252,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * If timestampDiff is true then the timestamps don't differ and there's no point checking the
 	 * contents.
 	 */
-	private boolean compare(int granularity, boolean force, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
+	protected boolean compare(int granularity, boolean force, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
 		boolean timestampEquals;
 		if (force) {
 			timestampEquals = false;
@@ -271,7 +271,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		}
 	}
 	
-	private boolean compare(int granularity, boolean force, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
+	protected boolean compare(int granularity, boolean force, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
 		boolean timestampEquals;
 		if (force) {
 			timestampEquals = false;
