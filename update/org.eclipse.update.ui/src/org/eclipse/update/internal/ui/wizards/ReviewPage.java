@@ -25,10 +25,10 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -45,7 +45,6 @@ public class ReviewPage
 	private Label label;
 	private ArrayList jobs;
 	private Label counterLabel;
-	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
 	private Collection problematicFeatures = new HashSet();
 	// feature that was recently selected or null
@@ -65,61 +64,206 @@ public class ReviewPage
 	private int LABEL_ORDER = 1;
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
-	class JobsContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+    
+    private CheckboxTreeViewer treeViewer;
+    
+    class TreeContentProvider extends DefaultContentProvider implements
+            ITreeContentProvider {
 
-		public Object[] getElements(Object inputElement) {
-			return jobs.toArray();
-		}
-	}
+        public Object[] getElements(Object parent) {
+            return getSites();
+        }
 
-	class JobsLabelProvider
-		extends SharedLabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int column) {
-			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
-			IFeature feature = job.getFeature();
+        public Object[] getChildren(final Object parent) {
+            if (parent instanceof SiteBookmark) {
+                SiteBookmark bookmark = (SiteBookmark) parent;
+                bookmark.getSite(null); // triggers catalog creation
+                Object[] children = bookmark.getCatalog(true,null);
+                ArrayList nonEmptyCategories = new ArrayList(children.length);
+                for (int i=0; i<children.length; i++)
+                    if (hasChildren(children[i]))
+                        nonEmptyCategories.add(children[i]);
+                return nonEmptyCategories.toArray();
+            } else if (parent instanceof SiteCategory) {
+                SiteCategory category = (SiteCategory)parent;
+                //return category.getChildren();
+                Object[] children = category.getChildren();
+                ArrayList list = new ArrayList(children.length);
+                for (int i=0; i<children.length; i++) {
+                    if (children[i] instanceof IFeatureAdapter) {
+                        try {
+                            IInstallFeatureOperation job = findJob(((IFeatureAdapter)children[i]).getFeature(null));
+                            if (job != null)
+                                list.add(job);
+                        } catch (CoreException e) {
+                            UpdateCore.log(e.getStatus());
+                        }
+                    }
+                }
+                return list.toArray();
+            }
+            return new Object[0];
+        }
 
-			String text = null;
-			switch (column) {
-				case 0 :
-					text = feature.getLabel();
-					break;
-				case 1 :
-					text = feature
-						.getVersionedIdentifier()
-						.getVersion()
-						.toString();
-					break;
-				case 2 :
-					text = feature.getProvider();
-					break;
-			}
-			if (text == null)
-				text = ""; //$NON-NLS-1$
-			return text;
-		}
-		public Image getColumnImage(Object obj, int column) {
-			if (column == 0) {
-				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
-				boolean patch = feature.isPatch();
-				
-				boolean problematic=problematicFeatures.contains(feature);
-				
-				if (patch) {
-					return get(UpdateUIImages.DESC_EFIX_OBJ, problematic? F_ERROR : 0);
-				} else {
-					return get(UpdateUIImages.DESC_FEATURE_OBJ, problematic? F_ERROR : 0);
-				}
-			}
-			return null;
-		}
-	}
+        public Object getParent(Object element) {
+            if (element instanceof SiteCategory)
+                return ((SiteCategory) element).getBookmark();
+            if (element instanceof IInstallFeatureOperation) {
+                IFeature f = ((IInstallFeatureOperation)element).getFeature();
+                ISiteFeatureReference fr = f.getSite().getFeatureReference(f);
+                ICategory[] categories = fr.getCategories();
+//                if (categories != null && categories.length > 0)
+//                    return categories[0];
+                SiteBookmark[] sites = (SiteBookmark[])((ITreeContentProvider)treeViewer.getContentProvider()).getElements(null);
+                for (int i=0; i<sites.length; i++) {
+                    if (sites[i].getSite(false, null) != f.getSite())
+                        continue;
+                    Object[] children = sites[i].getCatalog(true, null);
+                    for (int j = 0; j<children.length; j++) {
+                        if (!(children[j] instanceof SiteCategory))
+                            continue;
+                        for (int c=0; c < categories.length; c++)
+                            if (categories[c].getName().equals(((SiteCategory)children[j]).getName()))
+                                return children[j];
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public boolean hasChildren(Object element) {
+            return (element instanceof SiteBookmark || (
+                    element instanceof SiteCategory && getChildren(element).length > 0));
+        }
+
+        private SiteBookmark[] getSites() {
+            if (searchRunner == null)
+                return new SiteBookmark[0];
+            if (searchRunner.getSearchProvider() == null
+                    || searchRunner.getSearchProvider().getSearchRequest()
+                            .getScope().getSearchSites() == null
+                    || searchRunner.getSearchProvider().getSearchRequest()
+                            .getScope().getSearchSites().length == 0) {
+                // this is an update search, so see if there are any jobs first,
+                // and get their sites
+                if (jobs != null) {
+                    ArrayList sitesList = new ArrayList(jobs.size());
+                    for (int i = 0; i < jobs.size(); i++) {
+                        IInstallFeatureOperation op = (IInstallFeatureOperation) jobs
+                                .get(i);
+                        IFeature[] existingFeatures = UpdateUtils
+                                .getInstalledFeatures(op.getFeature(), true);
+                        if (existingFeatures != null
+                                && existingFeatures.length > 0) {
+                            IURLEntry entry = op.getFeature()
+                                    .getUpdateSiteEntry();
+                            String label = entry.getAnnotation() == null ? entry
+                                    .getURL().toExternalForm()
+                                    : entry.getAnnotation();
+
+                            SiteBookmark bookmark = new SiteBookmark(label,
+                                    entry.getURL(), false);
+                            if (sitesList.contains(bookmark))
+                                continue;
+                            else
+                                sitesList.add(bookmark);
+                        }
+                    }
+                    if (!sitesList.isEmpty())
+                        return (SiteBookmark[]) sitesList
+                                .toArray(new SiteBookmark[sitesList.size()]);
+                }
+                return new SiteBookmark[0];
+            } else {
+                // search for features
+                IUpdateSearchSite[] sites = searchRunner.getSearchProvider()
+                        .getSearchRequest().getScope().getSearchSites();
+                SiteBookmark[] siteBookmarks = new SiteBookmark[sites.length];
+                for (int i = 0; i < sites.length; i++)
+                    siteBookmarks[i] = new SiteBookmark(sites[i].getLabel(),
+                            sites[i].getURL(), false);
+                return siteBookmarks;
+            }
+        }
+    }
+
+    class TreeLabelProvider extends SharedLabelProvider {
+
+        public Image getImage(Object obj) {
+            if (obj instanceof SiteBookmark)
+                return UpdateUI.getDefault().getLabelProvider().get(
+                        UpdateUIImages.DESC_SITE_OBJ);
+            if (obj instanceof SiteCategory)
+                return UpdateUI.getDefault().getLabelProvider().get(
+                        UpdateUIImages.DESC_CATEGORY_OBJ);
+            if (obj instanceof IInstallFeatureOperation) {
+                IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
+                boolean patch = feature.isPatch();
+                
+                boolean problematic=problematicFeatures.contains(feature);
+                
+                if (patch) {
+                    return get(UpdateUIImages.DESC_EFIX_OBJ, problematic? F_ERROR : 0);
+                } else {
+                    return get(UpdateUIImages.DESC_FEATURE_OBJ, problematic? F_ERROR : 0);
+                }
+            }
+            return super.getImage(obj);
+
+        }
+
+        public String getText(Object obj) {
+            if (obj instanceof SiteBookmark) 
+                return ((SiteBookmark) obj).getLabel();
+            if (obj instanceof SiteCategory)
+                return ((SiteCategory)obj).getName();
+            if (obj instanceof IInstallFeatureOperation) {
+                IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
+                IFeature feature = job.getFeature();
+                return feature.getLabel() + " " + feature
+                            .getVersionedIdentifier()
+                            .getVersion()
+                            .toString();
+            }
+            return super.getText(obj);
+        }
+    }
+
+    class ModelListener implements IUpdateModelChangedListener {
+        public void objectChanged(Object object, String property) {
+            treeViewer.refresh();
+            checkItems();
+        }
+
+        public void objectsAdded(Object parent, Object[] children) {
+            treeViewer.refresh();
+            checkItems();
+        }
+
+        public void objectsRemoved(Object parent, Object[] children) {
+            treeViewer.refresh();
+            checkItems();
+        }
+        
+        private void checkItems() {
+            TreeItem[] items = treeViewer.getTree().getItems();
+            for (int i = 0; i < items.length; i++) {
+                SiteBookmark bookmark = (SiteBookmark) items[i].getData();
+                treeViewer.setChecked(bookmark, bookmark.isSelected());
+                String[] ignoredCats = bookmark.getIgnoredCategories();
+                treeViewer.setGrayed(bookmark, ignoredCats.length > 0
+                        && bookmark.isSelected());
+            }
+        }
+    }
 
 	class ContainmentFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object child) {
-			return !isContained((IInstallFeatureOperation) child);
+            if (child instanceof IInstallFeatureOperation)
+                return !isContained((IInstallFeatureOperation) child);
+            else
+                return true;
 		}
 		private boolean isContained(IInstallFeatureOperation job) {
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
@@ -166,7 +310,10 @@ public class ReviewPage
 
 	class LatestVersionFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object child) {
-			return isLatestVersion((IInstallFeatureOperation) child);
+            if (child instanceof IInstallFeatureOperation)
+                return isLatestVersion((IInstallFeatureOperation) child);
+            else
+                return true;
 		}
 		private boolean isLatestVersion(IInstallFeatureOperation job) {
 			IFeature feature = job.getFeature();
@@ -255,16 +402,16 @@ public class ReviewPage
 	private void performPostSearchProcessing() {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
-				if (tableViewer != null) {
-					tableViewer.refresh();
-					tableViewer.getTable().layout(true);
+				if (treeViewer != null) {
+                    treeViewer.refresh();
+                    treeViewer.getTree().layout(true);
 					if (searchRunner.getSearchProvider() instanceof ModeSelectionPage) {
 						selectTrueUpdates();
 					}
 				}
 				pageChanged();
 				
-				int totalCount = tableViewer.getTable().getItemCount();
+				int totalCount = jobs != null ? jobs.size(): 0;
 				if(totalCount >0) {
 					setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$;
 					label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
@@ -276,7 +423,6 @@ public class ReviewPage
 						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures")); //$NON-NLS-1$
 					label.setText("");
 				}
-
 			}
 		});
 	}
@@ -288,7 +434,7 @@ public class ReviewPage
 			if (!UpdateUtils.isPatch(job.getFeature()))
 				trueUpdates.add(job);
 		}
-		tableViewer.setCheckedElements(trueUpdates.toArray()); 
+		treeViewer.setCheckedElements(trueUpdates.toArray()); 
 	}	
 
 	/**
@@ -306,7 +452,7 @@ public class ReviewPage
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		createTable(client);
+        createTreeViewer(client);
 
 		Composite comp = new Composite(client, SWT.NONE);
 		layout = new GridLayout();
@@ -323,21 +469,21 @@ public class ReviewPage
 		buttonContainer.setLayout(layout);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.selectAll")); //$NON-NLS-1$
-		gd =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(button);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(true);
-			}
-		});
+//		Button button = new Button(buttonContainer, SWT.PUSH);
+//		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.selectAll")); //$NON-NLS-1$
+//		gd =
+//			new GridData(
+//				GridData.HORIZONTAL_ALIGN_FILL
+//					| GridData.VERTICAL_ALIGN_BEGINNING);
+//		button.setLayoutData(gd);
+//		SWTUtil.setButtonDimensionHint(button);
+//		button.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				handleSelectAll(true);
+//			}
+//		});
 
-		button = new Button(buttonContainer, SWT.PUSH);
+		Button button = new Button(buttonContainer, SWT.PUSH);
 		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.deselectAll")); //$NON-NLS-1$
 		gd =
 			new GridData(
@@ -347,7 +493,7 @@ public class ReviewPage
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(false);
+				handleDeselectAll();
 			}
 		});
 
@@ -406,13 +552,13 @@ public class ReviewPage
 		filterOlderVersionCheck = new Button(client, SWT.CHECK);
 		filterOlderVersionCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterOlderFeatures")); //$NON-NLS-1$
 		filterOlderVersionCheck.setSelection(true);
-		tableViewer.addFilter(olderVersionFilter);
+//		tableViewer.addFilter(olderVersionFilter);
 		filterOlderVersionCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (filterOlderVersionCheck.getSelection())
-					tableViewer.addFilter(olderVersionFilter);
+					treeViewer.addFilter(olderVersionFilter);
 				else 
-					tableViewer.removeFilter(olderVersionFilter);
+					treeViewer.removeFilter(olderVersionFilter);
 				
 				pageChanged();
 			}
@@ -430,12 +576,12 @@ public class ReviewPage
 				if (filterCheck.getSelection()) {
 					// make sure model is local
 					if (downloadIncludedFeatures()) {
-						tableViewer.addFilter(filter);
+						treeViewer.addFilter(filter);
 					} else {
 						filterCheck.setSelection(false);
 					}
 				} else {
-					tableViewer.removeFilter(filter);
+					treeViewer.removeFilter(filter);
 				}
 				pageChanged();
 			}
@@ -446,146 +592,224 @@ public class ReviewPage
 		
 		pageChanged();
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiReviewPage2"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.MultiReviewPage2"); //$NON-NLS-1$
 
 		Dialog.applyDialogFont(parent);
 
 		return client;
 	}
 
-	private void createTable(Composite parent) {
-		SashForm sform = new SashForm(parent, SWT.VERTICAL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 250;
-		gd.heightHint =100;
-		sform.setLayoutData(gd);
+    private void createTreeViewer(Composite parent) {
+        SashForm sform = new SashForm(parent, SWT.VERTICAL);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.widthHint = 250;
+        gd.heightHint =100;
+        sform.setLayoutData(gd);
+        
+        treeViewer = new CheckboxTreeViewer(sform, SWT.H_SCROLL | SWT.V_SCROLL
+                | SWT.BORDER);
+        treeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+        treeViewer.setContentProvider(new TreeContentProvider());
+        treeViewer.setLabelProvider(new TreeLabelProvider());
+        treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 
-		TableLayoutComposite composite= new TableLayoutComposite(sform, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer =
-			CheckboxTableViewer.newCheckList(
-					composite,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		Table table = tableViewer.getTable();
+//        treeViewer.addCheckStateListener(new ICheckStateListener() {
+//            public void checkStateChanged(CheckStateChangedEvent e) {
+//                Object element = e.getElement();
+//                if (element instanceof SiteBookmark)
+//                    handleSiteChecked((SiteBookmark) element, e.getChecked());
+//                else if (element instanceof SiteCategory) 
+//                    handleCategoryChecked(
+//                        (SiteCategory) element,
+//                        e.getChecked());
+//                else if (element instanceof IInstallFeatureOperation)
+//                    handleFeatureChecked((IInstallFeatureOperation)element, e.getChecked());
+//                
+//            }
+//        });
 
-		table.setHeaderVisible(true);
+        treeViewer
+            .addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent e) {
+                handleSelectionChanged((IStructuredSelection) e.getSelection());
+            }
+        });
+        
+        treeViewer.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                handleCheckStateChange(event);
+            }
+        });
 
-		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.feature")); //$NON-NLS-1$
-		column.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				LABEL_ORDER *= -1;
-				tableViewer.setSorter(
-					new FeatureSorter(
-						FeatureSorter.FEATURE_LABEL,
-						LABEL_ORDER,
-						VERSION_ORDER,
-						PROVIDER_ORDER));
-			}
-		});
+//      treeViewer.addFilter(new ViewerFilter() {
+//          public boolean select(
+//              Viewer viewer,
+//              Object parentElement,
+//              Object element) {
+//              if (element instanceof SiteBookmark)
+//                  return !((SiteBookmark) element).isWebBookmark();
+//              return true;
+//          }
+//      });
+        
+      descLabel = new ScrolledFormText(sform, true);
+      descLabel.setText("");
+      descLabel.setBackground(parent.getBackground());
+      HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
+      descLabel.getFormText().setHyperlinkSettings(settings);
+      
+      gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+      gd.horizontalSpan = 1;
+      descLabel.setLayoutData(gd);
+      
+      sform.setWeights(new int[] {10, 2});
+    }
+    
+    void handleCheckStateChange(final CheckStateChangedEvent event) {
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+            public void run() {
+                Object element = event.getElement();
+                boolean state = event.getChecked();
+                treeViewer.setGrayed(element, false);
+                if (isExpandable(element))
+                    setSubtreeChecked(element, state, state);
+                // only check subtree if state is set to true
 
-		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.version")); //$NON-NLS-1$
-		column.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				VERSION_ORDER *= -1;
-				tableViewer.setSorter(
-					new FeatureSorter(
-						FeatureSorter.FEATURE_VERSION,
-						LABEL_ORDER,
-						VERSION_ORDER,
-						PROVIDER_ORDER));
-			}
-		});
+                updateParentState(element, state);
+            }
+        });
+        //pageChanged();
+        validateSelection();
+    }
+    
 
-		column = new TableColumn(table, SWT.NULL);
-		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.provider")); //$NON-NLS-1$
-		column.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PROVIDER_ORDER *= -1;
-				tableViewer.setSorter(
-					new FeatureSorter(
-						FeatureSorter.FEATURE_PROVIDER,
-						LABEL_ORDER,
-						VERSION_ORDER,
-						PROVIDER_ORDER));
-			}
-		});
+    void setSubtreeChecked(Object parent, boolean state,
+            boolean checkExpandedState) {
 
-		//TableLayout layout = new TableLayout();
-		composite.addColumnData(new ColumnWeightData(5, 275, true));
-		composite.addColumnData(new ColumnWeightData(1, 80, true));
-		composite.addColumnData(new ColumnWeightData(5, 90, true));
+        Object[] children = ((ITreeContentProvider)treeViewer.getContentProvider()).getChildren(parent);
+        for (int i = children.length - 1; i >= 0; i--) {
+            Object element = children[i];
+            if (state) {
+                treeViewer.setChecked(element, true);
+                treeViewer.setGrayed(element, false);
+            } else
+                treeViewer.setGrayChecked(element, false);
+            if (isExpandable(element))
+                setSubtreeChecked(element, state, checkExpandedState);
+        }
+    }
+    
+    void updateParentState(Object child, boolean baseChildState) {
+        if (child == null)
+            return;
 
-		//layout.addColumnData(new ColumnPixelData(225, true));
-		//layout.addColumnData(new ColumnPixelData(80, true));
-		//layout.addColumnData(new ColumnPixelData(140, true));
+        Object parent = ((ITreeContentProvider)treeViewer.getContentProvider()).getParent(child);
+        if (parent == null)
+            return;
 
-		//table.setLayout(layout);
+        boolean allSameState = true;
+        Object[] children = null;
+        children = ((ITreeContentProvider)treeViewer.getContentProvider()).getChildren(parent);
 
-		tableViewer.setContentProvider(new JobsContentProvider());
-		tableViewer.setLabelProvider(new JobsLabelProvider());
-		tableViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				newlySelectedFeature = null;
-				if(event.getChecked()){
-					// save checked feeature, so its error can be shown if any
-					Object checked = event.getElement();
-					if(checked instanceof IInstallFeatureOperation){
-						newlySelectedFeature= ((IInstallFeatureOperation)checked).getFeature();
-					}
-				}
-				tableViewer
-					.getControl()
-					.getDisplay()
-					.asyncExec(new Runnable() {
-					public void run() {
-						pageChanged();
-					}
-				});
-			}
-		});
+        for (int i = children.length - 1; i >= 0; i--) {
+            if (treeViewer.getChecked(children[i]) != baseChildState
+                    || treeViewer.getGrayed(children[i])) {
+                allSameState = false;
+                break;
+            }
+        }
 
-		tableViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				jobSelected((IStructuredSelection) e.getSelection());
-			}
-		});
+        treeViewer.setGrayed(parent, !allSameState);
+        treeViewer.setChecked(parent, !allSameState || baseChildState);
 
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleProperties();
-			}
-		});
-		tableViewer.setSorter(new FeatureSorter());
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
-		table.setMenu(menuMgr.createContextMenu(table));
-		
-		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
-		tableViewer.setAllChecked(true);
-		
-		descLabel = new ScrolledFormText(sform, true);
-		descLabel.setText("");
-		descLabel.setBackground(parent.getBackground());
-		HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
-		descLabel.getFormText().setHyperlinkSettings(settings);
-		
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalSpan = 1;
-		descLabel.setLayoutData(gd);
-		
-		sform.setWeights(new int[] {10, 2});
-	}
+        updateParentState(parent, baseChildState);
+    }
+    
+    boolean isExpandable(Object element) {
+        return ((ITreeContentProvider)treeViewer.getContentProvider()).hasChildren(element);
+    }
+    
+//    private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
+//
+//        bookmark.setSelected(checked);
+//        if (checked)
+//            bookmark.setIgnoredCategories(new String[0]);
+//            
+//        if (checked || bookmark.isSiteConnected())
+//            treeViewer.setSubtreeChecked(bookmark, checked);
+//   
+//        treeViewer.setGrayed(bookmark, false);
+//    }
+//    
+//    private void handleCategoryChecked(SiteCategory category, boolean checked) {
+//        SiteBookmark bookmark = category.getBookmark();
+//
+//        ArrayList array = new ArrayList();
+//
+//        if (bookmark.isSelected()) {
+//            String[] ignored = bookmark.getIgnoredCategories();
+//            for (int i = 0; i < ignored.length; i++)
+//                array.add(ignored[i]);
+//        } else {
+//            Object[] categs = bookmark.getCatalog(true, null);
+//            for (int i = 0; i < categs.length; i++)
+//                array.add(((SiteCategory) categs[i]).getFullName());
+//        }
+//
+//        if (checked) {
+//            array.remove(category.getFullName());
+//        } else {
+//            array.add(category.getFullName());
+//        }
+//
+//        bookmark.setIgnoredCategories((String[]) array.toArray(new String[array
+//                .size()]));
+//
+//        Object[] children = ((TreeContentProvider) treeViewer
+//                .getContentProvider()).getChildren(category.getBookmark());
+//        treeViewer.setChecked(bookmark, array.size() < children.length);
+//        bookmark.setSelected(array.size() < children.length);
+//        
+//        if (checked)
+//            treeViewer.setSubtreeChecked(bookmark, checked);
+//        
+//        treeViewer.setGrayed(bookmark, array.size() > 0
+//                && array.size() < children.length);
+//    }
+//
+//    private void handleFeatureChecked(IInstallFeatureOperation job, boolean checked) {
+//        treeViewer.setGrayed(job, false);
+//    }
+    
+    private void handleSelectionChanged(IStructuredSelection ssel) {
+        boolean enable = false;
+        Object item = ssel.getFirstElement();
+        String description = null;
+        if (item instanceof SiteBookmark) {
+            enable = !((SiteBookmark) item).isReadOnly();
+            description = ((SiteBookmark)item).getDescription();
+        } else if (item instanceof SiteCategory) {
+            IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
+            if (descEntry != null)
+                description = descEntry.getAnnotation();
+        } else if (item instanceof IInstallFeatureOperation) {
+            jobSelected(ssel);
+//            IURLEntry descEntry = ((IInstallFeatureOperation)item).getFeature().getDescription();
+//            if (descEntry != null)
+//                description = descEntry.getAnnotation();
+            return;
+        }
+
+        if (description == null)
+            description = ""; //$NON-NLS-1$
+        descLabel.setText(UpdateManagerUtils.getWritableXMLString(description));
+        propertiesButton.setEnabled(false);
+        moreInfoButton.setEnabled(false);
+    }
+
 	
 	private void fillContextMenu(IMenuManager manager) {
-		if (tableViewer.getSelection().isEmpty()) return;
+		if (treeViewer.getSelection().isEmpty()) return;
 		Action action = new Action(UpdateUI.getString("InstallWizard.ReviewPage.prop")) { //$NON-NLS-1$
 			public void run() {
 				handleProperties();
@@ -598,20 +822,19 @@ public class ReviewPage
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				IInstallFeatureOperation job = OperationsManager.getOperationFactory().createInstallOperation( null, feature,null, null, null);
-				ViewerFilter[] filters = tableViewer.getFilters();
+				ViewerFilter[] filters = treeViewer.getFilters();
 				boolean visible = true;
 
 				for (int i = 0; i < filters.length; i++) {
 					ViewerFilter filter = filters[i];
-					if (!filter.select(tableViewer, null, job)) {
+					if (!filter.select(treeViewer, null, job)) {
 						visible = false;
 						break;
 					}
 				}
-				if (visible) {
-					tableViewer.add(job);
+				if (visible) 
 					updateItemCount(0, -1);
-				}
+				
 				jobs.add(job);
 			}
 		});
@@ -655,8 +878,8 @@ public class ReviewPage
 	}
 	
 	private void pageChanged() {
-		Object[] checked = tableViewer.getCheckedElements();
-		int totalCount = tableViewer.getTable().getItemCount();
+		Object[] checked = getSelectedJobs();
+		int totalCount = jobs.size();
 		updateItemCount(checked.length, totalCount);
 		if (checked.length > 0) {
 			validateSelection();
@@ -667,17 +890,18 @@ public class ReviewPage
 			validationStatus = null;
 			problematicFeatures.clear();
 		}
-		tableViewer.update(jobs.toArray(), null);
+		treeViewer.update(jobs.toArray(), null);
 		statusButton.setEnabled(validationStatus != null);
+        treeViewer.refresh();
 	}
 
 	private void updateItemCount(int checkedCount, int totalCount) {
 		if (checkedCount == -1) {
-			Object[] checkedElements = tableViewer.getCheckedElements();
+			Object[] checkedElements = getSelectedJobs();
 			checkedCount = checkedElements.length;
 		}
 		if (totalCount == -1) {
-			totalCount = tableViewer.getTable().getItemCount();
+			totalCount = jobs.size();
 		}
 		String total = "" + totalCount; //$NON-NLS-1$
 		String selected = "" + checkedCount; //$NON-NLS-1$
@@ -688,31 +912,56 @@ public class ReviewPage
 		counterLabel.getParent().layout();
 	}
 
-	private void handleSelectAll(boolean select) {
-		tableViewer.setAllChecked(select);
-//		 make sure model is local (download using progress monitor from container)
-		downloadIncludedFeatures(); 
-			
-		tableViewer.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				pageChanged();
-			}
-		});
-	}
+//	private void handleSelectAll(boolean select) {
+//		treeViewer.setAllChecked(select);
+////		 make sure model is local (download using progress monitor from container)
+//		downloadIncludedFeatures(); 
+//			
+//		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+//			public void run() {
+//				pageChanged();
+//			}
+//		});
+//	}
 
+//  private void handleSelectAll(boolean select) {
+//  treeViewer.setAllChecked(select);
+////     make sure model is local (download using progress monitor from container)
+//  downloadIncludedFeatures(); 
+//      
+//  treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+//      public void run() {
+//          pageChanged();
+//      }
+//  });
+//}
+
+   private void handleDeselectAll() {
+        treeViewer.setCheckedElements(new Object[0]);
+        // make sure model is local (download using progress monitor from
+        // container)
+//        downloadIncludedFeatures();
+
+        treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                pageChanged();
+            }
+        });
+}
+    
 	private void handleProperties() {
 		final IStructuredSelection selection =
-			(IStructuredSelection) tableViewer.getSelection();
+			(IStructuredSelection) treeViewer.getSelection();
 
 		final IInstallFeatureOperation job =
 			(IInstallFeatureOperation) selection.getFirstElement();
 		if (propertiesAction == null) {
 			propertiesAction =
-				new FeaturePropertyDialogAction(getShell(), tableViewer);
+				new FeaturePropertyDialogAction(getShell(), treeViewer);
 		}
 
 		BusyIndicator
-			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				SimpleFeatureAdapter adapter =
 					new SimpleFeatureAdapter(job.getFeature());
@@ -734,11 +983,11 @@ public class ReviewPage
 
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
-			(IStructuredSelection) tableViewer.getSelection();
+			(IStructuredSelection) treeViewer.getSelection();
 		final IInstallFeatureOperation selectedJob =
 			(IInstallFeatureOperation) selection.getFirstElement();
 		BusyIndicator
-			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				String urlName = getMoreInfoURL(selectedJob);
 				UpdateUI.showURL(urlName);
@@ -746,11 +995,13 @@ public class ReviewPage
 		});
 	}
 
-	public IInstallFeatureOperation[] getSelectedJobs() {
-		Object[] selected = tableViewer.getCheckedElements();
-		IInstallFeatureOperation[] result = new IInstallFeatureOperation[selected.length];
-		System.arraycopy(selected, 0, result, 0, selected.length);
-		return result;
+	public IInstallFeatureOperation[] getSelectedJobs() {      
+        Object[] selected = treeViewer.getCheckedElements();
+        ArrayList selectedJobs = new ArrayList(selected.length);
+        for (int i=0; i<selected.length; i++)
+            if (selected[i] instanceof IInstallFeatureOperation)
+                selectedJobs.add(selected[i]);
+        return (IInstallFeatureOperation[])selectedJobs.toArray(new IInstallFeatureOperation[selectedJobs.size()]);
 	}
 
 	public void validateSelection() {
@@ -948,4 +1199,13 @@ public class ReviewPage
 			}
 		}
 	}
+    
+    private IInstallFeatureOperation findJob(IFeature feature) {
+        if (jobs == null)
+            return null;
+        for (int i=0; i<jobs.size(); i++)
+            if (((IInstallFeatureOperation)jobs.get(i)).getFeature() == feature)
+                return (IInstallFeatureOperation)jobs.get(i);
+        return null;
+    }
 }

@@ -50,7 +50,25 @@ public class SiteBookmark extends NamedModelObject
 		this.selected = selected;
 	}
 
-	public void setSelected(boolean selected) {
+	public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (!(obj instanceof SiteBookmark))
+            return false;
+        SiteBookmark b = (SiteBookmark)obj;
+        if (url == null)
+            return false;
+        return url.equals(b.url);
+    }
+
+    public int hashCode() {
+        if (url == null)
+            return super.hashCode();
+        else
+            return url.hashCode();
+    }
+
+    public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 	

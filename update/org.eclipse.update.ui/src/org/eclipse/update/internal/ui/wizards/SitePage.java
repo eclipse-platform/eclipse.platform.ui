@@ -608,7 +608,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	public UpdateSearchRequest getSearchRequest() {
 		return searchRequest;
 	}
-
+    
 	public void setVisible(boolean value) {
 		super.setVisible(value);
 		if (value) {
