@@ -310,6 +310,14 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
 		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+		
+	}
+	
+	public void testMinusDAndGlobalProperties() throws CoreException {
+		run("echoing.xml", new String[]{"-DAntTests=testing", "-Declipse.is.cool=true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.running should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.running")));
+		assertNotNull("eclipse.home should have been set", AntTestChecker.getDefault().getUserProperty("eclipse.home"));
 	}
 	
 	/**
