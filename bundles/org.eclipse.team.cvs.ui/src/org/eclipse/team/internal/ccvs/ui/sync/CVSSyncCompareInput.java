@@ -362,9 +362,39 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 				throw (InterruptedException)exception[0];
 			}
 		}
-			
-		return result[0];
+		
+		if (hasDifferences(result[0])) {
+			return result[0];
+		} else {
+			return null;
+		}
 	}
+
+	/**
+	 * The given object has differences if it is an IDiffElement with a change
+	 * or it is an IDiffContainer that contains differences.
+	 * 
+	 * @param object
+	 * @return boolean
+	 */
+	private boolean hasDifferences(Object object) {
+		if (object instanceof IDiffElement) {
+			IDiffElement element = (IDiffElement)object;
+			if (element.getKind() != Differencer.NO_CHANGE) return true;
+			if (object instanceof IDiffContainer) {
+				IDiffContainer container = (IDiffContainer) object;
+				if (container.hasChildren()) {
+					IDiffElement[] children = container.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						IDiffElement child = children[i];
+						if (hasDifferences(child)) return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	
 	/**
 	 * Adjust the sync info (to conflicting change) for locally deleted 
