@@ -773,8 +773,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				boolean fireRedraw= true;
 				
 				processDeletions(event, fireRedraw);
-				processAdditions(event, fireRedraw);
-				processModifications(event, fireRedraw);
+				
+				List coverage= new ArrayList();
+				processAdditions(event, fireRedraw, coverage);
+				processModifications(event, fireRedraw, coverage);
 				
 				if (!fireRedraw) {
 					//TODO compute minimal scope for invalidation
@@ -785,7 +787,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
-	private boolean includes(Position expanded, Position position) {
+	private boolean covers(Position expanded, Position position) {
 		if (!expanded.equals(position) && !position.isDeleted())
 			return expanded.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= expanded.getOffset() + expanded.getLength();
 		return false;
@@ -802,7 +804,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					// annotation might already be deleted, we will be informed later on about this deletion
 					continue;
 				}
-				if (includes(expanded, position))
+				if (covers(expanded, position))
 					positions.add(position);
 			}
 		}
@@ -855,44 +857,48 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 	
-	private void processAdditions(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
-		Annotation[] annotations= event.getAddedAnnotations();
-		for (int i= 0; i < annotations.length; i++) {
-			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
-			if (annotation.isCollapsed()) {
-				Position position= fProjectionAnnotationModel.getPosition(annotation);
-				if (position != null) {
-					IRegion region= computeCollapsedRegion(position);
-					if (region != null)
-						collapse(region.getOffset(), region.getLength(), fireRedraw);
-				}
-			}
-		}
+	private void processAdditions(AnnotationModelEvent event, boolean fireRedraw, List coverage) throws BadLocationException {
+		processChanges(event.getAddedAnnotations(), fireRedraw, coverage);
 	}
 	
-	private void processModifications(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
-		Annotation[] annotations= event.getChangedAnnotations();
+	private void processModifications(AnnotationModelEvent event, boolean fireRedraw, List coverage) throws BadLocationException {
+		processChanges(event.getChangedAnnotations(), fireRedraw, coverage);
+	}
+	
+	private void processChanges(Annotation[] annotations, boolean fireRedraw, List coverage) throws BadLocationException {
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
 			
-			if (position == null) {
-				// we are potentially processing in a different thread, i.e. the annotation might already be 
-				// deleted which will be indicated with one of the subsequent events
+			if (position == null)
 				continue;
-			}
 			
 			if (annotation.isCollapsed()) {
-				IRegion region= computeCollapsedRegion(position);
-				if (region != null)
-					collapse(region.getOffset(), region.getLength(), fireRedraw);
+				if (!covers(coverage, position)) {
+					coverage.add(position);
+					IRegion region= computeCollapsedRegion(position);
+					if (region != null)
+						collapse(region.getOffset(), region.getLength(), fireRedraw);
+				}
 			} else {
-				Position[] collapsed= computeCollapsedRanges(position);
-				expand(position, collapsed, false);
-				if (fireRedraw)
-					invalidateTextPresentation(position.getOffset(), position.getLength());
+				if (!covers(coverage, position)) {
+					Position[] collapsed= computeCollapsedRanges(position);
+					expand(position, collapsed, false);
+					if (fireRedraw)
+						invalidateTextPresentation(position.getOffset(), position.getLength());
+				}
 			}
 		}
+	}
+
+	private boolean covers(List coverage, Position position) {
+		Iterator e= coverage.iterator();
+		while (e.hasNext()) {
+			Position p= (Position) e.next();
+			if (p.getOffset() <= position.getOffset() && position.getOffset() + position.getLength() <= p.getOffset() + p.getLength())
+				return true;
+		}
+		return false;
 	}
 
 	private void reinitializeProjection() throws BadLocationException {
