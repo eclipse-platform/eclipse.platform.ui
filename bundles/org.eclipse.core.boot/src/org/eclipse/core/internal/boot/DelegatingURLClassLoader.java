@@ -203,7 +203,7 @@ private static void initializePrefixTable() {
 	if (filename == null)
 		filename = InternalBootLoader.getDefaultClassLoaderPropertiesFilename();
 
-	String errorMessage = "Error opening: " + filename + ". Continuing execution without using classloader performance enhancement.";
+	String errorMessage = "Error opening: " + filename + ". Continuing execution without using classloader performance enhancement."; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Try to convert the filename to a URL. If that fails then try a java.io.File
 	try {
