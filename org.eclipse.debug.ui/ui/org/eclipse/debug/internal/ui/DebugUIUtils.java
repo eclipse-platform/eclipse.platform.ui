@@ -9,8 +9,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -69,6 +71,17 @@ public class DebugUIUtils {
 			e.printStackTrace();
 			System.out.println();
 		}
+	}
+	
+	/**
+	 * Defined here as an API-legal way to get the console document for the 
+	 * current process.
+	 */
+	public static IDocument getCurrentConsoleDocument() {
+		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
+		IProcess currentProcess = plugin.getCurrentProcess();
+		IDocument document = plugin.getConsoleDocument(currentProcess, true);
+		return document;
 	}
 }
 

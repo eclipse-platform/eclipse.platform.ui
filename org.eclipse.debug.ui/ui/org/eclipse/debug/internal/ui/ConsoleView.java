@@ -77,6 +77,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		
 		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fConsoleViewer.addTextInputListener(getTextInputListener());
+		getSite().setSelectionProvider(fConsoleViewer.getSelectionProvider());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
 		setTitleToolTip("Program Output");
 		WorkbenchHelp.setHelp(
