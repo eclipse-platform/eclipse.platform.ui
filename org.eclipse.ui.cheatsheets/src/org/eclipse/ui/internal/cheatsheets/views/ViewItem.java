@@ -99,7 +99,7 @@ public abstract class ViewItem {
 		checkDoneLabel.setBackground(white);
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create checkDoneLabel: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE);
+		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE|ExpandableComposite.COMPACT);
 		mainItemComposite.setBackground(itemColor);
 		mainItemComposite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String title = item.getTitle();
