@@ -126,8 +126,14 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	    if (info instanceof AntFileInfo) {
 		    AntFileInfo xmlInfo= (AntFileInfo) info;
 		    if (xmlInfo.fAntModel != null) {
-			    ISynchronizable doc= (ISynchronizable) xmlInfo.fTextFileBuffer.getDocument();
-			    synchronized (doc.getLockObject()) {	    	
+			    IDocument doc=  xmlInfo.fTextFileBuffer.getDocument();
+			    Object lock= null;
+			    if (doc instanceof ISynchronizable) {
+			    	lock= ((ISynchronizable) doc).getLockObject();
+			    } else {
+			    	lock= xmlInfo.fAntModel;
+			    }
+			    synchronized (lock) {	    	
 		    		xmlInfo.fAntModel.dispose();
 			    	xmlInfo.fAntModel= null;
 		    	}
