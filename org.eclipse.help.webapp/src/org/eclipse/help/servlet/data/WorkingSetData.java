@@ -10,7 +10,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.workingset.*;
 
 /**
  * This class manages help working sets

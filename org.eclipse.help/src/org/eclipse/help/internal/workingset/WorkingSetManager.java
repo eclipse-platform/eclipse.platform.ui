@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.filter;
+package org.eclipse.help.internal.workingset;
 
 /*
  * (c) Copyright IBM Corp. 2002.
@@ -25,11 +25,51 @@ import org.xml.sax.*;
  * @since 2.1
  */
 public class WorkingSetManager {
+	
+	// Note: keep the following constants in sych with the values defined in IWorkingSetManager.
+	//       They are needed to synch the ui and the help working sets, as help should run w/o ui plugins.
+	
+	/**
+	 * Change event id when a working set is added
+	 * newValue of the PropertyChangeEvent will be the added working set.
+	 * oldValue will be null.
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd";		
+	/**
+	 * Change event id when a working set is removed
+	 * newValue of the PropertyChangeEvent will be null.
+	 * oldValue will be the removed working set.
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove";	
+	/**
+	 * Change event id when the working set contents changed
+	 * newValue of the PropertyChangeEvent will be the changed working set.
+	 * oldValue will be null.
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	
+	/**
+	 * Change event id when the working set name changed.
+	 * newValue of the PropertyChangeEvent will be the changed working set.
+	 * oldValue will be null.
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange";	//$NON-NLS-1$	
+	 
+	 
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml";
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private String locale;
+	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
 
+	
 	/**
 	 * Constructor
 	 * @param locale
@@ -45,10 +85,17 @@ public class WorkingSetManager {
 	 * Adds a new working set and saves it
 	 */
 	public void addWorkingSet(WorkingSet workingSet) {
-		if (workingSets.contains(workingSet))
+		if (workingSet == null || workingSets.contains(workingSet))
 			return;
 		workingSets.add(workingSet);
 		saveState();
+		firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
+	}
+	
+	/**
+	 */
+	public void addPropertyChangeListener(PropertyChange.IPropertyChangeListener listener) {
+		propertyChangeListeners.add(listener);
 	}
 
 	/**
@@ -76,6 +123,28 @@ public class WorkingSetManager {
 		return false;
 	}
 
+	/**
+	 * Notify property change listeners about a change to the list of 
+	 * working sets.
+	 * 
+	 * @param changeId one of 
+	 * 	CHANGE_WORKING_SET_ADD		 	
+	 *  CHANGE_WORKING_SET_REMOVE
+	 *  CHANGE_WORKING_SET_CONTENT_CHANGE
+	 *  CHANGE_WORKING_SET_NAME_CHANGE
+	 * @param oldValue the removed working set or null if a working set 
+	 * 	was added or changed.
+	 * @param newValue the new or changed working set or null if a working 
+	 * 	set was removed.
+	 */
+	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
+		final PropertyChange.PropertyChangeEvent event = new PropertyChange.PropertyChangeEvent(this, changeId, oldValue, newValue);
+
+		Object[] listeners = propertyChangeListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((PropertyChange.IPropertyChangeListener) listeners[i]).propertyChange(event);
+		}
+	}
 	/**
 	 * Returns a working set by name
 	 * 
@@ -126,6 +195,7 @@ public class WorkingSetManager {
 	public void removeWorkingSet(WorkingSet workingSet) {
 		workingSets.remove(workingSet);
 		saveState();
+		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
 	}
 
 	/**
@@ -199,7 +269,6 @@ public class WorkingSetManager {
 	 */
 	private WorkingSet restoreWorkingSet(Element workingSetNode) {
 		String name = workingSetNode.getAttribute("name");
-		WorkingSet ws = new WorkingSet(name);
 		NodeList items = workingSetNode.getElementsByTagName("item");
 		List tocs = new ArrayList(items.getLength());
 		for (int i = 0; i < items.getLength(); i++) {
@@ -208,12 +277,23 @@ public class WorkingSetManager {
 				HelpSystem.getTocManager().getToc(
 					item.getAttribute("href"),
 					locale);
-			ws.addElement(toc);
+			tocs.add(toc);
 		}
+		
+		IToc[] elements = new IToc[tocs.size()];
+		tocs.toArray(elements);
+		
+		WorkingSet ws = createWorkingSet(name, elements);
 
 		return ws;
 	}
 
+	/**
+	 */
+	public void removePropertyChangeListener(PropertyChange.IPropertyChangeListener listener) {
+		propertyChangeListeners.remove(listener);
+	}
+	
 	/**
 	 * Saves the working sets in the persistence store
 	 */
@@ -267,5 +347,6 @@ public class WorkingSetManager {
 	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet) {
 		saveState();
+		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null, changedWorkingSet);
 	}
 }

@@ -238,4 +238,21 @@
       </sorter>
    </extension>
 
+<!-- Help Working Set Page -->
+<extension point="org.eclipse.ui.workingSets">
+	<workingSet
+		id="org.eclipse.help.ui.HelpWorkingSetPage"
+		icon="icons/workingset.gif"
+		name="%HelpWorkingSet"
+		pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage">
+	</workingSet>
+</extension>
+
+<extension
+    point = "org.eclipse.ui.elementFactories">
+    <factory id ="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
+      class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
+	</factory>
+</extension>
+
 </plugin>

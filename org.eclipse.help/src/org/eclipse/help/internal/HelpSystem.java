@@ -5,9 +5,10 @@
 package org.eclipse.help.internal;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
@@ -80,6 +81,9 @@ public final class HelpSystem {
 	 * Used to obtain Working Set Manager
 	 * @return instance of WorkingSetManager
 	 */
+	public static WorkingSetManager getWorkingSetManager() {
+		return getWorkingSetManager(BootLoader.getNL());
+	}
 	public static WorkingSetManager getWorkingSetManager(String locale) {
 		if (getInstance().workingSetManagers == null) {
 			getInstance().workingSetManagers = new HashMap();

@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -62,9 +63,9 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			Collection scope = null;
 			if (queryData.isBookFiltering()) {
 				scope = new ArrayList();
-				Collection books = queryData.getSelectedBooks();
-				for (Iterator it = books.iterator(); it.hasNext();) {
-					scope.add(((IToc) it.next()).getHref());
+				IWorkingSet[] workingSets = queryData.getSelectedWorkingSets();
+				for (int i=0; i<workingSets.length; i++) {
+					scope.add(workingSets[i].getName());
 				}
 			}
 			SearchResults results =

@@ -17,8 +17,6 @@ public interface IHelpUIConstants {
 		HELP_UI_PLUGIN_ID + "prefPageAppServer";
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH =
 		HELP_UI_PLUGIN_ID + "prefPageCustomBrowserPath";
-	public static final String SEARCH_FILTERING_OPTIONS =
-		HELP_UI_PLUGIN_ID + "searchFilteringOpts";
 	public static final String SEARCH_PAGE = HELP_UI_PLUGIN_ID + "searchPage";
 	public static final String HIT_MARKER_ID =
 		HELP_UI_PLUGIN_ID + "helpsearchhit";

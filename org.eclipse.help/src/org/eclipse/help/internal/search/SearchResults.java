@@ -10,7 +10,7 @@ import java.util.*;
 import org.apache.lucene.search.Hits;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.URLCoder;
 

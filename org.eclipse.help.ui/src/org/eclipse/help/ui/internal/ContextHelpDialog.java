@@ -71,6 +71,19 @@ public class ContextHelpDialog {
 				close();
 			};
 		});
+		
+		shell.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				System.out.println("pressed ");
+				if (Logger.DEBUG)
+					Logger.logDebugMessage(
+						"ContextHelpDialog",
+						"handleEvent: SWT.Deactivate called. ");
+				if (e.keyCode == SWT.TRAVERSE_ESCAPE)	
+					close();
+			};
+		});
+		
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
 				if (Logger.DEBUG)
@@ -294,5 +307,9 @@ public class ContextHelpDialog {
 				e.detail = ACC.STATE_READONLY;
 			}
 		});
+	}
+	
+	public void dispose() {
+		System.out.println("dispose");
 	}
 }

@@ -4,10 +4,13 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
-import org.eclipse.tomcat.AppServer;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.ui.browser.*;
+import org.eclipse.help.ui.internal.browser.*;
+import org.eclipse.help.ui.internal.workingset.*;
+import org.eclipse.tomcat.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.*;
 
 /**
   * This class is a UI plugin. This may need to change to regular 
@@ -16,6 +19,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	private static WorkbenchHelpPlugin plugin;
 	private IBrowser browser;
+	private HelpWorkingSetListener workingSetListener;
+
 	/**
 	 * WorkbenchHelpPlugin constructor. It is called as part of plugin
 	 * activation.
@@ -39,12 +44,26 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		// stop the web app
 		AppServer.remove("help", "org.eclipse.help.webapp");
 		BrowserManager.getInstance().closeAll();
+		PlatformUI
+			.getWorkbench()
+			.getWorkingSetManager()
+			.removePropertyChangeListener(
+			workingSetListener);
+		HelpSystem.getWorkingSetManager().removePropertyChangeListener(workingSetListener);
 		super.shutdown();
 	}
 	/**
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
+		// register the working set listener to keep the ui and the help working sets in sych
+		workingSetListener = new HelpWorkingSetListener();
+		PlatformUI
+			.getWorkbench()
+			.getWorkingSetManager()
+			.addPropertyChangeListener(
+			workingSetListener);
+		HelpSystem.getWorkingSetManager().addPropertyChangeListener(workingSetListener);
 	}
 
 	public IBrowser getHelpBrowser() {

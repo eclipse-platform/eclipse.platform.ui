@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.filter;
+package org.eclipse.help.internal.workingset;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.

@@ -22,10 +22,6 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
    <context  id="helpSearchMenu" >
       <description>This action will open the Search dialog that allows documentation searching.</description>
    </context>
-   
-   <context  id="searchFilteringOpts" >
-      <description>Choose a set of books to search.  Only results that are contained within those books will be displayed.</description>
-   </context>
 
    <context  id="prefPageBrowsers" >
       <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
@@ -53,7 +49,7 @@ Under normal circumstances, use the <b>Default</b> settings.</description>
 
 You can use OR and NOT qualifiers between terms. Also, if you put double-quotation marks around a query, search will return only results that contain specified phrase.
 
-Click <b>Choose</b> to see the book selection dialog, allowing for additional filtering to be specified.</description>
+Click <b>Choose</b> to see the working set selection dialog, allowing for additional filtering to be specified.</description>
        <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
    </context>
 

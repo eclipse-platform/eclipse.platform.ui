@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.filter;
+package org.eclipse.help.internal.workingset;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -32,11 +32,7 @@ public class WorkingSet {
 		
 		this.elements = new ArrayList(elements.length);
 		for (int i=0; i<elements.length; i++)
-			addElement(elements[i]);
-	}
-	
-	public void addElement(IHelpResource element) {
-		elements.add(element);
+			this.elements.add(elements[i]);
 	}
 	
 	public void removeElement(IHelpResource element) {
@@ -51,6 +47,12 @@ public class WorkingSet {
 		IHelpResource[] array = new IHelpResource[elements.size()];
 		elements.toArray(array);
 		return array;
+	}
+	
+	public void setElements(IHelpResource[] elements) {
+		this.elements = new ArrayList(elements.length);
+		for (int i=0; i<elements.length; i++)
+			this.elements.add(elements[i]);
 	}
 	
 	public void saveState(Element parent) {

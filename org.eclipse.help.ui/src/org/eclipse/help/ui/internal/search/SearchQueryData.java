@@ -4,13 +4,12 @@
  */
 package org.eclipse.help.ui.internal.search;
 
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.help.IToc;
-import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.URLCoder;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.ui.*;
 
 /**
  * Help Search Query Data.
@@ -28,7 +27,8 @@ public class SearchQueryData {
 	 */
 	private int maxHits;
 	private boolean bookFiltering;
-	private List selectedBooks;
+	private IWorkingSet[] workingSets;
+	
 	/**
 	 * HelpSearchQuery constructor.
 	 * @param key java.lang.String
@@ -38,7 +38,7 @@ public class SearchQueryData {
 		searchQuery = new SearchQuery();
 		bookFiltering = false;
 		maxHits = MAX_HITS;
-		selectedBooks = null;
+		workingSets = new IWorkingSet[0];
 	}
 	public ISearchQuery getSearchQuery() {
 		return searchQuery;
@@ -47,9 +47,9 @@ public class SearchQueryData {
 	 * Returns the list of books to be included in search,
 	 * or null (if bookFiltering is off).
 	 */
-	public List getSelectedBooks() {
+	public IWorkingSet[] getSelectedWorkingSets() {
 		if (bookFiltering) {
-			return selectedBooks;
+			return workingSets;
 		}
 		return null;
 	}
@@ -71,20 +71,24 @@ public class SearchQueryData {
 	 */
 	public void setBookFiltering(boolean enable) {
 		this.bookFiltering = enable;
-		if (enable && selectedBooks == null) {
+		if (enable && workingSets.length > 0) {
+			/*
 			selectedBooks = new ArrayList();
 			IToc tocs[] =
 				HelpSystem.getTocManager().getTocs(searchQuery.getLocale());
 			for (int i = 0; i < tocs.length; i++)
 				selectedBooks.add(tocs[i]);
+			*/
 		}
 	}
+
 	/**
-	 * Sets the list of books to be included in search.
-	 */
-	public void setSelecteBooks(List selected) {
-		this.selectedBooks = selected;
+	 * Sets the working sets to be included in search.
+	 * @param workingSets	 */
+	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
+		this.workingSets = workingSets;
 	}
+	
 	/**
 	 * Sets search to be performed on the fields only.
 	 * @param fieldSearch true if field only search
@@ -120,13 +124,8 @@ public class SearchQueryData {
 		else
 			q += "&fieldSearch=false";
 		if (bookFiltering) {
-			if (selectedBooks != null) {
-				for (Iterator iterator = selectedBooks.iterator();
-					iterator.hasNext();
-					) {
-					IToc toc = (IToc) iterator.next();
-					q += "&scope=" + URLEncoder.encode(toc.getHref());
-				}
+			for (int i=0; i<workingSets.length; i++ ) {
+				q += "&scope=" + URLEncoder.encode(workingSets[i].getName());
 			}
 		}
 		return q;

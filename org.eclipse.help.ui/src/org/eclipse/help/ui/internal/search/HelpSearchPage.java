@@ -4,21 +4,20 @@
  */
 package org.eclipse.help.ui.internal.search;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
+import java.lang.reflect.*;
 
-import org.eclipse.help.IToc;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.*;
 import org.eclipse.search.ui.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 /**
  * HelpSearchPage
@@ -31,7 +30,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		new java.util.ArrayList(20);
 	private Button all;
 	private Button selected;
-	private Text selectedBooksText;
+	private Text selectedWorkingSetsText;
 	//private Button headingsButton = null;
 	private ISearchPageContainer scontainer = null;
 	private boolean firstTime = true;
@@ -135,7 +134,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 		//
-		selectedBooksText =
+		selectedWorkingSetsText =
 			new Text(filteringGroup, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		displaySelectedBooks();
 		//
@@ -147,19 +146,23 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 8;
 		gd.widthHint =
-			SWTUtil.convertWidthInCharsToPixels(30, selectedBooksText);
-		selectedBooksText.setLayoutData(gd);
+			SWTUtil.convertWidthInCharsToPixels(30, selectedWorkingSetsText);
+		selectedWorkingSetsText.setLayoutData(gd);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				SearchFilteringOptions dialog =
-					new SearchFilteringOptions(
-						selected.getShell(),
-						searchQueryData);
+				IWorkingSetSelectionDialog dialog =
+					PlatformUI
+						.getWorkbench()
+						.getWorkingSetManager()
+						.createWorkingSetSelectionDialog(
+							selected.getShell(),
+							true);
+
 				if (dialog.open() == Window.OK) {
 					all.setSelection(false);
 					selected.setSelection(true);
 					searchQueryData.setBookFiltering(true);
-					searchQueryData.setSelecteBooks(dialog.getSelectedBooks());
+					searchQueryData.setSelectedWorkingSets(dialog.getSelection());
 					displaySelectedBooks();
 				}
 			}
@@ -225,28 +228,22 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 * it will display "All"
 	 */
 	private void displaySelectedBooks() {
-		String tocLabels = "";
-		if (searchQueryData.isBookFiltering()
-			&& searchQueryData.getSelectedBooks().size()
-				!= HelpSystem.getTocManager().getTocs(
-					searchQueryData.getLocale()).length) {
-			for (Iterator booksIt =
-				searchQueryData.getSelectedBooks().iterator();
-				booksIt.hasNext();
-				) {
-				String bookLabel = ((IToc) booksIt.next()).getLabel();
-				if (tocLabels.length() <= 0)
-					tocLabels = bookLabel;
+		String workingSetNames = "";
+		if (searchQueryData.isBookFiltering()) {
+			IWorkingSet[] workingSets = searchQueryData.getSelectedWorkingSets();
+			for (int i=0; i<workingSets.length; i++) {
+				String workingSet = workingSets[i].getName();
+				if (workingSetNames.length() <= 0)
+					workingSetNames = workingSet;
 				else
-					tocLabels
+					workingSetNames
 						+= WorkbenchResources.getString(
 							"HelpSearchPage.bookLabelSeparator")
-						+ bookLabel;
+						+ workingSet;
 			}
 		} else {
-			tocLabels =
-				WorkbenchResources.getString("HelpSearchPage.allBooksText");
+			workingSetNames = "";
 		}
-		selectedBooksText.setText(tocLabels);
+		selectedWorkingSetsText.setText(workingSetNames);
 	}
 }
