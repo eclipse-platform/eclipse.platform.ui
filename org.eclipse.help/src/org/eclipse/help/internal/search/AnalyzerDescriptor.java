@@ -41,11 +41,15 @@ public class AnalyzerDescriptor {
 			this.id =
 				HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier()
 					+ "#"
-					+ HelpPlugin.getDefault().getDescriptor().getVersionIdentifier().toString();
+					+ HelpPlugin
+						.getDefault()
+						.getDescriptor()
+						.getVersionIdentifier()
+						.toString();
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
-		
+
 	}
 	/**
 	 * Gets the analyzer.
@@ -92,7 +96,8 @@ public class AnalyzerDescriptor {
 			if (analyzerLocale == null || !analyzerLocale.equals(locale))
 				continue;
 			try {
-				Object analyzer = configElements[i].createExecutableExtension("class");
+				Object analyzer =
+					configElements[i].createExecutableExtension("class");
 				if (!(analyzer instanceof Analyzer))
 					continue;
 				else {
@@ -110,23 +115,47 @@ public class AnalyzerDescriptor {
 					this.luceneAnalyzer = (Analyzer) analyzer;
 					this.id = pluginId + "#" + pluginVersion;
 					this.lang = locale;
-					if("org.eclipse.help".equals(pluginId)){
+					if ("org.eclipse.help".equals(pluginId)) {
 						// The analyzer is contributed by help plugin.
 						// Continue in case there is another analyzer for the same locale
 						// let another analyzer take precendence over one from help
-					}else{
+					} else {
 						// the analyzer does not come from help
 						return this.luceneAnalyzer;
 					}
 				}
 			} catch (CoreException ce) {
 				Logger.logError(
-					Resources.getString("ES23", configElements[i].getAttribute("class"), locale),
+					Resources.getString(
+						"ES23",
+						configElements[i].getAttribute("class"),
+						locale),
 					ce);
 			}
 		}
 
 		return this.luceneAnalyzer;
+	}
+	/**
+	 * Checks whether analyzer is compatible with a given analyzer
+	 * @param analyzerId id of analyzer used in the past by the index;
+	 *  id has a form: pluginID#pluginVersion
+	 * @return true when it is known that given analyzer is compatible with
+	 *  this  analyzer
+	 */
+	public boolean isCompatible(String analyzerId) {
+		if (id.equals(analyzerId)) {
+			return true;
+		}
+		// analyzers in org.eclipse.help plugin 2.0.1 and 2.0.2, and 2.1
+		// are compatible (logic unchanged), index can be preserved between them
+		if (analyzerId.compareTo("org.eclipse.help#2.0.1") >= 0
+			&& analyzerId.compareTo("org.eclipse.help#2.1.0") <= 0
+			&& id.compareTo("org.eclipse.help#2.0.1") >= 0
+			&& id.compareTo("org.eclipse.help#2.1.0") <= 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

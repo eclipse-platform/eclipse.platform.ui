@@ -340,13 +340,14 @@ public class SearchIndex {
 	}
 	/**
 	 * @return Returns true if index has been left in inconsistent state
-	 * If analyzer has changed, index is treated as inconsistent as well.
+	 * If analyzer has changed to incompatible one,
+	 * index is treated as inconsistent as well.
 	 */
 	private boolean isInconsistent() {
 		if (inconsistencyFile.exists()) {
 			return true;
 		}
-		return !analyzerDescriptor.getId().equals(readAnalyzerId());
+		return !analyzerDescriptor.isCompatible(readAnalyzerId());
 	}
 	/**
 	 * Writes or deletes inconsistency flag file
@@ -424,5 +425,4 @@ public class SearchIndex {
 			}
 		}
 	}
-
 }
