@@ -56,8 +56,8 @@ public class PutAction extends FileSystemAction {
 	}
 	
 	/**
-	 * Indicate whether the put shoudl override incoming changes.
-	 * @return whether the put shoudl override incoming changes.
+	 * Indicate whether the put should override incoming changes.
+	 * @return whether the put should override incoming changes.
 	 */
 	protected boolean isOverrideIncoming() {
 		return false;
