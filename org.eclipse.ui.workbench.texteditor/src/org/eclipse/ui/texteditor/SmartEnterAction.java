@@ -20,15 +20,15 @@ import org.eclipse.swt.custom.StyledText;
 /**
  * This action implements smart return.
  * Instead of breaking the line where we are, we do the following:
- * <p><b>Smart Enter</b> (default binding <code>Ctrl-ENTER</code>)
+ * <p><b>Smart Enter</b>
  * <ul>
  * <li> if the caret is on a line containing any non-whitespace, a line is inserted below the 
  * current one and the caret moved to it,</li>
  * <li> if the caret is on a whitespace-only line, a line is inserted below the current line,
- * but the caret stays in its position .</li>
+ * but the caret stays in its position.</li>
  * </ul>
  * </p>
- * <p><b>Smart Enter Inverse</b> (default binding <code>Ctrl-Shift-ENTER</code>)
+ * <p><b>Smart Enter Inverse</b>
  * <ul>
  * <li> if the caret is on a line containing any non-whitespace, we insert a line above the 
  * current one and move the caret to it (i.e. it stays at the same offset in the widget),</li>
@@ -49,6 +49,9 @@ public class SmartEnterAction extends TextEditorAction {
 
 	/**
 	 * Creates a new smart enter action.
+	 * @param bundle the resource bundle
+	 * @param prefix the prefix to use to get properties from <code>bundle</code>
+	 * @param textEditor the editor that the action acts upon
 	 * @param above whether new lines are inserted above or below the caret's line.
 	 */
 	public SmartEnterAction(ResourceBundle bundle, String prefix, ITextEditor textEditor, boolean above) {
@@ -146,7 +149,7 @@ public class SmartEnterAction extends TextEditorAction {
 	}
 
 	/**
-	 * Computes the identation of a line. 
+	 * Computes the indentation of a line. 
 	 * @param line - a non <code>null</code> string
 	 * @return the number of whitespace characters at the beginning of <code>line</code>
 	 */
