@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.model.*;
@@ -256,19 +257,23 @@ public class Feature extends FeatureModel implements IFeature {
 					sourceFeaturePluginEntries,
 					targetSitePluginEntries);
 			INonPluginEntry[] nonPluginsToInstall = getNonPluginEntries();
+			IFeatureReference[] children = getIncludedFeatureReferences();			
 
 			// determine number of monitor tasks
 			//   2 tasks for the feature jar (download/verify + install)
 			// + 2*n tasks for plugin entries (download/verify + install for each)
 			// + 1*m tasks per non-plugin data entry (download for each)
 			// + 1 task for custom non-plugin entry handling (1 for all combined)
+			// + 5*x tasks for children features (5 subtasks per install)
 			int taskCount =
 				2
 					+ 2 * pluginsToInstall.length
 					+ nonPluginsToInstall.length
-					+ 1;
+					+ 1
+					+ 5*children.length;
 			if (monitor != null)
 				monitor.beginTask("", taskCount);
+			SubProgressMonitor subMonitor=null;				
 
 			// start log
 			recoveryLog.append(recoveryLog.START_INSTALL_LOG);
@@ -348,7 +353,6 @@ public class Feature extends FeatureModel implements IFeature {
 			consumer = targetFeature.getFeatureContentConsumer();
 
 			// install the children feature
-			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
 				IFeature childFeature = null;
 				try {
@@ -356,24 +360,26 @@ public class Feature extends FeatureModel implements IFeature {
 				} catch (CoreException e) {
 					UpdateManagerPlugin.warn(null,e);					
 				}
-				if (childFeature != null)
-					 ((Site) targetSite).install(// need to cast
-					childFeature,
+				if (childFeature != null){
+					if (monitor!=null)
+						subMonitor = new SubProgressMonitor(monitor,5);					
+					((Site) targetSite).install(// need to cast
+						childFeature,
 						consumer,
 						verifier,
 						verificationListener,
-						monitor);
+						subMonitor);
+				}
 			}
 
 			// Install plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				if (monitor != null)
-					monitor.setTaskName(
+				String msg = 
 						Policy.bind(
 							"Feature.TaskInstallPluginFiles",
 							pluginsToInstall[i]
 								.getVersionedIdentifier()
-								.getIdentifier()));
+								.getIdentifier());
 				//$NON-NLS-1$
 				IContentConsumer pluginConsumer =
 					consumer.open(pluginsToInstall[i]);
@@ -382,9 +388,12 @@ public class Feature extends FeatureModel implements IFeature {
 						pluginsToInstall[i],
 						monitor);
 				for (int j = 0; j < references.length; j++) {
-					if (monitor != null)
-						monitor.subTask(references[j].getIdentifier());
-					pluginConsumer.store(references[j], monitor);
+					subMonitor = null;
+					if (monitor != null){
+						subMonitor = new SubProgressMonitor(monitor,1);
+						subMonitor.setTaskName(msg+references[j].getIdentifier());
+					}
+					pluginConsumer.store(references[j], subMonitor);
 				}
 
 				if (monitor != null) {
@@ -395,13 +404,15 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 
 			//Install feature files
-			if (monitor != null)
-				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
 			references = provider.getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
-				if (monitor != null)
-					monitor.subTask(references[i].getIdentifier());
-				consumer.store(references[i], monitor);
+					subMonitor = null;
+					if (monitor != null){
+						subMonitor = new SubProgressMonitor(monitor,1);
+						String msg = Policy.bind("Feature.TaskInstallFeatureFiles");//$NON-NLS-1$
+						subMonitor.setTaskName(msg+references[i].getIdentifier());
+					}
+				consumer.store(references[i], subMonitor);
 			}
 			if (monitor != null) {
 				monitor.worked(1);
