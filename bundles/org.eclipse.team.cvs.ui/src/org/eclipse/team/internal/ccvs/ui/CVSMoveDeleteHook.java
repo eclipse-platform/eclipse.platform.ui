@@ -21,6 +21,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -125,6 +127,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 						IFolder destFolder = destination.getFolder(resource.getFullPath().removeFirstSegments(source.getFullPath().segmentCount()));
 						destFolder.create(false, true, monitor);
 					}
+					tree.failed(new CVSStatus(IStatus.ERROR, 0, Policy.bind("CVSMoveDeleteHook.folderDeletionFailure", resource.getFullPath().toString()))); //$NON-NLS-1$
 				} else if (resource.getType() == IResource.FILE) {
 					fileFound[0] = true;
 					IFile destFile = null;
@@ -255,25 +258,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 				// The CVS core delta listener will mark each file as an outgoing deletion
 				// so we just need to delete each file and let the delta listener do its thing
 				try {
-					if ( ! makeFolderOutgoingDeletion(tree, source, destination, updateFlags, monitor) && ! dialogShown && destination == null) {
-						showDialog(new IRunnableWithShell() {
-							public void run(Shell shell) {
-								MoveDeleteMessageDialog dialog = new MoveDeleteMessageDialog(
-									shell,
-									title, 
-									null,	// accept the default window icon
-									message, 
-									MessageDialog.QUESTION, 
-									new String[] {IDialogConstants.OK_LABEL}, 
-									0, false); 	// yes is the default
-								performDelete[0] = dialog.open() == 0;
-								if (performDelete[0]) {
-									CVSProviderPlugin.getPlugin().setPromptOnFolderDelete( ! dialog.isDontShowAgain());
-									CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, CVSProviderPlugin.getPlugin().getPromptOnFolderDelete());
-								}
-							}
-						});
-					}
+					makeFolderOutgoingDeletion(tree, source, destination, updateFlags, monitor);
 				} catch (final CoreException e) {
 					showDialog(new IRunnableWithShell() {
 						public void run(Shell shell) {
