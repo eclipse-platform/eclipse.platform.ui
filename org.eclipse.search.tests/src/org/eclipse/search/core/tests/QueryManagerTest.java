@@ -18,10 +18,6 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class QueryManagerTest extends TestCase {
 	public void testRemoveQuery() {
 		ISearchQuery query= new NullQuery();

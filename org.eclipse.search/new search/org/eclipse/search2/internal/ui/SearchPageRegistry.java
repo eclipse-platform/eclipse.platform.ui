@@ -21,10 +21,6 @@ import org.eclipse.search.ui.ISearchResultPage;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class SearchPageRegistry {
 	private Map fClassToInstance;
 	private Map fTargetClassNameToExtension;

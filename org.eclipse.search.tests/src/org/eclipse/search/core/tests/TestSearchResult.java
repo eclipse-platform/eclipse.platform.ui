@@ -19,11 +19,6 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 
-
-/**
- * @author Thomas Mäder
- *
- */
 public class TestSearchResult extends TestCase {
 	
 	public void testAddMatch() {

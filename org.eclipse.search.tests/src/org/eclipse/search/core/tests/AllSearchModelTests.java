@@ -13,10 +13,6 @@ package org.eclipse.search.core.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class AllSearchModelTests extends TestSuite {
 
 	/*

@@ -16,10 +16,6 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class NullSearchResult extends AbstractTextSearchResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getText(org.eclipse.search.ui.ISearchResult)

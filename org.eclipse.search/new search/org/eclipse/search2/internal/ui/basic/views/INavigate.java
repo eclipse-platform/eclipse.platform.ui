@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
 
-/**
- * @author Thomas Mäder
- *
- */
 public interface INavigate {
 
 	void navigateNext(boolean forward);
