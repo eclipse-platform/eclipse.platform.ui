@@ -179,7 +179,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
         for (int k = 0; k < projects.length; k++) {
             IProject project = projects[k];
             RepositoryProvider provider = RepositoryProvider.getProvider(project);
-            if (provider.getID().equals(providerId)) {
+            if (provider != null && provider.getID().equals(providerId)) {
                 return true;
             }
         }
