@@ -20,9 +20,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 
 /**
- * The perspective manager monitors launches, and changes
- * perspectives as dictated by the associated launch 
- * configurations.
+ * The perspective manager manages the 'perspective' settings
+ * defined by lanuch configurations. Specifically it: <ul>
+ * <li>changes perspectives as launches are registered</li>
+ * <li>(will) change perspective when a thread suspends</li>
+ * <li>(will) open the console when there is program output</li>
+ * </ul>
  * 
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
