@@ -120,12 +120,7 @@ public class ViewsPreferencePage
 			store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 		viewAlignment = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
-		Composite outerComposite = new Composite(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		outerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		outerComposite.setFont(font);
-		
-		Composite composite = new Composite(outerComposite, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(font);
 
@@ -186,40 +181,28 @@ public class ViewsPreferencePage
 		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		activeHyperlinkColorEditor.load();
 
-		Group colorSchemeComposite = new Group(composite, SWT.NONE);
-		colorSchemeComposite.setLayout(new GridLayout());
-		colorSchemeComposite.setText("Workbench Color Theme"); 
-		colorSchemeComposite.setFont(font);
-		colorSchemeComposite.setLayoutData(data); 
-		
-		//Add in an intermediate composite to allow for spacing
-		Composite spacingComposite2 = new Composite(outerComposite, SWT.NONE);
-		GridLayout spacingLayout2 = new GridLayout();
-		spacingLayout2.numColumns = 4;
-		spacingComposite2.setLayout(spacingLayout2);
-		spacingComposite2.setFont(font);
-
-		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
+		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite);
 
 		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		colorSchemeBGColorEditor.load();
 		
-		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
+		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite);
 
 		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		colorSchemeFGColorEditor.load();
 		
-		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
+		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite);
 
-		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeSelBGColorEditor.load();
+		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeBGColorEditor.load();
 		
-		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
+		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite);
 
-		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeSelFGColorEditor.load();
+		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeFGColorEditor.load();
 		
-		return outerComposite;
+		
+		return composite;
 	}
 
 	/**
@@ -364,11 +347,7 @@ public class ViewsPreferencePage
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
 		activeHyperlinkColorEditor.loadDefault();
-		colorSchemeBGColorEditor.loadDefault();
-		colorSchemeFGColorEditor.loadDefault();
-		colorSchemeSelBGColorEditor.loadDefault();
-		colorSchemeSelFGColorEditor.loadDefault();
-		
+
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -394,13 +373,12 @@ public class ViewsPreferencePage
 
 		colorIconsEditor.store();
 		errorColorEditor.store();
-		hyperlinkColorEditor.store();
-		activeHyperlinkColorEditor.store();
 		colorSchemeBGColorEditor.store();
 		colorSchemeFGColorEditor.store();
 		colorSchemeSelBGColorEditor.store();
 		colorSchemeSelFGColorEditor.store();
-		
+		hyperlinkColorEditor.store();
+		activeHyperlinkColorEditor.store();
 		return true;
 	}
 }

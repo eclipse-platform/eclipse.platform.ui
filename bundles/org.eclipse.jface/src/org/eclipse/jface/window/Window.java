@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.window;
 
+import java.util.Iterator;
+
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -555,6 +558,8 @@ public int open() {
 	// limit the shell size to the display size
 	constrainShellSize();
 	
+	ColorSchemeService.setSchemeColors(getShell());
+	
 	// open the window
 	shell.open();
 
@@ -670,5 +675,6 @@ public static void setExceptionHandler(IExceptionHandler handler) {
 	if(exceptionHandler instanceof DefaultExceptionHandler)
 		exceptionHandler = handler;
 }
+
 
 }
