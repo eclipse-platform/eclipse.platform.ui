@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -1170,7 +1171,8 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	// editor area, we can not drop.
 	if (!(e.dropTarget instanceof ViewPane || 
 		  e.dropTarget instanceof PartTabFolder ||
-		  e.dropTarget instanceof EditorArea)) {
+		  e.dropTarget instanceof EditorArea ||
+		  e.dropTarget instanceof ShortcutBarPart)) {
 			e.dropTarget = null;
 			e.relativePosition = PartDragDrop.INVALID;
 	}
@@ -1181,6 +1183,13 @@ private void onFastViewIconDrag(PartDropEvent e) {
 			e.dropTarget = null;
 			e.relativePosition = PartDragDrop.INVALID;
 	}
+	// If the drop target is the shortcut bar, we can 
+	// only drop in the middle
+	if (e.dropTarget instanceof ShortcutBarPart &&
+	    !(e.relativePosition == PartDragDrop.CENTER)) {
+			e.dropTarget = null;
+			e.relativePosition = PartDragDrop.INVALID;
+	}	
 }
 /**
  * Notification sent when drop happens. Only views and
@@ -1226,7 +1235,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	// If the dragged element is a fast view icon, set the dragSource to be the
 	// view represented by the icon before it is dropped into the page layout,
 	// and remove the view from the fast view list.
-	if (e.dragSource instanceof ShortcutBarPart) {
+	if (e.dragSource instanceof ShortcutBarPart && !(e.dropTarget instanceof ShortcutBarPart)) {
 		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 		ToolItem icon = window.getShortcutDND().getDraggedItem();
 		IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
@@ -1270,7 +1279,17 @@ private void onFastViewIconDrag(PartDropEvent e) {
 			if (isZoomed())
 				zoomOut();
 			if (e.dropTarget instanceof ShortcutBarPart) {
-				makeFast(e.dragSource);
+				if (e.dragSource instanceof ShortcutBarPart) 
+					//fast view is beig dragged, move it to the new posotion
+					moveFastView((ShortcutBarPart)e.dragSource, e.cursorX, e.cursorY);
+				else {
+					//fast view being created, then move it to its desired position
+					makeFast(e.dragSource);
+					//NOTE: when creating a fast view, the e.cursorX does not seem to 
+					//report the accurate position.  Since we are only interested in the
+					//vertical position, hard code the x value to a value over the shortcut bar.
+					reorderFastViews((ShortcutBarPart)e.dropTarget, ((ViewPane)e.dragSource).getViewReference(), 15, e.cursorY);
+				}
 				break;
 			}
 			if (e.dragSource instanceof ViewPane && e.dropTarget instanceof PartTabFolder) {
@@ -1292,6 +1311,48 @@ private void onFastViewIconDrag(PartDropEvent e) {
 			break;
 	}
 }
+/**
+ * Method moveFastView.
+ * @param shortcutBarPart
+ * @param x
+ * @param y
+ */
+private void moveFastView(ShortcutBarPart shortcutBarPart, int x, int y) {
+	
+	// Get the fast view that is being dragged
+	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+	ToolItem draggedItem = window.getShortcutDND().getDraggedItem();
+	IViewReference draggedView = (IViewReference)draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
+	
+	//move the fast view to the new position
+	reorderFastViews(shortcutBarPart, draggedView, x, y);
+}
+/**
+ * Method reorderFastViews.
+ * @param shortcutBarPart
+ * @param draggedView
+ * @param x
+ * @param y
+ */
+private void reorderFastViews(
+	ShortcutBarPart shortcutBarPart,
+	IViewReference draggedView,
+	int x,
+	int y) {
+	
+	// Get the fast view that it is being dragged to
+	IViewReference destinationView = null;	
+	ToolBar bar = (ToolBar)shortcutBarPart.getControl();
+	ToolItem destItem = bar.getItem(new Point(x,y));
+	
+	if (destItem != null)  // destination is a toolitem on the shortcut bar
+		destinationView = (IViewReference)destItem.getData(ShowFastViewContribution.FAST_VIEW);
+
+	//move the view and refresh the menu to show the change
+	page.getActivePerspective().moveFastView(draggedView, destinationView);
+	((WorkbenchWindow)page.getWorkbenchWindow()).getShortcutBar().update(true);
+}
+
 /**
  * Returns whether changes to a part will affect zoom.
  * There are a few conditions for this ..

@@ -41,6 +41,9 @@ public interface IPreferenceConstants {
 	public final static String EDITORS = "editors"; //$NON-NLS-1$
 	public final static String RESOURCES = "resourcetypes"; //$NON-NLS-1$
 
+	//saving perspective layouts
+	public final static String PERSPECTIVES = "perspectives";
+
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
 	//Boolean:	true = replace dirty editor if no other editors to reuse (prompt for save); 

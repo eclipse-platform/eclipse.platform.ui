@@ -426,10 +426,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			}
 		}
 		
-		// Delete the perspectives
-		for (int i = 0; i < perspToDelete.size(); i++)
-			perspectiveRegistry.deletePerspective(
-				(IPerspectiveDescriptor) perspToDelete.get(i));
+		//Delete the perspectives from the registry
+		perspectiveRegistry.deletePerspectives(perspToDelete);
 		return true;
 	}
 	/**
@@ -445,8 +443,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			return false;
 
 		// Revert the perspectives
-		for (int i = 0; i < perspToRevert.size(); i++)
-			((PerspectiveDescriptor) perspToRevert.get(i)).revertToPredefined();
+		perspectiveRegistry.revertPerspectives(perspToRevert);
 
 		// Update perspective history.
 		 ((Workbench) workbench).getPerspectiveHistory().refreshFromRegistry();
@@ -491,7 +488,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		if (desc != null) {
 			revertButton.setEnabled(
 				desc.isPredefined()
-					&& desc.hasCustomFile()
+					&& desc.hasCustomDefinition()
 					&& !perspToRevert.contains(desc));
 			deleteButton.setEnabled(!desc.isPredefined());
 			setDefaultButton.setEnabled(true);

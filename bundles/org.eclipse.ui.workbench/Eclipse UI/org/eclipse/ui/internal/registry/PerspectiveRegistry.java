@@ -5,13 +5,32 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -23,6 +42,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	private String defPerspID;
 	private static final String EXT = "_persp.xml";//$NON-NLS-1$
 	private static final String ID_DEF_PERSP = "PerspectiveRegistry.DEFAULT_PERSP";//$NON-NLS-1$
+	private static final String PERSP = "_persp"; //$NON-NLS-1$
+	private static final char SPACE_DELIMITER = ' '; //$NON-NLS-1$
+	//keep track of the perspectives the user has selected to remove or revert
+	private ArrayList perspToRemove = new ArrayList(5);
+	private ArrayList perspListToRemove = new ArrayList(5);
+	
 /**
  * Construct a new registry.
  *
@@ -31,13 +56,99 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 public PerspectiveRegistry(File rootFolder) {
 	super();
 	this.rootFolder = rootFolder;
+	
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	store.addPropertyChangeListener(new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			/* To ensure the that no custom perspective definitions are deleted
+			 * when preferences are imported, merge old and new values */
+			if (event.getProperty().endsWith(PERSP)) {
+				/* A Perspective is being changed, merge */
+				mergePerspectives(event);
+			} else if (event.getProperty().equals(IPreferenceConstants.PERSPECTIVES)) {
+				/* The list of perpsectives is being changed, merge */
+				mergePerspectivesList(event);
+			}
+		}
+
+		private void mergePerspectives(PropertyChangeEvent event) {
+			IPreferenceStore store = (IPreferenceStore)event.getSource();			
+			if (event.getNewValue() == null) { 
+				/* Perpsective is being removed; if the user has deleted or reverted 
+				 * a custom perspective, let the change pass through.
+				 * Otherwise, restore the custom perspective entry */
+				 
+				// Find the matching descriptor in the registry
+				IPerspectiveDescriptor [] perspectiveList = getPerspectives();
+				for (int i = 0; i < perspectiveList.length; i++) {
+					PerspectiveDescriptor desc = (PerspectiveDescriptor) perspectiveList[i];
+					String id = desc.getId();	
+					if (event.getProperty().startsWith(id)) { //found descriptor
+						//see if the perspective has been flagged for reverting or deleting
+						if ( ! perspToRemove.contains(id)) {
+							//restore
+							store.setValue(id + PERSP, (String)event.getOldValue());
+						} else {	//remove element from the list
+							perspToRemove.remove(id);
+						}
+					}
+				}
+			} else if ((event.getOldValue() == null || event.getOldValue().equals(""))) {
+				/* New perspective is being added, update the perspectiveRegistry to 
+				 * contain the new custom perspective */
+				 
+				String id = event.getProperty().substring(0, event.getProperty().lastIndexOf(PERSP));
+				if (findPerspectiveWithId(id) == null) { 
+					//perspective does not already exist in registry, add it
+					PerspectiveDescriptor desc = new PerspectiveDescriptor(null, null, null);
+					StringReader reader = new StringReader((String)event.getNewValue());
+					try {
+						XMLMemento memento = XMLMemento.createReadRoot(reader);
+						desc.restoreState(memento);
+						children.add(desc);						
+					} catch (WorkbenchException e) {
+					}
+				}	
+			}
+		}
+		
+		private void mergePerspectivesList(PropertyChangeEvent event) {
+			IPreferenceStore store = (IPreferenceStore)event.getSource();			
+			if (event.getNewValue() == null) { 
+				/* Value being wiped out, restore it */
+				store.setValue(IPreferenceConstants.PERSPECTIVES, (String)event.getOldValue());
+			} else { 
+				/* List is being altered; if the user has deleted or reverted 
+				 * a custom perspective, let the change pass through.
+				 * Otherwise, merge the old and new list */
+				String newList = (String)event.getNewValue();
+				String [] oldList = StringConverter.asArray((String)event.getOldValue());
+				for (int i = 0; i < oldList.length; i++) {
+					if (newList.indexOf(oldList[i]) == -1) { //not there, see if it should be added
+						PerspectiveDescriptor desc = (PerspectiveDescriptor)findPerspectiveWithId(oldList[i]);
+						if (desc != null) {
+							//see if the perspective has been flagged for reverting or deleting
+							if ( ! perspListToRemove.contains(oldList[i])) {
+								//user was not trying to remove, add to list
+								newList = new StringBuffer().append(newList).append(SPACE_DELIMITER).append(oldList[i]).toString();
+							} else { //remove element from list
+								perspListToRemove.remove(oldList[i]);
+							}
+						}
+					}
+				}
+				//save the updated list
+				store.setValue(IPreferenceConstants.PERSPECTIVES, newList.trim());
+			}
+		}		
+	});
+
 }
 /**
  * Adds a perspective.  This is typically used by the reader.
  */
 public void addPerspective(PerspectiveDescriptor desc) {
 	children.add(desc);
-	desc.setCustomFile(new File(rootFolder, desc.getId() + EXT));
 }
 /**
  * Create a new perspective.
@@ -52,15 +163,31 @@ public PerspectiveDescriptor createPerspective(String label,PerspectiveDescripto
 	String id = label.replace(' ', '_');
 	id = id.trim();
 
-	// Calculate storage file
-	String name = id + EXT;
-	File file = new File(rootFolder, name);
-
 	// Create descriptor.
 	PerspectiveDescriptor desc = new PerspectiveDescriptor(id, label,originalDescriptor);
-	desc.setCustomFile(file);
 	children.add(desc);
 	return desc;
+}
+/**
+ * Reverts a list of perspectives back to the plugin definition
+ * @param perspToRevert
+ */
+public void revertPerspectives(ArrayList perspToRevert) {
+	//indicate that the user is removing these perspectives	
+	for (int i = 0; i < perspToRevert.size(); i++) {
+		PerspectiveDescriptor desc = (PerspectiveDescriptor) perspToRevert.get(i);
+		perspToRemove.add(desc.getId());
+		perspListToRemove.add(desc.getId());
+		desc.revertToPredefined();
+	}
+}
+/**
+ * Deletes a list of perspectives
+ * @param perspToDelete
+ */
+public void deletePerspectives(ArrayList perspToDelete) {	
+	for (int i = 0; i < perspToDelete.size(); i++)
+		deletePerspective((IPerspectiveDescriptor) perspToDelete.get(i));
 }
 /**
  * Delete a perspective.
@@ -69,10 +196,43 @@ public PerspectiveDescriptor createPerspective(String label,PerspectiveDescripto
 public void deletePerspective(IPerspectiveDescriptor in) {
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)in;
 	if (!desc.isPredefined()) {
+		//indicate that the user is removing these perspectives
+		perspToRemove.add(desc.getId());
+		perspListToRemove.add(desc.getId());
 		children.remove(desc);
-		desc.deleteCustomFile();
+		desc.deleteCustomDefinition();
 		verifyDefaultPerspective();
 	}
+}
+/**
+ * Removes the custom definition of a perspective from the preference sotre
+ * @param perspectiveDescriptor
+ */
+/* package */ void deleteCustomDefinition(PerspectiveDescriptor desc) {
+	//remove the entry from the preference store.
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	
+	/* To delete the perspective definition from the preference store, use the 
+	 * setToDefault method.  Since no default is defined, this will remove the
+	 * entry */
+	store.setToDefault(desc.getId() + PERSP);
+	
+	//remove the id from the list of perspective ids
+	String customPerspectives = store.getString(IPreferenceConstants.PERSPECTIVES);
+	int strLoc = customPerspectives.indexOf(desc.getId());
+	if (strLoc > -1) {  //string found, remove it
+		StringBuffer customPerspectivesBuffer = new StringBuffer(customPerspectives);
+		customPerspectivesBuffer.delete(strLoc, strLoc + customPerspectives.length() + 1);
+		store.setValue(IPreferenceConstants.PERSPECTIVES, customPerspectivesBuffer.toString().trim());
+	}
+}
+/**
+ * Method hasCustomDefinition.
+ * @param perspectiveDescriptor
+ */
+/* package */ boolean hasCustomDefinition(PerspectiveDescriptor desc) {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	return store.contains(desc.getId() + PERSP);
 }
 /**
  * @see IPerspectiveRegistry
@@ -136,24 +296,115 @@ public void load() {
  * Read children from the file system.
  */
 private void loadCustom() {
+	Reader reader = null;	
+	
+	/* Get the entries from the Preference store */
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	
+	/* Get the space-delimited list of custom perspective ids */ 
+	String customPerspectives = store.getString(IPreferenceConstants.PERSPECTIVES);
+	String [] perspectivesList = StringConverter.asArray(customPerspectives);
+
+	for (int i = 0; i < perspectivesList.length; i++) {
+		try {
+			String xmlString = store.getString(perspectivesList[i] + PERSP);
+			if(xmlString != null && xmlString.length() != 0) 
+				reader = new StringReader(xmlString);
+				
+			// Restore the layout state.
+			XMLMemento memento = XMLMemento.createReadRoot(reader);
+			PerspectiveDescriptor newPersp = new PerspectiveDescriptor(null, null, null);
+			newPersp.restoreState(memento);
+			String id = newPersp.getId();
+			IPerspectiveDescriptor oldPersp = findPerspectiveWithId(id);
+			if (oldPersp == null)
+				children.add(newPersp);	
+			reader.close();
+		} catch (WorkbenchException e) {
+		} catch (IOException e) {
+		}
+	}
+		
+	/* Get the entries from files, if any */
 	if (rootFolder.isDirectory()) {
 		File [] fileList = rootFolder.listFiles();
 		int nSize = fileList.length;
 		for (int nX = 0; nX < nSize; nX ++) {
 			File file = fileList[nX];
 			if (file.getName().endsWith(EXT)) {
+				//get the memento
+				InputStream stream = null;
 				try {
-					PerspectiveDescriptor newPersp = new PerspectiveDescriptor(file);
-					String id = newPersp.getId();
-					IPerspectiveDescriptor oldPersp = findPerspectiveWithId(id);
+					stream = new FileInputStream(file);
+					reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+					
+					// Restore the layout state.
+					XMLMemento memento = XMLMemento.createReadRoot(reader);
+					PerspectiveDescriptor newPersp = new PerspectiveDescriptor(null, null, null);
+					newPersp.restoreState(memento);
+					IPerspectiveDescriptor oldPersp = findPerspectiveWithId(newPersp.getId());
 					if (oldPersp == null)
 						children.add(newPersp);
+					
+					//save to the preference store
+					saveCustomPersp(newPersp, memento);
+					
+					//delete the file
+					file.delete();
+
+					reader.close();
+					stream.close();					
 				} catch (IOException e) {
 				} catch (WorkbenchException e) {
 				}
 			}
 		}
 	}
+}
+/**
+ * Saves a custom perspective definition to the preference store.
+ * @param desc
+ */
+public void saveCustomPersp(PerspectiveDescriptor realDesc, XMLMemento memento) throws IOException {
+
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	
+	// Save it to the preference store.
+	Writer writer = new StringWriter();;
+	
+	memento.save(writer);
+	writer.close();
+	store.setValue(realDesc.getId() + PERSP,writer.toString());
+	
+	/* If necessary, add the perspective id to the space-delimited 
+	 * list of custom perspective ids in the preference store */
+	
+	String customPerspectives = store.getString(IPreferenceConstants.PERSPECTIVES);	
+	String [] perspectivesList = StringConverter.asArray(customPerspectives);		
+	for (int i = 0; i < perspectivesList.length; i++) {
+		if (perspectivesList[i].equals(realDesc.getId()))
+			return; //already exists, no need to add it.
+	}
+	customPerspectives = new StringBuffer().append(customPerspectives).append(SPACE_DELIMITER).append(realDesc.getId()).toString();
+	store.setValue(IPreferenceConstants.PERSPECTIVES, customPerspectives.trim());
+
+}
+/**
+ * Gets the Custom perspective definition from the preference store.
+ * @param string
+ * @return IMemento
+ */
+public IMemento getCustomPersp(String id) throws WorkbenchException, IOException {
+	Reader reader = null;
+	
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	String xmlString = store.getString(id + PERSP);
+		if(xmlString != null && xmlString.length() != 0) { //defined in store
+			reader = new StringReader(xmlString);
+		} 
+	XMLMemento memento = XMLMemento.createReadRoot(reader);
+	reader.close();
+	return memento;
 }
 /**
  * Read children from the plugin registry.

@@ -230,7 +230,7 @@ private void createInitialActionSets(List stringList) {
 private void createPresentation(PerspectiveDescriptor persp)
 	throws WorkbenchException
 {
-	if (persp.hasCustomFile()) {
+	if (persp.hasCustomDefinition()) {
 		loadCustomPersp(persp);
 	} else {
 		loadPredefinedPersp(persp);
@@ -546,11 +546,11 @@ public boolean isFastView(IViewReference ref) {
  */
 private void loadCustomPersp(PerspectiveDescriptor persp)
 {
+	//get the layout from the registry	
+	PerspectiveRegistry perspRegistry = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	try {
-		InputStream stream = new FileInputStream(persp.getCustomFile());
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
+		IMemento memento = perspRegistry.getCustomPersp(persp.getId());
 		// Restore the layout state.
-		IMemento memento = XMLMemento.createReadRoot(reader);
 		MultiStatus status = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
 			WorkbenchMessages.format("Perspective.unableToRestorePerspective",new String[]{persp.getLabel()}),
@@ -560,7 +560,6 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 		if(status.getSeverity() != IStatus.OK) {
 			unableToOpenPerspective(persp,status);
 		}
-		reader.close();
 	} catch (IOException e) {
 		unableToOpenPerspective(persp,null);
 	} catch (WorkbenchException e) {
@@ -568,7 +567,8 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 	}
 }
 private void unableToOpenPerspective(PerspectiveDescriptor persp,IStatus status) {
-	persp.deleteCustomFile();
+	PerspectiveRegistry perspRegistry = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+	perspRegistry.deletePerspective(persp);
 	String title = WorkbenchMessages.getString("Perspective.problemRestoringTitle");  //$NON-NLS-1$
 	String msg = WorkbenchMessages.getString("Perspective.errorReadingState"); //$NON-NLS-1$
 	if(status == null) {
@@ -962,9 +962,12 @@ public void saveDesc() {
  * Save the layout.
  */
 public void saveDescAs(IPerspectiveDescriptor desc) {		
+	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
+	//get the layout from the registry	
+	PerspectiveRegistry perspRegistry = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	// Capture the layout state.	
 	XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
-	IStatus status = saveState(memento, (PerspectiveDescriptor)desc, false);
+	IStatus status = saveState(memento, realDesc, false);
 	if(status.getSeverity() == IStatus.ERROR) {
 		ErrorDialog.openError((Shell)null, 
 			WorkbenchMessages.getString("Perspective.problemSavingTitle"),  //$NON-NLS-1$
@@ -972,17 +975,12 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 			status);
 		return;
 	}
-
-	// Save it to a file.
-	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
+	//save it to the preference store
 	try {
-		OutputStream stream = new FileOutputStream(realDesc.getCustomFile());
-		Writer writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
-		memento.save(writer);
-		writer.close();
+		perspRegistry.saveCustomPersp(realDesc, memento);
 		descriptor = realDesc;
 	} catch (IOException e) {
-		realDesc.deleteCustomFile();
+		perspRegistry.deletePerspective(realDesc);
 		MessageDialog.openError((Shell)null, 
 			WorkbenchMessages.getString("Perspective.problemSavingTitle"),  //$NON-NLS-1$
 			WorkbenchMessages.getString("Perspective.problemSavingMessage")); //$NON-NLS-1$
@@ -1380,6 +1378,24 @@ public String getOldPartID() {
  */
 public void setOldPartID(String oldPartID) {
 	this.oldPartID = oldPartID;
+}
+/**
+ * Method moveFastView.  Moves draggedView to the position above
+ * destinationView.  Moves draggedView to the end if destinationView is null
+ * @param draggedView
+ * @param destinationView
+ */
+/*package*/ void moveFastView(IViewReference draggedView, IViewReference destinationView) {
+	//do nothing if views are the same
+	if (draggedView == destinationView)
+		return;
+		
+	//move the view
+	fastViews.remove(draggedView);
+	if (destinationView == null) //add it to the end
+		fastViews.add(draggedView);
+	else
+		fastViews.add(fastViews.indexOf(destinationView), draggedView);
 }
 
 }

@@ -4,7 +4,6 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -33,7 +32,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private boolean singleton;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;
-	private File customFile;
 	
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
@@ -42,30 +40,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private static final String ATT_SINGLETON="singleton";//$NON-NLS-1$
 	
-/**
- * Create a descriptor from a file.
- */
-public PerspectiveDescriptor(File file)
-	throws IOException, WorkbenchException
-{
-	super();
-	InputStream stream = null;
-	try {
-		stream = new FileInputStream(file);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
-		// Restore the layout state.
-		IMemento memento = XMLMemento.createReadRoot(reader);
-		IStatus status = restoreState(memento);
-		reader.close();
-		stream = null;
-		customFile = file;
-		if(status.getSeverity() == IStatus.ERROR)
-			throw new WorkbenchException(status);
-	} finally {
-		if (stream != null)
-			stream.close();
-	}
-}
 /**
  * Create a new empty descriptor.
  */
@@ -119,16 +93,11 @@ public IPerspectiveFactory createFactory() throws CoreException {
 	return (IPerspectiveFactory) obj;
 }
 /**
- * Deletes the custom file for a perspective..
+ * Deletes the custom definition for a perspective..
  */
-public boolean deleteCustomFile() {
-	return customFile.delete();
-}
-/**
- * Returns the custom file.
- */
-public File getCustomFile() {
-	return customFile;
+public void deleteCustomDefinition() {
+	((PerspectiveRegistry)WorkbenchPlugin.getDefault().
+		getPerspectiveRegistry()).deleteCustomDefinition(this);
 }
 /**
  * Returns the ID.
@@ -158,8 +127,9 @@ public String getOriginalId() {
 /**
  * Returns true if this perspective has a custom file.
  */
-public boolean hasCustomFile() {
-	return customFile.exists();
+public boolean hasCustomDefinition() {
+	return ((PerspectiveRegistry)WorkbenchPlugin.getDefault().
+		getPerspectiveRegistry()).hasCustomDefinition(this);
 }
 /**
  * Returns true if this perspective wants to be default.
@@ -194,12 +164,6 @@ public IStatus restoreState(IMemento memento) {
 		originalId = childMem.getString(IWorkbenchConstants.TAG_DESCRIPTOR);
 		label = childMem.getString(IWorkbenchConstants.TAG_LABEL);
 		className = childMem.getString(IWorkbenchConstants.TAG_CLASS);
-		String customFileStr = childMem.getString(IWorkbenchConstants.TAG_FILE);
-		if(customFileStr != null) {
-			IPath path = WorkbenchPlugin.getDefault().getStateLocation();
-			path = path.append(customFileStr);
-			customFile = path.toFile();
-		}
 		singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
 	
 		//Find a descriptor in the registry.
@@ -218,7 +182,7 @@ public IStatus restoreState(IMemento memento) {
  */
 public void revertToPredefined() {
 	if (isPredefined())
-		deleteCustomFile();
+		deleteCustomDefinition();
 }
 /**
  * @see IPersistable
@@ -230,15 +194,8 @@ public IStatus saveState(IMemento memento) {
 		childMem.putString(IWorkbenchConstants.TAG_DESCRIPTOR,originalId);
 	childMem.putString(IWorkbenchConstants.TAG_LABEL,label);
 	childMem.putString(IWorkbenchConstants.TAG_CLASS,className);
-	childMem.putString(IWorkbenchConstants.TAG_FILE,customFile.getName());
 	if (singleton)
 		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
 	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
-}
-/**
- * Sets the custom file.
- */
-public void setCustomFile(File file) {
-	this.customFile = file;
 }
 }
