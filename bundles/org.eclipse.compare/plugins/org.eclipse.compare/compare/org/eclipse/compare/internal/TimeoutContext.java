@@ -192,7 +192,10 @@ public class TimeoutContext {
 			fSubTaskLabel.setFont(parent.getFont());
 						
 			// update with values fProgressMonitor
-			fTaskLabel.setText(fProgressMonitor.fTask);
+			String s= fProgressMonitor.fTask;
+			if (s == null)
+				s= ""; //$NON-NLS-1$
+			fTaskLabel.setText(s);
 			
 			if (fProgressMonitor.fMaxWork == IProgressMonitor.UNKNOWN)
 				fProgressIndicator.beginAnimatedTask();

@@ -114,6 +114,7 @@ import org.eclipse.compare.internal.Utilities;
 				if (c != null) {
 					Clipboard clipboard= new Clipboard(c.getDisplay());
 					Object o= clipboard.getContents(TextTransfer.getInstance());
+					clipboard.dispose();
 					if (o instanceof String)
 						reader= new StringReader((String)o);
 				}
@@ -396,6 +397,7 @@ import org.eclipse.compare.internal.Utilities;
 			if (c != null) {
 				Clipboard clipboard= new Clipboard(c.getDisplay());
 				Object o= clipboard.getContents(TextTransfer.getInstance());
+				clipboard.dispose();
 				if (o instanceof String) {
 					String s= ((String) o).trim();
 					if (s.length() > 0)
