@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +160,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Combo comboContext;
 	private Combo comboKeyConfiguration;	
 	private Map commandDefinitionsById;
+	private Map commandIdsByCategoryId;
 	private Map commandIdsByUniqueName;
 	private Map commandUniqueNamesById;
 	private CommandManager commandManager;
@@ -179,7 +181,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Label labelContextExtends;
 	private Label labelKeyConfiguration;
 	private Label labelKeyConfigurationExtends;
-	private Label labelKeySequence;
+	private Label labelKeySequence;	
 	private Table tableAssignmentsForCommand;
 	private Table tableAssignmentsForKeySequence;
 	private KeySequenceText textKeySequence;
@@ -358,9 +360,32 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				Map.Entry entry = (Map.Entry) iterator.next();
 				keyConfigurationUniqueNamesById.put(entry.getValue(), entry.getKey());
 			}
-		
-			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
-			Collections.sort(categoryNames, Collator.getInstance());						
+
+			commandIdsByCategoryId = new HashMap();
+			iterator = commandDefinitionsById.values().iterator();
+			
+			while (iterator.hasNext()) {
+				ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
+				String commandId = commandDefinition.getId();
+				String categoryId = commandDefinition.getCategoryId();				
+				Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+				
+				if (commandIds == null) {
+					commandIds = new HashSet();
+					commandIdsByCategoryId.put(categoryId, commandIds);
+				}
+				
+				commandIds.add(commandId);
+			}
+
+			Map categoryIdsInUseByUniqueName = new HashMap(categoryIdsByUniqueName);
+			categoryIdsInUseByUniqueName.values().retainAll(commandIdsByCategoryId.keySet());		
+			List categoryNames = new ArrayList(categoryIdsInUseByUniqueName.keySet());
+			Collections.sort(categoryNames, Collator.getInstance());
+			
+			if (commandIdsByCategoryId.containsKey(null))						
+				categoryNames.add(0, Util.translateString(resourceBundle, "other")); //$NON-NLS-1$
+
 			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
 			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
 			Collections.sort(commandNames, Collator.getInstance());						
@@ -374,7 +399,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
 			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
 			// TODO relayout page if any setVisible(false)		
-			boolean showCategory = !categoryIdsByUniqueName.isEmpty();
+			boolean showCategory = !categoryIdsInUseByUniqueName.isEmpty();
 			labelCategory.setVisible(showCategory);
 			comboCategory.setVisible(showCategory);									
 			boolean showContext = !contextIdsByUniqueName.isEmpty();
@@ -432,13 +457,18 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
-		gridLayout.numColumns = 3;
 		composite.setLayout(gridLayout);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gridData);
-		labelKeyConfiguration = new Label(composite, SWT.LEFT);
+		Composite compositeKeyConfiguration = new Composite(composite, SWT.NULL);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 3;
+		compositeKeyConfiguration.setLayout(gridLayout);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		compositeKeyConfiguration.setLayoutData(gridData);
+		labelKeyConfiguration = new Label(compositeKeyConfiguration, SWT.LEFT);
 		labelKeyConfiguration.setText(Util.translateString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
-		comboKeyConfiguration = new Combo(composite, SWT.READ_ONLY);
+		comboKeyConfiguration = new Combo(compositeKeyConfiguration, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		comboKeyConfiguration.setLayoutData(gridData);
@@ -449,39 +479,21 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
-		labelKeyConfigurationExtends = new Label(composite, SWT.LEFT);
+		labelKeyConfigurationExtends = new Label(compositeKeyConfiguration, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		labelKeyConfigurationExtends.setLayoutData(gridData);
-
 		Control spacer = new Composite(composite, SWT.NULL);
 		gridData = new GridData();
 		gridData.heightHint = 10;
-		gridData.horizontalSpan = 3;
 		gridData.widthHint = 10;
 		spacer.setLayoutData(gridData);
-			
 		groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		groupKeySequence.setLayout(gridLayout);	
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
 		groupKeySequence.setLayoutData(gridData);
 		groupKeySequence.setText(Util.translateString(resourceBundle, "groupKeySequence")); //$NON-NLS-1$	
-		
-		/* TODO remove?		
-		Composite compositeKeySequence = new Composite(groupKeySequence, SWT.NULL);
-		gridLayout = new GridLayout();
-		gridLayout.horizontalSpacing = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;		
-		gridLayout.numColumns = 2;
-		compositeKeySequence.setLayout(gridLayout);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		compositeKeySequence.setLayoutData(gridData);
-		*/
-
 		labelKeySequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData();
 		labelKeySequence.setLayoutData(gridData);
@@ -498,21 +510,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 		});
 
-		/* TODO remove?
-		buttonClear = new Button(compositeKeySequence, SWT.FLAT);
-		buttonClear.setImage(IMAGE_CLEAR);
-		gridData = new GridData();
-		gridData.heightHint = 20;
-		gridData.widthHint = 20;
-		buttonClear.setLayoutData(gridData);
-
-		buttonClear.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonClear();
-			}	
-		});
-		*/
-
 		labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		labelAssignmentsForKeySequence.setLayoutData(gridData);
@@ -520,27 +517,24 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableAssignmentsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 40;
+		gridData.heightHint = 50;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 520;
-		tableAssignmentsForKeySequence.setLayoutData(gridData);
-		int width = 0;
-		TableColumn tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
-		tableColumn.setResizable(false);
-		tableColumn.setText(Util.ZERO_LENGTH_STRING);
-		tableColumn.setWidth(20);
-		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumn.pack();		
-		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
-		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
-		tableColumn.pack();
-		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));		
+		tableAssignmentsForKeySequence.setLayoutData(gridData);		
+		TableColumn tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
+		tableColumnDelta.setResizable(false);
+		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
+		tableColumnDelta.setWidth(20);		
+		TableColumn tableColumnContext = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);		
+		tableColumnContext.setResizable(true);
+		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
+		tableColumnContext.pack();
+		tableColumnContext.setWidth(100);
+		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
+		tableColumnCommand.setResizable(true);
+		tableColumnCommand.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
+		tableColumnCommand.pack();
+		tableColumnCommand.setWidth(300);				
 
 		tableAssignmentsForKeySequence.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
@@ -559,7 +553,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridLayout.numColumns = 3;
 		groupCommand.setLayout(gridLayout);	
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
 		groupCommand.setLayoutData(gridData);
 		groupCommand.setText(Util.translateString(resourceBundle, "groupCommand")); //$NON-NLS-1$	
 		labelCategory = new Label(groupCommand, SWT.LEFT);
@@ -601,27 +594,24 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForCommand = new Table(groupCommand, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableAssignmentsForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 40;
+		gridData.heightHint = 50;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 520;
-		tableAssignmentsForCommand.setLayoutData(gridData);
-		width = 0;
-		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
-		tableColumn.setResizable(false);
-		tableColumn.setText(Util.ZERO_LENGTH_STRING);
-		tableColumn.setWidth(20);
-		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumn.pack();
-		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
-		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
-		tableColumn.pack();
-		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));	
+		tableAssignmentsForCommand.setLayoutData(gridData);		
+		tableColumnDelta = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
+		tableColumnDelta.setResizable(false);
+		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
+		tableColumnDelta.setWidth(20);				
+		tableColumnContext = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);		
+		tableColumnContext.setResizable(true);
+		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
+		tableColumnContext.pack();
+		tableColumnContext.setWidth(100);
+		TableColumn tableColumnKeySequence = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
+		tableColumnKeySequence.setResizable(true);
+		tableColumnKeySequence.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
+		tableColumnKeySequence.pack();
+		tableColumnKeySequence.setWidth(300);						
 
 		tableAssignmentsForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
@@ -635,9 +625,15 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
-		labelContext = new Label(groupCommand, SWT.LEFT);
+		Composite compositeContext = new Composite(composite, SWT.NULL);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 3;
+		compositeContext.setLayout(gridLayout);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		compositeContext.setLayoutData(gridData);
+		labelContext = new Label(compositeContext, SWT.LEFT);
 		labelContext.setText(Util.translateString(resourceBundle, "labelContext")); //$NON-NLS-1$
-		comboContext = new Combo(groupCommand, SWT.READ_ONLY);
+		comboContext = new Combo(compositeContext, SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		comboContext.setLayoutData(gridData);
@@ -648,7 +644,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
-		labelContextExtends = new Label(groupCommand, SWT.LEFT);
+		labelContextExtends = new Label(compositeContext, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		labelContextExtends.setLayoutData(gridData);
 		Composite compositeButton = new Composite(composite, SWT.NULL);
@@ -658,7 +654,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridLayout.numColumns = 3;
 		compositeButton.setLayout(gridLayout);
 		gridData = new GridData();
-		gridData.horizontalSpan = 3;
 		compositeButton.setLayoutData(gridData);
 		buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
@@ -744,7 +739,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private String getCategoryId() {
-		return (String) categoryIdsByUniqueName.get(comboCategory.getText());
+		return !commandIdsByCategoryId.containsKey(null) || comboCategory.getSelectionIndex() > 0 ? (String) categoryIdsByUniqueName.get(comboCategory.getText()) : null;
 	}
 	
 	private String getCommandId() {
@@ -830,12 +825,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		if (categoryUniqueName != null) {
 			String items[] = comboCategory.getItems();
 			
-			for (int i = 0; i < items.length; i++)
+			for (int i = commandIdsByCategoryId.containsKey(null) ? 1 : 0; i < items.length; i++)
 				if (categoryUniqueName.equals(items[i])) {
 					comboCategory.select(i);
 					break;		
 				}
-		}
+		} else if (commandIdsByCategoryId.containsKey(null))
+			comboCategory.select(0);
 	}
 	
 	private void setCommandId(String commandId) {				
@@ -897,21 +893,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String commandId = getCommandId();
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
-		KeySequence keySequence = getKeySequence();
-		
-		updateLabelContextExtends();
+		KeySequence keySequence = getKeySequence();		
 		updateLabelKeyConfigurationExtends();		
-
+		updateLabelContextExtends();
 		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		tableAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
-
 		labelAssignmentsForCommand.setEnabled(commandId != null);
-		tableAssignmentsForCommand.setEnabled(commandId != null);
-		
-		labelContext.setEnabled(commandId != null);
-		comboContext.setEnabled(commandId != null);
-		labelContextExtends.setEnabled(commandId != null);
-
+		tableAssignmentsForCommand.setEnabled(commandId != null);		
 		buttonAdd.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		buttonRemove.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		buttonRestore.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());

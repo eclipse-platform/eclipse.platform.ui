@@ -56,7 +56,21 @@ public final class KeySequenceText {
 	public KeySequenceText(final Composite composite) {
 		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
-		text.setFont(composite.getFont());
+		
+		/* TODO doug: pls. investigate. works until one backspaces to an empty text field, at which point the font gets changed somehow 
+		if ("carbon".equals(SWT.getPlatform())) {
+			// don't worry about this font name here, it is the official menu font and point size on the mac.
+			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
+
+			text.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					font.dispose();
+				}
+			});	
+			
+			text.setFont(font);		
+		}
+		*/
 
 		// Add the key listener.
 		final Listener keyFilter = new KeyTrapListener();
@@ -181,7 +195,7 @@ public final class KeySequenceText {
 			dummySequence = KeySequence.getInstance(keyStrokes);
 		}
 
-		text.setText(/*"carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) :*/dummySequence.format());
+		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */ dummySequence.format());
 
 		// Update the caret position.
 		text.setSelection(text.getText().length());
