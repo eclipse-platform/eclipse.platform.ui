@@ -20,7 +20,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -275,6 +274,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			return;
 
 		super.createControl(parent);
+
+		// add the support for hiding the top row of widgets in the view
+		Control viewForm = getControl();
+		if (viewForm instanceof ViewForm2) {
+			((ViewForm2)viewForm).setMaximizeVisible(true);
+		}
 
 		setTabList();
 		
