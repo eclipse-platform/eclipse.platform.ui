@@ -15,6 +15,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
+import java.net.MalformedURLException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -72,7 +73,7 @@ protected void createContents(Composite parent) {
 		public void linkEntered(Control link) {
 			ISite site = currentSite.getSite();
 			if (site!=null) {
-				URL infoURL = site.getInfoURL();
+				URL infoURL = site.getInfoURL(); // do not show callback string
 				if (infoURL!=null) {
 					manager.setMessage(infoURL.toString());
 				}
@@ -88,7 +89,7 @@ protected void createContents(Composite parent) {
 				public void run() {
 					ISite site = currentSite.getSite();
 					if (site!=null) {
-						URL infoURL = site.getInfoURL();
+						URL infoURL = getURLforSite(site); // navigate with callback string
 						if (infoURL!=null) {
 							DetailsView dv = (DetailsView)getPage().getView();
 							dv.showURL(infoURL.toString());
@@ -97,7 +98,18 @@ protected void createContents(Composite parent) {
 				}
 			});
 		}
-	};
+		public URL getURLforSite(ISite site) {
+			URL link = site.getInfoURL();
+			String callback = WebInstallHandler.getCallbackString();
+			if (callback == null)
+				return link;
+			try {
+				return new URL(link.toExternalForm()+callback);
+			} catch (MalformedURLException e) {
+				return link;
+			}
+		}
+	};	
 	SelectableFormLabel link = new SelectableFormLabel(parent, SWT.NULL);
 	link.setText(UpdateUIPlugin.getResourceString(KEY_LINK));
 	factory.turnIntoHyperlink(link, listener);
