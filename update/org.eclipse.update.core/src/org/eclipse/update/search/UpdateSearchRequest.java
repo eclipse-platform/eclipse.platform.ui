@@ -190,6 +190,9 @@ public class UpdateSearchRequest {
 					if (qsite != null) {
 						// check for mapping
 						IUpdateSiteAdapter mappedSite = getMappedSite(updatePolicy, qsite);
+						// when there is no mapped site the feature is not updatable
+						if (mappedSite == null || mappedSite.getURL() == null)
+							continue;
 						SubProgressMonitor subMonitor =
 							new SubProgressMonitor(monitor, 1);
 						IStatus status =
