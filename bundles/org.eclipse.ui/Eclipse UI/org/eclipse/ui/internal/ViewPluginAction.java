@@ -20,29 +20,27 @@ public final class ViewPluginAction extends PartPluginAction {
  * This class adds the requirement that action delegates
  * loaded on demand implement IViewActionDelegate
  */
-public ViewPluginAction(IConfigurationElement actionElement, String runAttribute, IViewPart part) {
+public ViewPluginAction(IConfigurationElement actionElement, String runAttribute, IViewPart viewPart) {
 	super(actionElement, runAttribute);
-	viewPart = part;
+	this.viewPart = viewPart;
 	registerSelectionListener(viewPart);
 }
-/**
- * Creates an instance of the delegate class as defined on
- * the configuration element. It will also initialize
- * it with the view part.
+
+/** 
+ * Initialize an action delegate.
+ * Subclasses may override this.
  */
-protected IActionDelegate createDelegate() {
-   IActionDelegate delegate = super.createDelegate();
-   if (delegate == null) return null;
-   if (delegate instanceof IViewActionDelegate) {
-	   IViewActionDelegate viewDelegate = (IViewActionDelegate)delegate;
-	   viewDelegate.init(viewPart);
-   }
-   else {
-	  WorkbenchPlugin.log("Action should implement IViewActionDelegate: "+getText());//$NON-NLS-1$
-	  return null;
-   }
-   return delegate;
+protected IActionDelegate initDelegate(Object obj) 
+	throws WorkbenchException
+{
+	if (obj instanceof IViewActionDelegate) {
+		IViewActionDelegate vad = (IViewActionDelegate)obj;
+		vad.init(viewPart);
+		return vad;
+	} else
+		throw new WorkbenchException("Action must implement IViewActionDelegate"); //$NON-NLS-1$
 }
+
 /**
  * Returns true if the view has been set
  * The view may be null after the constructor is called and

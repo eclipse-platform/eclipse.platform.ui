@@ -54,11 +54,57 @@ public SelectionEnabler(IConfigurationElement configElement) {
 public boolean isEnabledForSelection(ISelection selection) {
 	// Optimize it.
 	if (mode == UNKNOWN) return false;
+
+	// Handle undefined selections.	
+	if (selection == null) 
+		selection = StructuredSelection.EMPTY;
+		
+	// According to the dictionary, a selection is "one that
+	// is selected", or "a collection of selected things".  
+	// In reflection of this, we deal with one or a collection.
+	if (selection instanceof IStructuredSelection)
+		return isEnabledFor((IStructuredSelection)selection);
+	else
+		return isEnabledFor(selection);
+}
+
+/**
+ * Returns true if given structured selection matches the
+ * conditions specified in the registry for
+ * this action.
+ */
+private boolean isEnabledFor(ISelection sel) {
+	Object obj = sel;
+	int count = sel.isEmpty() ? 0: 1;
 	
-	// Get selection count.
-	if (!(selection instanceof IStructuredSelection))
-	return false;
-	IStructuredSelection ssel = (IStructuredSelection)selection;
+	// Compare selection count with requirements.
+	if (count > 0 && mode == NONE) return false;
+	if (count == 0 && mode == ONE_OR_MORE) return false;
+	if (count > 1 && mode == NONE_OR_ONE) return false;
+	if (count < 2 && mode == MULTIPLE) return false;
+	if (mode > 0 && count != mode) return false;
+
+	// Compare selection to enablement expression.
+	if (enablementExpression != null)
+		return enablementExpression.isEnabledFor(obj);
+
+	// Compare selection to class requirements.
+	if (obj instanceof IAdaptable) {
+		IAdaptable element = (IAdaptable)obj;
+		if (verifyElement(element)==false) return false;
+	} else {
+		return false;
+	}
+	
+	return true;
+}
+
+/**
+ * Returns true if given structured selection matches the
+ * conditions specified in the registry for
+ * this action.
+ */
+private boolean isEnabledFor(IStructuredSelection ssel) {
 	int count = ssel.size();
 	
 	// Compare selection count with requirements.
@@ -83,6 +129,7 @@ public boolean isEnabledForSelection(ISelection selection) {
 			return false;
 		}
 	}
+	
 	return true;
 }
 /**

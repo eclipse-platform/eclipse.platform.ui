@@ -27,6 +27,19 @@ public class WWinPluginAction extends PluginAction
 	private static ArrayList staticActionList = new ArrayList(50);
 
 	/**
+	 * Constructs a new WWinPluginAction object..
+	 */
+	public WWinPluginAction(IConfigurationElement actionElement,
+		String runAttribute, IWorkbenchWindow window) 
+	{
+		super(actionElement, runAttribute);
+		this.window = window;
+		window.getSelectionService().addSelectionListener(this);
+		refreshSelection();
+		addToActionList(this);
+	}
+
+	/**
 	 * Adds an item to the action list.
 	 */
 	private static void addToActionList(WWinPluginAction action) {
@@ -54,39 +67,22 @@ public class WWinPluginAction extends PluginAction
 		staticActionList.trimToSize();
 	}
 	
-	/**
-	 * Constructs a new WWinPluginAction object..
+	/** 
+	 * Initialize an action delegate.
+	 * Subclasses may override this.
 	 */
-	public WWinPluginAction(IConfigurationElement actionElement,
-		String runAttribute, IWorkbenchWindow window) 
+	protected IActionDelegate initDelegate(Object obj) 
+		throws WorkbenchException
 	{
-		super(actionElement, runAttribute);
-		this.window = window;
-		window.getSelectionService().addSelectionListener(this);
-		refreshSelection();
-		addToActionList(this);
-	}
-	/**
-	 * Creates an instance of the delegate class as defined on
-	 * the configuration element. It will also initialize
-	 * it with the view part.
-	 */
-	protected IActionDelegate createDelegate() {
-		IActionDelegate delegate = super.createDelegate();
-		if (delegate == null)
-			return null;
-		if (delegate instanceof IWorkbenchWindowActionDelegate) {
+		if (obj instanceof IWorkbenchWindowActionDelegate) {
 			IWorkbenchWindowActionDelegate winDelegate =
-				(IWorkbenchWindowActionDelegate) delegate;
+				(IWorkbenchWindowActionDelegate) obj;
 			winDelegate.init(window);
-			return delegate;
-		} else {
-			WorkbenchPlugin.log(
-				"Action should implement IWorkbenchWindowActionDelegate: " + getText());
-			//$NON-NLS-1$
-			return null;
-		}
+			return winDelegate;
+		} else
+			throw new WorkbenchException("Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Disposes of the action and any resources held.
 	 */
@@ -126,9 +122,9 @@ public class WWinPluginAction extends PluginAction
 	 */
 	protected void refreshSelection() {
 		ISelection selection = window.getSelectionService().getSelection();
-		if (selection instanceof IStructuredSelection)
-			selectionChanged((IStructuredSelection) selection);
-		else
-			selectionChanged(new StructuredSelection());
+		if (selection == null)
+			selectionChanged(StructuredSelection.EMPTY);
+		else 
+			selectionChanged(selection);
 	}
 }

@@ -36,6 +36,12 @@ public SelectionService() {
 public void addSelectionListener(ISelectionListener l) {
 	listeners.add(l);
 }
+/*
+ * Removes an ISelectionListener from the service.
+ */
+public void removeSelectionListener(ISelectionListener l) {
+	listeners.remove(l);
+}
 /**
  * Fires a selection event to all listeners.
  */
@@ -43,17 +49,19 @@ protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final ISelectionListener l = (ISelectionListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
-			public void run() {
-				l.selectionChanged(part, sel);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeSelectionListener(l);
-			}
-		});
+		if (sel != null || l instanceof INullSelectionListener) {
+			Platform.run(new SafeRunnableAdapter() {
+				public void run() {
+					l.selectionChanged(part, sel);
+				}
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					//If and unexpected exception happens, remove it
+					//to make sure the workbench keeps running.
+					removeSelectionListener(l);
+				}
+			});
+		}
 	}
 }
 /**
@@ -107,28 +115,30 @@ public void partClosed(IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been deactivated.
  */
-public void partDeactivated(org.eclipse.ui.IWorkbenchPart part) {}
+public void partDeactivated(org.eclipse.ui.IWorkbenchPart part) {
+	// Unhook selection from the part.
+	if (part == activePart) {
+		reset();
+	}
+}
 /**
  * Notifies the listener that a part has been opened.
  */
 public void partOpened(IWorkbenchPart part) {
 	// Wait for activation.
 }
-/*
- * Removes an ISelectionListener from the service.
- */
-public void removeSelectionListener(ISelectionListener l) {
-	listeners.remove(l);
-}
 /**
  * Resets the service.  The active part and selection provider are
  * dereferenced.
  */
 public void reset() {
-	if (activeProvider != null) {
-		activeProvider.removeSelectionChangedListener(selListener);
-		activeProvider = null;
+	if (activePart != null) {
+		fireSelection(null, null);
+		if (activeProvider != null) {
+			activeProvider.removeSelectionChangedListener(selListener);
+			activeProvider = null;
+		}
+		activePart = null;
 	}
-	activePart = null;
 }
 }

@@ -37,35 +37,34 @@ public class WWinPluginPulldown extends WWinPluginAction {
  * @param runAttribute java.lang.String
  * @param window org.eclipse.ui.IWorkbenchWindow
  */
-public WWinPluginPulldown(IConfigurationElement actionElement, String runAttribute, 
-	IWorkbenchWindow window) {
+public WWinPluginPulldown(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window) 
+{
 	super(actionElement, runAttribute, window);
 	menuProxy = new MenuProxy();
 	setMenuCreator(menuProxy);
 }
-/**
- * Creates an instance of the delegate class.
+
+/** 
+ * Initialize an action delegate.
+ * Subclasses may override this.
  */
-protected IActionDelegate createDelegate() {
-	IActionDelegate delegate = super.createDelegate();
-	if (delegate instanceof IWorkbenchWindowPulldownDelegate) {
-		IWorkbenchWindowPulldownDelegate pulldown =
-			(IWorkbenchWindowPulldownDelegate) delegate;
-		return delegate;
-	} else {
-		WorkbenchPlugin.log(
-			"Action should implement IWorkbenchWindowPluginDelegate: " + getText());//$NON-NLS-1$
-		return null;
-	}
+protected IActionDelegate initDelegate(Object obj) 
+	throws WorkbenchException
+{
+	IActionDelegate del = super.initDelegate(obj);
+	if (obj instanceof IWorkbenchWindowPulldownDelegate) {
+		return del;
+	} else
+		throw new WorkbenchException("Action must implement IWorkbenchWindowPulldownDelegate"); //$NON-NLS-1$
 }
+
 /**
  * Returns the pulldown delegate.  If it does not exist it is created.
  */
 protected IWorkbenchWindowPulldownDelegate getPulldownDelegate() {
 	IActionDelegate delegate = getDelegate();
 	if (delegate == null) {
-		delegate = createDelegate();
-		setDelegate(delegate);
+		createDelegate();
 	}
 	return (IWorkbenchWindowPulldownDelegate)delegate;
 }
