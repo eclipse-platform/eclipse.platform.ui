@@ -20,6 +20,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -70,7 +71,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private int fMaxWidth;
 	/** The maximal widget height. */
 	private int fMaxHeight;
-	
+	/** The horizontal scroll index. */
+	private int fHorizontalScrollPixel;
 	
 	/**
 	 * Creates a source viewer information control with the given shell as
@@ -194,11 +196,33 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			fViewer.setInput(null);
 			return;
 		}
-				
-		IDocument doc= new Document(content);
+
+		String spaces= getSpacesForHorizontalScrolling();
+		
+		IDocument doc= new Document(content + spaces);
 		fViewer.setInput(doc);
+		fViewer.getTextWidget().setHorizontalPixel(fHorizontalScrollPixel);
 	}
 	
+	/**
+	 * Returns a run of spaces the length of which is at least
+	 * <code>fHorizontalScrollPixel</code>.
+	 * 
+	 * @return the spaces to add to the document content to ensure that it can
+	 *         be scrolled at least <code>fHorizontalScrollPixel</code>
+	 */
+	private String getSpacesForHorizontalScrolling() {
+		StyledText widget= fViewer.getTextWidget();
+		GC gc= new GC(widget);
+		StringBuffer spaces= new StringBuffer();
+		Point spaceSize= gc.stringExtent(" "); //$NON-NLS-1$
+		gc.dispose();
+		int n= fHorizontalScrollPixel / spaceSize.x + 1; 
+		for (int i= 0; i < n; i++)
+			spaces.append(' ');
+		return spaces.toString();
+	}
+
 	/*
 	 * @see IInformationControl#setVisible(boolean)
 	 */
@@ -336,5 +360,13 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 */
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
+	}
+	
+	/**
+	 * @param scrollIndex the new horizontal scroll index.
+	 */
+	void setHorizontalScrollPixel(int scrollIndex) {
+		scrollIndex= Math.max(0, scrollIndex);
+		fHorizontalScrollPixel= scrollIndex;
 	}
 }
