@@ -689,58 +689,33 @@ public class Feature extends FeatureModel implements IFeature {
 
 		for (int i = 0; i < identifiers.length; i++) {
 			VersionedIdentifier identifier = identifiers[i];
-			boolean found = false;
 
-			// check if declared on the Site
-			if (refs != null) {
-				for (int ref = 0; ref < refs.length && !found; ref++) {
-					if (refs[ref]!=null){
-						IFeature feature = null;
-						try {
-							feature = refs[ref].getFeature();
-						} catch (CoreException e) {
-							UpdateManagerPlugin.warn(null,e);						
-						};
-	
-						if (feature != null) {
-							if (identifier
-								.equals(feature.getVersionedIdentifier())) {
-								includedFeatureReferences.add(refs[ref]);
-								found = true;
-							}
-						}						
-					}
-				}
+			// instanciate by mapping it based on the site.xml
+			// in future we may ask for a factory to create the feature ref
+			FeatureReference newRef = new FeatureReference();
+			newRef.setSite(getSite());
+			IFeatureReference parentRef =
+				getSite().getFeatureReference(this);
+			if (parentRef instanceof FeatureReference) {
+				newRef.setType(((FeatureReference) parentRef).getType());
 			}
-
-			// if not found, instanciate by mapping it based on the site.xml
-			if (!found) {
-				// in future we may ask for a factory to create the feature ref
-				FeatureReference newRef = new FeatureReference();
-				newRef.setSite(getSite());
-				IFeatureReference parentRef =
-					getSite().getFeatureReference(this);
-				if (parentRef instanceof FeatureReference) {
-					newRef.setType(((FeatureReference) parentRef).getType());
-				}
-				String featureID =
-					Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
-				URL featureURL =
-					getSite().getSiteContentProvider().getArchiveReference(
-						featureID);
-				newRef.setURL(featureURL);
-				try {
-					newRef.resolve(
-						getSite().getURL(),
-						getResourceBundle(getSite().getURL()));
-					includedFeatureReferences.add(newRef);
-				} catch (Exception e) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"Feature.UnableToInitializeFeatureReference",
-							identifier.toString()),
-						e);
-				}
+			String featureID =
+				Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
+			URL featureURL =
+				getSite().getSiteContentProvider().getArchiveReference(
+					featureID);
+			newRef.setURL(featureURL);
+			try {
+				newRef.resolve(
+					getSite().getURL(),
+					null); // no need to get the bundle
+				includedFeatureReferences.add(newRef);
+			} catch (Exception e) {
+				throw Utilities.newCoreException(
+					Policy.bind(
+						"Feature.UnableToInitializeFeatureReference",
+						identifier.toString()),
+					e);
 			}
 		}
 	}
