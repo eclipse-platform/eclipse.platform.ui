@@ -43,7 +43,7 @@ to learn how to add drag support to a viewer.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dropContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -66,6 +66,14 @@ to learn how to add drag support to a viewer.
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="dropContribution">
+      <complexType>
+         <sequence>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element>
 
@@ -101,10 +109,12 @@ to learn how to add drag support to a viewer.
 &lt;p&gt;
 &lt;pre&gt;
     &lt;extension point=&quot;org.eclipse.ui.dropActions&quot;&gt; 
-        &lt;action 
-            id=&quot;my_drop_action&quot; 
-            class=&quot;com.xyz.eclipse.TestDropAction&quot;&gt; 
-        &lt;/action&gt; 
+        &lt;dropContribution&gt;
+            &lt;action 
+                id=&quot;my_drop_action&quot; 
+                class=&quot;com.xyz.eclipse.TestDropAction&quot;&gt; 
+            &lt;/action&gt; 
+        &lt;/dropContribution&gt;
     &lt;/extension&gt;  
 &lt;/pre&gt;
 &lt;/p&gt;
