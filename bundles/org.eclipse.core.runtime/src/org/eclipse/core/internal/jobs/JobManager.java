@@ -54,14 +54,6 @@ public class JobManager implements IJobManager {
 	 */
 	private volatile boolean active = false;
 
-	/**
-	 * True if this manager has been suspended, and false otherwise.  A job manager
-	 * starts out not suspended, and becomes suspended when <code>suspend</code>
-	 * is invoked. Once suspended, no jobs will start running until <code>resume</code>
-	 * is called.
-	 */
-	private boolean suspended = false;
-
 	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
 
@@ -499,9 +491,6 @@ public class JobManager implements IJobManager {
 			int state = job.getState();
 			if (state == Job.NONE)
 				return;
-			//don't join a waiting or sleeping job when suspended (deadlock risk)
-			if (suspended && state != Job.RUNNING)
-				return;
 			//the semaphore will be released when the job is done
 			barrier = new Semaphore(null);
 			listener = new JobChangeAdapter() {
@@ -565,9 +554,7 @@ public class JobManager implements IJobManager {
 		final List jobs;
 		int jobCount;
 		synchronized (lock) {
-			//don't join a waiting or sleeping job when suspended (deadlock risk)
-			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
-			jobs = Collections.synchronizedList(select(family, states));
+			jobs = Collections.synchronizedList(select(family, Job.RUNNING | Job.WAITING | Job.SLEEPING));
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;
@@ -651,9 +638,6 @@ public class JobManager implements IJobManager {
 	 */
 	private Job nextJob() {
 		synchronized (lock) {
-			//do nothing if the job manager is suspended
-			if (suspended)
-				return null;
 			//tickle the sleep queue to see if anyone wakes up
 			long now = System.currentTimeMillis();
 			InternalJob job = sleeping.peek();
@@ -723,17 +707,6 @@ public class JobManager implements IJobManager {
 	final void reportUnblocked(IProgressMonitor monitor) {
 		if (monitor instanceof IProgressMonitorWithBlocking)
 			((IProgressMonitorWithBlocking) monitor).clearBlocked();
-	}
-
-	/*(non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume()
-	 */
-	public final void resume() {
-		synchronized (lock) {
-			suspended = false;
-			//poke the job pool
-			pool.jobQueued(null);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -921,9 +894,6 @@ public class JobManager implements IJobManager {
 	 */
 	protected long sleepHint() {
 		synchronized (lock) {
-			//wait forever if job manager is suspended
-			if (suspended)
-				return InternalJob.T_INFINITE;
 			if (!waiting.isEmpty())
 				return 0L;
 			//return the anticipated time that the next sleeping job will wake
@@ -982,15 +952,6 @@ public class JobManager implements IJobManager {
 				active = true;
 				pool.startup();
 			}
-		}
-	}
-
-	/* non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend()
-	 */
-	public final void suspend() {
-		synchronized (lock) {
-			suspended = true;
 		}
 	}
 

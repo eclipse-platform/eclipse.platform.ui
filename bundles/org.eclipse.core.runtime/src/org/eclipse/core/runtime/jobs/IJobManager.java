@@ -225,19 +225,7 @@ public interface IJobManager {
 	 */
 	public void resume(ISchedulingRule rule);
 
-	/**
-	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
-	 * jobs that were sleeping or waiting prior to the suspension, or that were
-	 * scheduled while the job manager was suspended, will now be elligible
-	 * for execution.
-	 * <p>
-	 * Calling <code>resume</code> when the job manager is not suspended
-	 * has no effect.
-	 * 
-	 * @see #suspend()
-	 * @deprecated Use #resume(ISchedulingRule) instead.
-	 */
-	public void resume();
+
 
 	/**
 	 * Provides a hook that is notified whenever a thread is about to wait on a lock,
@@ -263,29 +251,6 @@ public interface IJobManager {
 	 */
 	public void setProgressProvider(ProgressProvider provider);
 	
-	/**
-	 * Suspends execution of all jobs.  Jobs that are already running
-	 * when this method is invoked will complete as usual, but all sleeping and
-	 * waiting jobs will not be executed until the job manager is resumed.
-	 * <p>
-	 * The job manager will remain suspended until a subsequent call to
-	 * <code>resume</code>.  Further calls to <code>suspend</code>
-	 * when the job manager is already suspended are ignored.
-	 * <p>
-	 * All attempts to join sleeping and waiting jobs while the job manager is
-	 * suspended will return immediately.
-	 * <p>
-	 * Note that this very powerful function should be used with extreme caution.
-	 * Suspending the job manager will prevent all jobs in the system from executing,
-	 * which may have adverse affects on components that are relying on
-	 * execution of jobs. The job manager should never be suspended without intent
-	 * to resume execution soon afterwards.
-	 * 
-	 * @see #resume()
-	 * @deprecated use suspend(ISchedulingRule, IProgressMonitor) instead
-	 */
-	public void suspend();
-
 	/**
 	 * Defers execution of all jobs with scheduling rules that conflict with the
 	 * given rule. The caller will be blocked until all currently executing jobs with
