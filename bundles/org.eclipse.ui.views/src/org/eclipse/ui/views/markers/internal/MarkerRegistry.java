@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.jface.util.ListenerList;
+
 
 /**
  * Registry that tracks resource markers and maintains a sorted, filtered list of the markers. 
@@ -32,13 +34,19 @@ public class MarkerRegistry implements IResourceChangeListener, ITableViewConten
 	
 	private IFilter filter;
 	private IResource input;
-	private String[] types;
-	
-	private List listeners;
+	private String[] types = new String[0];
+	private ListenerList listeners = new ListenerList();
 	
 	public MarkerRegistry() {
-		listeners = new ArrayList();
-		types = new String[0];
+	}
+	
+	/** 
+	 * Disposes the registry, releasing all listeners 
+	 * and any other allocated resources.
+	 */
+	public void dispose() {
+		listeners.clear();
+		setInput(null);
 	}
 	
 	/**
@@ -217,10 +225,9 @@ public class MarkerRegistry implements IResourceChangeListener, ITableViewConten
 	}
 	
 	private void notifyListeners(List additions, List removals, List changes) {
-		if (listeners == null)
-			return;
-		for (int i = 0; i < listeners.size(); i++) {
-			IItemsChangedListener listener = (IItemsChangedListener) listeners.get(i);
+		Object[] listeners = this.listeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IItemsChangedListener listener = (IItemsChangedListener) listeners[i];
 			listener.itemsChanged(additions, removals, changes);
 		}
 	}
@@ -229,18 +236,13 @@ public class MarkerRegistry implements IResourceChangeListener, ITableViewConten
 	 * @see org.eclipse.ui.views.internal.tableview.ITableViewContentProvider#addItemsChangedListener(org.eclipse.ui.views.internal.tableview.IItemsChangedListener)
 	 */
 	public void addItemsChangedListener(IItemsChangedListener listener) {
-		if (listeners == null || listener == null)
-			return;
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.internal.tableview.ITableViewContentProvider#removeItemsChangedListener(org.eclipse.ui.views.internal.tableview.IItemsChangedListener)
 	 */
 	public void removeItemsChangedListener(IItemsChangedListener listener) {
-		if (listeners == null || listener == null)
-			return;
 		listeners.remove(listener);
 	}
 	

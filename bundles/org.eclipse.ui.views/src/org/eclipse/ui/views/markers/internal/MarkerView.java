@@ -134,7 +134,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	public void dispose() {
 		super.dispose();
-		getRegistry().removeItemsChangedListener(itemsListener);
+		getRegistry().dispose();
 		getSite().getPage().removeSelectionListener(focusListener);
 		
 		//dispose of selection provider actions
