@@ -17,8 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.internal.ui.Utils;
 
 /**
  * An authenticator that prompts the user for authentication info,
@@ -105,7 +104,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @param result  a String array of length two in which to put the result
 	 */
 	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
-		Shell shell = getShell();
+		Shell shell = Utils.findShell();
 		if(shell == null) {
 			return false;
 		}
@@ -158,7 +157,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						   final String[] prompt,
 						   final boolean[] echo) {
 	
-		Shell shell = getShell();
+		Shell shell = Utils.findShell();
 		if(shell == null) return new String[0];
 		String domain = location == null ? null : location.getLocation();
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
@@ -176,10 +175,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * Special alternate prompting. Returns the password. Username must be fixed.
 	 */
 	private String alternatePromptForPassword(final String username) {
-		Shell shell = getShell();
-		if(shell == null) {
-			return null;
-		}
+		Shell shell = Utils.findShell();
 		AlternateUserValidationDialog dialog = new AlternateUserValidationDialog(shell, (username == null) ? "" : username); //$NON-NLS-1$
 		dialog.setUsername(username);
 		int result = dialog.open();
@@ -244,18 +240,5 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 			}
 		});
 		return retval[0];
-	}
-	
-	private Shell getShell( ) {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null) {
-			return window.getShell();
-		}
-		Display display= Display.getCurrent();
-		if (display == null) {
-			display= Display.getDefault();
-			return display.getActiveShell();
-		}
-		return null;	
 	}
 }
