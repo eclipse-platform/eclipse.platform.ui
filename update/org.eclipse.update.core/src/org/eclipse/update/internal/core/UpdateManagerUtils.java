@@ -163,12 +163,17 @@ public class UpdateManagerUtils {
 		// get the path from the File to resolve File.separator..
 		// do not use the String as it may contain URL like separator
 		File localFile = new File(localName);
+		if (localFile.exists()){
+			throw new IOException(Policy.bind("UpdateManagerUtils.FileAlreadyExists",new Object[]{localFile}));
+		}
 		int index = localFile.getPath().lastIndexOf(File.separator);
 		if (index != -1) {
 			File dir = new File(localFile.getPath().substring(0, index));
 			if (!dir.exists())
 				dir.mkdirs();
-		} // transfer teh content of the File
+		} 
+		
+		// transfer the content of the File
 		if (!localFile.isDirectory()) {
 			OutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			Utilities.copy(
@@ -223,13 +228,42 @@ public class UpdateManagerUtils {
 	public static void removeFromFileSystem(File file) {
 		if (!file.exists())
 			return;
+			
 		if (file.isDirectory()) {
 			String[] files = file.list();
 			if (files != null) // be careful since file.list() can return null
 				for (int i = 0; i < files.length; ++i)
 					removeFromFileSystem(new File(file, files[i]));
 		}
+		
 		if (!file.delete()) {
+			String msg = 
+					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
+			//$NON-NLS-1$ //$NON-NLS-2$
+			UpdateManagerPlugin.log(msg,new Exception());
+System.err.println("!!!!!!!!!!!!!!!!!!!!!!!! No delete:"+file);
+		}
+	}
+
+
+	/**
+	 * remove all the empty directories recursively
+	 * used to clean up install
+	 */
+	public static void removeEmptyDirectoriesFromFileSystem(File file) {
+		if (!file.isDirectory())
+			return;
+System.err.println("Attempting to remove :"+file);			
+			
+		File childDir;
+		String[] files = file.list();
+		if (files != null){ // be careful since file.list() can return null
+			for (int i = 0; i < files.length; ++i){
+				removeEmptyDirectoriesFromFileSystem(new File(file, files[i]));
+			}
+		}
+		if (!file.delete()) {
+System.err.println("Unable to remove :"+file);				
 			String msg = 
 					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$

@@ -29,12 +29,14 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	
 	//  for abort
 	private List /* of SiteFilePluginContentConsumer */ contentConsumers;	
+	private List /*of path as String */ installedFiles;
 
 	/*
 	 * Constructor 
 	 */
 	public SiteFileContentConsumer(IFeature feature) {
 		this.feature = feature;
+		installedFiles= new ArrayList();
 	}
 
 	/*
@@ -111,6 +113,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		try {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
+			installedFiles.add(featurePath);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath),
@@ -202,10 +205,19 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 		contentConsumers = null;		
 		
+		// remove the feature files;
+		Iterator iter = installedFiles.iterator();
+		File featureFile = null;
+		while (iter.hasNext()) {
+			String path = (String) iter.next();
+			featureFile = new File(path);
+			UpdateManagerUtils.removeFromFileSystem(featureFile);			
+		}
+		
 		// remove the feature,
 		String featurePath = getFeaturePath();
-		UpdateManagerUtils.removeFromFileSystem(new File(featurePath));
-		
+		UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(new File(featurePath));
+				
 		closed= true;
 		return;
 	}

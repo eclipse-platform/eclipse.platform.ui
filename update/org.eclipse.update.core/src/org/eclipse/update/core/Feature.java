@@ -249,7 +249,7 @@ public class Feature extends FeatureModel implements IFeature {
 				debug("The site to install in is null");
 				targetSitePluginEntries = new IPluginEntry[0];
 			} else {
-			 targetSitePluginEntries = targetSite.getPluginEntries();
+				targetSitePluginEntries = targetSite.getPluginEntries();
 			}
 			IPluginEntry[] pluginsToInstall =
 				UpdateManagerUtils.diff(
@@ -362,18 +362,26 @@ public class Feature extends FeatureModel implements IFeature {
 				}
 			}
 
-			//Install feature files
-			references = provider.getFeatureEntryContentReferences(monitor);
+			// check if we need to install feature files [16718]	
+			// store will throw CoreException if another feature is already
+			// installed in the same place
+			if (!featureAlreadyInstalled(targetSite)){
+				//Install feature files
+				references = provider.getFeatureEntryContentReferences(monitor);
+				
+				String msg = "";
+				if (monitor != null){
+					subMonitor = new SubProgressMonitor(monitor,1);
+					msg = Policy.bind("Feature.TaskInstallFeatureFiles");//$NON-NLS-1$
+				}	
 			
-			String msg = "";
-			if (monitor != null){
-				subMonitor = new SubProgressMonitor(monitor,1);
-				msg = Policy.bind("Feature.TaskInstallFeatureFiles");//$NON-NLS-1$
-			}	
-					
-			for (int i = 0; i < references.length; i++) {
-				setMonitorTaskName(subMonitor,msg+references[i].getIdentifier());
-				consumer.store(references[i], subMonitor);
+				for (int i = 0; i < references.length; i++) {
+					setMonitorTaskName(subMonitor,msg+references[i].getIdentifier());
+					consumer.store(references[i], subMonitor);
+				}
+			} else {
+				if (monitor!=null)
+					monitor.worked(1);
 			}
 			
 			if (monitor != null) {
@@ -833,4 +841,12 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 		}	 	
 	 }
+	 
+	 /*
+	  * returns true f the same feature is installed on the site
+	  */
+	private boolean featureAlreadyInstalled(ISite targetSite){
+		IFeatureReference ref = targetSite.getFeatureReference(this);
+		return (ref!=null);
+	}
 }

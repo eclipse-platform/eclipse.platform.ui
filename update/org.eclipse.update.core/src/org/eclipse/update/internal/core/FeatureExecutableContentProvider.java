@@ -113,7 +113,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		throws CoreException {
 		ContentReference result = null;
 		try {
-			result = new ContentReference(null, new URL(getURL(), Feature.FEATURE_XML));
+			result = new ContentReference(Feature.FEATURE_XML, new URL(getURL(), Feature.FEATURE_XML));
 
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
@@ -243,11 +243,13 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		try {
 			// return the list of all subdirectories
 			File pluginDir = new File(getPath(pluginEntry));
+			URL pluginURL = pluginDir.toURL();
 			List files = getFiles(pluginDir);
 			result = new ContentReference[files.size()];
 			for (int i = 0; i < result.length; i++) {
 				File currentFile = (File) files.get(i);
-				result[i] = new ContentReference(null, currentFile.toURL());
+				String relativeString = UpdateManagerUtils.getURLAsString(pluginURL, currentFile.toURL());
+				result[i] = new ContentReference(relativeString, currentFile.toURL());
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
@@ -259,5 +261,4 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		}
 		return result;
 	}
-
 }

@@ -215,10 +215,12 @@ public class ConfiguredSite
 						+ installedFeatureRef.getURL().toExternalForm());
 			}
 
-			try {
-				installedFeature = installedFeatureRef.getFeature();
-			} catch (CoreException e) {
-				UpdateManagerPlugin.warn(null,e);
+			if (installedFeatureRef!=null){
+				try {
+					installedFeature = installedFeatureRef.getFeature();
+				} catch (CoreException e) {
+					UpdateManagerPlugin.warn(null,e);
+				}
 			}
 
 			// everything done ok
@@ -244,8 +246,8 @@ public class ConfiguredSite
 
 		// call the configure task	
 		if (installedFeature!=null)	
-		configure(installedFeature, false);
-		/*callInstallHandler*/
+			configure(installedFeature, false);
+			/*callInstallHandler*/
 
 		return installedFeatureRef;
 	}

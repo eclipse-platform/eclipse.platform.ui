@@ -6,11 +6,11 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
+import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.PluginEntryModel;
 
 /**
  * Plugin Content Consumer on a Site
@@ -25,12 +25,16 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	private String oldPath;
 	private String newPath;
 
+	// for abort
+	private List /*of path as String */ installedFiles;
+		
 	/*
 	 * Constructor
 	 */
 	public SiteFilePluginContentConsumer(IPluginEntry pluginEntry, ISite site) {
 		this.pluginEntry = pluginEntry;
 		this.site = site;
+		installedFiles = new ArrayList();
 	}
 
 	/*
@@ -72,6 +76,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.FRAGMENT_ENTRY, pluginPath);
 			}			
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
+			installedFiles.add(pluginPath);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath),
@@ -126,6 +131,15 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			return;
 		}		
 		
+		// remove the feature files;
+		Iterator iter = installedFiles.iterator();
+		File featureFile = null;
+		while (iter.hasNext()) {
+			String path = (String) iter.next();
+			featureFile = new File(path);
+			UpdateManagerUtils.removeFromFileSystem(featureFile);			
+		}
+		
 		// remove the plugin directory
 		try {
 			URL newURL =
@@ -133,10 +147,10 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 					site.getURL(),
 					Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
 			String pluginPath = newURL.getFile();
-			UpdateManagerUtils.removeFromFileSystem(new File(pluginPath));
+			UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(new File(pluginPath));
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(e.getMessage(), e);
-		}
+		}		
 		closed = true;
 	}
 
