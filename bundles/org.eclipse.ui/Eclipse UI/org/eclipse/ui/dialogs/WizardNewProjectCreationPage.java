@@ -228,6 +228,9 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 /**
  * Returns the current project location path as entered by 
  * the user, or its anticipated initial value.
+ * Note that if the default has been returned the path
+ * in a project description used to create a project
+ * should not be set.
  *
  * @return the project location path, its anticipated initial value, or <code>null</code>
  *   if no project location path is known
