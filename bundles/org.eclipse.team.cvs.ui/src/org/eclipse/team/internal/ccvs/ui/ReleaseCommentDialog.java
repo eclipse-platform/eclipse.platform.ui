@@ -138,7 +138,7 @@ public class ReleaseCommentDialog extends Dialog {
 		});
 		listViewer.setContentProvider(new WorkbenchContentProvider());
 		listViewer.setInput(new AdaptableResourceList(unaddedResources));
-	
+		listViewer.setAllChecked(true);
 		addSelectionButtons(composite);
 	}
 
