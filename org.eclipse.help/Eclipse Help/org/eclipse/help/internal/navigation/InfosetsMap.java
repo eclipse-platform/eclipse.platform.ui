@@ -74,9 +74,7 @@ public class InfosetsMap extends Hashtable {
 					new URL(
 						HelpSystem.getRemoteHelpServerURL(),
 						HelpSystem.getRemoteHelpServerPath()
-							+ "/"
-							+ TempURL.getPrefix()
-							+ "/"
+							+ "/help/temp/"
 							+ INFOSETS_FILENAME);
 				if (Logger.DEBUG)
 					Logger.logDebugMessage(

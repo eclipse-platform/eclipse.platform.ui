@@ -142,9 +142,7 @@ public class NavigationModel {
 				new URL(
 					HelpSystem.getRemoteHelpServerURL(),
 					HelpSystem.getRemoteHelpServerPath()
-						+ "/"
-						+ TempURL.getPrefix()
-						+ "/"
+						+ "/help/temp/"
 						+ infosetID
 						+ "/"
 						+ HelpNavigationManager.NAV_XML_FILENAME);
