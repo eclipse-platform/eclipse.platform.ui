@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.*;
@@ -53,7 +54,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	}
 	public void fetchMembers(IProgressMonitor monitor, CVSTag tag) throws CVSException {
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
-		progress.beginTask(Policy.bind("RemoteFolder.getMembers"), 100); //$NON-NLS-1$
+		progress.beginTask(CVSMessages.RemoteFolder_getMembers, 100); //$NON-NLS-1$
 		try {
 			// Update the parent folder children so there are no children
 			updateParentFolderChildren();
@@ -64,7 +65,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			Policy.checkCanceled(monitor);
 			
 			// Handle any errors that were identified by the listener
-			performErrorCheck(status, Policy.bind("RemoteFolder.errorFetchingMembers")); //$NON-NLS-1$
+			performErrorCheck(status, CVSMessages.RemoteFolder_errorFetchingMembers); //$NON-NLS-1$
 			
 			// Get the revision numbers for the files
 			ICVSFile[] remoteFiles = getFiles();
@@ -128,7 +129,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 					files,
 					new StatusListener(this),
 					Policy.subMonitorFor(monitor, 90));
-				performErrorCheck(status, Policy.bind("RemoteFolder.errorFetchingRevisions")); //$NON-NLS-1$
+				performErrorCheck(status, CVSMessages.RemoteFolder_errorFetchingRevisions); //$NON-NLS-1$
 				// TODO: Ensure all files have a revision?
 			} finally {
 				session.close();
@@ -148,7 +149,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			}	
 		}
 		if (!exists) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXIST, Policy.bind("RemoteFolder.doesNotExist", this.parentFolder.getRepositoryRelativePath()))); //$NON-NLS-1$
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_doesNotExist, new String[] { this.parentFolder.getRepositoryRelativePath() }))); //$NON-NLS-1$
 		}
 		
 		// Report any internal exceptions that occured fetching the members

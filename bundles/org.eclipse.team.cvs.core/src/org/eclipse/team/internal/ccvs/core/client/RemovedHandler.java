@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
 /**
@@ -49,7 +50,7 @@ class RemovedHandler extends ResponseHandler {
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		if ( ! mFile.isManaged()) {
-			throw new CVSException(Policy.bind("RemovedHandler.invalid", new Path(null, localDir).append(fileName).toString())); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.RemovedHandler_invalid, new String[] { new Path(null, localDir).append(fileName).toString() })); //$NON-NLS-1$
 		}
 		
 		// delete then unmanage the file
@@ -58,7 +59,7 @@ class RemovedHandler extends ResponseHandler {
 	        mFile.delete();
 	        mFile.unmanage(null);
         } catch (CVSException e) {
-            session.handleResponseError(new CVSStatus(IStatus.ERROR, CVSStatus.RESPONSE_HANDLING_FAILURE, Policy.bind("RemovedHandler.0", getPath(mFile)), e)); //$NON-NLS-1$
+            session.handleResponseError(new CVSStatus(IStatus.ERROR, CVSStatus.RESPONSE_HANDLING_FAILURE, NLS.bind(CVSMessages.RemovedHandler_0, new String[] { getPath(mFile) }), e)); //$NON-NLS-1$
         }
 	}
 

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -104,7 +105,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				EclipseSynchronizer.getInstance().created(getIResource());;
 			}				
 		} catch (CoreException e) {
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFolder_problem_creating", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$
+			throw CVSException.wrapException(resource, NLS.bind(CVSMessages.EclipseFolder_problem_creating, new String[] { resource.getFullPath().toString(), e.getStatus().getMessage() }), e); //$NON-NLS-1$
 		} 
 	}
 		
@@ -310,7 +311,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public boolean isModified(IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("EclipseFolder.isModifiedProgress", resource.getFullPath().toString()), 1000); //$NON-NLS-1$
+			monitor.beginTask(NLS.bind(CVSMessages.EclipseFolder_isModifiedProgress, new String[] { resource.getFullPath().toString() }), 1000); //$NON-NLS-1$
 			
 			IContainer container = (IContainer)getIResource();
 			

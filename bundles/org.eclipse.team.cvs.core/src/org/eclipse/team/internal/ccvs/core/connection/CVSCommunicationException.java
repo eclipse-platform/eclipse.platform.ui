@@ -15,10 +15,8 @@ import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 
 public class CVSCommunicationException extends CVSException {
 
@@ -61,19 +59,28 @@ public class CVSCommunicationException extends CVSException {
 	public static IStatus getStatusFor(Exception e) {
 		if (e instanceof InterruptedIOException) {
 			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 0, getMessageFor(e), e);
-			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptCause"))); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.interruptSolution"))); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.alternateInterruptCause"))); //$NON-NLS-1$
-			status.add(new CVSStatus(IStatus.ERROR, Policy.bind("CVSCommunicationException.alternateInterruptSolution"))); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptCause)); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptSolution)); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptCause)); //$NON-NLS-1$
+			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptSolution)); //$NON-NLS-1$
 			return status;
 		}
 		return new CVSStatus(IStatus.ERROR, getMessageFor(e), e);
 	}
 	
 	public static String getMessageFor(Throwable throwable) {
-		String message = Policy.bind(throwable.getClass().getName(), new Object[] {throwable.getMessage()});
-		if (message.equals(throwable.getClass().getName()))
-			message = Policy.bind("CVSCommunicationException.io", new Object[] {throwable.toString()}); //$NON-NLS-1$ 
+        String message = Policy.getMessage(getMessageKey(throwable));
+        if (message == null) {
+            message = NLS.bind(CVSMessages.CVSCommunicationException_io, (new Object[] {throwable.toString()}));
+        } else {
+            message = NLS.bind(message, (new Object[] {throwable.getMessage()}));
+        }
 		return message;
 	}
+    
+    private static String getMessageKey(Throwable t) {
+        String name = t.getClass().getName();
+        name = name.replace('.', '_');
+        return name;
+    }
 }

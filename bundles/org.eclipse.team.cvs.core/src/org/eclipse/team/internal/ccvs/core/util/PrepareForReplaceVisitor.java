@@ -13,14 +13,8 @@ package org.eclipse.team.internal.ccvs.core.util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -92,15 +86,15 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 		monitor.worked(1);
 	}
 	
-	public void visitResources(IProject project, final ICVSResource[] resources, final String key, int depth, IProgressMonitor pm) throws CVSException {
+	public void visitResources(IProject project, final ICVSResource[] resources, final String oneArgMessage, int depth, IProgressMonitor pm) throws CVSException {
 		this.depth = depth;
 		CVSWorkspaceRoot.getCVSFolderFor(project).run(new ICVSRunnable() {
 			public void run(IProgressMonitor pm) throws CVSException {
 				monitor = Policy.infiniteSubMonitorFor(pm, 100);
 				monitor.beginTask(null, 512);
 				for (int i = 0; i < resources.length; i++) {
-					if (key != null) {
-						monitor.subTask(Policy.bind(key, resources[i].getIResource().getFullPath().toString())); //$NON-NLS-1$
+					if (oneArgMessage != null) {
+						monitor.subTask(NLS.bind(oneArgMessage, new String[] { resources[i].getIResource().getFullPath().toString() })); //$NON-NLS-1$
 					}
 					resources[i].accept(PrepareForReplaceVisitor.this);
 				}

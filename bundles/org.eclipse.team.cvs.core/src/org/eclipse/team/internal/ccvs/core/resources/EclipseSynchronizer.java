@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
@@ -109,7 +110,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// this can occur when creating phatom folders
 			if (getFolderSync(folder.getParent()) == null) {
 				throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-					Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
+					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); //$NON-NLS-1$
 			}
 		}
 		ISchedulingRule rule = null;
@@ -210,7 +211,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -288,7 +289,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); //$NON-NLS-1$
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -375,7 +376,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void addIgnored(IContainer folder, String pattern) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
-				Policy.bind("EclipseSynchronizer.ErrorSettingIgnorePattern", folder.getFullPath().toString())); //$NON-NLS-1$
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() })); //$NON-NLS-1$
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -904,9 +905,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			int numResources = changedFolders.length + numDirty;
 			monitor.beginTask(null, numResources);
 			if(monitor.isCanceled()) {
-				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperationCancelled")); //$NON-NLS-1$
+				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperationCancelled); //$NON-NLS-1$
 			} else {
-				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperation")); //$NON-NLS-1$
+				monitor.subTask(CVSMessages.EclipseSynchronizer_UpdatingSyncEndOperation); //$NON-NLS-1$
 			}
 			
 			/*** write sync info to disk ***/
@@ -981,7 +982,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			}
 			
 			/*** broadcast events ***/
-			monitor.subTask(Policy.bind("EclipseSynchronizer.NotifyingListeners")); //$NON-NLS-1$
+			monitor.subTask(CVSMessages.EclipseSynchronizer_NotifyingListeners); //$NON-NLS-1$
 			Set allChanges = new HashSet();
 			allChanges.addAll(Arrays.asList(changedResources));
 			allChanges.addAll(Arrays.asList(changedFolders));
@@ -992,7 +993,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			if ( ! errors.isEmpty()) {
 				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 
 											CVSStatus.COMMITTING_SYNC_INFO_FAILED, 
-											Policy.bind("EclipseSynchronizer.ErrorCommitting"), //$NON-NLS-1$
+											CVSMessages.EclipseSynchronizer_ErrorCommitting, //$NON-NLS-1$
 											null);
 				for (int i = 0; i < errors.size(); i++) {
 					status.merge((IStatus)errors.get(i));

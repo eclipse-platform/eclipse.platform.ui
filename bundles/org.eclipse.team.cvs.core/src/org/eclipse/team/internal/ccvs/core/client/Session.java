@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -76,7 +77,7 @@ public class Session {
 	private boolean ignoringLocalChanges = false;
 
 	// The resource bundle key that provides the file sending message
-	private String sendFileTitleKey;
+	private String sendFileTitleMessage;
 	private Map responseHandlers;
 	
 	// List of errors accumulated while the command is executing
@@ -606,8 +607,8 @@ public class Session {
 				textTransferOverrideSet.contains(file)) isBinary = false;
 	
 			// update progress monitor
-			final String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
-			monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
+			final String title = NLS.bind(getSendFileTitleMessage(), (new Object[]{ Util.toTruncatedPath(file, localRoot, 3) })); //$NON-NLS-1$
+			monitor.subTask(NLS.bind(CVSMessages.Session_transferNoSize, new String[] { title })); //$NON-NLS-1$
 			try {
 				InputStream in = null;
 				long length;
@@ -641,13 +642,12 @@ public class Session {
 							protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
 								if (bytesRead == 0) return;
 								Assert.isTrue(bytesRead <= bytesTotal);
-								monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
-									new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+								monitor.subTask(NLS.bind(CVSMessages.Session_transfer, (new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) })));
 							}
 						};
 						sendUncompressedBytes(in, length);
 					} else {
-						monitor.subTask(Policy.bind("Session.calculatingCompressedSize", Util.toTruncatedPath(file, localRoot, 3))); //$NON-NLS-1$
+						monitor.subTask(NLS.bind(CVSMessages.Session_calculatingCompressedSize, new String[] { Util.toTruncatedPath(file, localRoot, 3) })); //$NON-NLS-1$
 						in = file.getContents();
 						byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
 						ByteCountOutputStream counter = new ByteCountOutputStream();
@@ -664,8 +664,7 @@ public class Session {
 							protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
 								if (bytesRead == 0) return;
 								Assert.isTrue(bytesRead <= bytesTotal);
-								monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
-									new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+								monitor.subTask(NLS.bind(CVSMessages.Session_transfer, (new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) })));
 							}
 						};
 						if (!isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
@@ -734,8 +733,8 @@ public class Session {
 			textTransferOverrideSet.contains(file)) isBinary = false;
 
 		// update progress monitor
-		final String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
-		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
+		final String title = NLS.bind(CVSMessages.Session_receiving, (new Object[]{ Util.toTruncatedPath(file, localRoot, 3) })); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.Session_transferNoSize, new String[] { title })); //$NON-NLS-1$
 		// get the file size from the server
 		long size;
 		boolean compressed = false;
@@ -753,7 +752,7 @@ public class Session {
 		        handleErrorLine(sizeLine.substring(1).trim(), org.eclipse.core.runtime.Status.OK_STATUS);
 		        return;
 		    } else {
-		        throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
+		        throw new CVSException(CVSMessages.Session_badInt, e); //$NON-NLS-1$
 		    }
 		}
 		// create an input stream that spans the next 'size' bytes from the connection
@@ -762,8 +761,7 @@ public class Session {
 		in = new ProgressMonitorInputStream(in, size, TRANSFER_PROGRESS_INCREMENT, monitor) {
 			protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
 				if (bytesRead == 0) return;
-				monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
-					new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+				monitor.subTask(NLS.bind(CVSMessages.Session_transfer, (new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) })));
 			}
 		};
 		// if compression enabled, decompress on the fly
@@ -854,18 +852,18 @@ public class Session {
 	 * Gets the sendFileTitleKey.
 	 * @return Returns a String
 	 */
-	String getSendFileTitleKey() {
-		if (sendFileTitleKey == null)
+	String getSendFileTitleMessage() {
+		if (sendFileTitleMessage == null)
 			return "Session.sending"; //$NON-NLS-1$
-		return sendFileTitleKey;
+		return sendFileTitleMessage;
 	}
 
 	/**
 	 * Sets the sendFileTitleKey.
 	 * @param sendFileTitleKey The sendFileTitleKey to set
 	 */
-	public void setSendFileTitleKey(String sendFileTitleKey) {
-		this.sendFileTitleKey = sendFileTitleKey;
+	public void setSendFileTitleKey(String sendFileTitleMessage) {
+		this.sendFileTitleMessage = sendFileTitleMessage;
 	}
 	
 	/**
@@ -1002,6 +1000,6 @@ public class Session {
      */
     public void handleResponseError(IStatus status) {
         addError(status);
-        handleErrorLine(Policy.bind("Session.0", status.getMessage()), status); //$NON-NLS-1$
+        handleErrorLine(NLS.bind(CVSMessages.Session_0, new String[] { status.getMessage() }), status); //$NON-NLS-1$
     }
 }

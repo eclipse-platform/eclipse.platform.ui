@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -47,7 +48,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		try {
 			((IFile)resource).delete(false /*force*/, true /*keepHistory*/, null);
 		} catch(CoreException e) {
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_deleting_resource", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
+			throw CVSException.wrapException(resource, NLS.bind(CVSMessages.EclipseFile_Problem_deleting_resource, new String[] { resource.getFullPath().toString(), e.getStatus().getMessage() }), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -59,7 +60,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
  		try {
 			return getIFile().getContents();
 		} catch (CoreException e) {
- 			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_accessing_resource", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
+ 			throw CVSException.wrapException(resource, NLS.bind(CVSMessages.EclipseFile_Problem_accessing_resource, new String[] { resource.getFullPath().toString(), e.getStatus().getMessage() }), e); //$NON-NLS-1$ //$NON-NLS-2$
  		}
  	}
 	
@@ -205,7 +206,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				if (t != null) message = t.getMessage();
 			}
 			if (message == null) message = e.getMessage();
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_writing_resource", resource.getFullPath().toString(), message), e); //$NON-NLS-1$
+			throw CVSException.wrapException(resource, NLS.bind(CVSMessages.EclipseFile_Problem_writing_resource, new String[] { resource.getFullPath().toString(), message }), e); //$NON-NLS-1$
 		}
 	}
 			

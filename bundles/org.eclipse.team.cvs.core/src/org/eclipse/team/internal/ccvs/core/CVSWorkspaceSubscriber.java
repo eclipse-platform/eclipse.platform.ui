@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -197,7 +198,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						try {
 							Policy.checkCanceled(monitor);
 							if (innerResource.getType() != IResource.FILE) {
-								monitor.subTask(Policy.bind("CVSWorkspaceSubscriber.1", innerResource.getFullPath().toString())); //$NON-NLS-1$
+								monitor.subTask(NLS.bind(CVSMessages.CVSWorkspaceSubscriber_1, new String[] { innerResource.getFullPath().toString() })); //$NON-NLS-1$
 							}
 							if (isOutOfSync(innerResource, monitor)) {
 								SyncInfo info = getSyncInfo(innerResource);
@@ -208,7 +209,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						} catch (TeamException e) {
 							set.addError(new TeamStatus(
 									IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.RESOURCE_SYNC_INFO_ERROR,
-									Policy.bind("CVSWorkspaceSubscriber.2", innerResource.getFullPath().toString(), e.getMessage()), e, innerResource)); //$NON-NLS-1$
+									NLS.bind(CVSMessages.CVSWorkspaceSubscriber_2, new String[] { innerResource.getFullPath().toString(), e.getMessage() }), e, innerResource)); //$NON-NLS-1$
 						}
 						return true;
 					}

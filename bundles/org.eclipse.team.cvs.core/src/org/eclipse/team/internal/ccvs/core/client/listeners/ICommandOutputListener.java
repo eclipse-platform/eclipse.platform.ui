@@ -12,10 +12,10 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Instances of this interface can be passed to the <code>Command#execute</code> methods
@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 public interface ICommandOutputListener {
 	
 	/*** Status to be returned when no error or warning occured ***/
-	public static final IStatus OK = new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
+	public static final IStatus OK = new CVSStatus(CVSStatus.OK, CVSMessages.ok); //$NON-NLS-1$
 	
 	public static final String SERVER_PREFIX = "server: "; //$NON-NLS-1$
 	public static final String SERVER_ABORTED_PREFIX = "[server aborted]: "; //$NON-NLS-1$

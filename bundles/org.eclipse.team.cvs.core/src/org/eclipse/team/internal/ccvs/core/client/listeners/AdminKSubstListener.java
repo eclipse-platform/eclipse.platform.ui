@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -44,7 +45,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 			String rcsFile = line.substring(10).trim();
 			if (! rcsFile.endsWith(",v")) { //$NON-NLS-1$
 				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile)); //$NON-NLS-1$
+					NLS.bind(CVSMessages.AdminKSubstListener_expectedRCSFile, new String[] { rcsFile })); //$NON-NLS-1$
 			}
 			IPath rcsFilePath = new Path(null, Util.removeAtticSegment(rcsFile.substring(0, rcsFile.length() - 2)));
 			try {
@@ -69,7 +70,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 		String remoteRootLocation = info.getRemoteLocation();
 		if (remoteRootLocation == null) {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR,
-				Policy.bind("AdminKSubstListener.commandRootNotManaged"))); //$NON-NLS-1$
+				CVSMessages.AdminKSubstListener_commandRootNotManaged)); //$NON-NLS-1$
 		}
 		IPath remoteRootPath = new Path(null, remoteRootLocation);
 		if (remoteRootPath.isPrefixOf(rcsFilePath)) {
@@ -92,8 +93,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 		
 		// No file was found so return null;
 		throw new CVSException(new CVSStatus(CVSStatus.ERROR,
-				Policy.bind("AdminKSubstListener.expectedChildOfCommandRoot", //$NON-NLS-1$
-					rcsFilePath.toString(), remoteRootPath.toString())));
+				NLS.bind(CVSMessages.AdminKSubstListener_expectedChildOfCommandRoot, new String[] { rcsFilePath.toString(), remoteRootPath.toString() })));
 	}
 
     private ICVSFolder findFolder(ICVSFolder commandRoot, IPath path) throws CVSException {

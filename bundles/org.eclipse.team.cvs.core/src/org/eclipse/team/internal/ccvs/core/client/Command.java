@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 
@@ -270,7 +271,7 @@ public abstract class Command extends Request {
 				folder = resources[i].getParent();
 			}
 			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
-				throw new CVSException(Policy.bind("Command.argumentNotManaged", folder.getName()));//$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));//$NON-NLS-1$
 			}
 		}
 	}
@@ -632,15 +633,41 @@ public abstract class Command extends Request {
 		 * Returns a short localized text string describing this mode.
 		 */
 		public String getShortDisplayText() {
-			if (isUnknownMode) return Policy.bind("KSubstOption.unknown.short", option); //$NON-NLS-1$
-			return Policy.bind("KSubstOption." + option + ".short"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (isUnknownMode)
+                return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); //$NON-NLS-1$
+            if (option.equals("-kb")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kb_short;
+            if (option.equals("-kkv")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kkv_short;
+            if (option.equals("-ko")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__ko_short;
+            if (option.equals("-kk")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kk_short;
+            if (option.equals("-kv")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kv_short;
+            if (option.equals("-kkvl")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kkvl_short;
+            return NLS.bind(CVSMessages.KSubstOption_unknown_short, new String[] { option }); //$NON-NLS-1$
 		}
 		/**
 		 * Returns a long localized text string describing this mode.
 		 */
 		public String getLongDisplayText() {
-			if (isUnknownMode) return Policy.bind("KSubstOption.unknown.long", option); //$NON-NLS-1$
-			return Policy.bind("KSubstOption." + option + ".long"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (isUnknownMode)
+                return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); //$NON-NLS-1$
+            if (option.equals("-kb")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kb_long;
+            if (option.equals("-kkv")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kkv_long;
+            if (option.equals("-ko")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__ko_long;
+            if (option.equals("-kk")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kk_long;
+            if (option.equals("-kv")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kv_long;
+            if (option.equals("-kkvl")) //$NON-NLS-1$
+                return CVSMessages.KSubstOption__kkvl_long;
+            return NLS.bind(CVSMessages.KSubstOption_unknown_long, new String[] { option }); //$NON-NLS-1$
 		}
 		/**
 		 * Return the text mode that will be used by default
@@ -675,7 +702,7 @@ public abstract class Command extends Request {
 				return new LocalOption("-D", tag.getName()); //$NON-NLS-1$
 			default:
 				// tag must not be HEAD
-				throw new IllegalArgumentException(Policy.bind("Command.invalidTag")); //$NON-NLS-1$
+				throw new IllegalArgumentException(CVSMessages.Command_invalidTag); //$NON-NLS-1$
 		}
 	}
 
@@ -782,7 +809,7 @@ public abstract class Command extends Request {
 		if (newStatus.isOK()) return accumulatedStatus;
 		MultiStatus result = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
 				new IStatus[] {accumulatedStatus, newStatus},
-				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null); //$NON-NLS-1$ //$NON-NLS-2$
+				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);
 		return result;
 	}
 }

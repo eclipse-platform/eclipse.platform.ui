@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -93,7 +94,7 @@ public class Util {
 		throws CVSException {
 
 		if (!resourceName.startsWith(rootName) || rootName.length() > resourceName.length()) {
-			throw new CVSException(Policy.bind("Util.Internal_error,_resource_does_not_start_with_root_3")); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.Util_Internal_error__resource_does_not_start_with_root_3); //$NON-NLS-1$
 		}
 		
 		// Otherwise we would get an ArrayOutOfBoundException
@@ -159,7 +160,7 @@ public class Util {
 		if (index == -1) {
 			return stringPath;
 		} else {
-			return Policy.bind("Util.truncatedPath", stringPath.substring(index)); //$NON-NLS-1$
+			return NLS.bind(CVSMessages.Util_truncatedPath, new String[] { stringPath.substring(index) }); //$NON-NLS-1$
 		}
 	}
 	
@@ -233,7 +234,7 @@ public class Util {
 				throw (IOException)exception[0];
 		}
 		if (socket[0] == null) {
-			throw new InterruptedIOException(Policy.bind("Util.timeout", host)); //$NON-NLS-1$
+			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_timeout, new String[] { host })); //$NON-NLS-1$
 		}
 		return socket[0];
 	}
@@ -303,7 +304,7 @@ public class Util {
 			throw (IOException)exception[0];
 		}
 		if (process[0] == null) {
-			throw new InterruptedIOException(Policy.bind("Util.processTimeout", command[0])); //$NON-NLS-1$
+			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_processTimeout, new String[] { command[0] })); //$NON-NLS-1$
 		}
 		return process[0];
 	}

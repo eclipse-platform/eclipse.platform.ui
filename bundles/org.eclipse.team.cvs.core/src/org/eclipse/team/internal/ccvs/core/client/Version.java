@@ -12,12 +12,13 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
@@ -44,7 +45,7 @@ public class Version extends RemoteCommand {
 		
 		// The server may not support the version request
 		if ( ! session.isValidRequest(getRequestId())) {
-			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.versionNotValidRequest", location.getHost()));//$NON-NLS-1$
+			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_versionNotValidRequest, new String[] { location.getHost() }));//$NON-NLS-1$
 			((CVSRepositoryLocation)location).setServerPlaform(CVSRepositoryLocation.UNKNOWN_SERVER);
 			CVSProviderPlugin.log(status);
 			return status;
@@ -69,13 +70,13 @@ public class Version extends RemoteCommand {
 					String versionNumber = line.substring(knownPrefix.length(), line.indexOf(' ', knownPrefix.length() + 1));
 					if (versionNumber.startsWith("1.10") || versionNumber.equals("1.11") || versionNumber.equals("1.11.1")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					    serverType = CVSRepositoryLocation.UNSUPPORTED_SERVER;
-						status = new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, Policy.bind("Version.unsupportedVersion", location.getHost(), versionNumber));//$NON-NLS-1$
+						status = new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, NLS.bind(CVSMessages.Version_unsupportedVersion, new String[] { location.getHost(), versionNumber }));//$NON-NLS-1$
 					} else if (isCVSNT) {
 					    serverType = CVSRepositoryLocation.CVSNT_SERVER;
 					}
 				} else {
 				    serverType = CVSRepositoryLocation.UNKNOWN_SERVER;
-					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.unknownVersionFormat", location.getHost(), line));//$NON-NLS-1$
+					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, NLS.bind(CVSMessages.Version_unknownVersionFormat, new String[] { location.getHost(), line }));//$NON-NLS-1$
 				}
 				((CVSRepositoryLocation)location).setServerPlaform(serverType);
 				return status;

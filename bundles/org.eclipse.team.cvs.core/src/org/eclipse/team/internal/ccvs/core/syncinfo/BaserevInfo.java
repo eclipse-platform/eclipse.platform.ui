@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -52,19 +53,19 @@ public class BaserevInfo {
 		// Accept either a length of 2 or 3. If the length is 3, we ignore the last
 		// string as per the CVS spec.
 		if(strings.length != 2 && strings.length != 3) {
-			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.BaseRevInfo_malformedEntryLine, new String[] { entryLine })); //$NON-NLS-1$
 		}
 
 		name = strings[0];
 
 		if(name.length()==0) {
-			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.BaseRevInfo_malformedEntryLine, new String[] { entryLine })); //$NON-NLS-1$
 		}
 
 		revision = strings[1];
 
 		if(revision.length()==0) {
-			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.BaseRevInfo_malformedEntryLine, new String[] { entryLine })); //$NON-NLS-1$
 		}
 	}
 	/**

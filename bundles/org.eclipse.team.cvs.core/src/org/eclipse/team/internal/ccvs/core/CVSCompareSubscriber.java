@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.variants.IResourceVariantTree;
@@ -38,14 +39,14 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	private CVSResourceVariantTree tree;
 	
 	public CVSCompareSubscriber(IResource[] resources, CVSTag tag) {
-		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", tag.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { tag.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
 		this.resources = resources;
 		tree = new CVSResourceVariantTree(new SessionResourceVariantByteStore(), tag, getCacheFileContentsHint());
 		initialize();
 	}
 
 	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
-		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name)); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), NLS.bind(CVSMessages.CVSCompareSubscriber_2, new String[] { name })); //$NON-NLS-1$ //$NON-NLS-2$
 		resetRoots(resources, tags);
 		initialize();
 	}

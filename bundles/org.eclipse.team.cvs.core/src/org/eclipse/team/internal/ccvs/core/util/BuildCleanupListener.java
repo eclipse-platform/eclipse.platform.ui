@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -139,14 +140,14 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 							try {
 								delta.accept(BuildCleanupListener.this);
 							} catch (CoreException e) {
-								Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
+								Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);//$NON-NLS-1$
 							}
 						}
 					}, Policy.monitorFor(null));
 				}
 			}
 		} catch (CVSException e) {
-			Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
+			Util.logError(CVSMessages.ResourceDeltaVisitor_visitError, e);//$NON-NLS-1$
 		}
 	}
 

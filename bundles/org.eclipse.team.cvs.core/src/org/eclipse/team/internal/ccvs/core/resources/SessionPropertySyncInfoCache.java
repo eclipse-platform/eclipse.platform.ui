@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -114,7 +115,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		}
 		if (info == null) {
 			// There should be sync info but it was missing. Report the error
-			throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.EclipseSynchronizer_folderSyncInfoMissing, new String[] { container.getFullPath().toString() })); //$NON-NLS-1$
 		}
 		if (info == NULL_FOLDER_SYNC_INFO) return null;
 		return info;

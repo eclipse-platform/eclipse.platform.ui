@@ -13,12 +13,12 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
@@ -67,7 +67,7 @@ public class Add extends Command {
 				ICVSFolder mFolder = (ICVSFolder) resources[i];
 				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();
 				if (info == null) {
-					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, Policy.bind("Add.invalidParent", mFolder.getRelativePath(session.getLocalRoot())))); //$NON-NLS-1$
+					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, NLS.bind(CVSMessages.Add_invalidParent, new String[] { mFolder.getRelativePath(session.getLocalRoot()) }))); //$NON-NLS-1$
 				} else {
 					String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$
                     MutableFolderSyncInfo newInfo = info.cloneMutable();

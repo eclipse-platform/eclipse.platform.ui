@@ -13,11 +13,11 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.TagListener;
 
@@ -58,7 +58,7 @@ public class Tag extends Command {
 		IProgressMonitor monitor) throws CVSException {
 		
 		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("Tag.notVersionOrBranchError"))); //$NON-NLS-1$
+			throw new CVSException(new CVSStatus(IStatus.ERROR, CVSMessages.Tag_notVersionOrBranchError)); //$NON-NLS-1$
 		}
 		
 		// Add the CREATE_BRANCH option for a branch tag

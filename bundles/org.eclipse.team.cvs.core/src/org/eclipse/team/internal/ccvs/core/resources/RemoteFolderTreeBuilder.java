@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.*;
@@ -122,7 +123,7 @@ public class RemoteFolderTreeBuilder {
 			progress.beginTask(null, 100);
 			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 100);
 			subProgress.beginTask(null, 512);  //$NON-NLS-1$
-			subProgress.subTask(Policy.bind("RemoteFolderTreeBuilder.buildingBase", root.getName())); //$NON-NLS-1$
+			subProgress.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_buildingBase, new String[] { root.getName() })); //$NON-NLS-1$
 	 		return builder.buildBaseTree(null, root, subProgress);
 		} finally {
 			progress.done();
@@ -192,7 +193,7 @@ public class RemoteFolderTreeBuilder {
 				// We cannot handle the case where a project (i.e. the top-most CVS folder)
 				// has been deleted directly on the sever (i.e. deleted using rm -rf)
 				if (root.isCVSFolder() && ! root.isManaged()) {
-					throw new CVSException(Policy.bind("RemoteFolderTreeBuild.folderDeletedFromServer", root.getFolderSyncInfo().getRepository())); //$NON-NLS-1$
+					throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuild_folderDeletedFromServer, new String[] { root.getFolderSyncInfo().getRepository() })); //$NON-NLS-1$
 				} else {
 					return false;
 				}
@@ -221,7 +222,7 @@ public class RemoteFolderTreeBuilder {
 		        } else {
 		            path = resource.getFullPath().toString();
 		        }
-                throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.0", path)); //$NON-NLS-1$
+                throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_0, new String[] { path })); //$NON-NLS-1$
 		    } else {
 		        // Just return. The remote tree will be null
 		        return;
@@ -569,7 +570,7 @@ public class RemoteFolderTreeBuilder {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					recordDelta(path, FOLDER, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(path, 3) })); //$NON-NLS-1$
 				}
 			}
 			public void directoryDoesNotExist(ICVSFolder root, String path) {
@@ -578,7 +579,7 @@ public class RemoteFolderTreeBuilder {
 					rootDoesNotExist = true;
 				} else {
 					recordDelta(path, DELETED, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(path, 3) })); //$NON-NLS-1$
 				}
 			}
 			public void fileInformation(int type, ICVSFolder root, String filename) {
@@ -601,13 +602,13 @@ public class RemoteFolderTreeBuilder {
 					case Update.STATE_REMOTE_CHANGES : // We have an remote change to an unmodified local file
 								changedFiles.add(filename);
 								recordDelta(filename, UNKNOWN, type);
-								monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
+								monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(filename, 3) })); //$NON-NLS-1$
 								break;
 				}	
 			}
 			public void fileDoesNotExist(ICVSFolder root, String filename) {
 				recordDelta(filename, DELETED, Update.STATE_NONE);
-				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
+				monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(filename, 3) })); //$NON-NLS-1$
 			}
 		};
 		
@@ -647,7 +648,7 @@ public class RemoteFolderTreeBuilder {
 					// Record new directory with parent so it can be retrieved when building the parent
 					// NOTE: Check path prefix
 					recordDelta(path, FOLDER, Update.STATE_NONE);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(path, 3) })); //$NON-NLS-1$
 				}
 			}
 			public void directoryDoesNotExist(ICVSFolder root, String path) {
@@ -656,7 +657,7 @@ public class RemoteFolderTreeBuilder {
 				// NOTE: Check path prefix
 				changedFiles.add(filename);
 				recordDelta(filename, ADDED, type);
-				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(filename, 3))); //$NON-NLS-1$
+				monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingDelta, new String[] { Util.toTruncatedPath(filename, 3) })); //$NON-NLS-1$
 			}
 			public void fileDoesNotExist(ICVSFolder root, String filename) {
 			}
@@ -698,7 +699,7 @@ public class RemoteFolderTreeBuilder {
 			public void fileStatus(ICVSFolder root, String path, String remoteRevision) {
 				try {
 					updateRevision(path, remoteRevision);
-					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingRevision", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
+					monitor.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_receivingRevision, new String[] { Util.toTruncatedPath(path, 3) })); //$NON-NLS-1$
 				} catch (CVSException e) {
 					exceptions.add(e);
 				}
@@ -721,7 +722,7 @@ public class RemoteFolderTreeBuilder {
 			if (exceptions.size() == 1) {
 				throw (CVSException)exceptions.get(0);
 			} else {
-				MultiStatus multi = new MultiStatus(CVSProviderPlugin.ID, 0, Policy.bind("RemoteFolder.errorFetchingRevisions"), null); //$NON-NLS-1$
+				MultiStatus multi = new MultiStatus(CVSProviderPlugin.ID, 0, CVSMessages.RemoteFolder_errorFetchingRevisions, null); //$NON-NLS-1$
 				for (int i = 0; i < exceptions.size(); i++) {
 					multi.merge(((CVSException)exceptions.get(i)).getStatus());
 				}
@@ -758,7 +759,7 @@ public class RemoteFolderTreeBuilder {
 	private void updateRevision(String path, String revision) throws CVSException {
 		RemoteFolderTree folder = getRecoredRemoteFolder(Util.removeLastSegment(path));
 		if (folder == null) {
-			throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.missingParent", path.toString(), revision));//$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_missingParent, new String[] { path.toString(), revision }));//$NON-NLS-1$
 		}
 		((RemoteFile)folder.getFile(Util.getLastSegment(path))).setRevision(revision);
 	}

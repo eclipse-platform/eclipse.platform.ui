@@ -14,8 +14,9 @@ package org.eclipse.team.internal.ccvs.core.client;
 import java.text.ParseException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.CVSMessages;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 /**
@@ -42,7 +43,7 @@ class ModTimeHandler extends ResponseHandler {
 		try {
 			session.setModTime(CVSDateFormatter.serverStampToDate(timeStamp));
 		} catch (ParseException e) {
-			throw new CVSException(Policy.bind("ModTimeHandler.invalidFormat", timeStamp), e); //$NON-NLS-1$
+			throw new CVSException(NLS.bind(CVSMessages.ModTimeHandler_invalidFormat, new String[] { timeStamp }), e); //$NON-NLS-1$
 		}
 	}
 }

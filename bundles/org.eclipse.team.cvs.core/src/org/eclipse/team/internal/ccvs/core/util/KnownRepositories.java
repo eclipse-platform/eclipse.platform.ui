@@ -26,7 +26,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.osgi.service.prefs.BackingStoreException;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class keeps track of the CVS repository locations that are known to
@@ -216,7 +215,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 				}
 			} catch (BackingStoreException e) {
 				// Log and continue (although all repos will be missing)
-				CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("KnownRepositories.0"), e); //$NON-NLS-1$
+				CVSProviderPlugin.log(IStatus.ERROR, CVSMessages.KnownRepositories_0, e); //$NON-NLS-1$
 			} catch (CVSException e) {
 				CVSProviderPlugin.log(e);
 			}

@@ -15,13 +15,14 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -233,10 +234,10 @@ public class UpdateListener extends CommandOutputListener {
 								IResource resource = file.getIResource();
 								if (resource != null) {
 									return new CVSStatus(IStatus.ERROR, CVSStatus.UNMEGERED_BINARY_CONFLICT,
-										Policy.bind("UpdateListener.0", new Object[] { //$NON-NLS-1$
-												resource.getFullPath().toString(), 
-												mergedBinaryFileRevision, 
-												resource.getFullPath().removeLastSegments(1).append(backupFile).toString()}));
+										NLS.bind(CVSMessages.UpdateListener_0, (new Object[] { //$NON-NLS-1$
+                                        resource.getFullPath().toString(), 
+                                        mergedBinaryFileRevision, 
+                                        resource.getFullPath().removeLastSegments(1).append(backupFile).toString()})));
 								}
 							}
 						} catch (CVSException e1) {

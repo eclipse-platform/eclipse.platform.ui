@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -123,7 +124,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 		}
 		
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
-		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", localPath)); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { localPath })); //$NON-NLS-1$
 		
 		session.sendConstructedDirectory(localPath);
 		mFolder.acceptChildren(this);

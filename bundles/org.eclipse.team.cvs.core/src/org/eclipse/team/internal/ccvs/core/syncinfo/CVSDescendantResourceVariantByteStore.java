@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
@@ -51,7 +52,7 @@ public class CVSDescendantResourceVariantByteStore extends DescendantResourceVar
 		if (resource.getType() == IResource.FILE && getBytes(resource) != null && !parentHasSyncBytes(resource)) {
 			// Log a warning if there is no sync bytes available for the resource's
 			// parent but there is valid sync bytes for the child
-			CVSProviderPlugin.log(new TeamException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", ((PersistantResourceVariantByteStore)getRemoteStore()).getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
+			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { ((PersistantResourceVariantByteStore)getRemoteStore()).getSyncName().toString(), resource.getFullPath().toString() }))); //$NON-NLS-1$
 		}
 		return changed;
 	}

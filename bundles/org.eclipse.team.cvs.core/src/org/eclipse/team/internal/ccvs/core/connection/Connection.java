@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.io.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
 /**
@@ -68,7 +69,7 @@ public class Connection {
 			// Generally, errors on close are of no interest.
 			// However, log them if debugging is on
 			if (CVSProviderPlugin.getPlugin().isDebugging()) {
-				CVSProviderPlugin.log(new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex));//$NON-NLS-1$
+				CVSProviderPlugin.log(new CVSCommunicationException(CVSMessages.Connection_cannotClose, ex));//$NON-NLS-1$
 			}
 		} finally {
 			fResponseStream = null;
@@ -126,7 +127,7 @@ public class Connection {
 		try {
 			serverConnection.open(monitor);
 		} catch (IOException e) {
-			throw new CVSCommunicationException(Policy.bind("Connection.0", fCVSRoot.getLocation(true), CVSCommunicationException.getMessageFor(e)), e); //$NON-NLS-1$
+			throw new CVSCommunicationException(NLS.bind(CVSMessages.Connection_0, new String[] { fCVSRoot.getLocation(true), CVSCommunicationException.getMessageFor(e) }), e); //$NON-NLS-1$
 		}
 		fIsEstablished= true;
 	}
@@ -135,7 +136,7 @@ public class Connection {
 	 */
 	public String readLine() throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(Policy.bind("Connection.readUnestablishedConnection"));//$NON-NLS-1$
+			throw new CVSCommunicationException(CVSMessages.Connection_readUnestablishedConnection);//$NON-NLS-1$
 		try {
 			InputStream in = getInputStream();
 			int index = 0;
@@ -211,7 +212,7 @@ public class Connection {
 	 */
 	void write(byte[] b, int off, int len, boolean newline) throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
+			throw new CVSCommunicationException(CVSMessages.Connection_writeUnestablishedConnection);//$NON-NLS-1$
 			
 		if (Policy.isDebugProtocol())
 		    Policy.printProtocol(new String(b, off, len), newline);

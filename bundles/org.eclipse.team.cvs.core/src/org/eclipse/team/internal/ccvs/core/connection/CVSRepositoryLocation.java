@@ -20,6 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -192,7 +193,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			connection = "pserver";//$NON-NLS-1$ 
 		IConnectionMethod method = getPluggedInConnectionMethod(connection);
 		if (method == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()}), null));//$NON-NLS-1$ 
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, NLS.bind(CVSMessages.CVSRepositoryLocation_methods, (new Object[] {getPluggedInConnectionMethodNames()})), null));//$NON-NLS-1$ 
 		String user = configuration.getProperty("user");//$NON-NLS-1$ 
 		if (user.length() == 0)
 			user = null;
@@ -201,7 +202,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			password = null;
 		String host = configuration.getProperty("host");//$NON-NLS-1$ 
 		if (host == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.hostRequired"), null));//$NON-NLS-1$ 
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, CVSMessages.CVSRepositoryLocation_hostRequired, null));//$NON-NLS-1$ 
 		String portString = configuration.getProperty("port");//$NON-NLS-1$ 
 		int port;
 		if (portString == null)
@@ -210,7 +211,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			port = Integer.parseInt(portString);
 		String root = configuration.getProperty("root");//$NON-NLS-1$ 
 		if (root == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));//$NON-NLS-1$ 
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, CVSMessages.CVSRepositoryLocation_rootRequired, null));//$NON-NLS-1$ 
 
 		String encoding = configuration.getProperty("encoding"); //$NON-NLS-1$
 		
@@ -231,8 +232,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		} catch (CVSException e) {
 			// Parsing failed. Include a status that
 			// shows the passed location and the proper form
-			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);//$NON-NLS-1$ 
-			error.merge(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));//$NON-NLS-1$ 
+			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_invalidFormat, (new Object[] {location})), null);//$NON-NLS-1$ 
+			error.merge(new CVSStatus(IStatus.ERROR, CVSMessages.CVSRepositoryLocation_locationForm));//$NON-NLS-1$ 
 			error.merge(e.getStatus());
 			throw new CVSException(error);
 		}
@@ -260,10 +261,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see CVSRepositoryLocation.fromString(String)
 	 */
 	public static CVSRepositoryLocation fromString(String location, boolean validateOnly) throws CVSException {
-		String partId = null;
+		String errorMessage = null;
 		try {
 			// Get the connection method
-			partId = "CVSRepositoryLocation.parsingMethod";//$NON-NLS-1$ 
+			errorMessage = CVSMessages.CVSRepositoryLocation_parsingMethod;
 			int start = location.indexOf(COLON);
 			String methodName;
 			int end;
@@ -279,10 +280,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			
 			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
 			if (method == null)
-				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
+				throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_methods, (new Object[] {getPluggedInConnectionMethodNames()}))));//$NON-NLS-1$ 
 			
 			// Get the user name and password (if provided)
-			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
+			errorMessage = CVSMessages.CVSRepositoryLocation_parsingUser;
 			
 			end = location.indexOf(HOST_SEPARATOR, start);
 			String user = null;
@@ -294,7 +295,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				// Separate the user and password (if there is a password)
 				start = user.indexOf(COLON);
 				if (start != -1) {
-					partId = "CVSRepositoryLocation.parsingPassword";//$NON-NLS-1$ 
+					errorMessage = CVSMessages.CVSRepositoryLocation_parsingPassword;
 					password = user.substring(start+1);
 					user = user.substring(0, start);	
 				}
@@ -303,7 +304,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			}
 			
 			// Get the host (and port)
-			partId = "CVSRepositoryLocation.parsingHost";//$NON-NLS-1$ 
+			errorMessage = CVSMessages.CVSRepositoryLocation_parsingHost;
 			end= location.indexOf(COLON, start);
 			if (end == -1) {
 			    // The last colon is optional so look for the slash that starts the path
@@ -319,7 +320,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			if (start != -1) {
 				try {
 					// Initially, we used a # between the host and port
-					partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+					errorMessage = CVSMessages.CVSRepositoryLocation_parsingPort;
 					port = Integer.parseInt(host.substring(start+1));
 					host = host.substring(0, start);
 					havePort = true;
@@ -329,7 +330,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			}
 			if (!havePort) {
 				// In the correct CVS format, the port follows the COLON
-				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+				errorMessage = CVSMessages.CVSRepositoryLocation_parsingPort;
 				int index = end;
 				char c = location.charAt(++index);
 				String portString = new String();
@@ -344,21 +345,21 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			}
 			
 			// Get the repository path (translating backslashes to slashes)
-			partId = "CVSRepositoryLocation.parsingRoot";//$NON-NLS-1$ 
+			errorMessage = CVSMessages.CVSRepositoryLocation_parsingRoot;
 			start = end + 1;
 			String root = location.substring(start);
 			
 			if (validateOnly)
-				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 		
+				throw new CVSException(new CVSStatus(IStatus.OK, CVSMessages.ok));//$NON-NLS-1$ 		
 			return new CVSRepositoryLocation(method, user, password, host, port, root, null /* encoding */, (user != null), (password != null));
 		}
 		catch (IndexOutOfBoundsException e) {
 			// We'll get here if anything funny happened while extracting substrings
-			throw new CVSException(Policy.bind(partId));
+			throw new CVSException(errorMessage);
 		}
 		catch (NumberFormatException e) {
 			// We'll get here if we couldn't parse a number
-			throw new CVSException(Policy.bind(partId));
+			throw new CVSException(errorMessage);
 		}
 	}
 	
@@ -389,14 +390,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					IExtension extension = extensions[i];
 					IConfigurationElement[] configs = extension.getConfigurationElements();
 					if (configs.length == 0) {
-						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), null);//$NON-NLS-1$ 
+						CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("Connection method {0} is missing required fields", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$ 
 						continue;
 					}
 					try {
 						IConfigurationElement config = configs[0];
 						connectionMethods.add(config.createExecutableExtension("run"));//$NON-NLS-1$ 
 					} catch (CoreException ex) {
-						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), ex);//$NON-NLS-1$ 
+						CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("Could not instantiate connection method for  {0}", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$ 
 					}
 				}
 			}
@@ -445,14 +446,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		IExtension extension = extensions[0];
 		IConfigurationElement[] configs = extension.getConfigurationElements();
 		if (configs.length == 0) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$ 
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("User autheticator {0} is missing required fields", (new Object[] {extension.getUniqueIdentifier()})), null);//$NON-NLS-1$ 
 			return null;
 		}
 		try {
 			IConfigurationElement config = configs[0];
 			return (IUserAuthenticator) config.createExecutableExtension("run");//$NON-NLS-1$ 
 		} catch (CoreException ex) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$ 
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("Unable to instantiate user authenticator {0}", (new Object[] {extension.getUniqueIdentifier()})), ex);//$NON-NLS-1$ 
 			return null;
 		}
 	}
@@ -506,7 +507,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				getParentPreferences().flush();
 			}
 		} catch (BackingStoreException e) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.73", getLocation(true)), e); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_73, new String[] { getLocation(true) }), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -706,7 +707,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			boolean connected = false;
 			try {
 				// Allow two ticks in case of a retry
-				monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
+				monitor.beginTask(NLS.bind(CVSMessages.CVSRepositoryLocation_openingConnection, new String[] { getHost() }), 2);//$NON-NLS-1$
 				ensureLocationCached();
 				boolean cacheNeedsUpdate = false;
 				// If the previous connection failed, prompt before attempting to connect
@@ -725,7 +726,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 						}
 						if (user == null) {
 							// This is possible if the cache was cleared somehow for a location with a mutable username
-							throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
+							throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, CVSMessages.CVSRepositoryLocation_usernameRequired)); //$NON-NLS-1$
 						}
 						if (password == null)
 							password = "";//$NON-NLS-1$ 
@@ -759,7 +760,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private void promptForUserInfo(String message) throws CVSException {
 		IUserAuthenticator authenticator = getAuthenticator();
 		if (authenticator == null) {
-			throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
+			throw new CVSAuthenticationException(CVSMessages.CVSRepositoryLocation_noAuthenticator, CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
 		}
 		authenticator.promptForUserInfo(this, this, message);
 	}
@@ -1009,13 +1010,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		String CVS_RSH_PARAMETERS = CVSProviderPlugin.getPlugin().getCvsRshParameters();
 		String CVS_SERVER = CVSProviderPlugin.getPlugin().getCvsServer();
 		if(CVS_RSH == null || CVS_SERVER == null) {
-			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet")); //$NON-NLS-1$
+			throw new IOException(CVSMessages.EXTServerConnection_varsNotSet); //$NON-NLS-1$
 		}
 		
 		// If there is only one token, assume it is the command and use the default parameters and order
 		if (CVS_RSH_PARAMETERS == null || CVS_RSH_PARAMETERS.length() == 0) {
 			if (port != USE_DEFAULT_PORT)
-				throw new IOException(Policy.bind("EXTServerConnection.invalidPort")); //$NON-NLS-1$
+				throw new IOException(CVSMessages.EXTServerConnection_invalidPort); //$NON-NLS-1$
 			return new String[] {CVS_RSH, host, "-l", user, CVS_SERVER, INVOKE_SVR_CMD}; //$NON-NLS-1$
 		}
 
@@ -1133,7 +1134,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		try {
 			return getParentPreferences().nodeExists(getPreferenceName());
 		} catch (BackingStoreException e) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.74", getLocation(true)), e); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_74, new String[] { getLocation(true) }), e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -1159,7 +1160,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		try {
 			internalGetPreferences().flush();
 		} catch (BackingStoreException e) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.75", getLocation(true)), e); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_75, new String[] { getLocation(true) }), e); //$NON-NLS-1$
 		}
 	}
 

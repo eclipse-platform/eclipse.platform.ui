@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -108,7 +109,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
 		
-		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", Util.toTruncatedPath(mFolder, session.getLocalRoot(), 3))); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.AbstractStructureVisitor_sendingFolder, new String[] { Util.toTruncatedPath(mFolder, session.getLocalRoot(), 3) })); //$NON-NLS-1$
 		
 		// Deal with questionable directories
 		boolean isQuestionable = exists && (! isCVSFolder || isOrphanedSubtree(mFolder));
@@ -124,7 +125,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// Send the directory to the server
 		String remotePath = mFolder.getRemoteLocation(session.getLocalRoot());
 		if (remotePath == null) {
-			throw new CVSException(Policy.bind("AbstractStructureVisitor.noRemote")); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.AbstractStructureVisitor_noRemote); //$NON-NLS-1$
 		}
 		session.sendDirectory(localPath, remotePath);
 
@@ -270,7 +271,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		try {
 			// Visit all the resources
 			this.monitor.beginTask(null, resourceHint);
-			session.setSendFileTitleKey(getSendFileTitleKey());
+			session.setSendFileTitleKey(getSendFileMessage());
 			for (int i = 0; i < resourceList.size(); i++) {
 				((ICVSResource)resourceList.get(i)).accept(this);
 			}
@@ -279,8 +280,14 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		}
 	}
 	
-	protected String getSendFileTitleKey() {
-		return "AbstractStructureVisitor.sendingFile"; //$NON-NLS-1$
+    /**
+     * Return a send file message that contains one argument slot
+     * for the file name.
+     * @return a send file message that contains one argument slot
+     * for the file name
+     */
+	protected String getSendFileMessage() {
+		return CVSMessages.AbstractStructureVisitor_sendingFile;
 	}
     public boolean isRecurse() {
         return recurse;

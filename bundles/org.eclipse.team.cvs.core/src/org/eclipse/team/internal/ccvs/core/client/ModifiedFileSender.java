@@ -41,7 +41,7 @@ class ModifiedFileSender extends FileStructureVisitor {
 		}
 	}
 	
-	protected String getSendFileTitleKey() {
+	protected String getSendFileMessage() {
 		return null;
 	}
 	

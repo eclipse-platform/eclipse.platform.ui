@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 
@@ -72,6 +71,6 @@ public class Diff extends Command {
 	}
 	
 	protected String getServerErrorMessage() {
-		return Policy.bind("Diff.serverError"); //$NON-NLS-1$
+		return CVSMessages.Diff_serverError; //$NON-NLS-1$
 	}
 }

@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -173,7 +174,7 @@ public class LogListener extends CommandOutputListener {
     				int lastDot = tagRevision.lastIndexOf('.');
     				if (lastDot == -1) {
     					CVSProviderPlugin.log(IStatus.ERROR, 
-    						Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision), null); //$NON-NLS-1$
+    						NLS.bind(CVSMessages.LogListener_invalidRevisionFormat, new String[] { tagName, tagRevision }), null); //$NON-NLS-1$
     				} else {
     					if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
     						lastDot = lastDot - 2;

@@ -14,6 +14,7 @@ import java.io.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
 /**
@@ -90,7 +91,7 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	private void testForCRLF(byte next) {
 		if (reported) return;
 		if (previousCR && next == '\n') {
-			CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CRLFDetectInputStream.0", filename), null); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.WARNING, NLS.bind(CVSMessages.CRLFDetectInputStream_0, new String[] { filename }), null); //$NON-NLS-1$
 			reported = true;
 		}
 		previousCR = (next == '\r');

@@ -12,11 +12,12 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Handles a "Remove-entry" response from the CVS server.
@@ -52,7 +53,7 @@ class RemoveEntryHandler extends ResponseHandler {
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		if (mFile.exists()) {
-			CVSProviderPlugin.log(new CVSException(Policy.bind("RemoveEntryHandler.2", mFile.getRepositoryRelativePath()))); //$NON-NLS-1$
+			CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.RemoveEntryHandler_2, new String[] { mFile.getRepositoryRelativePath() }))); //$NON-NLS-1$
 		} else {
 			mFile.unmanage(null);
 		}

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
@@ -163,14 +164,14 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 		IExtension extension = extensions[0];
 		IConfigurationElement[] configs = extension.getConfigurationElements();
 		if (configs.length == 0) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("The CVS file modification validator is missing from extension {0}", (new Object[] {extension.getUniqueIdentifier()})), null);//$NON-NLS-1$
 			return null;
 		}
 		try {
 			IConfigurationElement config = configs[0];
 			return (IFileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
 		} catch (CoreException ex) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("The CVS file modification validator registered as ID {0} could not be instantiated", (new Object[] {extension.getUniqueIdentifier()})), ex);//$NON-NLS-1$
 			return null;
 		}
 	}

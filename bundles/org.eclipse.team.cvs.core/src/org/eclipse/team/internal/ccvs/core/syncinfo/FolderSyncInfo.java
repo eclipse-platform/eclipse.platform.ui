@@ -17,9 +17,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -158,7 +158,7 @@ public class FolderSyncInfo {
 			}
 			return root.substring(index);
 		} catch (IndexOutOfBoundsException e) {
-			throw new CVSException(Policy.bind("FolderSyncInfo_Maleformed_root_4")); //$NON-NLS-1$
+			throw new CVSException(CVSMessages.FolderSyncInfo_Maleformed_root_4); //$NON-NLS-1$
 		}
 	}
 	

@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -153,7 +154,7 @@ public abstract class ResponseHandler {
                 } else {
                     path = local.getFullPath().toString();
                 }
-                IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, Policy.bind("ResponseHandler.0", path, e.getMessage()), e); //$NON-NLS-1$
+                IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, NLS.bind(CVSMessages.ResponseHandler_0, new String[] { path, e.getMessage() }), e); //$NON-NLS-1$
                 session.handleResponseError(status);
             } catch (CVSException e1) {
                 CVSProviderPlugin.log(e1);

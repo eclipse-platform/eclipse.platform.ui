@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
-import org.eclipse.team.internal.ccvs.core.Policy;
+
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Model for a CVS Annotate block.
@@ -108,16 +109,16 @@ public class CVSAnnotateBlock {
 	 */
 	public String toString() {
 		int delta = endLine - startLine + 1;
-		String line = Policy.bind("CVSAnnotateBlock.4"); //$NON-NLS-1$
+		String line = CVSMessages.CVSAnnotateBlock_4; //$NON-NLS-1$
 		if (delta == 1) {
-			line = Policy.bind("CVSAnnotateBlock.5"); //$NON-NLS-1$
+			line = CVSMessages.CVSAnnotateBlock_5; //$NON-NLS-1$
 		}
-		return Policy.bind("CVSAnnotateBlock.6", new Object[] { //$NON-NLS-1$
-			user,
-			revision,
-			String.valueOf(delta),
-			line
-		});
+		return NLS.bind(CVSMessages.CVSAnnotateBlock_6, (new Object[] { //$NON-NLS-1$
+        	user,
+        	revision,
+        	String.valueOf(delta),
+        	line
+        }));
 	}
 
 	/**

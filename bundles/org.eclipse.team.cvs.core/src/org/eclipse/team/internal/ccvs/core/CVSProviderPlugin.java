@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -106,7 +107,7 @@ public class CVSProviderPlugin extends Plugin {
 		if (cvsWorkspaceSubscriber == null) {
 			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
 					CVS_WORKSPACE_SUBSCRIBER_ID, 
-					Policy.bind("CVSProviderPlugin.20")); //$NON-NLS-1$
+					CVSMessages.CVSProviderPlugin_20); //$NON-NLS-1$
 		}
 		return cvsWorkspaceSubscriber;
 	}
@@ -456,11 +457,11 @@ public class CVSProviderPlugin extends Plugin {
 					// persisted in the user settings
 					file.delete();
 				} catch (IOException e) {
-					throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));  //$NON-NLS-1$
+					throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, CVSMessages.CVSProvider_ioException, e));  //$NON-NLS-1$
 				}
 			}
 		} catch (TeamException e) {
-			Util.logError(Policy.bind("CVSProvider.errorLoading"), e);//$NON-NLS-1$
+			Util.logError(CVSMessages.CVSProvider_errorLoading, e);//$NON-NLS-1$
 		}
 	}
 	
@@ -482,7 +483,7 @@ public class CVSProviderPlugin extends Plugin {
 				dis.readUTF();
 			}
 		} else {
-			Util.logError(Policy.bind("CVSProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
+			Util.logError(NLS.bind(CVSMessages.CVSProviderPlugin_unknownStateFileVersion, new String[] { new Integer(count).toString() }), null); //$NON-NLS-1$
 		}
 	}
 		

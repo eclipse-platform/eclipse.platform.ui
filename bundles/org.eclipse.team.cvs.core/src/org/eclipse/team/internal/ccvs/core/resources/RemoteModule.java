@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -29,7 +30,7 @@ public class RemoteModule extends RemoteFolder {
 	
 	public static RemoteModule[] getRemoteModules(ICVSRepositoryLocation repository, CVSTag tag, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(Policy.bind("RemoteModule.getRemoteModules"), 100); //$NON-NLS-1$
+		monitor.beginTask(CVSMessages.RemoteModule_getRemoteModules, 100); //$NON-NLS-1$
 		try {		
 			RemoteModule[] modules;
 			Session s = new Session(repository, getRemoteRootFolder(repository), false);
@@ -99,7 +100,7 @@ public class RemoteModule extends RemoteFolder {
 				}
 			} catch (NoSuchElementException e) {
 				// There is an invalid entry in the modules file. Log it and continue
-				CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation(true)), null); //$NON-NLS-1$
+				CVSProviderPlugin.log(IStatus.WARNING, NLS.bind(CVSMessages.RemoteModule_invalidDefinition, new String[] { moduleDefinitionStrings[i], repository.getLocation(true) }), null); //$NON-NLS-1$
 				continue;
 			}
 			LocalOption[] localOptions = (LocalOption[]) localOptionsList.toArray(new LocalOption[localOptionsList.size()]);

@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
@@ -82,7 +83,7 @@ public class SyncFileWriter {
 				} catch (CVSException e) {
 					// There was a problem parsing the entry line.
 					// Log the problem and skip the entry
-					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("SyncFileWriter.0", parent.getFullPath().toString()), e)); //$NON-NLS-1$
+					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.SyncFileWriter_0, new String[] { parent.getFullPath().toString() }), e)); //$NON-NLS-1$
 				}			
 			}
 		}
@@ -562,7 +563,7 @@ public class SyncFileWriter {
 			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(null, file.getName()));
 			if (!source.exists()) {
-				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
+				throw new CVSException(NLS.bind(CVSMessages.SyncFileWriter_baseNotAvailable, new String[] { file.getFullPath().toString() })); //$NON-NLS-1$
 			}
 			if (file.exists()) {
 				file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 10));

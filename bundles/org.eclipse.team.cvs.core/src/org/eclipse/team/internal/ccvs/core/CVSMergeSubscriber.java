@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
@@ -126,7 +127,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	}
 	
 	public CVSMergeSubscriber(QualifiedName id, IResource[] roots, CVSTag start, CVSTag end) {		
-		super(id, Policy.bind("CVSMergeSubscriber.2", start.getName(), end.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+		super(id, NLS.bind(CVSMessages.CVSMergeSubscriber_2, new String[] { start.getName(), end.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
 		this.start = start;
 		this.end = end;
 		this.roots = new ArrayList(Arrays.asList(roots));

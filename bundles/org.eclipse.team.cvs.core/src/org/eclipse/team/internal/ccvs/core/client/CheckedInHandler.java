@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -47,7 +48,7 @@ class CheckedInHandler extends ResponseHandler {
 		ICVSFile mFile = mParent.getFile(fileName);
 		
 		// Marked the local file as checked-in
-		monitor.subTask(Policy.bind("CheckInHandler.checkedIn", Util.toTruncatedPath((ICVSResource)mFile, session.getLocalRoot(), 3))); //$NON-NLS-1$
+		monitor.subTask(NLS.bind(CVSMessages.CheckInHandler_checkedIn, new String[] { Util.toTruncatedPath((ICVSResource)mFile, session.getLocalRoot(), 3) })); //$NON-NLS-1$
 		mFile.checkedIn(entryLine, session.getCurrentCommand() instanceof Commit);
 	}
 }
