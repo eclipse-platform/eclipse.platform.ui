@@ -106,9 +106,14 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
 
         public CVSCheckedInChangeSet(ILogEntry entry) {
             this.entry = entry;
-    		String date = DateFormat.getDateTimeInstance().format(entry.getDate());
+    		Date date = entry.getDate();
     		String comment = HistoryView.flattenText(entry.getComment());
-    		setName("["+entry.getAuthor()+ "] (" + date +") " + comment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    		if (date == null) {
+    			setName("["+entry.getAuthor()+ "] " + comment); //$NON-NLS-1$ //$NON-NLS-2$
+    		} else {
+    			String dateString = DateFormat.getDateTimeInstance().format(date);
+	    		setName("["+entry.getAuthor()+ "] (" + dateString +") " + comment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    		}
         }
         
         /* (non-Javadoc)
