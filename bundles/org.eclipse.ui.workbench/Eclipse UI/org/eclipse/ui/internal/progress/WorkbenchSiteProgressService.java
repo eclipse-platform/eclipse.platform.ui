@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -38,6 +39,8 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	IJobChangeListener listener;
 	IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 	private Cursor waitCursor;
+	private SiteUpdateJob updateJob; 
+	
 	private class SiteUpdateJob extends WorkbenchJob {
 		private boolean busy;
 		private boolean useWaitCursor;
@@ -110,6 +113,10 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 		
 	}
 	public void dispose() {
+		
+		if(updateJob != null)
+			updateJob.cancel();
+		
 		if (waitCursor == null)
 			return;
 		waitCursor.dispose();
@@ -170,7 +177,7 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 */
 	public IJobChangeListener getJobChangeListener(final Job job, boolean useHalfBusyCursor) {
 		if (listener == null) {
-			final SiteUpdateJob updateJob = new SiteUpdateJob();
+			updateJob = new SiteUpdateJob();
 			updateJob.setSystem(true);
 			updateJob.useWaitCursor = useHalfBusyCursor;
 			listener = new JobChangeAdapter() {
@@ -180,8 +187,12 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void aboutToRun(IJobChangeEvent event) {
-					updateJob.setBusy(true);
-					updateJob.schedule(100);
+					if(PlatformUI.isWorkbenchRunning()){
+						updateJob.setBusy(true);
+						updateJob.schedule(100);
+					}
+					else
+						updateJob.cancel();
 				}
 				/*
 				 * (non-Javadoc)
@@ -189,8 +200,12 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					updateJob.setBusy(false);
-					updateJob.schedule(100);
+					if(PlatformUI.isWorkbenchRunning()){
+						updateJob.setBusy(false);
+						updateJob.schedule(100);
+					}
+					else
+						updateJob.cancel();
 				}
 			};
 		}
