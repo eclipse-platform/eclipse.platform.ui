@@ -640,11 +640,18 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			workspace.beginOperation(true);
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status, updateFlags);
+			WorkManager workManager = workspace.getWorkManager();
+			ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
-			if (!hook.moveProject(tree, this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-				tree.standardMoveProject(this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			int depth = 0;
+			try {
+				depth = workManager.beginUnprotected();
+				if (!hook.moveProject(tree, this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+					tree.standardMoveProject(this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			} finally {
+				workManager.endUnprotected(depth);
+			}
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
 			if (!tree.getStatus().isOK())

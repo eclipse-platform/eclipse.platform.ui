@@ -17,12 +17,23 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ILock;
 
 /**
  * @since 2.0
+ * 
+ * Implementation note: Since the move/delete hook involves running third
+ * party code, the workspace lock is not held.  This means the workspace
+ * lock must be reacquired whenever we need to manipulate the workspace
+ * in any way.  All entry points from third party code back into the tree must
+ * be done in an acquire/release pair.
  */
 class ResourceTree implements IResourceTree {
-	
+
+	/**
+	 * The lock to acquire when the workspace needs to be manipulated
+	 */
+	private ILock lock;
 	private MultiStatus status;
 	private int updateFlags;
 	private boolean isValid = true;
@@ -30,8 +41,9 @@ class ResourceTree implements IResourceTree {
 /**
  * Constructor for this class.
  */
-public ResourceTree(MultiStatus status, int updateFlags) {
+public ResourceTree(ILock lock, MultiStatus status, int updateFlags) {
 	super();
+	this.lock = lock;
 	this.status = status;
 	this.updateFlags = updateFlags;
 }
@@ -49,13 +61,18 @@ void makeInvalid() {
  */
 public void addToLocalHistory(IFile file) {
 	Assert.isLegal(isValid);
-	if (!file.exists())
-		return;
-	IPath path = file.getLocation();
-	if (path == null || !path.toFile().exists())
-		return;
-	long lastModified = internalComputeTimestamp(path.toOSString());
-	((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path, lastModified, false);
+	try {
+		lock.acquire();
+		if (!file.exists())
+			return;
+		IPath path = file.getLocation();
+		if (path == null || !path.toFile().exists())
+			return;
+		long lastModified = internalComputeTimestamp(path.toOSString());
+		((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path, lastModified, false);
+	} finally {
+		lock.release();
+	}
 }
 
 /**
@@ -73,154 +90,92 @@ private void copyLocalHistory (IResource source, IResource destination) {
  */
 public void movedFile(IFile source, IFile destination) {
 	Assert.isLegal(isValid);
-	// Do nothing if the resource doesn't exist.
-	if (!source.exists())
-		return;
-	// If the destination already exists then we have a problem.
-	if (destination.exists()) {
-		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
-		// log the status but don't return until we try and move the rest of the resource information.
-		failed(status);
-	}
-
-	// Move the resource's persistent properties.
-	PropertyManager propertyManager = ((Resource) source).getPropertyManager();
 	try {
-		propertyManager.copy(source, destination, IResource.DEPTH_ZERO);
-		propertyManager.deleteProperties(source, IResource.DEPTH_ZERO);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		// log the status but don't return until we try and move the rest of the resource information.
-		failed(status);
-	}
+		lock.acquire();
+		// Do nothing if the resource doesn't exist.
+		if (!source.exists())
+			return;
+		// If the destination already exists then we have a problem.
+		if (destination.exists()) {
+			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
+			// log the status but don't return until we try and move the rest of the resource information.
+			failed(status);
+		}
 	
-	// Move the node in the workspace tree.
-	Workspace workspace = (Workspace) source.getWorkspace();
-	try {
-		workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, updateFlags, false);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		// log the status but don't return until we try and move the rest of the resource information.
-		failed(status);
+		// Move the resource's persistent properties.
+		PropertyManager propertyManager = ((Resource) source).getPropertyManager();
+		try {
+			propertyManager.copy(source, destination, IResource.DEPTH_ZERO);
+			propertyManager.deleteProperties(source, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+			// log the status but don't return until we try and move the rest of the resource information.
+			failed(status);
+		}
+		
+		// Move the node in the workspace tree.
+		Workspace workspace = (Workspace) source.getWorkspace();
+		try {
+			workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, updateFlags, false);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+			// log the status but don't return until we try and move the rest of the resource information.
+			failed(status);
+		}
+	
+		// Generate the marker deltas.
+		try {
+			workspace.getMarkerManager().moved(source, destination, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+			failed(status);
+		}
+	
+		// Copy the local history information
+		copyLocalHistory(source, destination);
+	} finally {
+		lock.release();
 	}
-
-	// Generate the marker deltas.
-	try {
-		workspace.getMarkerManager().moved(source, destination, IResource.DEPTH_ZERO);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		failed(status);
-	}
-
-	// Copy the local history information
-	copyLocalHistory(source, destination);
 }
 /**
  * @see IResourceTree#movedFolderSubtree
  */
 public void movedFolderSubtree(IFolder source, IFolder destination) {
 	Assert.isLegal(isValid);
-
-	// Do nothing if the source resource doesn't exist.
-	if (!source.exists())
-		return;
-	// If the destination already exists then we have an error.
-	if (destination.exists()) {
-		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
-		failed(status);
-		return;
-	}
-
-	// Move the folder properties.
-	int depth = IResource.DEPTH_INFINITE;
-	PropertyManager propertyManager = ((Resource) source).getPropertyManager();
 	try {
-		propertyManager.copy(source, destination, depth);
-		propertyManager.deleteProperties(source, depth);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		// log the status but don't return until we try and move the rest of the resource info
-		failed(status);
-	}
-
-	// Create the destination node in the tree.
-	Workspace workspace = (Workspace) source.getWorkspace();
-	try {
-		workspace.move((Resource) source, destination.getFullPath(), depth, updateFlags, false);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		// log the status but don't return until we try and move the rest of the resource info
-		failed(status);
-	}
-	
-	// Generate the marker deltas.
-	try {
-		workspace.getMarkerManager().moved(source, destination, depth);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		failed(status);
-	}
-	
-	// Copy the local history for this folder
-	copyLocalHistory(source, destination);
-}
-
-/**
- * @see IResourceTree#movedProjectSubtree.
- */
-public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
-	Assert.isLegal(isValid);
-	// Do nothing if the source resource doesn't exist.
-	if (!project.exists())
-		return true;
-
-	Project source = (Project) project;
-	Project destination = (Project) source.getWorkspace().getRoot().getProject(destDescription.getName());
-	IProjectDescription srcDescription = source.internalGetDescription();
-	Workspace workspace = (Workspace) source.getWorkspace();
-	int depth = IResource.DEPTH_INFINITE;
-	
-	// If the name of the source and destination projects are not the same then 
-	// rename the meta area and make changes in the tree.
-	if (isNameChange(source, destDescription)) {
+		lock.acquire();
+		// Do nothing if the source resource doesn't exist.
+		if (!source.exists())
+			return;
+		// If the destination already exists then we have an error.
 		if (destination.exists()) {
 			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
+			IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 			failed(status);
-			return false;
+			return;
 		}
-
-		// Rename the project metadata area. Close the property store to flush everything to disk
+	
+		// Move the folder properties.
+		int depth = IResource.DEPTH_INFINITE;
+		PropertyManager propertyManager = ((Resource) source).getPropertyManager();
 		try {
-			source.getPropertyManager().closePropertyStore(source);
+			propertyManager.copy(source, destination, depth);
+			propertyManager.deleteProperties(source, depth);
 		} catch (CoreException e) {
-			String message = Policy.bind("properties.couldNotClose", source.getFullPath().toString()); //$NON-NLS-1$
+			String message = Policy.bind("resources.errorPropertiesMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
 		}
-		java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
-		java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-		try{
-			source.getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, new NullProgressMonitor());
-		} catch (CoreException e) {
-			String message = Policy.bind("resources.moveMeta", oldMetaArea.toString(), newMetaArea.toString()); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, destination.getFullPath(), message, e);
-			// log the status but don't return until we try and move the rest of the resource info
-			failed(status);
-		}
 	
-		// Move the workspace tree.
+		// Create the destination node in the tree.
+		Workspace workspace = (Workspace) source.getWorkspace();
 		try {
-			workspace.move(source, destination.getFullPath(), depth, updateFlags, true);
+			workspace.move((Resource) source, destination.getFullPath(), depth, updateFlags, false);
 		} catch (CoreException e) {
 			String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -228,59 +183,135 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			failed(status);
 		}
 		
-		// Clear the natures and builders on the destination project.
-		ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
-		info.clearNatures();
-		info.setBuilders(null);
-
-		// Generate marker deltas.
+		// Generate the marker deltas.
 		try {
 			workspace.getMarkerManager().moved(source, destination, depth);
 		} catch (CoreException e) {
-			String message = Policy.bind("resources.errorMarkersMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
+			String message = Policy.bind("resources.errorMarkersDelete", source.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
 		}
-		// Copy the local history
+		
+		// Copy the local history for this folder
 		copyLocalHistory(source, destination);
+	} finally {
+		lock.release();
 	}
+}
+
+/**
+ * @see IResourceTree#movedProjectSubtree.
+ */
+public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
+	Assert.isLegal(isValid);
+	try {
+		lock.acquire();
+		// Do nothing if the source resource doesn't exist.
+		if (!project.exists())
+			return true;
 	
-	// Write the new project description on the destination project.
-	try {
-		//moving linked resources may have modified the description in memory
-		((ProjectDescription)destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
-		destination.internalSetDescription(destDescription, true);
-		destination.writeDescription(IResource.FORCE);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
-		failed(status);
-	}
-
-	// If the locations are the not the same then make sure the new location is written to disk.
-	// (or the old one removed)
-	IPath srcLocation = srcDescription.getLocation();
-	IPath destLocation = destDescription.getLocation();
-	if ((srcLocation == null && destLocation != null) || 
-		(srcLocation != null && !srcLocation.equals(destLocation))) {
-		try {
-			workspace.getMetaArea().writeLocation(destination);
-		} catch (CoreException e) {
-			failed(e.getStatus());
+		Project source = (Project) project;
+		Project destination = (Project) source.getWorkspace().getRoot().getProject(destDescription.getName());
+		IProjectDescription srcDescription = source.internalGetDescription();
+		Workspace workspace = (Workspace) source.getWorkspace();
+		int depth = IResource.DEPTH_INFINITE;
+		
+		// If the name of the source and destination projects are not the same then 
+		// rename the meta area and make changes in the tree.
+		if (isNameChange(source, destDescription)) {
+			if (destination.exists()) {
+				String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
+				failed(status);
+				return false;
+			}
+	
+			// Rename the project metadata area. Close the property store to flush everything to disk
+			try {
+				source.getPropertyManager().closePropertyStore(source);
+			} catch (CoreException e) {
+				String message = Policy.bind("properties.couldNotClose", source.getFullPath().toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+				// log the status but don't return until we try and move the rest of the resource info
+				failed(status);
+			}
+			java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
+			java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
+			try{
+				source.getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, new NullProgressMonitor());
+			} catch (CoreException e) {
+				String message = Policy.bind("resources.moveMeta", oldMetaArea.toString(), newMetaArea.toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, destination.getFullPath(), message, e);
+				// log the status but don't return until we try and move the rest of the resource info
+				failed(status);
+			}
+		
+			// Move the workspace tree.
+			try {
+				workspace.move(source, destination.getFullPath(), depth, updateFlags, true);
+			} catch (CoreException e) {
+				String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+				// log the status but don't return until we try and move the rest of the resource info
+				failed(status);
+			}
+			
+			// Clear the natures and builders on the destination project.
+			ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
+			info.clearNatures();
+			info.setBuilders(null);
+	
+			// Generate marker deltas.
+			try {
+				workspace.getMarkerManager().moved(source, destination, depth);
+			} catch (CoreException e) {
+				String message = Policy.bind("resources.errorMarkersMove", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+				// log the status but don't return until we try and move the rest of the resource info
+				failed(status);
+			}
+			// Copy the local history
+			copyLocalHistory(source, destination);
 		}
+		
+		// Write the new project description on the destination project.
+		try {
+			//moving linked resources may have modified the description in memory
+			((ProjectDescription)destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
+			destination.internalSetDescription(destDescription, true);
+			destination.writeDescription(IResource.FORCE);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
+			failed(status);
+		}
+	
+		// If the locations are the not the same then make sure the new location is written to disk.
+		// (or the old one removed)
+		IPath srcLocation = srcDescription.getLocation();
+		IPath destLocation = destDescription.getLocation();
+		if ((srcLocation == null && destLocation != null) || 
+			(srcLocation != null && !srcLocation.equals(destLocation))) {
+			try {
+				workspace.getMetaArea().writeLocation(destination);
+			} catch (CoreException e) {
+				failed(e.getStatus());
+			}
+		}
+	
+		// Do a refresh on the destination project to pick up any newly discovered resources
+		try {
+			destination.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
+			failed(status);
+			return false;
+		}
+		return true;
+	} finally {
+		lock.release();
 	}
-
-	// Do a refresh on the destination project to pick up any newly discovered resources
-	try {
-		destination.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
-		failed(status);
-		return false;
-	}
-	return true;
 }
 
 
@@ -295,26 +326,36 @@ protected IStatus getStatus() {
  */
 public long getTimestamp(IFile file) {
 	Assert.isLegal(isValid);
-	if (!file.exists())
-		return NULL_TIMESTAMP;
-	ResourceInfo info = ((File) file).getResourceInfo(false, false);
-	return info == null ? NULL_TIMESTAMP : info.getLocalSyncInfo();
+	try {
+		lock.acquire();
+		if (!file.exists())
+			return NULL_TIMESTAMP;
+		ResourceInfo info = ((File) file).getResourceInfo(false, false);
+		return info == null ? NULL_TIMESTAMP : info.getLocalSyncInfo();
+	} finally {
+		lock.release();
+	}		
 }
 /**
  * @see IResourceTree#deletedFile
  */
 public void deletedFile(IFile file) {
 	Assert.isLegal(isValid);
-	// Do nothing if the resource doesn't exist.
-	if (!file.exists())
-		return;
 	try {
-		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
-		((Resource) file).deleteResource(true, null);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", file.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, file.getFullPath(), message, e);
-		failed(status);
+		lock.acquire();
+		// Do nothing if the resource doesn't exist.
+		if (!file.exists())
+			return;
+		try {
+			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
+			((Resource) file).deleteResource(true, null);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorDeleting", file.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, file.getFullPath(), message, e);
+			failed(status);
+		}
+	} finally {
+		lock.release();
 	}
 }
 /**
@@ -322,16 +363,21 @@ public void deletedFile(IFile file) {
  */
 public void deletedFolder(IFolder folder) {
 	Assert.isLegal(isValid);
-	// Do nothing if the resource doesn't exist.
-	if (!folder.exists())
-		return;
 	try {
-		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
-		((Resource) folder).deleteResource(true, null);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", folder.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
-		failed(status);
+		lock.acquire();
+		// Do nothing if the resource doesn't exist.
+		if (!folder.exists())
+			return;
+		try {
+			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
+			((Resource) folder).deleteResource(true, null);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorDeleting", folder.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
+			failed(status);
+		}
+	} finally {
+		lock.release();
 	}
 }
 /**
@@ -339,39 +385,44 @@ public void deletedFolder(IFolder folder) {
  */
 public void deletedProject(IProject target) {
 	Assert.isLegal(isValid);
-	// Do nothing if the resource doesn't exist.
-	if (!target.exists())
-		return;
-	Project project = (Project) target;
-	Workspace workspace = (Workspace) project.getWorkspace();
-
-	// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 	try {
-		project.deleteResource(false, null);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorDeleting", project.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
-		// log the status but don't return until we try and delete the rest of the project info
-		failed(status);
-	}
-
-	// Delete the project metadata.
-	try {
-		workspace.getMetaArea().delete(project);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.deleteMeta", project.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_METADATA, project.getFullPath(), message, e);
-		// log the status but don't return until we try and delete the rest of the project info
-		failed(status);
-	}
-
-	// Clear the history store.
-	try {
-		project.clearHistory(null);
-	} catch (CoreException e) {
-		String message = Policy.bind("history.problemsRemoving", project.getFullPath().toString()); //$NON-NLS-1$
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message, e);
-		failed(status);
+		lock.acquire();
+		// Do nothing if the resource doesn't exist.
+		if (!target.exists())
+			return;
+		Project project = (Project) target;
+		Workspace workspace = (Workspace) project.getWorkspace();
+	
+		// Delete properties, generate marker deltas, and remove the node from the workspace tree.
+		try {
+			project.deleteResource(false, null);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.errorDeleting", project.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
+			// log the status but don't return until we try and delete the rest of the project info
+			failed(status);
+		}
+	
+		// Delete the project metadata.
+		try {
+			workspace.getMetaArea().delete(project);
+		} catch (CoreException e) {
+			String message = Policy.bind("resources.deleteMeta", project.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_METADATA, project.getFullPath(), message, e);
+			// log the status but don't return until we try and delete the rest of the project info
+			failed(status);
+		}
+	
+		// Clear the history store.
+		try {
+			project.clearHistory(null);
+		} catch (CoreException e) {
+			String message = Policy.bind("history.problemsRemoving", project.getFullPath().toString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message, e);
+			failed(status);
+		}
+	} finally {
+		lock.release();
 	}
 }
 /**
@@ -401,16 +452,26 @@ private boolean isContentChange(IProject project, IProjectDescription destinatio
  * @see IResourceTree#isSynchronized
  */
 public boolean isSynchronized(IResource resource, int depth) {
-	return ((Resource)resource).getLocalManager().isSynchronized(resource, depth);
+	try {
+		lock.acquire();
+		return ((Resource)resource).getLocalManager().isSynchronized(resource, depth);
+	} finally {
+		lock.release();
+	}		
 }
 /**
  * @see IResourceTree#computeTimestamp
  */
 public long computeTimestamp(IFile file) {
 	Assert.isLegal(isValid);
-	if (!file.getProject().exists())
-		return NULL_TIMESTAMP;
-	return internalComputeTimestamp(file.getLocation().toOSString());
+	try {
+		lock.acquire();
+		if (!file.getProject().exists())
+			return NULL_TIMESTAMP;
+		return internalComputeTimestamp(file.getLocation().toOSString());
+	} finally {
+		lock.release();
+	}
 }
 /**
  * Return the timestamp of the file at the given location.
@@ -423,7 +484,12 @@ protected long internalComputeTimestamp(String location) {
  */
 public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
-	internalDeleteFile(file, updateFlags, monitor);
+	try {
+		lock.acquire();
+		internalDeleteFile(file, updateFlags, monitor);
+	} finally {
+		lock.release();
+	}
 }
 /**
  * Helper method for #standardDeleteFile. Returns a boolean indicating whether or
@@ -504,6 +570,7 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
+		lock.acquire();
 		String message = Policy.bind("resources.deleting", folder.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
@@ -566,6 +633,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 			failed(status);
 		}
 	} finally {
+		lock.release();
 		monitor.done();
 	}
 }
@@ -654,6 +722,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 public void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
+		lock.acquire();
 		String message = Policy.bind("resources.deleting", project.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		// Do nothing if the project doesn't exist in the workspace tree.
@@ -724,6 +793,7 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 			failed(status);
 		}
 	} finally {
+		lock.release();
 		monitor.done();
 	}
 }
@@ -793,6 +863,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
+		lock.acquire();
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.subTask(message);
 
@@ -844,6 +915,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		monitor.worked(Policy.totalWork/4);
 		return;
 	} finally {
+		lock.release();
 		monitor.done();
 	}
 }
@@ -853,6 +925,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 public void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
+		lock.acquire();
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.subTask(message);
 			
@@ -907,6 +980,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			failed(status);
 		}
 	} finally {
+		lock.release();
 		monitor.done();
 	}
 }
@@ -1044,6 +1118,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
 	try {
+		lock.acquire();
 		String message = Policy.bind("resources.moving", source.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 
@@ -1086,6 +1161,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()), isDeep);
 		monitor.worked(Policy.totalWork*1/8);
 	} finally {
+		lock.release();
 		monitor.done();
 	}
 }
@@ -1106,14 +1182,19 @@ private void moveInFileSystem(java.io.File source, java.io.File destination, int
  */
 public void updateMovedFileTimestamp(IFile file, long timestamp) {
 	Assert.isLegal(isValid);
-	// Do nothing if the file doesn't exist in the workspace tree.
-	if (!file.exists())
-		return;
-	// Update the timestamp in the tree.
-	ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
-	// The info should never be null since we just checked that the resource exists in the tree.
-	((Resource) file).getLocalManager().updateLocalSync(info, timestamp);
-	//remove the linked bit since this resource has been moved in the file system
-	info.clear(ICoreConstants.M_LINK);
+	try {
+		lock.acquire();
+		// Do nothing if the file doesn't exist in the workspace tree.
+		if (!file.exists())
+			return;
+		// Update the timestamp in the tree.
+		ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
+		// The info should never be null since we just checked that the resource exists in the tree.
+		((Resource) file).getLocalManager().updateLocalSync(info, timestamp);
+		//remove the linked bit since this resource has been moved in the file system
+		info.clear(ICoreConstants.M_LINK);
+	} finally {
+		lock.release();
+	}
 }
 }

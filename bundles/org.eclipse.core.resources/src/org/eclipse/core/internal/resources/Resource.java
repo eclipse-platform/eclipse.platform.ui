@@ -622,44 +622,28 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 		ISchedulingRule rule = getType() == ROOT ? (ISchedulingRule)this : getParent();
 		try {
 			workspace.prepareOperation(rule, monitor);
-			/* if there is no such resource (including type check) then there is nothing
-			   to delete so just return. */
+			// if there is no resource then there is nothing to delete so just return
 			if (!exists())
 				return;
-
 			workspace.beginOperation(true);
 			IPath originalLocation = getLocation();
 			boolean wasLinked = isLinked();
 			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status, updateFlags);
-			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
-			switch (getType()) {
-				case IResource.FILE :
-					if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-						tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
-					break;
-				case IResource.FOLDER :
-					if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
-					break;
-				case IResource.PROJECT :
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
-					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
-					break;
-				case IResource.ROOT :
-					IProject[] projects = ((IWorkspaceRoot) this).getProjects();
-					for (int i = 0; i < projects.length; i++) {
-						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
-						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))
-							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2));
-					}
-					// need to clear out the root info
-					workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
-					getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
-					getResourceInfo(false, false).clearSessionProperties();
-					break;
+			WorkManager workManager = workspace.getWorkManager();
+			ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
+			int depth = 0;
+			try {
+				depth = workManager.beginUnprotected();
+				unprotectedDelete(tree, updateFlags, monitor);
+			} finally {
+				workManager.endUnprotected(depth);
+			}
+			if (getType() == IResource.ROOT) {
+				// need to clear out the root info
+				workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
+				getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
+				getResourceInfo(false, false).clearSessionProperties();
 			}
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
@@ -679,7 +663,6 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 		monitor.done();
 	}
 }
-
 /**
  * @see IProject and IWorkspaceRoot -- N.B. This is not an IResource method!
  */
@@ -1114,47 +1097,23 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			IPath originalLocation = getLocation();
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status, updateFlags);
-			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			WorkManager workManager = workspace.getWorkManager();
+			ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
 			IResource destination = null;
-			switch (getType()) {
-				case IResource.FILE:
-					destination = workspace.getRoot().getFile(path);
-					if (isLinked())
-						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
-					if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-						tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
-					break;
-				case IResource.FOLDER:
-					destination = workspace.getRoot().getFolder(path);
-					if (isLinked())
-						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
-					if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-						tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
-					break;
-				case IResource.PROJECT:
-					IProject project = (IProject) this;
-					// if there is no change in name, there is nothing to do so return.
-					if (getName().equals(path.lastSegment())) {
-						return;
-					}
-					//we are deleting the source project so notify.
-					destination = workspace.getRoot().getProject(path.lastSegment());
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
-					IProjectDescription description = project.getDescription();
-					description.setName(path.lastSegment());
-					if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
-						tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
-					break;
-				case IResource.ROOT:
-					message = Policy.bind("resources.moveRoot"); //$NON-NLS-1$
-					throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+			int depth = 0;
+			try {
+				depth = workManager.beginUnprotected();
+				destination = unprotectedMove(tree, path, updateFlags, monitor);
+			} finally {
+				workManager.endUnprotected(depth);
 			}
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
 			//update any aliases of this resource and the destination
-			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
-			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
+			if (destination != null) {
+				workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
+				workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
+			}
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
 		} catch (OperationCanceledException e) {
@@ -1167,7 +1126,6 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 		monitor.done();
 	}
 }
-
 /**
  * @see IResource#refreshLocal
  */
@@ -1432,5 +1390,76 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 			info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		}
 	}
+}
+/**
+ * Calls the move/delete hook to perform the deletion.  Since this method calls 
+ * client code, it is run "unprotected", so the workspace lock is not held.  
+ */
+private void unprotectedDelete(ResourceTree tree, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+	switch (getType()) {
+		case IResource.FILE :
+			if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+				tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+			break;
+		case IResource.FOLDER :
+			if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+				tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+			break;
+		case IResource.PROJECT :
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
+			if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+				tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+			break;
+		case IResource.ROOT :
+			IProject[] projects = ((IWorkspaceRoot) this).getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
+				if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))
+					tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2));
+			}
+	}
+}
+/**
+ * Calls the move/delete hook to perform the move.  Since this method calls 
+ * client code, it is run "unprotected", so the workspace lock is not held.  
+ * Returns the destination resource, or null if the resource was not moved.
+ */
+private IResource unprotectedMove(ResourceTree tree, IPath path, int updateFlags, IProgressMonitor monitor) throws CoreException, ResourceException {
+	IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+	IResource destination = null;
+	switch (getType()) {
+		case IResource.FILE:
+			destination = workspace.getRoot().getFile(path);
+			if (isLinked())
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
+			if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			break;
+		case IResource.FOLDER:
+			destination = workspace.getRoot().getFolder(path);
+			if (isLinked())
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
+			if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			break;
+		case IResource.PROJECT:
+			IProject project = (IProject) this;
+			// if there is no change in name, there is nothing to do so return.
+			if (getName().equals(path.lastSegment()))
+				return null;
+			//we are deleting the source project so notify.
+			destination = workspace.getRoot().getProject(path.lastSegment());
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
+			IProjectDescription description = project.getDescription();
+			description.setName(path.lastSegment());
+			if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			break;
+		case IResource.ROOT:
+			String msg = Policy.bind("resources.moveRoot"); //$NON-NLS-1$
+			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), msg));
+	}
+	return destination;
 }
 }

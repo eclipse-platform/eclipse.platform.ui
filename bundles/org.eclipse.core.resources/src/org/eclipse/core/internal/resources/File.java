@@ -35,17 +35,13 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 		String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
+		if (workspace.shouldValidate) 
+			workspace.validateSave(this);
 		try {
 			workspace.prepareOperation(this, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
-
 			workspace.beginOperation(true);
-			if (workspace.shouldValidate) {
-				workspace.validateSave(this);
-				info = getResourceInfo(false, false);
-				checkAccessible(getFlags(info));
-			}
 			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -270,17 +266,13 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 	try {
 		String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		if (workspace.shouldValidate) 
+			workspace.validateSave(this);
 		try {
 			workspace.prepareOperation(this, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
-
 			workspace.beginOperation(true);
-			if (workspace.shouldValidate) {
-				workspace.validateSave(this);
-				info = getResourceInfo(false, false);
-				checkAccessible(getFlags(info));
-			}				
 			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();

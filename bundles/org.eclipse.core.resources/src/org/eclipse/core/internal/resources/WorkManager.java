@@ -133,6 +133,12 @@ class WorkManager implements IManager {
 			lock.acquire();
 	}
 	/**
+	 * Returns the work manager's lock
+	 */
+	ILock getLock() {
+		return lock;
+	}
+	/**
 	 * This method can only be safelly called from inside a workspace
 	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
