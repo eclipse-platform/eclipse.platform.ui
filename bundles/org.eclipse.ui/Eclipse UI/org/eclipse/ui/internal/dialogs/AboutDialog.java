@@ -114,8 +114,9 @@ private void addListeners(StyledText styledText) {
 	
 	styledText.addTraverseListener(new TraverseListener() {
 		public void keyTraversed(TraverseEvent e) {
-			if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN) {
-				e.doit = true;
+			if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN ||
+				e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+					e.doit = true;
 			}
 		}
 	});
