@@ -209,15 +209,16 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * Returns the document offset of the upper left corner of the widgets viewport,
 	 * possibly including partially visible lines.
 	 */
-	private static int getInclusiveTopIndexStartOffset(StyledText text, IDocument document, int visibleRegionOffset) {
+	private int getInclusiveTopIndexStartOffset() {
 		
-		if (text != null) {	
-			int top= text.getTopIndex();
-			if ((text.getTopPixel() % text.getLineHeight()) != 0)
+		StyledText textWidget= fTextViewer.getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {	
+			int top= fTextViewer.getTopIndex();
+			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
 				top--;
 			try {
-				top= document.getLineOffset(top -  visibleRegionOffset);
-				return top + visibleRegionOffset;
+				IDocument document= fTextViewer.getDocument();
+				return document.getLineOffset(top);
 			} catch (BadLocationException ex) {
 			}
 		}
@@ -236,7 +237,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		StyledText styledText= fTextViewer.getTextWidget();
 		IDocument doc= fTextViewer.getDocument();
 
-		int topLeft= getInclusiveTopIndexStartOffset(styledText, doc, fTextViewer.getVisibleRegion().getOffset());
+		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight= fTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 		

@@ -217,15 +217,15 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * Returns the document offset of the upper left corner of the widgets viewport,
 	 * possibly including partially visible lines.
 	 */
-	private static int getInclusiveTopIndexStartOffset(StyledText text, IDocument document, int visibleRegionOffset) {
+	private int getInclusiveTopIndexStartOffset() {
 		
-		if (text != null) {	
-			int top= text.getTopIndex();
-			if ((text.getTopPixel() % text.getLineHeight()) != 0)
+		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
+			int top= fCachedTextViewer.getTopIndex();
+			if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
 				top--;
 			try {
-				top= document.getLineOffset(top -  visibleRegionOffset);
-				return top + visibleRegionOffset;
+				IDocument document= fCachedTextViewer.getDocument();
+				return document.getLineOffset(top);
 			} catch (BadLocationException ex) {
 			}
 		}
@@ -241,7 +241,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		if (fModel == null || fCachedTextViewer == null)
 			return;
 
-		int topLeft= getInclusiveTopIndexStartOffset(fCachedTextWidget, fCachedTextViewer.getDocument(), fCachedTextViewer.getVisibleRegion().getOffset());
+		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight= fCachedTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 		
