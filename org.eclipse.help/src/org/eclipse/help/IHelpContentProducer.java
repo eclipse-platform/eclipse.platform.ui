@@ -22,6 +22,7 @@ import java.util.*;
  * contributed by the plugin.  If IHelpContentProvider does not return
  * the content, help system searches doc.zip and plug-in install location
  * for the file and reads its content. 
+ * @since 3.0.0
  */
 public interface IHelpContentProducer {
 	/**
