@@ -65,7 +65,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 */
 	protected boolean isNotifying;
 	/**
-	 * Indicates if a PRE_BUILD event has occurred during this operation
+	 * Indicates the thread in which a PRE_BUILD last occurred. When that operation
+	 * finished, a POST_BUILD will be required.
 	 */
 	protected boolean wasBuild = false;
 
@@ -327,9 +328,16 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		listeners.remove(listener);
 		EventStats.listenerRemoved(listener);
 	}
-
+	/**
+	 * Returns true if a notification is needed. There are two conditions
+	 * under which a notification is needed even if we are not at the end
+	 * of a top level operation:
+	 * 1. Sufficient time has elapsed since the last notification
+	 * 2. A build occurred during this operation, in which case a POST_BUILD event is required
+	 * @return true if a notification is needed, and false otherwise
+	 */
 	public boolean shouldNotify() {
-		return !isNotifying && notificationRequested;
+		return !isNotifying && (notificationRequested || wasBuild);
 	}
 
 	public void shutdown(IProgressMonitor monitor) {
