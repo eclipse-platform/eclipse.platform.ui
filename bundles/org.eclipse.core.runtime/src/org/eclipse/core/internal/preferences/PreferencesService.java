@@ -806,7 +806,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		// fancy math to get the first segment of the path
 		String path = tree.absolutePath();
 		int index = path.indexOf('/', 1);
-		String sub = path.substring(1, index);
+		String sub = path.substring(1, index == -1 ? path.length() : index);
 		return scope.equals(sub);
 	}
 
@@ -914,7 +914,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					continue;
 				// get the child node
 				String childPath = nodeFullPath.substring(treePath.length());
-				// todo make relative
+				childPath = EclipsePreferences.makeRelative(childPath);
 				if (tree.nodeExists(childPath)) {
 					String[] keys = (String[]) mapping.get(nodePath);
 					// if there are no defined keys then we only have to match
@@ -924,7 +924,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					// otherwise check to see if we have any applicable keys
 					Preferences child = tree.node(childPath);
 					for (int j = 0; j < keys.length; j++) {
-						if (child.get(keys[i], null) != null)
+						if (child.get(keys[j], null) != null)
 							return true;
 					}
 				}
