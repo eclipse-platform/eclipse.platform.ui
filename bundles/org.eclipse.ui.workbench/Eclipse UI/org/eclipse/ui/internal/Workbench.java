@@ -148,12 +148,15 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.roles.IDERoleManager;
 import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.progress.IProgressManager;
+
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -2675,5 +2678,10 @@ public class Workbench
 		return ObjectActivityManager.getManager(id,create);
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getProgressManager()
+	 */
+	public IProgressManager getProgressManager() {
+		return ProgressManager.getInstance();
+	}
 }
