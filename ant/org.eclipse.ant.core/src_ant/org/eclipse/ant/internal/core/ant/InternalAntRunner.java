@@ -565,13 +565,11 @@ public class InternalAntRunner {
 			if (fileName == null) {
 				fileName= "log.xml"; //$NON-NLS-1$
 			}
-			IPath path= new Path(fileName);
-			if (!path.isAbsolute()) {
-				path= new Path(getBuildFileLocation());
-				path= path.removeLastSegments(1);
-				path= path.addTrailingSeparator();
-				path= path.append(fileName);
-			}
+			String realPath= new Path(getBuildFileLocation()).toFile().getAbsolutePath();
+			IPath path= new Path(realPath);
+			path= path.removeLastSegments(1);
+			path= path.addTrailingSeparator();
+			path= path.append(fileName);
 		
 			project.setProperty("XmlLogger.file", path.toOSString()); //$NON-NLS-1$
 		}
