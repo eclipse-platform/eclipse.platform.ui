@@ -872,11 +872,15 @@ public void testValidateNatureSet() {
 	
 	String[][] invalid = getInvalidNatureSets();
 	for (int i = 0; i < invalid.length; i++) {
-		assertTrue("invalid: " + i, !ws.validateNatureSet(invalid[i]).isOK());
+		IStatus result = ws.validateNatureSet(invalid[i]);
+		assertTrue("invalid (severity): " + i, !result.isOK());
+		assertTrue("invalid (code): " + i, result.getCode() != IStatus.OK);
 	}
 	String[][] valid = getValidNatureSets();
 	for (int i = 0; i < valid.length; i++) {
-		assertTrue("valid: " + i, ws.validateNatureSet(valid[i]).isOK());
+		IStatus result = ws.validateNatureSet(valid[i]);
+		assertTrue("valid (severity): " + i, result.isOK());
+		assertTrue("valid (code): " + i, result.getCode() == IStatus.OK);
 	}
 }
 /**
