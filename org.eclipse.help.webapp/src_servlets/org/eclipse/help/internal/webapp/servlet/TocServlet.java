@@ -119,7 +119,7 @@ public class TocServlet extends HttpServlet {
 	 * Finds a TOC that contains specified topic
 	 * @param topic the topic href
 	 */
-	public IToc findTocContainingTopic(String topic) {
+	private IToc findTocContainingTopic(String topic) {
 		if (topic == null || topic.equals(""))
 			return null;
 
