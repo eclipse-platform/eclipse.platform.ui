@@ -669,11 +669,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			return;
 		if (one == null || two == null)
 			assertTrue(message + ".1", false);
-		if (one.length != two.length)
-			assertTrue(message + ".2", false);
+		assertEquals(message + ".2", one.length, two.length);
 		for (int i = 0; i < one.length; i++)
-			if (one[i] != two[i])
-				assertTrue(message + ".3." + i, false);
+			assertEquals(message + ".3." + i, one[i], two[i]);
 	}
 
 	private void assertEquals(String message, Object[] one, Object[] two) {
