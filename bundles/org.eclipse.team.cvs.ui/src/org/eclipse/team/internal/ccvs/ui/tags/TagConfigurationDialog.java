@@ -292,11 +292,6 @@ public class TagConfigurationDialog extends Dialog {
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		table.setLayoutData(data);
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(60, true));
-		table.setLayout(layout);
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
 		cvsTagTree = new CheckboxTableViewer(table);
 		cvsTagTree.setContentProvider(new WorkbenchContentProvider());
 		cvsTagTree.setLabelProvider(new WorkbenchLabelProvider());
