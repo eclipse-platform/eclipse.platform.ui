@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
@@ -72,6 +73,10 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		}
 	}
 
+	/**
+	 * TODO: We should not be implementing IDecoration as it is
+	 * not speced to be implemented by clients (see bug 72677)
+	 */
 	public static class Decoration implements IDecoration {
 		public String prefix, suffix;
 		public ImageDescriptor overlay;
@@ -99,6 +104,26 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		 */
 		public void addOverlay(ImageDescriptor overlay, int quadrant) {
 		}
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IDecoration#setForegroundColor(org.eclipse.swt.graphics.Color)
+         */
+        public void setForegroundColor(Color color) {
+            // Ignore for now
+            
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IDecoration#setBackgroundColor(org.eclipse.swt.graphics.Color)
+         */
+        public void setBackgroundColor(Color color) {
+            // Ignore for now
+            
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IDecoration#setFont(org.eclipse.swt.graphics.Font)
+         */
+        public void setFont(Font color) {
+            // Ignore for now
+        }
 	}
 	
 	static {
