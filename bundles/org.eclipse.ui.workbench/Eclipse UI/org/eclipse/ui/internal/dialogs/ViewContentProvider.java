@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
