@@ -546,12 +546,16 @@ public class Preferences {
 	 */
 	public void setValue(String name, boolean value) {
 		boolean defaultValue = getDefaultBoolean(name);
-		if (value == defaultValue) {
-			internalSetToDefault(name, defaultValue ? Preferences.TRUE : Preferences.FALSE);
-			return;
-		}
 		boolean oldValue = getBoolean(name);
-		properties.put(name, value ? Preferences.TRUE : Preferences.FALSE);
+		if (value == defaultValue) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, value ? Preferences.TRUE : Preferences.FALSE);
+		}
 		if (oldValue != value) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -636,12 +640,16 @@ public class Preferences {
 			throw new IllegalArgumentException();
 		}
 		double defaultValue = getDefaultDouble(name);
-		if (value == defaultValue) {
-			internalSetToDefault(name, Double.toString(defaultValue));
-			return;
-		}
 		double oldValue = getDouble(name);
-		properties.put(name, Double.toString(value));
+		if (value == defaultValue) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, Double.toString(value));
+		}
 		if (oldValue != value) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -750,12 +758,16 @@ public class Preferences {
 			throw new IllegalArgumentException();
 		}
 		float defaultValue = getDefaultFloat(name);
-		if (value == defaultValue) {
-			internalSetToDefault(name, Float.toString(defaultValue));
-			return;
-		}
 		float oldValue = getFloat(name);
-		properties.put(name, Float.toString(value));
+		if (value == defaultValue) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, Float.toString(value));
+		}
 		if (oldValue != value) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -860,12 +872,16 @@ public class Preferences {
 	 */
 	public void setValue(String name, int value) {
 		int defaultValue = getDefaultInt(name);
-		if (value == defaultValue) {
-			internalSetToDefault(name, Integer.toString(defaultValue));
-			return;
-		}
 		int oldValue = getInt(name);
-		properties.put(name, Integer.toString(value));
+		if (value == defaultValue) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, Integer.toString(value));
+		}
 		if (oldValue != value) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -964,12 +980,16 @@ public class Preferences {
 	 */
 	public void setValue(String name, long value) {
 		long defaultValue = getDefaultLong(name);
-		if (value == defaultValue) {
-			internalSetToDefault(name, Long.toString(defaultValue));
-			return;
-		}
 		long oldValue = getLong(name);
-		properties.put(name, Long.toString(value));
+		if (value == defaultValue) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, Long.toString(value));
+		}
 		if (oldValue != value) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -1071,12 +1091,16 @@ public class Preferences {
 			throw new IllegalArgumentException();
 		}
 		String defaultValue = getDefaultString(name);
-		if (value.equals(defaultValue)) {
-			internalSetToDefault(name, defaultValue);
-			return;
-		}
 		String oldValue = getString(name);
-		properties.put(name, value);
+		if (value.equals(defaultValue)) {
+			Object removed = properties.remove(name);
+			if (removed != null) {
+				// removed an explicit setting
+				dirty = true;
+			}
+		} else {
+			properties.put(name, value);
+		}
 		if (!oldValue.equals(value)) {
 			// mark as dirty since value did really change
 			dirty = true;
@@ -1145,43 +1169,29 @@ public class Preferences {
 	 * This is implemented by removing the named value from the object, 
 	 * thereby exposing the default value.
 	 * </p>
+	 * <p>
+	 * A property change event is reported if the current value of the 
+	 * property actually changes from its previous value. In the event
+	 * object, the property name is the name of the property, and the
+	 * old and new values are either strings, or <code>null</code> 
+	 * indicating the default-default value.
+	 * </p>
 	 *
 	 * @param name the name of the property
 	 */
 	public void setToDefault(String name) {
 		Object oldPropertyValue = properties.remove(name);
 		if (oldPropertyValue == null) {
-			// nothing was explicitly set
+			// nothing was explicitly changed
 			// so no change
 			return;
 		}
 		dirty = true;
-		Object newValue = properties.getProperty(name);
+		String newValue = defaultProperties.getProperty(name, null);
 		// n.b. newValue == null if there is no default value
 		// can't determine correct default-default without knowing type
 		if (!oldPropertyValue.equals(newValue)) {
 			firePropertyChangeEvent(name, oldPropertyValue, newValue);
-		}
-	}
-
-	/**
-	 * Sets the current value of the property with the given name back
-	 * to its default value. Has no effect if the property does not have
-	 * its own current value.
-	 *
-	 * @param name the name of the property
-	 * @param defaultValue the default value for this property
-	 */
-	private void internalSetToDefault(String name, String defaultValue) {
-		Object oldPropertyValue = properties.remove(name);
-		if (oldPropertyValue == null) {
-			// nothing was explicitly set
-			// so no change
-			return;
-		}
-		dirty = true;
-		if (!oldPropertyValue.equals(defaultValue)) {
-			firePropertyChangeEvent(name, oldPropertyValue, defaultValue);
 		}
 	}
 
