@@ -1,0 +1,7 @@
+--begin .build_submit---
+plugin.xml
+plugin.jars
+plugin.properties
+doc
+icons
+--end .build_submit---
