@@ -1,32 +1,19 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  * IBM - Initial API and implementation
- ******************************************************************************/
+ **********************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-/*
- * RECOMMENDED: Run in scrapbook, restart page between runs and, if an exception is trapped,
- * do not stop the run. Continue to the finally block so that the workspace can be closed and
- * system resources freed.
- */
-
-/* Core Resources */
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.*;
-
-/* JUnit */ 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-/* Java */ import java.io.File;
 
 /**
  *

@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -913,25 +913,25 @@ public void testMarkerDeltasCopyResource() {
 		}
 
 		// verify marker deltas
-		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
-				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
-					return true;
-				if (!resource.getName().endsWith("copy"))
-					return false;
-				String name = resource.getFullPath().segment(0);
-				IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
-				path = path.append(resource.getFullPath().removeFirstSegments(1));
-				IResource oldResource = ((Workspace) getWorkspace()).newResource(path, resource.getType());
-				IMarker marker = (IMarker) table.get(oldResource);
-				assertNotNull("2.1." + oldResource.getFullPath(), marker);
-				IMarker[] markers = resource.findMarkers(null, true, IResource.DEPTH_ZERO);
-				assertEquals("2.2." + resource.getFullPath(), 1, markers.length);
-				assertEquals("2.3." + resource.getFullPath(), marker.getId(), markers[0].getId());
-				assertTrue("2.4." + resource.getFullPath(), listener.checkChanges(resource, new IMarker[] { markers[0] }, null, null));
-				return true;
-			}
-		};
+//		IResourceVisitor visitor = new IResourceVisitor() {
+//			public boolean visit(IResource resource) throws CoreException {
+//				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
+//					return true;
+//				if (!resource.getName().endsWith("copy"))
+//					return false;
+//				String name = resource.getFullPath().segment(0);
+//				IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
+//				path = path.append(resource.getFullPath().removeFirstSegments(1));
+//				IResource oldResource = ((Workspace) getWorkspace()).newResource(path, resource.getType());
+//				IMarker marker = (IMarker) table.get(oldResource);
+//				assertNotNull("2.1." + oldResource.getFullPath(), marker);
+//				IMarker[] markers = resource.findMarkers(null, true, IResource.DEPTH_ZERO);
+//				assertEquals("2.2." + resource.getFullPath(), 1, markers.length);
+//				assertEquals("2.3." + resource.getFullPath(), marker.getId(), markers[0].getId());
+//				assertTrue("2.4." + resource.getFullPath(), listener.checkChanges(resource, new IMarker[] { markers[0] }, null, null));
+//				return true;
+//			}
+//		};
 		// marker deltas should not appear after a resource copy
 		//assertEquals("2.5", count[0], listener.numAffectedResources());
 		assertEquals("2.5", 0, listener.numAffectedResources());
