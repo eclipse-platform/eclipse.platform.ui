@@ -10,7 +10,6 @@
   <runtime>
       <library name="variables.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.core.variables,org.eclipse.core.internal.variables"/>
       </library>
    </runtime>
    <requires>

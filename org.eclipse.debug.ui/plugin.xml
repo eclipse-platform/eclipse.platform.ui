@@ -10,7 +10,6 @@
    <runtime>
       <library name="dtui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.debug.ui,org.eclipse.debug.internal.ui"/>
       </library>
    </runtime>
    <requires>
