@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -376,7 +377,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		// View toolbar
 		viewToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-		control.setTopRight(viewToolBar);
 		viewToolBar.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent event) {
 				// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
@@ -389,7 +389,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		// ISV toolbar.
 		isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-		control.setTopCenter(isvToolBar);
 		isvToolBar.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent event) {
 				// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
@@ -744,10 +743,30 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void updateActionBars() {
 		if (isvMenuMgr != null)
 			isvMenuMgr.updateAll(false);
-		if (viewToolBarMgr != null)
+		if (viewToolBarMgr != null) {
 			viewToolBarMgr.update(false);
-		if (isvToolBarMgr != null)
+			ToolBar toolBar = viewToolBarMgr.getControl();
+			if (toolBar != null && !toolBar.isDisposed()) {
+			    if (toolBar.getItemCount() == 0) {
+			        getViewForm().setTopRight(null);
+			    }
+			    else {
+			        getViewForm().setTopRight(toolBar);
+			    }
+			}
+		}
+		if (isvToolBarMgr != null) {
 			isvToolBarMgr.update(false);
+			ToolBar toolBar = isvToolBarMgr.getControl();
+			if (toolBar != null && !toolBar.isDisposed()) {
+			    if (toolBar.getItemCount() == 0) {
+			        getViewForm().setTopCenter(null);
+			    }
+			    else {
+			        getViewForm().setTopCenter(toolBar);
+			    }
+			}
+		}
 	}
 	/**
 	 * Update the title attributes.
