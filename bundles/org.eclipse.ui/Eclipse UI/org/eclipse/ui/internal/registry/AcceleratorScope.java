@@ -178,7 +178,7 @@ public class AcceleratorScope {
 	private Integer convertEvent(KeyEvent event) {
 		//ISSUE: Must fix the number 64.
 		char upper = Character.toUpperCase(event.character);
-    	if((event.stateMask == SWT.CONTROL) && (event.keyCode == 0))
+    	if(((event.stateMask & SWT.CONTROL) != 0) && (event.keyCode == 0))
 			if (0 <= upper && upper <= 64) 
 				return new Integer(event.stateMask | upper + 64);
     	return new Integer(event.stateMask | event.keyCode | upper);
