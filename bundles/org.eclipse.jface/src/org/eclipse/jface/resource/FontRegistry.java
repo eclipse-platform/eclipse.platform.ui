@@ -328,26 +328,29 @@ public class FontRegistry extends ResourceRegistry {
     }
     
     /**
-     * Creates an empty font registry.
-     * 
-     * @param display the Display
-     * @param addDisposeHook whether a dispose listener should be added to the Display
-     * @since 3.1
-     */
-    public FontRegistry(Display display, boolean addDisposeHook) {
-    	Assert.isNotNull(display);
-    	if (addDisposeHook)
-    		hookDisplayDispose(display);
-    }
+	 * Creates an empty font registry.
+	 * 
+	 * @param display
+	 *            the <code>Display</code>
+	 * @param cleanOnDisplayDisposal
+	 *            whether all fonts allocated by this <code>FontRegistry</code>
+	 *            should be disposed when the display is disposed
+	 * @since 3.1
+	 */
+	public FontRegistry(Display display, boolean cleanOnDisplayDisposal) {
+		Assert.isNotNull(display);
+		if (cleanOnDisplayDisposal)
+			hookDisplayDispose(display);
+	}
 
     /**
-     * Find the first valid fontData in the provided list. 
-     * If none are valid return the first one regardless.
-     * If the list is empty return null.
-     * Return null if one cannot be found.
-     * @deprecated use bestDataArray in order to support 
-     * Motif multiple entry fonts.
-     */
+	 * Find the first valid fontData in the provided list. If none are valid
+	 * return the first one regardless. If the list is empty return null. Return
+	 * null if one cannot be found.
+	 * 
+	 * @deprecated use bestDataArray in order to support Motif multiple entry
+	 *             fonts.
+	 */
     public FontData bestData(FontData[] fonts, Display display) {
         for (int i = 0; i < fonts.length; i++) {
             FontData fd = fonts[i];
