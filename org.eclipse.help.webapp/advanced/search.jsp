@@ -182,7 +182,9 @@ function onloadHandler(e)
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td id="searchLabel">
+					<label for="searchWord">
 					&nbsp;<%=ServletResources.getString("Search", request)%>:
+					</label>
 				</td>
 				<td>
 					<input type="text" id="searchWord" name="searchWord" value='' size="24" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>'>
