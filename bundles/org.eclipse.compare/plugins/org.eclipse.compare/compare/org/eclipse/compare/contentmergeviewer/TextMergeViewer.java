@@ -252,7 +252,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
 	private Canvas fBirdsEyeCanvas;
-	private Label fSummaryLabel;
+	private Canvas fSummaryCanvas;
 		
 	// SWT resources to be disposed
 	private Map fColors;
@@ -827,7 +827,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRightCanvas= null;
 		fVScrollBar= null;
 		fBirdsEyeCanvas= null;
-		fSummaryLabel= null;
+		fSummaryCanvas= null;
 
 		unsetDocument(fAncestor);
 		unsetDocument(fLeft);
@@ -884,7 +884,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
 		
-		fSummaryLabel= new Label(composite, SWT.NONE);
+		fSummaryCanvas= new Canvas(composite, SWT.NONE);
+		fSummaryCanvas.addPaintListener(
+			new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+			}
+		);
 		updateResolveStatus();
 				
 		// 2nd row
@@ -1963,8 +1971,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
   		if (fBirdsEyeCanvas != null) {
-  			if (fSummaryLabel != null)
-  				fSummaryLabel.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
+  			if (fSummaryCanvas != null)
+				fSummaryCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
   			y+= scrollbarHeight;
   			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
    		}
@@ -2556,14 +2564,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			}
 			if (hasIncoming) {
-				Display d= fSummaryLabel.getDisplay();
+				Display d= fSummaryCanvas.getDisplay();
 				if (unresolved)
 					c= d.getSystemColor(SWT.COLOR_RED);
 				else
 					c= d.getSystemColor(SWT.COLOR_GREEN);
 			}
 		}
-		fSummaryLabel.setBackground(c);
+		fSummaryCanvas.setBackground(c);
 	}
 
 	private void updateStatus(Diff diff) {

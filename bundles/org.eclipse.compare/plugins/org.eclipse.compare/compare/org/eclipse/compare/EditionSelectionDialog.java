@@ -700,7 +700,34 @@ public class EditionSelectionDialog extends ResizableDialog {
 			fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle")); //$NON-NLS-1$
 			
-			//createTable();
+			int flags= SWT.H_SCROLL + SWT.V_SCROLL;
+			if (fMultiSelect)
+				flags|= SWT.CHECK;
+			fMemberTable= new Table(fMemberPane, flags);
+			fMemberTable.addSelectionListener(
+				new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (e.detail == SWT.CHECK) {
+							if (e.item instanceof TableItem) {
+								TableItem ti= (TableItem) e.item;
+								Object data= ti.getData();
+								if (ti.getChecked())
+									fArrayList.add(data);
+								else
+									fArrayList.remove(data);
+									
+								if (fCommitButton != null)
+									fCommitButton.setEnabled(fArrayList.size() > 0);
+									
+								fMemberTable.setSelection(new TableItem[] { ti });
+							}
+						}
+						handleMemberSelect(e.item);
+					}
+				}
+			);
+			fMemberPane.setContent(fMemberTable);
+			fMemberTable.setFocus();
 						
 			fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 		} else {
@@ -763,40 +790,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		vsplitter.setWeights(new int[] { 30, 70 });
 				
 		return vsplitter;
-	}
-	
-	private void createTable(boolean error) {
-		if (fMemberPane == null)
-			return;
-		if (fMemberTable == null) {
-			int flags= SWT.H_SCROLL + SWT.V_SCROLL;
-			if (fMultiSelect && !error)
-				flags|= SWT.CHECK;
-			fMemberTable= new Table(fMemberPane, flags);
-			fMemberTable.addSelectionListener(
-				new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						if (e.detail == SWT.CHECK) {
-							if (e.item instanceof TableItem) {
-								TableItem ti= (TableItem) e.item;
-								if (ti.getChecked())
-									fArrayList.add(ti.getData());
-								else
-									fArrayList.remove(ti.getData());
-									
-								if (fCommitButton != null)
-									fCommitButton.setEnabled(fArrayList.size() > 0);
-							}
-						}
-						handleMemberSelect(e.item);
-					}
-				}
-			);
-			fMemberPane.setContent(fMemberTable);
-			fMemberTable.setFocus();
-			fMemberPane.layout();
-		}
-	}
+	}	
 	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
@@ -882,9 +876,13 @@ public class EditionSelectionDialog extends ResizableDialog {
 	private void addMemberEdition(Pair pair) {
 		
 		if (pair == null) {	// end of list of pairs
-			createTable(true);
-			if (fMemberTable != null) {
+			if (fMemberTable != null) {	
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
+					if (fMultiSelect) {
+						fMemberTable.dispose();
+						fMemberTable= new Table(fMemberPane, SWT.NONE);
+						fMemberPane.setContent(fMemberTable);
+					}
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
 					ti.setText(Utilities.getString(fBundle, "noAdditionalMembersMessage")); //$NON-NLS-1$
 				}
@@ -907,7 +905,6 @@ public class EditionSelectionDialog extends ResizableDialog {
 		if (editions == null) {
 			editions= new ArrayList();
 			fMemberEditions.put(item, editions);
-			createTable(false);
 			if (fMemberTable != null && !fMemberTable.isDisposed()) {
 				ITypedElement te= (ITypedElement)item;
 				String name= te.getName();
@@ -942,7 +939,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		if (!fAddMode || editions == fCurrentEditions)
 			addEdition(pair);
 	}
-	
+		
 	/**
 	 * Returns the number of s since Jan 1st, 1970.
 	 * The given date is converted to GMT and daylight saving is taken into account too.
