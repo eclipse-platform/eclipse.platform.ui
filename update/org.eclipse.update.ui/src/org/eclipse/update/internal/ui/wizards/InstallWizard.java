@@ -14,11 +14,13 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
@@ -141,19 +143,33 @@ public class InstallWizard
 					}
 				}
 			};
-			try {
-				getContainer().run(true, true, operation);
-			} catch (InvocationTargetException e) {
-				Throwable targetException = e.getTargetException();
-				if (targetException instanceof InstallAbortedException) {
-					return true;
-				} else {
+			
+			boolean retry;
+			do {
+				retry = false;
+				try {
+					getContainer().run(true, true, operation);
+				} catch (InvocationTargetException e) {
+					Throwable targetException = e.getTargetException();
+					if (targetException instanceof InstallAbortedException) {
+						return true;
+					}else if(targetException instanceof FeatureDownloadException){
+							FeatureDownloadException fde=(FeatureDownloadException)targetException;
+							retry =
+							MessageDialog.openQuestion(
+								getShell(),
+								UpdateUI.getString("InstallWizard.retryTitle"),
+								fde.getMessage()+"\n"
+									+ UpdateUI.getString("InstallWizard.retry"));
+							if (retry)
+								continue;
+					}
 					UpdateUI.logException(e);
+					return false;
+				} catch (InterruptedException e) {
+					return false;
 				}
-				return false;
-			} catch (InterruptedException e) {
-				return false;
-			}
+			} while (retry);
 			return true;
 		} finally {
 			isRunning = false;

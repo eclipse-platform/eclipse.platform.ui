@@ -285,7 +285,11 @@ public abstract class FeatureContentProvider
 						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
 						throw new InstallAbortedException(msg, null);
 					} else {
-						throw new IOException();
+						throw new FeatureDownloadException(
+							Policy.bind(
+								"FeatureContentProvider.ExceptionDownloading",
+								new Object[] { getURL().toExternalForm()}),
+							new IOException());
 					}
 				} else {
 					UpdateManagerUtils.unMapLocalFileFragment(key);

@@ -186,7 +186,9 @@ public class Utilities {
 
 		// check the case of a multistatus
 		IStatus status;
-		if (e instanceof CoreException) {
+		if (e instanceof FeatureDownloadException)
+			return (FeatureDownloadException)e;
+		else if (e instanceof CoreException) {
 			if (s == null)
 				s = "";
 			status = new MultiStatus(id, code, s, e);
