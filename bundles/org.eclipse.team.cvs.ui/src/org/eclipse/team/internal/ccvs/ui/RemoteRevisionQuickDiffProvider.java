@@ -49,11 +49,20 @@ import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
  * and the diff should be recalculated (e.g. commit, update...) or when the file
  * is changed (e.g. replace with).
  * 
- * unmanaged file : reference == null
- * new file transitions to managed (add then commit) : reference updated with remote revision 
- * managed file has new remote (commit, refresh remote) : reference updated with new remote revision
- * managed file cleaned, remote is the same (replace with, update) : refresh diff bar with existing reference 
- * managed file is unmanaged (unmanage operation) :   
+ * Here are the file states and what this provider does for each:
+ * 
+ * 1. File is unmanaged : reference == empty document
+ * 2. Unmanaged file transitions to managed : empty reference updated with new remote revision 
+ * 3. A managed file has new remote (commit, refresh remote) : reference updated with new 
+ * remote revision
+ * 4. A managed file cleaned, remote is the same (replace with, update) : refresh diff bar 
+ * with existing reference 
+ * 
+ * [Note: Currently an empty document must be returned for an unmanaged file. This
+ * results in the entire document appearing as outgoing changes in the quickdiff bar. 
+ * This is required because the quickdiff support relies on IDocument change events
+ * to update the quickdiff, and returning null for the reference document doesn't
+ * allow the transition to later return a IDocument.]
  * 
  * @since 3.0
  */
@@ -281,7 +290,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplem
 					setDocumentContent(fReference, stream, encoding);
 				}
 			} else {
-				// the remote is null, so juts ensure that the document is null
+				// the remote is null, so ensure that the document is null
 				fReference = new Document();
 				fReference.set("");
 			}
