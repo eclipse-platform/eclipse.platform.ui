@@ -19,7 +19,7 @@ public interface ILabelProvider extends IBaseLabelProvider {
  *
  * @param element the element for which to provide the label image
  * @return the image used to label the element, or <code>null</code>
- *   if these is no image for the given object
+ *   if there is no image for the given object
  */
 public Image getImage(Object element);
 /**
@@ -27,7 +27,7 @@ public Image getImage(Object element);
  *
  * @param element the element for which to provide the label text
  * @return the text string used to label the element, or <code>null</code>
- *   if these is no text label for the given object
+ *   if there is no text label for the given object
  */
 public String getText(Object element);
 }
