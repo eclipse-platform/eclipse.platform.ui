@@ -50,6 +50,10 @@ class OverlayCache {
 		Image source,
 		Object element,
 		LightweightDecoratorDefinition[] decorators) {
+			
+		//Do not bother if there is no work to do,
+		if(decorators.length == 0)
+			return source;
 
 		ImageDescriptor[] descriptors = new ImageDescriptor[4];
 
@@ -80,6 +84,10 @@ class OverlayCache {
 		LightweightDecoratorDefinition[] decorators,
 		Object adapted,
 		LightweightDecoratorDefinition[] adaptedDecorators) {
+			
+		//Do not bother if there is no work to do,
+		if(decorators.length == 0 && adaptedDecorators.length == 0)
+			return source;
 
 		ImageDescriptor[] descriptors = new ImageDescriptor[4];
 
