@@ -455,6 +455,8 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @return boolean
 	 * 
 	 * @see getProvider(IProject)
+	 * 
+	 * @since 2.1
 	 */
 	public static boolean isShared(IProject project) {
 		if (!project.isAccessible()) return false;
@@ -582,6 +584,8 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @return IStatus see <code>org.eclipse.core.resources.team.TeamHook</code>
 	 * 
 	 * @see RepositoryProvider#canHandleLinkedResources()
+	 * 
+	 * @since 2.1
 	 */
 	public IStatus validateCreateLink(IResource resource, int updateFlags, IPath location) {
 		if (canHandleLinkedResources()) {
@@ -602,6 +606,8 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @return boolean
 	 * 
 	 * @see org.eclipe.team.resources.team.IMoveDeleteHook
+	 * 
+	 * @since 2.1
 	 */
 	public boolean canHandleLinkedResources() {
 		return false;
