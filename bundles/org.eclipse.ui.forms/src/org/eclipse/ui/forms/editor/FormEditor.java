@@ -233,8 +233,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		}
 		pages = null;
-		toolkit.dispose();
-		toolkit = null;
+		// toolkit may be null if editor has been instantiated
+		// but never created - see defect #62190  
+		if (toolkit!=null) {
+			toolkit.dispose();
+			toolkit = null;
+		}
 	}
 	/**
 	 * Returns the toolkit owned by this editor.
