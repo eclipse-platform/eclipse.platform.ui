@@ -12,6 +12,10 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -362,6 +366,53 @@ class ResourceCompareInput extends CompareEditorInput {
 				IDiffElement element= children[i];
 				if (element instanceof DiffNode)
 					commit(pm, (DiffNode) element);
+			}
+		}
+	}
+	
+	/* (non Javadoc)
+	 * see IAdaptable.getAdapter
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IFile[].class.equals(adapter)) {
+		    HashSet collector= new HashSet();
+		    collectDirtyResources(fRoot, collector);
+		    return (IFile[]) collector.toArray(new IFile[collector.size()]);
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	private void collectDirtyResources(Object o, Set collector) {
+		if (o instanceof DiffNode) {
+		    DiffNode node= (DiffNode) o;
+			
+			ITypedElement left= node.getLeft();
+			if (left instanceof BufferedResourceNode) {
+			    BufferedResourceNode bn= (BufferedResourceNode) left;
+			    if (bn.isDirty()) {
+			        IResource resource= bn.getResource();
+			        if (resource instanceof IFile)
+			            collector.add(resource);
+			    }
+			}
+
+			ITypedElement right= node.getRight();
+			if (right instanceof BufferedResourceNode) {
+			    BufferedResourceNode bn= (BufferedResourceNode) right;
+			    if (bn.isDirty()) {
+			        IResource resource= bn.getResource();
+			        if (resource instanceof IFile)
+			            collector.add(resource);
+			    }
+			}
+				
+			IDiffElement[] children= node.getChildren();
+			if (children != null) {
+				for (int i= 0; i < children.length; i++) {
+					IDiffElement element= children[i];
+					if (element instanceof DiffNode)
+					    collectDirtyResources(element, collector);
+				}
 			}
 		}
 	}

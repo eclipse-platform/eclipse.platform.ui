@@ -13,6 +13,7 @@ package org.eclipse.compare;
 import java.lang.reflect.InvocationTargetException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.custom.BusyIndicator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IEditorInput;
@@ -179,6 +181,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					}
 				);
 			return fNavigator;
+		}
+		if (IFile.class.equals(adapter)) {
+		    IProgressMonitor pm= new NullProgressMonitor();
+			// flush changes in any dirty viewer
+			try {
+	            flushViewer(fStructureInputPane, pm);
+	            flushViewer(fStructurePane1, pm);
+	            flushViewer(fStructurePane2, pm);
+	            flushViewer(fContentInputPane, pm);
+	        } catch (CoreException e) {
+	            CompareUIPlugin.log(e);
+	        }
+		    IFile[] files= (IFile[]) getAdapter(IFile[].class);
+		    if (files.length > 0)
+		        return files[0];	// can only return one: limitation on IDE.saveAllEditors; see #64617
+		    return null;
 		}
 		return null;
 	}
@@ -727,7 +745,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			fDirtyViewers.add(source);
 		else
 			fDirtyViewers.remove(source);
-		boolean newDirty= fDirtyViewers.size() > 0;
+		boolean newDirty= fDirty || fDirtyViewers.size() > 0;
 		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (oldDirty != newDirty)
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(newDirty));
@@ -779,7 +797,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 		save(pm);
 	}
-	
+		
 	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) throws CoreException {
 		if (pane != null) {
 			Viewer v= pane.getViewer();

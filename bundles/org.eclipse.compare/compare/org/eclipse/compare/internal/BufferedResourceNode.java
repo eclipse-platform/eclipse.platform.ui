@@ -33,7 +33,14 @@ public class BufferedResourceNode extends ResourceNode {
 	public BufferedResourceNode(IResource resource) {
 		super(resource);
 	}
-			
+	
+    /**
+     * Returns <code>true</code> if buffer contains uncommitted changes.
+     */
+	public boolean isDirty() {
+	    return fDirty;
+	}
+	
 	protected IStructureComparator createChild(IResource child) {
 		return new BufferedResourceNode(child);
 	}
@@ -58,18 +65,6 @@ public class BufferedResourceNode extends ResourceNode {
 			if (resource instanceof IFile) {
 
 				byte[] bytes= getContent();
-				/*
-				String enc1= getEncoding();
-				String enc2= Utilities.getCharset((IFile)resource);
-				if (! enc1.equals(enc2)) {
-					try {
-						String content= new String(bytes, enc1);
-						bytes= content.getBytes(enc2);
-					} catch (UnsupportedEncodingException e) {
-						// ignore
-					}
-				}
-				*/
 				ByteArrayInputStream is= new ByteArrayInputStream(bytes);
 				try {
 					IFile file= (IFile) resource;
