@@ -11,14 +11,8 @@
 package org.eclipse.debug.internal.ui.actions;
 
  
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Used to copy the values of variables to the clipboard from
@@ -26,37 +20,11 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActionDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate#pruneSelection()
-	 */
-	protected Iterator pruneSelection() {
-		IStructuredSelection selection= (IStructuredSelection)getViewer().getSelection();
-		List elements= new ArrayList(selection.size());
-		Iterator iter= selection.iterator();
-		while (iter.hasNext()) {
-			Object element= iter.next();
-			if (isEnabledFor(element)) {
-				if(walkHierarchy(element, elements)) {
-					elements.add(element);
-				}
-			}
-		}
-		
-		return elements.iterator();
-	}
-
 	/**
-	 * Only append children that are visible in the tree viewer
+	 * Only append children that are expanded in the tree viewer
 	 */
-	protected boolean shouldAppendChildren(Object e) {
-		return((TreeViewer)getViewer()).getExpandedState(e);
-	}
-	
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return element instanceof IDebugElement;
+	protected boolean shouldAppendChildren(TreeItem item) {
+		return item.getExpanded();
 	}
 	
 	protected String getActionId() {

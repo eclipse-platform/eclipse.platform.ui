@@ -22,12 +22,8 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -35,10 +31,11 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
-	private ContentViewer fViewer;
+	private TreeViewer fViewer;
 	
 	/**
 	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
@@ -48,7 +45,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			IDebugView adapter= (IDebugView)getView().getAdapter(IDebugView.class);
 			if (adapter != null) {
 				if (adapter.getViewer() instanceof ContentViewer) {
-					setViewer((ContentViewer) adapter.getViewer());
+					setViewer((TreeViewer) adapter.getViewer());
 				}
 				adapter.setAction(getActionId(), action);
 			}
@@ -70,8 +67,8 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
-	protected void doAction(Object element, StringBuffer buffer) {
-		append(element, buffer, (ILabelProvider)getViewer().getLabelProvider(), 0);
+	protected void doAction(TreeItem item, StringBuffer buffer) {
+		append(item, buffer, 0);
 	}
 
 	/** 
@@ -79,40 +76,19 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * to the buffer.  For elements down to stack frames, children representations
 	 * are append to the buffer as well.
 	 */
-	protected void append(Object e, StringBuffer buffer, ILabelProvider lp, int indent) {
+	protected void append(TreeItem item, StringBuffer buffer, int indent) {
 		for (int i= 0; i < indent; i++) {
 			buffer.append('\t');
 		}
-		buffer.append(lp.getText(e));
+		buffer.append(item.getText());
 		buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-		if (shouldAppendChildren(e)) {
-			Object[] children= new Object[0];
-			children= getChildren(e);
+		if (shouldAppendChildren(item)) {
+			TreeItem[] children= item.getItems();
 			for (int i = 0;i < children.length; i++) {
-				Object de= children[i];
-				append(de, buffer, lp, indent + 1);
+				TreeItem child= children[i];
+				append(child, buffer, indent + 1);
 			}
 		}
-	}
-	
-	protected Object getParent(Object e) {
-		return ((ITreeContentProvider) getViewer().getContentProvider()).getParent(e);
-	}
-	
-	/**
-	 * Returns the children of the parent after applying the filters
-	 * that are present in the viewer.
-	 */
-	protected Object[] getChildren(Object parent) {
-		Object[] children= ((ITreeContentProvider)getViewer().getContentProvider()).getChildren(parent);
-		ViewerFilter[] filters= ((StructuredViewer)getViewer()).getFilters();
-		if (filters != null) {
-			for (int i= 0; i < filters.length; i++) {
-				ViewerFilter f = filters[i];
-				children = f.filter(getViewer(), parent, children);
-			}
-		}
-		return children;
 	}
 	
 	/**
@@ -124,7 +100,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			public void run() {
 				StringBuffer buffer= new StringBuffer();
 				while (iter.hasNext()) {
-					doAction(iter.next(), buffer);
+					doAction((TreeItem) iter.next(), buffer);
 				}
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				Clipboard clipboard= new Clipboard(getViewer().getControl().getDisplay());		
@@ -158,27 +134,26 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * remove the child.
 	 */
 	protected Iterator pruneSelection() {
-		IStructuredSelection selection= (IStructuredSelection)getViewer().getSelection();
-		List elements= new ArrayList(selection.size());
-		Iterator iter= selection.iterator();
-		while (iter.hasNext()) {
-			Object element= iter.next();
-			if (isEnabledFor(element)) {
-				if(walkHierarchy(element, elements)) {
-					elements.add(element);
+		TreeItem[] selection= (TreeItem[]) getViewer().getTree().getSelection();
+		List items= new ArrayList(selection.length);
+		for (int i = 0; i < selection.length; i++) {
+			TreeItem item= selection[i];
+			if (isEnabledFor(item.getData())) {
+				if(walkHierarchy(item, items)) {
+					items.add(item);
 				}
-			}
+			}			
 		}
-		return elements.iterator();
+		return items.iterator();
 	}
 	
 	/**
 	 * Returns whether the parent of the specified
 	 * element is already contained in the collection.
 	 */
-	protected boolean walkHierarchy(Object element, List elements) {
-		Object parent= getParent(element);
-		if (parent == null || parent == element) {
+	protected boolean walkHierarchy(TreeItem item, List elements) {
+		TreeItem parent= item.getParentItem();
+		if (parent == null) {
 			return true;
 		}
 		if (elements.contains(parent)) {
@@ -187,15 +162,16 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		return walkHierarchy(parent, elements);		
 	}
 	
-	protected boolean shouldAppendChildren(Object e) {
-		return e instanceof IDebugTarget || e instanceof IThread;
+	protected boolean shouldAppendChildren(TreeItem item) {
+		Object data= item.getData();
+		return data instanceof IDebugTarget || data instanceof IThread;
 	}
 			
-	protected ContentViewer getViewer() {
+	protected TreeViewer getViewer() {
 		return fViewer;
 	}
 
-	protected void setViewer(ContentViewer viewer) {
+	protected void setViewer(TreeViewer viewer) {
 		fViewer = viewer;
 	}
 	/**
