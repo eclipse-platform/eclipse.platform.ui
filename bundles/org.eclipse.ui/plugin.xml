@@ -1091,6 +1091,13 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            locale="zh"
+            string="Alt+Shift+?"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             platform="carbon"
             string="Ctrl+F4"
             scope="org.eclipse.ui.globalScope"
@@ -2054,6 +2061,12 @@
       </keyBinding>
       <keyBinding
             string="Alt+?"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Alt+Shift+?"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
