@@ -2,7 +2,7 @@
 <cheatsheet title="Hello World Demo with Subitems">
 
 	<intro 
-		href="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm">
+		href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
 		<description>
 Welcome to the hello world cheat sheet.
 This cheat sheet will help you to build the famous "hello world" application and try it out. You will create a java project, and a java class that will print "hello world" in the console when run.
