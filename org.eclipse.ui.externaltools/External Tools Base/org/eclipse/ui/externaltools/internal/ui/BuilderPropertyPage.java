@@ -34,7 +34,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -346,7 +346,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType types[]= manager.getLaunchConfigurationTypes();
 		List toolTypes= new ArrayList();
-		String category= LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP).getCategory();
+		String category= DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP).getCategory();
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType type = types[i];
 			if (category.equals(type.getCategory())) {
@@ -473,7 +473,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	
 	private ILaunchConfigurationType promptForConfigurationType() {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		String category = LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
+		String category = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
 		List externalToolsTypes = new ArrayList();
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType configurationType = types[i];
