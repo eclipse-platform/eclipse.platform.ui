@@ -44,6 +44,10 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	 */
 	private Shell shell;
 
+	/**
+	 * The operation to run.  This is created only during the life-cycle of the
+	 * run method.
+	 */
 	protected CopyFilesAndFoldersOperation operation;
 
 	/**
@@ -99,6 +103,7 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	/**
 	 * Returns the path of the container to initially select in the container
 	 * selection dialog, or <code>null</code> if there is no initial selection
+	 * @return The initial container; <code>null</code> if none.
 	 */
 	IContainer getInitialContainer() {
 		List resources = getSelectedResources();
@@ -112,6 +117,7 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	 * Returns an array of resources to use for the operation from 
 	 * the provided list.
 	 * 
+	 * @param resourceList The list of resources to converted into an array.
 	 * @return an array of resources to use for the operation
 	 */
 	protected IResource[] getResources(List resourceList) {
@@ -119,6 +125,7 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	}
 	/**
 	 * Returns the shell in which to show any dialogs
+	 * @return The shell for parenting dialogs; never <code>null</code>.
 	 */
 	Shell getShell() {
 		return shell;
@@ -135,10 +142,10 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 		if (container != null) {
 			// create a new operation here. 
 			// isValid is API and may be called in any context.
-			CopyFilesAndFoldersOperation operation = createOperation();
+			CopyFilesAndFoldersOperation newOperation = createOperation();
 			List sources = getSelectedResources();
 			IResource[] resources = (IResource[]) sources.toArray(new IResource[sources.size()]);
-			return operation.validateDestination(container, resources);
+			return newOperation.validateDestination(container, resources);
 		}
 		return null;
 	}
@@ -220,7 +227,8 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 			if (currentResource.getType() == IResource.PROJECT) {
 				return false;
 			}
-			if (!currentResource.getParent().equals(firstParent)) {
+			IContainer parent = currentResource.getParent();
+			if ((parent != null) && (!parent.equals(firstParent))) {
 				return false;
 			}
 		}
