@@ -16,7 +16,6 @@ import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 public class FrameworkTests extends AbstractAntTest {
 	
@@ -82,14 +81,11 @@ public class FrameworkTests extends AbstractAntTest {
 	public void testIncludeAntRuntime() throws CoreException {
 		run("javac.xml", new String[]{"build","refresh"}, false); //standard compiler
 		assertSuccessful();
-		String path= "org.eclipse.ant.tests.core.tasks";
-		path= path.replace('.', Path.SEPARATOR);
-		path= "temp.folder" + Path.SEPARATOR + "javac.bin" + Path.SEPARATOR + path + Path.SEPARATOR + "AntTestTask.class";
-		IFile classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFolder("org").getFolder("eclipse").getFolder("ant").getFolder("tests").getFolder("core").getFolder("tasks").getFile("AntTestTask.class");
+		IFile classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class");
 		assertTrue("Class file was not generated", classFile.exists());
 		run("javac.xml", new String[]{"-Duse.eclipse.compiler=true", "clean", "build", "refresh"}, false); //JDTCompiler
 		assertSuccessful();
-		classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFolder("org").getFolder("eclipse").getFolder("ant").getFolder("tests").getFolder("core").getFolder("tasks").getFile("AntTestTask.class");
+		classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class");
 		assertTrue("Class file was not generated", classFile.exists());
 	}
 }
