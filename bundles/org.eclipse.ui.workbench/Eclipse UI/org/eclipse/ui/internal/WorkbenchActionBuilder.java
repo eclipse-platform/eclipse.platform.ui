@@ -1125,8 +1125,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 		CoolBarManager cBarMgr = window.getCoolBarManager();
 		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
-		IContributionManager tBarMgr = groupItem.getToolBarManager();
-		tBarMgr.remove(IWorkbenchActionConstants.BUILD);
-		tBarMgr.update(true);
+		if (groupItem != null) {
+			IContributionManager tBarMgr = groupItem.getToolBarManager();
+			try {
+				tBarMgr.remove(IWorkbenchActionConstants.BUILD);
+				tBarMgr.update(true);
+			} catch (IllegalArgumentException e) {
+				// action was not in toolbar
+			} 
+		}
 	}
 }
