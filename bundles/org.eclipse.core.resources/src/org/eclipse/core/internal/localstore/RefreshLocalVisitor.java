@@ -78,6 +78,9 @@ protected void createResource(UnifiedTreeNode node, Resource target) throws Core
 protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, false);
 	int flags = target.getFlags(info);
+	//don't delete linked resources
+	if (info.isSet(ICoreConstants.M_LINK))
+		return;
 	if (target.exists(flags, false))
 		target.deleteResource(true, null);
 	node.setExistsWorkspace(false);
@@ -163,8 +166,8 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	
 	if (existsInWorkspace) {
 		if (!node.existsInFileSystem()) {
-			//we always keep linked resources, even when the local file is missing
-			if (target.isLocal(IResource.DEPTH_ZERO) && !target.isLinked()) {
+			//non-local files are always in sync
+			if (target.isLocal(IResource.DEPTH_ZERO)) {
 				deleteResource(node, target);
 				resourceChanged = true;
 				return RL_NOT_IN_SYNC;
@@ -233,7 +236,6 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		int targetType = target.getType();
 		if (targetType == IResource.PROJECT)
 			return true;
-
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
 			/* for folders we only care about updating local status */
 			if (targetType == IResource.FOLDER && node.isFolder()) {
@@ -252,7 +254,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 				if (lastModifed == node.getLastModified())
 					return true;
 			}
-		} else {			
+		} else {
 			if (node.existsInFileSystem() && !Path.EMPTY.isValidSegment(node.getLocalName())) {
 				String message = Policy.bind("resources.invalidResourceName", node.getLocalName());  //$NON-NLS-1$
 				errors.merge(new ResourceStatus(IResourceStatus.INVALID_RESOURCE_NAME, message));

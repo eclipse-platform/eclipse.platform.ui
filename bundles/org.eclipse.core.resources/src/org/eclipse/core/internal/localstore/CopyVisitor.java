@@ -70,7 +70,7 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		}
 		if (destination.getType() == IResource.FOLDER) {
 			((IFolder)destination).create(updateFlags, true, null);
-			CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
+			CoreFileSystemLibrary.copyAttributes(node.getLocalLocation(), destination.getLocation().toOSString(), false);
 			return true;
 		}
 		// XXX: should use transfer streams in order to report better progress
@@ -149,16 +149,25 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	try {
 		//location can be null if based on an undefined variable
 		if (node.getLocalLocation() == null) {
-			String message = Policy.bind("localstore.locationUndefined", node.getResource().getFullPath().toString()); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL,  node.getResource().getFullPath(), message, null);
+			//should still be a best effort copy
+			IPath path = node.getResource().getFullPath();
+			String message = Policy.bind("localstore.locationUndefined", path.toString()); //$NON-NLS-1$
+			status.add(new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, path, message, null));
+			return false;
 		}
-
 		boolean wasSynchronized = isSynchronized(node);
 		if (force && !wasSynchronized) {
 			synchronize(node);
 			// If not synchronized, the monitor did not take this resource into account.
 			// So, do not report work on it.
 			work = 0;
+			//if source still doesn't exist, then fail because we can't copy a missing resource
+			if (!node.existsInFileSystem()) {
+				IPath path = node.getResource().getFullPath();
+				String message = Policy.bind("resources.mustExist", path.toString()); //$NON-NLS-1$
+				status.add(new ResourceStatus(IResourceStatus.RESOURCE_NOT_FOUND, path, message, null));
+				return false;
+			}
 		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
