@@ -23,7 +23,9 @@ package org.eclipse.core.runtime;
  * <b>Note</b>: This is obsolete API that will be replaced in time with
  * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
  * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * Runtime achieve their final and stable form (post-3.0). Furthermore, this 
+ * API is only functional if the org.eclipse.core.runtime.compatibility plug-in
+ * is present (and resolved) in the system.</p>
  */
 public interface IPluginRegistry {
 	/**
