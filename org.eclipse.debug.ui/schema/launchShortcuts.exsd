@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.ui" id="filaunchShortcuts" name="Launch Shortcuts"/>
+         <meta.schema plugin="org.eclipse.debug.ui" id="launchShortcuts" name="Launch Shortcuts"/>
       </appInfo>
       <documentation>
          This extension point provides support for selection sensitive launching.  Extensions register a shortcut which
