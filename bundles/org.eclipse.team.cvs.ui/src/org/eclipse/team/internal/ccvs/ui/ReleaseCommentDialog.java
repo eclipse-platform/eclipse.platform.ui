@@ -23,7 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -61,6 +60,8 @@ public class ReleaseCommentDialog extends Dialog {
 	public ReleaseCommentDialog(Shell parentShell, IResource[] unaddedResources) {
 		super(parentShell);
 		this.unaddedResources = unaddedResources;
+		// this line is required for the CVS UI test framework
+		this.resourcesToAdd = unaddedResources;
 	}
 	
 	/*
