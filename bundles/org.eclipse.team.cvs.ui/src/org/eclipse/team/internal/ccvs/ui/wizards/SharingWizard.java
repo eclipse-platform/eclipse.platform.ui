@@ -502,16 +502,26 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	private void populateSyncPage(final boolean exists) throws InvocationTargetException, InterruptedException {
 		getContainer().run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				monitor.beginTask(null, 100);
 				if (exists) {
-					reconcileProject(monitor);
+					reconcileProject(Policy.subMonitorFor(monitor, 90));
 				} else {
-					shareProject(monitor);
+					shareProject(Policy.subMonitorFor(monitor, 90));
 				}
+				waitForCollector(Policy.subMonitorFor(monitor, 10));
 				if (monitor.isCanceled()) {
 					throw new InterruptedException();
 				}
+				monitor.done();
 			}
 		});
+	}
+	
+	private void waitForCollector(IProgressMonitor sub) {
+		sub.beginTask(Policy.bind("ShareProjectOperation.1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		sub.subTask(Policy.bind("ShareProjectOperation.1")); //$NON-NLS-1$
+		CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant().getSubscriberSyncInfoCollector().waitForCollector(sub);
+		sub.done();
 	}
 	
 	/* (non-Javadoc)
