@@ -57,6 +57,7 @@ public final class InternalPlatform {
 	private static final String KEYRING = "-keyring";
 	private static final String PASSWORD = "-password";
 	private static final String DEV = "-dev";
+	private static final String ENDSPLASH = "-endsplash";
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -209,7 +210,7 @@ public static void endSplash() {
 	String[] args = BootLoader.getCommandLineArgs();
 	String splash = null;
 	for (int i = 0; i < args.length; i++)
-        if (args[i].equalsIgnoreCase("-endsplash") && (i + 1) < args.length)
+        if (args[i].equalsIgnoreCase(ENDSPLASH) && (i + 1) < args.length)
             splash = args[i + 1];
 	if (splash != null)
 	try {
@@ -607,39 +608,67 @@ public synchronized static PluginRegistryModel parsePlugins(URL[] pluginPath, Fa
 		PlatformClassLoader.getDefault().setImports(null);
 	}
 }
-private static void processCommandLine(String[] args) {
+private static String[] processCommandLine(String[] args) {
+	int[] configArgs = new int[100];
+	configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
+	int configArgIndex = 0;
 	for (int i = 0; i < args.length; i++) {
+		boolean found = false;
 		// check for args without parameters (i.e., a flag arg)
 
 		// look for the log flag
 		if (args[i].equalsIgnoreCase(LOG)) {
 			consoleLogEnabled = true;
-			continue;
+			found = true;
 		}
 
 		// look for the development mode flag
 		if (args[i].equalsIgnoreCase(DEV)) {
 			inDevelopmentMode = true;
-			continue;
+			found = true;
 		}
 
-		// check for args with parameters
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+		// done checking for args.  Remember where an arg was found 
+		if (found) {
+			configArgs[configArgIndex++] = i;
 			continue;
 		}
+		// check for args with parameters
+		if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+			continue;
 		String arg = args[++i];
 
 		// look for the keyring file
 		if (args[i - 1].equalsIgnoreCase(KEYRING)) {
 			keyringFile = arg;
-			continue;
+			found = true;
 		}
+
 		// look for the user password.  
 		if (args[i - 1].equalsIgnoreCase(PASSWORD)) {
 			password = arg;
-			continue;
+			found = true;
+		}
+
+		// done checking for args.  Remember where an arg was found 
+		if (found) {
+			configArgs[configArgIndex++] = i - 1;
+			configArgs[configArgIndex++] = i;
 		}
 	}
+	// remove all the arguments consumed by this argument parsing
+	if (configArgIndex == 0)
+		return args;
+	String[] passThruArgs = new String[args.length - configArgIndex];
+	configArgIndex = 0;
+	int j = 0;
+	for (int i = 0; i < args.length; i++) {
+		if (i == configArgs[configArgIndex])
+			configArgIndex++;
+		else
+			passThruArgs[j++] = args[i];
+	}
+	return passThruArgs;
 }
 /**
  * @see Platform#removeLogListener
