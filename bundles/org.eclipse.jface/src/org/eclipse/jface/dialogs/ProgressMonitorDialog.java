@@ -328,14 +328,21 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	// cancel button		
-	cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
+	createCancelButton(parent);
+}
+
+
+/**
+ * Create a cancel button for the receiver.
+ * @param parent
+ */
+protected void createCancelButton(Composite parent) {
+    cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
 	if(arrowCursor == null)
 		arrowCursor = new Cursor(cancel.getDisplay(),SWT.CURSOR_ARROW);		
 	cancel.setCursor(arrowCursor);
 	setOperationCancelButtonEnabled(enableCancelButton);
 }
-
-
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
