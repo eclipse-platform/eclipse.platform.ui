@@ -185,7 +185,10 @@ public class OrderedLock implements ILock {
 	 * Returns the thread of the current operation, or <code>null</code> if
 	 * there is no current operation
 	 */
-	public synchronized Thread getCurrentOperationThread() {
+// TODO: This was removed to help solve a deadlock. (bug 42234)
+// is this the right answer?
+//	public synchronized Thread getCurrentOperationThread() {
+	public Thread getCurrentOperationThread() {
 		return currentOperationThread;
 	}
 	public synchronized int getDepth() {
