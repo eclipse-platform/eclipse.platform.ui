@@ -120,7 +120,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	if (action.getText() == null) // may have been set by delegate
 		action.setText(label);
 	action.setId(id);
-	if (tooltip != null)
+	if (action.getToolTipText() == null && tooltip != null) // may have been set by delegate
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {
 		String fullID = helpContextId;
