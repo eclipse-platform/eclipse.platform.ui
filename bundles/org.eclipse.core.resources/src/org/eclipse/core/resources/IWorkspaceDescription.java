@@ -12,7 +12,10 @@ package org.eclipse.core.resources;
 
 /**
  * A workspace description represents the workspace preferences. It can be
- * used to query the current preferences and set new ones.
+ * used to query the current preferences and set new ones. The workspace
+ * preference values are stored in the preference store and are also accessible
+ * via the preference mechanism. Constants for the preference keys are found
+ * on the <code>ResourcesPlugin</code> class.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -29,6 +32,7 @@ public interface IWorkspaceDescription {
 	 * @return the names of projects in the order they will be built, 
 	 *   or <code>null</code> if the default build order should be used
 	 * @see #setBuildOrder(String[])
+	 * @see ResourcesPlugin#PREF_BUILD_ORDER
 	 */
 	public String[] getBuildOrder();
 
@@ -39,6 +43,7 @@ public interface IWorkspaceDescription {
 	 * @return the maximum time a file state should be kept in the local history
 	 *   represented in milliseconds
 	 * @see #setFileStateLongevity(long)
+	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
 	public long getFileStateLongevity();
 
@@ -49,6 +54,7 @@ public interface IWorkspaceDescription {
 	 * @return the maximum number of times that the workspace should rebuild when
 	 * builders affect projects that have already been built.
 	 * @see #setMaxBuildIterations(int)
+	 * @see ResourcesPlugin#PREF_MAX_BUILD_ITERATIONS
 	 * @since 2.1
 	 */
 	public int getMaxBuildIterations();
@@ -58,6 +64,7 @@ public interface IWorkspaceDescription {
 	 *
 	 * @return the maximum number of states per file that can be stored in the local history
 	 * @see #setMaxFileStates(int)
+	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
 	public int getMaxFileStates();
 
@@ -67,6 +74,7 @@ public interface IWorkspaceDescription {
 	 *
 	 * @return the maximum permited size of a file to be stored in the local history
 	 * @see #setMaxFileStateSize(long)
+	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
 	public long getMaxFileStateSize();
 
@@ -75,6 +83,7 @@ public interface IWorkspaceDescription {
 	 *
 	 * @return the amount of time in milliseconds between automatic workspace snapshots
 	 * @see #setSnapshotInterval(long)
+	 * @see ResourcesPlugin#PREF_SNAPSHOT_INTERVAL
 	 * @since 2.0
 	 */
 	public long getSnapshotInterval();
@@ -85,6 +94,7 @@ public interface IWorkspaceDescription {
 	 * @return <code>true</code> if auto-building is on, otherwise
 	 *		<code>false</code>
 	 * @see #setAutoBuilding(boolean)
+	 * @see ResourcesPlugin#PREF_AUTO_BUILDING
 	 */
 	public boolean isAutoBuilding();
 
@@ -106,6 +116,7 @@ public interface IWorkspaceDescription {
 	 *  and <code>false</code> to turn it off
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #isAutoBuilding()
+	 * @see ResourcesPlugin#PREF_AUTO_BUILDING
 	 */
 	public void setAutoBuilding(boolean value);
 
@@ -124,6 +135,7 @@ public interface IWorkspaceDescription {
 	 *   or <code>null</code> to use the workspace's default order for all projects
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getBuildOrder()
+	 * @see ResourcesPlugin#PREF_BUILD_ORDER
 	 */
 	public void setBuildOrder(String[] value);
 
@@ -139,6 +151,7 @@ public interface IWorkspaceDescription {
 	 * 		kept in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getFileStateLongevity()
+	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
 	public void setFileStateLongevity(long time);
 
@@ -154,6 +167,7 @@ public interface IWorkspaceDescription {
 	 * when builders affect projects that have already been built.
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxBuildIterations()
+	 * @see ResourcesPlugin#PREF_MAX_BUILD_ITERATIONS
 	 * @since 2.1
 	 */
 	public void setMaxBuildIterations(int number);
@@ -170,6 +184,7 @@ public interface IWorkspaceDescription {
 	 * @param number the maximum number of states per file that can be stored in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxFileStates()
+	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
 	public void setMaxFileStates(int number);
 
@@ -184,6 +199,7 @@ public interface IWorkspaceDescription {
 	 * @param size the maximum permited size of a file to be stored in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxFileStateSize()
+	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
 	public void setMaxFileStateSize(long size);
 
@@ -198,6 +214,7 @@ public interface IWorkspaceDescription {
 	 * @param delay the amount of time in milliseconds between automatic workspace snapshots
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getSnapshotInterval()
+	 * @see ResourcesPlugin#PREF_SNAPSHOT_INTERVAL
 	 * @since 2.0
 	 */
 	public void setSnapshotInterval(long delay);

@@ -608,7 +608,8 @@ public interface IWorkspace extends IAdaptable {
 	 * defining workspace preferences. The returned value is a modifiable copy
 	 * but changes are not automatically applied to the workspace. In order to
 	 * changes take effect, <code>IWorkspace.setDescription</code> needs to be
-	 * called.
+	 * called. The workspace description values are store in the preference
+	 * store.
 	 * 
 	 * @return the workspace description
 	 * @see #setDescription(IWorkspaceDescription)
@@ -1141,13 +1142,14 @@ public interface IWorkspace extends IAdaptable {
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Sets the workspace description.
+	 * Sets the workspace description. Its values are stored in the preference
+	 * store.
 	 * 
 	 * @param description the new workspace description.
 	 * @see #getDescription()
 	 * @exception CoreException if the method fails. Reasons include:
 	 * <ul>
-	 * <li>There was a problem writing the description to disk.</li>
+	 * <li>There was a problem setting the workspace description.</li>
 	 * </ul>
 	 */
 	public void setDescription(IWorkspaceDescription description) throws CoreException;

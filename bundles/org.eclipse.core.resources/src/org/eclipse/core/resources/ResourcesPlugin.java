@@ -136,6 +136,9 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring whether the workspace performs auto-
 	 * builds.
+	 * 
+	 * @see IWorkspaceDescription#isAutoBuilding()
+	 * @see IWorkspaceDescription#setAutoBuilding(boolean)
 	 * @since 2.1
 	 */
 	public static final String PREF_AUTO_BUILDING = PREF_DESCRIPTION_PREFIX + "autobuilding"; //$NON-NLS-1$
@@ -143,6 +146,9 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring the order projects in the workspace
 	 * are built.
+	 * 
+	 * @see IWorkspaceDescription#getBuildOrder()
+	 * @see IWorkspaceDescription#setBuildOrder(String[])
 	 * @since 2.1
 	 */
 	public static final String PREF_BUILD_ORDER = PREF_DESCRIPTION_PREFIX + "buildorder"; //$NON-NLS-1$
@@ -158,6 +164,9 @@ public final class ResourcesPlugin extends Plugin {
 	 * Name of a preference for configuring the maximum number of times that the
 	 * workspace should rebuild when builders affect projects that have already
 	 * been built.
+	 * 
+	 * @see IWorkspaceDescription#getMaxBuildIterations()
+	 * @see IWorkspaceDescription#setMaxBuildIterations(int)
 	 * @since 2.1
 	 */
 	public static final String PREF_MAX_BUILD_ITERATIONS = PREF_DESCRIPTION_PREFIX + "maxbuilditerations"; //$NON-NLS-1$
@@ -165,6 +174,9 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring the maximum number of milliseconds a
 	 * file state should be kept in the local history
+	 * 
+	 * @see IWorkspaceDescription#getFileStateLongevity()
+	 * @see IWorkspaceDescription#setFileStateLongevity(long)
 	 * @since 2.1
 	 */
 	public static final String PREF_FILE_STATE_LONGEVITY = PREF_DESCRIPTION_PREFIX + "filestatelongevity"; //$NON-NLS-1$
@@ -172,6 +184,9 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring the maximum permited size of a file
 	 * to be stored in the local history
+	 * 
+	 * @see IWorkspaceDescription#getMaxFileStateSize()
+	 * @see IWorkspaceDescription#setMaxFileStateSize(long)
 	 * @since 2.1
 	 */
 	public static final String PREF_MAX_FILE_STATE_SIZE = PREF_DESCRIPTION_PREFIX + "maxfilestatesize"; //$NON-NLS-1$
@@ -179,12 +194,18 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring the maximum number of states per
 	 * file that can be stored in the local history.
+	 * 
+	 * @see IWorkspaceDescription#getMaxFileStates()
+	 * @see IWorkspaceDescription#setMaxFileStates(int)
 	 * @since 2.1
 	 */
 	public static final String PREF_MAX_FILE_STATES = PREF_DESCRIPTION_PREFIX + "maxfilestates"; //$NON-NLS-1$	
 	/**
 	 * Name of a preference for configuring the amount of time in milliseconds
 	 * between automatic workspace snapshots
+	 * 
+	 * @see IWorkspaceDescription#getSnapshotInterval()
+	 * @see IWorkspaceDescription#setSnapshotInterval(long)
 	 * @since 2.1
 	 */
 	public static final String PREF_SNAPSHOT_INTERVAL = PREF_DESCRIPTION_PREFIX + "snapshotinterval"; //$NON-NLS-1$	
