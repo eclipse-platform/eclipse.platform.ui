@@ -14,12 +14,16 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
+import org.eclipse.core.tests.session.SessionTestSuite;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
+import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 /**
  * This class defines all tests for the HistoryStore Class.
@@ -88,30 +92,51 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 	}
 
+	private IWorkspaceDescription original;
+
+	public static void assertEquals(String tag, IFileState expected, IFileState actual) {
+		assertEquals(tag + " path differs", expected.getFullPath(), actual.getFullPath());
+		assertEquals(tag + " timestamp differs", expected.getModificationTime(), actual.getModificationTime());
+		assertEquals(tag + " uuid differs", ((FileState) expected).getUUID(), ((FileState) actual).getUUID());
+	}
+
 	public static Test suite() {
-		if (false) {
-			TestSuite suite = new TestSuite();
-			//			suite.addTest(new HistoryStoreTest("testSimpleUse"));			
-			//			suite.addTest(new HistoryStoreTest("testSimpleMove"));
-			//			suite.addTest(new HistoryStoreTest("testSimpleCopy"));
-			//suite.addTest(new HistoryStoreTest("testMoveFolder"));
-			//			suite.addTest(new HistoryStoreTest("testCopyFolder"));
-			suite.addTest(new HistoryStoreTest("testCopyHistoryFolder"));
-
-			//	suite.addTest(new HistoryStoreTest("testIndexOrdering2"));
-			//			suite.addTest(new HistoryStoreTest("testAddStateAndPolicies"));
-			//			suite.addTest(new HistoryStoreTest("testClean"));
-			//			suite.addTest(new HistoryStoreTest("testExists"));						
-			//			suite.addTest(new HistoryStoreTest("testGetContents"));						
-			//			suite.addTest(new HistoryStoreTest("testRemoveAll"));
-			//suite.addTest(new HistoryStoreTest("testClean"));			
-			//			suite.addTest(new HistoryStoreTest("testBug28238"));
-			//			suite.addTest(new HistoryStoreTest("testBug28603"));
-			//			suite.addTest(new HistoryStoreTest("testDelete"));			
-			return suite;
+		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
+		SessionTestSuite oldHistoryTestSuite = new WorkspaceSessionTestSuite(PI_RESOURCES_TESTS, HistoryStoreTest.class, "Old History Store test");
+		try {
+			oldHistoryTestSuite.getSetup().setSystemProperty(FileSystemResourceManager.ENABLE_NEW_HISTORY_STORE, Boolean.toString(false));
+		} catch (SetupException e) {
+			log(PI_RESOURCES_TESTS, e);
+			// an empty test should cause an error
+			return new TestSuite(oldHistoryTestSuite.getName());
 		}
+		suite.addTest(oldHistoryTestSuite);
+		//	 adds the tests for the new history store as session tests		
+		SessionTestSuite newHistoryTestSuite = new SessionTestSuite(PI_RESOURCES_TESTS, HistoryStoreTest.class, "New History Store test");
+		try {
+			newHistoryTestSuite.getSetup().setSystemProperty(FileSystemResourceManager.ENABLE_NEW_HISTORY_STORE, Boolean.toString(true));
+		} catch (SetupException e) {
+			log(PI_RESOURCES_TESTS, e);
+			// an empty test should cause an error
+			return new TestSuite(newHistoryTestSuite.getName());
+		}
+		suite.addTest(newHistoryTestSuite);
+		return suite;
+	}
 
-		return new TestSuite(HistoryStoreTest.class);
+	/*
+	 * This little helper method makes sure that the history store is
+	 * completely clean after it is invoked.  If a history store entry or
+	 * a file is left, it may become part of the history for another file in
+	 * another test (if this file has the same name).
+	 */
+	public static void wipeHistoryStore(IProgressMonitor monitor) {
+		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+		// Remove all the entries from the history store index.  Note that
+		// this does not cause the history store states to be removed.
+		store.remove(Path.ROOT, monitor);
+		// Now make sure all the states are really removed.
+		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
 	}
 
 	public HistoryStoreTest() {
@@ -139,9 +164,23 @@ public class HistoryStoreTest extends ResourceTest {
 		return i;
 	}
 
+	public IWorkspaceDescription setMaxFileStates(int maxFileStates) throws CoreException {
+		IWorkspaceDescription currentDescription = getWorkspace().getDescription();
+		IWorkspaceDescription newDescription = getWorkspace().getDescription();
+		newDescription.setMaxFileStates(maxFileStates);
+		getWorkspace().setDescription(newDescription);
+		return currentDescription;
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		original = getWorkspace().getDescription();
+	}
+
 	protected void tearDown() throws Exception {
+		getWorkspace().setDescription(original);
 		super.tearDown();
-		wipeHistoryStore();
+		wipeHistoryStore(getMonitor());
 	}
 
 	/**
@@ -193,9 +232,6 @@ public class HistoryStoreTest extends ResourceTest {
 		}
 
 		/* set local history policies */
-		// keep orignal
-		IWorkspaceDescription originalDescription = getWorkspace().getDescription();
-		// get another copy for changes
 		IWorkspaceDescription description = getWorkspace().getDescription();
 		// longevity set to 1 day
 		description.setFileStateLongevity(1000 * 3600 * 24);
@@ -228,6 +264,8 @@ public class HistoryStoreTest extends ResourceTest {
 		// Make sure we have 8 states as we haven't trimmed yet.
 		assertEquals("1.02", 8, states.length);
 
+		IFileState[] oldStates = states;
+
 		try {
 			getWorkspace().save(true, null);
 			states = file.getHistory(getMonitor());
@@ -240,9 +278,13 @@ public class HistoryStoreTest extends ResourceTest {
 		// assert that states are in the correct order (newer ones first)
 		long lastModified = states[0].getModificationTime();
 		for (int i = 1; i < states.length; i++) {
-			assertTrue("1.3", lastModified > states[i].getModificationTime());
+			assertTrue("1.3." + i, lastModified > states[i].getModificationTime());
 			lastModified = states[i].getModificationTime();
 		}
+
+		// assert that the most recent states were preserved
+		for (int i = 0; i < states.length; i++)
+			assertEquals("1.4." + i, oldStates[i], states[i]);
 
 		/* test max file state size */
 		description.setMaxFileStates(15);
@@ -326,18 +368,6 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("3.6", e);
 		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("20.0", e);
-		}
-		try {
-			getWorkspace().setDescription(originalDescription);
-		} catch (CoreException e) {
-			fail("20.1", e);
-		}
 	}
 
 	public void testBug28238() {
@@ -384,9 +414,11 @@ public class HistoryStoreTest extends ResourceTest {
 			file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
 			file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
 			file1.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+			setMaxFileStates(50);
 		} catch (CoreException e) {
 			fail("0.0", e);
 		}
+
 		int maxStates = ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates();
 
 		IFileState[] states = null;
@@ -456,8 +488,6 @@ public class HistoryStoreTest extends ResourceTest {
 			fail("0.0", e);
 		}
 		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		// keep orignal
-		IWorkspaceDescription originalDescription = getWorkspace().getDescription();
 		// get another copy for changes
 		IWorkspaceDescription description = getWorkspace().getDescription();
 
@@ -588,18 +618,6 @@ public class HistoryStoreTest extends ResourceTest {
 			assertEquals("5.1", 0, states.length);
 		} catch (CoreException e) {
 			fail("5.2", e);
-		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("20.0", e);
-		}
-		try {
-			getWorkspace().setDescription(originalDescription);
-		} catch (CoreException e) {
-			fail("20.1", e);
 		}
 	}
 
@@ -1039,13 +1057,6 @@ public class HistoryStoreTest extends ResourceTest {
 		// Make sure that each of these states really exists in the filesystem.
 		for (int i = 0; i < states.length; i++)
 			assertTrue("5.2." + i, states[i].exists());
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("20.0", e);
-		}
 	}
 
 	public void testFindDeleted() {
@@ -1447,13 +1458,47 @@ public class HistoryStoreTest extends ResourceTest {
 				// expected
 			}
 		}
+	}
 
-		/* remove garbage */
+	public void testModifiedStamp() {
+		/* Initialize common objects. */
+		IProject project = getWorkspace().getRoot().getProject("Project");
 		try {
-			project.delete(true, getMonitor());
+			project.create(getMonitor());
+			project.open(getMonitor());
 		} catch (CoreException e) {
-			fail("20.0", e);
+			fail("0.0", e);
 		}
+		IFile file = project.getFile("file");
+		try {
+			file.create(getRandomContents(), true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		IFileState[] history = null;
+		try {
+			history = file.getHistory(getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		// no history yet
+		assertEquals("1.2", 0, history.length);
+		// save the file's current time stamp - it will be remembered in the file state
+		long fileTimeStamp = file.getLocalTimeStamp();
+		try {
+			file.setContents(getRandomContents(), true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		try {
+			history = file.getHistory(getMonitor());
+		} catch (CoreException e) {
+			fail("2.1", e);
+		}
+		// one state in the history
+		assertEquals("2.2", 1, history.length);
+		// the timestamp in the state should match the previous file's timestamp 
+		assertEquals("3.0", fileTimeStamp, history[0].getModificationTime());
 	}
 
 	/**
@@ -1735,13 +1780,6 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("9.4", e);
 		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("20.0", e);
-		}
 	}
 
 	/**
@@ -1832,13 +1870,6 @@ public class HistoryStoreTest extends ResourceTest {
 
 		} catch (CoreException e) {
 			fail("6.8", e);
-		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("7.0", e);
 		}
 	}
 
@@ -1932,13 +1963,6 @@ public class HistoryStoreTest extends ResourceTest {
 
 		} catch (CoreException e) {
 			fail("6.8", e);
-		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("7.0", e);
 		}
 	}
 
@@ -2071,27 +2095,5 @@ public class HistoryStoreTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("9.3", e);
 		}
-
-		/* remove garbage */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("20.0", e);
-		}
-	}
-
-	/*
-	 * This little helper method makes sure that the history store is
-	 * completely clean after it is invoked.  If a history store entry or
-	 * a file is left, it may become part of the history for another file in
-	 * another test (if this file has the same name).
-	 */
-	private void wipeHistoryStore() {
-		IHistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-		// Remove all the entries from the history store index.  Note that
-		// this does not cause the history store states to be removed.
-		store.remove(Path.ROOT, getMonitor());
-		// Now make sure all the states are really removed.
-		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
 	}
 }
