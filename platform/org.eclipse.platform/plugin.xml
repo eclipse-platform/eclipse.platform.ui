@@ -15,7 +15,7 @@
    </requires>
 
 
-<!-- -->
+<!--
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -27,7 +27,7 @@
       		productId="org.eclipse.platform"
       		introId="org.eclipse.platform.intro"/>
    </extension>
-<!-- -->
+-->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
