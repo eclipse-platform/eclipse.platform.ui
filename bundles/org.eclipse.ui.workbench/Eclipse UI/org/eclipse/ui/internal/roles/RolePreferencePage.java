@@ -27,102 +27,123 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
- * This page manages enablement of roles and whether or not the entire role 
+ * This page manages enablement of roles and whether or not the entire role
  * filtering system is enabled at all.
  */
 public class RolePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    /**
-     * The button which indicates if the role system is currently enabled.
-     */
-    Button roleEnablement;
+	IWorkbench currentWorkbench;
+	/**
+	 * The button which indicates if the role system is currently enabled.
+	 */
+	Button roleEnablement;
 
-    /**
-     * Viewer to show the list of known roles.
-     */
+	/**
+	 * Viewer to show the list of known roles.
+	 */
 	CheckboxTableViewer viewer;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-        final RoleManager manager = RoleManager.getInstance();
+		final RoleManager manager = RoleManager.getInstance();
 		Composite composite = new Composite(parent, SWT.NULL);
-        composite.setLayout(new GridLayout(1, true));	
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        roleEnablement = new Button(composite, SWT.CHECK);
-        roleEnablement.setText(RoleMessages.getString("RolePreferencePage.RoleBasedFilteringLabel")); //$NON-NLS-1$
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.verticalSpan = 2;					
+		composite.setLayout(new GridLayout(1, true));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		roleEnablement = new Button(composite, SWT.CHECK);
+		roleEnablement.setText(RoleMessages.getString("RolePreferencePage.RoleBasedFilteringLabel")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalSpan = 2;
 		viewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		viewer.setContentProvider(new RoleContentProvider());
-		viewer.setLabelProvider(new RoleLabelProvider());	
+		viewer.setLabelProvider(new RoleLabelProvider());
 		viewer.setInput(manager);
-        viewer.getControl().setLayoutData(gd);
-        
-        roleEnablement.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                manager.setFiltering(roleEnablement.getSelection());
-                updateViewerEnablement();           
-            }
+		viewer.getControl().setLayoutData(gd);
 
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
-        });        
-        
-		loadRoleState();	
+		roleEnablement.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				manager.setFiltering(roleEnablement.getSelection());
+				updateViewerEnablement();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		loadRoleState();
 		return composite;
 	}
 
 	/**
-	 * Update the enablment of the role table based on whether filtering is 
-     * enabled in the RoleManager instance.
+	 * Update the enablment of the role table based on whether filtering is
+	 * enabled in the RoleManager instance.
 	 */
 	protected void updateViewerEnablement() {
-        boolean filterEnabled = RoleManager.getInstance().isFiltering();
-		viewer.getControl().setEnabled(filterEnabled); 
-        viewer.setAllGrayed(!filterEnabled);		
+		boolean filterEnabled = RoleManager.getInstance().isFiltering();
+		viewer.getControl().setEnabled(filterEnabled);
+		viewer.setAllGrayed(!filterEnabled);
 	}
 
 	/**
-     * Sets the state of the viewer based on the currently enabled roles.
-     */
+	 * Sets the state of the viewer based on the currently enabled roles.
+	 */
 	private void loadRoleState() {
-        updateViewerEnablement(); 
-        roleEnablement.setSelection(RoleManager.getInstance().isFiltering());
-		Role [] roles = RoleManager.getInstance().getRoles();	
+		updateViewerEnablement();
+		roleEnablement.setSelection(RoleManager.getInstance().isFiltering());
+		Role[] roles = RoleManager.getInstance().getRoles();
 		for (int i = 0; i < roles.length; i++) {
 			viewer.setChecked(roles[i], roles[i].allEnabled());
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		currentWorkbench = workbench;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
+
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
 	public boolean performOk() {
 		List checked = Arrays.asList(viewer.getCheckedElements());
 		RoleManager manager = RoleManager.getInstance();
-		Role [] roles = manager.getRoles();
+		Role[] roles = manager.getRoles();
 		for (int i = 0; i < roles.length; i++) {
 			roles[i].setEnabled(checked.contains(roles[i]));
 		}
-        manager.setFiltering(roleEnablement.getSelection());
+		manager.setFiltering(roleEnablement.getSelection());
 		manager.saveEnabledStates();
+
+		IWorkbenchWindow[] windows = currentWorkbench.getWorkbenchWindows();
+
+		for (int i = 0; i < windows.length; i++) {
+			if(windows[i] instanceof WorkbenchWindow){
+				WorkbenchWindow window = (WorkbenchWindow) windows[i];
+				window.getMenuBarManager().markDirty();
+				window.getCoolBarManager().markDirty();
+				window.getMenuBarManager().update(true);
+				window.getCoolBarManager().update(true);
+			}
+		}
+		
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		loadRoleState();
 	}
+	
+	
+	
+	
 }
