@@ -259,14 +259,25 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * Sets the tab order of the coolbar to the visual order of its items.
 	 */
 	/* package */ void updateTabOrder() {
-		CoolItem[] items = coolBar.getItems();
-		Control[] children = new Control[items.length];
-		for (int i = 0; i < children.length; i++) {
-			if (items[i].getControl() != null) {
-				children[i] = items[i].getControl();
+		if (coolBar != null) {
+			CoolItem[] items = coolBar.getItems();
+			if (items != null) {
+				ArrayList children = new ArrayList(items.length);
+				for(int i=0; i < items.length; i++) {
+					if ((items[i].getControl() != null) && (!items[i].getControl().isDisposed())) {
+						children.add(items[i].getControl());
+					}						
+				}
+				// Convert array
+				Control[] childrenArray = new Control[0];
+				childrenArray = (Control [])children.toArray(childrenArray);
+				
+				if (childrenArray != null) {
+					coolBar.setTabList(childrenArray);
+				}
+				
 			}
 		}
-		coolBar.setTabList(children);
 	}
 	
 	/* (non-Javadoc)
@@ -486,7 +497,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * </p>
 	 */
 	public void refresh() {
-		try {
+		
 		// Retreives the list of contribution items as an array list
 		ArrayList contributionList = getItemList();
 		
@@ -577,15 +588,11 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 			}
 		}
 	
-		// Print out the contribution list
 		if (contributionList.size() != 0) {
 			contributionList = adjustContributionList(contributionList);
 			IContributionItem[] array = new IContributionItem[contributionList.size()-1];
 			array = (IContributionItem[])contributionList.toArray(array);
 			internalSetItems(array);
-		}
-		}catch(Exception e) {
-			e.printStackTrace();
 		}
 		
 	}
