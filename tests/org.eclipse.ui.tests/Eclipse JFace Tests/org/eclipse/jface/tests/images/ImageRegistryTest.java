@@ -37,7 +37,12 @@ public class ImageRegistryTest extends TestCase {
 		assertTrue("Registry should handle null", result == null);
 	}
 	
-	public void testGetString() {		
+	public void testGetString() {
+		
+		// note, we must touch the class to ensure the static initialer runs
+		// so the image registry is up to date
+		Class clazz = Dialog.class;
+		
 		String[] imageNames = new String[] {
 				Dialog.DLG_IMG_ERROR,
 				Dialog.DLG_IMG_INFO,
