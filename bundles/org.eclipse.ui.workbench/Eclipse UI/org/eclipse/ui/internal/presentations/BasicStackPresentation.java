@@ -271,8 +271,13 @@ public class BasicStackPresentation extends StackPresentation {
 			FontRegistry registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
 			if(part.isBusy())
 				tab.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-			else
-				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+			else{
+				if(getCurrent().equals(part))//Set bold if it does not already have focus
+					tab.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+				else
+					tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+			}
+				
 		}
 	}
 
