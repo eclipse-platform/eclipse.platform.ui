@@ -26,19 +26,19 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <p>
  * It supports the following kinds of listeners:
  * <ul>
- * <li>view port listeners to inform about changes of the viewer's view port
+ * <li>view port listeners to inform about changes of the viewer's view port</li>
  * <li>text listeners to inform about changes of the document and the
- * subsequent viewer change
+ * subsequent viewer change</li>
  * <li>text input listeners to inform about changes of the viewer's input
- * document.
+ * document.</li>
  * </ul>
  * A text viewer supports a set of configuration options and plug-ins defining
  * its behavior:
  * <ul>
- * <li>undo manager
- * <li>double click behavior
- * <li>auto indentation
- * <li>text hover
+ * <li>undo manager</li>
+ * <li>double click behavior</li>
+ * <li>auto indentation</li>
+ * <li>text hover</li>
  * </ul>
  * Installed plug-ins are not automatically activated. Plug-ins must be
  * activated with the <code>activatePlugins</code> call. Most plug-ins can be
@@ -60,12 +60,12 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * visible. Clients can get access to this section by calling
  * <code>getVisibleRegion</code>. The viewer's presentation mode does not
  * affect any client of the viewer other than text listeners. With
- * {@link org.eclipse.jface.text.ITextViewerExtension5}the visible region
+ * {@link org.eclipse.jface.text.ITextViewerExtension5} the visible region
  * support has been reworked. With that extension interface, text viewers are
  * allowed to show fractions of their input document. I.e. a widget selection of
  * two visually neighboring characters is no longer guaranteed to be two
  * neighboring characters in the viewer's input document. Thus, viewers
- * implementing {@link org.eclipse.jface.text.ITextViewerExtension5}are
+ * implementing {@link org.eclipse.jface.text.ITextViewerExtension5} are
  * potentially forced to change the fractions of the input document that are
  * shown when clients ask for the visible region.
  * <p>
@@ -74,22 +74,22 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <code>ITextViewer</code>, extension interfaces are used as a means of
  * evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension}since version 2.0
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension} since version 2.0
  * replacing the event consumer mechanism and introducing the concept of rewrite
  * targets and means to manage the viewer's redraw behavior</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension2}since version 2.1
  * adding a way to invalidate a viewer's presentation and setters for hovers.
  * </li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension3}since version 2.1
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension3} since version 2.1
  * which itself was replaced by
- * {@link org.eclipse.jface.text.ITextViewerExtension5}in version 3.0</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension4}since version 3.0
+ * {@link org.eclipse.jface.text.ITextViewerExtension5} in version 3.0</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension4} since version 3.0
  * introducing focus handling for widget token keepers and the concept of text
  * presentation listeners.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension5}since version 3.0
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension5} since version 3.0
  * extending the visible region concept with explicit handling and conversation
  * of widget and model coordinates.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension6}since version 3.1
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1
  * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
  * </ul>
  * 
