@@ -63,6 +63,17 @@ public class UpdateSearchRequest {
 			}
 			return true;
 		}
+		
+		public boolean accept(IFeatureReference match) {
+			if (filters == null)
+				return true;
+			for (int i = 0; i < filters.size(); i++) {
+				IUpdateSearchFilter filter = (IUpdateSearchFilter) filters.get(i);
+				if (filter.accept(match) == false)
+					return false;
+			}
+			return true;
+		}
 	}
 
 	/**

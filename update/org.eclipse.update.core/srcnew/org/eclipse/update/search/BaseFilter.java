@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.core.*;
 
 /**
- * This class can be added to the update search request
- * to filter out features that do not match the current
- * environment settings.
+ * Base filter class
  * 
  * @see UpdateSearchRequest
  * @see IUpdateSearchFilter
  */
-public class EnvironmentFilter extends BaseFilter {
+public class BaseFilter implements IUpdateSearchFilter {
 	public boolean accept(IFeature match) {
-		return UpdateManagerUtils.isValidEnvironment(match);
+		return true;
 	}
+	public boolean accept(IFeatureReference match) {
+		return true;
+	}	
 }

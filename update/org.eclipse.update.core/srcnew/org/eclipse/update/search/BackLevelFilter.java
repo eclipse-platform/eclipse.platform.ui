@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.operations.UpdateManager;
 
@@ -22,20 +24,24 @@ import org.eclipse.update.internal.operations.UpdateManager;
  * @see UpdateSearchRequest
  * @see IUpdateSearchFilter
  */
-public class BackLevelFilter implements IUpdateSearchFilter {
-	public boolean accept(IFeature match) {
-		PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
-		IFeature [] installed = UpdateManager.getInstalledFeatures(match, false);
-		if (installed.length==0) return true;
-		
-		for (int i=0; i<installed.length; i++) {
-			PluginVersionIdentifier ivid = installed[i].getVersionedIdentifier().getVersion();
-			if (matchVid.isGreaterThan(ivid))
-				continue;
-			// installed version is the same or newer than
-			// the match - filter out
+public class BackLevelFilter extends BaseFilter {
+	public boolean accept(IFeatureReference match) {
+		try {
+			PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
+			IFeature [] installed = UpdateManager.getInstalledFeatures(match.getVersionedIdentifier(), false);
+			if (installed.length==0) return true;
+			
+			for (int i=0; i<installed.length; i++) {
+				PluginVersionIdentifier ivid = installed[i].getVersionedIdentifier().getVersion();
+				if (matchVid.isGreaterThan(ivid))
+					continue;
+				// installed version is the same or newer than
+				// the match - filter out
+				return false;
+			}
+			return true;
+		} catch (CoreException e) {
 			return false;
 		}
-		return true;
 	}
 }

@@ -25,19 +25,20 @@ import org.eclipse.update.search.*;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
-	private IUpdateSearchQuery [] queries;
-	private static final String CATEGORY_ID = "org.eclipse.update.core.unified-search";
+	private IUpdateSearchQuery[] queries;
+	private static final String CATEGORY_ID =
+		"org.eclipse.update.core.unified-search";
 
 	private static class UnifiedQuery implements IUpdateSearchQuery {
 		public void run(
 			ISite site,
-			String [] categoriesToSkip,
+			String[] categoriesToSkip,
 			IUpdateSearchFilter filter,
-			IUpdateSearchResultCollector collector, 
+			IUpdateSearchResultCollector collector,
 			IProgressMonitor monitor) {
 			ISiteFeatureReference[] refs = site.getFeatureReferences();
 			HashSet ignores = new HashSet();
-			if (categoriesToSkip!=null) {
+			if (categoriesToSkip != null) {
 				for (int i = 0; i < categoriesToSkip.length; i++) {
 					ignores.add(categoriesToSkip[i]);
 				}
@@ -63,10 +64,12 @@ public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
 				}
 				try {
 					if (!skipFeature) {
-						IFeature feature = ref.getFeature(null);
-						if (filter.accept(feature))
-							collector.accept(feature);
-						monitor.subTask(feature.getLabel());
+						if (filter.accept(ref)) {
+							IFeature feature = ref.getFeature(null);
+							if (filter.accept(feature))
+								collector.accept(feature);
+							monitor.subTask(feature.getLabel());
+						}
 					}
 				} catch (CoreException e) {
 					System.out.println(e);
@@ -86,7 +89,7 @@ public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
 
 	public UnifiedSiteSearchCategory() {
 		super(CATEGORY_ID);
-		queries = new IUpdateSearchQuery[] {new UnifiedQuery()};
+		queries = new IUpdateSearchQuery[] { new UnifiedQuery()};
 	}
 
 	public IUpdateSearchQuery[] getQueries() {
