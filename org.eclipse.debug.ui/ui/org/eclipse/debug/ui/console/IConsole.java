@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,8 +137,8 @@ public interface IConsole {
 	
 	/**
 	 * Returns the stream associated with the specified stream identifier.
-     * @param streamIdentifier Uniquely idenifies the required stream 
-     * @return The stream or null if none found with matching streamIdentifier
+     * @param streamIdentifier Uniquely identifies the required stream 
+     * @return The stream or <code>null</code> if none found with matching streamIdentifier
      * @since 3.1
      */
 	public IOConsoleOutputStream getStream(String streamIdentifier);

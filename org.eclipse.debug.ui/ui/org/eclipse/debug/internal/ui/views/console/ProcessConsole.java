@@ -218,9 +218,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
     
-	/**
-     * @param streamIdentifier Uniquely idenifies the required stream 
-     * @return The stream or null if none found with matching streamIdentifier
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.console.IConsole#getStream(java.lang.String)
      */
     public IOConsoleOutputStream getStream(String streamIdentifier) {
         for (Iterator i = streamListeners.iterator(); i.hasNext(); ) {
@@ -231,12 +230,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
         return null;
     }
-
-
-    /**
-	 * Returns the process associated with this console.
-	 * 
-	 * @return the process associated with this console
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsole#getProcess()
 	 */
 	public IProcess getProcess() {
 		return fProcess;
