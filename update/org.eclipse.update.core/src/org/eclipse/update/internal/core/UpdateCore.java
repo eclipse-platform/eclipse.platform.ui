@@ -333,7 +333,7 @@ public class UpdateCore extends Plugin {
 		if ("".equals(httpProxyPort)) //$NON-NLS-1$
 			httpProxyPort = null;
 		
-		boolean httpProxyEnable = httpProxyHost != null && httpProxyPort != null ? 
+		boolean httpProxyEnable = System.getProperty(P_HTTP_HOST) != null && System.getProperty(P_HTTP_PORT) != null ? 
 				true
 				: getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE);
 		
