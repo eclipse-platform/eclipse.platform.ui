@@ -187,7 +187,7 @@ public interface ISharedImages {
     /**
      * Identifies the copy image in the hover (colored) state.
      * 
-     * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_COPY_HOVER</code>.
+     * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_COPY</code>.
      *   Enabled images are now in color.  The workbench itself no longer uses the hover image variants.
      */
     public final static String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER"; //$NON-NLS-1$
