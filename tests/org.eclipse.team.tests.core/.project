@@ -11,7 +11,6 @@
 		<project>org.eclipse.core.tests.harness</project>
 		<project>org.eclipse.team.core</project>
 		<project>org.eclipse.team.ui</project>
-		<project>org.eclipse.team.webdav</project>
 		<project>org.eclipse.ui</project>
 		<project>org.junit</project>
 	</projects>
