@@ -33,16 +33,16 @@ that lets one attach </span><span style="font-family: monospace;">ICompletionPro
  style="font-family: helvetica,arial,sans-serif;"> </span><span
  style="font-family: helvetica,arial,sans-serif;">to</span>
 be shown when the position is hit.</li>
-  <li><code>LinkedEnvironment</code>: umbrellas several <code>PositionGroup</code>s,
+  <li><code>LinkedModeModel</code>: umbrellas several <code>LinkedPositionGroup</code>s,
 e.g. in a template that has several groups of linked positions. Handles
-the forwarding of updates received via an IDocumentListener. Add <code>PositionGroup</code>s
+the forwarding of updates received via an IDocumentListener. Add <code>LinkedPositionGroup</code>s
 to
-an environment using the <code>addGroup</code> method. Existence of a <span
- style="font-family: monospace;">LinkedEnvironment </span>can be
+an model using the <code>addGroup</code> method. Existence of a <span
+ style="font-family: monospace;">LinkedModeModel </span>can be
 tested by one of the static methods.<br>
   </li>
-  <li><code>LinkedUIControl</code>: The UI for linked mode (for one
-environment, to be precise). Monitors key etc. activity, monitors exit
+  <li><code>LinkedModeUI</code>: The UI for linked mode (for one
+model, to be precise). Monitors key etc. activity, monitors exit
 conditions, creates a painter etc. <br>
 Properties:
     <ul>
@@ -56,7 +56,7 @@ should stop over when cycling.</li>
       <li><span style="font-weight: bold;">position listener</span>:
 you can register a position listener which will get notified whenever
 the focus position changes. An example is <span
- style="font-family: monospace;">org.eclipse.ui.texteditor.link.EditorHistoryUpdater</span>
+ style="font-family: monospace;">org.eclipse.ui.texteditor.link.EditorLinkedModeUI.EditorHistoryUpdater</span>
 which will store the edit location in the editor navigation history.<br>
       </li>
     </ul>
@@ -64,11 +64,11 @@ which will store the edit location in the editor navigation history.<br>
 .
 </ul>
 <h4>Example</h4>
-<pre>	IDocument doc1, doc2;<br>	ITextViewer viewer1, viewer2;<br>	<br>	/* create groups - this step is independent of the linked mode */<br>	PositionGroup group1= new PositionGroup();<br>	group1.addPosition(doc1, 3,4);<br>	group1.addPosition(doc1, 7,8);<br>	<br>	PositionGroup group2= newPositionGroup();<br>	group2.addPosition(doc1, 15, 25);<br>	group2.addPosition(doc2, 0, 10);<br>	<br>	/* set up linked mode */<br>	LinkedEnvironment env= new LinkedEnvironment();<br>	env.addGroup(group1);<br>	env.addGroup(group2);<br>	env.forceInstall();<br>	<br>	/* create UI */<br>	LinkedUIControl ui= new LinkedUIControl(env, new ITextViewer[] { viewer1, viewer2 });<br>	ui.enter();<br></pre>
+<pre>	IDocument doc1, doc2;<br>	ITextViewer viewer1, viewer2;<br>	<br>	/* create groups - this step is independent of the linked mode */<br>	LinkedPositionGroup group1= new LinkedPositionGroup();<br>	group1.addPosition(new LinkedPosition(doc1, 3, 4));<br>	group1.addPosition(new LinkedPosition(doc1, 7, 8));<br>	<br>	LinkedPositionGroup group2= new LinkedPositionGroup();<br>	group2.addPosition(new LinkedPosition(doc1, 15, 25));<br>	group2.addPosition(new LinkedPosition(doc2, 0, 10));<br>	<br>	/* set up linked mode */<br>	LinkedModeModel model= new LinkedModeModel();<br>	model.addGroup(group1);<br>	model.addGroup(group2);<br>	model.forceInstall();<br>	<br>	/* create UI */<br>	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });<br>	ui.enter();<br></pre>
 <h4>Todo</h4>
 <ul>
   <li>handle lazy computation of per-group proposals using a <code>IContentAssistProcessor</code>
-(see PositionGroup, ProposalPosition) .</li>
+(see LinkedPositionGroup, ProposalPosition) .</li>
 </ul>
 </body>
 </html>
