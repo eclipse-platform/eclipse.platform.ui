@@ -77,7 +77,7 @@ public class ResourceExtender extends PropertyTester {
 		}
 		if (description != null) {
 			IContentType type= description.getContentType();
-			return contentType.equals(type.getId());
+			return type != null && contentType.equals(type.getId());
 		}
 		return false;
 	}
