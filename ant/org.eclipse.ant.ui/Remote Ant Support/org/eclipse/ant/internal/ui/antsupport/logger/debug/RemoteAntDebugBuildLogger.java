@@ -18,7 +18,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +26,10 @@ import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -208,19 +207,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
     
      private void initializeBuildSequenceInformation(BuildEvent event) {
-         Project antProject= event.getProject();
-         Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
-         fTargetToBuildSequence= new HashMap(targets.size());
-         Iterator itr= targets.iterator();
-         Hashtable allTargets= antProject.getTargets();
-         String targetName;
-         Vector sortedTargets;
-         while (itr.hasNext()) {
-             targetName= (String) itr.next();
-             sortedTargets= antProject.topoSort(targetName, allTargets);
-             fTargetToBuildSequence.put(allTargets.get(targetName), sortedTargets);
-         }
-         fTargetToExecute= (Target) allTargets.get(targets.remove(0));
+         fTargetToBuildSequence= new HashMap();
+         fTargetToExecute= AntDebugUtil.initializeBuildSequenceInformation(event, fTargetToBuildSequence);
      }
 	
 	/* (non-Javadoc)
@@ -301,8 +289,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		if (fBreakpoints == null) {
 			return null;
 		}
-		String fileName= getFileName(location);
-		int lineNumber= getLineNumber(location);
+		String fileName= AntDebugUtil.getFileName(location);
+		int lineNumber= AntDebugUtil.getLineNumber(location);
 		for (int i = 0; i < fBreakpoints.size(); i++) {
 			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) fBreakpoints.get(i);
 			if (breakpoint.isAt(fileName, lineNumber)) {
@@ -322,93 +310,16 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	protected void marshallStack() {
 	    StringBuffer stackRepresentation= new StringBuffer();
-	    stackRepresentation.append(DebugMessageIds.STACK);
-	    stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	    
-	    for (int i = fTasks.size() - 1; i >= 0 ; i--) {
-	        Task task= (Task) fTasks.get(i);
-            appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation(), true);
-	    }	
-        //target dependancy stack 
-         if (fTargetToExecute != null) {
-             Vector buildSequence= (Vector) fTargetToBuildSequence.get(fTargetToExecute);
-            int startIndex= buildSequence.indexOf(fTargetExecuting) + 1;
-            int dependancyStackDepth= buildSequence.indexOf(fTargetToExecute);
-          
-            Target stackTarget;
-            for (int i = startIndex; i <= dependancyStackDepth; i++) {
-               stackTarget= (Target) buildSequence.get(i);
-               appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation(), false); //$NON-NLS-1$
-           }
-        }
+	    AntDebugUtil.marshalStack(stackRepresentation, fTasks, fTargetToExecute, fTargetExecuting, fTargetToBuildSequence);
 	    sendRequestResponse(stackRepresentation.toString());
 	}
-    
-    private void appendToStack(StringBuffer stackRepresentation, String targetName, String taskName, Location location, boolean setLineNumber) {
-        stackRepresentation.append(targetName);
-        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-        stackRepresentation.append(taskName);
-        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-        
-        stackRepresentation.append(getFileName(location));
-        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-        if (setLineNumber) {
-            stackRepresentation.append(getLineNumber(location));
-        } else {   //TODO until targets have locations set properly 
-            stackRepresentation.append(-1);
-        }
-        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-    }
 	
 	protected void marshallProperties() {
-		
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
-	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	    Map currentProperties= null;
-	    if (!fTasks.isEmpty()) {
-	        currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
-	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
-	            //no new properties
-	            sendRequestResponse(propertiesRepresentation.toString());
-	            return;
-	        }
-            Map currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
-	        Iterator iter= currentProperties.keySet().iterator();
-	        String propertyName;
-	        String propertyValue;
-	        while (iter.hasNext()) {
-	            propertyName = (String) iter.next();
-	            if (propertyName.equals("line.separator")) { //$NON-NLS-1$
-	            	continue;
-	            }
-	            if (fProperties == null || fProperties.get(propertyName) == null) { //new property
-	                propertiesRepresentation.append(propertyName.length());
-	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	                propertiesRepresentation.append(propertyName);
-	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	                propertyValue= (String) currentProperties.get(propertyName);
-	                propertiesRepresentation.append(propertyValue.length());
-	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	                propertiesRepresentation.append(propertyValue);
-	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	                if (fInitialProperties.get(propertyName) != null) { //properties set before the start of the build
-	                	if (currentUserProperties.get(propertyName) == null) {
-	                		propertiesRepresentation.append(DebugMessageIds.PROPERTY_SYSTEM);
-	                	} else {
-	                		propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-	                	}
-	                } else if (currentUserProperties.get(propertyName) == null){
-	                	propertiesRepresentation.append(DebugMessageIds.PROPERTY_RUNTIME);
-	                } else {
-	                	propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-	                }
-	                propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	            }
-	        }
-	    }
-	    propertiesRepresentation.deleteCharAt(propertiesRepresentation.length() - 1);
-	    fProperties= currentProperties;
+        if (!fTasks.isEmpty()) {
+            AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties);
+        }
+	    fProperties= ((Task)fTasks.peek()).getProject().getProperties();
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
 	
@@ -435,51 +346,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 			}
 		}
 	}
-	
-	private int getLineNumber(Location location) {
-		try {
-			return location.getLineNumber();
-		} catch (NoSuchMethodError e) {
-			//Ant before 1.6
-			String locationString= location.toString();
-			if (locationString.length() == 0) {
-				return 0;
-			}
-			//filename: lineNumber: ("c:\buildfile.xml: 12: ")
-			int lastIndex= locationString.lastIndexOf(':');
-			int index =locationString.lastIndexOf(':', lastIndex - 1);
-			if (index != -1) {
-				try {
-					return Integer.parseInt(locationString.substring(index + 1, lastIndex));
-				} catch (NumberFormatException nfe) {
-					return 0;
-				}
-			}
-			return 0;
-		}
-	}
-	
-	private String getFileName(Location location) {
-		try {
-			return location.getFileName();
-		} catch (NoSuchMethodError e) {
-			//Ant before 1.6
-			String locationString= location.toString();
-			if (locationString.length() == 0) {
-				return null;
-			}
-			//filename: lineNumber: ("c:\buildfile.xml: 12: ")			
-			int lastIndex= locationString.lastIndexOf(':');
-			int index =locationString.lastIndexOf(':', lastIndex-1);
-			if (index == -1) {
-				index= lastIndex; //only the filename is known
-			}
-			if (index != -1) {
-				return locationString.substring(5, index);
-			}
-			return null;
-		}
-	}
+
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */

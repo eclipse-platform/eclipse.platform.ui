@@ -28,12 +28,14 @@
 		<!-- compile the source code -->
 		<javac target="1.1" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="yes"
 			classpath="${basedir}/../org.eclipse.swt${version.suffix}/bin;
-									${swt.jar}">
+									${swt.jar};
+			${basedir}/common_ant_support_bin">
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${temp.folder}/lib/remoteAnt.jar.bin">
 			<fileset dir="Remote Ant Support/" excludes="**/*.java"/>
+			<fileset dir="${basedir}/common_ant_support_bin"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar jarfile="${build.result.folder}/lib/remoteAnt.jar" basedir="${temp.folder}/lib/remoteAnt.jar.bin"/>

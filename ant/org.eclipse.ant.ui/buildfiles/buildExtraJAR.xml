@@ -47,12 +47,14 @@
 					${basedir}/../org.eclipse.ui.console/bin;
 					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}/console.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
-			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}/jface.jar;">
+			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}/jface.jar;
+					${basedir}/common_ant_support_bin">
 			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${temp.folder}/lib/antrunner.jar.bin">
 			<fileset dir="Ant Runner Support/" excludes="**/*.java"/>
+			<fileset dir="${basedir}/common_ant_support_bin"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar jarfile="${build.result.folder}/lib/antrunner.jar" basedir="${temp.folder}/lib/antrunner.jar.bin"/>

@@ -13,8 +13,6 @@ package org.eclipse.ant.internal.ui.antsupport.logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -22,13 +20,12 @@ import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
-import org.eclipse.ant.internal.ui.debug.model.DebugMessageIds;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -76,19 +73,8 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	}
 
     private void initializeBuildSequenceInformation(BuildEvent event) {
-        Project antProject= event.getProject();
-        Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
-        fTargetToBuildSequence= new HashMap(targets.size());
-        Iterator itr= targets.iterator();
-        Hashtable allTargets= antProject.getTargets();
-        String targetName;
-        Vector sortedTargets;
-        while (itr.hasNext()) {
-            targetName= (String) itr.next();
-            sortedTargets= antProject.topoSort(targetName, allTargets);
-            fTargetToBuildSequence.put(allTargets.get(targetName), sortedTargets);
-        }
-        fTargetToExecute= (Target) allTargets.get(targets.remove(0));
+        fTargetToBuildSequence= new HashMap();
+        fTargetToExecute= AntDebugUtil.initializeBuildSequenceInformation(event, fTargetToBuildSequence);
     }
 	
 	/* (non-Javadoc)
@@ -209,52 +195,12 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
 	public void getProperties() {
-		  StringBuffer propertiesRepresentation= new StringBuffer();
-		  propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
-		  propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		  Map currentProperties= null;
-		  if (!fTasks.isEmpty()) {
-		      currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
-		      if (fProperties != null && currentProperties.size() == fProperties.size()) {
-		  		//no new properties
-		  		((AntThread) fAntDebugTarget.getThreads()[0]).newProperties("no"); //$NON-NLS-1$
-		  		return;
-		  	}
-		  	
-              Map currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
-		  	Iterator iter= currentProperties.keySet().iterator();
-		  	String propertyName;
-		  	String propertyValue;
-		  	while (iter.hasNext()) {
-		  		propertyName = (String) iter.next();
-		  		if (fProperties == null || fProperties.get(propertyName) == null) { //new property
-                  propertiesRepresentation.append(propertyName.length());
-                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                    propertiesRepresentation.append(propertyName);
-                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                    propertyValue= (String) currentProperties.get(propertyName);
-                    propertiesRepresentation.append(propertyValue.length());
-                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                    propertiesRepresentation.append(propertyValue);
-                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                    if (fInitialProperties.get(propertyName) != null) { //properties set before the start of the build
-                        if (currentUserProperties.get(propertyName) == null) {
-                            propertiesRepresentation.append(DebugMessageIds.PROPERTY_SYSTEM);
-                        } else {
-                            propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-                        }
-                    } else if (currentUserProperties.get(propertyName) == null){
-                        propertiesRepresentation.append(DebugMessageIds.PROPERTY_RUNTIME);
-                    } else {
-                        propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-                    }
-                    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                }
-            }
-        }
-		  propertiesRepresentation.deleteCharAt(propertiesRepresentation.length() - 1);
-		  fProperties= currentProperties;
-		  ((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
+	    StringBuffer propertiesRepresentation= new StringBuffer();
+	    if (!fTasks.isEmpty()) {
+	        AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties);
+	    }
+	    fProperties= ((Task)fTasks.peek()).getProject().getProperties();
+	    ((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 	}
 
 	/* (non-Javadoc)
@@ -262,58 +208,16 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void getStackFrames() {
 		StringBuffer stackRepresentation= new StringBuffer();
-		stackRepresentation.append(DebugMessageIds.STACK);
-		stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		
-        //task stack
-		for (int i = fTasks.size() - 1; i >= 0 ; i--) {
-			Task task = (Task) fTasks.get(i);
-			stackRepresentation.append(task.getOwningTarget().getName());
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(task.getTaskName());
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			
-			Location location= task.getLocation();
-			stackRepresentation.append(getFileName(location));
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(getLineNumber(location));
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-		}	
-        
-        //target dependancy stack 
-		 if (fTargetToExecute != null) {
-		     Vector buildSequence= (Vector) fTargetToBuildSequence.get(fTargetToExecute);
-             int startIndex= buildSequence.indexOf(fTargetExecuting) + 1;
-             int dependancyStackDepth= buildSequence.indexOf(fTargetToExecute);
-           
-             Target stackTarget;
-             Location location;
-             for (int i = startIndex; i <= dependancyStackDepth; i++) {
-                stackTarget= (Target) buildSequence.get(i);
-                
-                stackRepresentation.append(stackTarget.getName());
-                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                stackRepresentation.append(""); //$NON-NLS-1$
-                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                
-                location= stackTarget.getLocation();
-                stackRepresentation.append(getFileName(location));
-                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-                //TODO until targets have locations set properly 
-                //stackRepresentation.append(getLineNumber(location));
-                stackRepresentation.append(-1);
-                stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-            }
-         }
-		 ((AntThread) fAntDebugTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
+		AntDebugUtil.marshalStack(stackRepresentation, fTasks, fTargetToExecute, fTargetExecuting, fTargetToBuildSequence);
+		((AntThread) fAntDebugTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
 	}
     
     private IBreakpoint breakpointAtLineNumber(Location location) {
         if (fBreakpoints == null) {
             return null;
         }
-        int lineNumber= getLineNumber(location);
-        File locationFile= new File(getFileName(location));
+        int lineNumber= AntDebugUtil.getLineNumber(location);
+        File locationFile= new File(AntDebugUtil.getFileName(location));
         for (int i = 0; i < fBreakpoints.size(); i++) {
             ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
             int breakpointLineNumber;
@@ -332,52 +236,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         }
         return null;
     }
-    
-    private int getLineNumber(Location location) {
-		try { //succeeds with Ant newer than 1.6
-			return location.getLineNumber();
-		} catch (NoSuchMethodError e) {
-			//Ant before 1.6
-			String locationString= location.toString();
-			if (locationString.length() == 0) {
-				return 0;
-			}
-			//filename: lineNumber: ("c:\buildfile.xml: 12: ")
-			int lastIndex= locationString.lastIndexOf(':');
-			int index =locationString.lastIndexOf(':', lastIndex - 1);
-			if (index != -1) {
-				try {
-					return Integer.parseInt(locationString.substring(index+1, lastIndex));
-				} catch (NumberFormatException nfe) {
-					return 0;
-				}
-			}
-			return 0;
-		}
-	}
-	
-	private String getFileName(Location location) {
-		try {//succeeds with Ant newer than 1.6
-			return location.getFileName();
-		} catch (NoSuchMethodError e) {
-			//Ant before 1.6
-			String locationString= location.toString();
-			if (locationString.length() == 0) {
-				return null;
-			}
-			//filename: lineNumber: ("c:\buildfile.xml: 12: ")			
-			int lastIndex= locationString.lastIndexOf(':');
-			int index =locationString.lastIndexOf(':', lastIndex-1);
-			if (index == -1) {
-				index= lastIndex; //only the filename is known
-			}
-			if (index != -1) {
-				//remove file:
-				return locationString.substring(5, index);
-			}
-			return null;
-		}
-	}
     
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
