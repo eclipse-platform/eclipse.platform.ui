@@ -457,7 +457,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	}
 	
 	private ArrayList getChildren(){
-		if(RoleManager.getInstance().filterRoles){
+		if(RoleManager.getInstance().isFiltering()){
 			RoleManager manager = RoleManager.getInstance();
 			ArrayList filtered = new ArrayList();
 			Iterator childIterator = children.iterator();
