@@ -19,12 +19,14 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -219,18 +221,40 @@ public class AboutDialog extends ProductInfoDialog {
 			    images.add(aboutImage);
 		}
 
+        
+		// create a composite which is the parent of the top area and the bottom
+        // button bar, this allows there to be a second child of this composite with 
+        // a banner background on top but not have on the bottom
+        Composite workArea = new Composite(parent, SWT.NONE);
+		GridLayout workLayout = new GridLayout();
+		workLayout.marginHeight = 0;
+		workLayout.marginWidth = 0;
+		workLayout.verticalSpacing = 0;
+		workLayout.horizontalSpacing = 0;
+		workArea.setLayout(workLayout);
+		workArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		// page group
-		Composite outer = (Composite) super.createDialogArea(parent);
-		outer.setSize(outer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		GridLayout layout = new GridLayout();
-		outer.setLayout(layout);
-		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Color background = JFaceColors.getBannerBackground(parent.getDisplay());
+		Color foreground = JFaceColors.getBannerForeground(parent.getDisplay());
+        Composite top = (Composite) super.createDialogArea(workArea);
 
+        // override any layout inherited from createDialogArea 
+		GridLayout layout = new GridLayout();
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+        top.setBackground(background);
+        top.setForeground(foreground);
+        
 		// the image & text	
-		Composite topContainer = new Composite(outer, SWT.NONE);
+		Composite topContainer = new Composite(top, SWT.NONE);
+		topContainer.setBackground(background);
+		topContainer.setForeground(foreground);
+		
 		layout = new GridLayout();
 		layout.numColumns = (aboutImage == null || getItem() == null ? 1 : 2);
 		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		topContainer.setLayout(layout);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
@@ -240,6 +264,9 @@ public class AboutDialog extends ProductInfoDialog {
 		//image on left side of dialog
 		if (aboutImage != null) {
 			Label imageLabel = new Label(topContainer, SWT.NONE);
+			imageLabel.setBackground(background);
+			imageLabel.setForeground(foreground);
+			
 			data = new GridData();
 			data.horizontalAlignment = GridData.FILL;
 			data.verticalAlignment = GridData.BEGINNING;
@@ -260,27 +287,35 @@ public class AboutDialog extends ProductInfoDialog {
 			text.setText(getItem().getText());
 			text.setLayoutData(data);
 			text.setCursor(null);
-			text.setBackground(topContainer.getBackground());
+			text.setBackground(background);
+			text.setForeground(foreground);
+			
 			setLinkRanges(text, getItem().getLinkRanges());
 			addListeners(text);
 		}
 
 		// horizontal bar
-		Label bar = new Label(outer, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label bar = new Label(workArea, SWT.HORIZONTAL | SWT.SEPARATOR);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		bar.setLayoutData(data);
 
 		// add image buttons for bundle groups that have them
-		createFeatureImageButtonRow(outer);
+		Composite bottom = (Composite) super.createDialogArea(workArea);
+		// override any layout inherited from createDialogArea 
+		layout = new GridLayout();
+		bottom.setLayout(layout);
+		bottom.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		createFeatureImageButtonRow(bottom);
 
 		// spacer
-		bar = new Label(outer, SWT.NONE);
+		bar = new Label(bottom, SWT.NONE);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		bar.setLayoutData(data);
 
-		return outer;
+		return workArea;
 	}
 
 	private void createFeatureImageButtonRow(Composite parent) {
