@@ -255,7 +255,7 @@ public class SyncFileUtil {
 		return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
 	}			
 	
-	private static void mergeEntriesLogFiles(File root) throws CVSException {
+	public static void mergeEntriesLogFiles(File root) throws CVSException {
 		
 		String FOLDER_TAG="D";
 		String ADD_TAG="A ";
