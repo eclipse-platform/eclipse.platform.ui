@@ -30,6 +30,7 @@ public class LocalHelp implements ISearchEngine {
         searchQuery.setSearchWord(query);
         SearchResults localResults = new SearchResults(null, MAX_HITS, Platform.getNL());
         BaseHelpSystem.getSearchManager().search(searchQuery, localResults, monitor);
+        collector.add(localResults.getSearchHits());
 
     }
 
