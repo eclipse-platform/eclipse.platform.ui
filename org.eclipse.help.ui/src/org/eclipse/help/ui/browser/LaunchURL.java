@@ -16,8 +16,6 @@ import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.program.*;
 import org.eclipse.ui.*;
 
 /**
@@ -67,16 +65,11 @@ public class LaunchURL
 		if (url == null || "".equals(url)) { //$NON-NLS-1$
 			return;
 		}
-		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
-			Program.launch(url);
-		} else {
-			IBrowser browser = BrowserManager.getInstance()
-					.createBrowser(false);
-			try {
-				browser.displayURL(url);
-			} catch (Exception e) {
-				ErrorUtil.displayErrorDialog(e.getMessage());
-			}
+		IBrowser browser = BrowserManager.getInstance().createBrowser(true);
+		try {
+			browser.displayURL(url);
+		} catch (Exception e) {
+			ErrorUtil.displayErrorDialog(e.getMessage());
 		}
 	}
 

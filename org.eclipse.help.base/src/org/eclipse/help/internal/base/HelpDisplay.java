@@ -84,9 +84,9 @@ public class HelpDisplay {
 			} else if (href.startsWith("jar:file:")) { //$NON-NLS-1$
 				// topic from a jar to display without frames
 				displayHelpURL(
-						getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal); //$NON-NLS-1$
+						getBaseURL() + "nftopic/" + getNoframesURL(href), true); //$NON-NLS-1$
 			} else {
-				displayHelpURL(getNoframesURL(href), forceExternal);
+				displayHelpURL(getNoframesURL(href), true);
 			}
 		}
 	}
@@ -118,9 +118,9 @@ public class HelpDisplay {
 		} else if (topicURL.startsWith("jar:file:")) { //$NON-NLS-1$
 			// topic from a jar to display without frames
 			displayHelpURL(
-					getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal); //$NON-NLS-1$
+					getBaseURL() + "nftopic/" + getNoframesURL(topicURL), true); //$NON-NLS-1$
 		} else {
-			displayHelpURL(getNoframesURL(topicURL), forceExternal);
+			displayHelpURL(getNoframesURL(topicURL), true);
 		}
 	}
 	/**
@@ -145,7 +145,7 @@ public class HelpDisplay {
 			}
 
 		} else {
-			displayHelpURL(getNoframesURL(topic), forceExternal);
+			displayHelpURL(getNoframesURL(topic), true);
 		}
 	}
 	/**

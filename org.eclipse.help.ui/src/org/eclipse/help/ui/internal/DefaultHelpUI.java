@@ -40,7 +40,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * Displays help.
 	 */
 	public void displayHelp() {
-		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser());
+		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser(null));
 	}
 	/**
 	 * Displays a help resource specified as a url.
@@ -56,7 +56,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 */
 	public void displayHelpResource(String href) {
 		BaseHelpSystem.getHelpDisplay().displayHelpResource(href,
-				useExternalBrowser());
+				useExternalBrowser(href));
 	}
 	/**
 	 * Displays context-sensitive help for specified context
@@ -90,13 +90,24 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 		return f1Dialog.isShowing();
 	}
-	private boolean useExternalBrowser() {
+	private boolean useExternalBrowser(String url) {
+		// Use external when modal window is displayed
 		Display display = Display.getCurrent();
 		if (display != null) {
 			Shell activeShell = display.getActiveShell();
 			if (activeShell != null) {
-				return 0 < (activeShell.getStyle() & (SWT.APPLICATION_MODAL
-						| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+				if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL
+						| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0) {
+					return true;
+				}
+			}
+		}
+		// Use external when no help frames are to be displayed, otherwise no
+		// navigation buttons.
+		if (url != null) {
+			if (url.indexOf("?noframes=true") > 0
+					|| url.indexOf("&noframes=true") > 0) {
+				return true;
 			}
 		}
 		return false;
