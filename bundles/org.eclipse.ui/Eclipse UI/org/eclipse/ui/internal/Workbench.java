@@ -6,35 +6,38 @@ package org.eclipse.ui.internal;
  */
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.core.boot.*;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
+
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.window.WindowManager;
+
 import org.eclipse.ui.*;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
@@ -166,12 +169,31 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
-				ArrayList dirtyEditors = getDirtyEditors();
+				//Collect dirtyEditors
+				ArrayList dirtyEditors = new ArrayList();
+				ArrayList dirtyEditorsInput = new ArrayList();
+				IWorkbenchWindow windows[] = getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					IWorkbenchPage pages[] = windows[i].getPages();
+					for (int j = 0; j < pages.length; j++) {
+						WorkbenchPage page = (WorkbenchPage)pages[j];
+						IEditorPart editors[] = page.getDirtyEditors();
+						for (int k = 0; k < editors.length; k++) {
+							IEditorPart editor = editors[k];
+							if(editor.isDirty()) {
+								if(!dirtyEditorsInput.contains(editor.getEditorInput())) {
+									dirtyEditors.add(editor);
+									dirtyEditorsInput.add(editor.getEditorInput());
+								}
+							}
+						}
+					}
+				}
 				if(dirtyEditors.size() > 0) {
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if(w == null)
-						w = getWorkbenchWindows()[0];
-					isClosing = EditorManager.saveAll(dirtyEditors,!force,w);
+						w = windows[0];
+					isClosing = EditorManager.saveAll(dirtyEditors,!force,w);					
 				}
 				if(isClosing || force)
 					isClosing = windowManager.close();
@@ -332,34 +354,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public String[] getCommandLineArgs() {
 		return commandLineArgs;
-	}
-	/**
-	 * Collects all dirty editors in the workspace.
-	 * 
-	 * @return all dirty editors in the workspace. 
-	 * 	Element type IEditorPart
-	 */
-	private ArrayList getDirtyEditors() {
-		ArrayList dirtyEditors = new ArrayList();
-		ArrayList dirtyEditorsInput = new ArrayList();
-		IWorkbenchWindow windows[] = getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchPage pages[] = windows[i].getPages();
-			for (int j = 0; j < pages.length; j++) {
-				WorkbenchPage page = (WorkbenchPage)pages[j];
-				IEditorPart editors[] = page.getDirtyEditors();
-				for (int k = 0; k < editors.length; k++) {
-					IEditorPart editor = editors[k];
-					if(editor.isDirty()) {
-						if(!dirtyEditorsInput.contains(editor.getEditorInput())) {
-							dirtyEditors.add(editor);
-							dirtyEditorsInput.add(editor.getEditorInput());
-						}
-					}
-				}
-			}
-		}
-		return dirtyEditors;
 	}
 	/**
 	 * Returns the editor history.
@@ -858,87 +852,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		else
 			throw new WorkbenchException(WorkbenchMessages.getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
 	}
-	/**
-	 * Closes the workbench when the system is about to shut down
-	 */
-	private boolean osShutdownClose() {
-		isClosing = true;
-		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) {
-			public void run() {
-				XMLMemento mem = recordWorkbenchState();
-				//Save the IMemento to a file.
-				saveWorkbenchState(mem);
-			}
-			public void handleException(Throwable e) {
-				if (e.getMessage() == null) {
-					message = WorkbenchMessages.getString("ErrorClosingNoArg"); //$NON-NLS-1$
-				} else {
-					message = WorkbenchMessages.format("ErrorClosingOneArg", new Object[] { e.getMessage()}); //$NON-NLS-1$
-				}
-
-				if (MessageDialog.openQuestion(null, WorkbenchMessages.getString("Error"), message) == false) { //$NON-NLS-1$
-					isClosing = false;
-				}
-			}
-		});
-		if (isClosing == false) {
-			return false;
-		}
-		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
-			public void run() {
-				List dirtyEditors = getDirtyEditors();
-				if(dirtyEditors.size() > 0) {
-					IWorkbenchWindow window = getActiveWorkbenchWindow();
-					if(window == null) {
-						window = getWorkbenchWindows()[0];
-					}
-					dirtyEditors = promptDirtyEditors(dirtyEditors, window);
-					if (dirtyEditors == null) {
-						isClosing = false;
-					}
-					else 
-					if (dirtyEditors.size() > 0) {
-						EditorManager.saveAll(dirtyEditors, false, window);
-					}
-				}
-				if(isClosing) {
-					isClosing = windowManager.close();
-				}
-			}
-		});
-		if (isClosing == false) {
-			return false;
-		}		
-		if (WorkbenchPlugin.getPluginWorkspace() != null)
-			disconnectFromWorkspace();
-		runEventLoop = false;
-		return true;
-	}
-	/**
-	 * Prompts the user to select from a list of dirty editors the ones that
-	 * should be saved.
-	 */
-	private List promptDirtyEditors(List dirtyEditors, IWorkbenchWindow window) {
-		AdaptableList input = new AdaptableList();
-		input.add(dirtyEditors.iterator());
-	
-		ListSelectionDialog dlg = new ListSelectionDialog(
-			window.getShell(), 
-			input, 
-			new WorkbenchContentProvider(), 
-			new WorkbenchPartLabelProvider(), 
-			WorkbenchMessages.getString("Workbench.shutdown"));
-		dlg.setInitialSelections(dirtyEditors.toArray(new Object[dirtyEditors.size()]));
-		dlg.setTitle(WorkbenchMessages.getString("Workbench.shutdownTitle"));
-	
-		if (dlg.open() == IDialogConstants.OK_ID) {
-			dirtyEditors = Arrays.asList(dlg.getResult());
-		}
-		else {
-			dirtyEditors = null;
-		}
-		return dirtyEditors;
-	}
 	
 	/**
 	 * Reads the about, platform and product info.
@@ -1139,7 +1052,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		display.setWarnings(false);
 		display.addListener(SWT.Close, new Listener() {
 			public void handleEvent(Event event) {
-				event.doit = osShutdownClose();
+				event.doit = close();
 			}
 		});
 		try {
