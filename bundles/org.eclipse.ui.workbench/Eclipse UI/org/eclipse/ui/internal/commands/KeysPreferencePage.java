@@ -313,7 +313,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();
 				String activityId = contextBindingDefinition.getContextId();
 				String commandId = contextBindingDefinition.getCommandId();
-				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
+				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandDefinitionsById.containsKey(commandId);
 				
 				if (!validActivityId || !validCommandId)
@@ -353,7 +353,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
 				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
-				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
+				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
 				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
 				boolean validActivityIdForCommandId = activityIds == null || activityIds.contains(activityId);
@@ -372,7 +372,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
 				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
-				boolean validActivityId = activityId != null && activityManager.getDefinedActivityIds().contains(activityId);
+				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
 				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
 				boolean validActivityIdForCommandId = activityIds == null || activityIds.contains(activityId);
