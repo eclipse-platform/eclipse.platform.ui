@@ -79,12 +79,6 @@
 				menubarPath="team.main/checkinGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.RefreshFromLocalAction"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.add"
-				label="%AddAction.label"
-				tooltip="%AddAction.tooltip"
-				menubarPath="team.main/checkinGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.branch"
 				label="%BranchAction.label"
 				tooltip="%BranchAction.tooltip"
@@ -96,6 +90,12 @@
 				tooltip="%TagAction.tooltip"
 				menubarPath="team.main/checkinGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.add"
+				label="%AddAction.label"
+				tooltip="%AddAction.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.diff"
 				label="%DiffAction.label"
@@ -128,8 +128,8 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.sync"
-				label="Synchronize"
-				tooltip="Synchronize"
+				label="%Synchronize.label"
+				tooltip="%Synchronize.tooltip"
 				menubarPath="team.main/advancedGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
 		</objectContribution>
@@ -154,6 +154,12 @@
 			id="org.eclipse.team.ccvs.ui.IFileContributions"
 			objectClass="org.eclipse.core.resources.IFile">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.delete"
+				label="%Delete.label"
+				tooltip="%Delete.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.ui.actions.DeleteAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithRevision"
 				label="%CompareWithRevisionAction.label"
