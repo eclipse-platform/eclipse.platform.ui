@@ -44,6 +44,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
@@ -62,18 +63,18 @@ import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 public abstract class MarkerView extends TableView {
-	
+
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
 	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
-	
+
 	protected IResource[] focusResources;
 
 	private TableViewer viewer;
 	private MarkerFilter filter;
 	private Clipboard clipboard;
-	
+
 	protected ActionCopyMarker copyAction;
 	protected ActionPasteMarker pasteAction;
 	protected SelectionProviderAction revealAction;
@@ -81,8 +82,8 @@ public abstract class MarkerView extends TableView {
 	protected SelectionProviderAction showInNavigatorAction;
 	protected SelectionProviderAction deleteAction;
 	protected SelectionProviderAction selectAllAction;
-	protected SelectionProviderAction propertiesAction;	
-	
+	protected SelectionProviderAction propertiesAction;
+
 	protected Composite compositeMarkerLimitExceeded;
 	protected StackLayout stackLayout = new StackLayout();
 
@@ -97,34 +98,33 @@ public abstract class MarkerView extends TableView {
 			MarkerView.this.focusSelectionChanged(part, selection);
 		}
 	};
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		getSite().getPage().addSelectionListener(focusListener);
 		getRegistry().addItemsChangedListener(itemsListener);
-		
+
 		clipboard = new Clipboard(parent.getDisplay());
 
 		super.createPartControl(parent);
 
 		initDragAndDrop();
-		
+
 		compositeMarkerLimitExceeded = new Composite(parent, SWT.NONE);
 		compositeMarkerLimitExceeded.setLayout(new GridLayout());
-		Label labelMarkerLimitExceeded =
-			new Label(compositeMarkerLimitExceeded, SWT.WRAP);
+		Label labelMarkerLimitExceeded = new Label(compositeMarkerLimitExceeded, SWT.WRAP);
 		labelMarkerLimitExceeded.setText(Messages.getString("markerLimitExceeded.title")); //$NON-NLS-1$
 		parent.setLayout(stackLayout);
-		
+
 		checkMarkerLimit();
 		updateTitle();
 	}
@@ -136,7 +136,7 @@ public abstract class MarkerView extends TableView {
 		super.dispose();
 		getRegistry().dispose();
 		getSite().getPage().removeSelectionListener(focusListener);
-		
+
 		//dispose of selection provider actions
 		openAction.dispose();
 		copyAction.dispose();
@@ -164,7 +164,7 @@ public abstract class MarkerView extends TableView {
 		selectAllAction = new ActionSelectAll(viewer, getRegistry());
 		showInNavigatorAction = new ShowInNavigatorAction(getViewSite().getPage(), viewer);
 		propertiesAction = new ActionMarkerProperties(this, viewer);
-		
+
 		super.createActions();
 	}
 
@@ -190,9 +190,7 @@ public abstract class MarkerView extends TableView {
 
 	protected void initDragAndDrop() {
 		int operations = DND.DROP_COPY;
-		Transfer[] transferTypes = new Transfer[] {
-			MarkerTransfer.getInstance(), 
-			TextTransfer.getInstance()};
+		Transfer[] transferTypes = new Transfer[] { MarkerTransfer.getInstance(), TextTransfer.getInstance()};
 		DragSourceListener listener = new DragSourceAdapter() {
 			public void dragSetData(DragSourceEvent event) {
 				performDragSetData(event);
@@ -200,7 +198,7 @@ public abstract class MarkerView extends TableView {
 			public void dragFinished(DragSourceEvent event) {
 			}
 		};
-		getViewer().addDragSupport(operations, transferTypes, listener);	
+		getViewer().addDragSupport(operations, transferTypes, listener);
 	}
 
 	/**
@@ -220,8 +218,7 @@ public abstract class MarkerView extends TableView {
 				if (markers != null) {
 					event.data = copyAction.createMarkerReport(markers);
 				}
-			}
-			catch (ArrayStoreException e) {
+			} catch (ArrayStoreException e) {
 			}
 		}
 	}
@@ -245,7 +242,7 @@ public abstract class MarkerView extends TableView {
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
-	
+
 	protected void fillContextMenuAdditions(IMenuManager manager) {
 	}
 
@@ -320,17 +317,16 @@ public abstract class MarkerView extends TableView {
 					if (marker != null)
 						selectionList.add(marker);
 				}
-			} 
-			catch (CoreException e) {
+			} catch (CoreException e) {
 			}
 		}
 		return new StructuredSelection(selectionList);
 	}
 
 	protected abstract String[] getRootTypes();
-	
+
 	protected abstract MarkerRegistry getRegistry();
-	
+
 	protected Dialog getFiltersDialog() {
 		IFilter filter = getFilter();
 		if (filter != null && filter instanceof MarkerFilter) {
@@ -338,7 +334,7 @@ public abstract class MarkerView extends TableView {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param part
 	 * @param selection
@@ -350,28 +346,20 @@ public abstract class MarkerView extends TableView {
 			if (input instanceof FileEditorInput) {
 				resources.add(((FileEditorInput) input).getFile());
 			}
-		}
-		else {
+		} else {
 			if (selection instanceof IStructuredSelection) {
 				for (Iterator iterator = ((IStructuredSelection) selection).iterator(); iterator.hasNext();) {
 					Object object = iterator.next();
 					if (object instanceof IAdaptable) {
 						ITaskListResourceAdapter taskListResourceAdapter;
-						Object adapter =
-							((IAdaptable) object).getAdapter(
-								ITaskListResourceAdapter.class);
-						if (adapter != null
-							&& adapter instanceof ITaskListResourceAdapter) {
-							taskListResourceAdapter =
-								(ITaskListResourceAdapter) adapter;
+						Object adapter = ((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
+						if (adapter != null && adapter instanceof ITaskListResourceAdapter) {
+							taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
 						} else {
-							taskListResourceAdapter =
-								DefaultMarkerResourceAdapter.getDefault();
+							taskListResourceAdapter = DefaultMarkerResourceAdapter.getDefault();
 						}
 
-						IResource resource =
-							taskListResourceAdapter.getAffectedResource(
-								(IAdaptable) object);
+						IResource resource = taskListResourceAdapter.getAffectedResource((IAdaptable) object);
 						if (resource != null) {
 							resources.add(resource);
 						}
@@ -394,7 +382,7 @@ public abstract class MarkerView extends TableView {
 			filtersChanged();
 		}
 	}
-	
+
 	private boolean updateNeeded(IResource[] oldResources, IResource[] newResources) {
 		//determine if an update if refiltering is required
 		IFilter iFilter = getFilter();
@@ -436,23 +424,27 @@ public abstract class MarkerView extends TableView {
 						return true;
 					}
 				}
-			}
-			else {
+			} else {
 				return true;
 			}
-		}
-		else {
+		} else {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param additions
 	 * @param removals
 	 * @param changes
 	 */
 	protected void itemsChanged(List additions, List removals, List changes) {
+
+		Display display = getSite().getShell().getDisplay();
+		//Be sure that the UI has not shut down
+		if (display == null || display.isDisposed())
+			return;
+
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				checkMarkerLimit();
@@ -460,12 +452,18 @@ public abstract class MarkerView extends TableView {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#filtersChanged()
 	 */
 	protected void filtersChanged() {
 		super.filtersChanged();
+
+		Display display = getSite().getShell().getDisplay();
+		//Be sure that the UI has not shut down
+		if (display == null || display.isDisposed())
+			return;
+
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				checkMarkerLimit();
@@ -476,41 +474,40 @@ public abstract class MarkerView extends TableView {
 
 	void checkMarkerLimit() {
 		IFilter iFilter = getFilter();
-		
+
 		if (iFilter == null || !(iFilter instanceof MarkerFilter))
-			return; 
-		
+			return;
+
 		MarkerFilter filter = (MarkerFilter) iFilter;
 		int itemCount = getRegistry().getItemCount();
-			
+
 		if (getFilter() == null || !filter.getFilterOnMarkerLimit() || itemCount <= filter.getMarkerLimit()) {
 			if (stackLayout.topControl != viewer.getTable()) {
 				stackLayout.topControl = viewer.getTable();
 				TableViewer viewer = getViewer();
-		
+
 				if (viewer != null) {
 					Table table = viewer.getTable();
-					
+
 					if (table != null && !table.isDisposed()) {
 						Composite parent = table.getParent();
-						
+
 						if (parent != null && !parent.isDisposed())
 							parent.layout();
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			if (stackLayout.topControl != compositeMarkerLimitExceeded) {
 				stackLayout.topControl = compositeMarkerLimitExceeded;
 				TableViewer viewer = getViewer();
-		
+
 				if (viewer != null) {
 					Table table = viewer.getTable();
-					
+
 					if (table != null && !table.isDisposed()) {
 						Composite parent = table.getParent();
-						
+
 						if (parent != null && !parent.isDisposed())
 							parent.layout();
 					}
@@ -518,7 +515,7 @@ public abstract class MarkerView extends TableView {
 			}
 		}
 	}
-	
+
 	void updateTitle() {
 		String currentTitle = getTitle();
 		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
@@ -526,12 +523,11 @@ public abstract class MarkerView extends TableView {
 		int filteredCount = getRegistry().getItemCount();
 		int totalCount = getRegistry().getRawItemCount();
 		if (filteredCount == totalCount) {
-			status = Messages.format("filter.itemsMessage", new Object[] {new Integer(totalCount)}); //$NON-NLS-1$
+			status = Messages.format("filter.itemsMessage", new Object[] { new Integer(totalCount)}); //$NON-NLS-1$
+		} else {
+			status = Messages.format("filter.matchedMessage", new Object[] { new Integer(filteredCount), new Integer(totalCount)}); //$NON-NLS-1$
 		}
-		else {
-			status = Messages.format("filter.matchedMessage", new Object[] {new Integer(filteredCount), new Integer(totalCount)}); //$NON-NLS-1$
-		}
-		String newTitle = Messages.format("view.title", new String[] {viewName, status}); //$NON-NLS-1$
+		String newTitle = Messages.format("view.title", new String[] { viewName, status }); //$NON-NLS-1$
 		if (!newTitle.equals(currentTitle)) {
 			setTitle(newTitle);
 		}
@@ -545,7 +541,7 @@ public abstract class MarkerView extends TableView {
 		for (Iterator i = structuredSelection.iterator(); i.hasNext();)
 			if (!(i.next() instanceof IMarker))
 				return;
-		
+
 		if (viewer != null)
 			viewer.setSelection(structuredSelection, reveal);
 	}

@@ -25,12 +25,7 @@ class ProgressUtil {
 	 * @return
 	 */
 	static Status exceptionStatus(Throwable exception) {
-		return new Status(
-			IStatus.ERROR,
-			PlatformUI.PLUGIN_ID,
-			IStatus.ERROR,
-			exception.getMessage(),
-			exception);
+		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, exception.getMessage(), exception);
 	}
 
 	/**
@@ -38,8 +33,7 @@ class ProgressUtil {
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-			exceptionStatus(exception));
+		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(exceptionStatus(exception));
 	}
 
 	/**
@@ -50,8 +44,9 @@ class ProgressUtil {
 	 */
 	static void openProgressView(IWorkbenchWindow window) {
 		try {
-			window.getActivePage().showView(
-				JobProgressManager.PROGRESS_VIEW_NAME);
+			IWorkbenchPage activePage = window.getActivePage();
+			if (activePage != null)
+				activePage.showView(JobProgressManager.PROGRESS_VIEW_NAME);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
