@@ -502,7 +502,7 @@ final class Persistence {
 
         // We treat null context identifiers as the window context.
         if (contextId == null) {
-            contextId = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
+            contextId = KeySequenceBinding.DEFAULT_CONTEXT_ID;
         }
 
 		return new KeySequenceBindingDefinition(

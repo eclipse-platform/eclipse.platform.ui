@@ -1289,22 +1289,46 @@ public class KeysPreferencePage extends
                 comboCommand.select(0);
     }
 
+    /**
+     * Changes the selected context name in the context combo box. The context
+     * selected is either the one matching the identifier provided (if
+     * possible), or the default context identifier. If no matching name can be
+     * found in the combo, then the first item is selected.
+     * 
+     * @param contextId
+     *            The context identifier for the context to be selected in the
+     *            combo box; may be <code>null</code>.
+     */
     private void setContextId(String contextId) {
+        // Clear the current selection.
         comboContext.clearSelection();
         comboContext.deselectAll();
-        String contextUniqueName = (String) contextUniqueNamesById
-                .get(contextId);
 
-        if (contextUniqueName != null) {
-            String items[] = comboContext.getItems();
+        // Figure out which name to look for.
+        String contextName = (String) contextUniqueNamesById.get(contextId);
+        if (contextName == null) {
+            contextName = (String) contextUniqueNamesById
+                    .get(KeySequenceBinding.DEFAULT_CONTEXT_ID);
+        }
+        if (contextName == null) {
+            contextName = Util.ZERO_LENGTH_STRING;
+        }
 
-            for (int i = 1; i < items.length; i++)
-                if (contextUniqueName.equals(items[i])) {
-                    comboContext.select(i);
-                    break;
-                }
-        } else
+        // Scan the list for the selection we're looking for.
+        final String[] items = comboContext.getItems();
+        boolean found = false;
+        for (int i = 0; i < items.length; i++) {
+            if (contextName.equals(items[i])) {
+                comboContext.select(i);
+                found = true;
+                break;
+            }
+        }
+
+        // If we didn't find an item, then set the first item as selected.
+        if ((!found) && (items.length > 0)) {
             comboContext.select(0);
+        }
     }
 
     private void setContextsForCommand() {
