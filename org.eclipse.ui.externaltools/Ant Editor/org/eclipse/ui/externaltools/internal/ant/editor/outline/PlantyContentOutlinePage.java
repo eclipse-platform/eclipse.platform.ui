@@ -439,18 +439,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		
 		if (path != null) {
 			IPath resourcePath= new Path(path);
-			//resourcePath.
 			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 			IResource resource= root.getFileForLocation(resourcePath);
-			if (resource != null && resource.getType() == IResource.FILE) {
-				IFile buildFile= (IFile)resource;
-				if (buildFile.exists()) {
-					menu.add(new Separator("group.open")); //$NON-NLS-1$
-					IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("PlantyContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
-					openWithMenu.setFile(buildFile);
-					submenu.add(openWithMenu);
-					menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
-				}
+			if (resource != null && resource.getType() == IResource.FILE && resource.exists()) {
+				menu.add(new Separator("group.open")); //$NON-NLS-1$
+				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("PlantyContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
+				openWithMenu.setFile((IFile)resource);
+				submenu.add(openWithMenu);
+				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+				
 			}
 		}
 	}
