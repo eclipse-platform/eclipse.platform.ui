@@ -42,10 +42,12 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	
 	private VariableContextManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.addWindowListener(this);
-		IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-		if (activeWindow != null) {
-			windowActivated(activeWindow);
+		if (workbench != null) { //may be running headless
+			workbench.addWindowListener(this);
+			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			if (activeWindow != null) {
+				windowActivated(activeWindow);
+			}
 		} 
 	}
 	
@@ -156,5 +158,4 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	public void buildEnded() {
 		fBuilding = false;
 	}
-
 }
