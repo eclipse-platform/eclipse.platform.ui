@@ -570,7 +570,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (table.getLinesVisible())
 			result+= table.getGridLineWidth() * (rows - 1);
 
-		// TODO adjustment might just work on windows
+		// TODO adjust to correct size. +4 works on windows, but not others
 //		return result + 4;		
 		return result;		
 	}
@@ -598,7 +598,6 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		StyledText text= fViewer.getTextWidget();
 		Point selection= text.getSelection();
 		Point p= text.getLocationAtOffset(selection.x);
-		// TODO subtract border width!
 		p.x -= fProposalShell.getBorderWidth();
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
