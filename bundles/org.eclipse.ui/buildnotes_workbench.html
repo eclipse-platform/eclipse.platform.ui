@@ -11,6 +11,41 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020326
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<blockquote><b>AbstractTreeViewer</b>
+<br>A new method has been added to AbstractTreeViewer. AbstractTreeViewer.getVisibleExpandedElements()
+will only return the expanded elements that are currently visible to the
+user. This is meant as a possible alternative to getExpandedElements()
+which returns all expanded elements whether they are currently visible
+or not. getVisibleExpandedElements()&nbsp; is now being used by the ResourceNavigator
+to determine the expansions to be stored in the Momento. This could be
+of use for the PackagesView as well.</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F03%2F21&chfieldto=2002%2F03%2F26&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/03/21 and 2002/03/26.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020321
 <h2>
 What's new in this drop</h2>
@@ -291,8 +326,7 @@ input, int keyState);
 <br>&nbsp;&nbsp;&nbsp; public static final String NO_NEW_PERSPECTIVE;
 <br><b>OpenNewPageMenu, OpenNewWindowMenu, and OpenPerspectiveMenu</b>
 <br>These IWorkbench methods, IWorkbenchPreferenceConstants constants,
-and
-3 classes have all been deprecated. Clients should use the new showPerspective
+and 3 classes have all been deprecated. Clients should use the new showPerspective
 methods on IWorkbench. See the ui mailing list for a more details about
 this new API and how clients are expected to use them.</blockquote>
 
