@@ -270,18 +270,17 @@ protected void handleSourceBrowseButtonPressed() {
  *  Import the resources with extensions as specified by the user
  */
 protected boolean importResources(List fileSystemObjects) {
-
 	ZipFile zipFile = getSpecifiedSourceFile();
 	ZipFileStructureProvider structureProvider = getStructureProvider(zipFile);
-
-	boolean result =
-		executeImportOperation(
-			new ImportOperation(
-				getContainerFullPath(),
-				structureProvider.getRoot(),
-				structureProvider,
-				this,
-				fileSystemObjects));
+	ImportOperation operation = new ImportOperation(
+		getContainerFullPath(),
+		structureProvider.getRoot(),
+		structureProvider,
+		this,
+		fileSystemObjects);
+				
+	operation.setContext(getShell());	 
+	boolean result = executeImportOperation(operation);				
 
 	closeZipFile(zipFile);
 

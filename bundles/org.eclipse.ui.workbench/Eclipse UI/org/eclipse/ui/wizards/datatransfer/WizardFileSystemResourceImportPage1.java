@@ -595,13 +595,15 @@ protected void handleTypesEditButtonPressed() {
  *  Import the resources with extensions as specified by the user
  */
 protected boolean importResources(List fileSystemObjects) {
-	return executeImportOperation(
-		new ImportOperation(
-			getContainerFullPath(),
-			getSourceDirectory(),
-			FileSystemStructureProvider.INSTANCE,
-			this,
-			fileSystemObjects));
+	ImportOperation operation = new ImportOperation(
+		getContainerFullPath(),
+		getSourceDirectory(),
+		FileSystemStructureProvider.INSTANCE,
+		this,
+		fileSystemObjects);
+		
+	operation.setContext(getShell());	 
+	return executeImportOperation(operation);
 }
 /**
  * Initializes the specified operation appropriately.

@@ -184,33 +184,6 @@ public class CopyFilesAndFoldersOperation {
 		shell.getDisplay().syncExec(query);
 		return result[0];
 	}
-	private void collectExistingReadonlyFiles(IPath destinationPath, File[] sourceFiles, ArrayList copyFiles) {
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-
-		for (int i = 0; i < sourceFiles.length; i++) {
-			File source = sourceFiles[i];
-			IPath newDestinationPath = destinationPath.append(source.getName());
-			IResource newDestination = workspaceRoot.findMember(newDestinationPath);
-			IFolder folder;
-						
-			if (newDestination == null) {
-				continue;
-			}
-			folder = getFolder(newDestination);
-			if (folder != null) {
-				if (source.isDirectory()) {
-					collectExistingReadonlyFiles(newDestinationPath, source.listFiles(), copyFiles);
-				}
-			}			
-			else {
-				IFile file = getFile(newDestination);
-				
-				if (file != null && file.isReadOnly()) {
-					copyFiles.add(file);
-				}
-			}
-		}
-	}
 	/**
 	 * Recursively collects existing files in the specified destination path.
 	 * 
@@ -435,15 +408,8 @@ public class CopyFilesAndFoldersOperation {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
-//					File[] files = getFiles(fileNames);
-//					ArrayList rejectedFiles = validateEdit(container, files);
-//					if (canceled)
-//						return;
-					
-					monitor.beginTask("", fileNames.length); //$NON-NLS-1$
-					for (int k = 0; k < fileNames.length && !canceled; k++)
-						performFileImport(fileNames[k], container, new SubProgressMonitor(monitor, 1));
-					monitor.done();
+				
+					performFileImport(getFiles(fileNames), container, monitor);
 				}
 			}
 		};
@@ -768,22 +734,16 @@ public class CopyFilesAndFoldersOperation {
 		return true;
 	}
 	/**
-	 * Performs an import of the given file into the provided
-	 * container.  Returns a status indicating if the import was successful.
+	 * Performs an import of the given files into the provided container.
+	 * Returns a status indicating if the import was successful.
 	 * 
-	 * @param filePath path to file that is to be imported
+	 * @param files files that are to be imported
 	 * @param target container to which the import will be done
 	 * @param monitor a progress monitor for showing progress and for cancelation
 	 */
-	private void performFileImport(String filePath, IContainer target, IProgressMonitor monitor) {
-		File toImport = new File(filePath);
-		if (target.getLocation().equals(toImport))
-			return;
-
+	private void performFileImport(File[] files, IContainer target, IProgressMonitor monitor) {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String pathString) {
-//				if (rejectedFiles.contains(new Path(pathString).makeAbsolute()))
-//					return NO;
 				if (alwaysOverwrite)
 					return ALL;
 
@@ -816,10 +776,11 @@ public class CopyFilesAndFoldersOperation {
 		ImportOperation op =
 			new ImportOperation(
 				target.getFullPath(),
-				new File(toImport.getParent()),
+				null,
 				FileSystemStructureProvider.INSTANCE,
 				query,
-				Arrays.asList(new File[] { toImport }));
+				Arrays.asList(files));
+		op.setContext(parentShell);
 		op.setCreateContainerStructure(false);
 		try {
 			op.run(monitor);
@@ -921,25 +882,6 @@ public class CopyFilesAndFoldersOperation {
 		collectExistingReadonlyFiles(destination.getFullPath(), sourceResources, copyFiles);
 		if (copyFiles.size() > 0) {
 			IFile[] files = (IFile[]) copyFiles.toArray(new IFile[copyFiles.size()]);
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IStatus status = workspace.validateEdit(files, parentShell);
-			
-			if (status.isMultiStatus()) {
-				rejectedFiles = getRejectedFiles(status, files);
-			}
-			else {
-				canceled = status.isOK() == false;
-			}
-		}
-		return rejectedFiles;
-	}
-	private ArrayList validateEdit(IContainer destination, File[] sourceFiles) {
-		ArrayList existingFiles = new ArrayList();
-		ArrayList rejectedFiles = new ArrayList();
-					
-		collectExistingReadonlyFiles(destination.getFullPath(), sourceFiles, existingFiles);
-		if (existingFiles.size() > 0) {
-			IFile[] files = (IFile[]) existingFiles.toArray(new IFile[existingFiles.size()]);
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IStatus status = workspace.validateEdit(files, parentShell);
 			

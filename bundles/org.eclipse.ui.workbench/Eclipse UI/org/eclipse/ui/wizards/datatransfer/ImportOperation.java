@@ -6,6 +6,7 @@ package org.eclipse.ui.wizards.datatransfer;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
@@ -29,9 +30,11 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	private IPath destinationPath;
 	private IContainer destinationContainer;
 	private List selectedFiles;
+	private List rejectedFiles; 
 	private IImportStructureProvider provider;
 	private IProgressMonitor	monitor;
 	protected IOverwriteQuery overwriteCallback;
+	private Shell context;
 	private List errorTable = new ArrayList();
 	private boolean createContainerStructure = true;
 	
@@ -143,6 +146,71 @@ public ImportOperation(IPath containerPath, IImportStructureProvider provider, I
 	setFilesToImport(filesToImport);
 }
 /**
+ * Prompts if existing resources should be overwritten. Recursively collects
+ * existing read-only files to overwrite and resources that should not be
+ * overwritten.
+ * 
+ * @param destinationPath destination path to check for existing files
+ * @param sources file system objects that may exist in the destination
+ * @param noOverwrite files that were selected to be skipped (don't overwrite).
+ * 	object type IPath
+ * @param overwriteReadonly the collected existing read-only files to overwrite.
+ * 	object type IPath
+ */
+void collectExistingReadonlyFiles(IPath destinationPath, List sources, ArrayList noOverwrite, ArrayList overwriteReadonly, int policy) {
+	IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+	Iterator sourceIter = sources.iterator();
+	IPath sourceRootPath = null;
+	
+	if (this.source != null) {
+		sourceRootPath = new Path(provider.getFullPath(this.source));
+	}
+	while (sourceIter.hasNext()) {
+		Object source = sourceIter.next();
+		IPath sourcePath = new Path(provider.getFullPath(source));
+		IPath newDestinationPath;
+		IResource newDestination;
+			
+		if (sourceRootPath == null) {
+			newDestinationPath = destinationPath.append(provider.getLabel(source));
+		} else {
+			int prefixLength = sourcePath.matchingFirstSegments(sourceRootPath);
+			IPath relativeSourcePath = sourcePath.removeFirstSegments(prefixLength); 
+			newDestinationPath = this.destinationPath.append(relativeSourcePath);
+		}		
+		newDestination = workspaceRoot.findMember(newDestinationPath);
+		if (newDestination == null)
+			continue;
+
+		IFolder folder = getFolder(newDestination);
+		if (folder != null) {
+			if (policy != POLICY_FORCE_OVERWRITE){			
+				if(this.overwriteState == OVERWRITE_NONE || !queryOverwrite(newDestinationPath)) {
+					noOverwrite.add(folder);
+					continue;
+				}
+			}			
+			if (provider.isFolder(source))			
+				collectExistingReadonlyFiles(
+					newDestinationPath, 
+					provider.getChildren(source), 
+					noOverwrite, 
+					overwriteReadonly, 
+					POLICY_FORCE_OVERWRITE);
+		}			
+		else {
+			IFile file = getFile(newDestination);
+			
+			if (file != null) {
+				if (!queryOverwriteFile(file, policy))
+					noOverwrite.add(file.getFullPath());
+				else if (file.isReadOnly())
+					overwriteReadonly.add(file);
+			}	
+		}
+	}
+} 
+/**
  * Creates the folders that appear in the specified resource path.
  * These folders are created relative to the destination container.
  *
@@ -213,32 +281,6 @@ void deleteResource(IResource resource) {
 		errorTable.add(e.getStatus());
 	}
 }
-/**
- * Attempts to ensure that the given resource does not already exist in the
- * workspace. The resource will be deleted if required, perhaps after asking
- * the user's permission.
- *
- * @param targetResource the resource that should not exist
- * @param policy determines how the resource is imported
- * @return <code>true</code> if the resource does not exist, and 
- *    <code>false</code> if it does exist
- */
-boolean ensureTargetDoesNotExist(IResource targetResource, int policy) {
-	if (targetResource.exists()) {
-		
-		//If force overwrite is on don't bother
-		if (policy != POLICY_FORCE_OVERWRITE){
-			if(this.overwriteState == OVERWRITE_NOT_SET && 
-				!queryOverwrite(targetResource.getFullPath()))
-					return false;
-			if(this.overwriteState == OVERWRITE_NONE)
-				return false;	
-		}
-		deleteResource(targetResource);
-	}
-
-	return true;
-}
 /* (non-Javadoc)
  * Method declared on WorkbenchModifyOperation.
  * Imports the specified file system objects from the file system.
@@ -252,6 +294,8 @@ protected void execute(IProgressMonitor progressMonitor) {
 			//Set the amount to 1000 as we have no idea of how long this will take
 			monitor.beginTask(DataTransferMessages.getString("DataTransfer.importTask"),1000); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destinationPath);
+			monitor.worked(30);
+			validateFiles(Arrays.asList(new Object[] {source}));
 			monitor.worked(50);
 			destinationContainer = generator.generateContainer(new SubProgressMonitor(monitor, 50));
 			importRecursivelyFrom(source, POLICY_DEFAULT);
@@ -262,6 +306,8 @@ protected void execute(IProgressMonitor progressMonitor) {
 			int creationCount = selectedFiles.size();
 			monitor.beginTask(DataTransferMessages.getString("DataTransfer.importTask"),creationCount + 100); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destinationPath);
+			monitor.worked(30);
+			validateFiles(selectedFiles);		
 			monitor.worked(50);
 			destinationContainer = generator.generateContainer(new SubProgressMonitor(monitor, 50));
 			importFileSystemObjects(selectedFiles);
@@ -297,6 +343,56 @@ IContainer getDestinationContainerFor(Object fileSystemObject) throws CoreExcept
 		IPath relativePath = destContainerPath.removeFirstSegments(sourcePath.segmentCount()).setDevice(null);
 		return createContainersFor(relativePath);
 	}
+}
+/**
+ * Returns the resource either casted to or adapted to an IFile. 
+ * 
+ * @param resource resource to cast/adapt
+ * @return the resource either casted to or adapted to an IFile.
+ * 	<code>null</code> if the resource does not adapt to IFile 
+ */
+IFile getFile(IResource resource) {
+	if (resource instanceof IFile) {
+		return (IFile) resource;
+	}
+	if (resource instanceof IAdaptable) {
+		return (IFile) ((IAdaptable) resource).getAdapter(IFile.class);
+	}
+	return null;
+}
+/**
+ * Returns the resource either casted to or adapted to an IFolder. 
+ * 
+ * @param resource resource to cast/adapt
+ * @return the resource either casted to or adapted to an IFolder.
+ * 	<code>null</code> if the resource does not adapt to IFolder 
+ */
+IFolder getFolder(IResource resource) {
+	if (resource instanceof IFolder) {
+		return (IFolder) resource;
+	}
+	if (resource instanceof IAdaptable) {
+		return (IFolder) ((IAdaptable) resource).getAdapter(IFolder.class);
+	}
+	return null;
+}
+/**
+ * Returns the rejected files based on the given multi status.
+ *  
+ * @param multiStatus multi status to use to determine file rejection
+ * @param files source files
+ * @return list of rejected files as absolute paths. Object type IPath.
+ */
+ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
+	ArrayList rejectedFiles = new ArrayList();
+
+	IStatus[] status = multiStatus.getChildren();
+	for (int i = 0; i < status.length; i++) {
+		if (status[i].isOK() == false) {
+			rejectedFiles.add(files[i].getFullPath());
+		}
+	}
+	return rejectedFiles;
 }
 /**
  * Returns the status of the import operation.
@@ -341,6 +437,9 @@ void importFile(Object fileObject, int policy) {
 	IFile targetResource = containerResource.getFile(new Path(provider.getLabel(fileObject)));
 	monitor.worked(1);
 	
+	if (rejectedFiles.contains(targetResource.getFullPath()))
+		return;
+
 	// ensure that the source and target are not the same
 	IPath targetPath = targetResource.getLocation();
 	// Use Files for comparison to avoid platform specific case issues
@@ -358,13 +457,6 @@ void importFile(Object fileObject, int policy) {
 		return;		
 	}
 
-	if (!ensureTargetDoesNotExist(targetResource, policy)) {
-		// Do not add an error status because the user
-		// has explicitely said no overwrite. Do not
-		// update the monitor as it was done in queryOverwrite.
-		return;
-	}
-	
 	InputStream contentStream = provider.getContents(fileObject);
 	if (contentStream == null) {
 		errorTable.add(
@@ -378,10 +470,10 @@ void importFile(Object fileObject, int policy) {
 	}
 	
 	try {
-		targetResource.create(
-			contentStream,
-			false,
-			null);
+		if (targetResource.exists())
+			targetResource.setContents(contentStream, IResource.KEEP_HISTORY, null);
+		else
+			targetResource.create(contentStream, false, null);
 	} catch (CoreException e) {
 		errorTable.add(e.getStatus());
 	} finally {
@@ -464,16 +556,12 @@ int importFolder(Object folderObject, int policy) {
 		return policy;
 
 	if (workspace.getRoot().exists(resourcePath)) {
-		if (policy != POLICY_FORCE_OVERWRITE){			
-			if(this.overwriteState == OVERWRITE_NONE || !queryOverwrite(resourcePath))
-			// Do not add an error status because the user
-			// has explicitely said no overwrite. Do not
-			// update the monitor as it was done in queryOverwrite.
+		if (rejectedFiles.contains(resourcePath))
 			return POLICY_SKIP_CHILDREN;
-		}
+
 		return POLICY_FORCE_OVERWRITE;
 	}
-
+		
 	try {
 		workspace.getRoot().getFolder(resourcePath).create(
 			false,
@@ -539,6 +627,36 @@ boolean queryOverwrite(IPath resourcePath) throws OperationCanceledException {
 	return true;
 }
 /**
+ * Returns whether the given file should be overwritten.
+ *
+ * @param targetFile the file to ask to overwrite 
+ * @param policy determines if the user is queried for overwrite 
+ * @return <code>true</code> if the file should be overwritten, and
+ * 	<code>false</code> if not.
+ */
+boolean queryOverwriteFile(IFile targetFile, int policy) {
+	//If force overwrite is on don't bother
+	if (policy != POLICY_FORCE_OVERWRITE){
+		if(this.overwriteState == OVERWRITE_NOT_SET && 
+			!queryOverwrite(targetFile.getFullPath()))
+				return false;
+		if(this.overwriteState == OVERWRITE_NONE)
+			return false;	
+	}
+	return true;
+}
+/**
+ * Sets the context for use by the VCM provider to prompt the user
+ * for check-out of files.
+ * 
+ * @param shell context for use by the VCM provider to prompt user
+ * 	for check-out. The user will not be prompted if set to <code>null</code>.
+ * @see IWorkspace.validateEdit
+ */
+public void setContext(Shell shell) {
+	context = shell;
+}
+/**
  * Sets whether the containment structures that are implied from the full paths
  * of file system objects being imported should be duplicated in the workbench.
  *
@@ -567,5 +685,43 @@ public void setFilesToImport(List filesToImport) {
 public void setOverwriteResources(boolean value) {
 	if(value)
 		this.overwriteState = OVERWRITE_ALL;
+}
+/**
+ * Validates that the given source resources can be copied to the 
+ * destination as decided by the VCM provider.
+ * 
+ * @param existingFiles existing files to validate
+ * @return list of rejected files as absolute paths. Object type IPath.
+ */
+ArrayList validateEdit(List existingFiles) {
+	ArrayList rejectedFiles = new ArrayList();
+		
+	if (existingFiles.size() > 0) {
+		IFile[] files = (IFile[]) existingFiles.toArray(new IFile[existingFiles.size()]);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IStatus status = workspace.validateEdit(files, context);
+			
+		if (status.isMultiStatus())
+			rejectedFiles = getRejectedFiles(status, files);
+		else if (!status.isOK())
+			throw new OperationCanceledException(DataTransferMessages.getString("DataTransfer.emptyString")); //$NON-NLS-1$
+	}
+	return rejectedFiles;
+}
+/**
+ * Validates the given file system objects.
+ * The user is prompted to overwrite existing files.
+ * Existing read-only files are validated with the VCM provider.
+ * 
+ * @param sourceFiles files to validate
+ */
+void validateFiles(List sourceFiles) {
+	ArrayList noOverwrite = new ArrayList();
+	ArrayList overwriteReadonly = new ArrayList();
+	ArrayList rejectedFiles;
+	
+	collectExistingReadonlyFiles(destinationPath, sourceFiles, noOverwrite, overwriteReadonly, POLICY_DEFAULT);
+	rejectedFiles = validateEdit(overwriteReadonly);
+	rejectedFiles.addAll(noOverwrite);
 }
 }
