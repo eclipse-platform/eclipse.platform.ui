@@ -15,8 +15,11 @@ import java.util.Collection;
 import org.eclipse.swt.widgets.Shell;
 
 /**
+ * <p>
  * An instance of this interface provides support for managing contexts at the
- * <code>IWorkbench</code> level.
+ * <code>IWorkbench</code> level. This provides the functionality necessary to
+ * enabled contexts, disable or enabled the key binding service, as well as
+ * register shells as particular types of windows.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -67,16 +70,46 @@ public interface IWorkbenchContextSupport {
     public static final int TYPE_WINDOW = 2;
 
     /**
-     * TODO
+     * <p>
+     * Add a single enabled submission for consideration. An enabled submission
+     * is a description of certain criteria under which a particular context
+     * should become active. All added submissions will be check when the
+     * conditions in the workbench change, and zero or more contexts will be
+     * selected as active.
+     * </p>
+     * <p>
+     * Just because an enabled submission is added, it does not mean that the
+     * corresponding context will become active. The workbench will consider the
+     * request, but other factors (such as conflicts) may prevent the context
+     * from becoming active.
+     * </p>
      * 
      * @param enabledSubmission
+     *            The enabled submission to be considered; must not be
+     *            <code>null</code>.
      */
     void addEnabledSubmission(EnabledSubmission enabledSubmission);
-    
+
     /**
-     * TODO
+     * <p>
+     * Adds zero or more enabled submissions for consideration. An enabled
+     * submission is a description of certain criteria under which a particular
+     * context should become active. All added submissions will be check when
+     * the conditions in the workbench change, and zero or more contexts will be
+     * selected as active.
+     * </p>
+     * <p>
+     * Just because an enabled submission is added, it does not mean that the
+     * corresponding context will become active. The workbench will consider the
+     * request, but other factors (such as conflicts) may prevent the context
+     * from becoming active.
+     * </p>
      * 
      * @param enabledSubmissions
+     *            The enabled submissions to be considered; must not be
+     *            <code>null</code>, but may be empty. Every element in the
+     *            collection must be an instance of
+     *            <code>EnabledSubmission</code>.
      */
     void addEnabledSubmissions(Collection enabledSubmissions);
 
@@ -131,16 +164,41 @@ public interface IWorkbenchContextSupport {
     public boolean registerShell(final Shell shell, final int type);
 
     /**
-     * TODO
+     * <p>
+     * Removes a single enabled submission from consideration. Only the same
+     * enabled submission will be removed; equivalent submissions will not be
+     * removed. Removing an enabled submission does not necessarily mean that
+     * the corresponding context will become inactive. It is possible that other
+     * parts of the application have requested that the context be enabled.
+     * </p>
+     * <p>
+     * There is no way to disable a context. It is only possible to not enable
+     * it.
+     * </p>
      * 
      * @param enabledSubmission
+     *            The enabled submission to be removed; must not be
+     *            <code>null</code>.
      */
     void removeEnabledSubmission(EnabledSubmission enabledSubmission);
-    
+
     /**
-     * TODO
+     * <p>
+     * Removes a collection of enabled submissions from consideration. Only the
+     * same enabled submissions will be removed; equivalent submissions will not
+     * be removed. Removing an enabled submission does not necessarily mean that
+     * the corresponding context will become inactive. It is possible that other
+     * parts of the application have requested that the context be enabled.
+     * </p>
+     * <p>
+     * There is no way to disable a context. It is only possible to not enable
+     * it.
+     * </p>
      * 
      * @param enabledSubmissions
+     *            The enabled submissions to be removed; must not be
+     *            <code>null</code>, but may be empty. The collection must
+     *            only contain instances of <code>EnabledSubmission</code>.
      */
     void removeEnabledSubmissions(Collection enabledSubmissions);
 
@@ -175,7 +233,7 @@ public interface IWorkbenchContextSupport {
      * then this method returns <code>false</code> and does nothing.
      * 
      * @param shell
-     *            The shell to unregistered; does nothing if this value is
+     *            The shell to be unregistered; does nothing if this value is
      *            <code>null</code>.
      * 
      * @return <code>true</code> if the shell had been registered;

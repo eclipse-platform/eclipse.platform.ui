@@ -23,19 +23,39 @@ import org.eclipse.ui.internal.util.Util;
  * </p>
  * 
  * @since 3.0
- * @see IContextManagerListener#contextManagerChanged
+ * @see IContextManagerListener#contextManagerChanged(ContextManagerEvent)
  */
 public final class ContextManagerEvent {
 
-    private IContextManager contextManager;
+    /**
+     * The context manager which has changed. This value is never
+     * <code>null</code>.
+     */
+    private final IContextManager contextManager;
 
-    private boolean definedContextIdsChanged;
+    /**
+     * Whether the set of defined contexts has changed.
+     */
+    private final boolean definedContextIdsChanged;
 
-    private boolean enabledContextIdsChanged;
+    /**
+     * Whether the set of enabled contexts has changed.
+     */
+    private final boolean enabledContextIdsChanged;
 
-    private Set previouslyDefinedContextIds;
+    /**
+     * The set of context identifiers (strings) that were defined before the
+     * change occurred. If the defined contexts did not changed, then this value
+     * is <code>null</code>.
+     */
+    private final Set previouslyDefinedContextIds;
 
-    private Set previouslyEnabledContextIds;
+    /**
+     * The set of context identifiers (strings) that were enabled before the
+     * change occurred. If the enabled contexts did not changed, then this value
+     * is <code>null</code>.
+     */
+    private final Set previouslyEnabledContextIds;
 
     /**
      * Creates a new instance of this class.
@@ -72,13 +92,19 @@ public final class ContextManagerEvent {
         if (!enabledContextIdsChanged && previouslyEnabledContextIds != null)
                 throw new IllegalArgumentException();
 
-        if (definedContextIdsChanged)
-                this.previouslyDefinedContextIds = Util.safeCopy(
-                        previouslyDefinedContextIds, String.class);
+        if (definedContextIdsChanged) {
+            this.previouslyDefinedContextIds = Util.safeCopy(
+                    previouslyDefinedContextIds, String.class);
+        } else {
+            this.previouslyDefinedContextIds = null;
+        }
 
-        if (enabledContextIdsChanged)
-                this.previouslyEnabledContextIds = Util.safeCopy(
-                        previouslyEnabledContextIds, String.class);
+        if (enabledContextIdsChanged) {
+            this.previouslyEnabledContextIds = Util.safeCopy(
+                    previouslyEnabledContextIds, String.class);
+        } else {
+            this.previouslyEnabledContextIds = null;
+        }
 
         this.contextManager = contextManager;
         this.definedContextIdsChanged = definedContextIdsChanged;

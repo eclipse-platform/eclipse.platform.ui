@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.internal.contexts;
 
@@ -26,8 +24,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextBinding;
-import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextManager extends AbstractContextManager
@@ -105,26 +101,6 @@ public final class MutableContextManager extends AbstractContextManager
         return Collections.unmodifiableSet(enabledContextIds);
     }
 
-    private void getRequiredContextIds(Set contextIds, Set requiredContextIds) {
-        for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
-            String contextId = (String) iterator.next();
-            IContext context = getContext(contextId);
-            Set childContextIds = new HashSet();
-            Set contextContextBindings = context.getContextContextBindings();
-
-            for (Iterator iterator2 = contextContextBindings.iterator(); iterator2
-                    .hasNext();) {
-                IContextBinding contextContextBinding = (IContextBinding) iterator2
-                        .next();
-                childContextIds.add(contextContextBinding.getContextId());
-            }
-
-            childContextIds.removeAll(requiredContextIds);
-            requiredContextIds.addAll(childContextIds);
-            getRequiredContextIds(childContextIds, requiredContextIds);
-        }
-    }
-
     private void notifyContexts(Map contextEventsByContextId) {
         for (Iterator iterator = contextEventsByContextId.entrySet().iterator(); iterator
                 .hasNext();) {
@@ -156,51 +132,6 @@ public final class MutableContextManager extends AbstractContextManager
                 .hasNext();)
             if (!isContextDefinitionChildOf(null, (String) iterator.next(),
                     contextDefinitionsById)) iterator.remove();
-
-        Map contextContextBindingDefinitionsByParentContextId = ContextContextBindingDefinition
-                .contextContextBindingDefinitionsByParentContextId(contextRegistry
-                        .getContextContextBindingDefinitions());
-        Map contextContextBindingsByParentContextId = new HashMap();
-
-        for (Iterator iterator = contextContextBindingDefinitionsByParentContextId
-                .entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String parentContextId = (String) entry.getKey();
-
-            if (contextDefinitionsById.containsKey(parentContextId)) {
-                Collection contextContextBindingDefinitions = (Collection) entry
-                        .getValue();
-
-                if (contextContextBindingDefinitions != null)
-                        for (Iterator iterator2 = contextContextBindingDefinitions
-                                .iterator(); iterator2.hasNext();) {
-                            ContextContextBindingDefinition contextContextBindingDefinition = (ContextContextBindingDefinition) iterator2
-                                    .next();
-                            String childContextId = contextContextBindingDefinition
-                                    .getChildContextId();
-
-                            if (contextDefinitionsById
-                                    .containsKey(childContextId)) {
-                                IContextBinding contextContextBinding = new ContextBinding(
-                                        childContextId, parentContextId);
-                                Set contextContextBindings = (Set) contextContextBindingsByParentContextId
-                                        .get(parentContextId);
-
-                                if (contextContextBindings == null) {
-                                    contextContextBindings = new HashSet();
-                                    contextContextBindingsByParentContextId
-                                            .put(parentContextId,
-                                                    contextContextBindings);
-                                }
-
-                                contextContextBindings
-                                        .add(contextContextBinding);
-                            }
-                        }
-            }
-        }
-
-        this.contextContextBindingsByParentContextId = contextContextBindingsByParentContextId;
         this.contextDefinitionsById = contextDefinitionsById;
         boolean definedContextIdsChanged = false;
         Set definedContextIds = new HashSet(contextDefinitionsById.keySet());
@@ -212,24 +143,12 @@ public final class MutableContextManager extends AbstractContextManager
             definedContextIdsChanged = true;
         }
 
-        Set enabledContextIds = new HashSet(this.enabledContextIds);
-        getRequiredContextIds(this.enabledContextIds, enabledContextIds);
-        boolean enabledContextIdsChanged = false;
-        Set previouslyEnabledContextIds = null;
-
-        if (!this.enabledContextIds.equals(enabledContextIds)) {
-            previouslyEnabledContextIds = this.enabledContextIds;
-            this.enabledContextIds = enabledContextIds;
-            enabledContextIdsChanged = true;
-        }
-
         Map contextEventsByContextId = updateContexts(contextsById.keySet());
 
-        if (definedContextIdsChanged || enabledContextIdsChanged)
+        if (definedContextIdsChanged)
                 fireContextManagerChanged(new ContextManagerEvent(this,
-                        definedContextIdsChanged, enabledContextIdsChanged,
-                        previouslyDefinedContextIds,
-                        previouslyEnabledContextIds));
+                        definedContextIdsChanged, false,
+                        previouslyDefinedContextIds, null));
 
         if (contextEventsByContextId != null)
                 notifyContexts(contextEventsByContextId);
@@ -237,9 +156,6 @@ public final class MutableContextManager extends AbstractContextManager
 
     public void setEnabledContextIds(Set enabledContextIds) {
         enabledContextIds = Util.safeCopy(enabledContextIds, String.class);
-        Set requiredContextIds = new HashSet(enabledContextIds);
-        getRequiredContextIds(enabledContextIds, requiredContextIds);
-        enabledContextIds = requiredContextIds;
         boolean contextManagerChanged = false;
         Map contextEventsByContextId = null;
         Set previouslyEnabledContextIds = null;
@@ -262,9 +178,6 @@ public final class MutableContextManager extends AbstractContextManager
     private ContextEvent updateContext(Context context) {
         Set contextContextBindings = (Set) contextContextBindingsByParentContextId
                 .get(context.getId());
-        boolean contextContextBindingsChanged = context
-                .setContextContextBindings(contextContextBindings != null ? contextContextBindings
-                        : Collections.EMPTY_SET);
         ContextDefinition contextDefinition = (ContextDefinition) contextDefinitionsById
                 .get(context.getId());
         boolean definedChanged = context.setDefined(contextDefinition != null);
@@ -277,11 +190,9 @@ public final class MutableContextManager extends AbstractContextManager
                 .setParentId(contextDefinition != null ? contextDefinition
                         .getParentId() : null);
 
-        if (contextContextBindingsChanged || definedChanged || enabledChanged
-                || nameChanged || parentIdChanged)
-            return new ContextEvent(context, contextContextBindingsChanged,
-                    definedChanged, enabledChanged, nameChanged,
-                    parentIdChanged);
+        if (definedChanged || enabledChanged || nameChanged || parentIdChanged)
+            return new ContextEvent(context, definedChanged, enabledChanged,
+                    nameChanged, parentIdChanged);
         else
             return null;
     }

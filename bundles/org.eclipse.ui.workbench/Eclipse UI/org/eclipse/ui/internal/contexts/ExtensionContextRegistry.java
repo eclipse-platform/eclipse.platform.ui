@@ -115,9 +115,7 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 				configurationElements[i];
 			String name = configurationElement.getName();
 
-			if (Persistence.TAG_CONTEXT_CONTEXT_BINDING.equals(name))
-				readContextContextBindingDefinition(configurationElement);
-			else if (Persistence.TAG_CONTEXT.equals(name))
+			if (Persistence.TAG_CONTEXT.equals(name))
 				readContextDefinition(configurationElement);
 		}
 
@@ -138,17 +136,6 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 
 		if (contextRegistryChanged)
 			fireContextRegistryChanged();
-	}
-
-	private void readContextContextBindingDefinition(IConfigurationElement configurationElement) {
-		ContextContextBindingDefinition contextContextBindingDefinition =
-			Persistence.readContextContextBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
-
-		if (contextContextBindingDefinition != null)
-			contextContextBindingDefinitions.add(
-				contextContextBindingDefinition);
 	}
 
 	private void readContextDefinition(IConfigurationElement configurationElement) {

@@ -19,8 +19,8 @@ package org.eclipse.ui.contexts;
  * </p>
  * 
  * @since 3.0
- * @see IContext#addContextListener
- * @see IContext#removeContextListener
+ * @see org.eclipse.ui.contexts.IContext#addContextListener(IContextListener)
+ * @see org.eclipse.ui.contexts.IContext#removeContextListener(IContextListener)
  */
 public interface IContextListener {
 

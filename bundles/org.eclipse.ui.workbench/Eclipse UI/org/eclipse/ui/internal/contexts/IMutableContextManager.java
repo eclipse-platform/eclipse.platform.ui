@@ -9,15 +9,18 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.contexts;
 
 import java.util.Set;
 
-import org.eclipse.ui.internal.contexts.ContextManagerFactory;
+import org.eclipse.ui.contexts.IContextManager;
 
 /**
- * An instance of this interface allows clients to manage contexts, as defined
- * by the extension point <code>org.eclipse.ui.contexts</code>.
+ * <p>
+ * A context manager is a type of context manager that allows its enabled
+ * context identifiers to be modified. The list can only be modified wholesale --
+ * individual addition and removal is not permitted.
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>

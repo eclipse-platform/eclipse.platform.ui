@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.internal.contexts;
 
@@ -18,251 +16,213 @@ import java.util.Set;
 
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextBinding;
 import org.eclipse.ui.contexts.IContextListener;
 import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Context implements IContext {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Context.class.getName().hashCode();
-	private final static Set strongReferences = new HashSet();
-	private Set contextContextBindings;
-	private transient IContextBinding[] contextContextBindingsAsArray;
-	private List contextListeners;
-	private boolean defined;
-	private boolean enabled;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String parentId;
-	private transient String string;
 
-	Context(String id) {
-		if (id == null)
-			throw new NullPointerException();
+    private final static int HASH_FACTOR = 89;
 
-		this.id = id;
-	}
+    private final static int HASH_INITIAL = Context.class.getName().hashCode();
 
-	public void addContextListener(IContextListener contextListener) {
-		if (contextListener == null)
-			throw new NullPointerException();
+    private final static Set strongReferences = new HashSet();
 
-		if (contextListeners == null)
-			contextListeners = new ArrayList();
+    private List contextListeners;
 
-		if (!contextListeners.contains(contextListener))
-			contextListeners.add(contextListener);
+    private boolean defined;
 
-		strongReferences.add(this);
-	}
+    private boolean enabled;
 
-	public int compareTo(Object object) {
-		Context castedObject = (Context) object;
+    private transient int hashCode;
 
-		int compareTo =
-			Util.compare(
-				(Comparable[]) contextContextBindingsAsArray,
-				(Comparable[]) castedObject.contextContextBindingsAsArray);
+    private transient boolean hashCodeComputed;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(defined, castedObject.defined);
+    private String id;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(enabled, castedObject.enabled);
+    private String name;
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(id, castedObject.id);
+    private String parentId;
 
-					if (compareTo == 0) {
-						compareTo = Util.compare(name, castedObject.name);
+    private transient String string;
 
-						if (compareTo == 0)
-							compareTo =
-								Util.compare(parentId, castedObject.parentId);
-					}
-				}
-			}
-		}
+    Context(String id) {
+        if (id == null) throw new NullPointerException();
 
-		return compareTo;
-	}
+        this.id = id;
+    }
 
-	public boolean equals(Object object) {
-		if (!(object instanceof Context))
-			return false;
+    public void addContextListener(IContextListener contextListener) {
+        if (contextListener == null) throw new NullPointerException();
 
-		Context castedObject = (Context) object;
-		boolean equals = true;
-		equals
-			&= Util.equals(
-				contextContextBindings,
-				castedObject.contextContextBindings);
-		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(enabled, castedObject.enabled);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
-		return equals;
-	}
+        if (contextListeners == null) contextListeners = new ArrayList();
 
-	void fireContextChanged(ContextEvent contextEvent) {
-		if (contextEvent == null)
-			throw new NullPointerException();
+        if (!contextListeners.contains(contextListener))
+                contextListeners.add(contextListener);
 
-		if (contextListeners != null)
-			for (int i = 0; i < contextListeners.size(); i++)
-				((IContextListener) contextListeners.get(i)).contextChanged(
-					contextEvent);
-	}
+        strongReferences.add(this);
+    }
 
-	public Set getContextContextBindings() {
-		return contextContextBindings;
-	}
+    public int compareTo(Object object) {
+        Context castedObject = (Context) object;
+        int compareTo = Util.compare(defined, castedObject.defined);
 
-	public String getId() {
-		return id;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(enabled, castedObject.enabled);
 
-	public String getName() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
+            if (compareTo == 0) {
+                compareTo = Util.compare(id, castedObject.id);
 
-		return name;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(name, castedObject.name);
 
-	public String getParentId() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
+                    if (compareTo == 0)
+                            compareTo = Util.compare(parentId,
+                                    castedObject.parentId);
+                }
+            }
+        }
 
-		return parentId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode =
-				hashCode * HASH_FACTOR + Util.hashCode(contextContextBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof Context)) return false;
 
-		return hashCode;
-	}
+        Context castedObject = (Context) object;
+        boolean equals = true;
+        equals &= Util.equals(defined, castedObject.defined);
+        equals &= Util.equals(enabled, castedObject.enabled);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(parentId, castedObject.parentId);
+        return equals;
+    }
 
-	public boolean isDefined() {
-		return defined;
-	}
+    void fireContextChanged(ContextEvent contextEvent) {
+        if (contextEvent == null) throw new NullPointerException();
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+        if (contextListeners != null)
+                for (int i = 0; i < contextListeners.size(); i++)
+                    ((IContextListener) contextListeners.get(i))
+                            .contextChanged(contextEvent);
+    }
 
-	public void removeContextListener(IContextListener contextListener) {
-		if (contextListener == null)
-			throw new NullPointerException();
+    public String getId() {
+        return id;
+    }
 
-		if (contextListeners != null)
-			contextListeners.remove(contextListener);
+    public String getName() throws NotDefinedException {
+        if (!defined)
+                throw new NotDefinedException(
+                        "Cannot get the name from an undefined context."); //$NON-NLS-1$
 
-		if (contextListeners.isEmpty())
-			strongReferences.remove(this);
-	}
+        return name;
+    }
 
-	boolean setContextContextBindings(Set contextContextBindings) {
-		contextContextBindings =
-			Util.safeCopy(contextContextBindings, IContextBinding.class);
+    public String getParentId() throws NotDefinedException {
+        if (!defined)
+                throw new NotDefinedException(
+                        "Cannot get the parent identifier from an undefined context."); //$NON-NLS-1$
 
-		if (!Util
-			.equals(contextContextBindings, this.contextContextBindings)) {
-			this.contextContextBindings = contextContextBindings;
-			this.contextContextBindingsAsArray =
-				(IContextBinding[]) this.contextContextBindings.toArray(
-					new IContextBinding[this
-						.contextContextBindings
-						.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return parentId;
+    }
 
-		return false;
-	}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+            hashCodeComputed = true;
+        }
 
-	boolean setDefined(boolean defined) {
-		if (defined != this.defined) {
-			this.defined = defined;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return hashCode;
+    }
 
-		return false;
-	}
+    public boolean isDefined() {
+        return defined;
+    }
 
-	boolean setEnabled(boolean enabled) {
-		if (enabled != this.enabled) {
-			this.enabled = enabled;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-		return false;
-	}
+    public void removeContextListener(IContextListener contextListener) {
+        if (contextListener == null) throw new NullPointerException();
 
-	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
-			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        if (contextListeners != null) contextListeners.remove(contextListener);
 
-		return false;
-	}
+        if (contextListeners.isEmpty()) strongReferences.remove(this);
+    }
 
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    boolean setDefined(boolean defined) {
+        if (defined != this.defined) {
+            this.defined = defined;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(contextContextBindings);
-			stringBuffer.append(',');
-			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(enabled);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    boolean setEnabled(boolean enabled) {
+        if (enabled != this.enabled) {
+            this.enabled = enabled;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
 
-		return string;
-	}
+        return false;
+    }
+
+    boolean setName(String name) {
+        if (!Util.equals(name, this.name)) {
+            this.name = name;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setParentId(String parentId) {
+        if (!Util.equals(parentId, this.parentId)) {
+            this.parentId = parentId;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(defined);
+            stringBuffer.append(',');
+            stringBuffer.append(enabled);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(parentId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

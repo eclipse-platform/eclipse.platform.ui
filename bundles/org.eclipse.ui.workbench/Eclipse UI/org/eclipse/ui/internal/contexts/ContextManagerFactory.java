@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.ui.contexts.IMutableContextManager;
 
 /**
  * This class allows clients to broker instances of <code>IContextManager</code>.

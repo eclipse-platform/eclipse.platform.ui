@@ -23,15 +23,18 @@ import java.util.Set;
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
- * plugin activation and deactivation, which can cause dynamic changes to the
- * extension registry.
+ * plugin activation and deactivation. If a context is defined, that means that
+ * its corresponding plug-in is active. If the plug-in is then deactivated, the
+ * context will still exist but it will be undefined. An attempts to use an
+ * undefined context will result in a <code>NotDefinedException</code> being
+ * thrown.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * 
  * @since 3.0
- * @see IContextManager
+ * @see org.eclipse.ui.contexts.IContextManager
  */
 public interface IContext extends Comparable {
 
@@ -45,24 +48,6 @@ public interface IContext extends Comparable {
      *            registered with this instance, no operation is performed.
      */
     void addContextListener(IContextListener contextListener);
-
-    /**
-     * Returns the set of context context bindings for this instance.
-     * <p>
-     * This method will return all context context bindings for this instance,
-     * whether or not this instance is defined.
-     * </p>
-     * <p>
-     * Notification is sent to all registered listeners if this property
-     * changes.
-     * </p>
-     * 
-     * @return the set of context context bindings. This set may be empty, but
-     *         is guaranteed not to be <code>null</code>. If this set is not
-     *         empty, it is guaranteed to only contain instances of
-     *         <code>IContextContextBinding</code>.
-     */
-    Set getContextContextBindings();
 
     /**
      * Returns the identifier of this instance.

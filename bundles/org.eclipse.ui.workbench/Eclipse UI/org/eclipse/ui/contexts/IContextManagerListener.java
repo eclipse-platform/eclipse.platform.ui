@@ -19,8 +19,8 @@ package org.eclipse.ui.contexts;
  * </p>
  * 
  * @since 3.0
- * @see IContextManager#addContextManagerListener
- * @see IContextManager#removeContextManagerListener
+ * @see IContextManager#addContextManagerListener(IContextManagerListener)
+ * @see IContextManager#removeContextManagerListener(IContextManagerListener)
  */
 public interface IContextManagerListener {
 

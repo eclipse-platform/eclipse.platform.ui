@@ -13,17 +13,18 @@ package org.eclipse.ui.contexts;
 
 import java.util.Set;
 
-import org.eclipse.ui.internal.contexts.ContextManagerFactory;
-
 /**
- * An instance of this interface allows clients to manage contexts, as defined
- * by the extension point <code>org.eclipse.ui.contexts</code>.
+ * <p>
+ * A context manager tracks the sets of defined and enabled contexts within the
+ * application. The manager sends notification events to listeners when these
+ * sets change. It is also possible to retrieve any given context with its
+ * identifier.
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * 
  * @since 3.0
- * @see ContextManagerFactory
  */
 public interface IContextManager {
 

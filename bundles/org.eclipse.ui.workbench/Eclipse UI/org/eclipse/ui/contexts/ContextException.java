@@ -21,19 +21,13 @@ package org.eclipse.ui.contexts;
 public abstract class ContextException extends Exception {
 
     /**
-     * Creates a new instance of this class with no specified detail message.
-     */
-    public ContextException() {
-    }
-
-    /**
      * Creates a new instance of this class with the specified detail message.
      * 
-     * @param s
+     * @param message
      *            the detail message.
      */
-    public ContextException(String s) {
-        super(s);
+    public ContextException(String message) {
+        super(message);
     }
 
     /**
@@ -47,15 +41,5 @@ public abstract class ContextException extends Exception {
      */
     public ContextException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Creates a new instance of this class with the specified cause.
-     * 
-     * @param cause
-     *            the cause.
-     */
-    public ContextException(Throwable cause) {
-        super(cause);
     }
 }

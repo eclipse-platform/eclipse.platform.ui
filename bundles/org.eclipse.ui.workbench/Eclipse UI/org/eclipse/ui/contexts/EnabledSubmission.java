@@ -12,13 +12,21 @@ package org.eclipse.ui.contexts;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * An instance of this class represents a request to enable a context, under
- * particular conditions.
+ * </p>
+ * An instance of this class represents a request to enabled a context. An
+ * enabled submission specifies a list of conditions under which it would be
+ * appropriate for a particular context to be enabled. These conditions include
+ * things like the active part or the active shell. So, it is possible to say
+ * things like: "when the java editor is active, please consider enabling the
+ * 'editing java' context".
+ * </p>
+ * <p>
+ * The workbench considers all of the submissions it has received and choses the
+ * ones it views as the best possible match.
+ * </p>
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -28,60 +36,61 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class EnabledSubmission implements Comparable {
 
+    /**
+     * The factor used in the hashing function.
+     */
     private final static int HASH_FACTOR = 89;
 
+    /**
+     * The seed value for the hash function.
+     */
     private final static int HASH_INITIAL = EnabledSubmission.class.getName()
             .hashCode();
 
-    private String activePartId;
+    /**
+     * The identifier of the part in which this context should be enabled. If
+     * this value is <code>null</code>, this means it should be active in any
+     * part.
+     */
+    private final String activePartId;
 
-    private Shell activeShell;
+    /**
+     * The shell in which this context should be enabled. If this value is
+     * <code>null</code>, this means it should be active in any shell.
+     */
+    private final Shell activeShell;
 
-    private IWorkbenchPartSite activeWorkbenchPartSite;
+    /**
+     * The part site in which this context should be enabled. If this value is
+     * <code>null</code>, this means it should be active in any part site.
+     */
+    private final IWorkbenchPartSite activeWorkbenchPartSite;
 
-    private String contextId;
+    /**
+     * The identifier for the context that should be enabled by this
+     * submissions. This value should never be <code>null</code>.
+     */
+    private final String contextId;
 
+    /**
+     * The cached value of the has code. This value is computed lazily on the
+     * first call to retrieve the hash code, and the cache is used for all
+     * future calls.
+     */
     private transient int hashCode;
 
-    private transient boolean hashCodeComputed;
-
-    private transient String string;
+    /**
+     * Whether the hash code has been computed yet.
+     */
+    private transient boolean hashCodeComputed = false;
 
     /**
-     * @deprecated to be removed for 3.0
-     * 
-     * @param activeWorkbenchSite
-     * @param activeWorkbenchWindow
-     * @param contextId
+     * The cached string representation of this instance. This value is computed
+     * lazily on the first call to retrieve the string representation, and the
+     * cache is used for all future calls. If this value is <code>null</code>,
+     * then the value has not yet been computed.
      */
-    public EnabledSubmission(IWorkbenchSite activeWorkbenchSite,
-            IWorkbenchWindow activeWorkbenchWindow, String contextId) {
-        if (contextId == null) throw new NullPointerException();
-
-        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
-                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
-
-        this.contextId = contextId;
-    }
-
-    /**
-     * @deprecated to be removed for 3.0
-     * 
-     * @param activeWorkbenchSite
-     * @param contextId
-     * @param activeShell
-     */
-    public EnabledSubmission(Shell activeShell,
-            IWorkbenchSite activeWorkbenchSite, String contextId) {
-        if (contextId == null) throw new NullPointerException();
-
-        this.activeShell = activeShell;
-
-        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
-                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
-
-        this.contextId = contextId;
-    }
+    private transient String string = null;
 
     /**
      * Creates a new instance of this class.
@@ -109,6 +118,9 @@ public final class EnabledSubmission implements Comparable {
         this.contextId = contextId;
     }
 
+    /**
+     * @see Comparable#compareTo(java.lang.Object)
+     */
     public int compareTo(Object object) {
         EnabledSubmission castedObject = (EnabledSubmission) object;
         int compareTo = Util.compare(activeWorkbenchPartSite,
@@ -171,6 +183,9 @@ public final class EnabledSubmission implements Comparable {
         return contextId;
     }
 
+    /**
+     * @see Object#hashCode()
+     */
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
@@ -185,6 +200,9 @@ public final class EnabledSubmission implements Comparable {
         return hashCode;
     }
 
+    /**
+     * @see Object#toString()
+     */
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();

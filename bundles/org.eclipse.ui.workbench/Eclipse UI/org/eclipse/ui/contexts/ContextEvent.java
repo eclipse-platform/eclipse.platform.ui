@@ -19,29 +19,40 @@ package org.eclipse.ui.contexts;
  * </p>
  * 
  * @since 3.0
- * @see IContextListener#contextChanged
+ * @see IContextListener#contextChanged(ContextEvent)
  */
 public final class ContextEvent {
 
-    private IContext context;
+    /**
+     * The context that has changed. This value is never <code>null</code>.
+     */
+    private final IContext context;
 
-    private boolean contextContextBindingsChanged;
+    /**
+     * Whether the context has become defined or undefined.
+     */
+    private final boolean definedChanged;
 
-    private boolean definedChanged;
+    /**
+     * Whether the context has become enabled or disabled.
+     */
+    private final boolean enabledChanged;
 
-    private boolean enabledChanged;
+    /**
+     * Whether the name of the context has changed.
+     */
+    private final boolean nameChanged;
 
-    private boolean nameChanged;
-
-    private boolean parentIdChanged;
+    /**
+     * Whether the parent identifier has changed.
+     */
+    private final boolean parentIdChanged;
 
     /**
      * Creates a new instance of this class.
      * 
      * @param context
      *            the instance of the interface that changed.
-     * @param contextContextBindingsChanged
-     *            true, iff the contextContextBindings property changed.
      * @param definedChanged
      *            true, iff the defined property changed.
      * @param enabledChanged
@@ -51,13 +62,11 @@ public final class ContextEvent {
      * @param parentIdChanged
      *            true, iff the parentId property changed.
      */
-    public ContextEvent(IContext context,
-            boolean contextContextBindingsChanged, boolean definedChanged,
+    public ContextEvent(IContext context, boolean definedChanged,
             boolean enabledChanged, boolean nameChanged, boolean parentIdChanged) {
         if (context == null) throw new NullPointerException();
 
         this.context = context;
-        this.contextContextBindingsChanged = contextContextBindingsChanged;
         this.definedChanged = definedChanged;
         this.enabledChanged = enabledChanged;
         this.nameChanged = nameChanged;
@@ -108,14 +117,5 @@ public final class ContextEvent {
      */
     public boolean hasParentIdChanged() {
         return parentIdChanged;
-    }
-
-    /**
-     * Returns whether or not the contextContextBindings property changed.
-     * 
-     * @return true, iff the contextContextBindings property changed.
-     */
-    public boolean haveContextContextBindingsChanged() {
-        return contextContextBindingsChanged;
     }
 }
