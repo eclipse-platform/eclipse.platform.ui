@@ -61,6 +61,10 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	private static final String ATTR_VIEWS_TO_NOT_CLOSE = "viewsNotToClose"; //$NON-NLS-1$
 	
 	private Map modelsToContext= new HashMap();
+	/**
+	 * A mapping of context IDs (Strings) to a collection
+	 * of context-view bindings (IConfigurationElements).
+	 */
 	private Map contextViews= new HashMap();
 	private IMutableContextManager contextManager= ContextManagerFactory.getMutableContextManager();
 	/**
@@ -262,18 +266,40 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	
 	/**
 	 * Lists the contextViews configuration elements for the
-	 * given context ID and all its parent context IDs.
+	 * given context ID and all its parent context IDs. The
+	 * list only contains one configuration element per view
+	 * such that if a child context provides a binding for a view
+	 * it will override any bindings provided for that same view by
+	 * parent contexts.
 	 * 
 	 * @param contextId the context ID
 	 * @return the configuration elements for the given context ID and
 	 * 	all parent context IDs. 
 	 */
 	private List getConfigurationElements(String contextId) {
-		List allElements= new ArrayList();
+		// Collection of view ids for which configuration
+		// elements have been found.
+		List configuredViewIds= new ArrayList();
+		List allConfigurationElements= new ArrayList();
 		while (contextId != null) {
-			List elements= (List) contextViews.get(contextId);
-			if (elements != null) {
-				allElements.addAll(elements);
+			List configurationElements= (List) contextViews.get(contextId);
+			if (configurationElements != null) {
+				ListIterator iter= configurationElements.listIterator();
+				while (iter.hasNext()) {
+					// Remove any configuration elements for views that
+					// are already "bound" by a configuration element.
+					// This allows child contexts to override parent
+					// bindings.
+					IConfigurationElement element= (IConfigurationElement) iter.next();
+					String viewId = element.getAttribute(ATTR_VIEW_ID);
+					if (viewId != null) {
+						if (configuredViewIds.contains(viewId)) {
+							iter.remove();
+						}
+						configuredViewIds.add(viewId);
+					}
+				}
+				allConfigurationElements.addAll(configurationElements);
 			}
 			IContext context = contextManager.getContext(contextId);
 			if (context != null) {
@@ -284,7 +310,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 				}
 			}
 		}
-		return allElements;		 
+		return allConfigurationElements;		 
 	}
 
 	/**
