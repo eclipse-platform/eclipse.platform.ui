@@ -157,9 +157,8 @@ public class ShowActivitiesDialog extends Dialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings settings= plugin.getDialogSettings();
-		dialogSettings= settings.getSection(getClass().getName());
+		IDialogSettings settings = UpdateUI.getDefault().getDialogSettings();
+		dialogSettings = settings.getSection(getClass().getName());
 		if (dialogSettings == null)
 			dialogSettings= settings.addNewSection(getClass().getName());
 		return dialogSettings;
