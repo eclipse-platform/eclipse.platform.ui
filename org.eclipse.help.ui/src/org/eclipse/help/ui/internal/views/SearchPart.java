@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.search.*;
+import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.*;
+import org.eclipse.help.search.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -57,6 +58,46 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private ScopeSetManager scopeSetManager;
 
 	private ArrayList engineDescriptors;
+	
+	private JobListener jobListener;
+	
+	private class JobListener implements IJobChangeListener, Runnable {
+		private boolean searchInProgress=false;
+		public void aboutToRun(IJobChangeEvent event) {
+		}
+
+		public void awake(IJobChangeEvent event) {
+		}
+
+		public void done(IJobChangeEvent event) {
+			if (event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
+				Job [] searchJobs = Platform.getJobManager().find(FederatedSearchJob.FAMILY);
+				if (searchJobs.length==0) {
+					// search finished
+					searchInProgress=false;
+					container.getDisplay().asyncExec(this);
+				}
+			}
+		}
+
+		public void running(IJobChangeEvent event) {
+		}
+
+		public void scheduled(IJobChangeEvent event) {
+			if (!searchInProgress && event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
+				searchInProgress=true;
+				container.getDisplay().asyncExec(this);
+			}
+		}
+
+		public void sleeping(IJobChangeEvent event) {
+		}
+		
+		public void run() {
+			searchWordCombo.setEnabled(!searchInProgress);
+			goButton.setEnabled(!searchInProgress);
+		}
+	}
 
 	/**
 	 * @param parent
@@ -161,6 +202,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		td = new TableWrapData();
 		td.colspan = 2;
 		advanced.setLayoutData(td);
+		jobListener = new JobListener();
+		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
 
 	private void createScopeSet(Section section, FormToolkit toolkit) {
@@ -352,6 +395,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		ScopeSet activeSet = scopeSetManager.getActiveSet();
 		if (activeSet != null)
 			activeSet.save();
+		Platform.getJobManager().removeJobChangeListener(jobListener);
 		super.dispose();
 	}
 

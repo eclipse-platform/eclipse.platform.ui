@@ -15,8 +15,16 @@ import org.eclipse.jface.preference.IPreferencePage;
 /**
  * Preference pages that are used for editing help search
  * scope settings should implement this interface.
+ * 
  * @since 3.1
  */
 public interface ISearchScopePage extends IPreferencePage {
+/**
+ * Initializes the search scope page.
+ * @param engineId the unique identifier of the search engine
+ * that owns this scope page
+ * @param scopeSetName the name of the current scope set
+ * that is used to group data shown in this page
+ */
 	void init(String engineId, String scopeSetName);
 }

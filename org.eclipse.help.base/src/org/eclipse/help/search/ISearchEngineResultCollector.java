@@ -8,16 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.search.federated;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.help.internal.search.*;
+package org.eclipse.help.search;
 
 /**
- * A search engine that is a participant in the help federated search.
+ * A collector for the search hits (asynchronously) returned by the help search
+ * participants.
+ * 
+ * @since 3.1
  */
-public interface ISearchEngine {
-	void run(String query, ISearchScope scope, ISearchEngineResultCollector collector, IProgressMonitor monitor) throws CoreException;
-	void cancel();
+public interface ISearchEngineResultCollector {
+	/**
+	 * Adds a new search result object.
+	 * 
+	 * @param searchResult
+	 *            the new search result
+	 */
+	void add(ISearchEngineResult searchResult);
+
+	/**
+	 * Adds an array of new search results.
+	 * 
+	 * @param searchResults
+	 *            an array of search result objects
+	 */
+	void add(ISearchEngineResult[] searchResults);
 }

@@ -17,9 +17,9 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 
 public class IndexerJob extends Job {
-	public static final String FAMILY = "org.eclipse.help.base.indexer";
+	public static final String FAMILY = "org.eclipse.help.base.indexer"; //$NON-NLS-1$
 	public IndexerJob() {
-		super("Help Indexer");
+		super(HelpBaseResources.getString("IndexerJob.name")); //$NON-NLS-1$
 	}
 	protected IStatus run(IProgressMonitor monitor) {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getSearchManager().getIndex(Platform.getNL());
@@ -31,7 +31,7 @@ public class IndexerJob extends Job {
 			return Status.CANCEL_STATUS;
 		}
 		catch (Exception e) {
-			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.OK, "Errors while indexing", e);
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources.getString("IndexerJob.error"), e); //$NON-NLS-1$
 		}
 	}
 	public boolean belongsTo(Object family) {

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
-import org.eclipse.help.internal.search.*;
-import org.eclipse.help.ui.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.help.search.ISearchScope;
+import org.eclipse.help.ui.ISearchScopeFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Factory for creating scope objects for the google engine

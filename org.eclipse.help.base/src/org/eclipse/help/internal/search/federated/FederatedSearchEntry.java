@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search.federated;
 
-import org.eclipse.help.internal.search.*;
+import org.eclipse.help.search.*;
 
 /**
  * A participant in the federated search.

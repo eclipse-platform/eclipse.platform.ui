@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.search.federated;
+package org.eclipse.help.search;
 
 /**
- * A collector for the search hits (asynchronously) returned by the federated search participants.
+ * The generic search scope object. This is a tagging interface
+ * since each search engine is expected to have its own non-overlapping
+ * set of scopes that users can include or exclude from the search.
+ * 
+ * @since 3.1
  */
-public interface ISearchEngineResultCollector {
-	void add(ISearchEngineResult searchResult);
-    void add(ISearchEngineResult[] searchResults);
+public interface ISearchScope {
 }

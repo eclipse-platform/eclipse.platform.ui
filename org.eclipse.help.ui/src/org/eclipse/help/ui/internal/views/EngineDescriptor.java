@@ -11,13 +11,12 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.search.federated.*;
+import org.eclipse.help.search.*;
 import org.eclipse.help.ui.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Descriptor for a federated search engine participant.

@@ -11,7 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.search.federated.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.jface.viewers.*;
 
 public class FederatedSearchSorter extends ViewerSorter {

@@ -11,17 +11,17 @@
 
 package org.eclipse.help.ui.internal.search;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.ui.*;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * Local Help participant in the federated search.
  */
-public class LocalHelpPage extends RootScopePage{
+public class LocalHelpPage extends RootScopePage {
     private Button searchAll;
     private Button searchSelected;
     private CheckboxTreeViewer tree;
@@ -37,6 +37,7 @@ public class LocalHelpPage extends RootScopePage{
     private ILabelProvider elementLabelProvider;
     private boolean firstCheck;
     private WorkingSet workingSet;
+    private Button capabilityFiltering;
 
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopePage#init(java.lang.String, java.lang.String)
@@ -66,7 +67,7 @@ public class LocalHelpPage extends RootScopePage{
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
         searchAll = new Button(composite, SWT.RADIO);
-        searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
+        searchAll.setText(HelpBaseResources.getString("selectAll")); //$NON-NLS-1$
         GridData gd = new GridData();
         searchAll.setLayoutData(gd);
         searchAll.addSelectionListener(new SelectionAdapter() {
@@ -77,7 +78,7 @@ public class LocalHelpPage extends RootScopePage{
         });
         
         searchSelected = new Button(composite, SWT.RADIO);
-        searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
+        searchSelected.setText(HelpBaseResources.getString("selectWorkingSet")); //$NON-NLS-1$
         gd = new GridData();
         searchSelected.setLayoutData(gd);
         searchSelected.addSelectionListener(new SelectionAdapter() {
@@ -94,7 +95,7 @@ public class LocalHelpPage extends RootScopePage{
         
         Label label = new Label(composite, SWT.WRAP);
         label.setFont(font);
-        label.setText(HelpUIResources.getString("WorkingSetContent")); //$NON-NLS-1$
+        label.setText(HelpBaseResources.getString("WorkingSetContent")); //$NON-NLS-1$
         gd = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
@@ -139,6 +140,8 @@ public class LocalHelpPage extends RootScopePage{
             }
         });
         tree.getTree().setEnabled(workingSet != null);
+        capabilityFiltering = new Button(parent, SWT.CHECK);
+        capabilityFiltering.setText(HelpBaseResources.getString("LocalHelpPage.capabilityFiltering.name")); //$NON-NLS-1$
         initializeCheckedState();
 
         // Set help for the page
@@ -147,6 +150,8 @@ public class LocalHelpPage extends RootScopePage{
     }
 
     private void initializeCheckedState() {
+    	IPreferenceStore store = getPreferenceStore();
+    	capabilityFiltering.setSelection(store.getBoolean(LocalSearchScopeFactory.CAPABILITY_FILTERING));
         if (workingSet == null)
             return;
 
@@ -262,7 +267,9 @@ public class LocalHelpPage extends RootScopePage{
         else 
             BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());
         
-        getPreferenceStore().setValue(getEngineId(), getScopeSetName());
+        getPreferenceStore().setValue(LocalSearchScopeFactory.WORKING_SET, getScopeSetName());
+        getPreferenceStore().setValue(LocalSearchScopeFactory.CAPABILITY_FILTERING, 
+        		capabilityFiltering.getSelection());
         return super.performOk();
     }
 }

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
-import java.io.*;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.search.federated.*;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.search.*;
 
 /**
  * Simple representation of Google in the federated search.

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.search.federated.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;

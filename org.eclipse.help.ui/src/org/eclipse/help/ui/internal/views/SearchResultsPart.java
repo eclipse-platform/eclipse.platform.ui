@@ -12,7 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
-import org.eclipse.help.internal.search.federated.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.Action;

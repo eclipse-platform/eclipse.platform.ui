@@ -20,11 +20,11 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
@@ -259,6 +259,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private void updateResults(final String phrase,
 			final IContext excludeContext, final StringBuffer buffer,
 			final SearchHit[] hits) {
+		if (getSection().isDisposed())
+			return;
 		getSection().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				doUpdateResults(phrase, excludeContext, buffer, hits);
@@ -355,7 +357,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		String url = (String) href;
 
 		if (url.startsWith("nw:")) { //$NON-NLS-1$
-			WorkbenchHelp.displayHelpResource(url.substring(3));
+			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url.substring(3));
 		} else
 			parent.showURL(url);
 	}
