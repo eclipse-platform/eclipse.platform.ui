@@ -5,7 +5,6 @@ package org.eclipse.ui.texteditor;
  * All Rights Reserved.
  */
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +27,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -86,9 +87,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
 
-
-
-
 /**
  * Abstract base implementation of a text editor.
  * <p>
@@ -98,15 +96,23 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor {
+public abstract class AbstractTextEditor
+	extends EditorPart
+	implements ITextEditor {
+		
+	/**
+	 * The font property change listener
+	 */
+	private IPropertyChangeListener fontListener;
 	
+
 	/**
 	 * Internal element state listener.
 	 */
 	class ElementStateListener implements IElementStateListener {
-		
+
 		private ITextSelection fRememberedSelection;
-		
+
 		/*
 		 * @see IElementStateListener#elementDirtyStateChanged
 		 */
@@ -117,18 +123,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fSourceViewer.resetPlugins();
 			}
 		}
-		
+
 		/*
 		 * @see IElementStateListener#elementContentAboutToBeReplaced
 		 */
 		public void elementContentAboutToBeReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
 				resetHighlightRange();
-				ISelectionProvider sp= getSelectionProvider();
-				fRememberedSelection= (sp == null ? null : (ITextSelection) sp.getSelection());
+				ISelectionProvider sp = getSelectionProvider();
+				fRememberedSelection = (sp == null ? null : (ITextSelection) sp.getSelection());
 			}
 		}
-		
+
 		/*
 		 * @see IElementStateListener#elementContentReplaced
 		 */
@@ -140,7 +146,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fSourceViewer.resetPlugins();
 			}
 		}
-		
+
 		/*
 		 * @see IElementStateListener#elementDeleted
 		 */
@@ -148,47 +154,47 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (deletedElement != null && deletedElement.equals(getEditorInput()))
 				close(false);
 		}
-		
+
 		/*
 		 * @see IElementStateListener#elementMoved
 		 */
 		public void elementMoved(Object originalElement, Object movedElement) {
-			if (originalElement != null && 
-					originalElement.equals(getEditorInput()) &&
-					(movedElement == null || movedElement instanceof IEditorInput)) {
-				
-				ITextSelection s= null;
-				ISelectionProvider p= getSelectionProvider();
+			if (originalElement != null
+				&& originalElement.equals(getEditorInput())
+				&& (movedElement == null || movedElement instanceof IEditorInput)) {
+
+				ITextSelection s = null;
+				ISelectionProvider p = getSelectionProvider();
 				if (p != null)
-					s= (ITextSelection) p.getSelection();
-					
-				IDocumentProvider d= getDocumentProvider();
-				IDocument changed= null;
+					s = (ITextSelection) p.getSelection();
+
+				IDocumentProvider d = getDocumentProvider();
+				IDocument changed = null;
 				if (isDirty())
-					changed= d.getDocument(getEditorInput());
-					
+					changed = d.getDocument(getEditorInput());
+
 				setInput((IEditorInput) movedElement);
-				
+
 				if (changed != null)
 					d.getDocument(getEditorInput()).set(changed.get());
-					
+
 				restoreSelection(s);
 			}
 		}
-		
+
 		/**
 		 * Restores the given selection in the editor.
 		 * 
 		 * @param selection the selection to be restored
 		 */
 		private void restoreSelection(final ITextSelection selection) {
-			
+
 			if (selection == null || fSourceViewer == null)
 				return;
-				
-			IDocument document= fSourceViewer.getDocument();
-			int offset= selection.getOffset();
-			int length= selection.getLength();
+
+			IDocument document = fSourceViewer.getDocument();
+			int offset = selection.getOffset();
+			int length = selection.getLength();
 			if (offset + length <= document.getLength()) {
 
 				try {
@@ -200,34 +206,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					 */
 				}
 			}
-		} 
+		}
 	};
-	
+
 	/**
 	 * Internal text listener.
 	 */
 	class TextListener implements ITextListener {
-		
-		private Runnable fRunnable= new Runnable() {
+
+		private Runnable fRunnable = new Runnable() {
 			public void run() {
 				updateContentDependentActions();
 			}
 		};
-		
+
 		private Display fDisplay;
-		
+
 		/**
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
-			
+
 			if (fDisplay == null)
-				fDisplay= getSite().getShell().getDisplay();
-				
+				fDisplay = getSite().getShell().getDisplay();
+
 			fDisplay.asyncExec(fRunnable);
 		}
 	};
-	
+
 	/**
 	 * Internal property change listener.
 	 */
@@ -239,124 +245,122 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			handlePreferenceStoreChanged(event);
 		}
 	};
-	
+
 	/**
 	 * Internal key verify listener for triggering action activation codes.
 	 */
 	class ActivationCodeTrigger implements VerifyKeyListener {
-		
-		public boolean fIsInstalled= false;
-		
+
+		public boolean fIsInstalled = false;
+
 		/**
 		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
 		 */
 		public void verifyKey(VerifyEvent event) {
-			ActionActivationCode code= null;
-			int size= fActivationCodes.size();
-			for (int i= 0; i < size; i++) {
-				code= (ActionActivationCode) fActivationCodes.get(i);
+			ActionActivationCode code = null;
+			int size = fActivationCodes.size();
+			for (int i = 0; i < size; i++) {
+				code = (ActionActivationCode) fActivationCodes.get(i);
 				if (code.matches(event)) {
-					IAction action= getAction(code.fActionId);
+					IAction action = getAction(code.fActionId);
 					if (action != null) {
-						
+
 						if (action instanceof IUpdate)
-							((IUpdate) action).update();
-						
+							 ((IUpdate) action).update();
+
 						if (action.isEnabled()) {
-							event.doit= false;
+							event.doit = false;
 							action.run();
 							return;
 						}
 					}
 				}
-			}	
-		}		
+			}
+		}
 	};
-	
+
 	/**
 	 * Representation of action activation codes.
 	 */
 	class ActionActivationCode {
-		
+
 		public String fActionId;
 		public char fCharacter;
 		public int fKeyCode;
 		public int fStateMask;
-		
+
 		public ActionActivationCode(String actionId) {
-			fActionId= actionId;
+			fActionId = actionId;
 		}
-		
+
 		public boolean matches(VerifyEvent event) {
-			return (event.character == fCharacter &&
-						event.keyCode == fKeyCode &&
-						event.stateMask == fStateMask);
-		}		
+			return (
+				event.character == fCharacter
+					&& event.keyCode == fKeyCode
+					&& event.stateMask == fStateMask);
+		}
 	};
-	
+
 	/**
 	 * Internal part activation listener
 	 */
 	class PartListener implements IPartListener {
-		
-		private long fModificationStamp= -1;
-		
+
+		private long fModificationStamp = -1;
+
 		/**
 		 * @see IPartListener#partActivated(IWorkbenchPart)
 		 */
 		public void partActivated(IWorkbenchPart part) {
 			if (part == AbstractTextEditor.this) {
-				
-				IDocumentProvider p= getDocumentProvider();
-				
-				if (fModificationStamp == -1) 
-					fModificationStamp= p.getSynchronizationStamp(getEditorInput());
-					
-				long stamp= p.getModificationStamp(getEditorInput());
+
+				IDocumentProvider p = getDocumentProvider();
+
+				if (fModificationStamp == -1)
+					fModificationStamp = p.getSynchronizationStamp(getEditorInput());
+
+				long stamp = p.getModificationStamp(getEditorInput());
 				if (stamp != fModificationStamp) {
-					fModificationStamp= stamp;
+					fModificationStamp = stamp;
 					if (stamp != p.getSynchronizationStamp(getEditorInput()))
 						handleEditorInputChanged();
 				}
 			}
 		}
-	
+
 		/**
 		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 		 */
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
-	
+
 		/**
 		 * @see IPartListener#partClosed(IWorkbenchPart)
 		 */
 		public void partClosed(IWorkbenchPart part) {
 		}
-	
+
 		/**
 		 * @see IPartListener#partDeactivated(IWorkbenchPart)
 		 */
 		public void partDeactivated(IWorkbenchPart part) {
 		}
-	
+
 		/**
 		 * @see IPartListener#partOpened(IWorkbenchPart)
 		 */
 		public void partOpened(IWorkbenchPart part) {
 		}
-	
+
 	};
-	
-	/** Key used to look up font preference */
-	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font";
+
 	/** Menu id for the editor context menu. */
-	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext";
+	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID = "#EditorContext";
 	/** Menu id for the ruler context menu. */
-	public final static String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext";
+	public final static String DEFAULT_RULER_CONTEXT_MENU_ID = "#RulerContext";
 	/** The width of the vertical ruler */
-	protected final static int VERTICAL_RULER_WIDTH= 12;
-	
-	
+	protected final static int VERTICAL_RULER_WIDTH = 12;
+
 	/** The editor's internal document provider */
 	private IDocumentProvider fInternalDocumentProvider;
 	/** The editor's external document provider */
@@ -385,16 +389,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private String fHelpContextId;
 	/** The editor's presentation mode */
 	private boolean fShowHighlightRangeOnly;
-	/** The actions registered with the editor */	
-	private Map fActions= new HashMap(10);
+	/** The actions registered with the editor */
+	private Map fActions = new HashMap(10);
 	/** The actions marked as selection dependent */
-	private List fSelectionActions= new ArrayList(5);
+	private List fSelectionActions = new ArrayList(5);
 	/** The actions marked as content dependent */
-	private List fContentActions= new ArrayList(5);
+	private List fContentActions = new ArrayList(5);
 	/** The editor's action activation codes */
-	private List fActivationCodes= new ArrayList(2);
+	private List fActivationCodes = new ArrayList(2);
 	/** The verify key listener for activation code triggering */
-	private ActivationCodeTrigger fActivationCodeTrigger= new ActivationCodeTrigger();
+	private ActivationCodeTrigger fActivationCodeTrigger =
+		new ActivationCodeTrigger();
 	/** Context menu listener */
 	private IMenuListener fMenuListener;
 	/** Vertical ruler mouse listener */
@@ -408,15 +413,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The ruler context menu to be disposed */
 	private Menu fRulerContextMenu;
 	/** The editor's element state listener */
-	private IElementStateListener fElementStateListener= new ElementStateListener();
+	private IElementStateListener fElementStateListener =
+		new ElementStateListener();
 	/** The editor's text listener */
-	private ITextListener fTextListener= new TextListener();
+	private ITextListener fTextListener = new TextListener();
 	/** The editor's property change listener */
-	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	private IPropertyChangeListener fPropertyChangeListener =
+		new PropertyChangeListener();
 	/** The editor's part listener */
-	private IPartListener fPartListener= new PartListener();
-	
-	
+	private IPartListener fPartListener = new PartListener();
+
 	/**
 	 * Creates a new text editor. It initializes the editor and ruler context
 	 * menu id with the predefined names. If not explicitly set, this
@@ -425,19 +431,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected AbstractTextEditor() {
 		super();
-		fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
-		fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
-		fHelpContextId= null;
+		fEditorContextMenuId = DEFAULT_EDITOR_CONTEXT_MENU_ID;
+		fRulerContextMenuId = DEFAULT_RULER_CONTEXT_MENU_ID;
+		fHelpContextId = null;
 	}
 	/**
 	 * Convenience method to add the action installed under the given action id
 	 * to the given menu.
 	 */
 	protected final void addAction(IMenuManager menu, String actionId) {
-		IAction action= getAction(actionId);
+		IAction action = getAction(actionId);
 		if (action != null) {
 			if (action instanceof IUpdate)
-				((IUpdate) action).update();
+				 ((IUpdate) action).update();
 			menu.add(action);
 		}
 	}
@@ -445,28 +451,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Convenience method to add the action installed under the given action id
 	 * to the specified group of the menu.
 	 */
-	protected final void addAction(IMenuManager menu, String group, String actionId) {
-	 	IAction action= getAction(actionId);
-	 	if (action != null) {
-	 		if (action instanceof IUpdate)
-	 			((IUpdate) action).update();
-	 			
-	 		IMenuManager subMenu= menu.findMenuUsingPath(group);
-	 		if (subMenu != null)
-	 			subMenu.add(action);
-	 		else
-	 			menu.appendToGroup(group, action);
-	 	}
+	protected final void addAction(
+		IMenuManager menu,
+		String group,
+		String actionId) {
+		IAction action = getAction(actionId);
+		if (action != null) {
+			if (action instanceof IUpdate)
+				 ((IUpdate) action).update();
+
+			IMenuManager subMenu = menu.findMenuUsingPath(group);
+			if (subMenu != null)
+				subMenu.add(action);
+			else
+				menu.appendToGroup(group, action);
+		}
 	}
 	/**
 	 * Convenience method to add a new group after the specified group.
 	 */
-	protected final void addGroup(IMenuManager menu, String existingGroup, String newGroup) {
- 		IMenuManager subMenu= menu.findMenuUsingPath(existingGroup);
- 		if (subMenu != null)
- 			subMenu.add(new Separator(newGroup));
- 		else
- 			menu.appendToGroup(existingGroup, new Separator(newGroup));
+	protected final void addGroup(
+		IMenuManager menu,
+		String existingGroup,
+		String newGroup) {
+		IMenuManager subMenu = menu.findMenuUsingPath(existingGroup);
+		if (subMenu != null)
+			subMenu.add(new Separator(newGroup));
+		else
+			menu.appendToGroup(existingGroup, new Separator(newGroup));
 	}
 	/**
 	 * Adjusts the highlight range so that at least the specified range 
@@ -479,7 +491,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void adjustHighlightRange(int offset, int length) {
 		if (fSourceViewer == null)
 			return;
-		
+
 		if (!fSourceViewer.overlapsWithVisibleRegion(offset, length))
 			fSourceViewer.resetVisibleRegion();
 	}
@@ -487,9 +499,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#close
 	 */
 	public void close(final boolean save) {
-		
-		Display display= getSite().getShell().getDisplay();
-		
+
+		Display display = getSite().getShell().getDisplay();
+
 		display.asyncExec(new Runnable() {
 			public void run() {
 				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
@@ -504,84 +516,159 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * </p>
 	 */
 	protected void createActions() {
-		
+
 		ResourceAction action;
-		
-		action= new TextOperationAction(getResourceBundle(), "Undo.", this, ITextOperationTarget.UNDO);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Undo.",
+				this,
+				ITextOperationTarget.UNDO);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
 		setAction(ITextEditorActionConstants.UNDO, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Redo.", this, ITextOperationTarget.REDO);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Redo.",
+				this,
+				ITextOperationTarget.REDO);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
 		setAction(ITextEditorActionConstants.REDO, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Cut.", this, ITextOperationTarget.CUT);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Cut.",
+				this,
+				ITextOperationTarget.CUT);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		setAction(ITextEditorActionConstants.CUT, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Copy.", this, ITextOperationTarget.COPY);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Copy.",
+				this,
+				ITextOperationTarget.COPY);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
 		setAction(ITextEditorActionConstants.COPY, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Paste.", this, ITextOperationTarget.PASTE);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Paste.",
+				this,
+				ITextOperationTarget.PASTE);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
 		setAction(ITextEditorActionConstants.PASTE, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "Delete.", this, ITextOperationTarget.DELETE);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"Delete.",
+				this,
+				ITextOperationTarget.DELETE);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
 		setAction(ITextEditorActionConstants.DELETE, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "SelectAll.", this, ITextOperationTarget.SELECT_ALL);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"SelectAll.",
+				this,
+				ITextOperationTarget.SELECT_ALL);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"ShiftRight.",
+				this,
+				ITextOperationTarget.SHIFT_RIGHT);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
-		
-		action= new TextOperationAction(getResourceBundle(), "ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT);
+
+		action =
+			new TextOperationAction(
+				getResourceBundle(),
+				"ShiftLeft.",
+				this,
+				ITextOperationTarget.SHIFT_LEFT);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
-		
-		action= new FindReplaceAction(getResourceBundle(), "FindReplace.", this);
+
+		action = new FindReplaceAction(getResourceBundle(), "FindReplace.", this);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		setAction(ITextEditorActionConstants.FIND, action);
-		
-		action= new AddMarkerAction(getResourceBundle(), "AddBookmark.", this, IMarker.BOOKMARK, true);
+
+		action =
+			new AddMarkerAction(
+				getResourceBundle(),
+				"AddBookmark.",
+				this,
+				IMarker.BOOKMARK,
+				true);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
 		setAction(ITextEditorActionConstants.BOOKMARK, action);
-		
-		action= new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true);
+
+		action =
+			new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
 		setAction(ITextEditorActionConstants.ADD_TASK, action);
-		
-		action= new SaveAction(getResourceBundle(), "Save.", this);
+
+		action = new SaveAction(getResourceBundle(), "Save.", this);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
 		setAction(ITextEditorActionConstants.SAVE, action);
-		
-		action= new RevertToSavedAction(getResourceBundle(), "Revert.", this);
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
+
+		action = new RevertToSavedAction(getResourceBundle(), "Revert.", this);
+		action.setHelpContextId(
+			IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
-		
-		action= new GotoLineAction(getResourceBundle(), "GotoLine.", this);
+
+		action = new GotoLineAction(getResourceBundle(), "GotoLine.", this);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
-		
-		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(getResourceBundle(), "ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true));
-		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(getResourceBundle(), "ManageTasks.", fVerticalRuler, this, IMarker.TASK, true));
-		setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
-		
+
+		setAction(
+			ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS,
+			new MarkerRulerAction(
+				getResourceBundle(),
+				"ManageBookmarks.",
+				fVerticalRuler,
+				this,
+				IMarker.BOOKMARK,
+				true));
+		setAction(
+			ITextEditorActionConstants.RULER_MANAGE_TASKS,
+			new MarkerRulerAction(
+				getResourceBundle(),
+				"ManageTasks.",
+				fVerticalRuler,
+				this,
+				IMarker.TASK,
+				true));
+		setAction(
+			ITextEditorActionConstants.RULER_DOUBLE_CLICK,
+			getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
+
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
-		
+
 		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
-		
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
+
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT, '\t', 0, 0);
+		setActionActivationCode(
+			ITextEditorActionConstants.SHIFT_LEFT,
+			'\t',
+			0,
+		/* SWT.SHIFT */ SWT.CTRL);
 	}
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
@@ -589,48 +676,73 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * source viewer. Subclasses may extend.
 	 */
 	public void createPartControl(Composite parent) {
-				
-		fVerticalRuler= createVerticalRuler();
-		
-		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		fSourceViewer= createSourceViewer(parent, fVerticalRuler, styles);
-		
+
+		fVerticalRuler = createVerticalRuler();
+
+		int styles =
+			SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
+		fSourceViewer = createSourceViewer(parent, fVerticalRuler, styles);
+
 		if (fConfiguration == null)
-			fConfiguration= new SourceViewerConfiguration();
+			fConfiguration = new SourceViewerConfiguration();
 		fSourceViewer.configure(fConfiguration);
-		
+
 		if (fRangeIndicator != null)
 			fSourceViewer.setRangeIndicator(fRangeIndicator);
-		
+
 		fSourceViewer.addTextListener(fTextListener);
-		getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
-				
-		StyledText styledText= fSourceViewer.getTextWidget();
+		getSelectionProvider().addSelectionChangedListener(
+			getSelectionChangedListener());
+
+		final StyledText styledText = fSourceViewer.getTextWidget();
 		initializeWidgetFont(styledText);
-		
+
+		fontListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (JFaceResources.TEXT_FONT.equals(event.getProperty())) {
+					initializeWidgetFont(styledText);
+				}
+			}
+		};
+
+		styledText.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				JFaceResources.getFontRegistry().removeListener(fontListener);
+			}
+		});
+
+		JFaceResources.getFontRegistry().addListener(fontListener);
+
 		if (getHelpContextId() != null)
-			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
-			
-		MenuManager manager= new MenuManager(fEditorContextMenuId, fEditorContextMenuId);
+			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId()});
+
+		MenuManager manager =
+			new MenuManager(fEditorContextMenuId, fEditorContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());
-		fTextContextMenu= manager.createContextMenu(styledText);
+		fTextContextMenu = manager.createContextMenu(styledText);
 		styledText.setMenu(fTextContextMenu);
-		getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
-		
-		Control ruler= fVerticalRuler.getControl();
-		manager= new MenuManager(fRulerContextMenuId, fRulerContextMenuId);
+		getSite().registerContextMenu(
+			fEditorContextMenuId,
+			manager,
+			getSelectionProvider());
+
+		Control ruler = fVerticalRuler.getControl();
+		manager = new MenuManager(fRulerContextMenuId, fRulerContextMenuId);
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(getContextMenuListener());		
-		fRulerContextMenu= manager.createContextMenu(ruler);
+		manager.addMenuListener(getContextMenuListener());
+		fRulerContextMenu = manager.createContextMenu(ruler);
 		ruler.setMenu(fRulerContextMenu);
 		ruler.addMouseListener(getRulerMouseListener());
-		getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
-		
+		getSite().registerContextMenu(
+			fRulerContextMenuId,
+			manager,
+			getSelectionProvider());
+
 		createActions();
-		
+
 		getSite().setSelectionProvider(getSelectionProvider());
-		
+
 		initializeSourceViewer(getEditorInput());
 	}
 	/**
@@ -645,7 +757,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
 		return new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
-				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()), overwrite);
+				getDocumentProvider().saveDocument(
+					monitor,
+					getEditorInput(),
+					getDocumentProvider().getDocument(getEditorInput()),
+					overwrite);
 			}
 		};
 	}
@@ -658,7 +774,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param styles style bits
 	 * @return the source viewer
 	 */
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+	protected ISourceViewer createSourceViewer(
+		Composite parent,
+		IVerticalRuler ruler,
+		int styles) {
 		return new SourceViewer(parent, ruler, styles);
 	}
 	/**
@@ -676,75 +795,76 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Subclasses must call <code>super.dispose()</code>.
 	 */
 	public void dispose() {
-		
+
 		if (fPartListener != null) {
-			getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
-			fPartListener= null;
+			getSite().getWorkbenchWindow().getPartService().removePartListener(
+				fPartListener);
+			fPartListener = null;
 		}
-		
+
 		if (fTitleImage != null) {
 			fTitleImage.dispose();
-			fTitleImage= null;
+			fTitleImage = null;
 		}
-		
+
 		if (fFont != null) {
 			fFont.dispose();
-			fFont= null;
+			fFont = null;
 		}
-		
+
 		if (fPropertyChangeListener != null) {
 			if (fPreferenceStore != null) {
 				fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-				fPreferenceStore= null;
+				fPreferenceStore = null;
 			}
-			fPropertyChangeListener= null;
+			fPropertyChangeListener = null;
 		}
-		
-		IDocumentProvider provider= getDocumentProvider();
+
+		IDocumentProvider provider = getDocumentProvider();
 		if (provider != null) {
-			
-			IEditorInput input= getEditorInput();
+
+			IEditorInput input = getEditorInput();
 			if (input != null)
 				provider.disconnect(input);
-			
+
 			if (fElementStateListener != null) {
 				provider.removeElementStateListener(fElementStateListener);
-				fElementStateListener= null;
+				fElementStateListener = null;
 			}
-			
-			fInternalDocumentProvider= null;
-			fExternalDocumentProvider= null;
+
+			fInternalDocumentProvider = null;
+			fExternalDocumentProvider = null;
 		}
-		
+
 		if (fSourceViewer != null) {
 			if (fTextListener != null) {
 				fSourceViewer.removeTextListener(fTextListener);
-				fTextListener= null;
+				fTextListener = null;
 			}
-			fSourceViewer= null;
+			fSourceViewer = null;
 		}
-		
+
 		if (fTextContextMenu != null) {
 			fTextContextMenu.dispose();
-			fTextContextMenu= null;
+			fTextContextMenu = null;
 		}
-		
+
 		if (fRulerContextMenu != null) {
 			fRulerContextMenu.dispose();
-			fRulerContextMenu= null;
+			fRulerContextMenu = null;
 		}
-		
+
 		if (fActions != null) {
 			fActions.clear();
-			fActions= null;
+			fActions = null;
 		}
-		
+
 		if (fActivationCodes != null) {
-			fActivationCodeTrigger= null;
+			fActivationCodeTrigger = null;
 			fActivationCodes.clear();
-			fActivationCodes= null;
-		}		
-		
+			fActivationCodes = null;
+		}
+
 		super.dispose();
 	}
 	/**
@@ -752,27 +872,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>ITextEditor</code> method may be extended by subclasses.
 	 */
 	public void doRevertToSaved() {
-		
-		IDocumentProvider p= getDocumentProvider();
+
+		IDocumentProvider p = getDocumentProvider();
 		if (p == null)
 			return;
-			
+
 		try {
-			
+
 			p.resetDocument(getEditorInput());
-			
-			IAnnotationModel model= p.getAnnotationModel(getEditorInput());
+
+			IAnnotationModel model = p.getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+				AbstractMarkerAnnotationModel markerModel =
+					(AbstractMarkerAnnotationModel) model;
 				markerModel.resetMarkers();
 			}
-						
+
 			firePropertyChange(PROP_DIRTY);
-			
+
 		} catch (CoreException x) {
-			String title= getResourceString("Error.revert.title");
-			String msg= getResourceString("Error.revert.message");
-			Shell shell= getSite().getShell();
+			String title = getResourceString("Error.revert.title");
+			String msg = getResourceString("Error.revert.message");
+			Shell shell = getSite().getShell();
 			ErrorDialog.openError(shell, title, msg, x.getStatus());
 		}
 	}
@@ -781,32 +902,32 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>IEditorPart</code> method may be extended by subclasses.
 	 */
 	public void doSave(IProgressMonitor progressMonitor) {
-		
-		IDocumentProvider p= getDocumentProvider();
+
+		IDocumentProvider p = getDocumentProvider();
 		if (p == null)
 			return;
-			
+
 		if (p.isDeleted(getEditorInput())) {
-			
+
 			if (isSaveAsAllowed()) {
-				
+
 				/*
 				 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
 				 * Changed Behavior to make sure that if called inside a regular save (because
 				 * of deletion of input element) there is a way to report back to the caller.
 				 */
 				performSaveAs(progressMonitor);
-			
+
 			} else {
-				
-				Shell shell= getSite().getShell();
-				String title= getResourceString("Error.save.deleted.title");
-				String msg= getResourceString("Error.save.deleted.message");
+
+				Shell shell = getSite().getShell();
+				String title = getResourceString("Error.save.deleted.title");
+				String msg = getResourceString("Error.save.deleted.message");
 				MessageDialog.openError(shell, title, msg);
 			}
-			
-		} else {	
-		
+
+		} else {
+
 			performSaveOperation(createSaveOperation(false), progressMonitor);
 		}
 	}
@@ -829,30 +950,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @exception CoreException if input cannot be connected to the document provider
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
-		
+
 		if (input == null)
-			
 			close(isSaveOnCloseNeeded());
-		
+
 		else {
-			
-			IEditorInput oldInput= getEditorInput();
+
+			IEditorInput oldInput = getEditorInput();
 			if (oldInput != null)
 				getDocumentProvider().disconnect(oldInput);
-			
-				
+
 			super.setInput(input);
-			
+
 			updateDocumentProvider(input);
-			
-			IDocumentProvider provider= getDocumentProvider();
+
+			IDocumentProvider provider = getDocumentProvider();
 			if (provider == null) {
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, getResourceString("Error.no_provider"), null);
+				IStatus s =
+					new Status(
+						IStatus.ERROR,
+						PlatformUI.PLUGIN_ID,
+						IStatus.OK,
+						getResourceString("Error.no_provider"),
+						null);
 				throw new CoreException(s);
 			}
-			
+
 			provider.connect(input);
-			
+
 			initializeTitle(input);
 			if (fSourceViewer != null)
 				initializeSourceViewer(input);
@@ -867,14 +992,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param menu the menu
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		
+
 		if (isEditable()) {
 			menu.add(new Separator(ITextEditorActionConstants.GROUP_UNDO));
 			addAction(menu, ITextEditorActionConstants.UNDO);
 			addAction(menu, ITextEditorActionConstants.REDO);
-			addAction(menu, ITextEditorActionConstants.REVERT_TO_SAVED);			
+			addAction(menu, ITextEditorActionConstants.REVERT_TO_SAVED);
 		}
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_COPY));
 		if (isEditable()) {
 			addAction(menu, ITextEditorActionConstants.CUT);
@@ -885,25 +1010,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			addAction(menu, ITextEditorActionConstants.COPY);
 			addAction(menu, ITextEditorActionConstants.SELECT_ALL);
 		}
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		addAction(menu, ITextEditorActionConstants.SHIFT_RIGHT);
 		addAction(menu, ITextEditorActionConstants.SHIFT_LEFT);
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_FIND));
 		addAction(menu, ITextEditorActionConstants.FIND);
 		addAction(menu, ITextEditorActionConstants.GOTO_LINE);
-		
-		String label= getResourceString("AddMenu.label", "A&dd");
-		MenuManager submenu= new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
+
+		String label = getResourceString("AddMenu.label", "A&dd");
+		MenuManager submenu =
+			new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
 		addAction(submenu, ITextEditorActionConstants.BOOKMARK);
 		addAction(submenu, ITextEditorActionConstants.ADD_TASK);
 		menu.add(submenu);
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
 		if (isEditable())
 			addAction(menu, ITextEditorActionConstants.SAVE);
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 	}
@@ -915,9 +1041,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 			code has been installed
 	 */
 	private ActionActivationCode findActionActivationCode(String actionID) {
-		int size= fActivationCodes.size();
-		for (int i= 0; i < size; i++) {
-			ActionActivationCode code= (ActionActivationCode) fActivationCodes.get(i);
+		int size = fActivationCodes.size();
+		for (int i = 0; i < size; i++) {
+			ActionActivationCode code = (ActionActivationCode) fActivationCodes.get(i);
 			if (actionID.equals(code.fActionId))
 				return code;
 		}
@@ -953,17 +1079,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final IMenuListener getContextMenuListener() {
 		if (fMenuListener == null) {
-			fMenuListener= new IMenuListener() {
-				
+			fMenuListener = new IMenuListener() {
+
 				public void menuAboutToShow(IMenuManager menu) {
-					String id= menu.getId();
+					String id = menu.getId();
 					if (getRulerContextMenuId().equals(id)) {
 						setFocus();
 						rulerContextMenuAboutToShow(menu);
-					} else if (getEditorContextMenuId().equals(id)) {
-						setFocus();
-						editorContextMenuAboutToShow(menu);
-					}
+					} else
+						if (getEditorContextMenuId().equals(id)) {
+							setFocus();
+							editorContextMenuAboutToShow(menu);
+						}
 				}
 			};
 		}
@@ -999,10 +1126,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public IRegion getHighlightRange() {
 		if (fSourceViewer == null)
 			return null;
-			
+
 		if (fShowHighlightRangeOnly)
 			return fSourceViewer.getVisibleRegion();
-			
+
 		return fSourceViewer.getRangeIndication();
 	}
 	/**
@@ -1028,7 +1155,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private ResourceBundle getResourceBundle() {
 		if (fResourceBundle == null)
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+			fResourceBundle =
+				ResourceBundle.getBundle(
+					"org.eclipse.ui.texteditor.AbstractTextEditorResources");
 		return fResourceBundle;
 	}
 	/**
@@ -1063,17 +1192,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final MouseListener getRulerMouseListener() {
 		if (fMouseListener == null) {
-			fMouseListener= new MouseListener() {
-				
-				public void mouseDown(MouseEvent e) {}
-				
-				public void mouseUp(MouseEvent e) {}
-				
+			fMouseListener = new MouseListener() {
+
+				public void mouseDown(MouseEvent e) {
+				}
+
+				public void mouseUp(MouseEvent e) {
+				}
+
 				public void mouseDoubleClick(MouseEvent e) {
-					IAction action= getAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
+					IAction action = getAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
 					if (action != null) {
 						if (action instanceof IUpdate)
-							((IUpdate) action).update();
+							 ((IUpdate) action).update();
 						action.run();
 					}
 				}
@@ -1089,25 +1220,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final ISelectionChangedListener getSelectionChangedListener() {
 		if (fSelectionChangedListener == null) {
-			fSelectionChangedListener= new ISelectionChangedListener() {
-				
-				private Runnable fRunnable= new Runnable() {
+			fSelectionChangedListener = new ISelectionChangedListener() {
+
+				private Runnable fRunnable = new Runnable() {
 					public void run() {
 						updateSelectionDependentActions();
 					}
 				};
-				
+
 				private Display fDisplay;
-				
+
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (fDisplay == null)
-						fDisplay= getSite().getShell().getDisplay();
-						
-					fDisplay.asyncExec(fRunnable);	
+						fDisplay = getSite().getShell().getDisplay();
+
+					fDisplay.asyncExec(fRunnable);
 				}
 			};
 		}
-		
+
 		return fSelectionChangedListener;
 	}
 	/*
@@ -1148,51 +1279,53 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see EditorPart#gotoMarker
 	 */
 	public void gotoMarker(IMarker marker) {
-		
+
 		if (fSourceViewer == null)
 			return;
-		
-		int start= MarkerUtilities.getCharStart(marker);
-		int end= MarkerUtilities.getCharEnd(marker);
-		
+
+		int start = MarkerUtilities.getCharStart(marker);
+		int end = MarkerUtilities.getCharEnd(marker);
+
 		if (start < 0 || end < 0) {
-			
+
 			// there is only a line number
-			int line= MarkerUtilities.getLineNumber(marker);
+			int line = MarkerUtilities.getLineNumber(marker);
 			if (line > -1) {
-				
+
 				// marker line numbers are 1-based
-				-- line;
-				
+				--line;
+
 				try {
-					
-					IDocument document= getDocumentProvider().getDocument(getEditorInput());
+
+					IDocument document = getDocumentProvider().getDocument(getEditorInput());
 					selectAndReveal(document.getLineOffset(line), document.getLineLength(line));
-				
+
 				} catch (BadLocationException x) {
 					// marker refers to invalid text position -> do nothing
 				}
 			}
-			
+
 		} else {
-		
+
 			// look up the current range of the marker when the document has been edited
-			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+			IAnnotationModel model =
+				getDocumentProvider().getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
-				
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-				Position pos= markerModel.getMarkerPosition(marker);
+
+				AbstractMarkerAnnotationModel markerModel =
+					(AbstractMarkerAnnotationModel) model;
+				Position pos = markerModel.getMarkerPosition(marker);
 				if (pos == null || pos.isDeleted()) {
 					// do nothing if position has been deleted
 					return;
 				}
-				
-				start= pos.getOffset();
-				end= pos.getOffset() + pos.getLength();
+
+				start = pos.getOffset();
+				end = pos.getOffset() + pos.getLength();
 			}
-			
-			IDocument document= getDocumentProvider().getDocument(getEditorInput());
-			int length= document.getLength();
+
+			IDocument document = getDocumentProvider().getDocument(getEditorInput());
+			int length = document.getLength();
 			if (end - 1 < length && start < length)
 				selectAndReveal(start, end - start);
 		}
@@ -1201,52 +1334,54 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Handles an external change of the editor's input element.
 	 */
 	protected void handleEditorInputChanged() {
-		
+
 		String title;
 		String msg;
-		Shell shell= getSite().getShell();
-		
+		Shell shell = getSite().getShell();
+
 		if (getDocumentProvider().isDeleted(getEditorInput())) {
-			
+
 			if (isSaveAsAllowed()) {
-			
-				title= getResourceString("Error.activated.deleted.save.title");
-				msg= getResourceString("Error.activated.deleted.save.message");
-				
-				String[] buttons= {
-					getResourceString("Error.activated.deleted.save.button.save"),
-					getResourceString("Error.activated.deleted.save.button.close"),
-				};
-					
-				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
-				
+
+				title = getResourceString("Error.activated.deleted.save.title");
+				msg = getResourceString("Error.activated.deleted.save.message");
+
+				String[] buttons =
+					{
+						getResourceString("Error.activated.deleted.save.button.save"),
+						getResourceString("Error.activated.deleted.save.button.close"),
+						};
+
+				MessageDialog dialog =
+					new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
+
 				if (dialog.open() == 0) {
-					NullProgressMonitor pm= new NullProgressMonitor();
+					NullProgressMonitor pm = new NullProgressMonitor();
 					performSaveAs(pm);
 					if (pm.isCanceled())
 						handleEditorInputChanged();
 				} else {
 					close(false);
 				}
-				
+
 			} else {
-				
-				title= getResourceString("Error.activated.deleted.close.title");
-				msg= getResourceString("Error.activated.deleted.close.message");
+
+				title = getResourceString("Error.activated.deleted.close.title");
+				msg = getResourceString("Error.activated.deleted.close.message");
 				MessageDialog.openConfirm(shell, title, msg);
 			}
-			
+
 		} else {
-			
-			title= getResourceString("Error.activated.outofsync.title");
-			msg= getResourceString("Error.activated.outofsync.message");
-				
+
+			title = getResourceString("Error.activated.outofsync.title");
+			msg = getResourceString("Error.activated.outofsync.message");
+
 			if (MessageDialog.openQuestion(shell, title, msg)) {
 				try {
 					doSetInput(getEditorInput());
 				} catch (CoreException x) {
-					title= getResourceString("Error.refresh.outofsync.title");
-					msg= getResourceString("Error.refresh.outofsync.message");
+					title = getResourceString("Error.refresh.outofsync.title");
+					msg = getResourceString("Error.refresh.outofsync.message");
 					ErrorDialog.openError(shell, title, msg, x.getStatus());
 				}
 			}
@@ -1260,19 +1395,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param exception the exception to handle
 	 * @param progressMonitor the progress monitor
 	 */
-	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
-		
-		Shell shell= getSite().getShell();
-		
-		IDocumentProvider p= getDocumentProvider();
-		long modifiedStamp= p.getModificationStamp(getEditorInput());
-		long synchStamp= p.getSynchronizationStamp(getEditorInput());
-		
+	protected void handleExceptionOnSave(
+		CoreException exception,
+		IProgressMonitor progressMonitor) {
+
+		Shell shell = getSite().getShell();
+
+		IDocumentProvider p = getDocumentProvider();
+		long modifiedStamp = p.getModificationStamp(getEditorInput());
+		long synchStamp = p.getSynchronizationStamp(getEditorInput());
+
 		if (modifiedStamp != synchStamp) {
-			
-			String title= getResourceString("Error.save.outofsync.title");
-			String msg= getResourceString("Error.save.outofsync.message");
-			
+
+			String title = getResourceString("Error.save.outofsync.title");
+			String msg = getResourceString("Error.save.outofsync.message");
+
 			if (MessageDialog.openQuestion(shell, title, msg))
 				performSaveOperation(createSaveOperation(true), progressMonitor);
 			else {
@@ -1284,11 +1421,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				progressMonitor.setCanceled(true);
 			}
 		} else {
-			
-			String title= getResourceString("Error.save.title");
-			String msg= getResourceString("Error.save.message");
+
+			String title = getResourceString("Error.save.title");
+			String msg = getResourceString("Error.save.message");
 			ErrorDialog.openError(shell, title, msg, exception.getStatus());
-			
+
 			/*
 			 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
 			 * Set progress monitor to canceled in order to report back 
@@ -1304,27 +1441,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param event the property change event
 	 */
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		
-		if (fSourceViewer == null)
-			return;
-			
-		if (PREFERENCE_FONT.equals(event.getProperty()))
-			initializeWidgetFont(fSourceViewer.getTextWidget());
-	}
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {}
 	/*
 	 * @see IEditorPart#init
 	 */
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		
+	public void init(IEditorSite site, IEditorInput input)
+		throws PartInitException {
+
 		setSite(site);
-		
+
 		try {
 			doSetInput(input);
 		} catch (CoreException x) {
 			throw new PartInitException(x.getMessage());
 		}
-		
+
 		getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
 	}
 	/**
@@ -1333,14 +1464,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param input the editor input to be used to initialize the source viewer
 	 */
 	private void initializeSourceViewer(IEditorInput input) {
-		
-		IAnnotationModel model= getDocumentProvider().getAnnotationModel(input);
-		IDocument document= getDocumentProvider().getDocument(input);
-		
+
+		IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
+		IDocument document = getDocumentProvider().getDocument(input);
+
 		if (document != null) {
 			fSourceViewer.setDocument(document, model);
 			fSourceViewer.setEditable(isEditable());
-			fSourceViewer.showAnnotations(model != null);			
+			fSourceViewer.showAnnotations(model != null);
 		}
 	}
 	/**
@@ -1349,22 +1480,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param input the editor input to be used
 	 */
 	private void initializeTitle(IEditorInput input) {
-		
-		Image oldImage= fTitleImage;
-		fTitleImage= null;
-		String title= "";
-		
+
+		Image oldImage = fTitleImage;
+		fTitleImage = null;
+		String title = "";
+
 		if (input != null) {
-			ImageDescriptor imageDesc= input.getImageDescriptor();
-			fTitleImage= imageDesc != null ? imageDesc.createImage() : null;
-			title= input.getName();
+			ImageDescriptor imageDesc = input.getImageDescriptor();
+			fTitleImage = imageDesc != null ? imageDesc.createImage() : null;
+			title = input.getName();
 		}
-		
+
 		setTitleImage(fTitleImage);
 		setTitle(title);
-		
+
 		firePropertyChange(PROP_DIRTY);
-		
+
 		if (oldImage != null && !oldImage.isDisposed())
 			oldImage.dispose();
 	}
@@ -1374,63 +1505,39 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param styledText the widget to be initialized
 	 */
 	private void initializeWidgetFont(StyledText styledText) {
-		
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			
-			FontData data= null;
-			
-			if (store.contains(PREFERENCE_FONT) && !store.isDefault(PREFERENCE_FONT))
-				data= PreferenceConverter.getFontData(store, PREFERENCE_FONT);
-			else
-				data= PreferenceConverter.getDefaultFontData(store, PREFERENCE_FONT);
-			
-			if (data != null) {
-				
-				Font font= new Font(styledText.getDisplay(), data);
-				styledText.setFont(font);
-				
-				if (fFont != null)
-					fFont.dispose();
-					
-				fFont= font;
-				return;
-			}
-		}
-		
-		// if all the preferences failed
+
 		styledText.setFont(JFaceResources.getTextFont());
 	}
 	/*
 	 * @see IEditorPart#isDirty
 	 */
 	public boolean isDirty() {
-		IDocumentProvider p= getDocumentProvider();
+		IDocumentProvider p = getDocumentProvider();
 		return p == null ? false : p.canSaveDocument(getEditorInput());
 	}
 	/*
 	 * @see ITextEditor#isEditable
 	 */
 	public boolean isEditable() {
-		
+
 		/*
 		 * 1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in the repositories?
 		 * Checks the editor input whether it is editable. This is a layer breaker, as only the
 		 * concrete document providers know about the various kinds of editor input.
 		 * Should be something like: getDocumentProvider().isEditable(getEditorInput());
 		 */
-		IEditorInput input= getEditorInput();
+		IEditorInput input = getEditorInput();
 		if (input instanceof IStorageEditorInput) {
-			IStorageEditorInput storageInput= (IStorageEditorInput) input;
+			IStorageEditorInput storageInput = (IStorageEditorInput) input;
 			try {
-				IStorage storage= storageInput.getStorage();
+				IStorage storage = storageInput.getStorage();
 				return (storage != null && !storage.isReadOnly());
 			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				ILog log = Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
 				log.log(x.getStatus());
 			}
 		}
-		
+
 		return true;
 	}
 	/**
@@ -1445,7 +1552,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see IEditorPart#isSaveOnCloseNeeded()
 	 */
 	public boolean isSaveOnCloseNeeded() {
-		IDocumentProvider p= getDocumentProvider();
+		IDocumentProvider p = getDocumentProvider();
 		return p == null ? false : p.mustSaveDocument(getEditorInput());
 	}
 	/**
@@ -1491,28 +1598,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param operation the operation to be performed
 	 * @param progressMonitor the monitor in which to run the operation
 	 */
-	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
-		
-		IDocumentProvider provider= getDocumentProvider();
-		
+	protected void performSaveOperation(
+		WorkspaceModifyOperation operation,
+		IProgressMonitor progressMonitor) {
+
+		IDocumentProvider provider = getDocumentProvider();
+
 		try {
-		
+
 			provider.aboutToChange(getEditorInput());
 			operation.run(progressMonitor);
-		
+
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
-			
-			Throwable t= x.getTargetException();
+
+			Throwable t = x.getTargetException();
 			if (t instanceof CoreException)
 				handleExceptionOnSave((CoreException) t, progressMonitor);
 			else {
-				Shell shell= getSite().getShell();
-				String title= getResourceString("Error.save.title");
-				String msg= getResourceString("Error.save.message");
+				Shell shell = getSite().getShell();
+				String title = getResourceString("Error.save.title");
+				String msg = getResourceString("Error.save.message");
 				MessageDialog.openError(shell, title, msg + t.getMessage());
 			}
-		
+
 		} finally {
 			provider.changed(getEditorInput());
 		}
@@ -1522,8 +1631,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public void removeActionActivationCode(String actionID) {
 		Assert.isNotNull(actionID);
-		
-		ActionActivationCode code= findActionActivationCode(actionID);
+
+		ActionActivationCode code = findActionActivationCode(actionID);
 		if (code != null) {
 			fActivationCodes.remove(code);
 			setupActionActivationCodes();
@@ -1535,7 +1644,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void resetHighlightRange() {
 		if (fSourceViewer == null)
 			return;
-		
+
 		if (fShowHighlightRangeOnly)
 			fSourceViewer.resetVisibleRegion();
 		else
@@ -1552,7 +1661,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
-		
+
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 	}
@@ -1562,13 +1671,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void selectAndReveal(int start, int length) {
 		if (fSourceViewer == null)
 			return;
-		
-		
-		StyledText widget= fSourceViewer.getTextWidget();
+
+		StyledText widget = fSourceViewer.getTextWidget();
 		widget.setRedraw(false);
 		{
 			adjustHighlightRange(start, length);
-			
+
 			fSourceViewer.revealRange(start, length);
 			fSourceViewer.setSelectedRange(start, length);
 		}
@@ -1587,20 +1695,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/*
 	 * @see ITextEditor#setActionActivationCode(String, char, int, int)
 	 */
-	public void setActionActivationCode(String actionID, char activationCharacter, int activationKeyCode, int activationStateMask) {
-		
+	public void setActionActivationCode(
+		String actionID,
+		char activationCharacter,
+		int activationKeyCode,
+		int activationStateMask) {
+
 		Assert.isNotNull(actionID);
-		
-		ActionActivationCode found= findActionActivationCode(actionID);
+
+		ActionActivationCode found = findActionActivationCode(actionID);
 		if (found == null) {
-			found= new ActionActivationCode(actionID);
+			found = new ActionActivationCode(actionID);
 			fActivationCodes.add(found);
 		}
-		
-		found.fCharacter= activationCharacter;
-		found.fKeyCode= activationKeyCode;
-		found.fStateMask= activationStateMask;
-		
+
+		found.fCharacter = activationCharacter;
+		found.fKeyCode = activationKeyCode;
+		found.fStateMask = activationStateMask;
+
 		setupActionActivationCodes();
 	}
 	/**
@@ -1611,7 +1723,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setDocumentProvider(IDocumentProvider provider) {
 		Assert.isNotNull(provider);
-		fInternalDocumentProvider= provider;
+		fInternalDocumentProvider = provider;
 	}
 	/**
 	 * Sets this editor's context menu id.
@@ -1620,7 +1732,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setEditorContextMenuId(String contextMenuId) {
 		Assert.isNotNull(contextMenuId);
-		fEditorContextMenuId= contextMenuId;
+		fEditorContextMenuId = contextMenuId;
 	}
 	/*
 	 * @see IDesktopPart#setFocus()
@@ -1636,7 +1748,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setHelpContextId(String helpContextId) {
 		Assert.isNotNull(helpContextId);
-		fHelpContextId= helpContextId;
+		fHelpContextId = helpContextId;
 	}
 	/*
 	 * @see ITextEditor#setHighlightRange
@@ -1644,7 +1756,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void setHighlightRange(int start, int length, boolean moveCursor) {
 		if (fSourceViewer == null)
 			return;
-			
+
 		if (fShowHighlightRangeOnly) {
 			if (moveCursor)
 				fSourceViewer.setVisibleRegion(start, length);
@@ -1655,17 +1767,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see EditorPart#setInput
 	 */
 	public final void setInput(IEditorInput input) {
-		
+
 		try {
-			
+
 			doSetInput(input);
-				
+
 		} catch (CoreException x) {
-			String title= getResourceString("Error.setinput.title");
-			String msg= getResourceString("Error.setinput.message");
-			Shell shell= getSite().getShell();
+			String title = getResourceString("Error.setinput.title");
+			String msg = getResourceString("Error.setinput.message");
+			Shell shell = getSite().getShell();
 			ErrorDialog.openError(shell, title, msg, x.getStatus());
-		}				
+		}
 	}
 	/**
 	 * Sets this editor's preference store. This method must be
@@ -1676,9 +1788,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void setPreferenceStore(IPreferenceStore store) {
 		if (fPreferenceStore != null)
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-			
-		fPreferenceStore= store;
-		
+
+		fPreferenceStore = store;
+
 		if (fPreferenceStore != null)
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 	}
@@ -1691,7 +1803,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setRangeIndicator(Annotation rangeIndicator) {
 		Assert.isNotNull(rangeIndicator);
-		fRangeIndicator= rangeIndicator;
+		fRangeIndicator = rangeIndicator;
 	}
 	/**
 	 * Sets the ruler's context menu id.
@@ -1700,7 +1812,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setRulerContextMenuId(String contextMenuId) {
 		Assert.isNotNull(contextMenuId);
-		fRulerContextMenuId= contextMenuId;
+		fRulerContextMenuId = contextMenuId;
 	}
 	/**
 	 * Sets this editor's source viewer configuration used to configure its
@@ -1711,7 +1823,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setSourceViewerConfiguration(SourceViewerConfiguration configuration) {
 		Assert.isNotNull(configuration);
-		fConfiguration= configuration;
+		fConfiguration = configuration;
 	}
 	/**
 	 * Deals with the installation/deinstallation of a 
@@ -1720,20 +1832,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private void setupActionActivationCodes() {
 		if (fActivationCodes.isEmpty() && fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
+			StyledText text = fSourceViewer.getTextWidget();
 			text.removeVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= false;
-		} else if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
-			text.addVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= true;
-		}
+			fActivationCodeTrigger.fIsInstalled = false;
+		} else
+			if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
+				StyledText text = fSourceViewer.getTextWidget();
+				text.addVerifyKeyListener(fActivationCodeTrigger);
+				fActivationCodeTrigger.fIsInstalled = true;
+			}
 	}
 	/*
 	 * @see ITextEditor#showHighlightRangeOnly
 	 */
 	public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
-		fShowHighlightRangeOnly= showHighlightRangeOnly;
+		fShowHighlightRangeOnly = showHighlightRangeOnly;
 	}
 	/*
 	 * @see ITextEditor#showsHighlightRangeOnly
@@ -1750,9 +1863,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private void updateAction(String actionId) {
 		Assert.isNotNull(actionId);
 		if (fActions != null) {
-			IAction action= (IAction) fActions.get(actionId);
+			IAction action = (IAction) fActions.get(actionId);
 			if (action instanceof IUpdate)
-				((IUpdate) action).update();
+				 ((IUpdate) action).update();
 		}
 	}
 	/**
@@ -1760,7 +1873,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void updateContentDependentActions() {
 		if (fContentActions != null) {
-			Iterator e= fContentActions.iterator();
+			Iterator e = fContentActions.iterator();
 			while (e.hasNext())
 				updateAction((String) e.next());
 		}
@@ -1774,10 +1887,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private void updateDocumentProvider(IEditorInput input) {
 		if (getDocumentProvider() != null)
 			getDocumentProvider().removeElementStateListener(fElementStateListener);
-			
+
 		if (fInternalDocumentProvider == null)
-			fExternalDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-			
+			fExternalDocumentProvider =
+				DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+
 		if (getDocumentProvider() != null)
 			getDocumentProvider().addElementStateListener(fElementStateListener);
 	}
@@ -1786,7 +1900,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void updateSelectionDependentActions() {
 		if (fSelectionActions != null) {
-			Iterator e= fSelectionActions.iterator();
+			Iterator e = fSelectionActions.iterator();
 			while (e.hasNext())
 				updateAction((String) e.next());
 		}
