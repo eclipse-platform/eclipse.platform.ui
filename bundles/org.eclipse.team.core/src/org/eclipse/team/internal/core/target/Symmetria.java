@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
@@ -40,52 +41,57 @@ public class Symmetria {
 		int depth,
 		IProgressMonitor progress) throws TeamException {
 
-		IResource localResource = resourceState.getLocal();
-
-		// If remote does not exist then simply ensure no local resource exists.
-		if (!resourceState.hasRemote()) {
-			deleteLocal(localResource, progress);
-			return;
-		}
-		
-		// If the remote resource is a file.
-		if (resourceState.getRemoteType() == IResource.FILE) {
-			// Replace any existing local resource with a copy of the remote file.
-			deleteLocal(localResource, progress);
-			resourceState.download(progress);
-			return;
-		}
-
-		// The remote resource is a container.
-
-		// If the local resource is a file, we must remove it first.
-		if (localResource.getType() == IResource.FILE)
-			deleteLocal(localResource, progress); // May not exist.
-
-		// If the local resource does not exist then it is created as a container.
-		if (!localResource.exists()) {
-			// Create a corresponding local directory.
-			mkLocalDirs(localResource, progress);
-		}
-
-		// Finally, resolve the collection membership based upon the depth parameter.
-		switch (depth) {
-			case IResource.DEPTH_ZERO :
-				// If we are not considering members of the collection then we are done.
+		progress.beginTask(null, 100);
+		try {
+			IResource localResource = resourceState.getLocal();
+			
+			// If remote does not exist then simply ensure no local resource exists.
+			if (!resourceState.hasRemote(Policy.subMonitorFor(progress, 10))) {
+				deleteLocal(localResource, Policy.subMonitorFor(progress, 90));
 				return;
-			case IResource.DEPTH_ONE :
-				// If we are considering only the immediate members of the collection
-				getFolderShallow(resourceState, progress);
+			}
+			
+			// If the remote resource is a file.
+			if (resourceState.getRemoteType() == IResource.FILE) {
+				// Replace any existing local resource with a copy of the remote file.
+				deleteLocal(localResource, Policy.subMonitorFor(progress, 10));
+				resourceState.download(Policy.subMonitorFor(progress, 90));
 				return;
-			case IResource.DEPTH_INFINITE :
-				// We are going in deep.
-				getFolderDeep(resourceState, progress);
-				return;
-			default :
-				// We have covered all the legal cases.
-				Assert.isLegal(false);
-				return; // Never reached.
-		} // end switch
+			}
+			
+			// The remote resource is a container.
+			
+			// If the local resource is a file, we must remove it first.
+			if (localResource.getType() == IResource.FILE)
+				deleteLocal(localResource, Policy.subMonitorFor(progress, 5)); // May not exist.
+			
+			// If the local resource does not exist then it is created as a container.
+			if (!localResource.exists()) {
+				// Create a corresponding local directory.
+				mkLocalDirs(localResource, Policy.subMonitorFor(progress, 5));
+			}
+			
+			// Finally, resolve the collection membership based upon the depth parameter.
+			switch (depth) {
+				case IResource.DEPTH_ZERO :
+					// If we are not considering members of the collection then we are done.
+					return;
+				case IResource.DEPTH_ONE :
+					// If we are considering only the immediate members of the collection
+					getFolderShallow(resourceState, Policy.subMonitorFor(progress, 90));
+					return;
+				case IResource.DEPTH_INFINITE :
+					// We are going in deep.
+					getFolderDeep(resourceState, Policy.subMonitorFor(progress, 90));
+					return;
+				default :
+					// We have covered all the legal cases.
+					Assert.isLegal(false);
+					return; // Never reached.
+			} // end switch
+		} finally {
+			progress.done();
+		}
 	}
 
 	/**

@@ -20,6 +20,7 @@ import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
@@ -121,12 +122,13 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
+		progress.beginTask(null, 100);
 		int description = IN_SYNC;
 		IResource local = getLocal();
 		boolean isDirty = provider.isDirty(local);
 		boolean isOutOfDate;
 		try{
-			isOutOfDate = provider.isOutOfDate(local);
+			isOutOfDate = provider.isOutOfDate(local, Policy.subMonitorFor(progress, 10));
 		} catch(TeamException e) {
 			isOutOfDate = true; // who knows?
 		}
@@ -169,7 +171,7 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 						description = CONFLICTING | CHANGE;
 					}
 					// if contents are the same, then mark as pseudo change
-					if (description != IN_SYNC && compare(granularity, false, local, remote, progress))
+					if (description != IN_SYNC && compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 90)))
 						description |= PSEUDO_CONFLICT;
 				}
 			}

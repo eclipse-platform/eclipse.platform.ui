@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.Site;
+import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
@@ -154,7 +155,7 @@ public abstract class ResourceState {
 	 * 		<li>NO_REMOTE_RESOURCE</li>
 	 * </ul></p>
 	 */
-	public abstract String getReleasedIdentifier() throws TeamException;
+	public abstract String getReleasedIdentifier(IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Check out the receiver. Return a status if the receiver is in the wrong state for the operation to be performed.
@@ -162,20 +163,25 @@ public abstract class ResourceState {
 	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
 	public void checkout(IProgressMonitor progress) throws TeamException {
-		// Not going to allow branching.
-		if (isOutOfDate())
-			throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
-
-		// Sanity check.
-		if (!hasRemote())
-			throw new TeamException(ITeamStatusConstants.NO_REMOTE_RESOURCE_STATUS);
-
-		// Legally, the resource must be checked in before it can be checked out.
-		if (isCheckedOut())
-			throw new TeamException(ITeamStatusConstants.NOT_CHECKED_IN_STATUS);
-
-		// Do the provider specific action for check-out.
-		basicCheckout(progress);
+		progress.beginTask(null, 100);
+		try {
+			// Not going to allow branching.
+			if (isOutOfDate(Policy.subMonitorFor(progress, 50)))
+				throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
+			
+			// Sanity check.
+			if (!hasRemote(Policy.subMonitorFor(progress, 50)))
+				throw new TeamException(ITeamStatusConstants.NO_REMOTE_RESOURCE_STATUS);
+			
+			// Legally, the resource must be checked in before it can be checked out.
+			if (isCheckedOut())
+				throw new TeamException(ITeamStatusConstants.NOT_CHECKED_IN_STATUS);
+			
+			// Do the provider specific action for check-out.
+			basicCheckout(progress);
+		} finally {
+			progress.done();
+		}
 	}
 	
 	/**
@@ -193,18 +199,23 @@ public abstract class ResourceState {
 	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
 	public void checkin(IProgressMonitor progress) throws TeamException {
-		// The resource must be checked out before it can be checked in.
-		if (!isCheckedOut())
-			throw new TeamException(ITeamStatusConstants.NOT_CHECKED_OUT_STATUS);
-
-		// Check to see if we can do this without conflict.
-		if (isOutOfDate())
-			throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
+		progress.beginTask(null, 100);
+		try {
+			// The resource must be checked out before it can be checked in.
+			if (!isCheckedOut())
+				throw new TeamException(ITeamStatusConstants.NOT_CHECKED_OUT_STATUS);
 			
-		// Copy from the local resource to the repository.	
-		upload(progress);
-		//if we got to here the upload succeeded (didn't throw)
-		checkedOut = false;
+			// Check to see if we can do this without conflict.
+			if (isOutOfDate(Policy.subMonitorFor(progress, 10)))
+				throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
+				
+			// Copy from the local resource to the repository.	
+			upload(Policy.subMonitorFor(progress, 90));
+			//if we got to here the upload succeeded (didn't throw)
+			checkedOut = false;
+		} finally {
+			progress.done();
+		}
 	}
 	
 	/**
@@ -257,12 +268,12 @@ public abstract class ResourceState {
 	 * Answers true if the base identifier of the given resource is different to the
 	 * current released state of the resource.
 	 */
-	public boolean isOutOfDate() throws TeamException {
+	public boolean isOutOfDate(IProgressMonitor monitor) throws TeamException {
 		if (remoteBaseIdentifier.equals(EMPTY_REMOTEBASEID))
 			return false; // by definition.
 
 		String releasedIdentifier = null;
-		releasedIdentifier = getReleasedIdentifier();
+		releasedIdentifier = getReleasedIdentifier(monitor);
 		return !remoteBaseIdentifier.equals(releasedIdentifier);
 	}
 
@@ -292,7 +303,7 @@ public abstract class ResourceState {
 	/**
 	 * Answer if the remote resource exists.
 	 */
-	public abstract boolean hasRemote() throws TeamException;
+	public abstract boolean hasRemote(IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Answer the type of the remote resource (if it exists).

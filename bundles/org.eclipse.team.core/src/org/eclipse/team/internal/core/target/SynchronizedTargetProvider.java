@@ -176,9 +176,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * current released state of the resource, and <code>false</code> otherwise.
 	 * @see ITeamSynch#isOutOfDate(IResource)
 	 */
-	public boolean isOutOfDate(IResource resource) throws TeamException {
+	public boolean isOutOfDate(IResource resource, IProgressMonitor monitor) throws TeamException {
 		ResourceState state = getState(resource);
-		return state.isOutOfDate();
+		return state.isOutOfDate(monitor);
 	}
 
 	/**
@@ -189,9 +189,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * and <code>false</code> otherwise.
 	 * @see ITeamSynch#hasRemote(IResource)
 	 */
-	public boolean hasRemote(IResource resource) throws TeamException {
+	public boolean hasRemote(IResource resource, IProgressMonitor monitor) throws TeamException {
 		ResourceState state = getState(resource);
-		return state.hasRemote();
+		return state.hasRemote(monitor);
 	}
 	
 	

@@ -123,7 +123,7 @@ public abstract class TargetProvider {
 	 * current released state of the resource.
 	 * @throws TeamException if there is a problem getting this information from the server.
 	 */
-	public abstract boolean isOutOfDate(IResource resource) throws TeamException;
+	public abstract boolean isOutOfDate(IResource resource, IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Answer if the local resource currently has a different timestamp to the
