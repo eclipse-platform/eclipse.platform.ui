@@ -241,10 +241,7 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	// get values
 	String name = getString(node, NAME);
 	String autobuild = getString(node, AUTOBUILD);
-	String snapshots = getString(node, SNAPSHOTS_ENABLED);
-	String operations = getString(node, OPERATIONS_PER_SNAPSHOT);
 	String snapshotInterval = getString(node, SNAPSHOT_INTERVAL);
-	String deltaExpiration = getString(node, DELTA_EXPIRATION_TIMESTAMP);
 	String fileStateLongevity = getString(node, FILE_STATE_LONGEVITY);
 	String maxFileStateSize = getString(node, MAX_FILE_STATE_SIZE);
 	String maxFileStates = getString(node, MAX_FILE_STATES);
@@ -255,22 +252,7 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	WorkspaceDescription description = new WorkspaceDescription(name);
 	if (autobuild != null)
 		//if in doubt (value is corrupt) we want autobuild on
-		description.setAutoBuilding(!autobuild.equals(Integer.toString(0)));
-	try {
-		if (operations != null)
-			description.setOperationsPerSnapshot(Integer.parseInt(operations));
-	} catch (NumberFormatException e) {
-		logNumberFormatException(operations, e);
-	}
-	if (snapshots != null)
-		//if in doubt (value is corrupt) we want snapshots on
-		description.setSnapshotEnabled(!snapshots.equals(Integer.toString(0)));
-	try {
-		if (deltaExpiration != null)
-			description.setDeltaExpiration(Long.parseLong(deltaExpiration));
-	} catch (NumberFormatException e) {
-		logNumberFormatException(deltaExpiration, e);
-	}
+		description.setAutoBuilding(!autobuild.equals(Integer.toString(0)));	
 	try {
 		if (fileStateLongevity != null)
 			description.setFileStateLongevity(Long.parseLong(fileStateLongevity));

@@ -37,10 +37,7 @@ protected String getInvalidWorkspaceDescription() {
 			"<workspaceDescription>\n" +
 				"<name>Foo</name>\n" +
 				"<autobuild>Foo</autobuild>\n" +
-				"<snapshotsEnabled>Foo</snapshotsEnabled>\n" +
-				"<operationsPerSnapshot>100Foo</operationsPerSnapshot>\n" +
 				"<snapshotInterval>300Foo000</snapshotInterval>\n" +
-				"<deltaExpirationTimestamp>259Foo00</deltaExpirationTimestamp>\n" +
 				"<fileStateLongevity>Foo480000</fileStateLongevity>\n" +
 				"<maxFileStateSize>104856Foo</maxFileStateSize>\n" +
 				"<maxFileStates>5Foo0</maxFileStates>\n" +
@@ -149,12 +146,9 @@ public void testInvalidWorkspaceDescription() {
 	WorkspaceDescription desc = new WorkspaceDescription("MyWorkspace");
 	desc.setName("aName");
 	desc.setAutoBuilding(false);
-	desc.setDeltaExpiration(123456l);
 	desc.setFileStateLongevity(654321l);
 	desc.setMaxFileStates(1000);
 	desc.setMaxFileStateSize(123456789l);
-	desc.setOperationsPerSnapshot(5);
-	desc.setSnapshotEnabled(true);
 
 	SafeFileOutputStream output = new SafeFileOutputStream(location.toFile());
 	writer.write(desc, output);

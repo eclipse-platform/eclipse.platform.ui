@@ -129,7 +129,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * Helper method that converts a string string array {"string1","
 	 * string2",..."stringN"} to a string in the form "string1,string2,...
 	 * stringN".
-	 */	
+	 */
 	public static String convertStringArraytoString(String[] array) {
 		if (array == null || array.length == 0)
 			return ""; //$NON-NLS-1$
@@ -162,10 +162,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		target.setMaxFileStates(source.getMaxFileStates());
 		target.setMaxFileStateSize(source.getMaxFileStateSize());
 		target.setSnapshotInterval(source.getSnapshotInterval());
-		//TODO: these attributes are not set by anybody - we should get rid of their mutators		
-		target.setDeltaExpiration(source.getDeltaExpiration());
-		target.setOperationsPerSnapshot(source.getOperationsPerSnapshot());
-		target.setSnapshotEnabled(source.isSnapshotEnabled());
 	}
 	public void copyFrom(WorkspaceDescription source) {
 		copyFromTo(source, this);
@@ -183,10 +179,9 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setDefault(SNAPSHOT_INTERVAL, defaults.getSnapshotInterval());
 	}
 	public Object clone() {
-		// should never be called - to avoid using a WorkspacePreferences when
-		// using WorkspaceDescription was the real intention (this class offers
-		// a different protocol for copying state.
+		// should never be called - throws an exception to avoid using a 
+		// WorkspacePreferences when using WorkspaceDescription was the real 
+		// intention (this class offers a different protocol for copying state).
 		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$ 
 	}
-
 }

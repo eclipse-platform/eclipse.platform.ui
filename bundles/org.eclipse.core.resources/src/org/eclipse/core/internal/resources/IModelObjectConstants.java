@@ -17,7 +17,6 @@ public interface IModelObjectConstants {
 	public static final String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
 	public static final String BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
 	public static final String COMMENT = "comment"; //$NON-NLS-1$
-	public static final String DELTA_EXPIRATION_TIMESTAMP = "deltaExpirationTimestamp"; //$NON-NLS-1$
 	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
 	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
 	public static final String KEY = "key"; //$NON-NLS-1$
@@ -28,12 +27,10 @@ public interface IModelObjectConstants {
 	public static final String NAME = "name"; //$NON-NLS-1$
 	public static final String NATURE = "nature"; //$NON-NLS-1$
 	public static final String NATURES = "natures"; //$NON-NLS-1$
-	public static final String OPERATIONS_PER_SNAPSHOT = "operationsPerSnapshot"; //$NON-NLS-1$
 	public static final String SNAPSHOT_INTERVAL = "snapshotInterval"; //$NON-NLS-1$
 	public static final String PROJECT = "project"; //$NON-NLS-1$
 	public static final String PROJECT_DESCRIPTION = "projectDescription"; //$NON-NLS-1$
 	public static final String PROJECTS = "projects"; //$NON-NLS-1$
-	public static final String SNAPSHOTS_ENABLED = "snapshotsEnabled"; //$NON-NLS-1$
 	public static final String TYPE = "type"; //$NON-NLS-1$
 	public static final String URI = "uri"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
