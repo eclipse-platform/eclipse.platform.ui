@@ -76,7 +76,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'M1' key.
 	 */
-	public final static String M1_NAME = "M1"; //$NON-NLS-1$	
+	private final static String M1_NAME = "M1"; //$NON-NLS-1$	
 
 	/**
 	 * The name of the 'M2' key.

@@ -22,29 +22,13 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * @since 3.0
  */
 public final class KeyFormatterFactory {
-
-	/**
-	 * A compact formatter instance.
-	 */
-	private static final IKeyFormatter COMPACT_FORMATTER =
+	private static final IKeyFormatter COMPACT_KEY_FORMATTER =
 		new CompactKeyFormatter();
-
-	/**
-	 * A formal formatter instance.
-	 */
-	private static final IKeyFormatter FORMAL_FORMATTER =
+	private static final IKeyFormatter FORMAL_KEY_FORMATTER =
 		new FormalKeyFormatter();
-
-	/**
-	 * An Emacs natural formatter instance.
-	 */
-	private static final IKeyFormatter EMACS_FORMATTER =
+	private static final IKeyFormatter EMACS_KEY_FORMATTER =
 		new EmacsKeyFormatter();
-
-	/**
-	 * The default formatter instance.
-	 */
-	private static IKeyFormatter defaultFormatter = FORMAL_FORMATTER;
+	private static IKeyFormatter defaultKeyFormatter = FORMAL_KEY_FORMATTER;
 
 	/**
 	 * Provides an instance of <code>CompactKeyFormatter</code>.
@@ -52,7 +36,7 @@ public final class KeyFormatterFactory {
 	 * @return The compact formatter; never <code>null</code>.
 	 */
 	public static final IKeyFormatter getCompactKeyFormatter() {
-		return COMPACT_FORMATTER;
+		return COMPACT_KEY_FORMATTER;
 	}
 
 	/**
@@ -61,7 +45,7 @@ public final class KeyFormatterFactory {
 	 * @return The default formatter; never <code>null</code>.
 	 */
 	public static IKeyFormatter getDefault() {
-		return defaultFormatter;
+		return defaultKeyFormatter;
 	}
 
 	/**
@@ -70,7 +54,7 @@ public final class KeyFormatterFactory {
 	 * @return The Xemacs formatter; never <code>null</code>.
 	 */
 	public static IKeyFormatter getEmacsKeyFormatter() {
-		return EMACS_FORMATTER;
+		return EMACS_KEY_FORMATTER;
 	}
 
 	/**
@@ -79,24 +63,20 @@ public final class KeyFormatterFactory {
 	 * @return The formal formatter; never <code>null</code>.
 	 */
 	public static IKeyFormatter getFormalKeyFormatter() {
-		return FORMAL_FORMATTER;
+		return FORMAL_KEY_FORMATTER;
 	}
 
 	/**
-	 * Sets the default key formatter. If the <code>formatter</code> provided
-	 * is <code>null</code>, then this changes the default to the formal
-	 * formatter.
+	 * Sets the default key formatter.
 	 * 
 	 * @param formatter
-	 *            The formatter to use; <code>null</code> means use the
-	 *            formal formatter.
+	 *            the default key formatter. Must not be <code>null</code>.
 	 */
-	public static void setDefault(IKeyFormatter formatter) {
-		if (formatter == null) {
-			defaultFormatter = FORMAL_FORMATTER;
-		} else {
-			defaultFormatter = formatter;
-		}
+	public static void setDefault(IKeyFormatter defaultKeyFormatter) {
+		if (defaultKeyFormatter == null)
+			throw new NullPointerException();
+
+		KeyFormatterFactory.defaultKeyFormatter = defaultKeyFormatter;
 	}
 
 	private KeyFormatterFactory() {
