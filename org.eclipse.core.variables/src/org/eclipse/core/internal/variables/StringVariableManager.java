@@ -555,4 +555,14 @@ public class StringVariableManager implements IStringVariableManager {
 	public void validateStringVariables(String expression) throws CoreException {
 		new StringSubstitutionEngine().validateStringVariables(expression, this);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.variables.IStringVariableManager#getContributingPluginId(org.eclipse.core.variables.IStringVariable)
+     */
+    public String getContributingPluginId(IStringVariable variable) {
+        if (variable instanceof StringVariable) {
+            return ((StringVariable) variable).getConfigurationElement().getNamespace();
+        }
+        return null;
+    }
 }

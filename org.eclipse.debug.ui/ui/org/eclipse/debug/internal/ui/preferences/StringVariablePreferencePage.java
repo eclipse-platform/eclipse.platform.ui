@@ -488,7 +488,12 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 					case 0 :
 						StringBuffer buffer= new StringBuffer(variable.getName());
 						if (variable.isContributed()) {
-							buffer.append(DebugPreferencesMessages.getString("SimpleLaunchVariablePreferencePage.23")); //$NON-NLS-1$
+                            String pluginId = getVariableManager().getContributingPluginId(variable);
+                            if (pluginId != null) {
+                                buffer.append(MessageFormat.format(DebugPreferencesMessages.getString("StringVariablePreferencePage.0"), new String[] {pluginId})); //$NON-NLS-1$
+                            } else {
+                                buffer.append(DebugPreferencesMessages.getString("SimpleLaunchVariablePreferencePage.23")); //$NON-NLS-1$
+                            }
 						}
 						return buffer.toString();
 					case 1:

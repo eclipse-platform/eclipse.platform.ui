@@ -71,6 +71,18 @@ public interface IStringVariableManager {
 	 * if none
 	 */
 	public IDynamicVariable getDynamicVariable(String name);
+    
+    /**
+     * Returns the plugin identifier of the plugin that contributed the
+     * given variable via extension or <code>null</code> if the given
+     * variable wasn't contributed via extension.
+     * 
+     * @param variable the variable
+     * @return the plugin identifier of the plugin that contributed the
+     *  given variable or <code>null</code>
+     * @since 3.1
+     */
+    public String getContributingPluginId(IStringVariable variable);
 	
 	/**
 	 * Recursively resolves and replaces all variable references in the given
