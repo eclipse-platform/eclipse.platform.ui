@@ -20,6 +20,8 @@ public class HelpURL {
 	protected StringBuffer query;
 	protected HashMap arguments = null;
 	protected long contentSize; // length of input data
+	protected Locale locale;
+	
 	/**
 	 * HelpURL constructor comment.
 	 */
@@ -117,20 +119,25 @@ public class HelpURL {
 	 */
 	protected Locale getLocale()
 	{	
+		if (locale != null)
+			return locale;
+			
 		String clientLocale = getValue(lang);
 
-
 		// The clientLocale takes precedence over the Help Server locale.
-		if (clientLocale != null) {
-			if (clientLocale.indexOf("_") != -1) {
-				return new Locale(clientLocale.substring(0, 2), clientLocale.substring(3, 5));
-			} else {
-				return new Locale(clientLocale.substring(0, 2), "_  ");
-				// In case client locale only contains language info and no country info
-			}
+		if (clientLocale != null && clientLocale.length() >= 2) {
+			String language = clientLocale.substring(0,2);
+			String country;
+			if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5) 
+				country = clientLocale.substring(3,5);
+			else
+				country = "";
+			locale = new Locale(language, country);	
 		}
 		else
-			return Locale.getDefault();
+			locale = Locale.getDefault();
+		
+		return locale;
 	}
 	// this returns whether or not a response created for a request
 	// to this URL is cached by the browser client.

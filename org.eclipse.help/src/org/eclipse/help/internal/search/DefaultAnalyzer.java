@@ -24,18 +24,8 @@ public class DefaultAnalyzer extends Analyzer {
 	public DefaultAnalyzer(String localeString) {
 		super();
 		// Create a locale object for a given locale string
-		Locale userLocale;
-		if (localeString != null) {
-			if (localeString.indexOf("_") != -1) {
-				userLocale =
-					new Locale(localeString.substring(0, 2), localeString.substring(3, 5));
-			} else {
-				userLocale = new Locale(localeString.substring(0, 2), "_  ");
-				// In case client locale only contains language info and no country info
-			}
-		} else {
-			userLocale = Locale.getDefault();
-		}
+		Locale userLocale = getLocale(localeString);
+		
 		// Check if the locale is supported by BreakIterator
 		// check here to do it only once.
 		Locale[] availableLocales = BreakIterator.getAvailableLocales();
@@ -58,5 +48,27 @@ public class DefaultAnalyzer extends Analyzer {
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new LowerCaseFilter(new WordTokenStream(fieldName, reader, locale));
+	}
+	
+	/**
+	 * Creates a Locale object out of a string representation
+	 */
+	private Locale getLocale(String localeString)
+	{
+		Locale locale;	
+
+		if (localeString != null && localeString.length() >= 2) {
+			String language = localeString.substring(0,2);
+			String country;
+			if (localeString.indexOf('_') == 2 && localeString.length() >= 5) 
+				country = localeString.substring(3,5);
+			else
+				country = "";
+			locale = new Locale(language, country);	
+		}
+		else
+			locale = Locale.getDefault();
+		
+		return locale;
 	}
 }
