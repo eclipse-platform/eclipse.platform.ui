@@ -45,8 +45,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.preferences.PreferenceTransferElement;
 import org.eclipse.ui.preferences.PreferenceTransferManager;
 
@@ -327,7 +327,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         buttonComposite.setLayoutData(data);
 
         Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages
+                IDialogConstants.SELECT_ALL_ID, IDEWorkbenchMessages
                         .getString("SelectionDialog.selectLabel"), false); //$NON-NLS-1$
 
         SelectionListener listener = new SelectionAdapter() {
@@ -338,7 +338,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         selectButton.addSelectionListener(listener);
 
         Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages
+                IDialogConstants.DESELECT_ALL_ID, IDEWorkbenchMessages
                         .getString("SelectionDialog.deselectLabel"), false); //$NON-NLS-1$
 
         listener = new SelectionAdapter() {

@@ -25,10 +25,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -214,7 +212,7 @@ public class IDEEncoding {
 			if (isSupported)
 				result.add(string);
 			else{
-				WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
+				WorkbenchPlugin.log(IDEWorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
 						new String[] { string }));
 				updateRequired = true;
 			}
