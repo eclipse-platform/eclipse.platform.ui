@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Composite;
  * <ul>
  *   <li><code>TextPropertyDescriptor</code> - edits with a 
  *      <code>TextCellEditor</code></li>
- *   <li><code>CheckboxPropertyDescriptor - edits with a 
- *      <code>CheckboxCellEditor</code></code></li>
  *   <li><code>ComboBoxPropertyDescriptor - edits with a
  *      <code>ComboBoxCellEditor</code></code></li>
  *   <li><code>ColorPropertyDescriptor - edits with a 
