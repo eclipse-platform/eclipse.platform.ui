@@ -122,13 +122,13 @@ public final class ContentType implements IContentType {
 		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
 		if (!tokenizer.hasMoreTokens())
 			return new String[0];
-		String first = tokenizer.nextToken();
+		String first = tokenizer.nextToken().trim();
 		if (!tokenizer.hasMoreTokens())
 			return new String[] {first};
 		ArrayList items = new ArrayList();
 		items.add(first);
 		do {
-			items.add(tokenizer.nextToken());
+			items.add(tokenizer.nextToken().trim());
 		} while (tokenizer.hasMoreTokens());
 		return (String[]) items.toArray(new String[items.size()]);
 	}

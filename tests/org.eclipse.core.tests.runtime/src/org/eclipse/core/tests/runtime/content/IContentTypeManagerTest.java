@@ -417,8 +417,11 @@ public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType myContent = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "myContent");
 		assertNotNull("0.5", myContent);
-		assertEquals("0.6", myContent, manager.findContentTypeFor("myContent.mc"));
-		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc", IContentDescription.ALL);
+		assertEquals("0.6", myContent, manager.findContentTypeFor("myContent.mc1"));
+		assertEquals("0.7", myContent, manager.findContentTypeFor("myContent.mc2"));
+		assertEquals("0.8", myContent, manager.findContentTypeFor("foo.myContent1"));
+		assertEquals("0.9", myContent, manager.findContentTypeFor("bar.myContent2"));		
+		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc1", IContentDescription.ALL);
 		assertNotNull("1.0", description);
 		assertEquals("1.1", myContent, description.getContentType());
 		assertTrue("1.2", !(description instanceof DefaultDescription));

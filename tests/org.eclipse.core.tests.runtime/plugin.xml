@@ -40,7 +40,8 @@
       <content-type      
             name="My Content Type"
             id="myContent"
-            file-names="myContent.mc"
+            file-names=" myContent.mc1 , myContent.mc2 "
+            file-extensions=" myContent1, myContent2 "
             describer="org.eclipse.core.tests.runtime.content.MyContentDescriber"/>         
       <!-- A base type and a sub-type are in conflict. Base type should be picked. --> 
       <content-type      
