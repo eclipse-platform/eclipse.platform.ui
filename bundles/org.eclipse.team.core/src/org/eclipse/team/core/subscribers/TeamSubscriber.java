@@ -22,9 +22,8 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.core.*;
 
 /**
- * A TeamSubscriber is connected to a remote location that has incoming changes
- * to be merged into a workspace. It maintains the synchronization state of the incoming
- * changes based on those in the workspace.
+ * A TeamSubscriber provides synchronization between local resources and a remote location 
+ * that is used to share those resources. 
  * 
  * [Note: How can we allow the refresh() operation to optimize the sync calculation based
  * on the currently configured compare criteria?]
