@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.editor;
 
+import java.io.File;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.tests.ui.editor.performance.EditorTestHelper;
@@ -97,7 +98,7 @@ public class AntEditorTests extends AbstractAntUITest {
             int offset= getOffsetWithinLine(editor, 46, 25);
             IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
             String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-            String correctResult= "\\Ant UI Tests\\buildfiles\\nothere not found.";
+            String correctResult= "Ant UI Tests" + File.separatorChar + "buildfiles" + File.separatorChar + "nothere not found.";
             assertTrue("Expected the following hover text to ends with: " + correctResult, hoverText.endsWith(correctResult));
             
         } finally {
@@ -113,8 +114,28 @@ public class AntEditorTests extends AbstractAntUITest {
             int offset= getOffsetWithinLine(editor, 44, 20);
             IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
             String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes: </h5><li>include</li><p><p><h5>Excludes: </h5><li>exclude</li><li>**\\*~</li><li>**\\#*#</li><li>**\\.#*</li><li>**\\%*%</li><li>**\\._*</li><li>**\\CVS</li><li>**\\CVS\\**</li><li>**\\.cvsignore</li><li>**\\SCCS</li><li>**\\SCCS\\**</li><li>**\\vssver.scc</li><li>**\\.svn</li><li>**\\.svn\\**</li><li>**\\.DS_Store</li></font></body></html>";
-            assertTrue("Expected the following hover text to start with: " + correctResult, correctResult.equals(hoverText));
+            
+            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes: </h5><li>include</li><p><p><h5>Excludes: </h5><li>exclude</li><li>**" + 
+            	File.separatorChar + "*~</li><li>**" 
+            	+ File.separatorChar
+            	+ "#*#</li><li>**" + 
+            	File.separatorChar + 
+            	".#*</li><li>**" +
+            	File.separatorChar + 
+            	"%*%</li><li>**" + 
+            	File.separatorChar +
+            	"._*</li><li>**" + 
+            	File.separatorChar + 
+            	"CVS</li><li>**" +
+            	File.separatorChar + 
+            	"CVS" + File.separatorChar + "**</li><li>**" + 
+            	File.separatorChar + ".cvsignore</li><li>**" + 
+            	File.separatorChar + "SCCS</li><li>**" + File.separatorChar + 
+            	"SCCS" + File.separatorChar + "**</li><li>**" + File.separatorChar + 
+            	"vssver.scc</li><li>**" + File.separatorChar + 
+            	".svn</li><li>**" + File.separatorChar + ".svn" + File.separatorChar + 
+            	"**</li><li>**" + File.separatorChar + ".DS_Store</li></font></body></html>";
+            assertTrue("Expected the following hover text to be: " + correctResult + " Was " + hoverText, correctResult.equals(hoverText));
             
         } finally {
             EditorTestHelper.closeAllEditors();    
