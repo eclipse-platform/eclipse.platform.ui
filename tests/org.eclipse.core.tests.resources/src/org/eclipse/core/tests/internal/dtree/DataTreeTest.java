@@ -522,15 +522,9 @@ protected void tearDown() throws Exception {
 	/*
 	 * @see Assert#assertTrue(boolean)
 	 */
-	public static void assertTrue(boolean arg0) {
-		Assert.assert(arg0);
-	}
 
 	/*
 	 * @see Assert#assertTrue(String, boolean)
 	 */
-	public static void assertTrue(String arg0, boolean arg1) {
-		Assert.assert(arg0, arg1);
-	}
 
 }
