@@ -166,6 +166,10 @@ protected void setUp() throws Exception {
 	getWorkspace().addResourceChangeListener(verifier);
 }
 public static Test suite() {
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new IResourceChangeListenerTest("testMoveProject2"));
+//	return suite;
+
 	return new TestSuite(IResourceChangeListenerTest.class);
 }
 /**
@@ -476,6 +480,66 @@ public void testMoveFile() {
 				try {
 					folder2.create(true, true, new SubProgressMonitor(m, 50));
 					file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
+/**
+ * Move a project via rename.
+ * Note that the DESCRIPTION flag should be set in the delta for the
+ * destination only.
+ */
+public void testMoveProject1() {
+	try {
+		verifier.addExpectedChange(project1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, project2.getFullPath());
+		verifier.addExpectedChange(project1.getFile(".project"), IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, project2.getFile(".project").getFullPath());
+		verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, project2.getFolder(folder1.getProjectRelativePath()).getFullPath());
+		verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, project2.getFile(file1.getProjectRelativePath()).getFullPath());
+
+		verifier.addExpectedChange(project2, IResourceDelta.ADDED, IResourceDelta.OPEN | IResourceDelta.DESCRIPTION | IResourceDelta.MOVED_FROM, project1.getFullPath());
+		verifier.addExpectedChange(project2.getFile(".project"), IResourceDelta.ADDED, IResourceDelta.CONTENT | IResourceDelta.MOVED_FROM, project1.getFile(".project").getFullPath());
+		verifier.addExpectedChange(project2.getFolder(folder1.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder1.getFullPath());
+		verifier.addExpectedChange(project2.getFile(file1.getProjectRelativePath()), IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("Creating and moving", 100);
+				try {
+					project1.move(project2.getFullPath(), IResource.NONE, new SubProgressMonitor(m, 50));
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
+/**
+ * Move a project via a location change only.
+ * Note that the DESCRIPTION flag should be set in the delta.
+ */
+public void testMoveProject2() {
+	try {
+		verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+		verifier.addExpectedChange(project1.getFile(".project"), IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("Creating and moving", 100);
+				try {
+					IProjectDescription desc = project1.getDescription();
+					IPath path = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+					desc.setLocation(path);
+					project1.move(desc, IResource.NONE, new SubProgressMonitor(m, 50));
 				} finally {
 					m.done();
 				}
