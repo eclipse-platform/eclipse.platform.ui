@@ -51,7 +51,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	/**
 	 * adds the feature to the list of features if the policy is USER_INCLUDE
 	 */
-	public	void configure(IFeatureReference featureReference, boolean callInstallHandler) throws CoreException {
+	public void configure(
+		IFeatureReference featureReference,
+		boolean callInstallHandler)
+		throws CoreException {
 
 		if (featureReference == null)
 			return;
@@ -62,7 +65,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		// Setup optional install handler
 		InstallHandlerProxy handler = null;
 		if (callInstallHandler)
-			handler = new InstallHandlerProxy(IInstallHandler.HANDLER_ACTION_CONFIGURE, feature, feature.getInstallHandlerEntry(), null);
+			handler =
+				new InstallHandlerProxy(
+					IInstallHandler.HANDLER_ACTION_CONFIGURE,
+					feature,
+					feature.getInstallHandlerEntry(),
+					null);
 		boolean success = false;
 		Throwable originalException = null;
 
@@ -71,7 +79,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (handler != null)
 				handler.configureInitiated();
 
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
+			ConfigurationActivity activity =
+				new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 			activity.setLabel(feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
@@ -79,7 +88,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+			(
+				(InstallConfiguration) SiteManager
+					.getLocalSite()
+					.getCurrentConfiguration())
+					.addActivityModel(
+				(ConfigurationActivityModel) activity);
 
 			if (handler != null)
 				handler.completeConfigure();
@@ -96,9 +110,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
+				throw UpdateManagerUtils.newCoreException(
+					Policy.bind("InstallHandler.error", feature.getLabel()),
+					originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
+				throw UpdateManagerUtils.newCoreException(
+					Policy.bind("InstallHandler.error", feature.getLabel()),
+					newException);
 		}
 	}
 
@@ -106,7 +124,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * check if the plugins to unconfigure are required by other configured feature and
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
-	public	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
+	public boolean unconfigure(IFeatureReference featureReference)
+		throws CoreException {
 
 		if (featureReference == null)
 			return false;
@@ -115,7 +134,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			return false;
 
 		// Setup optional install handler
-		InstallHandlerProxy handler = new InstallHandlerProxy(IInstallHandler.HANDLER_ACTION_UNCONFIGURE, feature, feature.getInstallHandlerEntry(), null);
+		InstallHandlerProxy handler =
+			new InstallHandlerProxy(
+				IInstallHandler.HANDLER_ACTION_UNCONFIGURE,
+				feature,
+				feature.getInstallHandlerEntry(),
+				null);
 		boolean success = false;
 		Throwable originalException = null;
 
@@ -123,15 +147,22 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		try {
 			handler.unconfigureInitiated();
 
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
+			ConfigurationActivity activity =
+				new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(
+				featureReference.getFeature().getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
 			addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+			(
+				(InstallConfiguration) SiteManager
+					.getLocalSite()
+					.getCurrentConfiguration())
+					.addActivityModel(
+				(ConfigurationActivityModel) activity);
 
 			handler.completeUnconfigure();
 
@@ -146,9 +177,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
+				throw UpdateManagerUtils.newCoreException(
+					Policy.bind("InstallHandler.error", feature.getLabel()),
+					originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
+				throw UpdateManagerUtils.newCoreException(
+					Policy.bind("InstallHandler.error", feature.getLabel()),
+					newException);
 		}
 
 		return true;
@@ -159,8 +194,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * It will include the include list providing the objects in the include list
 	 * are not 'unconfigured' if the type is Exclude or 'configured' if the type is Include
 	 */
-	public String[] getPluginPath(ISite site, String[] pluginRead) throws CoreException {
-
+	public String[] getPluginPath(ISite site, String[] pluginRead)
+		throws CoreException {
 
 		// which features should we write based on the policy
 		IFeatureReference[] arrayOfFeatureRef = null;
@@ -172,7 +207,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				arrayOfFeatureRef = getConfiguredFeatures();
 		}
 		String[] pluginToWrite = getPluginString(site, arrayOfFeatureRef);
-		
 
 		// remove from include the plugins that should not be saved 
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
@@ -190,44 +224,64 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		return result;
 	}
 
-
 	/**
 	 * return an array of plugin path for the array of feature reference
 	 * 
 	 * 
 	 */
-	private String[] getPluginString(ISite site, IFeatureReference[] arrayOfFeatureRef) throws CoreException {
-	
+	private String[] getPluginString(
+		ISite site,
+		IFeatureReference[] arrayOfFeatureRef)
+		throws CoreException {
+
 		String[] result = new String[0];
-			
+
 		// obtain path for each feature
 		if (arrayOfFeatureRef != null) {
-			List pluginsString = new ArrayList(0);
+			List pluginsString = new ArrayList();
 			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = element.getFeature();
-				IPluginEntry[] entries = (feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
-		
+				IPluginEntry[] entries =
+					(feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
+
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
-					// obtain the path of the plugin directories on the site	
-					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
-					);
-					for (int j = 0; j < featureContentReference.length; j++) {
-						URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
-						if (url != null) {
-							// make it relative to teh site
-							String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
-							// add end "/"
-							path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							// add plugin.xml or fragment.xml
-							path += entry.isFragment() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-							pluginsString.add(path);
+					// obtain the path of the plugin directories on the site
+					ContentReference[] featureContentReference = null;
+					try {
+						featureContentReference =
+							feature
+								.getFeatureContentProvider()
+								.getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
+						);
+					} catch (CoreException e) {
+						// DEDBUG
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+							UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+						}
+					}
+					if (featureContentReference != null) {
+						for (int j = 0; j < featureContentReference.length; j++) {
+							URL url =
+								site.getSiteContentProvider().getArchiveReference(
+									featureContentReference[j].getIdentifier());
+							if (url != null) {
+								// make it relative to teh site
+								String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
+								// add end "/"
+								path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
+								//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								// add plugin.xml or fragment.xml
+								path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
+								//$NON-NLS-1$ //$NON-NLS-2$
+								pluginsString.add(path);
+							}
 						}
 					}
 				}
 			}
-		
+
 			// transform in String[]
 			if (!pluginsString.isEmpty()) {
 				result = new String[pluginsString.size()];
