@@ -129,7 +129,6 @@ public class AppserverPreferencePage
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
@@ -138,6 +137,7 @@ public class AppserverPreferencePage
 		data = new GridData();
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		Preferences pref = AppserverPlugin.getDefault().getPluginPreferences();
 		textServerAddr.setText(pref.getString(AppserverPlugin.HOST_KEY));
