@@ -279,18 +279,6 @@
 		</objectContribution>
 	</extension> 
 
-	<!-- ************** Action Set ***************** -->
-	<extension point="org.eclipse.ui.actionSets">
-		<actionSet id="org.eclipse.team.ccvs.CVSActionSet" label="CVS" visible="true" description="CVS specific actions">
-			<action id="org.eclipse.team.ccvs.Checkout"
-				toolbarPath="Normal/CVSWizards"
-				label="%CheckoutAction.label"
-				tooltip="%CheckoutAction.tooltip"
-				icon="icons/full/ctool16/checkout.gif"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"/>
-		</actionSet>
-	</extension>
-	
 	<!-- ************** Views ********************** -->
 	<extension point="org.eclipse.ui.views">
 		<category 
