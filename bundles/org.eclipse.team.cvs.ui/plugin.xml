@@ -1335,7 +1335,7 @@
       <colorDefinition 
         id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_foreground_color"
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
-        label="IgnoredResourceFont.label"
+        label="%IgnoredResourceForegroundColor.label"
         value="COLOR_LIST_FOREGROUND">
         <description>
         This color is used for the foreground color for resources that are ignored from CVS.
@@ -1344,7 +1344,7 @@
       <colorDefinition 
         id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_background_color"
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"
-        label="Ignored Resource (Background)"
+        label="%IgnoredResourceBackgroundColor.label"
         value="COLOR_LIST_BACKGROUND">
         <description>
         This color is used for the background color for resources that are ignored from CVS.
@@ -1353,7 +1353,7 @@
       <fontDefinition
         id="org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_font"
         categoryId="org.eclipse.team.cvs.ui.fontsandcolors"      
-        label="Ignored Resource Font">
+        label="%IgnoredResourceFont.label">
         <description>
         The font used to display resources that are ignored from CVS.
         </description>
