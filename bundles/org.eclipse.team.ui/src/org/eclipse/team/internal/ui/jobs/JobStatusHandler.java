@@ -94,7 +94,6 @@ public class JobStatusHandler extends JobChangeAdapter {
 			JobStatusHandler handler = getHandler(jobType);
 			if (handler != null) {
 				handler.removeJobListener(listener);
-				checkStatus(jobType, handler);
 			}
 		}
 	}
@@ -124,18 +123,6 @@ public class JobStatusHandler extends JobChangeAdapter {
 		return newHandler;
 	}
 	
-	/*
-	 * Check whether the handler can be removed.
-     */
-	private static void checkStatus(QualifiedName jobType, JobStatusHandler handler) {
-		synchronized (handlers) {
-			if (handler.isEmpty()) {
-				// If a handler has no jobs or listeners, remove it
-				handlers.remove(jobType);
-			}
-		}
-	}
-
 	protected JobStatusHandler(QualifiedName jobType) {
 		super();
 		this.jobType = jobType;
@@ -214,7 +201,6 @@ public class JobStatusHandler extends JobChangeAdapter {
 	private void jobDone(Job job) {
 		if (removeJob(job)) {
 			fireEndNotification();
-			checkStatus(jobType, this);
 		}
 	}
 
@@ -230,12 +216,6 @@ public class JobStatusHandler extends JobChangeAdapter {
 		return !jobs.isEmpty();
 	}
 
-	/*
-	 * Return true if this hanlder has no jobs and no listeners
-	 */
-	private boolean isEmpty() {
-		return listeners.isEmpty() && jobs.isEmpty();
-	}
 	/**
 	 * @return Returns the jobType.
 	 */
