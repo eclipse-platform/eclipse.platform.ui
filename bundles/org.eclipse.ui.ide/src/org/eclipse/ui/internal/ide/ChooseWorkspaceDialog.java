@@ -77,9 +77,15 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         }
 
         String[] recent = launchData.getRecentWorkspaces();
-        launchData
-                .workspaceSelected(recent != null && recent.length > 0 ? recent[0]
-                        : launchData.getInitialDefault());
+
+        // If the selection dialog was not used then the workspace to use is either the
+        // most recent selection or the initialDefault (if there is no history).
+        String workspace = null;
+        if (recent != null && recent.length > 0)
+        	workspace = recent[0];
+        if (workspace == null || workspace.length() == 0)
+        	workspace = launchData.getInitialDefault();
+        launchData.workspaceSelected(workspace);
     }
 
     /**

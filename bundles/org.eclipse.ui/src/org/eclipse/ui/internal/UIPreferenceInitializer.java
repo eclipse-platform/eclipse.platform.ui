@@ -76,6 +76,10 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(
                 IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS, -1);
 
+        // Set the workspace selection dialog to open by default
+        store.setDefault(
+                IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG, true);
+
         store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }
 

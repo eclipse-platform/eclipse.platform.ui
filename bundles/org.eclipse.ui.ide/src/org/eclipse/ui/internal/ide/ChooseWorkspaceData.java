@@ -20,12 +20,14 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -347,9 +349,8 @@ public class ChooseWorkspaceData {
 	 *         otherwise
 	 */
 	public boolean readPersistedData() {
-		// 1. get config pref node
-		Preferences node = Platform.getPreferencesService().getRootNode().node(
-				ConfigurationScope.SCOPE).node(PlatformUI.PLUGIN_ID);
+		IPreferenceStore store = new ScopedPreferenceStore(
+				new ConfigurationScope(), PlatformUI.PLUGIN_ID);
 
 		// The old way was to store this information in a file, the new is to
 		// use the configuration area preference store. To help users with the
@@ -359,31 +360,28 @@ public class ChooseWorkspaceData {
 		// writes to the preference store, so the fall-back should be needed no
 		// more than once per-user, per-configuration.
 
-		// There isn't a direct way to see if a preference has a value. What
-		// this code does instead is get the value of the version of the
-		// encoding protocol, supplying a value that we know will never be set
-		// as the default. If that default value comes back, then we revert to
-		// the file method.
+		// This code always sets the value of the protocol to a non-zero value
+		// (currently at 2).  If the value comes back as the default (0), then
+		// none of the preferences were set, revert to the file method.
 
-		int protocol = node.getInt(
-				IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL,
-				PERS_ENCODING_VERSION);
-		if (protocol == PERS_ENCODING_VERSION && readPersistedData_file())
+		int protocol = store
+				.getInt(IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL);
+		if (protocol == IPreferenceStore.INT_DEFAULT_DEFAULT
+				&& readPersistedData_file())
 			return true;
 
 		// 2. get value for showDialog
-		showDialog = node.getBoolean(
-				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
-				true);
+		showDialog = store
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG);
 
 		// 3. use value of numRecent to create proper length array
-		int max = node.getInt(
-				IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES,
-				RECENT_MAX_LENGTH);
+		int max = store
+				.getInt(IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES);
+		max = Math.max(max, RECENT_MAX_LENGTH);
 
 		// 4. load values of recent workspaces into array
-		String workspacePathPref = node.get(
-				IWorkbenchPreferenceConstants.RECENT_WORKSPACES, null);
+		String workspacePathPref = store
+				.getString(IWorkbenchPreferenceConstants.RECENT_WORKSPACES);
 		recentWorkspaces = decodeStoredWorkspacePaths(max, workspacePathPref);
 
 		return true;
