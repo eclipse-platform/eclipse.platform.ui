@@ -32,7 +32,7 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION });
+			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
 	}
 
 	/**

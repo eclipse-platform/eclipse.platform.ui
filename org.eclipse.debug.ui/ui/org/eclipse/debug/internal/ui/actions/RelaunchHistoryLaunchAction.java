@@ -40,7 +40,7 @@ public class RelaunchHistoryLaunchAction extends Action {
 		}
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.RELAUNCH_HISTORY_ACTION });
+			IDebugHelpContextIds.RELAUNCH_HISTORY_ACTION);
 	}
 
 	/**

@@ -77,7 +77,7 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		setView(view);
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION });
+			IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION);
 		
 	}
 

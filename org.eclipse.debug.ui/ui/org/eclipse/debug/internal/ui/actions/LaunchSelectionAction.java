@@ -53,7 +53,7 @@ public class LaunchSelectionAction extends Action {
 		
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.LAUNCH_SELECTION_ACTION });
+			IDebugHelpContextIds.LAUNCH_SELECTION_ACTION);
 	}
 
 	/**

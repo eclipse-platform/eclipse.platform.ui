@@ -27,10 +27,7 @@ public class TerminateAllAction extends Action implements IUpdate {
 	public TerminateAllAction() {
 		super(ActionMessages.getString("TerminateAllAction.Termi&nate_All_1")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("TerminateAllAction.Terminate_All_2")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.TERMINATE_ALL_ACTION });
-			
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.TERMINATE_ALL_ACTION);
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_ALL));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL));

@@ -23,9 +23,7 @@ public class ShowVariableDetailPaneAction extends Action {
 		setToolTipText(ActionMessages.getString("ShowVariableDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
 		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowVariableDetailPaneAction"); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION });
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION);
 	}
 
 	/**

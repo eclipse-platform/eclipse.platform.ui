@@ -38,7 +38,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
 			parent,
-			new Object[] { IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE });
+			IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE );
 	}
 	
 	/**

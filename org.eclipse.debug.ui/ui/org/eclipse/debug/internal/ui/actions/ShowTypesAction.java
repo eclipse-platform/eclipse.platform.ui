@@ -35,9 +35,7 @@ public class ShowTypesAction extends Action {
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
 		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowTypesAction"); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.SHOW_TYPES_ACTION });
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_TYPES_ACTION);
 	}
 
 	/**

@@ -126,7 +126,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		setControl(root);
 		WorkbenchHelp.setHelp(
 			ancestor,
-			new Object[] { IDebugHelpContextIds.LAUNCHER_SELECTION_WIZARD_PAGE });
+			IDebugHelpContextIds.LAUNCHER_SELECTION_WIZARD_PAGE);
 	}
 
 	public void createLaunchersGroup(Composite root) {

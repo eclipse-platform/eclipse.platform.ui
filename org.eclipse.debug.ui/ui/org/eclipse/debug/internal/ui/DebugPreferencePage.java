@@ -35,7 +35,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
 			parent,
-			new Object[] { IDebugHelpContextIds.DEBUG_PREFERENCE_PAGE });
+			IDebugHelpContextIds.DEBUG_PREFERENCE_PAGE);
 	}
 	
 	/**

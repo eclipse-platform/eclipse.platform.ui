@@ -29,7 +29,7 @@ public class ClearOutputAction extends Action {
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CLEAR));
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.CLEAR_CONSOLE_ACTION });
+			IDebugHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}
 
 	/**

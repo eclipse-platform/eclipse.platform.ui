@@ -161,7 +161,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		setControl(root);
 		WorkbenchHelp.setHelp(
 			ancestor,
-			new Object[] { IDebugHelpContextIds.PROJECT_SELECTION_WIZARD_PAGE });
+			IDebugHelpContextIds.PROJECT_SELECTION_WIZARD_PAGE);
 	}
 
 	public void createElementsGroup(Composite root) {

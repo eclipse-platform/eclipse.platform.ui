@@ -53,7 +53,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		fTreeEditor= new TreeEditor(fTree);
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { IDebugHelpContextIds.CHANGE_VALUE_ACTION });
+			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
 	}
 	
 	/**

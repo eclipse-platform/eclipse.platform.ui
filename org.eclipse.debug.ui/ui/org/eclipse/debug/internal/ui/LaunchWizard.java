@@ -93,7 +93,7 @@ public class LaunchWizard extends Wizard {
 		super.createPageControls(pageContainer);
 		WorkbenchHelp.setHelp(
 			pageContainer,
-			new Object[] { IDebugHelpContextIds.LAUNCH_WIZARD });
+			IDebugHelpContextIds.LAUNCH_WIZARD);
 	}
 	
 	protected void initialize() {

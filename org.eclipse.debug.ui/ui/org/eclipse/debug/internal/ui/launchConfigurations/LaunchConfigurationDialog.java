@@ -802,7 +802,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		shell.setText("Launch Configurations");
 		WorkbenchHelp.setHelp(
 			shell,
-			new Object[] { IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG });
+			IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG);
 	}
 	
 	/**
