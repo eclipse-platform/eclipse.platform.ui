@@ -435,7 +435,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			try {
 				manager.addVariables((IValueVariable[]) fVariables.toArray(new IValueVariable[0]));
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), "Error", "Unable to save changes", e.getStatus());
+				DebugUIPlugin.errorDialog(getShell(), DebugPreferencesMessages.getString("StringVariablePreferencePage.24"), DebugPreferencesMessages.getString("StringVariablePreferencePage.25"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
