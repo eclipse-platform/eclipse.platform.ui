@@ -1,6 +1,8 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -254,6 +256,22 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	}
 
 	private void handleAddLocal() {
+		FileDialog dialog = new FileDialog(getShell());
+		dialog.setFilterExtensions(new String[] {"site.xml"});
+		dialog.setText("Choose a local site");
+		String res = dialog.open();
+		if (res != null) {
+			try {
+				String location = new Path(res).removeLastSegments(1).toString();
+				URL url = new URL("file:" + location);
+				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+				SiteBookmark bookmark = new SiteBookmark(location, url, false);
+				bookmark.setLocal(true);
+				model.addBookmark(bookmark);
+				model.saveBookmarks();
+			} catch (MalformedURLException e) {
+			}
+		}
 	}
 
 	private void handleRemove() {
@@ -276,7 +294,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();		
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
-		dialog.getShell().setText("Edit Update Site");
+		String title = bookmark.isLocal() ? "Edit Local Site" : "Edit Update Site";
+		dialog.getShell().setText(title);
 		dialog.open();		
 	}
 	
