@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2002 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Common Public License v1.0 which accompanies
+ * this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -27,6 +27,7 @@ public AutomatedTests(String name) {
 
 public static Test suite() {
 	TestSuite suite = new TestSuite();
+	suite.addTest(org.eclipse.core.tests.internal.alias.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.builders.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.dtree.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.indexing.AllTests.suite());
