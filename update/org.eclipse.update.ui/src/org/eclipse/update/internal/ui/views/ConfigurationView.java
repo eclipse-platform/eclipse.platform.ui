@@ -311,6 +311,9 @@ public class ConfigurationView
 	class LocalSiteLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof ILocalSite) {
+				AboutInfo info = UpdateUIPlugin.getDefault().getAboutInfo();
+				String productName = info.getProductName();
+				if (productName!=null) return productName;
 				return UpdateUIPlugin.getResourceString(KEY_CURRENT);
 			}
 			if (obj instanceof IInstallConfiguration) {
@@ -386,7 +389,11 @@ public class ConfigurationView
 	}
 
 	public ConfigurationView() {
-		eclipseImage = UpdateUIPluginImages.DESC_APP_OBJ.createImage();
+		ImageDescriptor edesc = UpdateUIPluginImages.DESC_APP_OBJ;
+		AboutInfo info = UpdateUIPlugin.getDefault().getAboutInfo();
+		if (info.getWindowImage()!=null)
+			edesc = info.getWindowImage();
+		eclipseImage = edesc.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 		unconfFeatureImage =
 			UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();

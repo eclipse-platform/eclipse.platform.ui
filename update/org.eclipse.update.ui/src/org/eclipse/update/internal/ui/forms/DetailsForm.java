@@ -40,6 +40,7 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_OS = "FeaturePage.os";
 	private static final String KEY_WS = "FeaturePage.ws";
 	private static final String KEY_NL = "FeaturePage.nl";
+	private static final String KEY_ARCH = "FeaturePage.arch";
 	private static final String KEY_PLATFORMS = "FeaturePage.platforms";
 	private static final String KEY_DESC = "FeaturePage.description";
 	private static final String KEY_INFO_LINK = "FeaturePage.infoLink";
@@ -80,6 +81,7 @@ public class DetailsForm extends PropertyWebForm {
 	private Label osLabel;
 	private Label wsLabel;
 	private Label nlLabel;
+	private Label archLabel;
 	private Label descriptionText;
 	private URL infoLinkURL;
 	private SelectableFormLabel infoLinkLabel;
@@ -244,6 +246,7 @@ public class DetailsForm extends PropertyWebForm {
 				osLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_OS));
 				wsLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_WS));
 				nlLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_NL));
+				archLabel = createProperty(expansion, UpdateUIPlugin.getResourceString(KEY_ARCH));
 			}
 		};
 		supportedPlatformsGroup.setText(
@@ -457,6 +460,7 @@ public class DetailsForm extends PropertyWebForm {
 		setOS(feature.getOS());
 		setWS(feature.getWS());
 		setNL(feature.getNL());
+		setArch(feature.getArch());
 
 		licenseLink.setInfo(feature.getLicense());
 		copyrightLink.setInfo(feature.getCopyright());
@@ -581,6 +585,10 @@ public class DetailsForm extends PropertyWebForm {
 		return key;
 	}
 
+	private String mapArch(String key) {
+		return key;
+	}
+
 	private String mapNL(String nl) {
 		String language, country;
 
@@ -608,6 +616,21 @@ public class DetailsForm extends PropertyWebForm {
 				buf.append(mapWS(array[i]));
 			}
 			wsLabel.setText(buf.toString());
+		}
+	}
+	
+	private void setArch(String arch) {
+		if (arch == null)
+			archLabel.setText("");
+		else {
+			String[] array = getTokens(arch);
+			StringBuffer buf = new StringBuffer();
+			for (int i = 0; i < array.length; i++) {
+				if (i > 0)
+					buf.append("\n");
+				buf.append(mapArch(array[i]));
+			}
+			archLabel.setText(buf.toString());
 		}
 	}
 

@@ -42,6 +42,8 @@ public class UpdatesView
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
+	private static final String KEY_FILTER_ENVIRONMENT =
+		"UpdatesView.menu.filterEnvironment";
 	private static final String KEY_SHOW_CATEGORIES =
 		"UpdatesView.menu.showCategories";
 	private static final String KEY_NEW_SEARCH_TITLE =
@@ -57,6 +59,7 @@ public class UpdatesView
 	private Action newLocalAction;
 	private DeleteAction deleteAction;
 	private Action fileFilterAction;
+	private Action filterEnvironmentAction;
 	private Action showCategoriesAction;
 	private Image siteImage;
 	private Image featureImage;
@@ -70,6 +73,7 @@ public class UpdatesView
 	private SelectionChangedListener selectionListener;
 	private Hashtable fileImages = new Hashtable();
 	private FileFilter fileFilter = new FileFilter();
+	private EnvironmentFilter environmentFilter = new EnvironmentFilter();
 
 	class DeleteAction extends Action implements IUpdate {
 		public DeleteAction() {
@@ -98,6 +102,22 @@ public class UpdatesView
 		public boolean select(Viewer viewer, Object parent, Object child) {
 			if (child instanceof MyComputerFile) {
 				return false;
+			}
+			return true;
+		}
+	}
+
+	class EnvironmentFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parent, Object child) {
+			if (child instanceof IFeatureAdapter) {
+				try {
+					child = ((IFeatureAdapter) child).getFeature();
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+			if (child instanceof IFeature) {
+				return EnvironmentUtil.isValidEnvironment((IFeature) child);
 			}
 			return true;
 		}
@@ -217,9 +237,9 @@ public class UpdatesView
 				}
 			}
 			if (obj instanceof MyComputerDirectory) {
-				MyComputerDirectory dir = (MyComputerDirectory)obj;
+				MyComputerDirectory dir = (MyComputerDirectory) obj;
 				IVolume volume = dir.getVolume();
-				if (volume!=null)
+				if (volume != null)
 					return volumeLabelProvider.getText(volume);
 				else
 					return dir.getLabel(dir);
@@ -366,6 +386,22 @@ public class UpdatesView
 		fileFilterAction.setChecked(false);
 
 		viewer.addFilter(fileFilter);
+		
+		filterEnvironmentAction = new Action() {
+			public void run() {
+				if (filterEnvironmentAction.isChecked()) {
+					viewer.addFilter(environmentFilter);
+				}
+				else
+					viewer.removeFilter(environmentFilter);
+			}
+		};
+
+		filterEnvironmentAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_FILTER_ENVIRONMENT));
+		filterEnvironmentAction.setChecked(true);
+
+		viewer.addFilter(environmentFilter);
 
 		showCategoriesAction = new Action() {
 			public void run() {
@@ -388,6 +424,7 @@ public class UpdatesView
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());
 		menuManager.add(showCategoriesAction);
+		menuManager.add(filterEnvironmentAction);
 		bars.setGlobalActionHandler(
 			IWorkbenchActionConstants.DELETE,
 			deleteAction);
@@ -691,7 +728,8 @@ public class UpdatesView
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 		discoveryImage = UpdateUIPluginImages.DESC_PLACES_OBJ.createImage();
-		bookmarkFolderImage = UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
+		bookmarkFolderImage =
+			UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
 		categoryImage = UpdateUIPluginImages.DESC_CATEGORY_OBJ.createImage();
 		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
 		volumeLabelProvider = new VolumeLabelProvider();
@@ -710,6 +748,5 @@ public class UpdatesView
 		}
 		volumeLabelProvider.dispose();
 	}
-
 
 }

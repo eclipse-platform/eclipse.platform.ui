@@ -46,6 +46,8 @@ public class SearchForm extends UpdateWebForm {
 		"SearchPage.options.bookmarkCheck";
 	private static final String KEY_DISCOVERY_CHECK =
 		"SearchPage.options.discoveryCheck";
+	private static final String KEY_FILTER_CHECK =
+		"SearchPage.options.filterCheck";
 	private static final String UPDATES_IMAGE_ID = "updates";
 	private static final String SETTINGS_SECTION = "SearchForm";
 	private static final String S_FULL_MODE = "fullMode";
@@ -58,6 +60,7 @@ public class SearchForm extends UpdateWebForm {
 	private Button myComputerCheck;
 	private Button discoveryCheck;
 	private Button bookmarkCheck;
+	private Button filterCheck;
 	private Button myComputerSettings;
 	private Button fullModeCheck;
 	private Button searchButton;
@@ -275,6 +278,20 @@ public class SearchForm extends UpdateWebForm {
 				gd = new GridData();
 				gd.horizontalSpan = 2;
 				bookmarkCheck.setLayoutData(gd);
+
+				filterCheck =
+					factory.createButton(expansion, null, SWT.CHECK);
+				filterCheck.setText(
+					UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+				filterCheck.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						searchObject.setFilterEnvironment(
+							filterCheck.getSelection());
+					}
+				});
+				gd = new GridData();
+				gd.horizontalSpan = 2;
+				filterCheck.setLayoutData(gd);
 			}
 		};
 		optionsGroup.setText(UpdateUIPlugin.getResourceString(KEY_OPTIONS));
@@ -527,6 +544,10 @@ public class SearchForm extends UpdateWebForm {
 
 	private void enableOptions(boolean enable) {
 		myComputerCheck.setEnabled(enable);
+		myComputerSettings.setEnabled(enable);
+		discoveryCheck.setEnabled(enable);
+		bookmarkCheck.setEnabled(enable);
+		filterCheck.setEnabled(enable);
 	}
 
 	private void updateButtonText() {
@@ -545,6 +566,7 @@ public class SearchForm extends UpdateWebForm {
 		myComputerSettings.setEnabled(sobj.getSearchMyComputer());
 		discoveryCheck.setSelection(sobj.getSearchDiscovery());
 		bookmarkCheck.setSelection(sobj.getSearchBookmarks());
+		filterCheck.setSelection(sobj.getFilterEnvironment());
 	}
 
 	public void expandTo(Object obj) {

@@ -75,8 +75,26 @@ public class UpdatesSearchCategory extends SearchCategory {
 					candidates.add(ref.getFeature());
 				}
 			}
+			filterIncludedFeatures(candidates);
+
 		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e, false);
+		}
+	}
+	
+	private void filterIncludedFeatures(ArrayList candidates) throws CoreException {
+		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
+		// filter out included features so that only top-level features remain on the list
+		for (int i=0; i<array.length; i++) {
+			IFeature feature = array[i];
+			IFeatureReference [] included = feature.getIncludedFeatureReferences();
+			for (int j=0; j<included.length; j++) {
+				IFeatureReference fref = included[j];
+				IFeature ifeature = fref.getFeature();
+				int index = candidates.indexOf(ifeature);
+				if (index!= -1)
+					candidates.remove(index);
+			}
 		}
 	}
 	public ISearchQuery[] getQueries() {

@@ -4,20 +4,17 @@ package org.eclipse.update.internal.ui.search;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.model.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.update.internal.ui.parts.EnvironmentUtil;
 
 public class SearchObject extends NamedModelObject {
 	public static final String P_REFRESH = "p_refresh";
@@ -31,6 +28,7 @@ public class SearchObject extends NamedModelObject {
 	protected static final String S_MY_COMPUTER = "searchMyComputer";
 	protected static final String S_BOOKMARKS = "searchBookmarks";
 	protected static final String S_DISCOVERY = "searchDiscovery";
+	protected static final String S_FILTER = "searchFilter";
 	protected static final String S_DRIVES = "searchDrives";
 
 	private Vector result = new Vector();
@@ -130,6 +128,13 @@ public class SearchObject extends NamedModelObject {
 	}
 	public void setDriveSettings(String drives) {
 		settings.put(S_DRIVES, drives);
+	}
+	
+	public void setFilterEnvironment(boolean value) {
+		setBooleanValue(S_FILTER, !value);
+	}
+	public boolean getFilterEnvironment() {
+		return !getBooleanValue(S_FILTER);
 	}
 
 	private boolean getBooleanValue(String key) {
@@ -252,7 +257,7 @@ public class SearchObject extends NamedModelObject {
 				if (monitor.isCanceled()) {
 					break;
 				}
-				Object source = candidates.get(i);
+				Object source = candidates.get(j);
 				searchOneSite((ISiteAdapter) source, query, monitor);
 				monitor.worked(1);
 			}
@@ -286,6 +291,9 @@ public class SearchObject extends NamedModelObject {
 		SearchResultSite searchSite = null;
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
+			// filter out the feature for environment
+			if (getFilterEnvironment() && isValidEnvironment(candidate)==false) continue;
+			
 			if (query.matches(candidate)) {
 				// bingo - add this
 				if (searchSite == null) {
@@ -297,6 +305,10 @@ public class SearchObject extends NamedModelObject {
 				asyncFireObjectAdded(searchSite, candidate);
 			}
 		}
+	}
+	
+	private boolean isValidEnvironment(IFeature candidate) {
+		return EnvironmentUtil.isValidEnvironment(candidate);
 	}
 
 	private void asyncFireObjectAdded(final Object parent, final Object child) {
