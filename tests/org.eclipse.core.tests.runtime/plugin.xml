@@ -131,7 +131,7 @@
          <describer
          	plugin="org.eclipse.core.runtime"
             class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
-            <parameter name="signature" value="10, 11, 12, 13"/>
+            <parameter name="signature" value="10, AB, CD, FF"/>
             <parameter name="offset" value="5"/>                           
          </describer>
       </content-type>
@@ -142,9 +142,20 @@
          <describer
          	plugin="org.eclipse.core.runtime"
             class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
-            <parameter name="signature" value="10, 11, 12, 14"/>   
+            <parameter name="signature" value="10, AB, CD, EF"/>   
          </describer>
       </content-type>            
+      <content-type
+            file-extensions="class"
+            name="Java Class file"
+            id="javaClass">
+         <describer
+         	plugin="org.eclipse.core.runtime"
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
+            <parameter name="signature" value="CA, FE, BA, BE"/>   
+         </describer>
+      </content-type>            
+      
       <file-association
             file-extensions="tkst"
             content-type="org.eclipse.core.runtime.text"/>
