@@ -82,9 +82,12 @@ public final class FileBuffers {
 			if (path != null && path.isPrefixOf(location)) {
 				IPath filePath= location.removeFirstSegments(path.segmentCount());
 				filePath= projects[i].getFullPath().append(filePath);
-				return filePath.makeAbsolute();
+				filePath= filePath.makeAbsolute();
+				IFile file= workspaceRoot.getFile(filePath);
+				if (file != null && file.exists())
+					return filePath;
+				break;
 			}
-			
 		}
 		return location.makeAbsolute();
 	}
