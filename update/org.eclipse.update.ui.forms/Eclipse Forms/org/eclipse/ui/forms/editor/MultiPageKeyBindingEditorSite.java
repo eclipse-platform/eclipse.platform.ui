@@ -18,25 +18,25 @@ import org.eclipse.ui.part.*;
  * @since 3.0
  */
 public class MultiPageKeyBindingEditorSite extends MultiPageEditorSite {
-	private MultiPageKeyBindingService fKeyBindingService;
+	private MultiPageKeyBindingService keyBindingService;
 
 	public MultiPageKeyBindingEditorSite(
 		MultiPageEditorPart multiPageEditor,
 		IEditorPart editor) {
 		super(multiPageEditor, editor);
-		fKeyBindingService = new MultiPageKeyBindingService(this);
+		keyBindingService = new MultiPageKeyBindingService(this);
 	}
 
 	public IKeyBindingService getKeyBindingService() {
-		return fKeyBindingService;
+		return keyBindingService;
 	}
 
 	public void activate() {
-		fKeyBindingService.activate();
+		keyBindingService.activate();
 	}
 
 	public void deactivate() {
-		fKeyBindingService.deactivate();
+		keyBindingService.deactivate();
 	}
 
 	public boolean isActive() {

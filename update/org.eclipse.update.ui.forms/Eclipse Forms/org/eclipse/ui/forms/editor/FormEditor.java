@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.editor;
 
 import java.util.Vector;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -33,7 +34,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	private FormToolkit toolkit;
 	private Vector pages;
 	private IEditorPart sourcePage;
-	private IEditorPart fLastActiveEditor = null;
+	private IEditorPart lastActiveEditor = null;
 	private int currentPage = -1;
 
 	/**
@@ -50,8 +51,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * @see #addPages
 	 */
 	protected final void createPages() {
-		toolkit = new FormToolkit(getContainer().getDisplay());
+		toolkit = createToolkit(getContainer().getDisplay());
 		addPages();
+	}
+	
+	protected FormToolkit createToolkit(Display display) {
+		return new FormToolkit(display);
 	}
 
 	/**
@@ -127,22 +132,23 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	protected void pageChange(int newPageIndex) {
 		// deactivate the old editor's site
-		if (fLastActiveEditor != null) {
-			((MultiPageKeyBindingEditorSite) fLastActiveEditor.getSite())
+		if (lastActiveEditor != null) {
+			((MultiPageKeyBindingEditorSite) lastActiveEditor.getSite())
 				.deactivate();
-			fLastActiveEditor = null;
+			lastActiveEditor = null;
 		}
 		// Now is the absolute last moment to create the page control.
 		IFormPage page = (IFormPage) pages.get(newPageIndex);
 		if (page.getPartControl() == null) {
 			page.createPartControl(getContainer());
+			setControl(newPageIndex, page.getPartControl());
 		}
 		// fix for windows handles
 		int oldPage = getCurrentPage();
 		if (pages.size() > newPageIndex
 			&& pages.get(newPageIndex) instanceof IFormPage)
 			 ((IFormPage) pages.get(newPageIndex)).setActive(true);
-		if (pages.size() > oldPage && pages.get(oldPage) instanceof IFormPage)
+		if (oldPage!= -1 && pages.size() > oldPage && pages.get(oldPage) instanceof IFormPage)
 			 ((IFormPage) pages.get(oldPage)).setActive(false);
 
 		// Call super - this will cause pages to switch
@@ -155,7 +161,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 				instanceof MultiPageKeyBindingEditorSite) {
 				((MultiPageKeyBindingEditorSite) activeEditor.getSite())
 					.activate();
-				fLastActiveEditor = activeEditor;
+				lastActiveEditor = activeEditor;
 			}
 		}
 		this.currentPage = newPageIndex;
@@ -199,6 +205,18 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		return page;
 	}
 
+/**
+ * Returns active page instance if the currently selected
+ * page index is not -1, or <code>null</code> if it is.
+ * @return active page instance if selected, or <code>null</code> 
+ * if no page is currently active.
+ */	
+	public IFormPage getActivePageInstance() {
+		int index = getActivePage();
+		if (index != -1) return (IFormPage)pages.get(index);
+		return null;
+	}
+
 	/**
 	 * @see MultiPageEditorPart#setActivePage(int)
 	 */
@@ -207,6 +225,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		// this should be called only when the editor is first opened
 		if (pages.size() > pageIndex
 			&& pages.get(pageIndex) instanceof IFormPage) {
+			pageChange(pageIndex);			
 			IFormPage activePage = (IFormPage) pages.get(pageIndex);
 			activePage.setActive(true);
 			super.setActivePage(pageIndex);
@@ -223,7 +242,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 				getEditor(pageIndex));
 		}
 	}
-
+	
 	private void registerPage(IFormPage page) {
 		if (!pages.contains(page))
 			pages.add(page);

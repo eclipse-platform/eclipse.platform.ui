@@ -11,6 +11,7 @@
 package org.eclipse.ui.forms.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -19,21 +20,42 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.part.EditorPart;
 
 /**
- *
+ * A base class that all pages that should be added to FormEditor
+ * must subclass. Form page has a managed form. Subclasses should
+ * override method 'createFormContent(ManagedForm)' to fill the
+ * form with content. Note that page itself can be loaded
+ * lazily (when first open). Consequently, the call to create
+ * the form content can come after the editor has been opened
+ * for a while (in fact, it is possible to open and close the
+ * editor and never create the form because no attempt was
+ * made to show the page). 
  */
 public class FormPage extends EditorPart implements IFormPage {
 	private FormEditor editor;
 	private ManagedForm mform;
-	private boolean active;
 	private int index;
 	private String id;
 	private String title;
+	
+	public FormPage(FormEditor editor, String id, String title) {
+		this(id, title);
+		initialize(editor);
+	}
 
+/**
+ * The constructor.
+ * @param id a unique page identifier
+ * @param title a user-friendly page title
+ */	
 	public FormPage(String id, String title) {
 		this.id = id;
 		this.title = title;
 	}
 
+/**
+ * Initializes the form page.
+ * @see IEditorPart#init
+ */	
 	public void init(IEditorSite site, IEditorInput input) {
 		setSite(site);
 		setInput(input);
@@ -55,11 +77,10 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.forms.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
-		this.active = active;
 	}
 	
 	public boolean isActive() {
-		return active;
+		return this.equals(editor.getActivePageInstance());
 	}
 
 	/* (non-Javadoc)
@@ -67,18 +88,31 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	public void createPartControl(Composite parent) {
 		Form form = editor.getToolkit().createForm(parent);
-		mform = new ManagedForm(form);
+		mform = new ManagedForm(editor.getToolkit(), form);
+		BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+			public void run() {
+				createFormContent(mform);
+			}
+		});
+	}
+	
+/**
+ * Subclasses should override this method to create content
+ * in the form hosted in this page.
+ * @param managedForm the form hosted in this page.
+ */
+	protected void createFormContent(ManagedForm managedForm) {
 	}
 	
 	public Control getPartControl() {
-		return mform.getForm();
+		return mform!=null?mform.getForm():null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		mform.dispose();
+		if (mform!=null) mform.dispose();
 	}
 	
 	public String getId() {
@@ -100,14 +134,14 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		mform.setFocus();
+		if (mform!=null) mform.setFocus();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		mform.commit(true);
+		if (mform!=null) mform.commit(true);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
@@ -126,7 +160,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
-		return mform.isDirty();
+		return mform!=null?mform.isDirty():false;
 	}
 
 	public void setIndex(int index) {

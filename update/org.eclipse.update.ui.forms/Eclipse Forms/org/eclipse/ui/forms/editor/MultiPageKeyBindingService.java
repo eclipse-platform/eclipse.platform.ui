@@ -24,25 +24,25 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  */
 public class MultiPageKeyBindingService implements IKeyBindingService {
 
-	private MultiPageKeyBindingEditorSite fSite;
-	private String[] fScopes =
+	private MultiPageKeyBindingEditorSite site;
+	private String[] scopes =
 		new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
-	private HashMap fCommandIdToActionMap = new HashMap();
+	private HashMap commandIdToActionMap = new HashMap();
 
 	public MultiPageKeyBindingService(MultiPageKeyBindingEditorSite site) {
-		fSite = site;
+		this.site = site;
 	}
 
 	/**
 	 * Is the corresponding nested editor active?
 	 */
 	private boolean isActive() {
-		return fSite.isActive();
+		return site.isActive();
 	}
 
 	public void activate() {
 		// register all actions with the outer service
-		for (Iterator i = fCommandIdToActionMap.values().iterator();
+		for (Iterator i = commandIdToActionMap.values().iterator();
 			i.hasNext();
 			) {
 			getOuterService().registerAction((IAction) i.next());
@@ -51,7 +51,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 
 	public void deactivate() {
 		// deregister all actions from the outer service
-		for (Iterator i = fCommandIdToActionMap.values().iterator();
+		for (Iterator i = commandIdToActionMap.values().iterator();
 			i.hasNext();
 			) {
 			getOuterService().unregisterAction((IAction) i.next());
@@ -62,11 +62,11 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 	 * Returns the outer key binding service.
 	 */
 	private IKeyBindingService getOuterService() {
-		return fSite.getMultiPageEditor().getSite().getKeyBindingService();
+		return site.getMultiPageEditor().getSite().getKeyBindingService();
 	}
 
 	public String[] getScopes() {
-		return (String[]) fScopes.clone();
+		return (String[]) scopes.clone();
 	}
 
 	public void setScopes(String[] scopes) {
@@ -75,7 +75,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 		for (int i = 0; i < scopes.length; i++)
 			if (scopes[i] == null)
 				throw new IllegalArgumentException();
-		fScopes = (String[]) scopes.clone();
+		this.scopes = (String[]) scopes.clone();
 		if (isActive())
 			getOuterService().setScopes(scopes);
 	}
@@ -85,7 +85,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 		// if the corresponding nested editor is active
 		String command = action.getActionDefinitionId();
 		if (command != null) {
-			fCommandIdToActionMap.put(command, action);
+			commandIdToActionMap.put(command, action);
 			if (isActive())
 				getOuterService().registerAction(action);
 		}
@@ -96,7 +96,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 		// if the corresponding nested editor is active
 		String command = action.getActionDefinitionId();
 		if (command != null) {
-			fCommandIdToActionMap.remove(command);
+			commandIdToActionMap.remove(command);
 			if (isActive())
 				getOuterService().unregisterAction(action);
 		}
