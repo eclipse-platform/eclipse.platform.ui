@@ -102,10 +102,12 @@ public synchronized IStatus[] readLogFile(String path) {
 					if (status != null)
 						list.add(status);
 					break;
+				case SESSION:
+					readSession();
+					break;
 				case SUBENTRY:
 				case MESSAGE:
 				case STACK:
-				case SESSION:
 				case UNKNOWN:
 					currentLine = reader.readLine();
 					break;
@@ -127,17 +129,19 @@ protected int getLineType() {
 	if (currentLine == null) 
 		return NULL;
 	StringTokenizer tokenizer = new StringTokenizer(currentLine);
-	String token = tokenizer.nextToken();
-	if (token.equals(KEYWORD_SESSION))
-		return SESSION;
-	if (token.equals(KEYWORD_ENTRY))
-		return ENTRY;
-	if (token.equals(KEYWORD_SUBENTRY))
-		return SUBENTRY;
-	if (token.equals(KEYWORD_MESSAGE))
-		return MESSAGE;
-	if (token.equals(KEYWORD_STACK))
-		return STACK;
+	if (tokenizer.hasMoreTokens()) {
+		String token = tokenizer.nextToken();
+		if (token.equals(KEYWORD_SESSION))
+			return SESSION;
+		if (token.equals(KEYWORD_ENTRY))
+			return ENTRY;
+		if (token.equals(KEYWORD_SUBENTRY))
+			return SUBENTRY;
+		if (token.equals(KEYWORD_MESSAGE))
+			return MESSAGE;
+		if (token.equals(KEYWORD_STACK))
+			return STACK;
+	}
 	return UNKNOWN;
 }
 
@@ -234,6 +238,12 @@ protected String readMessage() throws IOException {
 	currentLine = reader.readLine();
 	buffer.append(readText());
 	return buffer.toString();
+}
+protected String readSession() throws IOException {
+	if (currentLine == null || getLineType() != SESSION)
+		return "";
+	currentLine = reader.readLine();
+	return readText();
 }
 protected String readText() throws IOException {
 	StringBuffer buffer = new StringBuffer();

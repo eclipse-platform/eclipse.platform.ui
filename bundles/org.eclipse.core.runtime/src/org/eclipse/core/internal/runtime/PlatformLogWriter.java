@@ -14,6 +14,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 /**
@@ -97,13 +98,57 @@ protected void openLogFile() {
 	try {
 		log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));
 		if (newSession) {
-			writeln(SESSION);
+			writeHeader();
 			newSession = false;
 		}
 	} catch (IOException e) {
 		// there was a problem opening the log file so log to the console
 		log = logForStream(System.err);
 	}
+}
+protected void writeHeader() throws IOException {
+	write(SESSION);
+	writeSpace();
+	for (int i=SESSION.length(); i<78; i++) {
+		write("-");//$NON-NLS-1$
+	}
+	writeln();
+
+	// Write out certain values found in System.getProperties()
+	try {
+		String key = "java.fullversion";//$NON-NLS-1$
+		String value = System.getProperty(key);
+		if (value == null) {
+			key = "java.version";//$NON-NLS-1$
+			value = System.getProperty(key);
+			writeln(key + "=" + value);//$NON-NLS-1$
+			key = "java.vendor";//$NON-NLS-1$
+			value = System.getProperty(key);
+			writeln(key + "=" + value);//$NON-NLS-1$
+		} else {
+			writeln(key + "=" + value);//$NON-NLS-1$
+		}
+	} catch (Exception e) {
+		// If we're not allowed to get the values of these properties
+		// then just skip over them.
+	}
+
+	// The Bootloader has some information that we might be interested in.
+	write("BootLoader constants: OS=" + BootLoader.getOS());//$NON-NLS-1$
+	write(", ARCH=" + BootLoader.getOSArch());//$NON-NLS-1$
+	write(", WS=" + BootLoader.getWS());//$NON-NLS-1$
+	writeln(", NL=" + BootLoader.getNL());//$NON-NLS-1$
+	
+	// Add the command-line arguments used to envoke the platform.
+	String[] args = BootLoader.getCommandLineArgs();
+	if (args != null && args.length > 0) {
+		write("Command-line arguments:");//$NON-NLS-1$
+		for (int i=0; i<args.length; i++) {
+			write(" " + args[i]);//$NON-NLS-1$
+		}
+		writeln();
+	}
+
 }
 protected Writer logForStream(OutputStream output) {
 	try {
@@ -152,11 +197,10 @@ protected void write(Throwable throwable) throws IOException {
 
 
 protected void write(IStatus status, int depth) throws IOException {
-	if (depth == 0)
+	if (depth == 0) {
 		write(ENTRY);
-	else
+	} else {
 		write(SUBENTRY);
-	if (depth != 0) {
 		writeSpace();
 		write(Integer.toString(depth));
 	}
