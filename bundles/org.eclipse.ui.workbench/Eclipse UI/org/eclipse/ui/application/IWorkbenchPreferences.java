@@ -136,13 +136,4 @@ public interface IWorkbenchPreferences {
 	 */
 	public static String SHOULD_SAVE_WORKBENCH_STATE = "wb.save.workbench.state"; //$NON-NLS-1$
 	
-	/**
-	 * Workbench preference id for determining whether the 'show all' option 
-	 * should be shown where applicable.
-	 * <p>
-	 * The default value for this preference is: <code>true</code> (allow show 
-	 * all)
-	 * </p>
-	 */
-	public static final String SHOULD_ALLOW_SHOW_ALL = "wb.allow.show.all"; //$NON-NLS-1$
 }

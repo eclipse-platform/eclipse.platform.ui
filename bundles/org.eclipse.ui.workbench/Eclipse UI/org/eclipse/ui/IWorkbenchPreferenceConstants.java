@@ -131,4 +131,16 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating the default workbench perspective.
 	 */
 	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
+	
+	/**
+	 * Workbench preference id for determining whether the 'show all' option 
+	 * should be shown where applicable (for activity-based filtering).
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (allow show 
+	 * all)
+	 * </p>
+	 * @since 3.0
+	 */
+	public static final String SHOULD_ALLOW_SHOW_ALL = "wb.allow.show.all"; //$NON-NLS-1$
+	
 }

@@ -14,8 +14,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
@@ -99,7 +99,7 @@ public final class WorkbenchActivityHelper {
 	 * @return whether the UI will provide a "show all" option when applicable.
 	 */
 	public static final boolean showAll() {
-		return isFiltering() && PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_ALLOW_SHOW_ALL);
+		return isFiltering() && PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL);
 	}
 
 	/**
