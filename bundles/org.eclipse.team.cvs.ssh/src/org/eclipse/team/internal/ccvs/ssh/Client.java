@@ -543,7 +543,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		}
 	}
 }
-private void receive_SSH_SMSG_PUBLIC_KEY(ServerPacket packet) throws IOException {
+private void receive_SSH_SMSG_PUBLIC_KEY(ServerPacket packet) throws IOException, CVSAuthenticationException {
 	InputStream pis = packet.getInputStream();
 
 	byte[] anti_spoofing_cookie = new byte[8];
@@ -572,7 +572,7 @@ private void receive_SSH_SMSG_PUBLIC_KEY(ServerPacket packet) throws IOException
 
 	pis.close();
 
-	send_SSH_CMSG_SESSION_KEY(anti_spoofing_cookie, server_key_public_modulus, host_key_public_modulus, supported_ciphers_mask, server_key_public_exponent, host_key_public_exponent);
+	send_SSH_CMSG_SESSION_KEY(anti_spoofing_cookie, host_key_bits, server_key_public_modulus, host_key_public_modulus, supported_ciphers_mask, server_key_public_exponent, host_key_public_exponent);
 }
 private void send(int packetType, String s) throws IOException {
 	byte[] data = s == null ? new byte[0] : s.getBytes("UTF-8"); //$NON-NLS-1$
@@ -618,7 +618,7 @@ private void send_SSH_CMSG_REQUEST_PTY() throws IOException {
 	socketOut.write(packet.getBytes());
 	socketOut.flush();
 }
-private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] server_key_public_modulus, byte[] host_key_public_modulus, byte[] supported_ciphers_mask, byte[] server_key_public_exponent, byte[] host_key_public_exponent) throws IOException {
+private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_key_bits, byte[] server_key_public_modulus, byte[] host_key_public_modulus, byte[] supported_ciphers_mask, byte[] server_key_public_exponent, byte[] host_key_public_exponent) throws IOException, CVSAuthenticationException {
 	byte packet_type = SSH_CMSG_SESSION_KEY;
 
 	// session_id
@@ -657,8 +657,13 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] serve
 	System.arraycopy(session_key, 0, session_key_xored, 0, session_key.length);
 	Misc.xor(session_key_xored, 0, session_id, 0, session_key_xored, 0, session_id.length);
 
+	BigInteger host_e = new BigInteger(1, host_key_public_exponent);
+	BigInteger host_n = new BigInteger(1, host_key_public_modulus);
+	if (!new KnownHosts().verifyKey(host, host_key_bits, host_e, host_n)) {
+		throw new CVSAuthenticationException(Policy.bind("Client.hostIdChanged"));
+	};
 	byte[] result;
-	if (new BigInteger(1,server_key_public_modulus).compareTo(new BigInteger(1,host_key_public_modulus)) == -1) {
+	if (new BigInteger(1,server_key_public_modulus).compareTo(host_n) == -1) {
 		result = Misc.encryptRSAPkcs1(session_key_xored, server_key_public_exponent, server_key_public_modulus);
 		result = Misc.encryptRSAPkcs1(result, host_key_public_exponent, host_key_public_modulus);
 	} else {

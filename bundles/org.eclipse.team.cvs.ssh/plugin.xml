@@ -7,6 +7,7 @@
 	class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin">
 
   <requires>
+    <import plugin="org.eclipse.core.boot"/>
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.team.cvs.core"/>
     <import plugin="org.eclipse.team.core"/>
