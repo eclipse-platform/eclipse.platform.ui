@@ -23,7 +23,7 @@
     <!-- Session Test ** Team Core ** -->
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
-      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+      <property name="plugin-name" value="org.eclipse.team.tests.core"/>
       <property name="classname" value="org.eclipse.team.tests.core.AllTeamTests"/>
     </ant>
     
