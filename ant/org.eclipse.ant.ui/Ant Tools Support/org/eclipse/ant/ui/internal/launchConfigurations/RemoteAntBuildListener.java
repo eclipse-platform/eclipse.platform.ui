@@ -55,7 +55,6 @@ public class RemoteAntBuildListener {
 	private IProcess fProcess;
 	private String fProcessId;
 	private File fBuildFileParent= null;
-	private boolean fRegistered= false;
 	
 	/**
 	 * Reads the message stream from the RemoteTestRunner
@@ -146,22 +145,23 @@ public class RemoteAntBuildListener {
 	}
 		
 	private void receiveMessage(String message) {
-		if (!fRegistered && fProcessId != null){
-			fRegistered= true;
-			TaskLinkManager.registerRemoteAntBuild(getProcess());	
-		}
-		
 		if (message.startsWith(MessageIds.TASK)) {
 			message= message.substring(MessageIds.TASK.length());
-			String name= message.substring(0, message.indexOf(','));
-			String location= message.substring(message.indexOf(',') + 1, message.length());
+			
+			int index= message.indexOf(',');
+			String name= message.substring(0, index);
+			int index2= message.indexOf(',', index + 1);
+			int lineLength= Integer.parseInt(message.substring(index + 1, index2));
+			int finalIndex= index2 + 1 + lineLength;
+			String line= message.substring(index2 + 1, finalIndex);
+			String location= message.substring(finalIndex + 1);
 	
 			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
 			int offset = Math.max(size - 2, 1);
 			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
 			IConsoleHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
 			if (taskLink != null) {
-				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), name );
+				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), line);
 			}
 		} else if (message.startsWith(MessageIds.PROCESS_ID)) {
 			message= message.substring(MessageIds.PROCESS_ID.length());
