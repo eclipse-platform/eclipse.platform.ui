@@ -68,6 +68,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class LaunchConfigurationManager implements ILaunchListener {
 	/**
@@ -387,6 +388,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			rootHistoryElement = null;
 			try {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				parser.setErrorHandler(new DefaultHandler());
 				rootHistoryElement = parser.parse(new InputSource(stream)).getDocumentElement();
 			} catch (SAXException e) {
 				DebugUIPlugin.log(e);

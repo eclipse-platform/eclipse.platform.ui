@@ -58,6 +58,7 @@ import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -1137,6 +1138,7 @@ public class DebugPlugin extends Plugin {
 		InputStream stream = null;
 		try{		
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			stream = new ByteArrayInputStream(document.getBytes());
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {

@@ -50,6 +50,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Launch configuration handle.
@@ -88,6 +89,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			Element root = null;
 			DocumentBuilder parser =
 				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();

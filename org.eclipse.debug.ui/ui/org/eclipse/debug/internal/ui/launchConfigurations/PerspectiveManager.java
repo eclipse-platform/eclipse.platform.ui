@@ -52,6 +52,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The perspective manager manages the 'perspective' settings
@@ -708,6 +709,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			try {
 				Element root = null;
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				parser.setErrorHandler(new DefaultHandler());
 				StringReader reader = new StringReader(xml);
 				InputSource source = new InputSource(reader);
 				root = parser.parse(source).getDocumentElement();

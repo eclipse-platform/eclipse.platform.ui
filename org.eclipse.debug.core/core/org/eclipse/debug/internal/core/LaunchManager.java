@@ -98,6 +98,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Manages launch configurations, launch configuration types, and registered launches.
@@ -492,6 +493,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 																			 SAXException {
 		Element root = null;
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		LaunchConfigurationInfo info = new LaunchConfigurationInfo();
 		info.initializeFromXML(root);

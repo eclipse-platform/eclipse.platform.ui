@@ -51,6 +51,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Singleton string variable manager. 
@@ -233,6 +234,7 @@ public class StringVariableManager implements IStringVariableManager {
 		try {
 			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(stream).getDocumentElement();
 		} catch (UnsupportedEncodingException e) {
 			ex = e;
