@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * 
  */
-public class ResourceStatus extends Status {
+public class ResourceStatus extends Status implements IResourceStatus {
 	IPath path;
 	
 	/** Singleton status indicating success */
