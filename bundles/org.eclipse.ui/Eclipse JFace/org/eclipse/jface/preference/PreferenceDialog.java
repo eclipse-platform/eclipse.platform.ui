@@ -309,14 +309,23 @@ private Composite createTitleArea(Composite parent) {
 	// Create the title area which will contain
 	// a title, message, and image.
 	titleArea = new Composite(parent, SWT.NONE);
+	
+	
+	// Get the background color for the title area
+	Display display = parent.getDisplay();
+	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
 	layout.verticalSpacing = 0;
 	layout.horizontalSpacing = 0;
 	layout.numColumns = 2;
+	GridData layoutData = new GridData(GridData.FILL_BOTH);
+	layoutData.grabExcessVerticalSpace = true;
 	titleArea.setLayout(layout);
-	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	titleArea.setLayoutData(layoutData);
+	titleArea.setBackground(bg);
 
 	// Add a dispose listener
 	titleArea.addDisposeListener(new DisposeListener() {
@@ -328,14 +337,12 @@ private Composite createTitleArea(Composite parent) {
 		}
 	});
 
-	// Get the background color for the title area
-	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
 
 	// Message label
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" ");//$NON-NLS-1$
+	messageLabel.setFont(JFaceResources.getBannerFont());
 	
 	fontListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
