@@ -111,7 +111,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			throw new CoreException(status);
 		}
 
-		return createExecutableExtension(InternalPlatform.getDefault().getBundle(getDeclaringExtension().getParentIdentifier()), pluginName, className, initData, this, attributeName);
+		return createExecutableExtension(InternalPlatform.getDefault().getBundle(getDeclaringExtension().getNamespace()), pluginName, className, initData, this, attributeName);
 	}
 
 	Object createExecutableExtension(Bundle bundle, String pluginName, String className, Object initData, IConfigurationElement cfig, String propertyName) throws CoreException {

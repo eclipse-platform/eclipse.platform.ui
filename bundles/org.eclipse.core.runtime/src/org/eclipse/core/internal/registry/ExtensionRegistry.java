@@ -323,7 +323,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		extensionDelta.setExtension(extension);
 		extensionDelta.setExtensionPoint(extPoint);
 		extensionDelta.setKind(kind);
-		getDelta(extPoint.getParentIdentifier()).addExtensionDelta(extensionDelta);
+		getDelta(extPoint.getNamespace()).addExtensionDelta(extensionDelta);
 	}
 	/*
 	 * Records a set of extension additions/removals.
@@ -333,7 +333,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			return;
 		if (extensions.length == 0)
 			return;
-		RegistryDelta pluginDelta = getDelta(extPoint.getParentIdentifier());
+		RegistryDelta pluginDelta = getDelta(extPoint.getNamespace());
 		for (int i = 0; i < extensions.length; i++) {
 			ExtensionDelta extensionDelta = new ExtensionDelta();
 			extensionDelta.setExtension(extensions[i]);
