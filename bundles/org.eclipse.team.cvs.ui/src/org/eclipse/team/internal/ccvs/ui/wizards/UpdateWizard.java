@@ -19,9 +19,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -37,28 +34,22 @@ import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class UpdateWizard extends Wizard {
+public class UpdateWizard extends ResizableWizard {
 	
-	private static final String UPDATE_WIZARD_SECTION = "UpdateWizard"; //$NON-NLS-1$
-
 	private IResource[] resources;
 	private final IWorkbenchPart part;
-	private final WizardSizeSaver fSizeSaver;
 	private TagSelectionWizardPage tagSelectionPage;
 	
 	protected UpdateWizard(IWorkbenchPart part, IResource[] resources) {
+        super("UpdateWizard", CVSUIPlugin.getPlugin().getDialogSettings());
 		this.part = part;
 		this.resources = resources;
-		fSizeSaver= new WizardSizeSaver(this, UPDATE_WIZARD_SECTION);
-		setDialogSettings(CVSUIPlugin.getPlugin().getDialogSettings());
 		setWindowTitle(Policy.bind("UpdateWizard.title")); //$NON-NLS-1$
 	}
 	
     public static void run(IWorkbenchPart part, IResource [] resources) {
-        UpdateWizard wizard = new UpdateWizard(part, resources);
-		final WizardDialog dialog= new WizardDialog(part.getSite().getShell(), wizard);
-		dialog.setMinimumPageSize(wizard.loadSize());
-		dialog.open();
+        final UpdateWizard wizard = new UpdateWizard(part, resources);
+        open(part.getSite().getShell(), wizard);
     }
     
 	public void addPages() {
@@ -106,11 +97,6 @@ public class UpdateWizard extends Wizard {
 			return false;
 		}
 
-		fSizeSaver.saveSize();
-		return true;
+		return super.performFinish();
 	}
-	
-    public Point loadSize() {
-        return fSizeSaver.getSize();
-    }
 }

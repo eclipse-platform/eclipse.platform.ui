@@ -11,21 +11,16 @@
 
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
@@ -35,34 +30,25 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.subscribers.ChangeSet;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.CommitCommentArea;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.ui.synchronize.ParticipantPagePane;
-import org.eclipse.team.ui.synchronize.ResourceScope;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * This wizard page shows a preview of the commit operation and allows entering
@@ -70,28 +56,6 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
  */
 public class CommitWizardCommitPage extends WizardPage implements IPropertyChangeListener {
     
-    /**
-     * The actions to be displayed in the context menu.
-     */
-    private class ActionContribution extends SynchronizePageActionGroup {
-        
-        public void initialize(ISynchronizePageConfiguration configuration) {
-            super.initialize(configuration);
-            appendToGroup(
-                    ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-                    ISynchronizePageConfiguration.OBJECT_CONTRIBUTIONS_GROUP,
-                    new CVSActionDelegateWrapper(new IgnoreAction(), configuration));
-        }
-        
-        public void modelChanged(final ISynchronizeModelElement root) {
-            super.modelChanged(root);
-            Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					updateForModelChange(root);
-				}
-			});
-        }
-    }
     
     /**
      * Saves the size of the wizard dialog.
@@ -131,92 +95,28 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         }
     }
     
-    /**
-     * An extension of the standard label decorator which configures the keyword substitution 
-     * mode according to the settings on the file type wizard page.
-     */
-    private class Decorator extends CVSParticipantLabelDecorator {
-        
-        public Decorator(ISynchronizePageConfiguration configuration) {
-            super(configuration);
-        }
-        
-        protected CVSDecoration getDecoration(IResource resource) throws CVSException {
-            final CVSDecoration decoration= super.getDecoration(resource);
-            if (fFileTypePage != null && resource instanceof IFile)
-                decoration.setKeywordSubstitution(fFileTypePage.getOption((IFile)resource).getShortDisplayText());
-            return decoration;
-        }
-    }
-    
-    /**
-     * A participant that uses our decorator instead of the standard one.
-     */
-    private class Participant extends WorkspaceSynchronizeParticipant {
-        public Participant(ISynchronizeScope scope) {
-            super(scope);
-        }
-        protected ILabelDecorator getLabelDecorator(ISynchronizePageConfiguration configuration) {
-            return new Decorator(configuration);
-        }
-        
-        public ChangeSetCapability getChangeSetCapability() {
-            return null; // we don't want that button
-        }
-        /* (non-Javadoc)
-		 * @see org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-		 */
-		protected void initializeConfiguration( ISynchronizePageConfiguration configuration) {
-			super.initializeConfiguration(configuration);
-	        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP});
-	        configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
-	        configuration.addActionContribution(new ActionContribution());
-	        
-	        // Wrap the container so that we can update the enablements after the runnable
-	        // (i.e. the container resets the state to what it was at the beginning of the
-	        // run even if the state of the page changed. Remove from View changes the state)
-	        configuration.setRunnableContext(new IRunnableContext() {
-				public void run(boolean fork, boolean cancelable,
-						IRunnableWithProgress runnable)
-						throws InvocationTargetException, InterruptedException {
-					getContainer().run(fork, cancelable, runnable);
-					updateEnablements();
-				}
-			});
-	        configuration.setSupportedModes(ISynchronizePageConfiguration.OUTGOING_MODE);
-	        configuration.setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#doesSupportSynchronize()
-		 */
-		public boolean doesSupportSynchronize() {
-			return false;
-		}
-    }
-    
     private final CommitCommentArea fCommentArea;
-    private final IResource [] fResources;
-    
     private final SettingsSaver fSettingsSaver;
     
     private ISynchronizePageConfiguration fConfiguration;
     private SashForm fSashForm;
-    protected final CommitWizardFileTypePage fFileTypePage;
-	private ParticipantPagePane fPagePane;
-	private Participant fParticipant;
     
-    public CommitWizardCommitPage(IResource [] resources, CommitWizardFileTypePage fileTypePage) {
+    protected final CommitWizard fWizard;
+    
+	private ParticipantPagePane fPagePane;
+    
+    public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
+        
         super(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
         setTitle(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
         setDescription(Policy.bind("CommitWizardCommitPage.2")); //$NON-NLS-1$
         
         fSettingsSaver= new SettingsSaver();
-        fFileTypePage= fileTypePage;
+        fWizard= wizard;
         fCommentArea= new CommitCommentArea();
         fCommentArea.setProposedComment(getProposedComment(resources));
         if (resources.length > 0)
             fCommentArea.setProject(resources[0].getProject());
-        fResources= resources;
     }
     
     /* (non-Javadoc)
@@ -266,14 +166,14 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         
         createPlaceholder(composite);
         
-        fParticipant = new Participant(new ResourceScope(fResources));
-        fConfiguration= fParticipant.createPageConfiguration();
-        fPagePane= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, fParticipant);
+        final CommitWizardParticipant participant= fWizard.getParticipant();
+        fConfiguration= participant.createPageConfiguration();
+        fPagePane= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, participant);
         Control control = fPagePane.createPartControl(composite);
         control.setLayoutData(SWTUtils.createHVFillGridData());
     }
-    
-    /* (non-Javadoc)
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
 	public void dispose() {
@@ -281,8 +181,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 		// Disposing of the page pane will dispose of the page and the configuration
 		if (fPagePane != null)
 			fPagePane.dispose();
-		if (fParticipant != null)
-			fParticipant.dispose();
 	}
 	
     private void createPlaceholder(final Composite composite) {
@@ -305,27 +203,31 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        fCommentArea.setFocus();
-        fConfiguration.getPage().getViewer().refresh();
         expand();
+        fCommentArea.setFocus();
     }
     
     protected void expand() {
         final Viewer viewer= fConfiguration.getPage().getViewer();
         if (viewer instanceof TreeViewer) {
-            ((TreeViewer)viewer).expandAll();
+        	try {
+	        	viewer.getControl().setRedraw(false);
+	            ((TreeViewer)viewer).expandAll();
+        	} finally {
+        		viewer.getControl().setRedraw(true);
+        	}
         }
     }
     
 	/*
 	 * Expand the sync elements and update the page enablement
 	 */
-	protected void updateForModelChange(ISynchronizeModelElement root) {
+	protected void updateForModelChange() {
 		expand();
 		updateEnablements();
 	}
 	
-	private void updateEnablements() {
+	public void updateEnablements() {
 		SyncInfoSet set = fConfiguration.getSyncInfoSet();
 		if (set.hasConflicts()) {
 			setErrorMessage(Policy.bind("CommitWizardCommitPage.4")); //$NON-NLS-1$

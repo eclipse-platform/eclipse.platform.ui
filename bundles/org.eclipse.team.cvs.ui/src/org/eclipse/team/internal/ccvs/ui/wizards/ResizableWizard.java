@@ -1,14 +1,16 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Persists the size of the wizard dialog.
  */
-public class WizardSizeSaver {
+public class ResizableWizard extends Wizard {
 	
 	private final int DEFAULT_WIDTH;
 	private final int DEFAULT_HEIGHT;
@@ -16,24 +18,28 @@ public class WizardSizeSaver {
     private static final String BOUNDS_HEIGHT_KEY = "width"; //$NON-NLS-1$
     private static final String BOUNDS_WIDTH_KEY = "height"; //$NON-NLS-1$
     
-    final IWizard fWizard;
     final String fSectionName;
     
-    public WizardSizeSaver(IWizard wizard, String sectionName) {
-    	this(wizard, sectionName, 300, 400);
+    public ResizableWizard(String sectionName, IDialogSettings settings) {
+    	this(sectionName, settings, 300, 400);
     }
     
-    public WizardSizeSaver(IWizard wizard, String sectionName, int defaultWidth, int defaultHeight) {
+    protected ResizableWizard(String sectionName, IDialogSettings settings, int defaultWidth, int defaultHeight) {
         DEFAULT_WIDTH= defaultWidth;
         DEFAULT_HEIGHT= defaultHeight;
-        fWizard= wizard;
         fSectionName= sectionName;
+        setDialogSettings(settings);
+    }
+    
+    protected static int open(Shell shell, ResizableWizard wizard) {
+        final WizardDialog dialog= new WizardDialog(shell, wizard);
+        dialog.setMinimumPageSize(wizard.loadSize());
+        return dialog.open();
     }
     
     public void saveSize() {
-        
-        final Rectangle bounds= fWizard.getContainer().getCurrentPage().getControl().getParent().getClientArea();
-    	final IDialogSettings settings= fWizard.getDialogSettings();
+        final Rectangle bounds= getContainer().getCurrentPage().getControl().getParent().getClientArea();
+    	final IDialogSettings settings= getDialogSettings();
     	if (settings == null)
     		return;
     	
@@ -45,10 +51,10 @@ public class WizardSizeSaver {
         section.put(BOUNDS_HEIGHT_KEY, bounds.height);
     }
     
-    public Point getSize() {
+    public Point loadSize() {
         final Point size= new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         
-    	final IDialogSettings settings= fWizard.getDialogSettings();
+    	final IDialogSettings settings= getDialogSettings();
     	if (settings == null)
     		return size;
     	
@@ -62,5 +68,11 @@ public class WizardSizeSaver {
         } catch (NumberFormatException e) {
         }
         return size;
+    }
+
+
+    public boolean performFinish() {
+        saveSize();
+        return true;
     }
 }

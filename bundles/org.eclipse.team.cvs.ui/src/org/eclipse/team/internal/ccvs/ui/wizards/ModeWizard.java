@@ -19,9 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -41,10 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
  *     an option to include them in the operation anyways.
  * 5.  Perform the operation on Finish.
  */
-public class ModeWizard extends Wizard {
-    
-    private static final int DEFAULT_WIDTH= 500;
-    private static final int DEFAULT_HEIGHT= 400;
+public class ModeWizard extends ResizableWizard {
     
     public interface ModeChange extends Comparable {
         
@@ -99,22 +93,12 @@ public class ModeWizard extends Wizard {
         }
     }
 
-
     private List fChanges;
-    private static final String MODE_WIZARD_SECTION = "ModeWizard"; //$NON-NLS-1$
-    private final WizardSizeSaver fSizeSaver;
 
-	
     public static ModeWizard run(Shell shell, IResource [] resources) {
         final ModeWizard wizard= new ModeWizard(resources);
-        final WizardDialog dialog= new WizardDialog(shell, wizard);
-        dialog.setMinimumPageSize(wizard.loadSize());
-        dialog.open();
+        open(shell, wizard);
         return wizard;
-    }
-
-	private Point loadSize() {
-        return fSizeSaver.getSize();
     }
 
     /**
@@ -125,11 +109,8 @@ public class ModeWizard extends Wizard {
 	 * @param defaultOption the keyword substitution option to select by default
 	 */
 	protected ModeWizard(IResource[] resources) {
-		super();
+		super("ModeWizard", CVSUIPlugin.getPlugin().getDialogSettings(), 500, 400);
 		setWindowTitle("Change the CVS file transfer mode");
-        setDialogSettings(CVSUIPlugin.getPlugin().getDialogSettings());
-
-        fSizeSaver= new WizardSizeSaver(this, MODE_WIZARD_SECTION, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         fChanges= getModeChanges(resources);
 	}
 
@@ -144,14 +125,6 @@ public class ModeWizard extends Wizard {
 		return true;
 	}
 
-	/* (Non-javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-        fSizeSaver.saveSize();
-        return true;
-    }
-    
     private List getModeChanges(IResource [] resources) {
         
         final ArrayList changes= new ArrayList();
