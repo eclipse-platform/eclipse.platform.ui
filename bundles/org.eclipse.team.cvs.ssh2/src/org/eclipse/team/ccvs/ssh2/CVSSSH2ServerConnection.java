@@ -11,11 +11,14 @@
 package org.eclipse.team.ccvs.ssh2;
 
 import java.io.*;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 import com.jcraft.jsch.*;
 
@@ -32,24 +35,40 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 	private Session session;
 	private Channel channel;
 
+  private IServerConnection ssh1;
+
 	protected CVSSSH2ServerConnection(ICVSRepositoryLocation location, String password) {
 		this.location = location;
 		this.password = password;
 	}
 
 	public void close() throws IOException {
+	  if(ssh1!=null){
+	    ssh1.close();
+	    return;
+	  }
 		if (channel != null)
 			channel.disconnect();
 	}
 
 	public InputStream getInputStream() {
+	  if(ssh1!=null){
+	    return ssh1.getInputStream();
+	  }
 		return inputStream;
 	}
 	public OutputStream getOutputStream() {
+	  if(ssh1!=null){
+	    return ssh1.getOutputStream();
+	  }
 		return outputStream;
 	}
 
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
+	  if(ssh1!=null){
+	    ssh1.open(monitor);
+	    return;
+	  }
 		monitor.subTask(Policy.bind("CVSSSH2ServerConnection.open", location.getHost())); //$NON-NLS-1$
 		monitor.worked(1);
 		try {
@@ -91,8 +110,34 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			inputStream = channel_in;
 			outputStream = channel_out;
 		} catch (JSchException e) {
+		  if(e.toString().indexOf("invalid server's version string")==-1){
 			//e.printStackTrace();
 			throw new CVSAuthenticationException(e.toString());
+		  }
+		  ssh1=getServerConnection("extssh1");
+		  if(ssh1==null){
+		    throw new CVSAuthenticationException(e.toString());
+		  }
+		  ssh1.open(monitor);
 		}
 	}
+
+  private IServerConnection getServerConnection(String ctype){
+    try {
+      Properties prop = new Properties();
+      prop.put("connection", ctype);
+      prop.put("user", location.getUsername());
+      prop.put("password", password);
+      prop.put("host", location.getHost());
+      prop.put("port", Integer.toString(location.getPort()));
+      prop.put("root", location.getRootDirectory());
+
+      CVSRepositoryLocation cvsrl=CVSRepositoryLocation.fromProperties(prop);
+      IConnectionMethod method=cvsrl.getMethod();
+      return  method.createConnection(cvsrl, password);
+    } 
+    catch (CVSException e) {
+    }
+    return null;
+  }
 }
