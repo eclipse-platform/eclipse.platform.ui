@@ -262,7 +262,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	}
 	
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 5);	
+		store.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);	
 	}
 	/**
 	 * @see IDialogPage#createControl(Composite)
