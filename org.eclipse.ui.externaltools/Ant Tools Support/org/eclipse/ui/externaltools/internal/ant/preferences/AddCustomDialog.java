@@ -29,10 +29,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -206,19 +206,20 @@ public class AddCustomDialog extends StatusDialog {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		sourceNameField.setLayoutData(data);
 		sourceNameField.setFont(parent.getFont());
-
-		Iterator libraries= libraryUrls.iterator();
-		while (libraries.hasNext()) {
-			URL library = (URL) libraries.next();
-			sourceNameField.add(library.getFile());
-		}
+		
 		sourceNameField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateFromSourceField();
 			}
 		});
 
-		sourceNameField.addKeyListener(new KeyListener() {
+		Iterator libraries= libraryUrls.iterator();
+		while (libraries.hasNext()) {
+			URL library = (URL) libraries.next();
+			sourceNameField.add(library.getFile());
+		}
+
+		sourceNameField.addKeyListener(new KeyAdapter() {
 			/*
 			 * @see KeyListener.keyPressed
 			 */
@@ -226,22 +227,9 @@ public class AddCustomDialog extends StatusDialog {
 				//If there has been a key pressed then mark as dirty
 				entryChanged = true;
 			}
-
-			/*
-			 * @see KeyListener.keyReleased
-			 */
-			public void keyReleased(KeyEvent e) {
-			}
 		});
 
-		sourceNameField.addFocusListener(new FocusListener() {
-			/*
-			 * @see FocusListener.focusGained(FocusEvent)
-			 */
-			public void focusGained(FocusEvent e) {
-				//Do nothing when getting focus
-			}
-
+		sourceNameField.addFocusListener(new FocusAdapter() {
 			/*
 			 * @see FocusListener.focusLost(FocusEvent)
 			 */
