@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="TThthemes" name="Themes"/>
+         <meta.schema plugin="org.eclipse.ui" id="themes" name="Themes"/>
       </appInfo>
       <documentation>
          This extension point is used to customize the appearance of the UI.  It allows definition of color and font entities as well as theme entitities.  Themes allow applications to selectivly override default color and font specifications for particular uses.
