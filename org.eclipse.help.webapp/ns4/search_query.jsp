@@ -30,12 +30,14 @@ TABLE {
    	<form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" >
    	  <tr>
    	   <td>
+   	   <!--
    	        <input type="hidden" name="field" value="h1" >
             <input type="hidden" name="field" value="h2" >
             <input type="hidden" name="field" value="h3" >
             <input type="hidden" name="field" value="role" >
             <input type="hidden" name="field" value="solution" >
             <input type="hidden" name="field" value="technology" >
+            -->
             <input type="hidden" name="maxHits" value="500" >
             
             <table border="0" cellpadding="0" cellspacing="2">

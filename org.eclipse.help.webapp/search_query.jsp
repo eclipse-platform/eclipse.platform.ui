@@ -54,13 +54,14 @@ function mouseout(img)
             <input type="checkbox" name="scope" value="/org.eclipse.help.examples.ex1/maindocs.xml" checked>
             <input type="checkbox" name="scope" value="/org.eclipse.jdt.doc.user/toc.xml" checked>
             <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
-          -->
+     
             <input type="hidden" name="field" value="h1" >
             <input type="hidden" name="field" value="h2" >
             <input type="hidden" name="field" value="h3" >
             <input type="hidden" name="field" value="role" >
             <input type="hidden" name="field" value="solution" >
             <input type="hidden" name="field" value="technology" >
+            -->
             <input type="hidden" name="maxHits" value="500" >
 		   </td>
 
