@@ -41,4 +41,9 @@
    <super type="org.eclipse.core.resources.textmarker"/>
    <persistent value="true"/>
 </extension>
+
+<extension point="org.eclipse.team.core.fileTypes">
+  <fileTypes extension="launch" type="text"/>
+</extension>
+
 </plugin>
