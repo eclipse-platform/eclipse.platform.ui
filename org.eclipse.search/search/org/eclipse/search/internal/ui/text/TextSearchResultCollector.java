@@ -45,12 +45,12 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 			IStructuredSelection selection= inputProvider.getSelection() instanceof IStructuredSelection 
 				?  (IStructuredSelection)inputProvider.getSelection() 
 				: StructuredSelection.EMPTY;
-			ReplaceAction replace= new ReplaceAction(view.getSite(), selection);
-			if (replace.isEnabled())
-				menu.add(replace);
 			ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)inputProvider.getInput());
 			if (replaceAll.isEnabled())
 				menu.add(replaceAll);
+			ReplaceAction replaceSelected= new ReplaceAction(view.getSite(), selection);
+			if (replaceSelected.isEnabled())
+				menu.add(replaceSelected);
 		}
 	}	
 			

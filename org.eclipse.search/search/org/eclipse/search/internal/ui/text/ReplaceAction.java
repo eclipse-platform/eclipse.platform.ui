@@ -58,7 +58,7 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 	public ReplaceAction(IWorkbenchSite site, IStructuredSelection selection) {
 		Assert.isNotNull(site);
 		fSite= site;
-		setText(SearchMessages.getString("ReplaceAction.label")); //$NON-NLS-1$
+		setText(SearchMessages.getString("ReplaceAction.label_selected")); //$NON-NLS-1$
 		fElements= selection.toList();
 		setEnabled(!fElements.isEmpty());
 	}
