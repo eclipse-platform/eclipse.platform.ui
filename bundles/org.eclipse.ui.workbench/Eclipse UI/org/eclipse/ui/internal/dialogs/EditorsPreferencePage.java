@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -12,24 +12,46 @@ Contributors:
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
+/**
+ * The Editors preference page of the workbench.
+ */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
 	
@@ -51,7 +73,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button promptToReuseEditor;
 
 	// TODO: editor tabs 
-	private IntegerFieldEditor numberEditorTabs;
+//	private IntegerFieldEditor numberEditorTabs;
 	private Button editorTabSpanMultipleLines;
 	
 	// editor tab appearance
@@ -76,6 +98,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Hashtable namesToConfiguration;
 	// the name of the active accelerator configuration
 	private String activeAcceleratorConfigurationName;
+			
+	private IPropertyChangeListener validityChangeListener =
+		new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					updateValidState();
+			}
+		};
 			
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -120,7 +150,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
 
-		validCheck();
+		updateValidState();
 		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
 
@@ -208,7 +238,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEncodingState(defaultEncodingButton.getSelection());
-				validCheck();
+				updateValidState();
 			}
 		};
 		
@@ -233,7 +263,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		encodingCombo.setLayoutData(data);
 		encodingCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				validCheck();
+				updateValidState();
 			}
 		});
 
@@ -271,8 +301,20 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		updateEncodingState(isDefault);
 	}
-	private void validCheck() {
-		if (!isEncodingValid()) {
+	private void updateValidState() {
+		if (!recentFilesEditor.isValid()) {
+			setErrorMessage(recentFilesEditor.getErrorMessage());
+			setValid(false);
+		}
+		else if (!reuseEditorsThreshold.isValid()) {
+			setErrorMessage(reuseEditorsThreshold.getErrorMessage());
+			setValid(false);
+		}
+//		else if (!numberEditorTabs.isValid()) {
+//			setErrorMessage(numberEditorTabs.getErrorMessage());
+//			setValid(false);
+//		}
+		else if (!isEncodingValid()) {
 			setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
 			setValid(false);
 		}
@@ -300,8 +342,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		defaultEncodingButton.setSelection(useDefault);
 		otherEncodingButton.setSelection(!useDefault);
 		encodingCombo.setEnabled(!useDefault);
-		setErrorMessage(null);
-		setValid(true);
+		updateValidState();
 	}		
 	/**
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
@@ -358,12 +399,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.load();
 		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(reuseEditorsThreshold.isValid());
-			}
-		});		
+		reuseEditorsThreshold.setPropertyChangeListener(validityChangeListener);		
 		
 		dirtyEditorReuseGroup = new Group(editorReuseIndentGroup, SWT.NONE);
 		dirtyEditorReuseGroup.setLayout(new GridLayout());		
@@ -409,12 +445,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		recentFilesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		recentFilesEditor.setValidRange(0, recentFilesMax);
 		recentFilesEditor.load();
-		recentFilesEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(recentFilesEditor.isValid());
-			}
-		});
+		recentFilesEditor.setPropertyChangeListener(validityChangeListener);
 		
 	}
 	
@@ -422,7 +453,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * Create a composite that contains entry fields specifying number of editor
 	 * tabs preferences.
 	 */
-	private void createNumberOfEditorTabGroup(Composite composite) {
+/*	private void createNumberOfEditorTabGroup(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -443,15 +474,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		numberEditorTabs.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		numberEditorTabs.setValidRange(0, numberEditorTabsMax);
 		numberEditorTabs.load();
-		numberEditorTabs.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID))
-					setValid(numberEditorTabs.isValid());
-			}
-		});
+		numberEditorTabs.setPropertyChangeListener(validityChangeListener);
 	
 	}
-
+*/
 	private void updateEditorTabCompressionState(int scalar) {
 		editorTabCompression = scalar;
 		editorTabCompressionNone.setSelection(scalar==EDITOR_TAB_COMPRESSION_NONE);
