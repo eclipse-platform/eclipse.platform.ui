@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
@@ -100,7 +102,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		}
 		
 		if (setInputHandler && separateVM) {
-			addSWTJar(rtes);
+			addSWTJars(rtes);
 		}
 		
 		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
@@ -127,12 +129,25 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		}
 	}
 	
-	private void addSWTJar(List rtes) {
+	private void addSWTJars(List rtes) {
 		IPath swtPath= AntLaunchDelegate.getSWTPath();
 		swtPath= swtPath.append("ws"); //$NON-NLS-1$
 		swtPath= swtPath.append(SWT.getPlatform());
-		swtPath= swtPath.append("swt.jar"); //$NON-NLS-1$
-		rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(swtPath));
+		File swtLibFolder= swtPath.toFile();
+		String[] libPaths= null;
+		if (swtLibFolder.isDirectory()) {
+		    libPaths= swtLibFolder.list(new FilenameFilter() {
+		        public boolean accept(File dir, String name) {
+		            return name.endsWith(".jar"); //$NON-NLS-1$
+		        }    
+		    });
+		}
+		if (libPaths != null) {
+		    for (int i = 0; i < libPaths.length; i++) {
+                String path = libPaths[i];
+                rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(swtPath.append(path)));        
+            }
+		}
 	}
 	
 	/**
