@@ -220,6 +220,7 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public void endSplash() {
 		if (DEBUG) {
+			//TODO This value is only relevant if the workspace chooser is not used.
 			String startString = System.getProperty("eclipse.debug.startupTime"); //$NON-NLS-1$
 			if (startString != null)
 				try {
@@ -451,6 +452,7 @@ public final class InternalPlatform implements IPlatform {
 					listener.logging(status, PI_RUNTIME);
 				}
 				public void handleException(Throwable e) {
+					//Ignore
 				}
 			};
 			run(code);
@@ -458,6 +460,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	private String[] processCommandLine(String[] args) {
+		//TODO "true" should be put in a constant
 		//TODO: need a real fix
 		// disables lazy registry cache loading 
 		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, "true"); //$NON-NLS-1$
@@ -593,7 +596,7 @@ public final class InternalPlatform implements IPlatform {
 		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
 			return result;
 
-		URLConverter urlConverter = getURLConverter();
+		URLConverter urlConverter = getURLConverter();	//TODO no need to use the method the field is declared here
 		if (urlConverter == null) {
 			throw new IOException("url.noaccess");
 		}
@@ -900,6 +903,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 	}
 
+	//TODO I guess it is now time to get rid of that
 	/*
 	 * This method is retained for R1.0 compatibility because it is defined as API.
 	 * It's function matches the API description (returns <code>null</code> when

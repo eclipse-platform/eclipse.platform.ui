@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
 
+//TODO Given the callers, it should be removed 
 public class PlatformMetaAreaLock {
 	private FileLock fileLock;
 	private FileOutputStream fileStream;

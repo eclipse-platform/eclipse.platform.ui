@@ -36,7 +36,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	
-	private static BundleContext context;
+	private static BundleContext context;//TODO Could be renamed to runtimeContext would be clearer
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;

@@ -21,6 +21,8 @@ import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.osgi.framework.Bundle;
 
+
+//TODO Remove some deadcode
 public class PlatformURLFragmentConnection extends PlatformURLConnection {
 
 	// fragment/ protocol

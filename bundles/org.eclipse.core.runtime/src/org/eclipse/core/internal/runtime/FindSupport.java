@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 
+//TODO Add a comment
+//TODO Remove the deadcode (WS_JAR_VARIANTS / OS / JAR and the methods)
 public class FindSupport {
 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();

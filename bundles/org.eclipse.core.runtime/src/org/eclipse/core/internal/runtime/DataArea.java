@@ -20,14 +20,14 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 
 public class DataArea {
-	/* package */static final String F_DESCRIPTION = ".platform"; //$NON-NLS-1$
+	/* package */static final String F_DESCRIPTION = ".platform"; //$NON-NLS-1$	//TODO Not used
 	/* package */static final String F_META_AREA = ".metadata"; //$NON-NLS-1$
-	/* package */static final String F_PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	/* package */static final String F_PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$	//TODO Not used
 	/* package */static final String F_PLUGIN_DATA = ".plugins"; //$NON-NLS-1$
 	/* package */static final String F_LOG = ".log"; //$NON-NLS-1$
 	/* package */static final String F_BACKUP = ".bak"; //$NON-NLS-1$
-	/* package */static final String F_KEYRING = ".keyring"; //$NON-NLS-1$
-	/* package */static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$
+	/* package */static final String F_KEYRING = ".keyring"; //$NON-NLS-1$	//TODO Consider for removal
+	/* package */static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$	//TODO To consider for removal
 	/* package */static final String F_VERSION = "version.ini"; //$NON-NLS-1$
 	/**
 	 * Internal name of the preference storage file (value <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
@@ -61,7 +61,7 @@ public class DataArea {
 			throw new IllegalStateException(e.getMessage());
 		}
 	}
-	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException {
+	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException {	//TODO Does not seems to be used
 		assertLocationInitialized();
 		return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP);
 	}

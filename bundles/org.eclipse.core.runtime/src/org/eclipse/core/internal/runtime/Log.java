@@ -63,6 +63,7 @@ public class Log implements ILog {
 					listener.logging(status, bundle.getSymbolicName());
 				}
 				public void handleException(Throwable e) {
+					//Ignore
 				}
 			};
 			InternalPlatform.getDefault().run(code);
