@@ -110,7 +110,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		if (status.isOK()){
 			fail(msg+status.getMessage());
 		}
-		if (status.getMessage().indexOf("The site cannot be modifed by this product. It is already associated with product:")==-1){
+		if (status.getMessage().indexOf("The site cannot be modified by this product. It is already associated with product:")==-1){
 			fail("Wrong validation:"+status.getMessage());
 		}
 	}	
