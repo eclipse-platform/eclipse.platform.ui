@@ -61,9 +61,6 @@ public class GlobalBuildAction
 	 * action has been <code>dispose</code>d.
 	 */
 	private IWorkbenchWindow workbenchWindow;
-	
-	//The family to see if this has already run
-	private static final Object FAMILY_MANUAL_BUILD = new Object();
 			
 /**
  * Creates a new action of the appropriate type. The action id is 
@@ -206,7 +203,7 @@ public void doBuild() {
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
 		public boolean belongsTo(Object family) {
-			return FAMILY_MANUAL_BUILD == family;
+			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 		}
 	};
 	
@@ -310,7 +307,7 @@ public void dispose() {
  * @return whether or not there is a manual build job running.
  */
 private boolean verifyNoManualRunning(){
-	Job[] buildJobs = JobManager.getInstance().find(FAMILY_MANUAL_BUILD);
+	Job[] buildJobs = JobManager.getInstance().find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
 	if(buildJobs.length == 0)
 		return true;
 	
