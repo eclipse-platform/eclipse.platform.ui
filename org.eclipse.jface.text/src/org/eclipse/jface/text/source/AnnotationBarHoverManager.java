@@ -26,6 +26,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -62,7 +64,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @since 3.0
 	 */
 	protected class Closer extends MouseTrackAdapter 
-	implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, Listener {
+	implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, ShellListener, Listener {
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -114,7 +116,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addMouseMoveListener(this);
 				fSubjectControl.addMouseTrackListener(this);
-				fSubjectControl.getShell().addListener(SWT.Deactivate, this);
+				fSubjectControl.getShell().addShellListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
 			}
@@ -151,7 +153,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.removeMouseTrackListener(this);
-				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);				
+				fSubjectControl.getShell().removeShellListener(this);				
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
@@ -226,13 +228,49 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		public void keyPressed(KeyEvent event) {
 			stop(true);
 		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellActivated(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellClosed(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellClosed(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellDeactivated(ShellEvent e) {
+			stop();
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellDeiconified(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellDeiconified(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellIconified(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellIconified(ShellEvent e) {
+		}
 		
 		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Deactivate || event.type == SWT.Activate || event.type == SWT.Show)
+			if (event.type == SWT.Activate || event.type == SWT.Show)
 				stop();
 		}
 

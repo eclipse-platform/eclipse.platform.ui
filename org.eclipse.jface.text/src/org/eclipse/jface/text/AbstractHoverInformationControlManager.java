@@ -24,6 +24,7 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -57,7 +58,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * or the subject control is resized or moved.
 	 */
 	class Closer extends MouseTrackAdapter 
-		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, Listener {
+		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, ShellListener, Listener {
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -107,7 +108,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addMouseTrackListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
-				fSubjectControl.getShell().addListener(SWT.Deactivate, this);
+				fSubjectControl.getShell().addShellListener(this);
 			
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
@@ -145,7 +146,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseTrackListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
-				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);
+				fSubjectControl.getShell().removeShellListener(this);
 			}
 			
 			if (fDisplay != null && !fDisplay.isDisposed()) {
@@ -218,11 +219,47 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 
 		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellActivated(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellClosed(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellClosed(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellDeactivated(ShellEvent e) {
+			stop();
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellDeiconified(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellDeiconified(ShellEvent e) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.ShellListener#shellIconified(org.eclipse.swt.events.ShellEvent)
+		 * @since 3.1
+		 */
+		public void shellIconified(ShellEvent e) {
+		}
+
+		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Deactivate || event.type == SWT.Activate || event.type == SWT.Show)
+			if (event.type == SWT.Activate || event.type == SWT.Show)
 				stop();
 		}
 	}
