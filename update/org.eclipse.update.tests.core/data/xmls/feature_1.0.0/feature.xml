@@ -4,7 +4,7 @@
   <copyright>Ok, now, this is a very very complex Copyright  not prepared by a lawyer Copyright (c) the company</copyright>
   <license>#1 Do you accept it #2 you do nto accept it ...Do you accpt it ?</license>
   <url>
-    <update label="URL to update the feature" url="path/feature1/"/>
+    <update label="URL to update the feature" url="http://www.eclipse.org/path/feature1/"/>
     <discovery label="Discovery 1" url="http://www.eclipse.org"/>
     <discovery label="Discovery 2" url="http://www.eclipse.org"/>
   </url>

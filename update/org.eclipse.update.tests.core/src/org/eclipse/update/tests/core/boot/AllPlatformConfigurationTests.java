@@ -23,7 +23,7 @@ public class AllPlatformConfigurationTests
 		TestSuite suite = new TestSuite();
 		suite.setName("PlatformConfiguration Tests");
 
-		// R2.0 STARTUP ISSUE
+		// DO NOT TEST YET
 		//suite.addTest(new TestSuite(TestPlatCfgAPI.class));
 
 		return suite;

@@ -29,6 +29,9 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 		// create a site on it
 		// check with the first one
 		
+		// DO NOT INCLUDE IN TESTS YET
+		return;
+		
 		// get site.xml
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		

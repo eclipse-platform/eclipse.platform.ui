@@ -5,9 +5,8 @@ package org.eclipse.update.tests.parser;
  */
 import java.net.URL;
 
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.core.FeatureExecutable;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -25,10 +24,12 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 		String xmlFile = "xmls/feature_1.0.0/";
 		try {		
 			ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
-			URL id = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
+			URL url = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
 			
-			FeatureExecutable feature = new FeatureExecutable(id,remoteSite);
-			//feature.initializeFeature();
+			FeatureReference ref = new FeatureReference();
+			ref.setSite(remoteSite);
+			ref.setURL(url);
+			IFeature feature = ref.getFeature();
 			
 			String prov = feature.getProvider();
 			assertEquals("Object Technology International",prov);

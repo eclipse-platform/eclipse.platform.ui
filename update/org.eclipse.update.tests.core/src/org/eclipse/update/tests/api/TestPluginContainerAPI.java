@@ -5,17 +5,16 @@ package org.eclipse.update.tests.api;
  */
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
 	private Site site;
-	private Feature feature;
+	private DefaultFeature feature;
 
 	/**
 	 * the Site to test
@@ -32,11 +31,12 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private Feature getFeature() throws MalformedURLException, CoreException {
+	private DefaultFeature getFeature() throws MalformedURLException, CoreException {
 		if (feature == null) {
 			ISite site = getSite();
 			URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);						
-			feature = new FeaturePackaged(id, site);
+			feature = new DefaultFeature(site);
+			feature.setURL(id);	
 		}
 		return feature;
 	}
@@ -49,7 +49,8 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	}
 
 	public void testAbstractFeature() throws CoreException, MalformedURLException {
-		PluginEntry pluginEntry = new PluginEntry("id", "ver");
+		PluginEntry pluginEntry = new PluginEntry();
+		pluginEntry.setIdentifier(new VersionedIdentifier("id", "ver"));
 		Feature _feature = getFeature();
 		_feature.addPluginEntry(pluginEntry);
 		assertEquals(_feature.getPluginEntryCount(), 1);
@@ -58,7 +59,8 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	}
 
 	public void testAbstactSite() throws CoreException {
-		PluginEntry pluginEntry = new PluginEntry("id", "ver");
+		PluginEntry pluginEntry = new PluginEntry();
+		pluginEntry.setIdentifier(new VersionedIdentifier("id", "ver"));
 		Site _site = getSite();
 		_site.addPluginEntry(pluginEntry);
 		assertEquals(_site.getPluginEntryCount(), 1);

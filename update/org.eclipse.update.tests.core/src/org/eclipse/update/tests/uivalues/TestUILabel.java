@@ -35,10 +35,16 @@ public class TestUILabel extends UpdateManagerTestCase {
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
 			IFeature feature = remoteFeatures[i].getFeature();
-			System.out.println("feature:"+feature.getIdentifier()+"->"+feature.getLabel());
+			System.out.println("feature:"+feature.getVersionIdentifier()+"->"+feature.getLabel());
 			print(feature.getLicense(),"License");
 			print(feature.getCopyright(),"Copyright");			
 			print(feature.getDescription(),"Description");				
+			
+			// check that it downloads the feature.jar under the cover
+			// and unpack it
+			
+			// DO NOT INCLUDE IN TESTS YET
+			return;
 			
 			URL url = feature.getLicense().getURL();
 			if (url!=null){
@@ -64,12 +70,12 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 * @param info
 	 * @param text
 	 */
-	private void print(IInfo info, String text){
+	private void print(IURLEntry info, String text){
 		System.out.print("->"+text+":");
 		if (info.getURL()!=null) 
 			System.out.println("<"+info.getURL().toExternalForm()+">");
 		else 
-			System.out.println(info.getText());
+			System.out.println(info.getAnnotation());
 	}
-}
+} 
 

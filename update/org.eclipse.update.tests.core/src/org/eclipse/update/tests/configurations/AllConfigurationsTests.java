@@ -14,8 +14,7 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.setName("Regular Install Tests");
 	
-	// R2.0 STARTUP ISSUE
-	//suite.addTest(new TestSuite(TestRevert.class));
+	suite.addTest(new TestSuite(TestRevert.class));
 	
 	return suite;
 }

@@ -6,25 +6,30 @@
    version="0.0.1">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
-   <import plugin="org.eclipse.update.core"/>
    <import plugin="org.junit"/>
    <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.update.core"/>
 </requires>
 
 <runtime>
-	<library name="updatetests.jar">
+   <library name="updatetests.jar">
       <export name="*"/>
-    </library>
+   </library>
 </runtime>
 
-
-<extension 	id="feature1" point="org.eclipse.update.core.featureTypes">
-	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
+<extension
+      id="feature1"
+      point="org.eclipse.update.core.featureTypes">
+   <feature-factory
+         class="org.eclipse.update.internal.core.FeatureExecutableFactory">
+   </feature-factory>
 </extension>
-
-<extension 	id="ftp" point="org.eclipse.update.core.siteTypes">
-	<feature-factory class="org.eclipse.update.tests.implementation.SiteFTPFactory"/>
+<extension
+      id="ftp"
+      point="org.eclipse.update.core.siteTypes">
+   <feature-factory
+         class="org.eclipse.update.tests.implementation.SiteFTPFactory">
+   </feature-factory>
 </extension>
-
 </plugin>

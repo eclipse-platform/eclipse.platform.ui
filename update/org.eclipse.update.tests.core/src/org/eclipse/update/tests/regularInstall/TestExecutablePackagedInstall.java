@@ -4,7 +4,6 @@ package org.eclipse.update.tests.regularInstall;
  * All Rights Reserved.
  */
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
@@ -24,7 +23,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 	 */
 	public void testFilePackageExecutableFeatureSite() throws Exception {
 
-		//cleanup target 
+		//cleanup target  
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
@@ -44,8 +43,8 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			remoteFeature = featuresRef[i].getFeature();
 			localSite.install(remoteFeature, null);
 			
-			if (remoteFeature instanceof FeaturePackaged) packFeature = true;
-			if (remoteFeature instanceof FeatureExecutable) execFeature = true;
+			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
+			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
 			String site = localSite.getURL().getFile();
@@ -55,10 +54,10 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			assertTrue("plugin files not installed locally", pluginFile.exists());
 
-			File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 
-			File featureFileXML = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString() + File.separator + "feature.xml");
+			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString() + File.separator + "feature.xml");
 			assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
 		}
 
@@ -98,8 +97,8 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			remoteFeature = featuresRef[i].getFeature();
 			localSite.install(remoteFeature, null);
 			
-			if (remoteFeature instanceof FeaturePackaged) packFeature = true;
-			if (remoteFeature instanceof FeatureExecutable) execFeature = true;
+			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
+			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
 			String site = localSite.getURL().getFile();
@@ -109,10 +108,10 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			assertTrue("plugin files not installed locally", pluginFile.exists());
 
-			File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 
-			File featureFileXML = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString() + File.separator + "feature.xml");
+			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString() + File.separator + "feature.xml");
 			assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
 		}
 

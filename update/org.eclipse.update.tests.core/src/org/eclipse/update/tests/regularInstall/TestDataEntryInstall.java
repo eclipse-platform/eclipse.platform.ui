@@ -40,12 +40,12 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 
 			// verify
 			String site = localSite.getURL().getFile();
-			IDataEntry[] entries = remoteFeature.getDataEntries();
+			INonPluginEntry[] entries = remoteFeature.getNonPluginEntries();
 			assertTrue("no data entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getIdentifier().toString();
-			File pluginFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString()+File.separator+ pluginName);
+			File pluginFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString()+File.separator+ pluginName);
 			assertTrue("data files not installed locally:"+pluginFile, pluginFile.exists());
-		}
+		} 
 
 		//cleanup target 
 		UpdateManagerUtils.removeFromFileSystem(target);

@@ -7,6 +7,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.*;
 
 public class SiteFTP implements ISite {
 
@@ -78,10 +83,10 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see ISite#getArchives()
 	 */
-	public IInfo[] getArchives() {
+	public IArchiveEntry[] getArchives() {
 		return null;
 	}
-
+ 
 	/*
 	 * @see ISite#addCategory(ICategory)
 	 */
@@ -111,14 +116,14 @@ public class SiteFTP implements ISite {
 	/*
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
-	public int getDownloadSize(IPluginEntry entry) {
+	public long getDownloadSize(IPluginEntry entry) {
 		return 0;
 	}
 
 	/*
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
-	public int getInstallSize(IPluginEntry entry) {
+	public long getInstallSize(IPluginEntry entry) {
 		return 0;
 	}
 
@@ -145,6 +150,71 @@ public class SiteFTP implements ISite {
 	 * @see IPluginContainer#remove(IPluginEntry)
 	 */
 	public void remove(IPluginEntry entry) throws CoreException {
+	}
+
+	/*
+	 * @see ISite#setSiteContentConsumer(ISiteContentConsumer)
+	 */
+	public void setSiteContentConsumer(ISiteContentConsumer contentConsumer) {
+	}
+
+	/*
+	 * @see ISite#setSiteContentProvider(ISiteContentProvider)
+	 */
+	public void setSiteContentProvider(ISiteContentProvider siteContentProvider) {
+	}
+
+	/*
+	 * @see ISite#getSiteContentProvider()
+	 */
+	public ISiteContentProvider getSiteContentProvider() {
+		return null;
+	}
+
+	/*
+	 * @see ISite#getDefaultExecutableFeatureType()
+	 */
+	public String getDefaultExecutableFeatureType() {
+		return null;
+	}
+
+	/*
+	 * @see ISite#getDefaultInstallableFeatureType()
+	 */
+	public String getDefaultInstallableFeatureType() {
+		return null;
+	}
+
+	/*
+	 * @see ISite#store(IFeature, String, InputStream, IProgressMonitor)
+	 */
+	public void store(IFeature feature, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
+	}
+
+	/*
+	 * @see IPluginContainer#store(IPluginEntry, String, InputStream, IProgressMonitor)
+	 */
+	public void store(IPluginEntry entry, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
+	}
+
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry, IProgressMonitor)
+	 */
+	public void remove(IPluginEntry entry, IProgressMonitor monitor) throws CoreException {
+	}
+
+	/*
+	 * @see ISite#getCategory(String)
+	 */
+	public ICategory getCategory(String key) {
+		return null;
+	}
+
+	/*
+	 * @see ISite#createSiteContentConsumer(IFeature)
+	 */
+	public ISiteContentConsumer createSiteContentConsumer(IFeature feature) throws CoreException {
+		return null;
 	}
 
 }

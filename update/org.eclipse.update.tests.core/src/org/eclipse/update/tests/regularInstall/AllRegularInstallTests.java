@@ -21,8 +21,7 @@ public static Test suite() {
 	suite.addTest(new TestSuite(TestExecutableInstall.class));	
 	suite.addTest(new TestSuite(TestExecutablePackagedInstall.class));		
 	suite.addTest(new TestSuite(TestDataEntryInstall.class));
-	// R2.0 STARTUP ISSUE
-	//site.addTest(new TestSuite(TestLocalSite.class));		
+	suite.addTest(new TestSuite(TestLocalSite.class));		
 	
 	// or you can specify the method
 	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	

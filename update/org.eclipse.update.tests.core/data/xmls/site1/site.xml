@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site url="/info/siteInfo.html">
+<site url="info/siteInfo.html">
   <feature id="org.isv.feature3" url="www.eclipse.org/feature3" version="3.4.5">
     <category name="eclipse/UML"/>
   </feature>

@@ -1,16 +1,15 @@
 package org.eclipse.update.tests.implementation;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteFactory;
-import org.eclipse.update.internal.core.InvalidSiteTypeException;
-import org.eclipse.update.internal.core.Site;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
 
 public class SiteFTPFactory implements ISiteFactory {
 

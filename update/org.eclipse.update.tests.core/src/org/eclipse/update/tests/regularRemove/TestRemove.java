@@ -9,9 +9,9 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.tests.api.DefaultFeature;
 
 public class TestRemove extends UpdateManagerTestCase {
 	
@@ -29,7 +29,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		 */
 		public void featureInstalled(IFeature feature) {
 			notified = true;
-			System.out.println("Notified Feature Installed");
+			System.out.println("Notified DefaultFeature Installed");
 		}
 
 		/*
@@ -51,7 +51,10 @@ public class TestRemove extends UpdateManagerTestCase {
 
 	private IFeature getFeature1(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/org.eclipse.update.core.tests.feature1_1.0.4.jar", null);
-		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
+
+		DefaultFeature remoteFeature = new DefaultFeature(site);
+		remoteFeature.setURL(id);	
+		
 		//remoteFeature.initializeFeature();
 		return remoteFeature;
 	}
@@ -63,7 +66,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		IFeatureReference ref = localSite.install(remoteFeature, null);
 
-		String featureRef =  ref.getFeature().getIdentifier().toString();	
+		String featureRef =  ref.getFeature().getVersionIdentifier().toString();	
 		System.out.println();	
 		localSite.remove(ref.getFeature(),null);
 
@@ -76,7 +79,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files installed locally", !pluginFile.exists());
 
-		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH +featureRef);
+		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH +featureRef);
 		assertTrue("feature info installed locally:"+featureFile, !featureFile.exists());
 
 
@@ -84,14 +87,16 @@ public class TestRemove extends UpdateManagerTestCase {
 
 	private IFeature getFeature2(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/features2.jar", null);
-		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
-		//remoteFeature.initializeFeature();
+
+		DefaultFeature remoteFeature = new DefaultFeature(site);
+		remoteFeature.setURL(id);	
+		
 		return remoteFeature;
 	}
 
 	public void testHTTPSite() throws Exception {
 
-/*		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -134,7 +139,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		localSite.save();
@@ -190,11 +195,11 @@ public class TestRemove extends UpdateManagerTestCase {
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(sitePath, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(sitePath, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
-		File file = new File(site.getSite().getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
@@ -216,11 +221,11 @@ public class TestRemove extends UpdateManagerTestCase {
 		if (localSite.getSite().getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
 		
 		//cleanup
-		File file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		File file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
-		file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
+		file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
 		UpdateManagerUtils.removeFromFileSystem(file);
-		file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
+		file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
 		UpdateManagerUtils.removeFromFileSystem(file);
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
@@ -230,7 +235,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		features = site.getFeatureReferences();
 		if (features.length!=0) fail("The site contains feature... it is an HTTP site without an XML file, so it should not contain any features");
 
-*/		
+		
 	}
 
 	
