@@ -41,6 +41,8 @@ folder_img = new Image();
 folder_img.src = "<%=prefs.getImagesDirectory()%>"+"/container_obj.gif";
 topic_img = new Image();
 topic_img.src = "<%=prefs.getImagesDirectory()%>"+"/topic.gif";
+altTopicClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicClosed", request))%>";
+altTopicOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicOpen", request))%>";
 </script>
 
 <script language="JavaScript" src="toc.js"></script>
@@ -133,7 +135,7 @@ if (data.isIE()){
 		if(isSelected) {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt=""><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt="<%=ServletResources.getString("bookOpen", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
 <%
 			// Only generate the selected toc
 			data.generateToc(toc, out);
@@ -144,7 +146,7 @@ if (data.isIE()){
 		} else {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt=""><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
 		}
 %>

@@ -358,7 +358,7 @@ public class TocData extends RequestData {
 			out.write("<li>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='collapsed' alt=\"\">");
+			out.write("/plus.gif' class='collapsed' alt=\""+ServletResources.getString("topicClosed", request)+"\">");
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);

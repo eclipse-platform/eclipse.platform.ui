@@ -124,6 +124,8 @@ var plus = new Image();
 plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 
 var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
+var altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
+var altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
 
 function onloadHandler() {
 <%if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
@@ -207,9 +209,11 @@ function collapseOrExpand(nodeId) {
 	if (node.className == "expanded") {
 		node.className = "collapsed";
 		img.src = plus.src;
+		img.alt = altBookClosed;
 	} else {
 		node.className = "expanded";
 		img.src = minus.src;
+		img.alt = altBookOpen;
 	}
 }
 
@@ -219,6 +223,7 @@ function collapse(nodeId) {
 	if (!node || !img) return;
 	node.className = "collapsed";
 	img.src = plus.src;
+	img.alt = altBookClosed;
 }
 
 function expand(nodeId) {
@@ -227,6 +232,7 @@ function expand(nodeId) {
 	if (!node || !img) return;
 	node.className = "expanded";
 	img.src = minus.src;
+	img.alt = altBookOpen;
 }
 
 function getParent(child) {
@@ -354,7 +360,7 @@ for (int i=0; i<data.getTocCount(); i++)
 	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
 %>
 				<div class="book" id='<%="id"+i%>' >
-					<img id='<%="img"+i%>' alt="" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					<img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
 					<input 	class='<%=className%>' 
 							type="checkbox" 
 							id='<%=data.getTocHref(i)%>' 

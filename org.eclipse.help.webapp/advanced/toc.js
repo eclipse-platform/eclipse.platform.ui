@@ -204,6 +204,7 @@ function isPlusMinus(node)
 function collapse(node) {
   node.className = "collapsed";
   node.src = plus.src;
+  node.alt = altTopicClosed;
   // set the UL as well
   var ul = getChildNode(node.parentNode, "UL");
   if (ul != null) ul.className = "collapsed";
@@ -215,6 +216,7 @@ function collapse(node) {
 function expand(node) {
   	node.className = "expanded";
   	node.src = minus.src;
+    node.alt = altTopicOpen;
   	// set the UL as well
   	var ul = getChildNode(node.parentNode, "UL");
   	if (ul != null){

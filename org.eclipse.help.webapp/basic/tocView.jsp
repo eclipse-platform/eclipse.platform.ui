@@ -39,10 +39,13 @@
 		String icon = isSelected ?
 						prefs.getImagesDirectory()+"/toc_open.gif" :
 						prefs.getImagesDirectory()+"/toc_closed.gif";
+		String alt = isSelected ?
+						ServletResources.getString("bookOpen", request) :
+						ServletResources.getString("bookClosed", request) ;
 %>
 	<tr>
 		<td align='left' nowrap>
-			<b><img src="<%=icon%>" alt=""><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
+			<b><img src="<%=icon%>" alt="<%=alt%>"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
 		</td>
 	</tr>
 <%
