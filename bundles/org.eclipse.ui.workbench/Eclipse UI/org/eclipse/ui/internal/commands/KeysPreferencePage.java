@@ -193,15 +193,12 @@ public class KeysPreferencePage
 	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;
 	private Menu menuButtonAddKey;
-	private Button radioFormatNative;
-	private Button radioFormat;
 	private Table tableAssignmentsForCommand;
 	private Table tableAssignmentsForKeySequence;
 	private Text textKeySequence;
 	private KeySequenceText textKeySequenceManager;
 	private IntegerFieldEditor textMultiKeyAssistTime;
 	private SortedMap tree;
-	private IWorkbench workbench;
 
 	private void buildCommandAssignmentsTable() {
 		tableAssignmentsForCommand.removeAll();
@@ -821,9 +818,7 @@ public class KeysPreferencePage
 	}
 
 	public void init(IWorkbench workbench) {
-		this.workbench = workbench;
-		IWorkbenchContextSupport workbenchContextSupport =
-			(IWorkbenchContextSupport) workbench.getContextSupport();
+		IWorkbenchContextSupport workbenchContextSupport = workbench.getContextSupport();
 		contextManager = workbenchContextSupport.getContextManager();
 		// TODO remove blind cast
 		commandManager = (CommandManager) workbench.getCommandManager();
@@ -1169,13 +1164,13 @@ public class KeysPreferencePage
 		String categoryId = getCategoryId();
 		String commandId = getCommandId();
 		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
-		Map commandIdsByUniqueName = new HashMap(this.commandIdsByUniqueName);
+		Map commandIdsByName = new HashMap(commandIdsByUniqueName);
 		if (commandIds == null) {
-			commandIdsByUniqueName = new HashMap();
+			commandIdsByName = new HashMap();
 		} else {
-			commandIdsByUniqueName.values().retainAll(commandIds);
+			commandIdsByName.values().retainAll(commandIds);
 		}
-		List commandNames = new ArrayList(commandIdsByUniqueName.keySet());
+		List commandNames = new ArrayList(commandIdsByName.keySet());
 		Collections.sort(commandNames, Collator.getInstance());
 		comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
 		setCommandId(commandId);
@@ -1205,15 +1200,15 @@ public class KeysPreferencePage
 		String commandId = getCommandId();
 		String contextId = getContextId();
 		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
-		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);
+		Map contextIdsByName = new HashMap(contextIdsByUniqueName);
 
 		// TODO for context bound commands, this code retains only those
 		// contexts explictly bound. what about assigning key bindings to
 		// implicit descendant contexts?
 		if (contextIds != null)
-			contextIdsByUniqueName.values().retainAll(contextIds);
+			contextIdsByName.values().retainAll(contextIds);
 
-		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
+		List contextNames = new ArrayList(contextIdsByName.keySet());
 		Collections.sort(contextNames, Collator.getInstance());
 
 		if (contextIds == null)
