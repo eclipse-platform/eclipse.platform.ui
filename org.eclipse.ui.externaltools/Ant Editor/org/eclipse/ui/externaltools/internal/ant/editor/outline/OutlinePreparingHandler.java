@@ -1,5 +1,8 @@
-//
-// OutlinePreparingHandler.java
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -74,15 +77,15 @@ public class OutlinePreparingHandler extends DefaultHandler {
     /**
      * Used as a helper for resolving external relative entries.
      */
-    private File mainFile;
+    private File mainFileContainer;
 
 
     /**
      * Creates an instance.
      */
-    public OutlinePreparingHandler(File mainFile) throws ParserConfigurationException {
+    public OutlinePreparingHandler(File mainFileContainer) throws ParserConfigurationException {
         super();
-        this.mainFile= mainFile;
+        this.mainFileContainer= mainFileContainer;
     }
 
 
@@ -423,8 +426,8 @@ public class OutlinePreparingHandler extends DefaultHandler {
 			if (file == null) {
 				//relative path
 				try {
-					//this call is ok if mainFile is null
-					relativeFile= FileUtils.newFileUtils().resolveFile(mainFile, systemId);
+					//this call is ok if mainFileContainer is null
+					relativeFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
 				} catch (BuildException be) {
 					return null;
 				}
