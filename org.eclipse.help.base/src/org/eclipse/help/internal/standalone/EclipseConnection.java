@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eclipse.help.internal.standalone;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * This program is used to start or stop Eclipse Infocenter application. It
@@ -48,6 +51,22 @@ public class EclipseConnection {
 		try {
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
+			if (connection instanceof HttpsURLConnection) {
+				HttpsURLConnection secureConnection = (HttpsURLConnection) connection;
+				// The following allows the connection to
+				// continue even if the default rules for
+				// URL hostname verification fail.
+				secureConnection.setHostnameVerifier(new HostnameVerifier() {
+					public boolean verify(String urlHostName, javax.net.ssl.SSLSession session) {
+						if (Options.isDebug()) {
+							System.out.println("Warning: URL Host: "
+									+ urlHostName + " vs. "
+									+ session.getPeerHost());							
+						}
+			            return true;
+					}
+				});
+			}
 			if (Options.isDebug()) {
 				System.out.println("Connection  to control servlet created."); //$NON-NLS-1$
 			}
@@ -61,6 +80,22 @@ public class EclipseConnection {
 						.println("Response code from control servlet=" + code); //$NON-NLS-1$
 			}
 			connection.disconnect();
+			if (code == HttpURLConnection.HTTP_MOVED_TEMP) {
+				// Redirect from server.
+				String redirectLocation = connection.getHeaderField("location");
+				URL redirectURL = new URL(redirectLocation);
+				if (url.equals(redirectURL)) {
+					if (Options.isDebug()) {
+						System.out.println("Redirecting to the same URL! "
+								+ redirectLocation);
+					}
+					return;
+				}
+				if (Options.isDebug()) {
+					System.out.println("Follows redirect to " + redirectLocation); //$NON_NLS-1$
+				}
+				connect(redirectURL);
+			}
 			return;
 		} catch (IOException ioe) {
 			if (Options.isDebug()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,6 +174,14 @@ public class EclipseController implements EclipseLifeCycleListener {
 			connection.renew();
 		}
 		try {
+			String trustStoreLocation = Options.getTrustStoreLocation();
+			if (trustStoreLocation != null) {
+				System.setProperty("javax.net.ssl.trustStore", trustStoreLocation);
+			}
+			String trustStorePassword = Options.getTrustStorePassword();
+			if (trustStorePassword != null) {
+				System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);				
+			}
 			URL url = createCommandURL(command, parameters);
 			if ("shutdown".equalsIgnoreCase(command) //$NON-NLS-1$
 					&& Options.getConnectionFile().exists()) {

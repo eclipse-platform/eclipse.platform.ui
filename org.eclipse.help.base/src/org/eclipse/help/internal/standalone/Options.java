@@ -65,6 +65,20 @@ public class Options {
 	// port to override appserver preferences
 	private static String port;
 
+	// User ID of the administrator
+	private static String adminId = null;
+	
+	// Password of the administrator
+	private static String adminPassword = null;
+	
+	// location of the trustStore to use if SSL
+	// connection must be established
+	private static String trustStoreLocation = null;
+	
+	// password of the trustStore to use if SSL
+	// connection must be established
+	private static String trustStorePassword = null;
+	
 	// update parameters, ex: "version=1.0.0", "from=file:///c:/site"
 	private static String[] updateParameters;
 
@@ -182,6 +196,30 @@ public class Options {
 		if (ports != null && ports.size() > 0) {
 			port = (String) ports.get(0);
 		}
+		
+		// consume - adminId option
+		List adminIds = extractOption(eclipseArgs, "-adminId"); //$NON-NLS-1$
+		if (adminIds != null && adminIds.size() > 0) {
+			adminId = (String) adminIds.get(0);
+		}
+		
+		// consume - admin option
+		List adminPasswords = extractOption(eclipseArgs, "-adminPassword"); //$NON-NLS-1$
+		if (adminPasswords != null && adminPasswords.size() > 0) {
+			adminPassword = (String) adminPasswords.get(0);
+		}
+		
+		// consume - trustStoreLocation option
+		List trustStoreLocations = extractOption(eclipseArgs, "-trustStoreLocation"); //$NON-NLS-1$
+		if (trustStoreLocations != null && trustStoreLocations.size() > 0) {
+			trustStoreLocation = (String) trustStoreLocations.get(0);
+		}
+		
+		// consume - trustStoreLocation option
+		List trustStorePasswords = extractOption(eclipseArgs, "-trustStorePassword"); //$NON-NLS-1$
+		if (trustStorePasswords != null && trustStorePasswords.size() > 0) {
+			trustStorePassword = (String) trustStorePasswords.get(0);
+		}
 
 		// consume -vm option
 		List vms = extractOption(eclipseArgs, "-vm"); //$NON-NLS-1$
@@ -242,6 +280,22 @@ public class Options {
 		return debug;
 	}
 
+	public static String getAdminId() {
+		return adminId;
+	}
+	
+	public static String getAdminPassword() {
+		return adminPassword;
+	}
+	
+	public static String getTrustStoreLocation() {
+		return trustStoreLocation;
+	}
+	
+	public static String getTrustStorePassword() {
+		return trustStorePassword;
+	}
+	
 	public static File getConnectionFile() {
 		return hostPortFile;
 	}

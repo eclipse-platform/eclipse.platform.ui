@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.util.*;
 
 import org.eclipse.help.internal.base.*;
@@ -45,6 +48,15 @@ public class StandaloneInfocenter extends EclipseController {
 
 			List helpCommand = Options.getHelpCommand();
 
+			final String adminId = Options.getAdminId();
+			final String adminPassword = Options.getAdminPassword();
+			Authenticator.setDefault(new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(adminId, adminPassword.toCharArray());
+				}
+			});
+			HttpURLConnection.setFollowRedirects(true);
+			
 			if (infocenter.executeCommand(helpCommand)) {
 				return;
 			} else {
@@ -90,7 +102,7 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out
-				.println("-command start | shutdown | [update command [update parameters]] [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
+				.println("-command start | shutdown | [update command [update parameters]] [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-adminId administratorUserId] [-adminPassword administratorPassword] [-trustStoreLocation trustStoreLocation] [-trustStorePassword trustStorePassword][-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("where:");
 		System.out
@@ -99,6 +111,14 @@ public class StandaloneInfocenter extends EclipseController {
 				.println(" helpServerHost specifies host name of the interface that help server will use,");
 		System.out
 				.println(" helpServerPort specifies port number that help server will use,");
+		System.out
+				.println(" administratorUserId specifies the administrator user id to use when secure access is enabled");
+		System.out
+				.println(" administratorPassword specifies the administrator password to use when secure access is enabled");
+		System.out
+				.println(" trustStoreLocation specifies the location of the truststore file to use when secure access is enabled");
+		System.out
+				.println(" trustStorePassword specifies the password of the truststore file when secure access is enabled");
 		System.out
 				.println(" noexec option indicates that Eclipse executable should not be used, ");
 		System.out
