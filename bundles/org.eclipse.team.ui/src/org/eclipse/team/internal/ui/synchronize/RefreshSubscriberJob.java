@@ -191,8 +191,8 @@ public final class RefreshSubscriberJob extends Job {
 				}
 			}
 		});		
-		
-		initialize(listener);
+		if(listener != null)
+			initialize(listener);
 	}
 	
 	/**
