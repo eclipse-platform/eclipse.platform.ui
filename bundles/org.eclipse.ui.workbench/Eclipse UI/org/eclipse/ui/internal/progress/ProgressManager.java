@@ -95,6 +95,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
 
 	Hashtable runnableMonitors = new Hashtable();
+	
 
 	/**
 	 * Get the progress manager currently in use.
@@ -755,24 +756,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		dialog.setOpenOnRun(false);
 		final boolean[] busy = { true };
 
-			UIJob updateJob = new UIJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				busy[0] = false;
-
-				dialog.open();
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				else
-					return Status.OK_STATUS;
-			}
-		};
-
-		updateJob.schedule(100);
+		scheduleProgressMonitorJob(dialog,busy);
 
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
@@ -814,5 +798,65 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		if (interrupt[0] != null)
 			throw interrupt[0];
 
+	}
+
+	/**
+	 * Schedule the job that starts the progress monitor.
+	 * @param dialog
+	 * @param busy
+	 */
+	private void scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog, final boolean[] busy) {
+		
+		final boolean [] defer = new boolean[1];
+		defer[0] = false;
+		final UIJob updateJob = new UIJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				//If there is a modal shell open then wait
+				Shell[] shells = getDisplay().getShells();
+				for(int i = 0; i < shells.length; i ++){
+					
+					//Do not stop for shells that will not
+					//block the user.
+					if(shells[i].isVisible()){
+						int style = shells[i].getStyle();
+						if((style & SWT.APPLICATION_MODAL
+							| style & SWT.SYSTEM_MODAL
+								| style & SWT.PRIMARY_MODAL) > 0){
+								defer[0] = true;
+								return Status.CANCEL_STATUS;
+						}
+					}
+				}
+				
+				busy[0] = false;
+
+				dialog.open();
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				else
+					return Status.OK_STATUS;
+			}
+		};
+		
+		updateJob.addJobChangeListener(new JobChangeAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				//If we are deferring try again.
+				if(defer[0]){
+					defer[0] = false;
+					updateJob.schedule(LONG_OPERATION_MILLISECONDS);
+				}
+			}
+		});
+
+		updateJob.schedule(LONG_OPERATION_MILLISECONDS);
 	}
 }
