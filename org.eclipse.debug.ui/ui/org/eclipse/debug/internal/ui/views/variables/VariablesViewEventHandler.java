@@ -83,9 +83,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 				}
 			}
 			refresh();
-			if (event.getDetail() == DebugEvent.STEP_END) {
-				getVariablesView().populateDetailPane();
-			}
+			getVariablesView().populateDetailPane();
 		}		
 	}
 	
