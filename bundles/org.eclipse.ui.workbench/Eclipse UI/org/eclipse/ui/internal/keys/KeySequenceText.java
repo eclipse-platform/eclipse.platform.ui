@@ -19,15 +19,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -338,7 +334,8 @@ public final class KeySequenceText {
 		 */
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
-			selectAll();
+			// TODO This doesn't work.  Bug 46059.
+			//selectAll();
 		}
 
 		/**
@@ -408,7 +405,7 @@ public final class KeySequenceText {
 	 */
 	public static final List TRAPPED_KEYS;
 
-	/** 
+	/**
 	 * The key filter attached to the underlying widget that traps key events.
 	 */
 	private final KeyTrapListener keyFilter = new KeyTrapListener();
@@ -429,51 +426,23 @@ public final class KeySequenceText {
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the
-	 * widget that will be containing the text field. The font is set based on
-	 * this container.
+	 * text field to use.
 	 * 
-	 * @param composite
-	 *            The container widget; must not be <code>null</code>.
+	 * @param wrappedText
+	 *            The text widget to wrap; must not be <code>null</code>.
 	 */
-	public KeySequenceText(final Composite composite) {
-		// Set up the text field.
-		text = new Text(composite, SWT.BORDER);
-
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			// don't worry about this font name here, it is the official
-			// menu
-			// font and point size on the mac.
-			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
-
-			text.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					font.dispose();
-				}
-			});
-
-			text.setFont(font);
-		}
+	public KeySequenceText(Text wrappedText) {
+		text = wrappedText;
 
 		// Add the key listener.
 		text.addListener(SWT.KeyUp, keyFilter);
 		text.addListener(SWT.KeyDown, keyFilter);
 
-		// Add the focus listener that attaches the global traversal
-		// filter.
+		// Add the focus listener that attaches the global traversal filter.
 		text.addFocusListener(new TraversalFilterManager());
 
 		// Add an internal modify listener.
 		text.addModifyListener(updateSequenceListener);
-	}
-
-	/**
-	 * Adds a listener for modification of the text component.
-	 * 
-	 * @param modifyListener
-	 *            The listener that is to be added; must not be <code>null</code>.
-	 */
-	public void addModifyListener(final ModifyListener modifyListener) {
-		text.addModifyListener(modifyListener);
 	}
 
 	/**
@@ -509,10 +478,10 @@ public final class KeySequenceText {
 
 		/*
 		 * Using the key sequence format method, discover the point at which
-		 * adding key strokes passes or equals the start of the selection.  In 
+		 * adding key strokes passes or equals the start of the selection. In
 		 * other words, find the first stroke that is part of the selection.
-		 * Keep track of the text range under which the stroke appears
-		 * (i.e., startTextIndex->string.length() is the first selected stroke).
+		 * Keep track of the text range under which the stroke appears (i.e.,
+		 * startTextIndex->string.length() is the first selected stroke).
 		 */
 		String string = new String();
 		List currentStrokes = new ArrayList();
@@ -523,9 +492,9 @@ public final class KeySequenceText {
 			currentStrokes.add(keyStrokeItr.next());
 			string = KeySequence.getInstance(currentStrokes).format();
 		}
-		
+
 		/*
-		 * If string.length() == start, then the cursor is positioned between 
+		 * If string.length() == start, then the cursor is positioned between
 		 * strokes (i.e., selection is outside of a stroke).
 		 */
 		int startStrokeIndex;
@@ -537,13 +506,13 @@ public final class KeySequenceText {
 
 		/*
 		 * Check to see if the cursor is only positioned, rather than actually
-		 * selecting something.  We only need to compute the end if there is a
+		 * selecting something. We only need to compute the end if there is a
 		 * selection.
 		 */
 		int endStrokeIndex;
 		if (start == end) {
 			return startStrokeIndex;
-			
+
 		} else {
 			while ((string.length() < end) && (keyStrokeItr.hasNext())) {
 				currentStrokes.add(keyStrokeItr.next());
@@ -553,10 +522,11 @@ public final class KeySequenceText {
 			if (endStrokeIndex < 0) {
 				endStrokeIndex = 0;
 			}
-			
+
 		}
 
-		/* Remove the strokes that are touched by the selection.  Keep track of
+		/*
+		 * Remove the strokes that are touched by the selection. Keep track of
 		 * the first stroke removed.
 		 */
 		KeyStroke startStroke = (KeyStroke) keyStrokes.get(startStrokeIndex);
@@ -565,7 +535,8 @@ public final class KeySequenceText {
 			endStrokeIndex--;
 		}
 
-		/* Allow the first stroke removed to be replaced by an incomplete 
+		/*
+		 * Allow the first stroke removed to be replaced by an incomplete
 		 * stroke.
 		 */
 		if (allowIncomplete) {
@@ -692,26 +663,6 @@ public final class KeySequenceText {
 	}
 
 	/**
-	 * A mutator for the enabled state of the wrapped widget.
-	 * 
-	 * @param enabled
-	 *            Whether the text field should be enabled.
-	 */
-	public void setEnabled(final boolean enabled) {
-		text.setEnabled(enabled);
-	}
-
-	/**
-	 * Changes the font on the underlying text widget.
-	 * 
-	 * @param font
-	 *            The new font.
-	 */
-	public void setFont(Font font) {
-		text.setFont(font);
-	}
-
-	/**
 	 * <p>
 	 * A mutator for the key sequence stored within this widget. The text and
 	 * caret position are updated.
@@ -749,16 +700,6 @@ public final class KeySequenceText {
 			text.addModifyListener(updateSequenceListener);
 			text.setSelection(getText().length());
 		}
-	}
-
-	/**
-	 * A mutator for the layout information associated with the wrapped widget.
-	 * 
-	 * @param layoutData
-	 *            The layout information; must not be <code>null</code>.
-	 */
-	public void setLayoutData(Object layoutData) {
-		text.setLayoutData(layoutData);
 	}
 
 	/**
