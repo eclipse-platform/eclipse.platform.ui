@@ -141,7 +141,9 @@ public class BrowserManager {
 				DEFAULT_BROWSER_ID_KEY);
 		if (curBrowserID != null && (!"".equals(curBrowserID))) {
 			setCurrentBrowserID(curBrowserID);
-		} else {
+			// may fail if such browser does not exist
+		}
+		if (currentBrowserDesc == null) {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
 

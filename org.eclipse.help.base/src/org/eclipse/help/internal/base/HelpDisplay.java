@@ -162,7 +162,14 @@ public class HelpDisplay {
 				BaseHelpSystem.getHelpBrowser().displayURL(helpURL);
 			}
 		} catch (Exception e) {
-			BaseHelpSystem.getDefaultErrorUtil().displayError(e.getMessage());
+			BaseHelpSystem.getDefaultErrorUtil().displayError(
+				HelpBaseResources.getString(
+					"HelpDisplay.exceptionMessage"));
+			HelpBasePlugin.logError(
+				HelpBaseResources.getString(
+					"HelpDisplay.exception",
+					e.getMessage()),
+				e);
 		}
 	}
 	private String getContextID(IContext context) {
