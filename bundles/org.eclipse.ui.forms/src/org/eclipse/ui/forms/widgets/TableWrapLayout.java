@@ -310,7 +310,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 					if (k < j + span - 1)
 						cwidth += horizontalSpacing;
 				}
-				Point size = computeSize(td.childIndex, cwidth, td.indent);
+				Point size = computeSize(td.childIndex, cwidth, td.indent, td.maxWidth, td.maxHeight);
 				td.compWidth = cwidth;
 				if (td.heightHint != SWT.DEFAULT) {
 					size = new Point(size.x, td.heightHint);
@@ -385,12 +385,16 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		return widths;
 	}
 
-	Point computeSize(int childIndex, int width, int indent) {
+	Point computeSize(int childIndex, int width, int indent, int maxWidth, int maxHeight) {
 		int widthArg = width - indent;
 		SizeCache controlCache = cache.getCache(childIndex);
 		if (!isWrap(controlCache.getControl()))
 			widthArg = SWT.DEFAULT;
 		Point size = controlCache.computeSize(widthArg, SWT.DEFAULT);
+		if (maxWidth!=SWT.DEFAULT)
+			size.x = Math.min(size.x, maxWidth);
+		if (maxHeight!=SWT.DEFAULT)
+			size.y = Math.min(size.y, maxHeight);
 		size.x += indent;
 		return size;
 	}
@@ -652,7 +656,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 				int cy = td.heightHint;
 				if (cy == SWT.DEFAULT) {
-					Point size = computeSize(td.childIndex, cwidth, td.indent);
+					Point size = computeSize(td.childIndex, cwidth, td.indent, td.maxWidth, td.maxHeight);
 					cy = size.y;
 				}
 				RowSpan rowspan = (RowSpan) rowspans.get(child);
@@ -755,6 +759,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 				SizeCache childCache = cache.getCache(td.childIndex);
 				int minWidth = childCache.computeMinimumWidth();
+				if (td.maxWidth!=SWT.DEFAULT)
+					minWidth = Math.min(minWidth, td.maxWidth);
 
 				minWidth += td.indent;
 				if (td.colspan == 1)
@@ -823,6 +829,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 				SizeCache sc = cache.getCache(td.childIndex);
 				int maxWidth = sc.computeMaximumWidth();
+				if (td.maxWidth!=SWT.DEFAULT)
+					maxWidth = Math.min(maxWidth, td.maxWidth);
 
 				maxWidth += td.indent;
 				if (td.colspan == 1)
