@@ -9,7 +9,12 @@
 	<target name="init" depends="properties">
 		<property name="plugin" value="org.eclipse.help.webapp"/>
 		<property name="version.suffix" value="_2.0.0"/>
+		<!-- custom change begin -->
+		<!--
 		<property name="full.name" value="${plugin}${version.suffix}"/>
+		-->
+		<property name="full.name" value="infocenter"/>
+		<!-- custom end -->
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
