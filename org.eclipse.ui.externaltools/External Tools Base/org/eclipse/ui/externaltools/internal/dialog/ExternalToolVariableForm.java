@@ -98,6 +98,7 @@ public class ExternalToolVariableForm {
 			}
 		});
 		
+		setEnabled(true);
 		return mainComposite;
 	}
 	
@@ -187,8 +188,10 @@ public class ExternalToolVariableForm {
 		variableListLabel.setEnabled(enabled);
 		variableList.setEnabled(enabled);
 		if (enabled && variableList.getSelection().length == 0) {
-			variableList.select(0);
-			activeComponentIndex= 0;
+			if (variableList.getItemCount() > 0) {
+				variableList.select(0);
+				activeComponentIndex= 0;
+			}
 		}
 		variableComposite.setVisible(enabled);
 	}
