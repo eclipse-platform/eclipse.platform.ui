@@ -13,16 +13,6 @@ public IFolderTest() {
 public IFolderTest(String name) {
 	super(name);
 }
-public void setGetPersistentProperty(IResource target) throws Throwable {
-	String value = "this is a test property value";
-	QualifiedName name = new QualifiedName("itp-test", "testProperty");
-	target.setPersistentProperty(name, value);
-	// see if we can get the property
-	assertTrue("get not equal set", ((String) target.getPersistentProperty(name)).equals(value));
-	// see what happens if we get a non-existant property
-	name = new QualifiedName("itp-test", "testNonProperty");
-	assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
-}
 protected void setUp() throws Exception {
 	super.setUp();
 }
@@ -244,7 +234,29 @@ public void testReadOnlyFolderCopy() throws Exception {
 }
 public void testSetGetFolderPersistentProperty() throws Throwable {
 	IResource target = getWorkspace().getRoot().getFolder(new Path("/Project/Folder"));
+	String value = "this is a test property value";
+	QualifiedName name = new QualifiedName("itp-test", "testProperty");
+	// getting/setting persistent properties on non-existent resources should throw an exception
+	ensureDoesNotExistInWorkspace(target);
+	try {
+		target.getPersistentProperty(name);
+		fail("1.0");
+	} catch (CoreException e) {
+		//this should happen
+	}
+	try {
+		target.setPersistentProperty(name, value);
+		fail("1.1");
+	} catch (CoreException e) {
+		//this should happen
+	}
+	
 	ensureExistsInWorkspace(target, true);
-	setGetPersistentProperty(target);
+	target.setPersistentProperty(name, value);
+	// see if we can get the property
+	assertTrue("2.0", ((String) target.getPersistentProperty(name)).equals(value));
+	// see what happens if we get a non-existant property
+	name = new QualifiedName("itp-test", "testNonProperty");
+	assertNull("2.1", target.getPersistentProperty(name));
 }
 }

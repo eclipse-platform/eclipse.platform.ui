@@ -166,6 +166,7 @@ public void testFile() {
 	} catch (CoreException e) {
 		assertTrue("8.3", false);
 	}
+
 	try {
 		file.setSessionProperty(Q_NAME_SESSION, null);
 	} catch (CoreException e) {

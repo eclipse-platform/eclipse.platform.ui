@@ -225,16 +225,6 @@ public void refreshFiles() {
 		refreshFile(file);
 	}
 }
-public void setGetPersistentProperty(IResource target) throws Throwable {
-	String value = "this is a test property value";
-	QualifiedName name = new QualifiedName("itp-test", "testProperty");
-	target.setPersistentProperty(name, value);
-	// see if we can get the property
-	assertTrue("get not equal set", ((String) target.getPersistentProperty(name)).equals(value));
-	// see what happens if we get a non-existant property
-	name = new QualifiedName("itp-test", "testNonProperty");
-	assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
-}
 protected void setUp() throws Exception {
 	super.setUp();
 
@@ -631,6 +621,7 @@ public void testGetContents2() throws IOException {
 	} catch (CoreException e) {
 	}
 }
+
 /**
  * Tests creation and manipulation of file names that are reserved on some platforms.
  */
@@ -748,10 +739,31 @@ public void testSetContents2() throws Throwable {
 		content.close();
 	}
 }
-public void testSetGetFilePersistentProperty() throws Throwable {
-	IFile target = projects[0].getFile("file1");
+public void testSetGetFolderPersistentProperty() throws Throwable {
+	IResource target = getWorkspace().getRoot().getFile(new Path("/Project/File.txt"));
+	String value = "this is a test property value";
+	QualifiedName name = new QualifiedName("itp-test", "testProperty");
+	// getting/setting persistent properties on non-existent resources should throw an exception
+	ensureDoesNotExistInWorkspace(target);
+	try {
+		target.getPersistentProperty(name);
+		fail("1.0");
+	} catch (CoreException e) {
+		//this should happen
+	}
+	try {
+		target.setPersistentProperty(name, value);
+		fail("1.1");
+	} catch (CoreException e) {
+		//this should happen
+	}
+	
 	ensureExistsInWorkspace(target, true);
-	ensureExistsInFileSystem(target);
-	setGetPersistentProperty(target);
+	target.setPersistentProperty(name, value);
+	// see if we can get the property
+	assertTrue("2.0", ((String) target.getPersistentProperty(name)).equals(value));
+	// see what happens if we get a non-existant property
+	name = new QualifiedName("itp-test", "testNonProperty");
+	assertNull("2.1", target.getPersistentProperty(name));
 }
 }
