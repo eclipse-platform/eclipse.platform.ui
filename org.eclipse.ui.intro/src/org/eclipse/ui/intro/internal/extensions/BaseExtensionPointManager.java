@@ -36,7 +36,7 @@ public class BaseExtensionPointManager {
     protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId";
 
     // the id attribute in any intro element.
-    protected static final String ATT_ID = IntroElement.ATT_ID;
+    protected static final String ATT_ID = AbstractCommonIntroElement.ATT_ID;
 
     protected Hashtable introModels = new Hashtable();
 

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 /**
  * An intro text element.
  */
-public class IntroText extends IntroElement {
+public class IntroText extends AbstractCommonIntroElement {
 
     protected static final String TAG_TEXT = "text";
 
@@ -40,7 +40,7 @@ public class IntroText extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.TEXT;
+        return AbstractIntroElement.TEXT;
     }
 
 }

@@ -32,18 +32,18 @@ public class IntroModelLabelProvider extends LabelProvider {
 
     public Image getImage(Object element) {
         Image image = null;
-        IntroElement introElement = null;
-        if (element instanceof IntroElement)
+        AbstractIntroElement introElement = null;
+        if (element instanceof AbstractIntroElement)
             // synch the resource first.
-            introElement = (IntroElement) element;
+            introElement = (AbstractIntroElement) element;
         if (introElement == null)
             return null;
 
         int elementType = introElement.getType();
         switch (elementType) {
-        case IntroElement.DIV:
-        case IntroElement.PAGE:
-        case IntroElement.HOME_PAGE:
+        case AbstractIntroElement.DIV:
+        case AbstractIntroElement.PAGE:
+        case AbstractIntroElement.HOME_PAGE:
             image = ImageUtil.getImage(ImageUtil.INTRO_MODEL_CONTAINER);
             break;
         default:
@@ -56,46 +56,46 @@ public class IntroModelLabelProvider extends LabelProvider {
     public String getText(Object element) {
 
         String label = null;
-        IntroElement introElement = null;
-        if (element instanceof IntroElement)
+        AbstractIntroElement introElement = null;
+        if (element instanceof AbstractIntroElement)
             // synch the resource first.
-            introElement = (IntroElement) element;
+            introElement = (AbstractIntroElement) element;
         if (introElement == null)
             return null;
 
         int elementType = introElement.getType();
         switch (elementType) {
-        case IntroElement.DIV:
+        case AbstractIntroElement.DIV:
             label = "DIV: " + ((IntroDiv) introElement).getLabel();
             break;
-        case IntroElement.LINK:
+        case AbstractIntroElement.LINK:
             label = "LINK: " + ((IntroLink) introElement).getLabel();
             break;
-        case IntroElement.TEXT:
+        case AbstractIntroElement.TEXT:
             label = "TEXT: " + ((IntroText) introElement).getText();
             break;
-        case IntroElement.IMAGE:
+        case AbstractIntroElement.IMAGE:
             label = "IMAGE: " + ((IntroImage) introElement).getId();
             break;
-        case IntroElement.HTML:
+        case AbstractIntroElement.HTML:
             label = "HTML: " + ((IntroHTML) introElement).getId();
             break;
-        case IntroElement.INCLUDE:
+        case AbstractIntroElement.INCLUDE:
             label = "Unresolved INCLUDE: "
                     + ((IntroInclude) introElement).getPath();
             break;
-        case IntroElement.PAGE:
+        case AbstractIntroElement.PAGE:
             label = "PAGE: " + ((AbstractIntroPage) introElement).getTitle();
             break;
-        case IntroElement.HOME_PAGE:
+        case AbstractIntroElement.HOME_PAGE:
             label = "HOME PAGE: "
                     + ((AbstractIntroPage) introElement).getTitle();
             break;
-        case IntroElement.PRESENTATION:
+        case AbstractIntroElement.PRESENTATION:
             label = "PRESENTATION: "
                     + ((IntroPartPresentation) introElement).getTitle();
             break;
-        case IntroElement.CONTAINER_EXTENSION:
+        case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: "
                     + ((IntroContainerExtension) introElement).getPath();
             break;

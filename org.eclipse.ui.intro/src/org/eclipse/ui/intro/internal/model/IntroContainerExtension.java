@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 /**
  * An intro container extension.
  */
-public class IntroContainerExtension extends IntroElement {
+public class IntroContainerExtension extends AbstractCommonIntroElement {
 
     protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
 
@@ -52,7 +52,7 @@ public class IntroContainerExtension extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.CONTAINER_EXTENSION;
+        return AbstractIntroElement.CONTAINER_EXTENSION;
     }
 
     protected IConfigurationElement[] getChildren() {

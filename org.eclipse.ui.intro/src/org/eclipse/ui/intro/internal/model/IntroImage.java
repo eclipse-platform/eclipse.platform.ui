@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 /**
  * An intro image element.
  */
-public class IntroImage extends IntroElement {
+public class IntroImage extends AbstractCommonIntroElement {
 
     protected static final String TAG_IMAGE = "img";
 
@@ -55,7 +55,7 @@ public class IntroImage extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.IMAGE;
+        return AbstractIntroElement.IMAGE;
     }
 
 }

@@ -42,7 +42,7 @@ import org.eclipse.ui.intro.internal.util.*;
  * implmenetation.</li>
  * <ul>
  */
-public class IntroPartPresentation extends IntroElement {
+public class IntroPartPresentation extends AbstractCommonIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation";
     private static final String TAG_IMPLEMENTATION = "implementation";
@@ -356,7 +356,7 @@ public class IntroPartPresentation extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.PRESENTATION;
+        return AbstractIntroElement.PRESENTATION;
     }
 
     /**

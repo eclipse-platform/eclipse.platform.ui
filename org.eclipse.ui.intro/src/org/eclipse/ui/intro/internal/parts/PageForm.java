@@ -13,7 +13,7 @@ package org.eclipse.ui.intro.internal.parts;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;

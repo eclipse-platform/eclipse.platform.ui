@@ -75,7 +75,7 @@ public class IntroLink extends AbstractTextElement {
 	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
 	 */
 	public int getType() {
-		return IntroElement.LINK;
+		return AbstractIntroElement.LINK;
 	}
 
 }

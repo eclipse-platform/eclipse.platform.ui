@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
  * child under any of the other model classes. It is returned by the
  * ExtensionPointManager when asked for registration parts.
  */
-public class StandbyPartContent extends IntroElement {
+public class StandbyPartContent extends AbstractCommonIntroElement {
 
     public static final String STANDBY_PART_ELEMENT = "standbyPart";
 

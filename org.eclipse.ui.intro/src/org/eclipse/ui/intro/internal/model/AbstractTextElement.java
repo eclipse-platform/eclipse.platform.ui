@@ -19,7 +19,7 @@ import org.eclipse.ui.intro.internal.util.*;
  * case there is more than one text child, the text is retrieved from the first
  * text child element.
  */
-public abstract class AbstractTextElement extends IntroElement {
+public abstract class AbstractTextElement extends AbstractCommonIntroElement {
 
     private IntroText introText;
 
@@ -77,7 +77,7 @@ public abstract class AbstractTextElement extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.ABSTRACT_TEXT;
+        return AbstractIntroElement.ABSTRACT_TEXT;
     }
 
 }

@@ -241,12 +241,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 extension);
         // now resolve this extension.
         String path = extensionModel.getPath();
-        IntroElement target = findTarget(this, path);
+        AbstractIntroElement target = findTarget(this, path);
         if (target == null)
             // target could not be found. Signal failure.
             return false;
 
-        if (target.isOfType(IntroElement.ABSTRACT_CONTAINER)) {
+        if (target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER)) {
             // extenions are only for container (ie: divs and pages)
             AbstractIntroContainer targetContainer = (AbstractIntroContainer) target;
             // make sure you load the children of the target container
@@ -271,10 +271,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param target
      */
     private void handleExtensionStyleInheritence(
-            IntroContainerExtension extension, IntroElement targetContainer) {
+            IntroContainerExtension extension, AbstractIntroElement targetContainer) {
 
-        if (targetContainer.getType() == IntroElement.DIV
-                && targetContainer.getParent().getType() == IntroElement.MODEL_ROOT)
+        if (targetContainer.getType() == AbstractIntroElement.DIV
+                && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
             // if we are extending a shared div, defined under a config, we can
             // not include styles.
             return;
@@ -332,7 +332,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);</code>
      */
     public IntroPage[] getPages() {
-        return (IntroPage[]) getChildrenOfType(IntroElement.PAGE);
+        return (IntroPage[]) getChildrenOfType(AbstractIntroElement.PAGE);
     }
 
     /**
@@ -422,7 +422,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.MODEL_ROOT;
+        return AbstractIntroElement.MODEL_ROOT;
     }
 
     /*

@@ -12,7 +12,7 @@ package org.eclipse.ui.intro.internal.parts;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
@@ -109,10 +109,10 @@ public class CategoryForm implements IIntroConstants, IPropertyListener {
             label.setLayoutData(td);
         }
         // DONOW: revisit.for now, just make code work.
-        IntroElement[] children = currentPage.getChildren();
-        boolean hasDivs = currentPage.getChildrenOfType(IntroElement.DIV).length != 0 ? true
+        AbstractIntroElement[] children = currentPage.getChildren();
+        boolean hasDivs = currentPage.getChildrenOfType(AbstractIntroElement.DIV).length != 0 ? true
                 : false;
-        boolean hasLinks = currentPage.getChildrenOfType(IntroElement.LINK).length != 0 ? true
+        boolean hasLinks = currentPage.getChildrenOfType(AbstractIntroElement.LINK).length != 0 ? true
                 : false;
         if (hasDivs) {
             String layoutStyle = getLayoutStyle(currentPage);

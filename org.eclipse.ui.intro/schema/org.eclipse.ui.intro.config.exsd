@@ -205,6 +205,13 @@ Note: do we really wanna expose this implementation detail?
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -234,6 +241,13 @@ Note: do we really wanna expose this implementation detail?
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -255,6 +269,13 @@ Note: do we really wanna expose this implementation detail?
             </annotation>
          </attribute>
          <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
             <annotation>
                <documentation>
                   
@@ -304,6 +325,13 @@ Note: do we really wanna expose this implementation detail?
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -352,6 +380,13 @@ Note: do we really wanna expose this implementation detail?
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -366,6 +401,13 @@ Note: do we really wanna expose this implementation detail?
             <annotation>
                <documentation>
                   unique identifier of this text.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

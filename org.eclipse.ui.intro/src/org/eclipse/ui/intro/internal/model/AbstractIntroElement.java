@@ -14,16 +14,15 @@ package org.eclipse.ui.intro.internal.model;
 import org.eclipse.core.runtime.*;
 
 /**
- * An intro config component that has an id attribute. All config components
- * can get to their configuration element.
+ * An intro config component that has an id attribute. All config components can
+ * get to their configuration element.
  * <p>
- * Note: This is an abstract base class for all classes in the Intro Model.
- * <br>
+ * Note: This is an abstract base class for all classes in the Intro Model. <br>
  * Clients are not expected to implement/subclass this class, or any of its
  * subclasses.
  * </p>
  */
-public abstract class IntroElement {
+public abstract class AbstractIntroElement {
 
     /**
      * Type constant which identifies an IntroModelRoot element.
@@ -102,25 +101,27 @@ public abstract class IntroElement {
     public static final int HEAD = 1 << 11;
 
 
+    /**
+     * Type constant which identifies the AbstractCommonIntroElement element.
+     */
+    public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
+            | CONTAINER_EXTENSION | HEAD | IMAGE | PRESENTATION | TEXT;
 
     /**
      * Type constant which identifies any element in the Intro Model.
      */
-    public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
-            | IMAGE | INCLUDE | MODEL_ROOT | PRESENTATION | TEXT
-            | CONTAINER_EXTENSION | HEAD;
+    public static final int ELEMENT = BASE_ELEMENT | INCLUDE;
 
-    public static final String ATT_ID = "id";
-    private IntroElement parent;
+
+
+    private AbstractIntroElement parent;
 
     // cached config element representing this component.
     private IConfigurationElement element;
 
-    protected String id;
 
-    IntroElement(IConfigurationElement element) {
+    AbstractIntroElement(IConfigurationElement element) {
         this.element = element;
-        id = element.getAttribute(ATT_ID);
     }
 
     /**
@@ -130,12 +131,6 @@ public abstract class IntroElement {
         return element;
     }
 
-    /**
-     * @return Returns the id.
-     */
-    public String getId() {
-        return id;
-    }
 
     /**
      * Returns the specific model type of this intro element. To be implemented
@@ -153,8 +148,8 @@ public abstract class IntroElement {
      * <li>For the model root, it retruns null.</li>
      * <li>For the introPart presentation it returns a model root.</li>
      * <li>For Pages, it returns an intro model root.</li>
-     * <li>For all other elements, it retruns a subclass of abstract
-     * container.</li>
+     * <li>For all other elements, it retruns a subclass of abstract container.
+     * </li>
      * <li>for divs that are children of configs (shared divs), it returns the
      * holding model root.</li>
      * <li>for Head elements that are children of Implementation elements
@@ -164,7 +159,7 @@ public abstract class IntroElement {
      * @return returns the parent of this intro element. Null only for model
      *         root.
      */
-    public IntroElement getParent() {
+    public AbstractIntroElement getParent() {
         return parent;
     }
 
@@ -172,14 +167,14 @@ public abstract class IntroElement {
      * @param parent
      *            The parent to set.
      */
-    protected void setParent(IntroElement parent) {
+    protected void setParent(AbstractIntroElement parent) {
         this.parent = parent;
     }
 
     /**
      * Returns the parent page holding this intro element. For the model root
-     * and the introPart presentation it returns null. For Pages, it returns
-     * the page itself. For all other element, returns the holding page.
+     * and the introPart presentation it returns null. For Pages, it returns the
+     * page itself. For all other element, returns the holding page.
      * <p>
      * Exceptions:
      * <ul>
@@ -191,15 +186,15 @@ public abstract class IntroElement {
      */
     public AbstractIntroPage getParentPage() {
         // return yourself if you are a page.
-        if (isOfType(IntroElement.ABSTRACT_PAGE))
+        if (isOfType(AbstractIntroElement.ABSTRACT_PAGE))
             return (AbstractIntroPage) this;
 
-        IntroElement parent = getParent();
+        AbstractIntroElement parent = getParent();
         if (parent == null)
             return null;
 
         while (parent != null && parent.getParent() != null
-                && !parent.isOfType(IntroElement.ABSTRACT_PAGE))
+                && !parent.isOfType(AbstractIntroElement.ABSTRACT_PAGE))
             parent = parent.getParent();
         if (parent.isOfType(ABSTRACT_PAGE))
             return (AbstractIntroPage) parent;
@@ -239,14 +234,14 @@ public abstract class IntroElement {
      *         <code>false</code> if the list is empty, or at least one
      *         element is not of the specified types.
      */
-    public static final boolean allElementsAreOfType(IntroElement[] elements,
-            int elementMask) {
+    public static final boolean allElementsAreOfType(
+            AbstractIntroElement[] elements, int elementMask) {
         // if we have an empty list, no point going on.
         if (elements.length == 0)
             return false;
 
         for (int i = 0; i < elements.length; i++) {
-            IntroElement element = elements[i];
+            AbstractIntroElement element = elements[i];
             if (!element.isOfType(elementMask))
                 return false;
         }

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
  * An intro Head element. Head elements are only interpreted for HTML case. They
  * are always inlined. Ignored in UI Forms case.
  */
-public class IntroHead extends IntroElement {
+public class IntroHead extends AbstractCommonIntroElement {
 
     protected static final String TAG_HEAD = "head";
 
@@ -46,7 +46,7 @@ public class IntroHead extends IntroElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.HEAD;
+        return AbstractIntroElement.HEAD;
     }
 
 }

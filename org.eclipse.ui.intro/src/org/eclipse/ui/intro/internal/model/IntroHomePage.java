@@ -100,7 +100,7 @@ public class IntroHomePage extends AbstractIntroPage {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.HOME_PAGE;
+        return AbstractIntroElement.HOME_PAGE;
     }
 
     // THESE METHODS WILL BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
@@ -111,7 +111,7 @@ public class IntroHomePage extends AbstractIntroPage {
      */
     public IntroLink[] getLinks() {
         // DONOW:
-        IntroLink[] links = (IntroLink[]) getChildrenOfType(IntroElement.LINK);
+        IntroLink[] links = (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
         if (links.length != 0)
             return links;
 
@@ -129,7 +129,7 @@ public class IntroHomePage extends AbstractIntroPage {
      */
     public IntroDiv[] getDivs() {
         // get real page divs.
-        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(IntroElement.DIV);
+        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
 
         // filter bad stuff for now.
         Vector vectorDivs = new Vector(Arrays.asList(divs));

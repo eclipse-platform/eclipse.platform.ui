@@ -105,7 +105,7 @@ public class IntroHTML extends AbstractTextElement {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.HTML;
+        return AbstractIntroElement.HTML;
     }
 
 }

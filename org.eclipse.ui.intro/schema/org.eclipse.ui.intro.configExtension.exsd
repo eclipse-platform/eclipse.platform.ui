@@ -164,6 +164,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -193,6 +200,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -214,6 +228,13 @@
             </annotation>
          </attribute>
          <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
             <annotation>
                <documentation>
                   
@@ -263,6 +284,13 @@
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -294,6 +322,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -308,6 +343,13 @@
             <annotation>
                <documentation>
                   unique identifier of this text.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class-id" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

@@ -161,7 +161,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.ABSTRACT_PAGE;
+        return AbstractIntroElement.ABSTRACT_PAGE;
     }
 
     /*
@@ -190,8 +190,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * 
      * @see org.eclipse.ui.intro.internal.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
      */
-    protected IntroElement getModelChild(IConfigurationElement childElement) {
-        IntroElement child = null;
+    protected AbstractIntroElement getModelChild(
+            IConfigurationElement childElement) {
+        AbstractIntroElement child = null;
         if (childElement.getName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
             child = new IntroHead(childElement);
             return child;
@@ -206,12 +207,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @return
      */
     public IntroHead[] getHTMLHeads() {
-        return (IntroHead[]) getChildrenOfType(IntroElement.HEAD);
+        return (IntroHead[]) getChildrenOfType(AbstractIntroElement.HEAD);
     }
 
     // THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
     public IntroLink[] getLinks() {
-        return (IntroLink[]) getChildrenOfType(IntroElement.LINK);
+        return (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
     }
 
     /**
@@ -220,7 +221,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     public IntroDiv[] getDivs() {
         // get real page divs.
-        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(IntroElement.DIV);
+        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
 
         // filter bad stuff for now.
         Vector vectorDivs = new Vector(Arrays.asList(divs));

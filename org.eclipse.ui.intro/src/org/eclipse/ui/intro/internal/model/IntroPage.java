@@ -31,7 +31,7 @@ public class IntroPage extends AbstractIntroPage {
 	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
 	 */
 	public int getType() {
-		return IntroElement.PAGE;
+		return AbstractIntroElement.PAGE;
 	}
 
 }

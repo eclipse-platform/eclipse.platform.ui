@@ -45,12 +45,12 @@ public class IntroDiv extends AbstractIntroContainer {
      * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
      */
     public int getType() {
-        return IntroElement.DIV;
+        return AbstractIntroElement.DIV;
     }
 
     // THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
     public IntroLink[] getLinks() {
-        return (IntroLink[]) getChildrenOfType(IntroElement.LINK);
+        return (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
     }
 
     /**
