@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -516,7 +517,18 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
                 // Just log and keep going
                 CVSProviderPlugin.log(e);
             }
-		}
+		} else {
+            // Check to see if watch-edit is enabled for the project
+            CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+            if (provider != null && provider.isWatchEditEnabled()) {
+                try {
+                    setReadOnly(true);
+                } catch (CVSException e) {
+                    // Just log and keep going
+                    CVSProviderPlugin.log(e);
+                }
+            }
+        }
 	}
 
 	/**
