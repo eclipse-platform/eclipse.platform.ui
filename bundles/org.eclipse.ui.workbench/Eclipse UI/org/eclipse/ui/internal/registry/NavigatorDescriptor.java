@@ -24,7 +24,7 @@ public class NavigatorDescriptor {
 
 	private String targetId;
 	private IConfigurationElement configElement;
-	private NavigatorContentDescriptor contentDescriptor;
+	private NavigatorDelegateDescriptor contentDescriptor;
 	private NavigatorRootDescriptor rootContentDescriptor;
 
 /**
@@ -39,7 +39,7 @@ public NavigatorDescriptor(IConfigurationElement configElement) throws Workbench
 }
 /**
  */
-public NavigatorContentDescriptor getContentDescriptor() {
+public NavigatorDelegateDescriptor getContentDescriptor() {
 	return contentDescriptor;
 }
 public NavigatorRootDescriptor getRootDescriptor() {
@@ -53,7 +53,7 @@ private void readConfigElement() throws WorkbenchException {
 			
 	IConfigurationElement[] children = configElement.getChildren(CHILD_CONTENT);
 	if (children.length > 0)
-		contentDescriptor = new NavigatorContentDescriptor(children[0]);
+		contentDescriptor = new NavigatorDelegateDescriptor(children[0]);
 
 	children = configElement.getChildren(CHILD_ROOT_CONTENT);
 	if (children.length > 0)

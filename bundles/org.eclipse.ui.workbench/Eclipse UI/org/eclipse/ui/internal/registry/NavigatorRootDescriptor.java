@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.WorkbenchException;
 
@@ -19,7 +17,11 @@ import org.eclipse.ui.WorkbenchException;
  * 
  * @since 3.0
  */
-public class NavigatorRootDescriptor extends NavigatorAbstractContentDescriptor {
+public class NavigatorRootDescriptor extends NavigatorContentDescriptor {
+	public static final String ATT_ELEMENT_CLASS = "elementClass"; //$NON-NLS-1$	
+	
+	Class elementClass;
+	
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
@@ -28,5 +30,16 @@ public class NavigatorRootDescriptor extends NavigatorAbstractContentDescriptor 
 	public NavigatorRootDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super(configElement);
 		readConfigElement();
+	}
+	public Class getElementClass() {
+		return elementClass;
+	}
+	protected void readConfigElement() throws WorkbenchException {
+		super.readConfigElement();
+		IConfigurationElement configElement = getConfigurationElement();
+		try {
+			elementClass = Class.forName(configElement.getAttribute(ATT_ELEMENT_CLASS));
+		} catch (ClassNotFoundException e) {
+		}
 	}
 }

@@ -104,7 +104,7 @@
          <attribute name="contentTargetId" type="string">
             <annotation>
                <documentation>
-                  The unique id of the content provider which this extension modifies.
+                  The unique id of the content provider which this extension modifies.  [Attribute currently not used.  Probably necessary for a more generic framework.]
                </documentation>
             </annotation>
          </attribute>
@@ -225,6 +225,16 @@
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="elementClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=""/>
                </appInfo>
             </annotation>
          </attribute>

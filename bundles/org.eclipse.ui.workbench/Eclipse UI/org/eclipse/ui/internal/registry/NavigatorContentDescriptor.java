@@ -10,68 +10,82 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.ActionExpression;
 
 /**
  * 
  * @since 3.0
  */
-public class NavigatorContentDescriptor extends NavigatorAbstractContentDescriptor {
-	private static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
-	private static final String ATT_PRIORITY = "priority"; //$NON-NLS-1$
-	private static final String ATT_CONTENT_TARGET_ID = "contentTargetId"; //$NON-NLS-1$
+public class NavigatorContentDescriptor {
+	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_NAME = "name"; //$NON-NLS-1$	
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$	
 
-	private int priority = 0;
-	private String contentTargetId;
-	private ActionExpression enablement;
+	private String id;	
+	private String name;
+	private String className;
+	private IConfigurationElement configElement;
+	
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
 	 * @param configElement configuration element to create a descriptor from
 	 */
 	public NavigatorContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
-		super(configElement);
-		readConfigElement();
-	}
-	public String getContentTargetId() {
-		return contentTargetId;
+		super();
+		this.configElement = configElement;
 	}
 	/**
 	 */
-	public int getPriority() {
-		return priority;
+	public String getId() {
+		return id;
+	}
+	public String getClassName() {
+		return className;
+	}
+	public IConfigurationElement getConfigurationElement() {
+		return configElement;
 	}
 	/**
 	 */
-	public ActionExpression getEnableExpression() {
-		return enablement;
+	public String getName() {
+		return name;
 	}
 	protected void readConfigElement() throws WorkbenchException {
-		super.readConfigElement();
-		IConfigurationElement configElement = getConfigurationElement();
-		String priorityString = configElement.getAttribute(ATT_PRIORITY);
-		if (priorityString != null) {
-			try {
-				priority = Integer.valueOf(priorityString).intValue();
-			}
-			catch (NumberFormatException exception) {
-				// TODO: handle exception
-			}
-		} 
-		contentTargetId = configElement.getAttribute(ATT_CONTENT_TARGET_ID);
-			
-		IConfigurationElement[] children = configElement.getChildren(CHILD_ENABLEMENT);
-		if (children.length == 1) {
-			enablement = new ActionExpression(children[0]);
-		}
-		else
-		if (children.length > 1) {
-			throw new WorkbenchException("More than one element: " +//$NON-NLS-1$
-				CHILD_ENABLEMENT +
+		id = configElement.getAttribute(ATT_ID);
+		name = configElement.getAttribute(ATT_NAME);
+		className = configElement.getAttribute(ATT_CLASS);
+
+		if (id == null) {
+			throw new WorkbenchException("Missing attribute: " +//$NON-NLS-1$
+				ATT_ID +
 				" in navigator extension: " +//$NON-NLS-1$
 				configElement.getDeclaringExtension().getUniqueIdentifier());				
-		} 
+		}
+		if (className == null) {
+			throw new WorkbenchException("Missing attribute: " +//$NON-NLS-1$
+				ATT_CLASS +
+				" in navigator extension: " +//$NON-NLS-1$
+				configElement.getDeclaringExtension().getUniqueIdentifier());				
+		}
+	}
+	protected ArrayList delegateDescriptors = new ArrayList();
+	protected void addDelegateDescriptor(NavigatorDelegateDescriptor descriptor) {
+		delegateDescriptors.add(descriptor);
+	}
+	/**
+	 */
+	protected NavigatorContentDescriptor findDescriptor(String contentProviderId) {
+		for (int i=0; i<delegateDescriptors.size(); i++) {
+			NavigatorDelegateDescriptor descriptor = (NavigatorDelegateDescriptor)delegateDescriptors.get(i);
+			if (descriptor.getId().equals(contentProviderId)) return descriptor;
+		}
+		return null;
+	}
+	protected ArrayList getDelegateDescriptors() {
+		return delegateDescriptors;
 	}
 }

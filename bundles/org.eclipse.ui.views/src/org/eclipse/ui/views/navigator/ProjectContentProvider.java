@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.internal.registry.NavigatorContentDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -20,37 +18,7 @@ public class ProjectContentProvider extends WorkbenchContentProvider implements 
 	String id;
 	NavigatorContentHandler provider;
 	
-	public Object[] getChildren(Object element) {
-		NavigatorContentDescriptor descriptor = provider.getParentContentDescriptor(element);
-		if (descriptor != null) {
-			INavigatorContentProvider contentProvider = provider.createContentProvider(descriptor);
-			return contentProvider.getChildren(element);
-		}
-		return new Object[0];
-	}
-	public Object[] getElements(Object element) {
-		return super.getChildren(element);
-	}
-	public boolean hasChildren(Object element) {
-		if (element instanceof IProject) {
-			NavigatorContentDescriptor descriptor = provider.getContentDescriptor(element);
-			INavigatorContentProvider contentProvider = provider.getContentProvider(descriptor.getId());
-			if (contentProvider == null) return true;
-			return contentProvider.getChildren(element).length > 0;
-		} else {
-			return getChildren(element).length > 0;
-		}
-	}
-	public Object getParent(Object element) {
-		if (element instanceof IProject) return ((IProject)element).getParent();
-		NavigatorContentDescriptor descriptor = provider.getParentContentDescriptor(element);
-		if (descriptor != null) {
-			INavigatorContentProvider contentProvider = provider.createContentProvider(descriptor);
-			return contentProvider.getParent(element);
-		}
-		return new Object[0];
-	}
-	public void init (NavigatorContentHandler provider, String id) {
+public void init (NavigatorContentHandler provider, String id) {
 		this.provider = provider;
 		this.id = id;
 	}

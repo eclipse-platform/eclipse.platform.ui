@@ -30,7 +30,7 @@ public NavigatorRegistry() {
  */
 protected void add(NavigatorDescriptor descriptor) {
 	NavigatorRootDescriptor rootDescriptor = descriptor.getRootDescriptor();
-	NavigatorContentDescriptor contentDescriptor = descriptor.getContentDescriptor();
+	NavigatorDelegateDescriptor contentDescriptor = descriptor.getContentDescriptor();
 	String viewTargetId = descriptor.getTargetId();
 	
 	if (rootDescriptor != null)
@@ -42,13 +42,13 @@ protected void add(NavigatorDescriptor descriptor) {
 		rootDescriptor.addDelegateDescriptor(contentDescriptor);
 	}
 }
-public NavigatorContentDescriptor getContentDescriptor(NavigatorRootDescriptor root, Object element) {
+public NavigatorDelegateDescriptor getContentDescriptor(NavigatorRootDescriptor root, Object element) {
 	ArrayList descriptors = getDelegateDescriptors(root);
-	NavigatorContentDescriptor contentDescriptor = null;
+	NavigatorDelegateDescriptor contentDescriptor = null;
 	int priority = -1;
 	
 	for (int i = 0; i < descriptors.size(); i++) {
-		NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)descriptors.get(i);
+		NavigatorDelegateDescriptor descriptor = (NavigatorDelegateDescriptor)descriptors.get(i);
 		ActionExpression enablement = descriptor.getEnableExpression(); 	
 		if (enablement == null) {
 			if (descriptor.getPriority() > priority) contentDescriptor = descriptor;
