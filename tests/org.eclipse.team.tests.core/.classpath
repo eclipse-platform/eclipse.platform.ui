@@ -13,5 +13,6 @@
     <classpathentry kind="src" path="/org.junit"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
+    <classpathentry kind="src" path="/org.eclipse.team.ftp"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
