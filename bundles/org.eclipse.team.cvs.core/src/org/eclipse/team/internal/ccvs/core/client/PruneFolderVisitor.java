@@ -16,7 +16,12 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
  * recusion (the folders that do not have subfolders).
  */
 class PruneFolderVisitor implements ICVSResourceVisitor {
-
+	
+	private Session session;
+	
+	public PruneFolderVisitor(Session s) {
+		session = s;
+	}
 	/**
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
@@ -27,8 +32,12 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
 	public void visitFolder(ICVSFolder folder) throws CVSException {
+		// First prune any empty children
 		folder.acceptChildren(this);
-		if (folder.getFiles().length == 0 && 
+		// Then prune the folder if it is not the command root.
+		// XXX Seems a bit inefficient to fetch the files and folders separately
+		if ( ! folder.equals(session.getLocalRoot()) &&
+			folder.getFiles().length == 0 && 
 			folder.getFolders().length == 0) {
 			folder.delete();
 			folder.unmanage();

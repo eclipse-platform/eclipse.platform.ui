@@ -87,7 +87,7 @@ public class Checkout extends Command {
 				session.getLocalRoot().getFolder(dOption.argument) };
 
 			// Prune empty directories
-			ICVSResourceVisitor visitor = new PruneFolderVisitor();
+			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
 			for (int i=0; i<resources.length; i++) {
 				resources[i].accept(visitor);
 			}

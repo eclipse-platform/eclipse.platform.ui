@@ -332,6 +332,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	public void updateCache() throws CVSException {
+		if (passwordFixed)
+			return;
 		IUserAuthenticator authenticator = getAuthenticator();
 		if (authenticator != null) {
 			authenticator.cachePassword(this, this, password);

@@ -23,8 +23,6 @@ public class Remove extends Command {
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
-		ICVSResource[] mWorkResources;
-		
 		// Send all changed files to the server	
 		sendFileStructure(session, resources, true, false, monitor);
 	}

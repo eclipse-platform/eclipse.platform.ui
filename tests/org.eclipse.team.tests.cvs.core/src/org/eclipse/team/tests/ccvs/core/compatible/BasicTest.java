@@ -283,6 +283,26 @@ public class BasicTest extends JUnitTestCase {
 
 	}
 	
+	public void testPrune2() throws Exception {
+				
+		// Download content in two locations
+		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
+		env2.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
+		
+		// change the file "proj1/folder1/c.txt" in env1 check it in
+		// on the server
+		env1.deleteFile("proj2/f1/b.txt");
+		env1.deleteFile("proj2/f1/c.txt");
+		env1.execute("remove",EMPTY_ARGS,new String[0],"proj2");
+		
+		env1.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
+		env1.execute("update",new String[]{"-P"},new String[]{},"proj2");
+		
+		// update env2 and make sure the changes are there
+		env2.execute("update",new String[]{"-P"},new String[]{},"proj2");
+
+	}
+	
 	public void testAdmin() throws Exception {
 				
 		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");

@@ -69,7 +69,7 @@ public class Update extends Command {
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
 			findOption(localOptions, "-D") != null) {
 			// Delete empty directories
-			ICVSResourceVisitor visitor = new PruneFolderVisitor();
+			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
 			for (int i = 0; i < resources.length; i++) {
 				resources[i].accept(visitor);
 			}
