@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -102,27 +103,29 @@ final class WWinKeyBindingService {
 	private final KeyModeContributionItem keyModeContributionItem = new KeyModeContributionItem("KeyModeContribution"); //$NON-NLS-1$
 
 	private final IPartListener partListener = new IPartListener() {
-		public void partActivated(IWorkbenchPart part) {
-			update(part);
+		public void partActivated(IWorkbenchPart workbenchPart) {
+			update(workbenchPart);
 		}
 			
-		public void partBroughtToTop(IWorkbenchPart part) {
+		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
 		}
 			
-		public void partClosed(IWorkbenchPart part) {
-		}
-			
-		public void partDeactivated(IWorkbenchPart part) {
+		public void partClosed(IWorkbenchPart workbenchPart) {
 			clear();
 		}
 			
-		public void partOpened(IWorkbenchPart part) {
+		public void partDeactivated(IWorkbenchPart workbenchPart) {
+			clear();
+		}
+			
+		public void partOpened(IWorkbenchPart workbenchPart) {
+			clear();
 		}
 	};
 		
 	private final ShellListener shellListener = new ShellAdapter() {
 		public void shellActivated(ShellEvent e) {
-			((Workbench) workbenchWindow.getWorkbench()).updateActiveKeyBindingService();
+			update(workbenchWindow.getPartService().getActivePart());	
 		}
 
 		public void shellDeactivated(ShellEvent e) {
@@ -159,8 +162,9 @@ final class WWinKeyBindingService {
 			public void pageOpened(IWorkbenchPage page) {
 				page.addPartListener(partListener);
 				update(page.getActivePart());
-				finalWorkbenchWindow.getShell().removeShellListener(shellListener);				
-				finalWorkbenchWindow.getShell().addShellListener(shellListener);				
+				Shell shell = finalWorkbenchWindow.getShell();
+				shell.removeShellListener(shellListener);				
+				shell.addShellListener(shellListener);				
 			}
 		});		
 	}
