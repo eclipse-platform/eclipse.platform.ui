@@ -590,6 +590,15 @@ private void removePage(PageRec rec) {
 	mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
 
+	Control control = rec.page.getControl();
+	if (control != null && !control.isDisposed()) {
+		// Dispose the page's control so pages don't have to do this in their 
+		// dispose method. 
+		// The page's control is a child of this view's control so if this view 
+		// is closed, the page's control will already be disposed.
+		control.dispose();
+	}
+
 	// free the page 
 	doDestroyPage(rec.part, rec);
 }

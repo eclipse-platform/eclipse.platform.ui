@@ -36,15 +36,17 @@ public void createControl(Composite parent);
 /**
  * Disposes of this page.
  * <p>
- * This is the last method called on the <code>IPage</code>.  It is the page's
- * responsibility to ensure that all of its controls have been disposed by the
- * time this method returns, but they may have already been disposed if the parent
- * composite has been disposed.  Also, there is no guarantee that createControl() 
- * has been called, so the controls may never have been created.
+ * This is the last method called on the <code>IPage</code>. Implementors should 
+ * clean up any resources associated with the page.
+ * </p>
+ * Callers of this method should ensure that the page's control (if it exists)
+ * has been disposed before calling this method. However, for backward compatibilty,
+ * implementors must also ensure that the page's control has been disposed before
+ * this method returns.  
  * </p>
  * <p>
- * Clients should not call this method (the workbench calls this method at
- * appropriate times).
+ * Note that there is no guarantee that createControl() has been called, 
+ * so the control may never have been created.
  * </p>
  */
 public void dispose();
