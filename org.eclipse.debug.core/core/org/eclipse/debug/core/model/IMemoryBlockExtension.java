@@ -37,7 +37,8 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	public String getExpression();	
 	
 	/**
-	 * Returns the base address of this memory block as a big integer.
+	 * Returns the base address of this memory block as a big integer. The 
+	 * address is in terms of addressable units.
 	 * 
 	 * @return the base address of this memory block
 	 * @throws DebugException if unable to retreive the base address
@@ -117,10 +118,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * case.
 	 * </p> 
 	 * @param unitOffset zero based offset into this memory block at which to start
-	 *  retrieving bytes.  Client should retrieve memory starting from
-	 *  "base address + (offset * addressible size)". Note that the offset is
-	 *  in terms of addressible units, rather than bytes.
-	 * @param addressableUnits the number of addressible units to retrieve
+	 *  retrieving bytes in terms of addressable units. Client should retrieve
+	 *  memory starting from "base address + offset".
+	 * @param addressableUnits the number of addressable units to retrieve
 	 * @return an array of bytes from this memory block based on the given offset
 	 *  and number of units. The size of the array returned must to be equal to 
 	 *  <code>units</code> * <code>getAddressableSize()</code>.
@@ -141,8 +141,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * the of the accessible range. An exception should not be thrown in this
 	 * case.
 	 * </p>
-	 * @param address address at which to begin retrieving bytes
-	 * @param units is the number of addressible units of memory to retrieve 
+	 * @param address address at which to begin retrieving bytes in terms
+	 *  of addressable units
+	 * @param units is the number of addressable units of memory to retrieve 
 	 * @return an array of bytes from this memory block based on the given address
 	 *  and number of units. The size of the array returned must to be equal to 
 	 *  <code>units</code> * <code>getAddressableSize()</code>.
