@@ -89,6 +89,10 @@ public interface ICVSUIConstants {
 	
 	public final String PREF_SHOW_SYNCINFO_AS_TEXT = "pref_show_syncinfo_as_text"; //$NON-NLS-1$
 
+	// watch/edit preferences
+	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
+	public final String PREF_PROMPT_ON_EDIT = "pref_prompt_on_edit"; //$NON-NLS-1$
+	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_BRANCH = "wizban/newstream_wizban.gif";	 //$NON-NLS-1$

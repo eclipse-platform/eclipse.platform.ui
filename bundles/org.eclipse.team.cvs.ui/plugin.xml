@@ -572,6 +572,17 @@
             id="org.eclipse.team.cvs.ui.ExtMethodPreferencePage">
       </page>
    </extension>
+   <!--
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%WatchEditPreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.WatchEditPreferencePage"
+            id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
+      </page>
+   </extension>
+   -->
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">
