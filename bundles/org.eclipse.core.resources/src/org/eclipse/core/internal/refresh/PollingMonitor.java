@@ -31,6 +31,19 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PollingMonitor extends Job implements IRefreshMonitor {
 	/**
+	 * The maximum duration of a single polling iteration
+	 */
+	private static final long MAX_DURATION = 250;
+	/**
+	 * The amount of time that a changed root should remain
+	 * hot.
+	 */
+	private static final long HOT_ROOT_DECAY = 90000;
+	/**
+	 * The minimum delay between executions of the polling monitor
+	 */
+	private static final long MIN_FREQUENCY = 4000;
+	/**
 	 * The roots of resources which should be polled
 	 */
 	private final ArrayList resourceRoots;
@@ -49,14 +62,9 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 
 	private final RefreshManager manager;
 	/**
-	 * The minimum polling interval
+	 * True if this job has never been run. False otherwise.
 	 */
-	private long MIN_FREQUENCY = 4000;
-	/**
-	 * The maximum duration of a single polling iteration
-	 */
-	private static final long MAX_DURATION = 250;
-	private static final long HOT_ROOT_DECAY = 90000;
+	private boolean firstRun = true;
 
 	/**
 	 * Creates a new polling monitor.
@@ -82,6 +90,15 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * Polls the filesystem under the root containers for changes.
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
+		//sleep on the first run to avoid colliding with the startup process
+		if (firstRun) {
+			firstRun = false;
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				//ignore
+			}
+		}
 		long time = System.currentTimeMillis();
 		//check to see if we need to start an iteration
 		if (toRefresh.isEmpty()) {
