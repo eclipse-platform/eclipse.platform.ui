@@ -276,8 +276,8 @@ private Object[] sortByCategories(List nodes) {
 		private Collator collator = Collator.getInstance();
 		
 		public boolean compare(Object o1, Object o2) {
-			String s1 = ((CategoryNode)o1).getFlatCategory().toUpperCase();
-			String s2 = ((CategoryNode)o2).getFlatCategory().toUpperCase();
+			String s1 = ((CategoryNode)o1).getFlatCategory();
+			String s2 = ((CategoryNode)o2).getFlatCategory();
 			//Return true if elementTwo is 'greater than' elementOne
 			return collator.compare(s2, s1) > 0;
 		}
