@@ -4,6 +4,7 @@
   <property name="root" value="${basedir}/.."/>
   <property name="temp" value="${root}/__temp"/>
   <property name="plugins" value="${temp}/eclipse/plugins"/>
+  <property name="versionSuffix" value=""/>
 
   <target name="init">
     <tstamp/>
@@ -61,13 +62,13 @@
   </target>
           
   <target name="buildPlugin">
-    <copy todir="${plugins}/${pluginName}">
+    <copy todir="${plugins}/${pluginName}${versionSuffix}">
       <fileset dir="${root}/${pluginName}"/>
     </copy>
-    <jar jarfile="${plugins}/${pluginName}/${jarName}"
-         basedir="${plugins}/${pluginName}/bin"
+    <jar jarfile="${plugins}/${pluginName}${versionSuffix}/${jarName}"
+         basedir="${plugins}/${pluginName}${versionSuffix}/bin"
     />
-    <delete dir="${plugins}/${pluginName}/bin"/>
+    <delete dir="${plugins}/${pluginName}${versionSuffix}/bin"/>
   </target>
 
 </project>
