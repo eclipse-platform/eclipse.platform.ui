@@ -41,16 +41,6 @@ class LayoutPartSash extends LayoutPart {
 
     private int left = 300, right = 300;
     
-    private int scheduledUpdates = 0;
-    
-    private Runnable updateCounterJob = new Runnable() {
-
-        public void run() {
-            scheduledUpdates--;
-        }
-        
-    };
-    
     /**
      * Stores whether or not the sash is visible. (This is expected to have a meaningful
      * value even if the underlying control doesn't exist).
@@ -66,20 +56,10 @@ class LayoutPartSash extends LayoutPart {
             public void widgetSelected(SelectionEvent e) { 
                 checkDragLimit(e);
                 
-                // Ensure that we don't wear out the poor CPU -- if
-                // we have more than 5 updates scheduled at once then
-                // stop updating the views with the sash.
-                // This will look ugly (the views will stay still until the user
-                // moves the mouse) but it ensures that we never
-                // make the UI unusable by causing too many redraws.
-                if (e.detail != SWT.DRAG || (scheduledUpdates <= 5)) {
-                    scheduledUpdates++;
-                    
+                //if (e.detail != SWT.DRAG) {    
                     LayoutPartSash.this.widgetSelected(e.x, e.y, e.width,
                             e.height);
-                    
-                    sash.getDisplay().asyncExec(updateCounterJob);
-                }
+                //}
             }
         };
     }
