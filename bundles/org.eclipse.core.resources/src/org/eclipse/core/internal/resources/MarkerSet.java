@@ -89,20 +89,30 @@ protected void expand() {
 	}
 	elements = array;
 }
+/**
+ * Returns the set element with the given id, or null
+ * if not found.
+ */
 public IMarkerSetElement get(long id) {
+	if (elementCount == 0)
+		return null;
 	int hash = hashFor(id) % elements.length;
 
 	// search the last half of the array
 	for (int i = hash; i < elements.length; i++) {
 		IMarkerSetElement element = elements[i];
-		if (element != null && element.getId() == id)
+		if (element == null)
+			return null;
+		if (element.getId() == id)
 			return element;
 	}
 
 	// search the beginning of the array
 	for (int i = 0; i < hash - 1; i++) {
 		IMarkerSetElement element = elements[i];
-		if (element != null && element.getId() == id)
+		if (element == null)
+			return null;
+		if (element.getId() == id)
 			return element;
 	}
 
