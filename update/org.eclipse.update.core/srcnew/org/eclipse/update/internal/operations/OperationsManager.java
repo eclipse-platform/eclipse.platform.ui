@@ -172,69 +172,63 @@ public class OperationsManager implements IAdaptable {
 		}
 	}
 
-	public static boolean hasSelectedJobsWithLicenses(Object[] jobs) {
+	public static boolean hasSelectedJobsWithLicenses(PendingOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() != PendingOperation.INSTALL)
+			if (jobs[i].getJobType() != PendingOperation.INSTALL)
 				continue;
-			if (UpdateManager.hasLicense(job))
+			if (UpdateManager.hasLicense(jobs[i]))
 				return true;
 		}
 		return false;
 	}
 
-	public static boolean hasSelectedJobsWithOptionalFeatures(Object[] jobs) {
+	public static boolean hasSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() != PendingOperation.INSTALL)
+			if (jobs[i].getJobType() != PendingOperation.INSTALL)
 				continue;
-			if (UpdateManager.hasOptionalFeatures(job.getFeature()))
+			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
 				return true;
 		}
 		return false;
 	}
 
-	public static boolean hasSelectedInstallJobs(Object[] jobs) {
+	public static boolean hasSelectedInstallJobs(PendingOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() == PendingOperation.INSTALL)
+			if (jobs[i].getJobType() == PendingOperation.INSTALL)
 				return true;
 		}
 		return false;
 	}
 
-	public static PendingOperation[] getSelectedJobsWithLicenses(Object[] jobs) {
+	public static PendingOperation[] getSelectedJobsWithLicenses(PendingOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() != PendingOperation.INSTALL)
+			if (jobs[i].getJobType() != PendingOperation.INSTALL)
 				continue;
-			if (UpdateManager.hasLicense(job))
-				list.add(job);
+			if (UpdateManager.hasLicense(jobs[i]))
+				list.add(jobs[i]);
 		}
 		return (PendingOperation[]) list.toArray(
 			new PendingOperation[list.size()]);
 	}
 
-	public static PendingOperation[] getSelectedJobsWithOptionalFeatures(Object[] jobs) {
+	public static PendingOperation[] getSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() != PendingOperation.INSTALL)
+			if (jobs[i].getJobType() != PendingOperation.INSTALL)
 				continue;
-			if (UpdateManager.hasOptionalFeatures(job.getFeature()))
-				list.add(job);
+			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
+				list.add(jobs[i]);
 		}
 		return (PendingOperation[]) list.toArray(
 			new PendingOperation[list.size()]);
 	}
 
-	public static PendingOperation[] getSelectedInstallJobs(Object[] jobs) {
+	public static PendingOperation[] getSelectedInstallJobs(PendingOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = (PendingOperation) jobs[i];
-			if (job.getJobType() == PendingOperation.INSTALL)
-				list.add(job);
+			if (jobs[i].getJobType() == PendingOperation.INSTALL)
+				list.add(jobs[i]);
 		}
 		return (PendingOperation[]) list.toArray(
 			new PendingOperation[list.size()]);
