@@ -202,10 +202,16 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			// compute information
 			String information= null;
 			Object d= item.getData();
+			
 			if (d instanceof ICompletionProposal) {
 				ICompletionProposal p= (ICompletionProposal) d;
 				information= p.getAdditionalProposalInfo();
 			}
+			
+			if (d instanceof ICompletionProposalExtension3)
+				setCustomInformationControlCreator(((ICompletionProposalExtension3) d).getInformationControlCreator());
+			else
+				setCustomInformationControlCreator(null);
 			
 			// compute subject area
 			setMargins(4, -1);
