@@ -285,9 +285,11 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		assertTrue("0.3", manager.validateName("_").isOK());
 
 		// invalid names
-		assertFalse("1.0", manager.validateName("1FOO").isOK());
-		assertFalse("1.1", manager.validateName("FOO%BAR").isOK());
-		assertFalse("1.2", manager.validateName("FOO$BAR").isOK());
+		assertTrue("1.0", !manager.validateName("1FOO").isOK());
+		assertTrue("1.1", !manager.validateName("FOO%BAR").isOK());
+		assertTrue("1.2", !manager.validateName("FOO$BAR").isOK());
+		assertTrue("1.3", !manager.validateName(" FOO").isOK());
+		assertTrue("1.4", !manager.validateName("FOO ").isOK());
 
 	}
 	/**
