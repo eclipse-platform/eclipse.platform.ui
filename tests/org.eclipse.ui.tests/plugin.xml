@@ -1653,12 +1653,6 @@
             requiredActivityId="org.eclipse.activity7"
             activityId="org.eclipse.activity1">
       </activityRequirementBinding>
-      <activityImageBinding
-            icon="icons/anything.gif"
-            id="org.eclipse.activity1"/>
-      <categoryImageBinding
-            icon="icons/anything.gif"
-            id="org.eclipse.category1"/>
    </extension>
 
   <extension
@@ -2294,5 +2288,14 @@
       <categoryActivityBinding
             activityId="org.eclipse.ui.tests.util.5"
             categoryId="org.eclipse.ui.tests.util.5"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.activitySupport">
+      <activityImageBinding
+            icon="icons/anything.gif"
+            id="org.eclipse.activity1"/>
+      <categoryImageBinding
+            icon="icons/anything.gif"
+            id="org.eclipse.category1"/>   
    </extension>
 </plugin>            

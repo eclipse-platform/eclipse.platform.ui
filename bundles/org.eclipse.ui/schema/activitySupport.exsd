@@ -8,7 +8,6 @@
       <documentation>
          &lt;p&gt;This extension point is used to register various support extensions relating to the activities infrastucture.
 &lt;/p&gt;
-
       </documentation>
    </annotation>
 
@@ -18,6 +17,8 @@
             <element ref="triggerPoint"/>
             <element ref="triggerPointAdvisor"/>
             <element ref="triggerPointAdvisorProductBinding"/>
+            <element ref="categoryImageBinding"/>
+            <element ref="activityImageBinding"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -153,6 +154,66 @@
                <documentation>
                   unique id of a trigger point advisor
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="categoryImageBinding">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id" icon="icon"/>
+         </appInfo>
+         <documentation>
+            This element allows binding of icons to categories  These icons may be used by user interface components that wish to visualize categories in some way.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the category to bind an icon to
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the icon that will be used for this category
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="activityImageBinding">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id" icon="icon"/>
+         </appInfo>
+         <documentation>
+            This element allows binding of icons to activities.  These icons may be used by user interface components that wish to visualize activities in some way.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the activity to bind an icon to
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the icon that will be used for this activity
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

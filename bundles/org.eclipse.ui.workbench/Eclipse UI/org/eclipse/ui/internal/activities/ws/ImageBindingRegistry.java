@@ -75,7 +75,7 @@ public class ImageBindingRegistry implements IExtensionAdditionHandler, IExtensi
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
 	 */
 	public IExtensionPoint getExtensionPointFilter() {
-		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITIES);
+		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
 	}
 
 	/* (non-Javadoc)

@@ -28,7 +28,7 @@ public class ActivitiesTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public ActivitiesTestSuite() {
-    	addTest(new TestSuite(ImagesTest.class));
+      	addTest(new TestSuite(ImagesTest.class));
 		addTest(new TestSuite(UtilTest.class));
         addTest(new TestSuite(StaticTest.class));
         addTest(new TestSuite(DynamicTest.class));
