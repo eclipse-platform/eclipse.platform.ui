@@ -210,7 +210,8 @@ private Font createFont(String symbolicName, FontData[] fonts) {
 		//Create a font data for updating the registry
 		FontData[] newEntry = new FontData[1];
 		newEntry[0] = validData;
-		put(symbolicName,newEntry);
+		//Do not fire the update from creation as it is not a property change
+		put(symbolicName,newEntry,false);
 		return new Font(display, validData);
 	}
 }
@@ -346,6 +347,7 @@ private FontData makeFontData(String value) throws MissingResourceException {
 		throw new MissingResourceException("Wrong font data format. Value is: \"" + value + "\"", getClass().getName(), value);//$NON-NLS-2$//$NON-NLS-1$
 	}
 }
+
 /**
  * Adds (or replaces) a font to this font registry under the given
  * symbolic name.
@@ -357,8 +359,30 @@ private FontData makeFontData(String value) throws MissingResourceException {
  *
  * @param symbolicName the symbolic font name
  * @param fontData an Array of FontData
+ * @param update - fire a font mapping changed if true. False
+ * 	if this method is called from the get method as no setting
+ *  has changed.
  */
 public void put(String symbolicName, FontData[] fontData) {
+	put(symbolicName,fontData,true);
+}
+
+/**
+ * Adds (or replaces) a font to this font registry under the given
+ * symbolic name.
+ * <p>
+ * A property change event is reported whenever the mapping from
+ * a symbolic name to a font changes. The source of the event is
+ * this registry; the property name is the symbolic font name.
+ * </p>
+ *
+ * @param symbolicName the symbolic font name
+ * @param fontData an Array of FontData
+ * @param update - fire a font mapping changed if true. False
+ * 	if this method is called from the get method as no setting
+ *  has changed.
+ */
+private void put(String symbolicName, FontData[] fontData, boolean update) {
 
 	Assert.isNotNull(symbolicName);
 	Assert.isNotNull(fontData);
@@ -369,7 +393,8 @@ public void put(String symbolicName, FontData[] fontData) {
 		
 	Font oldFont = (Font)stringToFont.remove(symbolicName);
 	stringToFontData.put(symbolicName, fontData);
-	fireFontMappingChanged(symbolicName);
+	if(update)
+		fireFontMappingChanged(symbolicName);
 
 	if (oldFont == defaultFont())
 		return;
