@@ -205,7 +205,7 @@ public class PropertyBucket extends Bucket {
 	 */
 	private static final byte VERSION = 1;
 
-	private List qualifierIndex = new ArrayList();
+	private final List qualifierIndex = new ArrayList();
 
 	public PropertyBucket() {
 		super();
@@ -239,7 +239,7 @@ public class PropertyBucket extends Bucket {
 	}
 
 	public void load(String newProjectName, File baseLocation, boolean force) throws CoreException {
-		qualifierIndex = new ArrayList(5);
+		qualifierIndex.clear();
 		super.load(newProjectName, baseLocation, force);
 	}
 
@@ -272,7 +272,7 @@ public class PropertyBucket extends Bucket {
 	}
 
 	public void save() throws CoreException {
-		qualifierIndex = new ArrayList(5);
+		qualifierIndex.clear();
 		super.save();
 	}
 
