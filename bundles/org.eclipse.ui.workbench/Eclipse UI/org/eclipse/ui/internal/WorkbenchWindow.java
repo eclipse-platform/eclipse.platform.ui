@@ -12,91 +12,33 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.Match;
+import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
-import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.IActionSet;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ModifierKey;
+import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.keys.*;
 
 /**
  * A window within the workbench.
@@ -213,20 +155,6 @@ public class WorkbenchWindow
 			}
 
 			int toolBarWidth = clientArea.width;
-			//Layout the progress indicator
-			if (showProgressIndicator()) {
-				if (animationItem != null) {
-					Control progressWidget = animationItem.getControl();
-					Rectangle bounds = animationItem.getImageBounds();
-					toolBarWidth -= (bounds.width + CLIENT_INSET);
-					progressWidget.setBounds(
-						clientArea.x + toolBarWidth,
-						clientArea.y,
-						bounds.width,
-						bounds.height);
-
-				}
-			}
 
 			//Layout the toolbar	
 			Control toolBar = getToolBarControl();
@@ -270,12 +198,30 @@ public class WorkbenchWindow
 					sep2.setBounds(0, 0, 0, 0);
 			}
 
+			int width = BAR_SIZE;
+			//Layout the progress indicator
+			if (showProgressIndicator()) {
+				if (animationItem != null) {
+					Control progressWidget = animationItem.getControl();
+					Rectangle bounds = animationItem.getImageBounds();
+					int offset = 0;
+					if (width > bounds.width)
+						offset = (width - bounds.width) / 2;
+					progressWidget.setBounds(
+						offset,
+						clientArea.y + clientArea.height - bounds.height,
+						width,
+						bounds.height);
+					width = Math.max(width, bounds.width);
+
+				}
+			}
+
 			if (getStatusLineManager() != null) {
 				Control statusLine = getStatusLineManager().getControl();
 				if (statusLine != null) {
 					if (getShowStatusLine()) {
 
-						int width = 0;
 						if (getShortcutBar() != null && getShowShortcutBar()) {
 							Widget shortcutBar = getShortcutBar().getControl();
 							if (shortcutBar != null
@@ -283,7 +229,7 @@ public class WorkbenchWindow
 								ToolBar bar = (ToolBar) shortcutBar;
 								if (bar.getItemCount() > 0) {
 									ToolItem item = bar.getItem(0);
-									width = item.getWidth();
+									width = Math.max(width, item.getWidth());
 									Rectangle trim =
 										bar.computeTrim(0, 0, width, width);
 									width = trim.width;
@@ -316,7 +262,6 @@ public class WorkbenchWindow
 				if (shortCutBar != null) {
 					if (getShowShortcutBar()) {
 
-						int width = BAR_SIZE;
 						if (shortCutBar instanceof ToolBar) {
 							ToolBar bar = (ToolBar) shortCutBar;
 							if (bar.getItemCount() > 0) {
@@ -334,10 +279,12 @@ public class WorkbenchWindow
 							clientArea.height);
 						clientArea.x += width + VGAP;
 						clientArea.width -= width + VGAP;
-					} else
-						getShortcutBar().getControl().setBounds(0, 0, 0, 0);
+
+					}
 				}
-			}
+
+			} else
+				getShortcutBar().getControl().setBounds(0, 0, 0, 0);
 
 			Control sep3 = getSeparator3();
 
