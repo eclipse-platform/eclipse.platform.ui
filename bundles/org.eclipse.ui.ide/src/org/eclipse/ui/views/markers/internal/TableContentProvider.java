@@ -148,7 +148,7 @@ class TableContentProvider implements IStructuredContentProvider {
 	/**
 	 * Job that does the real work for individual updates
 	 */
-	WidgetRefreshJob uiJob = new WidgetRefreshJob(UPDATING_TABLE_WIDGET);
+	WidgetRefreshJob uiJob;
 	
 	/**
 	 * This job incrementally updates the viewer until all pending changes have
@@ -173,6 +173,8 @@ class TableContentProvider implements IStructuredContentProvider {
 	public TableContentProvider(TableViewer viewer, String description, IWorkbenchSiteProgressService service) {
 		this.queues = new DeferredQueue(viewer);
 		this.description = description;
+		
+		uiJob = new WidgetRefreshJob(UPDATING_TABLE_WIDGET);
 		uiJob.setPriority(Job.LONG);
 		uiJob.setSystem(true);
 		

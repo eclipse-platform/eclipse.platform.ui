@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -36,18 +35,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -58,7 +45,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -72,7 +68,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
@@ -143,13 +139,7 @@ public abstract class MarkerView extends TableView {
 	private int totalMarkers = 0;
 	private boolean markerCountDirty = true;
 
-	Job uiJob = new UIJob(Messages.getString("MarkerView.refreshProgress")) { //$NON-NLS-1$
-		public IStatus runInUIThread(IProgressMonitor monitor) {						
-			updateStatusMessage();
-			updateTitle();
-			return Status.OK_STATUS;
-		}
-	};
+	WorkbenchJob uiJob;
 	
 	/**
 	 * This job is scheduled whenever a filter or resource change occurs. It computes the new
@@ -234,8 +224,9 @@ public abstract class MarkerView extends TableView {
 	 * immediately. 
 	 */
 	protected void refresh() {
-		uiJob.setPriority(Job.INTERACTIVE);
-		uiJob.setSystem(true);
+		
+		if(uiJob == null)
+			createUIJob();
 	
 		if (refreshJob == null) {
 			
@@ -762,6 +753,23 @@ public abstract class MarkerView extends TableView {
         		getProgressService().warnOfContentChange();
         }
         
+    }
+    
+    /**
+     * Create the UIJob used in the receiver for updates.
+     *
+     */
+    private void createUIJob(){
+    	uiJob = new WorkbenchJob(Messages.getString("MarkerView.refreshProgress")) { //$NON-NLS-1$
+    		
+    		public IStatus runInUIThread(IProgressMonitor monitor) {						
+    			updateStatusMessage();
+    			updateTitle();
+    			return Status.OK_STATUS;
+    		}
+    	};
+    	uiJob.setPriority(Job.INTERACTIVE);
+		uiJob.setSystem(true);
     }
 	
 }
