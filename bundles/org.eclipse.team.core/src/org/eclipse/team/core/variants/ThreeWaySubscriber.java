@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,16 @@ import org.eclipse.team.internal.core.subscribers.ThreeWayBaseTree;
 /**
  * A resource variant tree subscriber whose trees use an underlying
  * <code>ThreeWaySycnrhonizer</code> to store and manage the
- * synchronization state for the local workspace.
+ * synchronization state for the local workspace. Subclasses need to
+ * provide a subclass of <code>ThreeWayRemoteTree</code> and a method
+ * to create resource variant handles from the bytes cached in the
+ * <code>ThreeWaySynchronizer</code>.
+ * 
+ * @see ThreeWaySynchronizer
+ * @see ThreeWayRemoteTree
+ * @see CachedResourceVariant
+ * 
+ * @since 3.0
  */
 public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber implements ISynchronizerChangeListener {
 	
@@ -71,7 +80,7 @@ public abstract class ThreeWaySubscriber extends ResourceVariantTreeSubscriber i
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.target.subscriber.ISynchronizerChangeListener#syncStateChanged(org.eclipse.core.resources.IResource[])
+	 * @see org.eclipse.team.core.variants.ISynchronizerChangeListener#syncStateChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void syncStateChanged(IResource[] resources) {
 		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, resources));

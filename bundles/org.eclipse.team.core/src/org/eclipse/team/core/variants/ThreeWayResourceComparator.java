@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,12 @@ import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * A resource comparator that uses the <code>ThreeWaySynchronizer</code>
- * to compare local resources to their resource variants.
+ * to compare local resources to their resource variants. The local state
+ * is determined using the local modification state and the remote state
+ * is determined by comparing the base bytes to the remote bytes obtained
+ * from the synchronizer.
+ * 
+ * @since 3.0
  */
 public class ThreeWayResourceComparator implements IResourceVariantComparator {
 	

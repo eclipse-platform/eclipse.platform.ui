@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		getSynchronizer().remove(getSyncName());
@@ -63,7 +63,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
 		byte[] syncBytes = internalGetSyncBytes(resource);
@@ -75,7 +75,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		Assert.isNotNull(bytes);
@@ -90,7 +90,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#flushBytes(org.eclipse.core.resources.IResource, int)
 	 */
 	public boolean flushBytes(IResource resource, int depth) throws TeamException {
 		if (resource.exists() || resource.isPhantom()) {
@@ -106,8 +106,14 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#isVariantKnown(org.eclipse.core.resources.IResource)
+	/**
+	 * Return whether the resource variant state for this resource is known.
+	 * This is used to differentiate the case where a resource variant has never been fetched
+	 * from the case where the resource variant is known to not exist. In the later
+	 * case, this method returns <code>true</code> while <code>getBytes</code> returns <code>null</code>
+	 * @param resource the local resource
+	 * @return whether the resource variant state for this resource is known
+	 * @throws TeamException
 	 */
 	public boolean isVariantKnown(IResource resource) throws TeamException {
 		return internalGetSyncBytes(resource) != null;
@@ -116,8 +122,8 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	/**
 	 * This method should be invoked by a client to indicate that it is known that 
 	 * there is no remote resource associated with the local resource. After this method
-	 * is invoked, <code>isRemoteKnown(resource)</code> will return <code>true</code> and
-	 * <code>getSyncBytes(resource)</code> will return <code>null</code>.
+	 * is invoked, <code>isVariantKnown(resource)</code> will return <code>true</code> and
+	 * <code>getBytes(resource)</code> will return <code>null</code>.
 	 * @return <code>true</code> if this changes the remote sync bytes
 	 */
 	public boolean deleteBytes(IResource resource) throws TeamException {
@@ -125,7 +131,7 @@ public class PersistantResourceVariantByteStore extends ResourceVariantByteStore
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) throws TeamException {
 		if(resource.getType() == IResource.FILE) {

@@ -32,12 +32,12 @@ import org.eclipse.team.internal.core.TeamPlugin;
 /**
  * A resource variant is a partial implementation of a remote resource
  * whose contents and handle are cached locally. It is assumed that a
- * resource varant is an immutable version or revision of a resource.
+ * resource variant is an immutable version or revision of a resource.
  * Therefore, once the contents are cached they cannot be replaced.
  * However, the cached handle can be replaced to allow clients to
  * cache addition state or properties for a resource variant.
  * <p>
- * Overriding subclasses need to provide a cache Id for al there resource variants
+ * Overriding subclasses need to provide a cache Id for all their resource variants
  * and a cache path for each resource variant that uniquely identifies it. In addition,
  * they must implement <code>fetchContents</code> to retrieve the contents of the
  * resource variant and then call <code>setContents</code> to place these contents in the cache.
@@ -47,9 +47,14 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * cache additional resource variant properties such as author, comment, etc.
  * </p>
  * <p>
+ * The <code>IStorage</code> instance returned by this class will be 
+ * an {@link org.eclipse.core.resources.IEncodedStorage}.
+ * <p>
  * The cache in which the resource variants reside will occasionally clear
  * cached entries if they have not been accessed for a certain amount of time.
  * </p>
+ * 
+ * @since 3.0
  */
 public abstract class CachedResourceVariant extends PlatformObject implements IResourceVariant {
 	
@@ -99,7 +104,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.synchronize.IRemoteResource#getStorage(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.variants.IResourceVariant#getStorage(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws TeamException {
 		if (isContainer()) return null;
@@ -129,7 +134,9 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 
 	/**
 	 * This method should be invoked by subclasses from within their <code>fetchContents</code>
-	 * method in order to cache the contents for this resource variant.
+	 * method in order to cache the contents for this resource variant. 
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 * @param stream the stream containing the contents of the resource variant
 	 * @param monitor a progress monitor
 	 * @throws TeamException
@@ -150,7 +157,9 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * This method will return <code>false</code> even if the contents are currently
 	 * being cached by another thread. The consequence of this is that the contents
 	 * may be fetched twice in the rare case where two threads request the same contents
-	 * at the same time. For containers, this method will always return <code>false</code>.
+	 * concurrently. For containers, this method will always return <code>false</code>.
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 */
 	protected boolean isContentsCached() {
 		if (isContainer() || !isHandleCached()) {
@@ -164,6 +173,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * Return the cached contents for this resource variant or <code>null</code>
 	 * if the contents have not been cached.
 	 * For containers, this method will always return <code>null</code>.
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 * @return the cached contents or <code>null</code>
 	 * @throws TeamException
 	 */
@@ -179,6 +190,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * cached contents can be retrieved from any handle to a resource variant whose
 	 * cache path (as returned by <code>getCachePath()</code>) match but other
 	 * state information may only be accessible from the cached copy.
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 * @return whether the variant is cached
 	 */
 	protected boolean isHandleCached() {
@@ -233,6 +246,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * one. If there isn't one, then <code>null</code> is returned.
 	 * If there is no cached handle and one is desired, then <code>cacheHandle()</code>
 	 * should be called.
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 * @return a cached copy of this resource variant or <code>null</code>
 	 */
 	protected CachedResourceVariant getCachedHandle() {
@@ -250,6 +265,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * resource version (or revision). The ability to replace the handle itself
 	 * is provided so that additional state may be cached before or after the contents
 	 * are fetched.
+	 * <p>
+	 * This method is not intended to be overridden by clients.
 	 */
 	protected void cacheHandle() {
 		getCache().add(getCachePath(), this);

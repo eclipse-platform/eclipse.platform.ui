@@ -21,6 +21,8 @@ import org.eclipse.team.core.TeamException;
  * clients may subclass {@link AbstractResourceVariantTree} or {@link ResourceVariantTree}.
  * </p>
  * 
+ * @see AbstractResourceVariantTree
+ * @see ResourceVariantTree
  * @since 3.0
  */
 public interface IResourceVariantTree {
@@ -35,7 +37,7 @@ public interface IResourceVariantTree {
 	/**
 	 * Returns the members of the local resource that have resource variants in this tree.
 	 * The members may or may not exist locally. The resource variants corresponding to the
-	 * memebers can be retrieved using <code>getResourceVariant(IResource)</code>.
+	 * members can be retrieved using <code>getResourceVariant(IResource)</code>.
 	 * @param resource the local resource
 	 * @return the members of the local resource for which this tree contains resource variants
 	 * @throws TeamException

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,14 +33,14 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	private Map syncBytesCache = new HashMap();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#deleteBytes(org.eclipse.core.resources.IResource)
 	 */
 	public boolean deleteBytes(IResource resource) throws TeamException {
 		return flushBytes(resource, IResource.DEPTH_ZERO);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		syncBytesCache.clear();
@@ -48,7 +48,7 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#flushBytes(org.eclipse.core.resources.IResource, int)
 	 */
 	public boolean flushBytes(IResource resource, int depth) throws TeamException {
 		if (getSyncBytesCache().containsKey(resource)) {
@@ -67,7 +67,7 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
 		byte[] syncBytes = internalGetSyncBytes(resource);
@@ -87,7 +87,7 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) {
 		List members = (List)membersCache.get(resource);
@@ -97,9 +97,8 @@ public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 		return (IResource[]) members.toArray(new IResource[members.size()]);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		Assert.isNotNull(bytes);

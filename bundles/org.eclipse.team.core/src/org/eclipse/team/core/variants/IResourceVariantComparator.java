@@ -51,7 +51,7 @@ public interface IResourceVariantComparator {
 	public boolean compare(IResourceVariant base, IResourceVariant remote);
 
 	/**
-	 * Answers <code>true</code> if the base tree is maintained by this
+	 * Answers <code>true</code> if the base tree is maintained by this comparator's
 	 * subscriber. If the base tree is not considered than the subscriber can
 	 * be considered as not supported three-way comparisons. Instead
 	 * comparisons are made between the local and remote only without

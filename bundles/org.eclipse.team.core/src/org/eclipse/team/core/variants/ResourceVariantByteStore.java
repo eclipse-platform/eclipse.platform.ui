@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,8 @@ import org.eclipse.team.core.TeamException;
  * reponsibility of the client of this API to cache enough bytes to meaningfully identify
  * a resource variant (and possibly create an {@link IResourceVariant} handle from them).
  * <p>
- * The bytes for
- * a resource variant are accessed using the local handle that corresponds to the 
- * resource variant (using the <code>getSyncInfo</code> method). 
+ * The bytes for a resource variant are accessed using the local <code>IResource</code> handle 
+ * that corresponds to the resource variant (using the <code>getBytes</code> method). 
  * The potential children of a resource variant are also accessed
  * by using the local handle that corresponds to the resource variant 
  * (using the <code>members</code> method).

@@ -28,7 +28,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
-
 /**
  * An implemenation of <code>IResourceVariantTree</code> that provides the logic for
  * refreshing the tree and collecting the results so they can be cached locally.
@@ -127,8 +126,8 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 
 	/**
 	 * Fetch the members of the given resource variant handle. This method may
-	 * return members that were fetched when <code>getRemoteTree</code> was called or
-	 * may fetch the children directly. 
+	 * return members that were fetched when <code>fetchVariant</code> was called or
+	 * may fetch the children directly (i.e. this method may contact the server). 
 	 * @param variant the resource variant
 	 * @param progress a progress monitor
 	 * @return the members of the resource variant.
@@ -136,14 +135,13 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	protected abstract IResourceVariant[] fetchMembers(IResourceVariant variant, IProgressMonitor progress) throws TeamException;
 
 	/**
-	 * Fetch the resource variant corresponding to the given resource.
-	 * The depth
+	 * Fetch the resource variant corresponding to the given resource. The depth
 	 * parameter indicates the depth of the refresh operation and also indicates the
 	 * depth to which the resource variant's desendants will be traversed. 
 	 * This method may prefetch the descendants to the provided depth
 	 * or may just return the variant handle corresponding to the given 
 	 * local resource, in which case
-	 * the descendant variants will be fetched by <code>fecthMembers(IResourceVariant, IProgressMonitor)</code>.
+	 * the descendant variants will be fetched by <code>fetchMembers(IResourceVariant, IProgressMonitor)</code>.
 	 * @param resource the local resource
 	 * @param depth the depth of the refresh  (one of <code>IResource.DEPTH_ZERO</code>,
 	 * <code>IResource.DEPTH_ONE</code>, or <code>IResource.DEPTH_INFINITE</code>)
@@ -151,11 +149,12 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	 * @return the resource variant corresponding to the given local resource
 	 */
 	protected abstract IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException;
+
 	/**
 	 * Method that is invoked during collection to let subclasses know which members
 	 * were collected for the given resource. Implementors should purge any cached 
 	 * state for children of the local resource that are no longer members. Any such resources
-	 * should be returned.
+	 * should be returned to allow clients to clear any state they maintain for those resources.
 	 * @param local the local resource
 	 * @param members the collected members
 	 * @return any resources that were previously collected whose state has been flushed
@@ -166,9 +165,8 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 
 	/**
 	 * Set the variant associated with the local resource to the newly fetched resource
-	 * variant. 
-	 * This method is invoked during change collection and should return whether
-	 * the variant associated with the lcoal resource has changed
+	 * variant. This method is invoked during change collection and should return whether
+	 * the variant associated with the local resource has changed
 	 * @param local the local resource
 	 * @param remote the newly fetched resoure variant
 	 * @return <code>true</code> if the resource variant changed

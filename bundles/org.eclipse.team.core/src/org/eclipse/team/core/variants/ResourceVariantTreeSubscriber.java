@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 	}
 
 	/**
-	 * Method that creates an instance of SyncInfo for the provider local, base and remote
+	 * Method that creates an instance of SyncInfo for the provided local, base and remote
 	 * resource variants.
 	 * Can be overiden by subclasses.
 	 * @param local the local resource
@@ -111,7 +111,7 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);

@@ -28,14 +28,14 @@ public interface IResourceVariant {
 	 * Answers the name of the remote resource. The name may be
 	 * displayed to the user.
 	 * 
-	 * @return name of the subscriber resource.
+	 * @return name of the resource variant.
 	 */
 	public String getName();
 	
 	/**
 	 * Answers if the remote resource may have children.
 	 * 
-	 * @return <code>true</code> if the remote element may have children and 
+	 * @return <code>true</code> if the remote resource may have children and 
 	 * <code>false</code> otherwise.
 	 */
 	public boolean isContainer();
@@ -48,6 +48,10 @@ public interface IResourceVariant {
 	 * argument to this method). Implementations of this method should
 	 * ensure that the resulting <code>IStorage</code> is accessing locally cached contents and is not
 	 * contacting the server.
+	 * <p>
+	 * The returned storage object may be an instance of (@link org.eclipse.core.resources.IEncodedStorage}
+	 * in which case clients can determine the character encoding of the contents.
+	 * 
 	 * @return an <code>IStorage</code> that provides access to the contents of 
 	 * the remote resource or <code>null</code> if the remote resource is a container.
 	 */

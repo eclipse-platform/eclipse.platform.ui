@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,15 @@ import org.eclipse.core.resources.IResource;
 /**
  * Listener that can receive notification from a <code>ThreeWaySynchronizer</code>
  * when the synchronization state of one or more resources has changed.
+ * @see ThreeWaySynchronizer
+ * @since 3.0
  */
 public interface ISynchronizerChangeListener {
 	
 	/**
 	 * Notification of synchronization state changes for the given resources.
+	 * Clients must query the <code>ThreeWaySynchronizer</code> that generated
+	 * this event to determine the new synchronization state.
 	 * @param resources the resources whose synchronization state has changed
 	 */
 	public void syncStateChanged(IResource[] resources);

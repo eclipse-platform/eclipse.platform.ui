@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,36 +29,38 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 	
 	private ResourceVariantByteStore store;
 
+	/**
+	 * Create a resource variant tree that uses the provided byte store to
+	 * cache the resource variant bytes.
+	 * @param store the resource variant byte store used to cahe resource variants
+	 */
 	protected ResourceVariantTree(ResourceVariantByteStore store) {
 		this.store = store;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) throws TeamException {
 		return getByteStore().members(resource);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#hasResourceVariant(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#hasResourceVariant(org.eclipse.core.resources.IResource)
 	 */
 	public boolean hasResourceVariant(IResource resource) throws TeamException {
 		return getByteStore().getBytes(resource) != null;
 	}
 	
-	/**
-	 * Flush any variants for the given resource to the depth specified.
-	 * @param resource the local resource
-	 * @param depth the depth of the flush
-	 * @throws TeamException
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#flushVariants(org.eclipse.core.resources.IResource, int)
 	 */
 	public void flushVariants(IResource resource, int depth) throws TeamException {
 		getByteStore().flushBytes(resource, depth);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.AbstractResourceVariantTree#setVariant(org.eclipse.core.resources.IResource, org.eclipse.team.core.synchronize.IResourceVariant)
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#setVariant(org.eclipse.core.resources.IResource, org.eclipse.team.core.variants.IResourceVariant)
 	 */
 	protected boolean setVariant(IResource local, IResourceVariant remote) throws TeamException {
 		ResourceVariantByteStore cache = getByteStore();
@@ -72,12 +74,13 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 		return changed;
 	}
 	
-
-	
 	/**
 	 * Get the byte store that is used to cache the serialization bytes
 	 * for the resource variants of this tree. A byte store is used
 	 * to reduce the memory footprint of the tree.
+	 * <p>
+	 * This method is not intended to be overriden by subclasses.
+	 * 
 	 * @return the resource variant tree that is being refreshed.
 	 */
 	protected ResourceVariantByteStore getByteStore() {
