@@ -551,6 +551,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fOverviewRulerHoveringController.dispose();
 			fOverviewRulerHoveringController= null;
 		}
+		
+		setHyperlinksEnabled(false);
 	}
 	
 	/*
