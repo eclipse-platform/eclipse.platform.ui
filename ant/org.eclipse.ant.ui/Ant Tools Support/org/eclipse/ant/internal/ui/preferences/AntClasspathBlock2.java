@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -294,7 +294,7 @@ public class AntClasspathBlock2 {
 			contentProvider.setRefreshEnabled(false);
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
-				String varExpression= DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
+				String varExpression= VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
 				contentProvider.add(currentParent, varExpression);
 			}
 			contentProvider.setRefreshEnabled(true);

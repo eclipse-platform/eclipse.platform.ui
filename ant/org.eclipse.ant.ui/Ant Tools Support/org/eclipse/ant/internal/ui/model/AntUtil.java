@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -288,7 +288,7 @@ public final class AntUtil {
 	}
 
 	private static String expandVariableString(String variableString, String invalidMessage) throws CoreException {
-		String expandedString = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
+		String expandedString = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
 		if (expandedString == null || expandedString.length() == 0) {
 			String msg = MessageFormat.format(invalidMessage, new String[] {variableString});
 			throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
