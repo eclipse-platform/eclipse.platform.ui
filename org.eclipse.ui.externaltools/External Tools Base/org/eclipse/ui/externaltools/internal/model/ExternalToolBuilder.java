@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -27,7 +28,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 
 /**
- * This project builder implementation will run an external tool during the
+ * This project builder implementation will run an external tool or tools during the
  * build process. 
  * <p>
  * Note that there is only ever one instance of ExternalToolBuilder per project,
@@ -44,45 +45,61 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
+	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
+		int[] buildKinds = buildTypesToArray((String) config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
+		for (int j = 0; j < buildKinds.length; j++) {
+			if (kind == buildKinds[j]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder.
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		ILaunchConfiguration config= ExternalToolsUtil.configFromBuildCommandArgs(args);
-		if (config == null) {
-			return null;
-		}
-		boolean runTool = false;
-		int[] buildKinds = buildTypesToArray((String)config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
-		for (int i = 0; i < buildKinds.length; i++) {
-			if (kind == buildKinds[i]) {
-				runTool = true;
-				break;
+		if (kind == FULL_BUILD) {
+			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(args);
+			if (config != null && buildKindCompatible(kind, config)) {
+				launchBuild(kind, config, monitor);
 			}
-		}
-		if (!runTool) {
 			return null;
 		}
 		
-		boolean buildForChange= true;
-		if (kind != FULL_BUILD) {
-			IResource[] resources= ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
-			if (resources != null && resources.length > 0) {
-				buildForChange= buildScopeIndicatesBuild(resources);
+		//need to build all external tools from one builder (see bug 39713)
+		//if not a full build
+		ICommand[] commands = getProject().getDescription().getBuildSpec();
+		for (int i = 0; i < commands.length; i++) {
+			if (ID.equals(commands[i].getBuilderName())){
+				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
+				if (config != null && buildKindCompatible(kind, config)) {
+					doBuild(kind, commands[i].getArguments(), config, monitor);
+				}
 			}
 		}
-		
-		if (buildForChange) {
-			monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[]{config.getName()})); //$NON-NLS-1$
-			buildStarted(kind);
-			config.launch(ILaunchManager.RUN_MODE, monitor);
-			buildEnded();
-			forgetLastBuiltState();
-		}
-				
 		return null;
 	}
+
+	protected void doBuild(int kind, Map args, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+		boolean buildForChange = true;
+		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
+		if (resources != null && resources.length > 0) {
+			buildForChange = buildScopeIndicatesBuild(resources);
+		}
+
+		if (buildForChange) {
+			launchBuild(kind, config, monitor);
+		}
+	}
 	
+	private void launchBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[] { config.getName()})); //$NON-NLS-1$
+		buildStarted(kind);
+		config.launch(ILaunchManager.RUN_MODE, monitor);
+		buildEnded();
+	}
+
 	/**
 	 * Returns the build type being performed if the
 	 * external tool is being run as a project builder.
@@ -124,8 +141,10 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
 			IResourceDelta delta = getDelta(resources[i].getProject());
-		
-			if (delta != null) {	
+			if (delta == null) {
+				//project just added to the workspace..no previous build tree
+				return true;
+			} else {	
 				IPath path= resources[i].getProjectRelativePath();
 				IResourceDelta change= delta.findMember(path);
 				if (change != null) {
@@ -144,14 +163,14 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	 * @return the array of build kinds.
 	 */
 	public static int[] buildTypesToArray(String buildTypes) {
+		if (buildTypes == null || buildTypes.length() == 0) {
+			return DEFAULT_BUILD_TYPES;
+		}
+		
 		int count = 0;
 		boolean incremental = false;
 		boolean full = false;
 		boolean auto = false;
-		
-		if (buildTypes == null || buildTypes.length() == 0) {
-			return DEFAULT_BUILD_TYPES;
-		}
 
 		StringTokenizer tokenizer = new StringTokenizer(buildTypes, BUILD_TYPE_SEPARATOR);
 		while (tokenizer.hasMoreTokens()) {
@@ -161,14 +180,12 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 					incremental = true;
 					count++;
 				}
-			}
-			else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(token)) {
+			} else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(token)) {
 				if (!full) {
 					full = true;
 					count++;
 				}
-			}
-			else if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(token)) {
+			} else if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(token)) {
 				if (!auto) {
 					auto = true;
 					count++;
