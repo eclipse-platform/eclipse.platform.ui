@@ -123,12 +123,21 @@
             label="%DebugMenu.label"
             id="org.eclipse.debug.ui.DebugMenu">
          <separator
-               name="stepGroup">
+               name="launchGroup">
          </separator>
          <separator
-               name="relaunchGroup">
+               name="stepGroup">
          </separator>
       </menu>
+      <action
+            label="%RelaunchLastAction.label"
+            icon="icons/full/clcl16/relaunch_co.gif"
+            helpContextId="relaunch_last_action_context"
+            tooltip="%RelaunchLastAction.tooltip"
+            class="org.eclipse.debug.internal.ui.RelaunchLastAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+            id="org.eclipse.debug.internal.ui.RelaunchLastAction">
+      </action>
       <action
             label="%RunAction.label"
             pulldown="true"
@@ -136,6 +145,7 @@
             helpContextId="run_action_context"
             tooltip="%RunAction.tooltip"
             class="org.eclipse.debug.internal.ui.RunDropDownAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.RunDropDownAction">
       </action>
@@ -146,6 +156,7 @@
             helpContextId="debug_action_context"
             tooltip="%DebugAction.tooltip"
             class="org.eclipse.debug.internal.ui.DebugDropDownAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.DebugDropDownAction">
       </action>
@@ -213,15 +224,6 @@
          <selection
                class="org.eclipse.debug.core.model.ISuspendResume">
          </selection>
-      </action>
-      <action
-            label="%RelaunchLastAction.label"
-            icon="icons/full/clcl16/relaunch_co.gif"
-            helpContextId="relaunch_last_action_context"
-            tooltip="%RelaunchLastAction.tooltip"
-            class="org.eclipse.debug.internal.ui.RelaunchLastAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
-            id="org.eclipse.debug.internal.ui.RelaunchLastAction">
       </action>
    </actionSet>
 </extension>
