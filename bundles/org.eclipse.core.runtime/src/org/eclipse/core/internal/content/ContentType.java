@@ -16,6 +16,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class ContentType implements IContentType {
@@ -133,7 +134,7 @@ public class ContentType implements IContentType {
 		this.manager = manager;
 	}
 
-	public synchronized void addFileSpec(String fileSpec, int type) {
+	public synchronized void addFileSpec(String fileSpec, int type) throws CoreException {
 		if (aliasTarget != null) {
 			getTarget().addFileSpec(fileSpec, type);
 			return;
@@ -142,9 +143,18 @@ public class ContentType implements IContentType {
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$		
 		if (!internalAddFileSpec(fileSpec, type | USER_DEFINED_SPEC))
 			return;
+		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		//TODO are we including user and plug-in provided file specs here?
 		contentTypeNode.put(key, toListString(fileSpecs));
+		try {
+			contentTypeNode.flush();
+		} catch (BackingStoreException bse) {
+			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			throw new CoreException(status);
+		}
 	}
 
 	int describe(IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) throws IOException {
@@ -203,7 +213,8 @@ public class ContentType implements IContentType {
 	public String getDefaultCharset() {
 		if (aliasTarget != null)
 			return getTarget().getDefaultCharset();
-		return defaultCharset;
+		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		return contentTypeNode.get(CONTENT_TYPE_CHARSET_PREF, defaultCharset);
 	}
 
 	public int getDepth() {
@@ -413,7 +424,7 @@ public class ContentType implements IContentType {
 		return validation == VALID;
 	}
 
-	public synchronized void removeFileSpec(String fileSpec, int type) {
+	public synchronized void removeFileSpec(String fileSpec, int type) throws CoreException {
 		if (aliasTarget != null) {
 			getTarget().removeFileSpec(fileSpec, type);
 			return;
@@ -421,6 +432,17 @@ public class ContentType implements IContentType {
 		if (type != FILE_EXTENSION_SPEC && type != FILE_NAME_SPEC)
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$
 		internalRemoveFileSpec(fileSpec, type | USER_DEFINED_SPEC);
+		// persist using preferences
+		String key = getPreferenceKey(type);
+		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		contentTypeNode.put(key, toListString(fileSpecs));
+		try {
+			contentTypeNode.flush();
+		} catch (BackingStoreException bse) {
+			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			throw new CoreException(status);
+		}
 	}
 
 	void setAliasTarget(ContentType newTarget) {
@@ -428,6 +450,25 @@ public class ContentType implements IContentType {
 		if (aliasTarget != null && newTarget != null)
 			return;
 		aliasTarget = newTarget;
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
+	 */
+	public void setDefaultCharset(String userCharset) throws CoreException {
+		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		if (userCharset == null)
+			contentTypeNode.remove(CONTENT_TYPE_CHARSET_PREF);
+		else
+			contentTypeNode.put(CONTENT_TYPE_CHARSET_PREF, userCharset);
+		try {
+			contentTypeNode.flush();
+		} catch (BackingStoreException bse) {
+			String message = Policy.bind("content.errorSavingSettings", getId()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, bse);
+			throw new CoreException(status);
+		}
 	}
 
 	void setValidation(byte validation) {

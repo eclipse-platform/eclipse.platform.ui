@@ -72,7 +72,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
-		assertEquals("8.1", "BAR", myText.getDefaultCharset());
+		assertEquals("8.1", "BAR", myText.getDefaultCharset());		
 		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor("foo.bar");
 		assertEquals("9.0", 2, fooBarTypes.length);
 		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
@@ -114,7 +114,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertTrue("4.3", appropriate == selected[2]);
 	}
 
-	public void testContentDescription() throws IOException {
+	public void testContentDescription() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xmlType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentDescription description;
@@ -134,9 +134,23 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("4.0", description);
 		assertEquals("4.1", xmlType, description.getContentType());
 		assertEquals("4.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
+		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
+		assertNotNull("5.0", mytext);
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
-		assertNotNull("5.0", description);
-		assertEquals("5.1", "BAR", description.getProperty(IContentDescription.CHARSET));
+		assertNotNull("5.1", description);
+		assertEquals("5.2", mytext, description.getContentType());
+		assertEquals("5.3", "BAR", description.getProperty(IContentDescription.CHARSET));
+		// now plays with setting a non-default default charset
+		mytext.setDefaultCharset("FOO");
+		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
+		assertNotNull("5.5", description);
+		assertEquals("5.6", mytext, description.getContentType());
+		assertEquals("5.7", "FOO", description.getProperty(IContentDescription.CHARSET));
+		mytext.setDefaultCharset(null);
+		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
+		assertNotNull("5.10", description);
+		assertEquals("5.11", mytext, description.getContentType());
+		assertEquals("5.12", "BAR", description.getProperty(IContentDescription.CHARSET));		
 	}
 
 	public void testBinaryTypes() throws IOException {
@@ -212,7 +226,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertTrue("3.0", contains(multiple, xmlContentType));
 	}
 
-	public void testAssociations() {
+	public void testAssociations() throws CoreException {
 		IContentType text = Platform.getContentTypeManager().getContentType((IPlatform.PI_RUNTIME + ".text"));
 		// associate a user-defined file spec
 		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);

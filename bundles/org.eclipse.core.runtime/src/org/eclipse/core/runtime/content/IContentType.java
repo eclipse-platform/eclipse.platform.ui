@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -53,10 +54,14 @@ public interface IContentType {
 	 * <code>FILE_EXTENSION_SPEC</code>.
 	 * @throws IllegalArgumentException if the type bit mask is  
 	 * incorrect
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> An error occurred persisting this setting.</li>
+	 * </ul>
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC	 
 	 */
-	public void addFileSpec(String fileSpec, int type);
+	public void addFileSpec(String fileSpec, int type) throws CoreException;
 
 	/**
 	 * Removes a user-defined file specification from this content type. Has no 
@@ -69,10 +74,14 @@ public interface IContentType {
 	 * <code>FILE_EXTENSION_SPEC</code>.
 	 * @throws IllegalArgumentException if the type bit mask is  
 	 * incorrect
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> An error occurred persisting this setting.</li>
+	 * </ul>
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC
 	 */
-	public void removeFileSpec(String fileSpec, int type);
+	public void removeFileSpec(String fileSpec, int type) throws CoreException;
 
 	/**
 	 * Returns a reference to this content type's base type. If this content type
@@ -183,4 +192,16 @@ public interface IContentType {
 	 * given content type, <code>false</code> otherwise
 	 */
 	public boolean isKindOf(IContentType another);
+	/**
+	 * Sets the default charset for this content type. If 
+	 * <code>null</code> is provided, restores the pre-defined default charset. 
+	 * 
+	 * @param userCharset the new charset for this content type, or
+	 * <code>null</code>  
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> An error occurred persisting this setting.</li>
+	 * </ul>
+	 */
+	public void setDefaultCharset(String userCharset) throws CoreException;
 }
