@@ -236,11 +236,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			// Treat the first stack frame differently, since we want to select it
 			getLaunchView().autoExpand(stackFrames[0], true, true);				
-		}	
-		
-		// Update the stack frame count for the thread
-		oldStackFrameCountObject = new Integer(currentStackFrameCount);
-		fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
+		}
 	}
 	
 	/**

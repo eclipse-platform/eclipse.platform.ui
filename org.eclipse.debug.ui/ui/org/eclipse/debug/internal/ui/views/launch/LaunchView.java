@@ -46,6 +46,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -704,6 +705,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		Object selectee = element;
 		Object[] children= null;
 		if (element instanceof IThread) {
+			if (!refreshNeeded) {
+				refreshNeeded= threadRefreshNeeded((IThread)element);
+			}
 			// try the top stack frame
 			try {
 				selectee = ((IThread)element).getTopStackFrame();
@@ -714,16 +718,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		} else if (element instanceof ILaunch) {
 			IDebugTarget dt = ((ILaunch)element).getDebugTarget();
-				if (dt != null) {
-					selectee= dt;
-					try {
-						children= dt.getThreads();
-					} catch (DebugException de) {
-						DebugUIPlugin.log(de);
-					}
+			if (dt != null) {
+				selectee= dt;
+				try {
+					children= dt.getThreads();
+				} catch (DebugException de) {
+					DebugUIPlugin.log(de);
 				}
+			}
 		}
-		
 		if (refreshNeeded) {
 			//ensures that the child item exists in the viewer widget
 			//set selection only works if the child exists
@@ -736,6 +739,51 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			//reveal the thread children of a debug target
 			getStructuredViewer().reveal(children[0]);
 		}
+	}
+	
+	/**
+	 * Returns whether the given thread needs to
+	 * be refreshed in the tree.
+	 * 
+	 * The tree needs to be refreshed if the
+	 * underlying model objects (IStackFrame) under the given thread
+	 * differ from those currently displayed in the tree.
+	 */
+	protected boolean threadRefreshNeeded(IThread thread) {
+		LaunchViewer viewer= (LaunchViewer)getStructuredViewer();
+		ILaunch launch= thread.getLaunch();
+		TreeItem[] launches= viewer.getTree().getItems();
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i].getData() == launch) {
+				IDebugTarget target= thread.getDebugTarget();
+				TreeItem[] targets= launches[i].getItems();
+				for (int j = 0; j < targets.length; j++) {
+					if (targets[j].getData() == target) {
+						TreeItem[] threads= targets[j].getItems();
+						for (int k = 0; k < threads.length; k++) {
+							if (threads[k].getData() == thread) {
+								IStackFrame[] frames= null;
+								try {
+									frames = thread.getStackFrames();
+								} catch (DebugException exception) {
+									return true;
+								}
+								TreeItem[] treeFrames= threads[k].getItems();
+								for (int l= 0, numFrames= treeFrames.length; l < numFrames; l++) {
+									if (treeFrames[l].getData() != frames[l]) {
+										return true;
+									}
+								}
+								break;
+							}
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return false;
 	}
 	
 	/**
