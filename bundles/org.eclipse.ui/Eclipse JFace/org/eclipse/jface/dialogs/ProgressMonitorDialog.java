@@ -111,6 +111,7 @@ public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 		
 		private String fSubTask= "";//$NON-NLS-1$
 		private boolean fIsCanceled;
+		protected boolean forked = false;
 		
 		public void beginTask(String name, int totalWork) {
 			//System.out.println("beginTask: " + name + " " + totalWork);
@@ -126,6 +127,8 @@ public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 			if (s.length() <= 0)
 				s= DEFAULT_TASKNAME;
 			taskLabel.setText(s);	
+			if(!forked)
+				taskLabel.update();
 			
 			if (totalWork == UNKNOWN) {
 				progressIndicator.beginAnimatedTask();
@@ -155,6 +158,8 @@ public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 			if (s.length() <= 0)
 				s= DEFAULT_TASKNAME;
 			taskLabel.setText(s);	
+			if(!forked)
+				taskLabel.update();
 		}
 				
 		public boolean isCanceled() {
@@ -176,6 +181,8 @@ public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 				fSubTask= name;
 		
 			subTaskLabel.setText(fSubTask);
+			if(!forked)
+				subTaskLabel.update();
 		}
 		
 		public void worked(int work) {
@@ -373,6 +380,9 @@ public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable
 	open();
 	try {
 		runningRunnables++;
+		
+		//Let the progress monitor know if they need to update in UI Thread
+		progressMonitor.forked = fork;
 		ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
 	} finally {	
 		runningRunnables--;
