@@ -318,7 +318,7 @@ import org.eclipse.ui.internal.util.Util;
 
                 // Create the view.
                 IViewPart view = null;
-                String label = desc.getLabel();
+                String label = desc.getLabel(); // debugging only
                 try {
                     try {
                         UIStats.start(UIStats.CREATE_PART, label);

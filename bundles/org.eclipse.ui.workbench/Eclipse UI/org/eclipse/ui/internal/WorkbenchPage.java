@@ -154,7 +154,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (ref == null)
                     return;
                 if (Boolean.TRUE.equals(event.getNewValue())) {
-                    String label = "visible::" + ref.getTitle(); //$NON-NLS-1$
+                    String label = null; // debugging only
+                    if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+                        label = "visible::" + ref.getTitle(); //$NON-NLS-1$
+                    }
                     try {
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
                         partListeners2.firePartVisible(ref);
@@ -162,7 +165,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         UIStats.end(UIStats.NOTIFY_PART_LISTENERS, label);
                     }
                 } else {
-                    String label = "hidden::" + ref.getTitle(); //$NON-NLS-1$
+                    String label = null; // debugging only
+                    if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+                        label = "hidden::" + ref.getTitle(); //$NON-NLS-1$
+                    }
                     try {
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
                         partListeners2.firePartHidden(ref);
@@ -593,7 +599,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (isZoomed() && partChangeAffectsZoom(getReference(part)))
             return;
 
-        String label = part != null ? part.getTitle() : "none"; //$NON-NLS-1$
+
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.BRING_PART_TO_TOP)) {
+            label = part != null ? part.getTitle() : "none"; //$NON-NLS-1$
+        }
+        
         boolean broughtToTop = false;
         try {
             UIStats.start(UIStats.BRING_PART_TO_TOP, label);
@@ -740,7 +751,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private void busySetPerspective(IPerspectiveDescriptor desc) {
         // Create new layout.
-        String label = desc.getId();
+        String label = desc.getId(); // debugging only
         try {
             UIStats.start(UIStats.SWITCH_PERSPECTIVE, label);
             PerspectiveDescriptor realDesc = (PerspectiveDescriptor) desc;
@@ -1142,7 +1153,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Creates a new view set. Return null on failure.
      */
     private Perspective createPerspective(PerspectiveDescriptor desc) {
-        String label = desc.getId();
+        String label = desc.getId(); // debugging only
         try {
             UIStats.start(UIStats.CREATE_PERSPECTIVE, label);
             Perspective persp = new Perspective(desc, this);
@@ -1406,7 +1417,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part activation out.
      */
     private void firePartActivated(IWorkbenchPart part) {
-        String label = "activate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "activate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        } 
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartActivated(part);
@@ -1421,7 +1435,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part brought to top out.
      */
     private void firePartBroughtToTop(IWorkbenchPart part) {
-        String label = "bringToTop::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "bringToTop::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartBroughtToTop(part);
@@ -1436,7 +1453,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part close out.
      */
     private void firePartClosed(IWorkbenchPartReference ref) {
-        String label = "close::" + ref.getTitle(); //$NON-NLS-1$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "close::" + ref.getTitle(); //$NON-NLS-1$
+        }
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             IWorkbenchPart part = ref.getPart(false);
@@ -1454,7 +1474,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part deactivation out.
      */
     private void firePartDeactivated(IWorkbenchPart part) {
-        String label = "deactivate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "deactivate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartDeactivated(part);
@@ -1469,7 +1492,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part open out.
      */
     public void firePartOpened(IWorkbenchPart part) {
-        String label = "opened::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "opened::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartOpened(part);
@@ -1484,7 +1510,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part input changed out.
      */
     private void firePartInputChanged(IWorkbenchPart part) {
-        String label = "inputChanged::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PART_LISTENERS)) {
+            label = "inputChanged::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners2.firePartInputChanged(getReference(part));
@@ -2448,7 +2477,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             IPerspectiveDescriptor activeDescritor) {
         // Restore working set
         String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
-        String label = pageName == null ? "" : "::" + pageName; //$NON-NLS-1$ //$NON-NLS-2$
+        
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.RESTORE_WORKBENCH)) {
+            label = pageName == null ? "" : "::" + pageName; //$NON-NLS-1$ //$NON-NLS-2$
+        }
 
         try {
             UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPage" + label); //$NON-NLS-1$
@@ -2709,7 +2742,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         //No need to change the history if the active editor is becoming the
         // active part
         boolean markLocation = newPart != lastActiveEditor;
-        String label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.ACTIVATE_PART)) {
+            label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
+        }
         try {
             UIStats.start(UIStats.ACTIVATE_PART, label);
             // Notify perspective. It may deactivate fast view.

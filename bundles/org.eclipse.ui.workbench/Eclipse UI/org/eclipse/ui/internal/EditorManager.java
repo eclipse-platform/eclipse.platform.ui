@@ -808,7 +808,7 @@ public class EditorManager {
         else
             site.setActionBars(createEmptyEditorActionBars());
 
-        final String label = part.getTitle();
+        final String label = part.getTitle(); // debugging only
         try {
             UIStats.start(UIStats.INIT_PART, label);
             part.init(site, input);
@@ -1561,7 +1561,10 @@ public class EditorManager {
                 return null;
             }
             IAdaptable input;
-            String label = getName() != null ? getName() : factoryID;
+            String label = null; // debugging only
+            if (UIStats.isDebugging(UIStats.CREATE_PART_INPUT)) {
+                label = getName() != null ? getName() : factoryID;
+            }
             try {
                 UIStats.start(UIStats.CREATE_PART_INPUT, label);
                 IElementFactory factory = PlatformUI.getWorkbench()
