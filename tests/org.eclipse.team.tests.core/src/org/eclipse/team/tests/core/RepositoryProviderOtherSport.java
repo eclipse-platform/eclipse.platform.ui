@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.tests.core;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.RepositoryProvider;
 

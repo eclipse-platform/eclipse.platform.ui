@@ -179,7 +179,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 	
 	public void sleep(int ms) {
 		try {
-			Thread.currentThread().sleep(ms);
+			Thread.sleep(ms);
 		} catch (InterruptedException e) {
 			System.err.println("Testing was rudely interrupted.");
 		}

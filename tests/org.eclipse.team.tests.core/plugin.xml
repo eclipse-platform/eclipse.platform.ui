@@ -54,47 +54,42 @@
       </test>
    </extension>
    
-   
-   <extension
-         id="bic-provider"
-         name="Bic Provider"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.team.tests.core.RepositoryProviderBic">
-         </run>
-      </runtime>
-      <one-of-nature
-            id="org.eclipse.team.repository-provider">
-      </one-of-nature>
-   </extension>
-   <extension
-         id="naish-provider"
-         name="Naish Provider"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.team.tests.core.RepositoryProviderNaish">
-         </run>
-      </runtime>
-      <one-of-nature
-            id="org.eclipse.team.repository-provider">
-      </one-of-nature>
-   </extension>
-   <extension
-         id="other"
-         name="Bad Set Provider"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.team.tests.core.RepositoryProviderOtherSport">
-         </run>
-      </runtime>
-      <one-of-nature
-            id="some set">
-      </one-of-nature>
-   </extension>
-
+	<!-- *************** Repository Providers **************** -->
+	<extension
+         point="org.eclipse.team.core.repository">
+      <repository
+      		id="org.eclipse.team.tests.core.bic-provider"
+            class="org.eclipse.team.tests.core.RepositoryProviderBic">
+      </repository>
+	</extension>
+	
+	<extension
+         point="org.eclipse.team.core.repository">
+      <repository
+      		id="org.eclipse.team.tests.core.naish-provider"
+            class="org.eclipse.team.tests.core.RepositoryProviderNaish">
+      </repository>
+	</extension>
+	
+	<!-- *************** Bad provider that is not registered **************** 
+	<extension
+         point="org.eclipse.team.core.repository">
+      <repository
+      		id="org.eclipse.team.tests.core.other"
+            class="org.eclipse.team.tests.core.RepositoryProviderOtherSport">
+      </repository>
+	</extension>
+	-->
+	
+	<extension
+         point="org.eclipse.team.core.repository">
+      <repository
+      		id="org.eclipse.team.tests.core.linking"
+            class="org.eclipse.team.tests.core.RepositoryProviderWithLinking">
+      </repository>
+	</extension>
+	
+	<!-- *************** Test application **************** -->
    <extension
          id="testapplication"
          point="org.eclipse.core.runtime.applications">
