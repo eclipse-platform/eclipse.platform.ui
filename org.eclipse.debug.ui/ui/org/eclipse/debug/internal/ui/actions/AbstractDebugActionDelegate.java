@@ -45,7 +45,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Whether this delegate has been initialized
 	 */
-	protected boolean fInitialized = false;
+	private boolean fInitialized = false;
 	
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -251,11 +251,11 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @return whether the action was initialized
 	 */
 	protected boolean initialize(IAction action, ISelection selection) {
-		if (!fInitialized) {
+		if (!isInitialized()) {
 			setAction(action);
 			setActionImages(action);
 			update(action, selection);
-			fInitialized = true;
+			setInitialized(true);
 			return true;
 		}
 		return false;
@@ -299,5 +299,13 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	
 	protected void setView(IViewPart viewPart) {
 		fViewPart = viewPart;
+	}
+	
+	protected boolean isInitialized() {
+		return fInitialized;
+	}
+
+	protected void setInitialized(boolean initialized) {
+		fInitialized = initialized;
 	}
 }

@@ -66,11 +66,11 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-		if (!fInitialized) {
+		if (!isInitialized()) {
 			action.setEnabled(false);
 			setAction(action);
 			setActionImages(action);
-			fInitialized = true;
+			setInitialized(true);
 		}
 		update();
 	}
