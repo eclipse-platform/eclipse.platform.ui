@@ -114,14 +114,14 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	
 	protected IStreamListener fSystemOutListener= new IStreamListener() {
 				public void streamAppended(String newText, IStreamMonitor monitor) {
-					DebugUIPlugin.getDefault().aboutToWriteSystemOut();
+					DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemOut(ConsoleDocument.this);
 					systemOutAppended(newText);
 				}
 			};
 			
 	protected IStreamListener fSystemErrListener= new IStreamListener() {
 				public void streamAppended(String newText, IStreamMonitor monitor) {
-					DebugUIPlugin.getDefault().aboutToWriteSystemErr();
+					DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemErr(ConsoleDocument.this);
 					systemErrAppended(newText);
 				}
 			};

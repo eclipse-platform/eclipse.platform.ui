@@ -20,15 +20,21 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 public class ConsoleDocumentManager implements ILaunchListener {
@@ -208,5 +214,88 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		}
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
+	}
+	
+	/**
+	 * Notifies the console document manager that system err is about to be written
+	 * to the console. The manager will open the console if the preference is
+	 * set to show the console on system err.
+	 */
+	protected void aboutToWriteSystemErr(IDocument doc) {
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
+			showConsole(doc);
+		}
+	}
+	
+	/**
+	 * Notifies the console document manager that system out is about to be written
+	 * to the console. The manager will open the console if the preference is
+	 * set to show the console on system out and the console document being written 
+	 * is associated with the current process.
+	 */	
+	protected void aboutToWriteSystemOut(IDocument doc) {
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
+			showConsole(doc);
+		}
+	}
+	
+	protected IProcess getDebugViewProcess() {
+		IProcess debugViewProcess= null;
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {	
+			ISelection selection= window.getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			if (selection instanceof IStructuredSelection) {
+				Object element= ((IStructuredSelection)selection).getFirstElement();
+				if (element instanceof IProcess) {
+					debugViewProcess= (IProcess) element;
+				} else if (element instanceof ILaunch) {
+					IDebugTarget target= ((ILaunch) element).getDebugTarget();
+					if (target != null) {
+						debugViewProcess= target.getProcess();
+					} else {
+						IProcess[] processes= ((ILaunch) element).getProcesses();
+						if ((processes != null) && (processes.length > 0)) {
+							debugViewProcess= processes[0];
+						}
+					}
+				} else if (element instanceof IDebugElement) {
+					debugViewProcess= ((IDebugElement) element).getDebugTarget().getProcess();
+				}
+			}
+		}
+		return debugViewProcess;
+	}
+	
+	/**
+	 * Opens the console view. If the view is already open, it is brought to the front.
+	 */
+	protected void showConsole(final IDocument doc) {
+		DebugUIPlugin.getDefault().getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IProcess debugViewProcess= getDebugViewProcess();
+				if (debugViewProcess == null || !getConsoleDocument(debugViewProcess).equals(doc)) {
+					return;
+				}
+				IWorkbenchWindow window= DebugUIPlugin.getDefault().getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage page= window.getActivePage();
+					if (page != null) {
+						try {
+							IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+							if(consoleView == null) {
+								IWorkbenchPart activePart= page.getActivePart();
+								page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
+								//restore focus stolen by the creation of the console
+								page.activate(activePart);
+							} else {
+								page.bringToTop(consoleView);
+							}
+						} catch (PartInitException pie) {
+							DebugUIPlugin.log(pie);
+						}
+					}
+				}
+			}
+		});
 	}
 }

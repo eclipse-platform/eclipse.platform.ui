@@ -32,7 +32,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.preferences.*;
+import org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage;
+import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
+import org.eclipse.debug.internal.ui.preferences.DebugPreferencePage;
+import org.eclipse.debug.internal.ui.preferences.LaunchHistoryPreferencePage;
+import org.eclipse.debug.internal.ui.preferences.VariableViewsPreferencePage;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -42,19 +46,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.w3c.dom.Document;
 
@@ -298,63 +297,6 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Notifies the DebugUIPlugin that system out is about to be written
-	 * to the console. The plugin will open the console if the preference is
-	 * set to show the console on system out.
-	 */	
-	public void aboutToWriteSystemOut() {
-		if (getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
-			showConsole();
-		}
-	}
-	
-	/**
-	 * Notifies the DebugUIPlugin that system err is about to be written
-	 * to the console. The plugin will open the console if the preference is
-	 * set to show the console on system err.
-	 */
-	public void aboutToWriteSystemErr() {
-		if (getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
-			showConsole();
-		}
-	}
-	
-	/**
-	 * Opens the console view. If the view is already open, it is brought to the front.
-	 */
-	protected void showConsole() {
-		getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchWindow window = getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage page= window.getActivePage();
-					if (page != null) {
-						try { // show the console
-							IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-							if(consoleView == null) {
-								IWorkbenchPart activePart= page.getActivePart();
-								page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
-								//restore focus stolen by the creation of the console
-								page.activate(activePart);
-							} else {
-								page.bringToTop(consoleView);
-							}
-						} catch (PartInitException pie) {
-							log(pie);
-						}
-					}
-				}
-			}
-		});
-	}
-
-	/**
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
-	public void documentChanged(DocumentEvent e) {
-	}
-				
-	/**
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
@@ -508,8 +450,9 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public static Display getStandardDisplay() {
 		Display display= Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display= Display.getDefault();
+		}
 		return display;		
 	}	
 	
