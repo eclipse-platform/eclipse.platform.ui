@@ -118,7 +118,13 @@ public class RefreshSubscriberJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {		
 		MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("Team.errorRefreshingSubscribers"), null);
 		TeamSubscriber subscriber = getSubscriber();
-		IResource[] roots = getResources();		
+		IResource[] roots = getResources();
+		
+		// if there are no resources to refresh, just return
+		if(subscriber == null || resources == null) {
+			return Status.OK_STATUS;
+		}
+				
 		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100);
 		try {
 			lastTimeRun = System.currentTimeMillis();
