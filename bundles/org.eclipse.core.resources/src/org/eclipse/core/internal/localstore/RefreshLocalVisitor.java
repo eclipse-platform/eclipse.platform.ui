@@ -52,7 +52,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		this.monitor = monitor;
 		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		resourceChanged = false;
-		String msg = Messages.bind(Messages.resources_errorMultiRefresh);
+		String msg = Messages.resources_errorMultiRefresh;
 		errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_LOCAL, msg, null);
 	}
 

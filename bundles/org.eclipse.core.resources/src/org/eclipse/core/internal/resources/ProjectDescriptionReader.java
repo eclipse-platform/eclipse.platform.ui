@@ -493,7 +493,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	public ProjectDescription read(InputSource input) {
-		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.bind(Messages.projectDescriptionReader_failureReadingProjectDesc), null);
+		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projectDescriptionReader_failureReadingProjectDesc, null);
 		objectStack = new Stack();
 		state = S_INITIAL;
 		try {

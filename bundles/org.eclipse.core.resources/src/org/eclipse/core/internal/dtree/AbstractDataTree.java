@@ -236,7 +236,7 @@ public abstract class AbstractDataTree {
 	 * method
 	 */
 	AbstractDataTreeNode getRootNode() {
-		throw new AbstractMethodError(Messages.bind(Messages.dtree_subclassImplement));
+		throw new AbstractMethodError(Messages.dtree_subclassImplement);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public abstract class AbstractDataTree {
 	 * an unchecked exception.
 	 */
 	static void handleImmutableTree() {
-		throw new RuntimeException(Messages.bind(Messages.dtree_immutable));
+		throw new RuntimeException(Messages.dtree_immutable);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public abstract class AbstractDataTree {
 	 * method
 	 */
 	void setRootNode(AbstractDataTreeNode node) {
-		throw new Error(Messages.bind(Messages.dtree_subclassImplement));
+		throw new Error(Messages.dtree_subclassImplement);
 	}
 
 	public String toDebugString() {

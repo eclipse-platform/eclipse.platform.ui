@@ -97,7 +97,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		//read the extension
 		id = natureExtension.getUniqueIdentifier();
 		if (id == null) {
-			fail(Messages.bind(Messages.natures_missingIdentifier));
+			fail(Messages.natures_missingIdentifier);
 		}
 		label = natureExtension.getLabel();
 		IConfigurationElement[] elements = natureExtension.getConfigurationElements();

@@ -37,7 +37,7 @@ public class CharsetManager implements IManager {
 		private List asyncChanges = new ArrayList();
 
 		public CharsetManagerJob() {
-			super(Messages.bind(Messages.resources_charsetUpdating));
+			super(Messages.resources_charsetUpdating);
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 		}
@@ -62,10 +62,10 @@ public class CharsetManager implements IManager {
 		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.bind(Messages.resources_updatingEncoding), null);			
+			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.resources_updatingEncoding, null);			
 			monitor = Policy.monitorFor(monitor);
 			try {
-				monitor.beginTask(Messages.bind(Messages.resources_charsetUpdating), Policy.totalWork);
+				monitor.beginTask(Messages.resources_charsetUpdating, Policy.totalWork);
 				final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(workspace.getRoot());
 				try {
 					workspace.prepareOperation(rule, monitor);
@@ -81,7 +81,7 @@ public class CharsetManager implements IManager {
 								getPreferences(next).flush();
 						} catch (BackingStoreException e) {
 							// we got an error saving					
-							String detailMessage = Messages.bind(Messages.resources_savingEncoding);
+							String detailMessage = Messages.resources_savingEncoding;
 							result.add(new ResourceStatus(IResourceStatus.FAILED_SETTING_CHARSET, next.getFullPath(), detailMessage, e));
 						}
 					}
@@ -123,7 +123,7 @@ public class CharsetManager implements IManager {
 				affectedResources = projectPrefs.keys();
 			} catch (BackingStoreException e) {
 				// problems with the project scope... we gonna miss the changes (but will log)
-				String message = Messages.bind(Messages.resources_readingEncoding);
+				String message = Messages.resources_readingEncoding;
 				ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, currentProject.getFullPath(), message, e));
 				return;
 			}
@@ -236,7 +236,7 @@ public class CharsetManager implements IManager {
 			// save changes
 			encodingSettings.flush();
 		} catch (BackingStoreException e) {
-			String message = Messages.bind(Messages.resources_savingEncoding);
+			String message = Messages.resources_savingEncoding;
 			throw new ResourceException(IResourceStatus.FAILED_SETTING_CHARSET, project.getFullPath(), message, e);
 		} finally {
 			charsetListener.setDisabled(false);

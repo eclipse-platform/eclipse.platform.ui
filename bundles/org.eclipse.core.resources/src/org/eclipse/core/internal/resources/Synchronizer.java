@@ -250,7 +250,7 @@ public class Synchronizer implements ISynchronizer {
 			resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 			flags = target.getFlags(resourceInfo);
 			if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.bind(Messages.resources_deleteProblem), null);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.resources_deleteProblem, null);
 				((Resource) resource).deleteResource(false, status);
 				if (!status.isOK())
 					throw new ResourceException(status);

@@ -68,24 +68,24 @@ public class ObjectStoreException extends StoreException {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = Messages.bind(Messages.objectStore_genericFailure);
-		message[InternalFailure] = Messages.bind(Messages.objectStore_internalFailure);
-		message[StoreCreateFailure] = Messages.bind(Messages.objectStore_storeCreateFailure);
-		message[StoreConversionFailure] = Messages.bind(Messages.objectStore_storeConversionFailure);
-		message[StoreOpenFailure] = Messages.bind(Messages.objectStore_storeOpenFailure);
-		message[StoreCloseFailure] = Messages.bind(Messages.objectStore_storeCloseFailure);
-		message[PageReadFailure] = Messages.bind(Messages.objectStore_pageReadFailure);
-		message[PageWriteFailure] = Messages.bind(Messages.objectStore_pageWriteFailure);
-		message[PageVacancyFailure] = Messages.bind(Messages.objectStore_pageVacancyFailure);
-		message[ObjectTypeFailure] = Messages.bind(Messages.objectStore_objectTypeFailure);
-		message[ObjectSizeFailure] = Messages.bind(Messages.objectStore_objectSizeFailure);
-		message[ObjectExistenceFailure] = Messages.bind(Messages.objectStore_objectExistenceFailure);
-		message[ObjectHeaderFailure] = Messages.bind(Messages.objectStore_objectHeaderFailure);
-		message[ObjectInsertFailure] = Messages.bind(Messages.objectStore_objectInsertFailure);
-		message[ObjectRemoveFailure] = Messages.bind(Messages.objectStore_objectRemoveFailure);
-		message[ObjectUpdateFailure] = Messages.bind(Messages.objectStore_objectUpdateFailure);
-		message[ObjectIsLocked] = Messages.bind(Messages.objectStore_objectIsLocked);
-		message[MetadataRequestFailure] = Messages.bind(Messages.objectStore_metadataRequestFailure);
+		message[GenericFailure] = Messages.objectStore_genericFailure;
+		message[InternalFailure] = Messages.objectStore_internalFailure;
+		message[StoreCreateFailure] = Messages.objectStore_storeCreateFailure;
+		message[StoreConversionFailure] = Messages.objectStore_storeConversionFailure;
+		message[StoreOpenFailure] = Messages.objectStore_storeOpenFailure;
+		message[StoreCloseFailure] = Messages.objectStore_storeCloseFailure;
+		message[PageReadFailure] = Messages.objectStore_pageReadFailure;
+		message[PageWriteFailure] = Messages.objectStore_pageWriteFailure;
+		message[PageVacancyFailure] = Messages.objectStore_pageVacancyFailure;
+		message[ObjectTypeFailure] = Messages.objectStore_objectTypeFailure;
+		message[ObjectSizeFailure] = Messages.objectStore_objectSizeFailure;
+		message[ObjectExistenceFailure] = Messages.objectStore_objectExistenceFailure;
+		message[ObjectHeaderFailure] = Messages.objectStore_objectHeaderFailure;
+		message[ObjectInsertFailure] = Messages.objectStore_objectInsertFailure;
+		message[ObjectRemoveFailure] = Messages.objectStore_objectRemoveFailure;
+		message[ObjectUpdateFailure] = Messages.objectStore_objectUpdateFailure;
+		message[ObjectIsLocked] = Messages.objectStore_objectIsLocked;
+		message[MetadataRequestFailure] = Messages.objectStore_metadataRequestFailure;
 	}
 
 }

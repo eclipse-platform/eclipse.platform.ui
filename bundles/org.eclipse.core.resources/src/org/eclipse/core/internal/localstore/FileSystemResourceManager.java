@@ -178,14 +178,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			String title = Messages.bind(Messages.localstore_deleting, resource.getFullPath());
 			monitor.beginTask(title, totalWork);
 			monitor.subTask(""); //$NON-NLS-1$
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.bind(Messages.localstore_deleteProblem), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
 			List skipList = null;
 			UnifiedTree tree = new UnifiedTree(target);
 			if (!force) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork/2);
 				sub.beginTask("", 1000); //$NON-NLS-1$
 				try {
-					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.bind(Messages.localstore_deleteProblem), sub);
+					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, sub);
 					tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
 					status.merge(refreshVisitor.getSyncStatus());
 					skipList = refreshVisitor.getAffectedResources();
@@ -670,7 +670,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		monitor = Policy.monitorFor(monitor);
 		IProject[] projects = target.getProjects();
 		int totalWork = projects.length;
-		String title = Messages.bind(Messages.localstore_refreshingRoot);
+		String title = Messages.localstore_refreshingRoot;
 		try {
 			monitor.beginTask(title, totalWork);
 			// if doing depth zero, there is nothing to do (can't refresh the root).  

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class DelayedSnapshotJob extends Job {
 
-	private static final String MSG_SNAPSHOT = Messages.bind(Messages.resources_snapshot);
+	private static final String MSG_SNAPSHOT = Messages.resources_snapshot;
 	private SaveManager saveManager;
 
 	public DelayedSnapshotJob(SaveManager manager) {

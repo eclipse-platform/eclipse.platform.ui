@@ -53,7 +53,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	private static final int CHARSET_DELTA_DELAY = 500;
 
 	public CharsetDeltaJob(Workspace workspace) {
-		super(Messages.bind(Messages.resources_charsetBroadcasting));
+		super(Messages.resources_charsetBroadcasting);
 		this.workspace = workspace;
 	}
 
@@ -147,7 +147,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	public IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_charsetBroadcasting);
+			String message = Messages.resources_charsetBroadcasting;
 			monitor.beginTask(message, Policy.totalWork);
 			try {
 				workspace.prepareOperation(null, monitor);

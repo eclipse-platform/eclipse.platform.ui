@@ -32,7 +32,7 @@ public class Project extends Container implements IProject {
 	 * some description fields to change value after project creation. (e.g. project location)
 	 */
 	protected MultiStatus basicSetDescription(ProjectDescription description, int updateFlags) {
-		String message = Messages.bind(Messages.resources_projectDesc);
+		String message = Messages.resources_projectDesc;
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 		ProjectDescription current = internalGetDescription();
 		current.setComment(description.getComment());
@@ -135,7 +135,7 @@ public class Project extends Container implements IProject {
 		IPath location = desc.getLocation();
 		if (location == null)
 			return;
-		String message = Messages.bind(Messages.resources_invalidProjDesc);
+		String message = Messages.resources_invalidProjDesc;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 		status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
 		if (moving) {
@@ -243,7 +243,7 @@ public class Project extends Container implements IProject {
 	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Messages.bind(Messages.resources_create), Policy.totalWork);
+			monitor.beginTask(Messages.resources_create, Policy.totalWork);
 			checkValidPath(path, PROJECT, false);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
@@ -534,7 +534,7 @@ public class Project extends Container implements IProject {
 
 				// call super.copy for each child (excluding project description file)
 				//make it a best effort copy
-				message = Messages.bind(Messages.resources_copyProblem);
+				message = Messages.resources_copyProblem;
 				MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 
 				IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -565,7 +565,7 @@ public class Project extends Container implements IProject {
 				monitor.worked(Policy.opWork * 10 / 100);
 
 				// refresh local
-				monitor.subTask(Messages.bind(Messages.resources_updating));
+				monitor.subTask(Messages.resources_updating);
 				getLocalManager().refresh(destination, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 				if (!problems.isOK())
 					throw new ResourceException(problems);
@@ -734,7 +734,7 @@ public class Project extends Container implements IProject {
 				}
 				checkDescription(destination, description, true);
 				workspace.beginOperation(true);
-				message = Messages.bind(Messages.resources_moveProblem);
+				message = Messages.resources_moveProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
 				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
@@ -848,7 +848,7 @@ public class Project extends Container implements IProject {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		String msg = Messages.bind(Messages.links_errorLinkReconcile);
+		String msg = Messages.links_errorLinkReconcile;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
 		for (int i = 0; i < children.length; i++) {
@@ -905,7 +905,7 @@ public class Project extends Container implements IProject {
 		//    FORCE means overwrite any existing .project file 
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Messages.bind(Messages.resources_setDesc), Policy.totalWork);
+			monitor.beginTask(Messages.resources_setDesc, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRoot();
 			try {
 				//need to use root rule because nature configuration calls third party code

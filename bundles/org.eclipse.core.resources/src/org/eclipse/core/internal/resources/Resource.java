@@ -68,7 +68,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} catch (OperationCanceledException e) {
 			throw e;
 		} catch (RuntimeException e) {
-			String msg = Messages.bind(Messages.resources_errorVisiting);
+			String msg = Messages.resources_errorVisiting;
 			IResourceStatus errorStatus = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), msg, e);
 			ResourcesPlugin.getPlugin().getLog().log(errorStatus);
 			throw new ResourceException(errorStatus);
@@ -191,10 +191,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#copy(IPath, int, IProgressMonitor)
 	 */
 	public IStatus checkCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
-		String message = Messages.bind(Messages.resources_copyNotMet);
+		String message = Messages.resources_copyNotMet;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 		if (destination == null) {
-			message = Messages.bind(Messages.resources_destNotNull);
+			message = Messages.resources_destNotNull;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
 		}
 		destination = makePathAbsolute(destination);
@@ -214,7 +214,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 		// ensure we aren't trying to copy a file to a project
 		if (getType() == IResource.FILE && destinationType == IResource.PROJECT) {
-			message = Messages.bind(Messages.resources_fileToProj);
+			message = Messages.resources_fileToProj;
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
 
@@ -338,10 +338,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#move(IPath, int, IProgressMonitor)
 	 */
 	protected IStatus checkMoveRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
-		String message = Messages.bind(Messages.resources_moveNotMet);
+		String message = Messages.resources_moveNotMet;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 		if (destination == null) {
-			message = Messages.bind(Messages.resources_destNotNull);
+			message = Messages.resources_destNotNull;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
 		}
 		destination = makePathAbsolute(destination);
@@ -365,7 +365,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 		// ensure we aren't trying to move a file to a project
 		if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
-			message = Messages.bind(Messages.resources_fileToProj);
+			message = Messages.resources_fileToProj;
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 		}
 
@@ -660,7 +660,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.beginOperation(true);
 				IPath originalLocation = getLocation();
 				boolean wasLinked = isLinked();
-				message = Messages.bind(Messages.resources_deleteProblem);
+				message = Messages.resources_deleteProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
 				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
@@ -1189,7 +1189,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				assertMoveRequirements(destination, getType(), updateFlags);
 				workspace.beginOperation(true);
 				IPath originalLocation = getLocation();
-				message = Messages.bind(Messages.resources_moveProblem);
+				message = Messages.resources_moveProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
 				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
@@ -1228,7 +1228,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		monitor = Policy.monitorFor(monitor);
 		try {
 			boolean isRoot = getType() == ROOT;
-			String message = isRoot ? Messages.bind(Messages.resources_refreshingRoot) : Messages.bind(Messages.resources_refreshing, getFullPath());
+			String message = isRoot ? Messages.resources_refreshingRoot : Messages.bind(Messages.resources_refreshing, getFullPath());
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			monitor.subTask(message);
 			boolean build = false;
@@ -1256,7 +1256,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_setLocal);
+			String message = Messages.resources_setLocal;
 			monitor.beginTask(message, Policy.totalWork);
 			try {
 				workspace.prepareOperation(null, monitor);
@@ -1587,7 +1587,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
 			case IResource.ROOT :
-				String msg = Messages.bind(Messages.resources_moveRoot);
+				String msg = Messages.resources_moveRoot;
 				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), msg));
 		}
 		return true;

@@ -163,7 +163,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			Assert.isTrue(false, Messages.bind(Messages.utils_clone));
+			Assert.isTrue(false, Messages.utils_clone);
 			return null;
 		}
 	}
@@ -373,7 +373,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		try {
 			outStream.writeBytes(toString());
 		} catch (IOException e) {
-			Assert.isTrue(false, Messages.bind(Messages.utils_print));
+			Assert.isTrue(false, Messages.utils_print);
 		}
 	}
 

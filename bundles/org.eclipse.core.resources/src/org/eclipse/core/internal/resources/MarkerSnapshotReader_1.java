@@ -117,7 +117,7 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 				break;
 			default :
 				//if we get here the marker file is corrupt
-				String msg = Messages.bind(Messages.resources_readMarkers);
+				String msg = Messages.resources_readMarkers;
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
 		info.internalSetAttributes(readAttributes(input));

@@ -108,7 +108,7 @@ public class DataTreeReader {
 			case AbstractDataTreeNode.T_NO_DATA_DELTA_NODE :
 				return new NoDataDeltaNode(name, children);
 			default :
-				Assert.isTrue(false, Messages.bind(Messages.dtree_switchError));
+				Assert.isTrue(false, Messages.dtree_switchError);
 				return null;
 		}
 	}

@@ -421,14 +421,6 @@ public class Messages extends PlatformMessages {
 
 	/**
 	 * Bind the given message's substitution locations with the given string values.
-	 * TODO: Remove this unneeded message
-	 */
-	public static String bind(String message) {
-		return message;
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
 	 */
 	public static String bind(String message, Object binding) {
 		return PlatformMessages.bind(message, new Object[] {binding});

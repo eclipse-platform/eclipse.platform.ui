@@ -167,7 +167,7 @@ public class HistoryStore2 implements IHistoryStore {
 				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
 			blobsToRemove = new HashSet();
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.history_problemsCleaning);
+			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -177,13 +177,13 @@ public class HistoryStore2 implements IHistoryStore {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
 		if (sourceResource == null || destinationResource == null) {
-			String message = Messages.bind(Messages.history_copyToNull);
+			String message = Messages.history_copyToNull;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
 		if (sourceResource.equals(destinationResource)) {
-			String message = Messages.bind(Messages.history_copyToSelf);
+			String message = Messages.history_copyToSelf;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, sourceResource.getFullPath(), message, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
@@ -216,7 +216,7 @@ public class HistoryStore2 implements IHistoryStore {
 
 	public InputStream getContents(IFileState target) throws CoreException {
 		if (!target.exists()) {
-			String message = Messages.bind(Messages.history_notValid);
+			String message = Messages.history_notValid;
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		return blobStore.getBlob(((FileState) target).getUUID());
@@ -301,7 +301,7 @@ public class HistoryStore2 implements IHistoryStore {
 			blobStore.deleteBlobs(blobsToRemove);
 			blobsToRemove = new HashSet();
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.history_problemsCleaning);
+			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}

@@ -127,7 +127,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ISafeRunnable code = new ISafeRunnable() {
 
 					public void handleException(Throwable e) {
-						String message = Messages.bind(Messages.resources_saveProblem);
+						String message = Messages.resources_saveProblem;
 						IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
 						warnings.add(status);
 
@@ -366,7 +366,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			String message = Messages.bind(Messages.resources_snapInit);
+			String message = Messages.resources_snapInit;
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
 		}
 	}
@@ -507,7 +507,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			message = Messages.bind(Messages.resources_resetMarkers);
+			message = Messages.resources_resetMarkers;
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 		}
 
@@ -516,7 +516,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			message = Messages.bind(Messages.resources_resetSync);
+			message = Messages.resources_resetSync;
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 		}
 
@@ -544,7 +544,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			// inside an operation, be sure to close it afterwards
 			workspace.newWorkingTree();
 			try {
-				String msg = Messages.bind(Messages.resources_startupProblems);
+				String msg = Messages.resources_startupProblems;
 				MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, null);
 
 				restoreMasterTable();
@@ -655,7 +655,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				input.close();
 			}
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.resources_exMasterTable);
+			String message = Messages.resources_exMasterTable;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 		if (Policy.DEBUG_RESTORE_MASTERTABLE)
@@ -762,7 +762,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				}
 			} catch (Exception e) {
 				// only log the exception, we should not fail restoring the snapshot
-				message = Messages.bind(Messages.resources_snapRead);
+				message = Messages.resources_snapRead;
 				ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
 			}
 		} finally {
@@ -887,9 +887,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_saving_0);
+			String message = Messages.resources_saving_0;
 			monitor.beginTask(message, 7);
-			message = Messages.bind(Messages.resources_saveWarnings);
+			message = Messages.resources_saveWarnings;
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
 			try {
@@ -998,7 +998,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				output.close();
 			}
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.resources_exSaveMaster);
+			String message = Messages.resources_exSaveMaster;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 		if (Policy.DEBUG_SAVE_MASTERTABLE)

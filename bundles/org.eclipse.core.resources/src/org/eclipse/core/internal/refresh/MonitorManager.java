@@ -138,9 +138,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 		if (isMonitoring(resource))
 			return false;
 		boolean pollingMonitorNeeded = true;
-		RefreshProvider[] providers = getRefreshProviders();
-		for (int i = 0; i < providers.length; i++) {
-			IRefreshMonitor monitor = safeInstallMonitor(providers[i], resource);
+		RefreshProvider[] refreshProviders = getRefreshProviders();
+		for (int i = 0; i < refreshProviders.length; i++) {
+			IRefreshMonitor monitor = safeInstallMonitor(refreshProviders[i], resource);
 			if (monitor != null) {
 				registerMonitor(monitor, resource);
 				pollingMonitorNeeded = false;
@@ -249,7 +249,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 			t = e;
 		}
 		if (t != null) {
-			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.bind(Messages.refresh_installError), t);
+			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, t);
 			ResourcesPlugin.getPlugin().getLog().log(error);
 		}
 		return null;

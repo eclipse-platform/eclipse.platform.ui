@@ -43,7 +43,7 @@ public class SyncInfoReader {
 			case 3 :
 				return new SyncInfoReader_3(workspace, synchronizer);
 			default :
-				throw new IOException(Messages.bind(Messages.resources_format));
+				throw new IOException(Messages.resources_format);
 		}
 	}
 

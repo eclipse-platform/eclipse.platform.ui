@@ -389,7 +389,7 @@ public abstract class AbstractDataTreeNode {
 	 * Returns the node's data
 	 */
 	Object getData() {
-		throw new AbstractMethodError(Messages.bind(Messages.dtree_subclassImplement));
+		throw new AbstractMethodError(Messages.dtree_subclassImplement);
 	}
 
 	/**

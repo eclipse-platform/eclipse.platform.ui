@@ -317,7 +317,7 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public static IWorkspace getWorkspace() {
 		if (workspace == null)
-			throw new IllegalStateException(Messages.bind(Messages.resources_workspaceClosed));
+			throw new IllegalStateException(Messages.resources_workspaceClosed);
 		return workspace;
 	}
 

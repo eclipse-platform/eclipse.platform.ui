@@ -194,7 +194,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public IStatus validateName(String name) {
 		String message = null;
 		if (name.length() == 0) {
-			message = Messages.bind(Messages.pathvar_length);
+			message = Messages.pathvar_length;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -219,7 +219,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public IStatus validateValue(IPath value) {
 		if (value != null && (!value.isValidPath(value.toString()) || !value.isAbsolute())) {
-			String message = Messages.bind(Messages.pathvar_invalidValue);
+			String message = Messages.pathvar_invalidValue;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;

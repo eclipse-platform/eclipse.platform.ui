@@ -116,7 +116,7 @@ public class StoreKey {
 			value = buffer.toByteArray();
 		} catch (IOException e) {
 			// should never happen
-			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.properties_storeProblem, e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public class StoreKey {
 			localName = readNullTerminated(stream);
 		} catch (IOException e) {
 			// should never happen
-			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.properties_storeProblem, e);
 		}
 	}
 

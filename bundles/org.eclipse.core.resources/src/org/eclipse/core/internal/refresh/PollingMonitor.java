@@ -71,7 +71,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * Creates a new polling monitor.
 	 */
 	public PollingMonitor(RefreshManager manager) {
-		super(Messages.bind(Messages.refresh_pollJob));
+		super(Messages.refresh_pollJob);
 		this.manager = manager;
 		setPriority(Job.DECORATE);
 		setSystem(true);

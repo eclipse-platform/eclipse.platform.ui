@@ -90,7 +90,7 @@ public class WorkManager implements IManager {
 		boolean success = false;
 		try {
 			if (workspace.isTreeLocked()) {
-				String msg = Messages.bind(Messages.resources_cannotModify);
+				String msg = Messages.resources_cannotModify;
 				throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, msg, null);
 			}
 			jobManager.beginRule(rule, monitor);

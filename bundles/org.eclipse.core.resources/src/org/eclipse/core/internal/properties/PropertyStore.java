@@ -284,7 +284,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
 		}
 	}
 
@@ -309,7 +309,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
 		}
 	}
 
@@ -333,7 +333,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
 		}
 	}
 
@@ -480,7 +480,7 @@ public class PropertyStore {
 				propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
 			visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Messages.bind(Messages.properties_storeProblem), e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Messages.properties_storeProblem, e);
 		}
 	}
 

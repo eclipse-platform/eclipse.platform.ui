@@ -284,7 +284,7 @@ class ResourceTree implements IResourceTree {
 				destination.internalSetDescription(destDescription, true);
 				destination.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_projectDesc);
+				String message = Messages.resources_projectDesc;
 				IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
 				failed(status);
 			}

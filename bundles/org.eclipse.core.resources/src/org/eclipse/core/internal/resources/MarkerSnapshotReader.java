@@ -33,7 +33,7 @@ public class MarkerSnapshotReader {
 			case 2 :
 				return new MarkerSnapshotReader_2(workspace);
 			default :
-				throw new IOException(Messages.bind(Messages.resources_format));
+				throw new IOException(Messages.resources_format);
 		}
 	}
 

@@ -38,7 +38,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		this.convertToPhantom = convertToPhantom;
 		this.keepHistory = keepHistory;
 		this.monitor = monitor;
-		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.bind(Messages.localstore_deleteProblem), null);
+		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
 	}
 
 	/**

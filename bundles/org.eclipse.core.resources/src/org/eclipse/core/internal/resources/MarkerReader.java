@@ -39,7 +39,7 @@ public class MarkerReader {
 			case 3 :
 				return new MarkerReader_3(workspace);
 			default :
-				throw new IOException(Messages.bind(Messages.resources_format));
+				throw new IOException(Messages.resources_format);
 		}
 	}
 

@@ -279,7 +279,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 			} finally {
 				if (success) {
 					// fail if source cannot be successfully deleted
-					String message = Messages.bind(Messages.localstore_deleteProblemDuringMove); 
+					String message = Messages.localstore_deleteProblemDuringMove; 
 					MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
 					if (!delete(source, result))
 						throw new ResourceException(result);

@@ -34,7 +34,7 @@ public abstract class WorkspaceTreeReader {
 				return new WorkspaceTreeReader_2(workspace);
 			default :
 				// Unknown tree version - fail to read the tree
-				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, Messages.bind(Messages.resources_format), null);
+				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, Messages.resources_format, null);
 		}
 	}
 

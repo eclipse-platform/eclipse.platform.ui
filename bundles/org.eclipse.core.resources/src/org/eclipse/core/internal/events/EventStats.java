@@ -67,7 +67,7 @@ public class EventStats {
 	public static void buildException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
-				System.out.println(Messages.bind(Messages.utils_buildException));
+				System.out.println(Messages.utils_buildException);
 		} else
 			currentStats.addException(e);
 	}
@@ -136,7 +136,7 @@ public class EventStats {
 		long end = System.currentTimeMillis();
 		if (currentStats == null || currentStart == -1) {
 			if (DEBUG)
-				System.err.println(Messages.bind(Messages.utils_endBuild));
+				System.err.println(Messages.utils_endBuild);
 			return;
 		}
 		currentStats.addBuild(end - currentStart);
@@ -148,7 +148,7 @@ public class EventStats {
 		long end = System.currentTimeMillis();
 		if (currentStats == null || currentStart == -1) {
 			if (DEBUG)
-				System.err.println(Messages.bind(Messages.utils_endNotify));
+				System.err.println(Messages.utils_endNotify);
 			return;
 		}
 		currentStats.addNotify(end - currentStart);
@@ -271,7 +271,7 @@ public class EventStats {
 	public static void notifyException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
-				System.out.println(Messages.bind(Messages.utils_buildException));
+				System.out.println(Messages.utils_buildException);
 			return;
 		}
 		currentStats.addException(e);

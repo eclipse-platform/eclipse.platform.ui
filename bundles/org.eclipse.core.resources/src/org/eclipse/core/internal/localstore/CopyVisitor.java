@@ -54,7 +54,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		this.force = (updateFlags & IResource.FORCE) != 0;
 		this.monitor = monitor;
 		this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-		this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Messages.bind(Messages.localstore_copyProblem), null);
+		this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Messages.localstore_copyProblem, null);
 	}
 
 	protected boolean copy(UnifiedTreeNode node) {

@@ -81,7 +81,7 @@ public class ElementTreeReader {
 			case 1 :
 				return new ElementTreeReaderImpl_1(elementInfoFlattener);
 			default :
-				throw new IOException(Messages.bind(Messages.watson_unknown));
+				throw new IOException(Messages.watson_unknown);
 		}
 	}
 

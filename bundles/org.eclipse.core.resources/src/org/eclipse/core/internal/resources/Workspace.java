@@ -305,7 +305,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			return;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Messages.bind(Messages.resources_closing_0);
+			String msg = Messages.resources_closing_0;
 			int rootCount = tree.getChildCount(Path.ROOT);
 			monitor.beginTask(msg, rootCount + 2);
 			monitor.subTask(msg);
@@ -527,7 +527,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.bind(Messages.resources_copying_0);
+			String message = Messages.resources_copying_0;
 			monitor.beginTask(message, totalWork);
 			Assert.isLegal(resources != null);
 			if (resources.length == 0)
@@ -535,7 +535,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// to avoid concurrent changes to this array
 			resources = (IResource[]) resources.clone();
 			IPath parentPath = null;
-			message = Messages.bind(Messages.resources_copyProblem);
+			message = Messages.resources_copyProblem;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
 				prepareOperation(getRoot(), monitor);
@@ -778,9 +778,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.bind(Messages.resources_deleting_0);
+			String message = Messages.resources_deleting_0;
 			monitor.beginTask(message, totalWork);
-			message = Messages.bind(Messages.resources_deleteProblem);
+			message = Messages.resources_deleteProblem;
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			if (resources.length == 0)
 				return result;
@@ -1192,7 +1192,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public WorkManager getWorkManager() throws CoreException {
 		if (_workManager == null) {
-			String message = Messages.bind(Messages.resources_shutdown);
+			String message = Messages.resources_shutdown;
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message));
 		}
 		return _workManager;
@@ -1215,7 +1215,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// the #setContents (e.g. don't throw an exception)
 		if (configs.length > 1) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneValidator), null);
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneValidator, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -1229,7 +1229,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//ignore the failure if we are shutting down (expected since extension
 			//provider plugin has probably already shut down
 			if (canCreateExtensions()) {//$NON-NLS-1$
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initValidator), e);
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initValidator, e);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -1252,7 +1252,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
 				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneHook), null);
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneHook, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
 			}
@@ -1265,7 +1265,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {//$NON-NLS-1$
-					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initHook), e);
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initHook, e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
 			}
@@ -1293,7 +1293,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
 				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneTeamHook), null);
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_oneTeamHook, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
 			}
@@ -1306,7 +1306,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {//$NON-NLS-1$
-					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initTeamHook), e);
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.resources_initTeamHook, e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
 			}
@@ -1416,14 +1416,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.bind(Messages.resources_moving_0);
+			String message = Messages.resources_moving_0;
 			monitor.beginTask(message, totalWork);
 			Assert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 			IPath parentPath = null;
-			message = Messages.bind(Messages.resources_moveProblem);
+			message = Messages.resources_moveProblem;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
 				prepareOperation(getRoot(), monitor);
@@ -1607,10 +1607,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus open(IProgressMonitor monitor) throws CoreException {
 		// This method is not inside an operation because it is the one responsible for
 		// creating the WorkManager object (who takes care of operations).
-		String message = Messages.bind(Messages.resources_workspaceOpen);
+		String message = Messages.resources_workspaceOpen;
 		Assert.isTrue(!isOpen(), message);
 		if (!getMetaArea().hasSavedWorkspace()) {
-			message = Messages.bind(Messages.resources_readWorkspaceMeta);
+			message = Messages.resources_readWorkspaceMeta;
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
 		}
 		description = new WorkspacePreferences();
@@ -1657,7 +1657,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			buildManager.interrupt();
 		getWorkManager().checkIn(rule, monitor);
 		if (!isOpen()) {
-			String message = Messages.bind(Messages.resources_workspaceClosed);
+			String message = Messages.resources_workspaceClosed;
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 		}
 	}
@@ -1731,7 +1731,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (full) {
 			//according to spec it is illegal to start a full save inside another operation
 			if (getWorkManager().isLockAlreadyAcquired()) {
-				message = Messages.bind(Messages.resources_saveOp);
+				message = Messages.resources_saveOp;
 				throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, new IllegalStateException());
 			}
 			return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
@@ -1742,7 +1742,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			prepareOperation(getRoot(), monitor);
 			beginOperation(false);
 			saveManager.requestSnapshot();
-			message = Messages.bind(Messages.resources_snapRequest);
+			message = Messages.resources_snapRequest;
 			return new ResourceStatus(IStatus.OK, message);
 		} finally {
 			endOperation(getRoot(), false, null);
@@ -1784,7 +1784,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
 			monitor.beginTask(null, managers.length);
-			String message = Messages.bind(Messages.resources_shutdownProblems);
+			String message = Messages.resources_shutdownProblems;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			// best effort to shutdown every object and free resources
 			for (int i = 0; i < managers.length; i++) {
@@ -1795,7 +1795,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					try {
 						manager.shutdown(Policy.subMonitorFor(monitor, 1));
 					} catch (Exception e) {
-						message = Messages.bind(Messages.resources_shutdownProblems);
+						message = Messages.resources_shutdownProblems;
 						status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 					}
 				}
@@ -1891,7 +1891,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus validateEdit(final IFile[] files, final Object context) {
 		// if validation is turned off then just return
 		if (!shouldValidate) {
-			String message = Messages.bind(Messages.resources_readOnly2);
+			String message = Messages.resources_readOnly2;
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.READ_ONLY_LOCAL, message, null);
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isReadOnly()) {
@@ -1917,7 +1917,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			public void handleException(Throwable exception) {
-				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.bind(Messages.resources_errorValidator), exception);
+				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
 			}
 		};
 		Platform.run(body);
@@ -1959,7 +1959,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!result.isOK())
 			return result;
 		if (location.isEmpty()) {
-			message = Messages.bind(Messages.links_noPath);
+			message = Messages.links_noPath;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//check the standard path name restrictions
@@ -2036,13 +2036,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* segment must not be null */
 		if (segment == null) {
-			message = Messages.bind(Messages.resources_nameNull);
+			message = Messages.resources_nameNull;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		// cannot be an empty string
 		if (segment.length() == 0) {
-			message = Messages.bind(Messages.resources_nameEmpty);
+			message = Messages.resources_nameEmpty;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2075,7 +2075,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus validatePath(String path, int type) {
 		/* path must not be null */
 		if (path == null) {
-			String message = Messages.bind(Messages.resources_pathNull);
+			String message = Messages.resources_pathNull;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return validatePath(Path.fromOSString(path), type, false);
@@ -2093,7 +2093,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* path must not be null */
 		if (path == null) {
-			message = Messages.bind(Messages.resources_pathNull);
+			message = Messages.resources_pathNull;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2105,7 +2105,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* path must not be the root path */
 		if (path.isRoot()) {
-			message = Messages.bind(Messages.resources_invalidRoot);
+			message = Messages.resources_invalidRoot;
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2171,7 +2171,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (location.segmentCount() > 0)
 				message = Messages.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
 			else
-				message = Messages.bind(Messages.links_noPath);
+				message = Messages.links_noPath;
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 		}
 		//if the location doesn't have a device, see if the OS will assign one
@@ -2256,7 +2256,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			public void handleException(Throwable exception) {
-				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.bind(Messages.resources_errorValidator), exception);
+				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.resources_errorValidator, exception);
 			}
 		};
 		Platform.run(body);

@@ -69,7 +69,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			message = Messages.bind(Messages.resources_reading);
+			message = Messages.resources_reading;
 			monitor.beginTask(message, 10);
 
 			/* read in the builder infos */
@@ -83,7 +83,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
 
 		} catch (IOException e) {
-			message = Messages.bind(Messages.resources_readProjectTree);
+			message = Messages.resources_readProjectTree;
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 		} finally {
 			monitor.done();

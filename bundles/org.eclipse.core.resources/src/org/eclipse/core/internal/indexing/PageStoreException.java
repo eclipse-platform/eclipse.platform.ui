@@ -65,19 +65,19 @@ public class PageStoreException extends StoreException {
 	 * Initialize the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = Messages.bind(Messages.pageStore_genericFailure);
-		message[CreateFailure] = Messages.bind(Messages.pageStore_createFailure);
-		message[OpenFailure] = Messages.bind(Messages.pageStore_openFailure);
-		message[LengthFailure] = Messages.bind(Messages.pageStore_lengthFailure);
-		message[WriteFailure] = Messages.bind(Messages.pageStore_writeFailure);
-		message[ReadFailure] = Messages.bind(Messages.pageStore_readFailure);
-		message[CommitFailure] = Messages.bind(Messages.pageStore_commitFailure);
-		message[IntegrityFailure] = Messages.bind(Messages.pageStore_integrityFailure);
-		message[MetadataRequestFailure] = Messages.bind(Messages.pageStore_metadataRequestFailure);
-		message[ConversionFailure] = Messages.bind(Messages.pageStore_conversionFailure);
-		message[LogCreateFailure] = Messages.bind(Messages.pageStore_logCreateFailure);
-		message[LogOpenFailure] = Messages.bind(Messages.pageStore_logOpenFailure);
-		message[LogReadFailure] = Messages.bind(Messages.pageStore_logReadFailure);
-		message[LogWriteFailure] = Messages.bind(Messages.pageStore_logWriteFailure);
+		message[GenericFailure] = Messages.pageStore_genericFailure;
+		message[CreateFailure] = Messages.pageStore_createFailure;
+		message[OpenFailure] = Messages.pageStore_openFailure;
+		message[LengthFailure] = Messages.pageStore_lengthFailure;
+		message[WriteFailure] = Messages.pageStore_writeFailure;
+		message[ReadFailure] = Messages.pageStore_readFailure;
+		message[CommitFailure] = Messages.pageStore_commitFailure;
+		message[IntegrityFailure] = Messages.pageStore_integrityFailure;
+		message[MetadataRequestFailure] = Messages.pageStore_metadataRequestFailure;
+		message[ConversionFailure] = Messages.pageStore_conversionFailure;
+		message[LogCreateFailure] = Messages.pageStore_logCreateFailure;
+		message[LogOpenFailure] = Messages.pageStore_logOpenFailure;
+		message[LogReadFailure] = Messages.pageStore_logReadFailure;
+		message[LogWriteFailure] = Messages.pageStore_logWriteFailure;
 	}
 }

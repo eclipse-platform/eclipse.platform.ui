@@ -98,7 +98,7 @@ public interface ICoreConstants {
 	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];
 
 	//common externalized strings
-	public static final String MSG_RESOURCES_UPDATING = Messages.bind(Messages.resources_updating);
-	public static final String MSG_EVENTS_BUILDING_0 = Messages.bind(Messages.events_building_0);
-	public static final String MSG_EVENTS_ERRORS = Messages.bind(Messages.events_errors);
+	public static final String MSG_RESOURCES_UPDATING = Messages.resources_updating;
+	public static final String MSG_EVENTS_BUILDING_0 = Messages.events_building_0;
+	public static final String MSG_EVENTS_ERRORS = Messages.events_errors;
 }

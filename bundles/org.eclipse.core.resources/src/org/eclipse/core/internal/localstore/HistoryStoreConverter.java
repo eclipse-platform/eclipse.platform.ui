@@ -63,7 +63,7 @@ public class HistoryStoreConverter {
 			Policy.debug("Time to convert local history: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (exception[0] != null) {
 			// failed while visiting or saving
-			String conversionFailed = Messages.bind(Messages.history_conversionFailed);
+			String conversionFailed = Messages.history_conversionFailed;
 			Status failure = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, new IStatus[] {exception[0].getStatus()}, conversionFailed, null);
 			// we failed, so don't do anything else - we might try converting again later
 			return failure;
@@ -73,7 +73,7 @@ public class HistoryStoreConverter {
 		// so we don't try converting again in the future
 		if (rename)
 			indexFile.toFile().renameTo(indexFile.addFileExtension(Long.toString(System.currentTimeMillis())).toFile());
-		String conversionOk = Messages.bind(Messages.history_conversionSucceeded);
+		String conversionOk = Messages.history_conversionSucceeded;
 		// leave a note to the user so this does not happen silently
 		return new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, IStatus.OK, conversionOk, null);
 	}

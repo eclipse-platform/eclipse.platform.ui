@@ -605,7 +605,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		int count = natureIds.length;
 		if (count == 0)
 			return Status.OK_STATUS;
-		String msg = Messages.bind(Messages.natures_invalidSet);
+		String msg = Messages.natures_invalidSet;
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 
 		//set of the nature ids being validated (String (id))

@@ -69,7 +69,7 @@ public class SafeFileTable {
 				input.close();
 			}
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.resources_exSafeRead);
+			String message = Messages.resources_exSafeRead;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}
@@ -84,7 +84,7 @@ public class SafeFileTable {
 				output.close();
 			}
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.resources_exSafeSave);
+			String message = Messages.resources_exSafeSave;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}

@@ -296,7 +296,7 @@ public class ElementTree {
 	public synchronized void createSubtree(IPath key, ElementTree subtree) {
 		/* don't allow creating subtrees at the root */
 		if (key.isRoot()) {
-			throw new IllegalArgumentException(Messages.bind(Messages.watson_noModify));
+			throw new IllegalArgumentException(Messages.watson_noModify);
 		}
 
 		// Clear the child IDs cache in case it's referring to this parent.
@@ -309,7 +309,7 @@ public class ElementTree {
 			/* don't copy the implicit root node of the subtree */
 			IPath[] children = subtree.getChildren(subtree.getRoot());
 			if (children.length != 1) {
-				throw new IllegalArgumentException(Messages.bind(Messages.watson_illegalSubtree));
+				throw new IllegalArgumentException(Messages.watson_illegalSubtree);
 			}
 
 			/* get the subtree for the specified key */
@@ -755,7 +755,7 @@ public class ElementTree {
 
 		/* The tree has to be open */
 		if (isImmutable()) {
-			throw new IllegalArgumentException(Messages.bind(Messages.watson_immutable));
+			throw new IllegalArgumentException(Messages.watson_immutable);
 		}
 		ElementTree current = this;
 		if (trees.length > 0) {

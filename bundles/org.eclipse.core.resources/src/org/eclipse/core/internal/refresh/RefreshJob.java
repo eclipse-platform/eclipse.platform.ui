@@ -33,7 +33,7 @@ public class RefreshJob extends WorkspaceJob {
 	private final List fRequests;
 
 	public RefreshJob() {
-		super(Messages.bind(Messages.refresh_jobName));
+		super(Messages.refresh_jobName);
 		fRequests = new ArrayList(1);
 	}
 
@@ -114,7 +114,7 @@ public class RefreshJob extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
-		String msg = Messages.bind(Messages.refresh_refreshErr);
+		String msg = Messages.refresh_refreshErr;
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 		long longestRefresh = 0;
 		try {
