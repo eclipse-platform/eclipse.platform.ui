@@ -79,6 +79,9 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <activeKeyConfiguration
+            value="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </activeKeyConfiguration>
       <command
             name="%command.newWizard.name"
             description="%command.newWizard.description"
