@@ -1,29 +1,48 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0 which
- * accompanies this distribution, and is available at http://www.eclipse.
- * org/legal/cpl-v10.html
- * 
- * Contributors: 
- * IBM - Initial implementation
- ***********************************************************************/
+Copyright (c) 2000, 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.TreeSet;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -32,9 +51,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
-/**
- * The BuildOrderPage is the page that is used to determine what order projects
- * will be built in by the workspace.
+/**	
+ * Page used to determine what order projects will be built in 
+ * by the workspace.
  */
 public class BuildOrderPreferencePage
 	extends PreferencePage
@@ -47,6 +66,7 @@ public class BuildOrderPreferencePage
 	private List buildList;
 	private Composite buttonComposite;
 	private Label noteLabel;
+	private IntegerFieldEditor maxItersField;
 	
 	private String[] defaultBuildOrder;
 	private String[] customBuildOrder;
@@ -54,16 +74,16 @@ public class BuildOrderPreferencePage
 	//Boolean to indicate if we have looked it up
 	private boolean notCheckedBuildOrder = true;
 
-	private static final String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
-	private static final String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
-	private static final String ADD_LABEL = WorkbenchMessages.getString("BuildOrderPreference.add"); //$NON-NLS-1$
-	private static final String REMOVE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.remove"); //$NON-NLS-1$
-	private static final String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
-	private static final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
-	private static final String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
-	private static final String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
-	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
-	private static final String REMOVE_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.removeNote"); //$NON-NLS-1$
+	private final String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
+	private final String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
+	private final String ADD_LABEL = WorkbenchMessages.getString("BuildOrderPreference.add"); //$NON-NLS-1$
+	private final String REMOVE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.remove"); //$NON-NLS-1$
+	private final String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
+	private final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
+	private final String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
+	private final String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
+	private final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
+	private final String REMOVE_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.removeNote"); //$NON-NLS-1$
 	
 	// marks projects with unspecified build orders
 	private static final String MARKER = "*"; //$NON-NLS-1$
@@ -71,6 +91,14 @@ public class BuildOrderPreferencePage
 	// whether or not the use defaults option was selected when Apply (or OK) was last pressed
 	// (or when the preference page was opened). This represents the most recent applied state.
 	private boolean defaultOrderInitiallySelected;
+	
+	private IPropertyChangeListener validityChangeListener =
+		new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					updateValidState();
+			}
+		};
 	
 /**
  * Add another project to the list at the end.
@@ -116,6 +144,14 @@ private void addProject() {
 		result.length);
 	this.buildList.setItems(newItems);
 }
+
+/**
+ * Updates the valid state of the page.
+ */
+private void updateValidState() {
+	setValid(maxItersField.isValid());
+}
+
 /**
  * Create the list of build paths. If the current build order is empty make the list empty
  * and disable it.
@@ -189,13 +225,12 @@ protected Control createContents(Composite parent) {
 	noteData.horizontalSpan = 2;
 	noteComposite.setLayoutData(noteData);
 	
-	//Add in a spacer
+	createSpacer(composite);
 	
-	Label spacer = new Label(composite, SWT.NONE);
-	GridData spacerData = new GridData();
-	spacerData.horizontalSpan = 2;
-	spacer.setLayoutData(spacerData);
+	createMaxIterationsField(composite);
 	
+	createSpacer(composite);
+
 	if (useDefault) {
 		this.buildList.setItems(getDefaultProjectOrder());
 	} else {
@@ -204,6 +239,18 @@ protected Control createContents(Composite parent) {
 	
 	return composite;
 
+}
+
+/**
+ * Adds in a spacer.
+ * 
+ * @param composite the parent composite
+ */
+private void createSpacer(Composite composite) {
+	Label spacer = new Label(composite, SWT.NONE);
+	GridData spacerData = new GridData();
+	spacerData.horizontalSpan = 2;
+	spacer.setLayoutData(spacerData);
 }
 /**
  * Create the default path button. Set it to selected based on the current workspace
@@ -303,6 +350,46 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 	setButtonLayoutData(removeButton);
 
 }
+
+/**
+ * Create the field for the maximum number of iterations in the presence
+ * of cycles. 
+ */
+private void createMaxIterationsField(Composite composite) {
+	Composite maxItersComposite = new Composite(composite, SWT.NONE);
+	GridData gd = new GridData(GridData.FILL_HORIZONTAL); 
+	maxItersComposite.setLayoutData(gd);
+	maxItersComposite.setFont(composite.getFont());
+	
+	String label = "&Max iterations when building with cycles:";	
+	maxItersField = new IntegerFieldEditor("", label, maxItersComposite) {
+		protected void doLoad() {
+			Text text = getTextControl();
+			if (text != null) {
+				int value = getWorkspace().getDescription().getMaxBuildIterations();
+				text.setText(Integer.toString(value));
+			}
+		}		
+		protected void doLoadDefault() {
+			Text text = getTextControl();
+			if (text != null) {
+				int value = ResourcesPlugin.getPlugin().getPluginPreferences().getDefaultInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS);
+				text.setText(Integer.toString(value));
+			}
+			valueChanged();
+		}
+		protected void doStore() {
+			// handled specially in performOK()
+			throw new UnsupportedOperationException();
+		}
+	};
+	maxItersField.setValidRange(1, Integer.MAX_VALUE);
+	maxItersField.setPreferencePage(this);
+	maxItersField.setPreferenceStore(getPreferenceStore());
+	maxItersField.setPropertyChangeListener(validityChangeListener);
+	maxItersField.load();
+}
+
 /**
  * The defaults button has been selected - update the other widgets as required.
  * @param selected - whether or not the defaults button got selected
@@ -380,6 +467,7 @@ private boolean includes(String[] testArray, String searchElement) {
  */
 public void init(IWorkbench workbench) {
 	this.workbench = workbench;
+	setPreferenceStore(workbench.getPreferenceStore());
 }
 /**
  * Move the current selection in the build list down.
@@ -419,6 +507,7 @@ private void moveSelectionUp() {
 protected void performDefaults() {
 	this.defaultOrderButton.setSelection(true);
 	defaultsButtonSelected(true);
+	maxItersField.loadDefault();
 	super.performDefaults();
 }
 /** 
@@ -438,6 +527,7 @@ public boolean performOk() {
 	//apply it to the workspace.
 	IWorkspaceDescription description = getWorkspace().getDescription();
 	description.setBuildOrder(buildOrder);
+	description.setMaxBuildIterations(maxItersField.getIntValue());
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException exception) {
