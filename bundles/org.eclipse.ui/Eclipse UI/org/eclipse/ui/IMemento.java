@@ -1,9 +1,14 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
  
 /**
  * Interface to a memento used for saving the important state of an object
@@ -29,7 +34,7 @@ package org.eclipse.ui;
  * The key for an attribute may be any alpha numeric value.  However, the
  * value of <code>TAG_ID</code> is reserved for internal use.
  * </p><p>
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  *
  * @see IPersistableElement
