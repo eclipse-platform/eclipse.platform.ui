@@ -66,7 +66,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
-import org.eclipse.ui.externaltools.internal.ant.view.actions.AntViewOpenWithMenu;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.EditLaunchConfigurationAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
@@ -95,7 +95,6 @@ import org.eclipse.ui.texteditor.IUpdate;
  * user to run selected targets from those files.
  */
 public class AntView extends ViewPart implements IResourceChangeListener, IShowInSource {
-
 	/**
 	 * The root node of the project viewer as restored during initialization
 	 */
@@ -199,7 +198,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
-	private AntViewOpenWithMenu openWithMenu;
+	private AntOpenWithMenu openWithMenu;
 	private EditLaunchConfigurationAction editConfigAction;
 	
 	// TargetsViewer actions
@@ -389,7 +388,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		moveDownAction = new TargetMoveDownAction(this);
 		updateTargetActions.add(moveDownAction);
 		
-		openWithMenu= new AntViewOpenWithMenu(this.getViewSite().getPage());
+		openWithMenu= new AntOpenWithMenu(this.getViewSite().getPage());
 		
 		horizontalOrientationAction= new ToggleAntViewOrientation(this, HORIZONTAL_ORIENTATION);
 		verticalOrientationAction= new ToggleAntViewOrientation(this, VERTICAL_ORIENTATION);

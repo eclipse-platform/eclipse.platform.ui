@@ -40,7 +40,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
  * 
  * Code mostly a copy of the OpenWithMenu which cannot be effectively subclassed
  */
-public class AntViewOpenWithMenu extends ContributionItem {
+public class AntOpenWithMenu extends ContributionItem {
 
 	private IWorkbenchPage page;
 	private IAdaptable file;
@@ -52,9 +52,9 @@ public class AntViewOpenWithMenu extends ContributionItem {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = IExternalToolConstants.PLUGIN_ID + ".AntViewOpenWithMenu"; //$NON-NLS-1$
+	public static final String ID = IExternalToolConstants.PLUGIN_ID + ".AntOpenWithMenu"; //$NON-NLS-1$
 
-	public AntViewOpenWithMenu(IWorkbenchPage page) {
+	public AntOpenWithMenu(IWorkbenchPage page) {
 		super(ID);
 		this.page= page;
 	}
