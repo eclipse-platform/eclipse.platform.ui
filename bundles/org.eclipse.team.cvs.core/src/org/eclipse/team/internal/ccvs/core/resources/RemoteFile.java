@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -193,6 +198,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
 			}
 
+			monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
 			Session.run(getRepository(), parent, false, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
 					monitor.beginTask(null, 100);
@@ -217,7 +223,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 						throw new CVSServerException(status);
 					}
 				}
-			}, monitor);
+			}, Policy.subMonitorFor(monitor, 100));
 
 			// If the update succeeded but no contents were retreived from the server
 			// than we can assume that the remote file has no contents.
