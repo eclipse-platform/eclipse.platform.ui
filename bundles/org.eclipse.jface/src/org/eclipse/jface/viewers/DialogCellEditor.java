@@ -245,7 +245,8 @@ protected Label getDefaultLabel() {
 }
 /**
  * Opens a dialog box under the given parent control and returns the
- * dialog's value when it closes.
+ * dialog's value when it closes, or <code>null</code> if the dialog
+ * was cancelled or no selection was made in the dialog.
  * <p>
  * This framework method must be implemented by concrete subclasses.
  * It is called when the user has pressed the button and the dialog
@@ -254,7 +255,8 @@ protected Label getDefaultLabel() {
  *
  * @param cellEditorWindow the parent control cell editor's window
  *   so that a subclass can adjust the dialog box accordingly
- * @return the selected value
+ * @return the selected value, or <code>null</code> if the dialog was 
+ *   cancelled or no selection was made in the dialog
  */
 protected abstract Object openDialogBox(Control cellEditorWindow);
 /**
