@@ -139,7 +139,7 @@ public class DocumentExtensionTest extends TestCase {
 	
 	
 	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.test.DocumentExtensionTest"};
+		String a[] = { "org.eclipse.jface.text.tests.DocumentExtensionTest"};
 		TestRunner.main(a);
 	}
 	

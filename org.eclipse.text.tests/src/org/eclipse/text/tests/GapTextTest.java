@@ -51,7 +51,7 @@ public class GapTextTest extends TestCase {
 	}
 	
 	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.ui.text.test.GapTextTest" };
+		String a[] = { "org.eclipse.jface.ui.text.tests.GapTextTest" };
 		TestRunner.main(a);
 	}
 	

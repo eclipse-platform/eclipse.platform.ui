@@ -33,7 +33,7 @@ public class LineTrackerTest3 extends TestCase {
 	}
 	
 	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.test.LineTrackerTest3"};
+		String a[] = { "org.eclipse.jface.text.tests.LineTrackerTest3"};
 		TestRunner.main(a);
 	}
 	

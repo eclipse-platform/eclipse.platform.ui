@@ -34,7 +34,7 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 	
 	
 	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.test.PositionUpdatingCornerCasesTest"};
+		String a[] = { "org.eclipse.jface.text.tests.PositionUpdatingCornerCasesTest"};
 		TestRunner.main(a);
 	}
 

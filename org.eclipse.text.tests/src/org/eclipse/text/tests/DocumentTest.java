@@ -34,7 +34,7 @@ public class DocumentTest extends TestCase {
 	
 	
 	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.test.DocumentTest"};
+		String a[] = { "org.eclipse.jface.text.tests.DocumentTest"};
 		TestRunner.main(a);
 	}
 
