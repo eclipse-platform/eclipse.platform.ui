@@ -13,14 +13,15 @@ package org.eclipse.help.internal.browser.macosx;
 import java.io.IOException;
 
 import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.base.*;
 
 public class DefaultBrowserAdapter implements IBrowser {
 
 	private static DefaultBrowserAdapter fgInstance;
-	
+
 	static DefaultBrowserAdapter getInstance() {
 		if (fgInstance == null)
-			fgInstance= new DefaultBrowserAdapter();
+			fgInstance = new DefaultBrowserAdapter();
 		return fgInstance;
 	}
 
@@ -40,13 +41,14 @@ public class DefaultBrowserAdapter implements IBrowser {
 		try {
 			Runtime.getRuntime().exec(
 				new String[] {
-					"/usr/bin/osascript", 
-					"-e", 
-					"open location \"" + url +"\""
-				}
-			);
-		} catch (IOException e) {
-			// ignore silently
+					"/usr/bin/osascript",
+					"-e",
+					"open location \"" + url + "\"" });
+		} catch (IOException ioe) {
+			HelpBasePlugin.logError(
+				HelpBaseResources.getString(
+					"DefaultBrowserAdapter.executeFailed"),
+				ioe);
 		}
 	}
 

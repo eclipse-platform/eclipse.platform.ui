@@ -75,6 +75,8 @@ public class BrowserManager {
 				if (defaultBrowserDesc == null) {
 					setDefaultBrowserID("org.eclipse.help.base.netscapeHPUX");
 				}
+			} else if (System.getProperty("os.name").equals("Mac OS X")) {
+				setDefaultBrowserID("org.eclipse.help.base.defaultBrowserMacOSX");
 			} else {
 				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
 			}
