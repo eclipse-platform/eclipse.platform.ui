@@ -88,6 +88,39 @@ GBK definition defines its locale as zh which is all Chinese language locales)</
   <li>GBK (Chinese only)</li>
 </ul>
 
+<p><b><i>Known Problems with Encoding Detection</i></b></p>
+<p>The value 'Text file encoding' displayed in the Preferences dialog under
+'Editors' may be wrong on platforms running Windows 2000/XP when user locale and
+system locale differ. </p>
+<p>Example of the manifestation of the bug: A Japanese user using Japanese
+Windows 2000 works in New York, United States. The user has selected English
+(United States) as the user locale. The value 'Text file encoding' displayed by
+Eclipse is incorrect: 'Cp1252' (English). It should display the system locale
+'MS932' (Japanese). </p>
+<p><b>Workaround</b> The user can modify the user locale so that user locale and
+system locale are identical. In the example above, this means the user should
+set Japanese as the user locale. Restart Eclipse to see the results of this
+change.&nbsp; In the above example the value 'Text file encoding' will be
+correct: 'MS932' (Japanese) after restart. </p>
+<p><b>Checking the system locale</b></p>
+<ul>
+  <li><b>Windows 2000 : </b>Open the Control Panel. Go to Regional Options. Look
+    up the items in the tab 'General', inside the 'Language settings for the
+    system' group. The system locale is the item marked as (Default). </li>
+  <li><b>Windows XP</b>: Open the Control Panel. Go to Regional and Language
+    Options. Switch to the tab 'Advanced'. The system locale is specified in
+    'Language for non-Unicode programs'. </li>
+</ul>
+<p><b>Changing the user locale</b></p>
+<ul>
+  <li><b>Windows 2000</b> : Open the Control Panel. Go to Regional Options. The
+    user locale can be modified by changing the location in 'Settings for the
+    current user'.</li>
+  <li><b>Windows XP</b>: Open the Control Panel. Go to Regional and Language
+    Options. The user locale can be modified by changing the language in
+    'Standards and formats'.</li>
+</ul>
+
 <p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0></a>
 
 </body>
