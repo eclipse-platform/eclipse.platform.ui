@@ -38,7 +38,7 @@ public class TestingSupport {
 	 * @param hook the hook implementation, or <code>null</code> to restore
 	 *    the default workspace behavior
 	 */
-	public void installMoveDeleteHook(IWorkspace workspace, IMoveDeleteHook hook) {
+	public static void installMoveDeleteHook(IWorkspace workspace, IMoveDeleteHook hook) {
 		if (hook != null) {
 			Workspace.moveDeleteHook = hook;
 		} else {
