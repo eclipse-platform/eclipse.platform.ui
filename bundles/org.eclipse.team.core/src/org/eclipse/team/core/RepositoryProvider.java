@@ -511,7 +511,8 @@ public abstract class RepositoryProvider implements IProjectNature {
 							} catch (CoreException e) {
 								TeamPlugin.log(e.getStatus());
 							} catch (ClassCastException e) {
-								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.invalidClass", id), e); //$NON-NLS-1$
+								String className = configElements[j].getAttribute("class"); //$NON-NLS-1$
+								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.invalidClass", id, className), e); //$NON-NLS-1$
 							}
 							return null;
 						}
