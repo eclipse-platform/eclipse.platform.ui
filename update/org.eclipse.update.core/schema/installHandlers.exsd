@@ -38,6 +38,9 @@ part of the downloadable feature.
                <documentation>
                   optional displayable label for the new install handler
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

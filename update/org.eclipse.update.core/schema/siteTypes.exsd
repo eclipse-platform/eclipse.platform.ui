@@ -43,6 +43,9 @@ is used to create the correct concrete site implementation.
                <documentation>
                   optional displayable label for the new site type
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -44,6 +44,9 @@ is used to create the correct concrete feature implementation.
                <documentation>
                   optional displayable label for the new feature type
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
