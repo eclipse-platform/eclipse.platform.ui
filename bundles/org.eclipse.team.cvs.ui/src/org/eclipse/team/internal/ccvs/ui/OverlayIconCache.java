@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.internal.ui.*;
 
 /**
  * Maintains a cache of OverlayIcons.
