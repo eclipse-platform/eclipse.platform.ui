@@ -56,7 +56,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             ids[i] = refs[i].getId();
         }
         closePerspective(activePage);
-        //populate the empty view with all view that will be shown in the test view
+        //populate the empty perspective with all view that will be shown in the test view
         for (int i = 0; i < ids.length; i++) {
             activePage.showView(ids[i]);
         }      
