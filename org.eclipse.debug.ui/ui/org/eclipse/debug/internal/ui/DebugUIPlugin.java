@@ -689,7 +689,9 @@ public static Object createExtension(final IConfigurationElement element, final 
 		} else {
 			IProcess processFromInput= getProcessFromInput(input);
 			if (processFromInput == null) {
-				consoleView.setViewerInput(null, false);
+				if (consoleView != null) {
+					consoleView.setViewerInput(null, false);
+				}
 				setCurrentProcess(null);
 				return;
 			}
