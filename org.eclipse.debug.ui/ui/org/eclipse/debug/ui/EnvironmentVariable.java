@@ -66,4 +66,11 @@ public class EnvironmentVariable
 	{
 		this.value = value;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
 }
