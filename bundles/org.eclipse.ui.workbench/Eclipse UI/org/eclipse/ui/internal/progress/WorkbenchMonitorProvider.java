@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The WorkbenchProgressListener is a class that listens to progress on the
@@ -166,7 +167,7 @@ class WorkbenchMonitorProvider {
 
 	}
 
-	private class RefreshJob extends UIJob {
+	private class RefreshJob extends WorkbenchJob {
 
 		String message;
 		boolean clear = false;
