@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -965,19 +967,35 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						buffer.append(DebugUIMessages.getString("DebugUIPlugin.0")); //$NON-NLS-1$
 						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
-						ILaunch pendingLaunch= new Launch(workingCopy, mode, null) {
+						final ILaunch pendingLaunch= new Launch(workingCopy, mode, null) {
                             // Allow the user to terminate the dummy launch as a means of
                             // cancelling the launch while waiting for a build to finish.
                             public boolean canTerminate() {
                                 return true;
                             }
                             public void terminate() throws DebugException {
-                                monitor.setCanceled(true);
-                                DebugPlugin.getDefault().getLaunchManager().removeLaunch(this);
+                                cancel();
                             }
-                            
                         };
+                        
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
+                        IJobChangeListener listener= new IJobChangeListener() {
+                            public void sleeping(IJobChangeEvent event) {
+                            }
+                            public void scheduled(IJobChangeEvent event) {
+                            }
+                            public void running(IJobChangeEvent event) {
+                            }
+                            public void done(IJobChangeEvent event) {
+                                DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
+                                removeJobChangeListener(this);
+                            }
+                            public void awake(IJobChangeEvent event) {
+                            }
+                            public void aboutToRun(IJobChangeEvent event) {
+                            }
+                        };
+                        addJobChangeListener(listener);
 
 						try {
 							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
@@ -985,8 +1003,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						} catch (InterruptedException e) {
 							// just continue.
 						}
-						
-						DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
+                        DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
 					}
 					
 					if (!monitor.isCanceled()) {
