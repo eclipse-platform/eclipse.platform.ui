@@ -60,5 +60,22 @@ public interface ICVSUIConstants {
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	
 	public final String IMG_WIZBAN_BRANCH = "wizban/newstream_wizban.gif";	
 	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	
+
+	// Properties
+	public final String PROP_NAME = "cvs.name";
+	public final String PROP_REVISION = "cvs.revision";
+	public final String PROP_AUTHOR = "cvs.author";
+	public final String PROP_COMMENT = "cvs.comment";
+	public final String PROP_DATE = "cvs.date";
+	public final String PROP_DIRTY = "cvs.dirty";
+	public final String PROP_MODIFIED = "cvs.modified";
+	public final String PROP_KEYWORD = "cvs.date";
+	public final String PROP_TAG = "cvs.tag";
+	public final String PROP_PERMISSIONS = "cvs.permissions";
+	public final String PROP_HOST = "cvs.host";
+	public final String PROP_USER = "cvs.user";
+	public final String PROP_METHOD = "cvs.method";
+	public final String PROP_PORT = "cvs.port";
+	public final String PROP_ROOT = "cvs.root";
 }
 
