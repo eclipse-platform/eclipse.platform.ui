@@ -156,7 +156,7 @@ public class NativeStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (getSite().isMoveable(part)) {
+				if (getSite().isPartMoveable(part)) {
 				    getSite().dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
 				}
@@ -275,13 +275,6 @@ public class NativeStackPresentation extends StackPresentation {
 		
 		tabFolder.dispose();
 		tabFolder = null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
-	 */
-	public void setActive(boolean isActive) {
-	    // do nothing
 	}
 		
 	private TabItem createPartTab(IPresentablePart part, int tabIndex) {

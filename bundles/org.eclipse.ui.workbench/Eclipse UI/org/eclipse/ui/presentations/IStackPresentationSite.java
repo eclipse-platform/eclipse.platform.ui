@@ -102,18 +102,6 @@ public interface IStackPresentationSite {
 	public boolean isStackMoveable();
 	
 	/**
-	 * Returns true iff this site will allow the given part to be moved.
-	 * If the argument is null, this returns whether dragging should
-	 * be enabled for the entire stack
-	 *
-	 * @deprecated use isPartMoveable(...) or isStackMoveable() instead
-	 *
-	 * @param toMove part to test, or null if we're testing the entire stack
-	 * @return true iff the part may be moved
-	 */
-	public boolean isMoveable(IPresentablePart toMove);
-	
-	/**
 	 * Makes the given part active
 	 * 
 	 * @param toSelect

@@ -36,7 +36,7 @@ public class SystemMenuMovePane extends Action implements ISelfUpdatingAction {
 	
 	public void update() {
 		IPresentablePart part = site.getSelectedPart();
-		setEnabled(part != null && site.isMoveable(part));
+		setEnabled(part != null && site.isPartMoveable(part));
 	}
 	
     public boolean shouldBeVisible() {

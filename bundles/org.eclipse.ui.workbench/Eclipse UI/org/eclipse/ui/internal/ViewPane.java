@@ -44,6 +44,7 @@ import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.presentations.PresentableViewPart;
 
 /**
  * Provides support for a title bar where the
@@ -628,7 +629,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		}
 	}
 
-	protected boolean toolbarIsVisible() {
+	public boolean toolbarIsVisible() {
 		ToolBarManager toolbarManager = getToolBarManager();
 		
 		if (toolbarManager == null) {

@@ -34,10 +34,10 @@ public class SystemMenuMoveFolder extends Action implements ISelfUpdatingAction 
 	}
 	
 	public void update() {
-		setEnabled(site.isMoveable(null));
+		setEnabled(site.isStackMoveable());
 	}
 	
     public boolean shouldBeVisible() {
-    	return site.isMoveable(null);
+    	return site.isStackMoveable();
     }
 }

@@ -69,7 +69,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         	return PartStack.this.isCloseable(part);
         }
 
-        public boolean isMoveable(IPresentablePart part) {
+        public boolean isPartMoveable(IPresentablePart part) {
         	return PartStack.this.isMoveable(part);
         }
 
@@ -91,7 +91,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		
 		public void addSystemActions(IMenuManager menuManager) {
 			PartStack.this.addSystemActions(menuManager);
-		}		
+		}
+
+		public boolean isStackMoveable() {
+			return canMoveFolder();
+		}
     };
     
     protected abstract boolean isMoveable(IPresentablePart part);
@@ -865,7 +869,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	                    initialLocation, !keyboard);
 	        }
 		} else {
-	    	if (presentationSite.isMoveable(beingDragged)) {
+	    	if (presentationSite.isPartMoveable(beingDragged)) {
 	            LayoutPart pane = getPaneFor(beingDragged);
 	
 	            if (pane != null) {

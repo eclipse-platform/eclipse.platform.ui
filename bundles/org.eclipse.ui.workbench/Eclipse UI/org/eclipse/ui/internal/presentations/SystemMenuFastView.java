@@ -33,7 +33,7 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     }
 
     public void update() {
-    	if (viewPane == null || !site.isMoveable(viewPane.getPresentablePart()) ) {
+    	if (viewPane == null || !site.isPartMoveable(viewPane.getPresentablePart()) ) {
     		setEnabled(false);
     	} else {
     		setEnabled(true);
@@ -50,7 +50,7 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     		.getWorkbenchWindow();
     
         return workbenchWindow.getShowFastViewBars() 
-			&& viewPane != null && site.isMoveable(viewPane.getPresentablePart());
+			&& viewPane != null && site.isPartMoveable(viewPane.getPresentablePart());
     }
     
     public void dispose() {

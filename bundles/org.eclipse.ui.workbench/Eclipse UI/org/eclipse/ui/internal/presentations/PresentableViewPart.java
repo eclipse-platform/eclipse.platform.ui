@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.internal.ViewPane;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;

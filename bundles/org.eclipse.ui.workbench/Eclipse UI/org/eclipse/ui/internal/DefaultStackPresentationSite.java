@@ -82,13 +82,6 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#isMovable()
-	 */
-	public boolean isMoveable(IPresentablePart part) {
-		return true;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(org.eclipse.ui.internal.skins.IPresentablePart, boolean)
 	 */
 	public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard) {
@@ -122,12 +115,8 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 		
 	}
 
-	public boolean isPartMoveable(IPresentablePart toMove) {
-		return isMoveable(toMove);
-	}
+	public abstract boolean isPartMoveable(IPresentablePart toMove);
 
-	public boolean isStackMoveable() {
-		return isMoveable(null);
-	}
+	public abstract boolean isStackMoveable();
 	
 }

@@ -66,7 +66,7 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
- * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
+ * Base class for StackPresentations that display IPresentableParts in a PaneFolder. 
  * 
  * @since 3.0
  */
@@ -305,7 +305,7 @@ public class BasicStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (getSite().isMoveable(part)) {
+				if (getSite().isPartMoveable(part)) {
 					dragStart = tabFolder.indexOf(tabUnderPointer);
 					getSite().dragStart(part, 
 						tabFolder.getControl().toDisplay(localPos), false);

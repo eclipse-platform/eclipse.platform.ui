@@ -120,9 +120,6 @@ public class PartTabFolder extends PartStack {
 	 * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
 	 */
 	protected boolean isMoveable(IPresentablePart part) {
-	    if (part == null) {
-	        return canMoveFolder();
-	    }
         ViewPane pane = (ViewPane)getPaneFor(part);
         Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
