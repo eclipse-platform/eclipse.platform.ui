@@ -15,6 +15,7 @@
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="factory" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
