@@ -54,6 +54,7 @@ public abstract class Command extends Request {
 	public final static Tag CUSTOM_TAG = new Tag(true);
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
+	public final static Version VERSION = new Version();
 	
 	// Empty argument array
 	public final static String[] NO_ARGUMENTS = new String[0];
