@@ -127,9 +127,14 @@ public class Main {
 	protected String installLocation = null;
 
 	/**
-	 * The configuration to use.
+	 * The location of the configuration information for this instance
 	 */
-	protected String configurationLocation;
+	protected String configurationLocation = null;
+
+	/**
+	 * The location of the configuration information in the install root
+	 */
+	protected String parentConfigurationLocation = null;
 
 	/**
 	 * The id of the bundle that will contain the framework to run.  Defaults to org.eclipse.osgi.
@@ -176,23 +181,35 @@ public class Main {
 	private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
 
 	// constants: configuration file location
+	private static final String CONFIG_DIR = "configuration/"; //$NON-NLS-1$
 	private static final String CONFIG_FILE = "config.ini"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
-	private static final String USER_HOME = "user.home"; //$NON-NLS-1$
-	private static final String USER_DIR = "user.dir"; //$NON-NLS-1$
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
 	private static final String PRODUCT_SITE_ID = "id"; //$NON-NLS-1$
 	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
 	// constants: System property keys and/or configuration file elements
-	private static final String CFG_INSTALLLOCATION= "osgi.installLocation"; //$NON-NLS-1$
-	private static final String CFG_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
-	private static final String CFG_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
-	private static final String CFG_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
-	private static final String CFG_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
-	private static final String CFG_EOF = "eof"; //$NON-NLS-1$
+	/** @deprecated remove this constant */
+	private static final String PROP_INSTALL_LOCATION= "osgi.installLocation"; //$NON-NLS-1$
+
+	private static final String PROP_USER_HOME = "user.home"; //$NON-NLS-1$
+	private static final String PROP_USER_DIR = "user.dir"; //$NON-NLS-1$
+	private static final String PROP_INSTALL_AREA = "osgi.install.area"; //$NON-NLS-1$
+	private static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
+	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded"; //$NON-NLS-1$
+	private static final String PROP_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
+	private static final String PROP_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
+	private static final String PROP_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
+	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
+	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
+
+	// Data mode constants for user, configuration and data locations.
+	private static final String NONE = "<none>"; //$NON-NLS-1$
+	private static final String NO_DEFAULT = "<noDefault>"; //$NON-NLS-1$
+	private static final String USER_HOME = "<user.home>"; //$NON-NLS-1$
+	private static final String USER_DIR = "<user.dir>"; //$NON-NLS-1$
 
 	// log file handling
 	protected static final String SESSION = "!SESSION"; //$NON-NLS-1$
@@ -201,11 +218,11 @@ public class Main {
 	protected static final String STACK = "!STACK"; //$NON-NLS-1$
 	protected static final int ERROR = 4;
 	protected static final String PLUGIN_ID = "org.eclipse.core.launcher"; //$NON-NLS-1$
-	protected static File logFile = null;
-	protected static BufferedWriter log = null;
-	protected static boolean newSession = true;
+	protected File logFile = null;
+	protected BufferedWriter log = null;
+	protected boolean newSession = true;
 
-	protected static String[] arguments;
+	protected String[] arguments;
 
 	static class Identifier {
 		private static final String DELIM = ". "; //$NON-NLS-1$
@@ -264,6 +281,14 @@ public class Main {
 	 * @exception Exception thrown if a problem occurs during the launch
 	 */
 	protected Object basicRun(String[] args) throws Exception {
+		System.getProperties().setProperty("eclipse.debug.startupTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
+		String[] passThruArgs = processCommandLine(args);
+		processConfiguration();
+		// need to ensure that getInstallLocation is called at least once to initialize the value.
+		// Do this AFTER processing the configuration to allow the configuration to set
+		// the install location.  
+		getInstallLocation();
+
 		// locate boot plugin (may return -dev mode variations)
 		URL[] bootPath = getBootPath(bootLocation);
 
@@ -276,7 +301,7 @@ public class Main {
 		Class clazz = loader.loadClass(STARTER);
 		Method method = clazz.getDeclaredMethod("run", new Class[] { String[].class, Runnable.class }); //$NON-NLS-1$
 		try {
-			return method.invoke(clazz, new Object[] { args, endSplashHandler });
+			return method.invoke(clazz, new Object[] { passThruArgs, endSplashHandler });
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof Error)
 				throw (Error) e.getTargetException();
@@ -380,13 +405,13 @@ public class Main {
 	}
 
 	private void addBaseJars(String devBase, ArrayList result) throws IOException {
-		String baseJarList = System.getProperty(CFG_CLASSPATH);
+		String baseJarList = System.getProperty(PROP_CLASSPATH);
 		if (baseJarList == null) {
-			Properties defaults = loadProperties(new URL(devBase + "eclipse.properties"));
-			baseJarList = defaults.getProperty(CFG_CLASSPATH);
+			Properties defaults = loadProperties(devBase + "eclipse.properties");
+			baseJarList = defaults.getProperty(PROP_CLASSPATH);
 			if (baseJarList == null)
-				throw new IOException("Unable to initialize " + CFG_CLASSPATH);
-			System.getProperties().put(CFG_CLASSPATH, baseJarList);
+				throw new IOException("Unable to initialize " + PROP_CLASSPATH);
+			System.getProperties().put(PROP_CLASSPATH, baseJarList);
 		}
 		String[] baseJars = getArrayFromList(baseJarList);
 		for (int i = 0; i < baseJars.length; i++) {
@@ -431,15 +456,15 @@ public class Main {
 		} else {
 			// search in the root location
 			url = new URL(getInstallLocation());
-			String path = url.getFile() + "/plugins"; //$NON-NLS-1$
+			String path = url.getFile() + "plugins"; //$NON-NLS-1$
 			path = searchFor(framework, path);
 			if (path == null)
 				throw new RuntimeException("Could not find framework"); //$NON-NLS-1$
 			// add on any dev path elements
 			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 		}
-		if (System.getProperty(CFG_FRAMEWORK) == null)
-			System.getProperties().put(CFG_FRAMEWORK, url.toExternalForm());
+		if (System.getProperty(PROP_FRAMEWORK) == null)
+			System.getProperties().put(PROP_FRAMEWORK, url.toExternalForm());
 		if (debug) 
 			System.out.println("Framework located:\n    " + url.toExternalForm());
 		URL[] result = getDevPath(url);
@@ -498,7 +523,7 @@ public class Main {
 	* <code>0</code> if left == right;
 	* <code>>0</code> if left > right;
 	*/
-	private static int compareVersion(Object[] left, Object[] right) {
+	private int compareVersion(Object[] left, Object[] right) {
 
 		int result = ((Integer) left[0]).compareTo((Integer) right[0]); // compare major
 		if (result != 0)
@@ -546,6 +571,117 @@ public class Main {
 		return result;
 	}
 
+	private URL buildURL(String spec) {
+		if (spec == null)
+			return null;
+		try {
+			return new URL(spec);
+		} catch (MalformedURLException e) {
+			if (spec.startsWith("file:"))
+				return null;
+			return buildURL("file:" + spec);
+		}
+	}
+	private URL buildLocation(String property, URL defaultLocation, String userDefaultAppendage) {
+		URL result = null;
+		String location = System.getProperty(property);
+		System.getProperties().remove(property);
+		// if the instance location is not set, predict where the workspace will be and 
+		// put the instance area inside the workspace meta area.
+		if (location == null) 
+			result = defaultLocation;
+		else if (location.equalsIgnoreCase(NONE))
+			return null;
+		else if (location.equalsIgnoreCase(NO_DEFAULT))
+			result = buildURL(location);
+		else {
+			if (location.equalsIgnoreCase(USER_HOME)) 
+				location = computeDefaultUserAreaLocation(userDefaultAppendage);
+			if (location.equalsIgnoreCase(USER_DIR)) 
+				location = new File(System.getProperty(PROP_USER_DIR), userDefaultAppendage).getAbsolutePath();
+			result = buildURL(location);
+		}
+		if (result != null)
+			System.getProperties().put(property, result.toExternalForm());
+		return result;
+	}
+
+	/** 
+	 * Retuns the default file system path for the configuration location.
+	 * By default the configuration information is in the installation directory
+	 * if this is writeable.  Otherwise it is located somewhere in the user.home
+	 * area relative to the current product. 
+	 * @return the default file system path for the configuration information
+	 */
+	private String computeDefaultConfigurationLocation() {
+		// 1) We store the config state relative to the 'eclipse' directory if possible
+		// 2) If this directory is read-only 
+		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
+		//    is unique for each local user, and <application-id> is the one 
+		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
+		//    exist, use "eclipse" as the application-id.
+
+		String install = getInstallLocation();
+		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
+		File installDir = new File(install.substring(5));
+		if (install.startsWith("file:")) {
+			if (installDir.canWrite()) 
+				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
+		}
+		// We can't write in the eclipse install dir so try for some place in the user's home dir
+		return computeDefaultUserAreaLocation(CONFIG_DIR);
+	}
+
+	/**
+	 * Returns a files system path for an area in the user.home region related to the
+	 * current product.  The given appendage is added to this base location
+	 * @param pathAppendage the path segments to add to computed base
+	 * @return a file system location in the user.home area related the the current
+	 *   product and the given appendage
+	 */
+	private String computeDefaultUserAreaLocation(String pathAppendage) {
+		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
+		//    is unique for each local user, and <application-id> is the one 
+		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
+		//    exist, use "eclipse" as the application-id.
+		URL installURL = buildURL(getInstallLocation());
+		if (installURL == null)
+			return null;
+		File installDir = new File(installURL.getPath());
+		String appName = "." + ECLIPSE; //$NON-NLS-1$
+		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER );
+		if (eclipseProduct.exists()) {
+			Properties props = new Properties();
+			try {
+				props.load(new FileInputStream(eclipseProduct));
+				String appId = props.getProperty(PRODUCT_SITE_ID);
+				if (appId == null || appId.trim().length() == 0)
+					appId = ECLIPSE;
+				String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
+				if (appVersion == null || appVersion.trim().length() == 0)
+					appVersion = ""; //$NON-NLS-1$
+				appName += File.separator + appId + "_" + appVersion; //$NON-NLS-1$
+			} catch (IOException e) {
+				// Do nothing if we get an exception.  We will default to a standard location 
+				// in the user's home dir.
+			}
+		}
+		String userHome = System.getProperty(PROP_USER_HOME);
+		return new File(userHome, appName + "/" + pathAppendage).getAbsolutePath(); //$NON-NLS-1$
+	}
+	/**
+	 * Runs this launcher with the arguments specified in the given string.
+	 * 
+	 * @param argString the arguments string
+	 * @exception Exception thrown if a problem occurs during launching
+	 */
+	public static void main(String argString) {
+		Vector list = new Vector(5);
+		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
+			list.addElement(tokens.nextElement());
+		main((String[]) list.toArray(new String[list.size()]));
+	}
+
 	/**
 	* Runs the platform with the given arguments.  The arguments must identify
 	* an application to run (e.g., <code>-application com.example.application</code>).
@@ -556,12 +692,26 @@ public class Main {
 	* <p>
 	* Clients wishing to run the platform without a following <code>System.exit</code>
 	* call should use <code>run()</code>.
-	*
-	* @see #run
+	* </p>
 	* 
 	* @param args the command line arguments
+	* @see #run
 	*/
 	public static void main(String[] args) {
+		int result = new Main().run(args);
+		System.exit(result);
+	}
+	
+	/**
+	* Runs the platform with the given arguments.  The arguments must identify
+	* an application to run (e.g., <code>-application com.example.application</code>).
+	* Returns the value returned from running the application.
+	* If the application's return value is an <code>Integer</code>, N is this value.
+	* In all other cases, N = 0.
+	*
+	* @param args the command line arguments
+	*/	
+	public int run(String[] args) {
 		Object result = null;
 		arguments = args;
 		// Check to see if we are running with a compatible VM.
@@ -569,49 +719,32 @@ public class Main {
 		// by the executable and an appropriate message will be displayed
 		// to the user.
 		if (!isCompatible())
-			System.exit(14);
+			return 14;
 		// Check to see if there is already a platform running in
 		// this workspace. If there is, then return an exit code of "15" which
 		// will be recognized by the executable and an appropriate message
 		// will be displayed to the user.
 		if (isAlreadyRunning())
-			System.exit(15);
-		Main launcher = new Main();
+			return 15;
 		try {
-			result = launcher.run(args);
+			result = basicRun(args);
 		} catch (Throwable e) {
 			// try and take down the splash screen.
-			launcher.takeDownSplash();
+			takeDownSplash();
 			log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
 			log(e);
 			// Return "unlucky" 13 as the exit code. The executable will recognize
 			// this constant and display a message to the user telling them that
 			// there is information in their log file.
-			System.exit(13);
+			return 13;
 		}
-
-		// TODO should we be doing the system exit here or leave it in the runtime?
-		//	if (!runningOSGi) {
-		if (false) {
-			int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-			System.exit(exitCode);
-		}
+		return result instanceof Integer ? ((Integer) result).intValue() : 0;
 	}
 	/**
-	 * Runs this launcher with the arguments specified in the given string.
-	 * 
-	 * @param argString the arguments string
-	 * @exception Exception thrown if a problem occurs during launching
-	 */
-	public static void main(String argString) throws Exception {
-		Vector list = new Vector(5);
-		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
-			list.addElement(tokens.nextElement());
-		main((String[]) list.toArray(new String[list.size()]));
-	}
-
-	/**
-	 * Processes the command line arguments
+	 * Processes the command line arguments.  The general principle is to NOT
+	 * consume the arguments and leave them to be processed by Eclipse proper.
+	 * There are a few args which are directed towards main() and a few others which
+	 * we need to know about.  Very few should actually be consumed here.
 	 * 
 	 * @return the arguments to pass through to the launched application
 	 * @param args the command line arguments
@@ -626,14 +759,16 @@ public class Main {
 			// check if debug should be enabled for the entire platform
 			if (args[i].equalsIgnoreCase(DEBUG)) {
 				debug = true;
-				// passed thru this arg (i.e., do not set found = true
+				// passed thru this arg (i.e., do not set found = true)
 				continue;
 			}
 
+			// TODO confirm with Update that this arg can be removed.  We should be able to ignore this
+			// case (only used for some splash logic) and consume the arg
 			// check if this is initialization pass
 			if (args[i].equalsIgnoreCase(INITIALIZE)) {
 				cmdInitialize = true;
-				// passed thru this arg (i.e., do not set found = true
+				// passed thru this arg (i.e., do not set found = true)
 				continue;
 			}
 
@@ -658,25 +793,6 @@ public class Main {
 				continue;
 			String arg = args[++i];
 
-			// look for the laucher to run
-			if (args[i - 1].equalsIgnoreCase(BOOT)) {
-				//			bootLocation = arg;
-				found = true;
-			}
-
-			// TODO replace the use of framework with boot in its generic sense
-			// look for the framework to run
-			if (args[i - 1].equalsIgnoreCase(FRAMEWORK)) {
-				framework = arg;
-				found = true;
-			}
-
-			// look explicitly set install root
-			if (args[i - 1].equalsIgnoreCase(INSTALL)) {
-				setInstallLocation(arg);
-				found = true;
-			}
-
 			// look for the development mode and class path entries.  
 			if (args[i - 1].equalsIgnoreCase(DEV)) {
 				inDevelopmentMode = true;
@@ -684,12 +800,28 @@ public class Main {
 				continue;
 			}
 
-			// look for the configuration to use
+			// look for the framework to run
+			if (args[i - 1].equalsIgnoreCase(FRAMEWORK)) {
+				framework = arg;
+				found = true;
+			}
+
+			// look for explicitly set install root
+			// Consume the arg here to ensure that the launcher and Eclipse get the 
+			// same value as each other.  
+			if (args[i - 1].equalsIgnoreCase(INSTALL)) {
+				found = true;
+				URL url = buildURL(arg);
+				if (url == null)
+					continue;
+				System.getProperties().put(PROP_INSTALL_AREA, url.toExternalForm()); 
+			}
+
+			// look for the configuration to use.  
+			// Consume the arg here to ensure that the launcher and Eclipse get the 
+			// same value as each other.  
 			if (args[i - 1].equalsIgnoreCase(CONFIGURATION)) {
-				configurationLocation = arg;
-				// we  mark -configuration for removal. It will be
-				// reinserted after we determine the actual URL of
-				// the configuration file to use.
+				System.getProperties().put(PROP_CONFIG_AREA, arg);
 				found = true;
 			}
 
@@ -704,6 +836,10 @@ public class Main {
 				endSplash = arg;
 				found = true;
 			}
+
+			// consume the old -boot option
+			if (args[i - 1].equalsIgnoreCase(BOOT)) 
+				found = true;
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -725,123 +861,75 @@ public class Main {
 		}
 		return passThruArgs;
 	}
-	/**
-	 * Runs the application to be launched.
-	 * 
-	 * @return the return value from the launched application
-	 * @param args the arguments to pass to the application
-	 * @exception thrown if a problem occurs during launching
-	 */
-	public Object run(String[] args) throws Exception {
-		System.getProperties().setProperty("eclipse.debug.startupTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
-		String[] passThruArgs = processCommandLine(args);
-		setConfigurationLocation();
-		passThruArgs = processConfiguration(passThruArgs);
-		// need to ensure that getInstallLocation is called at least once to initialize the value.
-		getInstallLocation();
-		return basicRun(passThruArgs);
+
+	private String getConfigurationLocation() {
+		if (configurationLocation != null)
+			return configurationLocation;
+		URL result = buildLocation(PROP_CONFIG_AREA, null, CONFIG_DIR);
+		if (result == null)
+			result = buildURL(computeDefaultConfigurationLocation());
+		if (result == null)
+			return null;
+		// for backward compatibility, remove the filename if the location is a .cfg file.  config
+		// locations are directories not files now.
+		configurationLocation = result.toExternalForm();
+		if (configurationLocation.endsWith(".cfg")) {
+			int index = configurationLocation.lastIndexOf('/');
+			configurationLocation = configurationLocation.substring(0, index + 1);
+		}
+		if (!configurationLocation.endsWith("/"))
+			configurationLocation += "/";
+		System.getProperties().put(PROP_CONFIG_AREA, configurationLocation);
+		if (debug)
+			System.out.println("Configuration location:\n    " + configurationLocation);
+		return configurationLocation;
 	}
 
-	private void setConfigurationLocation() {
-		String location = System.getProperty("osgi.configuration.area");
-		if (location != null) {
-			configurationLocation = location;
-			return;
+	private void processConfiguration() {
+		loadConfiguration(getConfigurationLocation());
+		if (!"false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) {
+			URL parentConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR);
+			if (parentConfigurationLocation != null)
+				loadConfiguration(parentConfigurationLocation.toExternalForm());
 		}
-		// -configuration was not specified so compute a configLocation based on the
-		// install location.  If it is read/write then use it.  Otherwise use the user.home
-		if (configurationLocation == null || configurationLocation.trim().length() == 0) {
-			configurationLocation = computeDefaultConfigurationLocation() + "/.config";
-		} else {
-			// if -configuration was specified, then interpret the config location from the 
-			// value given.  Allow for the specification of a config file (.cfg) or a dir.
-			configurationLocation = configurationLocation.replace(File.separatorChar, '/');
-			String tmp = null;
-			if (configurationLocation.equalsIgnoreCase(USER_HOME))
-				// configuration is in current working directory
-				tmp = System.getProperty(USER_HOME);
-			else if (configurationLocation.equalsIgnoreCase(USER_DIR))
-				// configuration is in current working directory
-				tmp = System.getProperty(USER_DIR);
-			// if it was either USER_HOME or USER_DIR then put .config on the end
-			if (tmp != null) {
-				if (!tmp.endsWith(File.separator))
-					tmp += File.separator;
-				configurationLocation = "file:" + tmp.replace(File.separatorChar, '/') + "/.config"; //$NON-NLS-1$
-			} else {
-				// otherwise it was just a regular location spec so trim off the .cfg if any 
-				// (to handle legacy -configuration forms)
-				int index = configurationLocation.lastIndexOf('/');
-				if (configurationLocation.endsWith(".cfg") || configurationLocation.endsWith("/"))
-					configurationLocation = configurationLocation.substring(0, index);
-			}
-			try {
-				configurationLocation = new URL(configurationLocation).getFile();
-			} catch (MalformedURLException e) {
-				// TODO do something in the error case
-			}
-		}
-		System.getProperties().put("osgi.configuration.area", configurationLocation);
-	}
-
-	/*
-	 * After the command line arguments have been processed, we try
-	 * to locate and load the platform configuration file. It contains
-	 * information maintained by the install/ update support. In 
-	 * particular, the following are needed at this point
-	 * in the startup sequence:
-	 * -> if -boot was not specified, which boot.jar to load 
-	 *    BootLoader from (original core.boot plugin may have been updated)
-	 * -> if -feature was not specified, what is the default feature
-	 *    (product packagers can set the default)
-	 * -> if we were requested to put up the splash (-showsplash
-	 *    was specified), which one (based on defaulted or
-	 *    specified feature information)
-	 * Note, that if we can't find the platform configuration file,
-	 * or it does not contain the information we are looking for,
-	 * the startup support ends up computing "reasonable" defaults
-	 * as before (based on relative locations within the file system)
-	 */
-	private String[] processConfiguration(String[] passThruArgs) throws MalformedURLException {
-		// attempt to locate configuration file
-		URL configURL = null;
-		// If a configuration location was specified, process the given value to ensure it is the 
-		// right form etc.
-		if (configurationLocation != null && configurationLocation.trim().length() != 0) {
-			configURL = new URL("file:" + configurationLocation + "/" + CONFIG_FILE);
-		} else {
-			// TODO what to do here? configuration not specified - defer to BootLoader
-		}
-
-		// now we either have a well-formed URL or null. If null then the default configuraiotn locaiton will be used.
-		loadConfiguration(configURL);
-		String urlString = System.getProperty(CFG_FRAMEWORK, null);
+		// setup the 
+		String urlString = System.getProperty(PROP_FRAMEWORK, null);
 		if (urlString != null) {
 			if (!urlString.endsWith("/")) {
 				urlString += "/";
-				System.getProperties().put(CFG_FRAMEWORK, urlString);
+				System.getProperties().put(PROP_FRAMEWORK, urlString);
 			}
 			bootLocation = resolve(urlString);
 		}
-		return passThruArgs;
 	}
 
 	/**
 	 * Returns url of the location this class was loaded from
 	 */
 	private String getInstallLocation() {
+		// TODO make the install location property end in / if it is a dir
 		if (installLocation != null)
 			return installLocation;
 
-		installLocation = System.getProperty(CFG_INSTALLLOCATION);
-		if (installLocation != null)
+		// value is not set so compute the default and set the value
+		installLocation = System.getProperty(PROP_INSTALL_AREA);
+		// TODO remove this if when we get off the old property value
+		if (installLocation == null)
+			installLocation = System.getProperty(PROP_INSTALL_LOCATION);			
+		if (installLocation != null) {
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
+			// TODO remove this set when we get off the old property
+			System.getProperties().put(PROP_INSTALL_LOCATION, installLocation); 
+			if (debug)
+				System.out.println("Install location:\n    " + installLocation);
 			return installLocation;
+		}
 
-		URL result = getClass().getProtectionDomain().getCodeSource().getLocation();
+		URL result = Main.class.getProtectionDomain().getCodeSource().getLocation();
 		String path = decode(result.getFile());
 		path = new File(path).getAbsolutePath().replace(File.separatorChar, '/');
 		// TODO need a better test for windows
-		// If on Windows then cannoicalize the drive letter to be lowercase.
+		// If on Windows then canonicalize the drive letter to be lowercase.
 		if (File.separatorChar == '\\')
 			if (Character.isUpperCase(path.charAt(0))) {
 				char[] chars = path.toCharArray();
@@ -851,105 +939,42 @@ public class Main {
 		if (path.endsWith(".jar")) //$NON-NLS-1$
 			path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
 		try {
-			result = new URL(result.getProtocol(), result.getHost(), result.getPort(), path);
+			installLocation = new URL(result.getProtocol(), result.getHost(), result.getPort(), path).toExternalForm();
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
+			// TODO remove this set when we get off the old property
+			System.getProperties().put(PROP_INSTALL_LOCATION, installLocation); 
 		} catch (MalformedURLException e) {
 			// TODO Very unlikely case.  log here.  
 		}
-		setInstallLocation(result.toExternalForm());
-		return result.toExternalForm();
-	}
-
-	private String computeDefaultConfigurationLocation() {
-		// 1) We store the config state relative to the 'eclipse' directory if possible
-		// 2) If this directory is read-only 
-		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
-		//    is unique for each local user, and <application-id> is the one 
-		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
-		//    exist, use "eclipse" as the application-id.
-
-		String install = getInstallLocation();
-		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
-		File installDir = new File(install.substring(5));
-		if (install.startsWith("file:")) {
-			if (installDir.canWrite()) {
-				if (debug)
-					System.out.println("Using the installation directory."); //$NON-NLS-1$
-				return installDir.getAbsolutePath();
-			}
-		}
-
-		// We can't write in the eclipse install dir so try for some place in the user's home dir
 		if (debug)
-			System.out.println("Using the user.home location."); //$NON-NLS-1$
-		String appName = "." + ECLIPSE; //$NON-NLS-1$
-		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER);
-		if (eclipseProduct.exists()) {
-			Properties props = new Properties();
-			try {
-				props.load(new FileInputStream(eclipseProduct));
-				String appId = props.getProperty(PRODUCT_SITE_ID);
-				if (appId == null || appId.trim().length() == 0)
-					appId = ECLIPSE;
-				String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
-				if (appVersion == null || appVersion.trim().length() == 0)
-					appVersion = ""; //$NON-NLS-1$
-				appName += File.separator + appId + "_" + appVersion; //$NON-NLS-1$
-			} catch (IOException e) {
-				// Do nothing if we get an exception.  We will default to a standard location 
-				// in the user's home dir.
-			}
-		}
-
-		String userHome = System.getProperty(USER_HOME);
-		File configDir = new File(userHome, appName);
-		configDir.mkdirs();
-		return configDir.getAbsolutePath();
+			System.out.println("Install location:\n    " + installLocation);
+		return installLocation;
 	}
 
 	/*
-	 * Load the configuration file. If not specified, default to the workspace
+	 * Load the given configuration file
 	 */
-	private Properties loadConfiguration(URL url) {
-		if (url == null) {
-			// configuration URL was not specified so compute the default
-			try {
-				String location = computeDefaultConfigurationLocation();
-				url = new URL(location + "/" + CONFIG_FILE); //$NON-NLS-1$ 
-			} catch (IOException e1) {
-				// .continue
-			}
-		}
+	private void loadConfiguration(String url) {
 		Properties result = null;
+		url += CONFIG_FILE;
 		try {
-			// configuration url was specified ... use it
+			if (debug)
+				System.out.print("Configuration file:\n    " + url.toString()); //$NON-NLS-1$
 			result = loadProperties(url);
 			if (debug)
-				System.out.println("Configuration file:\n    " + url.toString()); //$NON-NLS-1$
+				System.out.println("  loaded"); //$NON-NLS-1$
 		} catch (IOException e) {
-			// the given or computed configuration locations do not have the file we are after.
-			// The file may however be in the pre-defined install location...
-			try {
-				String location = getInstallLocation().replace('/', File.separatorChar);
-				if (!location.endsWith(File.separator))
-					location += File.separator;
-				location = location + ".config" + File.separator + CONFIG_FILE; //$NON-NLS-1$
-				url = new URL(location);
-				result = loadProperties(url);
-				if (debug)
-					System.out.println("Configuration file\n    " + url.toString()); //$NON-NLS-1$
-			} catch (IOException e1) {
-				// continue ...
-				if (debug)
-					System.out.println("Unable to load configuration\n" + e1); //$NON-NLS-1$
-			}
+			if (debug)
+				System.out.println("  not found or not read"); //$NON-NLS-1$
 		}
-		if (result != null)
-			mergeProperties(System.getProperties(), result);
-		return result;
+		mergeProperties(System.getProperties(), result);
 	}
 
-	private Properties loadProperties(URL url) throws IOException {
+	private Properties loadProperties(String location) throws IOException {
 		// try to load saved configuration file (watch for failed prior save())
+		URL url = buildURL(location);
+		if (url == null)
+			return null;
 		Properties result = null;
 		IOException originalException = null;
 		try {
@@ -984,7 +1009,7 @@ public class Main {
 			is = url.openStream();
 			props.load(is);
 			// check to see if we have complete config file
-			if (!CFG_EOF.equals(props.getProperty(CFG_EOF)))
+			if (!PROP_EOF.equals(props.getProperty(PROP_EOF)))
 				throw new IOException("Incomplete configuration file: " + url.toExternalForm()); //$NON-NLS-1$
 		} finally {
 			if (is != null)
@@ -1108,10 +1133,10 @@ public class Main {
 	 * so the return value here is the file system path.
 	 */
 	private String getSplashLocation(URL[] bootPath) {
-		String result = System.getProperty(CFG_SPLASHLOCATION);
+		String result = System.getProperty(PROP_SPLASHLOCATION);
 		if (result != null)
 			return result;
-		String splashPath = System.getProperty(CFG_SPLASHPATH);
+		String splashPath = System.getProperty(PROP_SPLASHPATH);
 		if (splashPath != null) {
 			String[] entries = getArrayFromList(splashPath);
 			ArrayList path = new ArrayList(entries.length);
@@ -1128,7 +1153,7 @@ public class Main {
 			// see if we can get a splash given the splash path
 			result = searchForSplash((String[]) path.toArray(new String[path.size()]));
 			if (result != null) {
-				System.getProperties().put(CFG_SPLASHLOCATION, result);
+				System.getProperties().put(PROP_SPLASHLOCATION, result);
 				return result;
 			}
 		}
@@ -1143,7 +1168,7 @@ public class Main {
 				temp = temp.substring(0, pix);
 				result = searchForSplash(new String[] { temp });
 				if (result != null) 
-					System.getProperties().put(CFG_SPLASHLOCATION, result);
+					System.getProperties().put(PROP_SPLASHLOCATION, result);
 			}
 		}
 		return result;
@@ -1203,14 +1228,11 @@ public class Main {
 		// handle the case where people mistakenly spec a refererence: url.
 		if (urlString.startsWith("reference:")) {
 			urlString = urlString.substring(10);
-			System.getProperties().put(CFG_FRAMEWORK, urlString);
+			System.getProperties().put(PROP_FRAMEWORK, urlString);
 		}
 		if (urlString.startsWith(PLATFORM_URL)) {
-			String root = getInstallLocation();
-			if (!root.endsWith("/")) //$NON-NLS-1$
-				root += "/"; //$NON-NLS-1$
 			String path = urlString.substring(PLATFORM_URL.length());
-			return root + path;
+			return getInstallLocation() + path;
 		} else
 			return urlString;
 	}
@@ -1218,7 +1240,7 @@ public class Main {
 	/*
 	 * Entry point for logging.
 	 */
-	private static synchronized void log(Object obj) {
+	private synchronized void log(Object obj) {
 		if (obj == null)
 			return;
 		try {
@@ -1260,7 +1282,7 @@ public class Main {
 	/*
 	 * This should only be called from #log()
 	 */
-	private static void write(Object obj) throws IOException {
+	private void write(Object obj) throws IOException {
 		if (obj == null)
 			return;
 		if (obj instanceof Throwable) {
@@ -1290,45 +1312,17 @@ public class Main {
 		}
 		log.newLine();
 	}
-	private static void computeLogFileLocation() {
+	private void computeLogFileLocation() {
 		if (logFile != null)
 			return;
 		// compute the base location and then append the name of the log file
-		File base = computeMetadataLocation();
-		logFile = new File(base, ".log"); //$NON-NLS-1$
+		URL base = buildURL(System.getProperty(PROP_CONFIG_AREA));
+		if (base == null)
+			return;
+		logFile = new File(base.getPath(), ".log"); //$NON-NLS-1$
 		logFile.getParentFile().mkdirs();
 	}
-	private static File computeLockFileLocation() {
-		// compute the base location and then append the name of the lock file
-		File base = computeMetadataLocation();
-		File result = new File(base, ".lock"); //$NON-NLS-1$
-		result.getParentFile().mkdirs();
-		return result;
-	}
-
-	/*
-	 * Returns the location of the metadata.  This is a bit of a hack since it can be called 
-	 * very early in the case of an error (to get the log location).  So just iterate over the 
-	 * command line and look for -data and compute if none is found.
-	 */
-	private static File computeMetadataLocation() {
-		File result = null;
-		// check to see if the user specified a workspace location in the command-line args
-		for (int i = 0; arguments != null && result == null && i < arguments.length; i++) {
-			if (arguments[i].equalsIgnoreCase(DATA)) {
-				// found the -data command line argument so the next argument should be the
-				// workspace location. Ensure that we have another arg to check
-				if (i + 1 < arguments.length)
-					result = new File(arguments[i + 1]);
-			}
-		}
-		// otherwise use the default location
-		if (result == null)
-			result = new File(System.getProperty("user.dir"), "workspace"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// append the .metadata directory to the path
-		return new File(result, ".metadata"); //$NON-NLS-1$
-	}
+	
 	/**
 	 * Converts an ASCII character representing a hexadecimal
 	 * value into its integer equivalent.
@@ -1378,7 +1372,7 @@ public class Main {
 		}
 	}
 
-	private static void openLogFile() throws IOException {
+	private void openLogFile() throws IOException {
 		computeLogFileLocation();
 		try {
 			log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8")); //$NON-NLS-1$
@@ -1387,14 +1381,14 @@ public class Main {
 			throw e;
 		}
 	}
-	private static BufferedWriter logForStream(OutputStream output) {
+	private BufferedWriter logForStream(OutputStream output) {
 		try {
 			return new BufferedWriter(new OutputStreamWriter(output, "UTF-8")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			return new BufferedWriter(new OutputStreamWriter(output));
 		}
 	}
-	private static void closeLogFile() throws IOException {
+	private void closeLogFile() throws IOException {
 		try {
 			if (log != null) {
 				log.flush();
@@ -1405,15 +1399,29 @@ public class Main {
 		}
 	}
 	
-	private void setInstallLocation(String location) {
-		installLocation = location;
-		System.getProperties().setProperty(CFG_INSTALLLOCATION, installLocation); 
+	private void mergeProperties(Properties destination, Properties source) {
+		if (destination == null || source == null)
+			return;
+		for (Enumeration e = source.keys(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
+			if (!key.equals(PROP_EOF)) {
+				String value = source.getProperty(key);
+				if (destination.getProperty(key) == null)
+					destination.put(key, value);
+			}
+		}
 	}
+
+	
+	
+
+	// TODO the following methods will be deleted before 3.0 ships
 	/**
 	 * Return a boolean value indicating whether or not the version of the JVM is
 	 * deemed to be compatible with Eclipse.
+	 * @deprecated move this check to the application
 	 */
-	private static boolean isCompatible() {
+	private boolean isCompatible() {
 		try {
 			String vmVersionString = System.getProperty("java.version"); //$NON-NLS-1$
 			Identifier minimum = new Identifier(1, 3, 0);
@@ -1429,11 +1437,20 @@ public class Main {
 			return true;
 		}
 	}
+
+	private File computeLockFileLocation() {
+		// compute the base location and then append the name of the lock file
+		File base = computeMetadataLocation();
+		File result = new File(base, ".lock"); //$NON-NLS-1$
+		result.getParentFile().mkdirs();
+		return result;
+	}
 	/**
 	 * Return a boolean value indicating whether or not the platform is already
 	 * running in this workspace.
+	 * @deprecated  The application is now responsible for checking the lock
 	 */
-	private static boolean isAlreadyRunning() {
+	private boolean isAlreadyRunning() {
 		if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
 			return false;
 		// Calculate the location of the lock file
@@ -1455,15 +1472,28 @@ public class Main {
 		}
 	}
 
-	private void mergeProperties(Properties destination, Properties source) {
-		for (Enumeration e = source.keys(); e.hasMoreElements();) {
-			String key = (String) e.nextElement();
-			if (!key.equals(CFG_EOF)) {
-				String value = source.getProperty(key);
-				if (destination.getProperty(key) == null)
-					destination.put(key, value);
+	/*
+	 * Returns the location of the metadata.  This is a bit of a hack since it can be called 
+	 * very early in the case of an error (to get the log location).  So just iterate over the 
+	 * command line and look for -data and compute if none is found.
+	 */
+	private File computeMetadataLocation() {
+		File result = null;
+		// check to see if the user specified a workspace location in the command-line args
+		for (int i = 0; arguments != null && result == null && i < arguments.length; i++) {
+			if (arguments[i].equalsIgnoreCase(DATA)) {
+				// found the -data command line argument so the next argument should be the
+				// workspace location. Ensure that we have another arg to check
+				if (i + 1 < arguments.length)
+					result = new File(arguments[i + 1]);
 			}
 		}
+		// otherwise use the default location
+		if (result == null)
+			result = new File(System.getProperty("user.dir"), "workspace"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// append the .metadata directory to the path
+		return new File(result, ".metadata"); //$NON-NLS-1$
 	}
 
 }
