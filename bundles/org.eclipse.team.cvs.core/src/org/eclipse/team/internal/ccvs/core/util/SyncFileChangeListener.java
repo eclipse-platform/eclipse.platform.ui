@@ -74,6 +74,11 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						return true;
 					}
 					
+					if (resource.getType() == IResource.PROJECT) {
+						// If the project is not accessible, don't process it
+						if (!resource.isAccessible()) return false;
+					}
+					
 					String name = resource.getName();
 					int kind = delta.getKind();
 					IResource[] toBeNotified = new IResource[0];
