@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
-import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.ViewPart;
 
@@ -30,6 +29,7 @@ import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 /**

@@ -76,7 +76,7 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
             toolkit.setBackground(bg);
         }
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-                HyperlinkGroup.UNDERLINE_ROLLOVER);
+                HyperlinkGroup.UNDERLINE_HOVER);
 
         Form mainForm = toolkit.createForm(container);
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg");

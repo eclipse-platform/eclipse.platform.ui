@@ -22,12 +22,12 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 public abstract class ViewItem {
