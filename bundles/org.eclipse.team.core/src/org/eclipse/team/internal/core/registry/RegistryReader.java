@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.registry;
+package org.eclipse.team.internal.core.registry;
 
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.internal.ui.Utils.Sorter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.team.internal.core.Sorter;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -46,7 +46,7 @@ public abstract class RegistryReader {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
-		WorkbenchPlugin.log(buf.toString());
+		TeamPlugin.log(IStatus.ERROR, buf.toString(), null);
 	}
 	/**
 	 * Logs a very common registry error when a required attribute is missing.

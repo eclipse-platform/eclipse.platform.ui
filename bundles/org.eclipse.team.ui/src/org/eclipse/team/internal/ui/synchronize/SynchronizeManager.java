@@ -483,7 +483,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		try {
 			// Initialize the participant registry - reads all participant
 			// extension descriptions.
-			participantRegistry.readRegistry(Platform.getExtensionRegistry(), TeamUIPlugin.ID, ITeamUIConstants.PT_SYNCPARTICIPANTS);
+			participantRegistry.readRegistry(Platform.getPluginRegistry(), TeamUIPlugin.ID, ITeamUIConstants.PT_SYNCPARTICIPANTS);
 
 			// Instantiate and register any dynamic participants saved from a
 			// previous session.

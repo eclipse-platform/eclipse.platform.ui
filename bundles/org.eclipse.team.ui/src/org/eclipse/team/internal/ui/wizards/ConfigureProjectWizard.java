@@ -153,7 +153,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 */
 	protected AdaptableList getAvailableWizards() {
 		AdaptableList result = new AdaptableList();
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();

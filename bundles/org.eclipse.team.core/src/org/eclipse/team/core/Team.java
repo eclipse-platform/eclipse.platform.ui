@@ -273,7 +273,7 @@ public final class Team {
 	private static void initializePluginPatterns(Map pTypes, Map fTypes) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
-			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.FILE_TYPES_EXTENSION);
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.FILE_TYPES_EXTENSION);
 			if (extension != null) {
 				IExtension[] extensions =  extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
@@ -388,7 +388,7 @@ public final class Team {
 	private static void initializePluginIgnores(SortedMap pIgnore, SortedMap gIgnore) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
-			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.IGNORE_EXTENSION);
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.IGNORE_EXTENSION);
 			if (extension != null) {
 				IExtension[] extensions =  extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
