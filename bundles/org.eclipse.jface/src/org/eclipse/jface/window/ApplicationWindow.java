@@ -256,12 +256,28 @@ protected void configureShell(Shell shell) {
 		menuBarManager.updateAll(true);
 		shell.setMenuBar(menuBarManager.createMenuBar((Decorations)shell));
 	}
+	
+	createTrimWidgets(shell);
 
 	// we need a special layout
 	shell.setLayout(new ApplicationWindowLayout());
 
+	
+}
+/**
+ * Create the widgets around the perimeter of the window.
+ * @param shell
+ */
+protected void createTrimWidgets(Shell shell) {
 	createToolBarControl(shell);
+	createStatusLine(shell);
+}
 
+/**
+ * Create the status line if required.
+ * @param shell
+ */
+protected void createStatusLine(Shell shell) {
 	if (statusLineManager != null) {
 		statusLineManager.createControl(shell);
 	}
