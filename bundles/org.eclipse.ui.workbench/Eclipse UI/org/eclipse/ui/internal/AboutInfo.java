@@ -317,7 +317,6 @@ public class AboutInfo extends NewConfigurationInfo {
 		ArrayList mappingsList = new ArrayList();
 		if (mappingsBundle != null) {
 			boolean found = true;
-			String readValue;
 			int i = 0;
 			while (found) {
 				try {

@@ -363,8 +363,8 @@ public class CyclePartAction extends PageEventAction {
 			public void keyReleased(KeyEvent e) {		
 				int keyCode = e.keyCode;
 				int stateMask = e.stateMask;
-				char character = e.character;
-				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+				//char character = e.character;
+				//int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
 
 				//System.out.println("\nRELEASED");
 				//printKeyEvent(e);
