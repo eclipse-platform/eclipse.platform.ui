@@ -20,8 +20,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.components.FactoryMap;
 import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.part.Part;
-import org.eclipse.ui.tests.result.AbstractTestLogger;
-import org.eclipse.ui.tests.result.UITestCaseWithResult;
+import org.eclipse.ui.tests.autotests.AbstractTestLogger;
+import org.eclipse.ui.tests.autotests.UITestCaseWithResult;
 
 /**
  * @since 3.1

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.result;
+package org.eclipse.ui.tests.autotests;
 
 import java.net.URL;
 
@@ -63,6 +63,9 @@ public class AutoTestSuite extends TestSuite {
         
         if (!logger.getErrors().isEmpty()) {
             IPath errorsPath = statePath.append(testName).append("errors.xml");
+            
+            System.out.println("Errors detected. Results written to " + errorsPath.toString());
+
             XMLMemento output = XMLMemento.createWriteRoot("errors");
             logger.getErrors().saveState(output);
             try {
@@ -73,8 +76,11 @@ public class AutoTestSuite extends TestSuite {
         }
         
         if (!logger.getUnknownTests().isEmpty()) {
-            
+
             IPath unknownPath = statePath.append(testName).append("newtests.xml");
+            
+            System.out.println("New tests detected. Results written to " + unknownPath.toString());
+
             XMLMemento output = XMLMemento.createWriteRoot("unknown");
             logger.getUnknownTests().saveState(output);
             try {

@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.dnd.TestDropLocation;
 
-public class DetachedDropTarget extends AbstractTestDropTarget {
+public class DetachedDropTarget implements TestDropLocation {
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -28,11 +27,10 @@ public class DetachedDropTarget extends AbstractTestDropTarget {
      * @see org.eclipse.ui.internal.dnd.TestDropLocation#getLocation()
      */
     public Point getLocation() {
-        Shell shell = getPage().getWorkbenchWindow().getShell();
-        Rectangle clientArea = shell.getClientArea();
-        Rectangle bounds = (Geometry.toDisplay(shell, clientArea));
-        Point centerPoint = Geometry.centerPoint(bounds);
-        return new Point(bounds.x + bounds.width + 20, centerPoint.y);
+        return new Point(0,0);
     }
 
+    public Shell[] getShells() {
+        return new Shell[0];
+    }
 }

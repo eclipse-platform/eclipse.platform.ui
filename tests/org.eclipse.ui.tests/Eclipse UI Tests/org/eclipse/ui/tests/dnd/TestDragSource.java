@@ -10,24 +10,30 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 /**
  * @since 3.0
  */
-public abstract class TestDragSource {
+public abstract class TestDragSource implements IWorkbenchWindowProvider {
     private WorkbenchPage page;
 
     public abstract String toString();
 
-    public abstract void drag(AbstractTestDropTarget target);
+    public abstract void drag(TestDropLocation target);
 
     public void setPage(WorkbenchPage page) {
         this.page = page;
     }
 
+    public IWorkbenchWindow getWorkbenchWindow() {
+        return getPage().getWorkbenchWindow();
+    }
+    
     public WorkbenchPage getPage() {
         if (page == null) {
             page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI
@@ -35,4 +41,6 @@ public abstract class TestDragSource {
         }
         return page;
     }
+    
+    
 }

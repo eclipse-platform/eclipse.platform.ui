@@ -18,11 +18,12 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.0
  */
-public class WindowDropTarget extends AbstractTestDropTarget {
+public class WindowDropTarget extends WorkbenchWindowDropTarget {
 
     private int side;
 
-    public WindowDropTarget(int side) {
+    public WindowDropTarget(IWorkbenchWindowProvider provider, int side) {
+        super(provider);
         this.side = side;
     }
 
@@ -37,7 +38,7 @@ public class WindowDropTarget extends AbstractTestDropTarget {
      * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
      */
     public Point getLocation() {
-        Shell shell = getPage().getWorkbenchWindow().getShell();
+        Shell shell = getShell();
         Rectangle clientArea = shell.getClientArea();
 
         return DragOperations.getPoint(Geometry.toDisplay(shell, clientArea),

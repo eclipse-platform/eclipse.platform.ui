@@ -16,13 +16,14 @@ import org.eclipse.ui.IEditorPart;
 /**
  * @since 3.0
  */
-public class EditorDropTarget extends AbstractTestDropTarget {
+public class EditorDropTarget extends WorkbenchWindowDropTarget {
 
     int editorIdx;
 
     int side;
 
-    public EditorDropTarget(int editorIdx, int side) {
+    public EditorDropTarget(IWorkbenchWindowProvider provider, int editorIdx, int side) {
+        super(provider);
         this.editorIdx = editorIdx;
         this.side = side;
     }

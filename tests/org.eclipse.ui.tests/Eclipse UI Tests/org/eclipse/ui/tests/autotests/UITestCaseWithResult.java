@@ -8,37 +8,35 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.result;
+package org.eclipse.ui.tests.autotests;
 
-import junit.framework.TestCase;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
  */
-public class AutoTestWrapper extends TestCase {
-    private AutoTest test;
-    private AbstractTestLogger log;
-
-    public AutoTestWrapper(AutoTest test, AbstractTestLogger resultLog) {
-        super(test.getName());
-        
-        this.test = test;
-        this.log = resultLog;
+public abstract class UITestCaseWithResult extends UITestCase implements AutoTest {
+    private AbstractTestLogger resultLog;
+    
+    public UITestCaseWithResult(String testName, AbstractTestLogger log) {
+        super(testName);
+        this.resultLog = log;
     }
     
     /* (non-Javadoc)
      * @see junit.framework.TestCase#runTest()
      */
-    protected void runTest() throws Throwable {
-        String testName = test.getName();
+    protected final void runTest() throws Throwable {
+        String testName = getName();
         
         TestResult result;
         try {
-            result = new TestResult(test.performTest());
+            result = new TestResult(performTest());
         } catch (Throwable t) {
             result = new TestResult(t);
         }
         
-        log.reportResult(testName, result);
+        resultLog.reportResult(testName, result);
     }
+    
 }

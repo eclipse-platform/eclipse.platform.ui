@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.result;
+package org.eclipse.ui.tests.autotests;
 
 import java.net.URL;
 

@@ -26,11 +26,12 @@ import org.eclipse.ui.views.IViewDescriptor;
  * 
  * @since 3.0
  */
-public class ViewTabDropTarget extends AbstractTestDropTarget {
+public class ViewTabDropTarget extends WorkbenchWindowDropTarget {
 
     String targetPart;
 
-    public ViewTabDropTarget(String part) {
+    public ViewTabDropTarget(IWorkbenchWindowProvider provider, String part) {
+        super(provider);
         targetPart = part;
     }
 

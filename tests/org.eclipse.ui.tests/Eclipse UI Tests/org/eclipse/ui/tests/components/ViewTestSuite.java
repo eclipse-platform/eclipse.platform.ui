@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.result.AutoTestSuite;
+import org.eclipse.ui.tests.autotests.AutoTestSuite;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 

@@ -500,13 +500,6 @@
             <separator name="additions" />
          </menu>
          <action
-               label="Drag-Drop Snapshot"
-               class="org.eclipse.ui.tests.dnd.GenerateDragSnapshotAction"
-               allowLabelUpdate="false"
-               menubarPath="test/additions"
-               id="org.eclipse.ui.tests.action1">
-         </action>
-         <action
                label="Create Test Markers"
                class="org.eclipse.ui.tests.menus.AddMarkersAction"
                allowLabelUpdate="false"

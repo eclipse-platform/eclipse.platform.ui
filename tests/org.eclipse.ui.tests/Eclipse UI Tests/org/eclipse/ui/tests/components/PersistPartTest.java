@@ -15,7 +15,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.components.FactoryMap;
 import org.eclipse.ui.part.Part;
-import org.eclipse.ui.tests.result.AbstractTestLogger;
+import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 
 /**
  * @since 3.1

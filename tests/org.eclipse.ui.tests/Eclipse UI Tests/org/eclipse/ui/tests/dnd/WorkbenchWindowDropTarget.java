@@ -12,37 +12,39 @@ package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 /**
  * @since 3.0
  */
-public abstract class AbstractTestDropTarget implements TestDropLocation {
+public abstract class WorkbenchWindowDropTarget implements TestDropLocation {
 
-    private WorkbenchPage page;
-
+    private IWorkbenchWindowProvider window;
+    
     public abstract String toString();
 
     public abstract Point getLocation();
 
-    public void setPage(WorkbenchPage page) {
-        this.page = page;
+    public WorkbenchWindowDropTarget(IWorkbenchWindowProvider window) {
+        this.window = window;
+    }
+    
+    public IWorkbenchWindow getWindow() {
+        return window.getWorkbenchWindow();
+    }
+    
+    public Shell getShell() {
+        return getWindow().getShell();
     }
     
     public WorkbenchPage getPage() {
-        if (page == null) {
-            page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI.getWorkbench()
-                    .getActiveWorkbenchWindow()).getActivePage();
-        }
-        
-        return page;
+        return (WorkbenchPage)getWindow().getActivePage();
     }
     
     public Shell[] getShells() {
-        return new Shell[] {getPage().getWorkbenchWindow().getShell()};
+        return new Shell[] {getShell()};
     }
 
 }

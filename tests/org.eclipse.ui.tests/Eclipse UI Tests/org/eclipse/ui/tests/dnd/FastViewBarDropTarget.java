@@ -20,13 +20,13 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 /**
  * @since 3.0
  */
-public class FastViewBarDropTarget extends AbstractTestDropTarget {
+public class FastViewBarDropTarget extends WorkbenchWindowDropTarget {
 
     /**
      * @param window
      */
-    public FastViewBarDropTarget() {
-        super();
+    public FastViewBarDropTarget(IWorkbenchWindowProvider provider) {
+        super(provider);
     }
 
     /* (non-Javadoc)

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.result;
+package org.eclipse.ui.tests.autotests;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +70,7 @@ public class XmlUtil {
             output = new FileOutputStream(file);
             OutputStreamWriter writer = new OutputStreamWriter(output);
             data.save(writer);
+            output.close();
         } catch (FileNotFoundException e) {
             throw new WorkbenchException(new Status(IStatus.ERROR, 
                     TestPlugin.getDefault().getBundle().getSymbolicName(),

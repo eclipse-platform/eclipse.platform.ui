@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,11 +19,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
+import org.eclipse.ui.tests.autotests.AbstractTestLogger;
+import org.eclipse.ui.tests.autotests.UITestCaseWithResult;
 import org.eclipse.ui.tests.util.FileUtil;
-import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests a single drag-drop scenario, given a dragSource capable of initiating the drag and
@@ -127,10 +127,10 @@ import org.eclipse.ui.tests.util.UITestCase;
  * 
  * @since 3.0
  */
-public class DragTest extends UITestCase {
+public class DragTest extends UITestCaseWithResult {
     TestDragSource dragSource;
 
-    AbstractTestDropTarget dropTarget;
+    TestDropLocation dropTarget;
 
     String intendedResult;
 
@@ -149,35 +149,10 @@ public class DragTest extends UITestCase {
 
     static WorkbenchPage page;
 
-    public DragTest(TestDragSource dragSource, AbstractTestDropTarget dropTarget) {
-        super("drag " + dragSource.toString() + " to " + dropTarget.toString());
+    public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log) {
+        super("drag " + dragSource.toString() + " to " + dropTarget.toString(), log);
         this.dragSource = dragSource;
         this.dropTarget = dropTarget;
-    }
-
-    public void setExpectedResult(String intended) {
-        intendedResult = intended;
-    }
-
-    protected void runTest() throws Throwable {
-        String resultingLayout = internalTest();
-
-        if (intendedResult != null) {
-            if (!resultingLayout.equals(intendedResult)) {
-                String errorMessage = "Expecting '" + intendedResult
-                        + "' and found '" + resultingLayout + "'";
-
-                System.out.println("Failed " + getName() + ": " + errorMessage);
-
-                Assert.assertEquals(
-                        "Drag operation resulted in incorrect layout",
-                        intendedResult, resultingLayout);
-            }
-        } else {
-            fail("data/dragtests.xml is missing data for test" + getName());
-        }
-
-        page.testInvariants();
     }
 
     public void doSetUp() throws Exception {
@@ -220,33 +195,18 @@ public class DragTest extends UITestCase {
 
         window.getShell().setActive();
         DragOperations
-                .drag(editor2, new EditorDropTarget(0, SWT.CENTER), false);
+                .drag(editor2, new EditorDropTarget(new ExistingWindowProvider(window), 0, SWT.CENTER), false);
         DragOperations
-                .drag(editor3, new EditorAreaDropTarget(SWT.RIGHT), false);
+                .drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
     }
 
-    private String internalTest() throws Exception {
+    public String performTest() throws Throwable {
         dragSource.setPage(page);
-        //dropTarget.setSource(dragSource);
 
         dragSource.drag(dropTarget);
 
+        page.testInvariants();
+        
         return DragOperations.getLayoutDescription(page);
-    }
-
-    /**
-     * Programatically run the test
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String performTest() throws Exception {
-        setUp();
-        try {
-            String result = internalTest();
-            return result;
-        } finally {
-            tearDown();
-        }
     }
 }

@@ -36,6 +36,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorAreaDropTarget;
+import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -102,7 +103,7 @@ public class ZoomTestCase extends UITestCase {
                     MockEditorPart.ID2);
 
             DragOperations
-        		.drag(editor3, new EditorAreaDropTarget(SWT.RIGHT), false);
+        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
         } catch (PartInitException e) {
         } catch (CoreException e) {
         }

@@ -15,15 +15,15 @@ import org.eclipse.swt.graphics.Point;
 /**
  * @since 3.0
  */
-public class EditorAreaDropTarget extends AbstractTestDropTarget {
+public class EditorAreaDropTarget extends WorkbenchWindowDropTarget {
     int side;
 
     /**
      * @param window
      * @param side
      */
-    public EditorAreaDropTarget(int side) {
-        super();
+    public EditorAreaDropTarget(IWorkbenchWindowProvider provider, int side) {
+        super(provider);
         this.side = side;
     }
 

@@ -17,11 +17,12 @@ import org.eclipse.ui.IEditorPart;
 /**
  * @since 3.0
  */
-public class EditorTabDropTarget extends AbstractTestDropTarget {
+public class EditorTabDropTarget extends WorkbenchWindowDropTarget {
 
     int editorIdx;
 
-    public EditorTabDropTarget(int editorIdx) {
+    public EditorTabDropTarget(IWorkbenchWindowProvider provider, int editorIdx) {
+        super(provider);
         this.editorIdx = editorIdx;
     }
 

@@ -18,13 +18,14 @@ import org.eclipse.ui.views.IViewDescriptor;
 /**
  * @since 3.0
  */
-public class ViewDropTarget extends AbstractTestDropTarget {
+public class ViewDropTarget extends WorkbenchWindowDropTarget {
 
     String targetPart;
 
     int side;
 
-    public ViewDropTarget(String part, int side) {
+    public ViewDropTarget(IWorkbenchWindowProvider provider, String part, int side) {
+        super(provider);
         targetPart = part;
         this.side = side;
     }
