@@ -157,7 +157,6 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		} catch (CoreException e) {
-			// TODO need to log whole core exception but htis is not pretty
 			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
 		}
 	}
