@@ -63,16 +63,9 @@ public class ResourceTranslator {
 		localizationServiceReference = null;
 	}
 
-	public static ResourceBundle getResourceBundle(Bundle bundle) {
-		if (hasRuntime21(bundle)) {
-			try {
-				// TODO the resource need not be named "plugin".  In the case of fragments it is "fragment"
-				return ResourceBundle.getBundle("plugin", Locale.getDefault(), createTempClassloader(bundle)); //$NON-NLS-1$
-			} catch (MissingResourceException e) {
-				// the resource need not exist.  return null if it is not found
-				return null;
-			}
-		}
+	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
+		if (hasRuntime21(bundle))
+			return ResourceBundle.getBundle("plugin", Locale.getDefault(), createTempClassloader(bundle)); //$NON-NLS-1$
 		return localizationService.getLocalization(bundle, null);
 	}
 
@@ -117,7 +110,7 @@ public class ResourceTranslator {
 		ManifestElement[] classpathElements;
 		try {
 			classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) b.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
-			if(classpathElements == null)
+			if (classpathElements == null)
 				return;
 			for (int i = 0; i < classpathElements.length; i++) {
 				URL classpathEntry = b.getEntry(classpathElements[i].getValue());

@@ -13,9 +13,9 @@ package org.eclipse.core.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
 import org.xml.sax.InputSource;
@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  * points, we need to ensure that they are in the registry before the
  * bundle start is called. By listening sync we are able to ensure that
  * happens.
- */ 
+ */
 public class EclipseBundleListener implements SynchronousBundleListener {
 	private static final String PLUGIN_MANIFEST = "plugin.xml"; //$NON-NLS-1$
 	private static final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$	
@@ -128,7 +128,13 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		try {
 			String message = Policy.bind("parse.problems", bundle.getLocation()); //$NON-NLS-1$
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
-			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName, ResourceTranslator.getResourceBundle(bundle));
+			ResourceBundle b = null;
+			try {
+				b = ResourceTranslator.getResourceBundle(bundle);
+			} catch (MissingResourceException e) {
+				//Ignore the exception
+			}
+			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName, b);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {
