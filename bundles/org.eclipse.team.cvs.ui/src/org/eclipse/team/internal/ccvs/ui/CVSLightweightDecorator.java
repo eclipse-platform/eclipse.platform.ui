@@ -521,9 +521,7 @@ public class CVSLightweightDecorator
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
 		super.dispose();
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(false /* disabled */);
 	}
-
 }
