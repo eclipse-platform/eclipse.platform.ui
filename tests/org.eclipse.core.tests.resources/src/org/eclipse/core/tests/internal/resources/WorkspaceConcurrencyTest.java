@@ -11,10 +11,8 @@ package org.eclipse.core.tests.internal.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.*;
 
 /**
@@ -68,6 +66,7 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 					try {
 						getWorkspace().run(new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) {
+								//noop
 							}
 						}, new CancelingProgressMonitor());
 					} catch (CoreException e) {
@@ -91,6 +90,7 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			try {
 				testJob.join();
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
