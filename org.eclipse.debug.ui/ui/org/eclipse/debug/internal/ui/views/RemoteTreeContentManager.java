@@ -85,8 +85,10 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
              */
             public void add(Object[] elements, IProgressMonitor monitor) {
                 Object[] filtered = fViewer.filter(elements);
-                replaceChildren(parent, filtered, offset, monitor);
-                offset = offset + filtered.length;
+                if (filtered.length > 0) {
+                    replaceChildren(parent, filtered, offset, monitor);
+                    offset = offset + filtered.length;
+                }
             }
 
             /*
@@ -177,10 +179,7 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
                 //Cancel the job if the tree viewer got closed
                 if (fViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
-                //Prevent extra redraws on deletion and addition
-//                fViewer.getControl().setRedraw(false);
                 fViewer.prune(parent, offset);
-//                fViewer.getControl().setRedraw(true);
                 return Status.OK_STATUS;
             }
         };
