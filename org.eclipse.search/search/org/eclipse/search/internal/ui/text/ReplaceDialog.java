@@ -11,8 +11,15 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -35,24 +42,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.search.ui.ISearchResultView;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -315,9 +313,10 @@ public class ReplaceDialog extends Dialog {
 			return;
 		}
 		
-		if (fSaved) {
-			new GlobalBuildAction(SearchPlugin.getDefault().getWorkbench(), 
-				fWindow.getShell(),
+		ISearchResultView view= SearchPlugin.getSearchResultView();
+		if (fSaved && view != null) {
+			new GlobalBuildAction(
+				view.getSite().getWorkbenchWindow(),
 				IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
 		}
 	}
