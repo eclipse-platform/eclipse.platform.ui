@@ -141,6 +141,19 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}	
 		refresh(source);
 		if (source instanceof IThread) {
+			// When a thread resumes, try to select another suspended thread
+			// in the same target.
+			try {
+				IThread[] threads= ((IThread) source).getDebugTarget().getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					IStackFrame frame = threads[i].getTopStackFrame();
+					if (frame != null) {
+						selectAndReveal(frame);
+						return;
+					}
+				}
+			} catch (DebugException e) {
+			}
 			selectAndReveal(source);
 			return;
 		}	
