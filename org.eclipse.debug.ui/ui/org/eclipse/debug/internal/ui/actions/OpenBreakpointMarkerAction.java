@@ -65,11 +65,13 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		IEditorPart part= null;
 		if (input != null) {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
-			try {
-				part= page.openEditor(input, editorId);
-			} catch (PartInitException e) {
-				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_Breakpoint_1"), ActionMessages.getString("OpenBreakpointMarkerAction.Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+            if (editorId != null) {
+    			try {
+    				part= page.openEditor(input, editorId);
+    			} catch (PartInitException e) {
+    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_Breakpoint_1"), ActionMessages.getString("OpenBreakpointMarkerAction.Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+    			}
+            }
 		}
 		if (part != null) {
 			part.setFocus();
