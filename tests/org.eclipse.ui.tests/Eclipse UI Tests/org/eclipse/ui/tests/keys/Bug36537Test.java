@@ -72,8 +72,8 @@ public class Bug36537Test extends UITestCase {
 				KeySequenceBindingDefinition definition = (KeySequenceBindingDefinition) matchItr.next();
 				String commandA = keySequenceBinding.getCommandId();
 				String commandB = definition.getCommandId();
-				String contextA = keySequenceBinding.getActivityId();
-				String contextB = definition.getActivityId();
+				String contextA = keySequenceBinding.getContextId();
+				String contextB = definition.getContextId();
 				String keyConfA = keySequenceBinding.getKeyConfigurationId();
 				String keyConfB = definition.getKeyConfigurationId();
 				String localeA = keySequenceBinding.getLocale();
