@@ -144,11 +144,12 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		fCurrentPage= getDescriptorAt(pageIndex).createObject();
 		fCurrentPage.setContainer(this);
 
+		fScopePart= new ScopePart(this);
+
 		if (numPages == 1) {
 			Control control= getControl(fCurrentPage, parent);
 			if (control instanceof Composite) {
 				// Search scope
-				fScopePart= new ScopePart();
 				fScopePart.createPart((Composite)control);
 			}
 			return control;
@@ -161,7 +162,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			border.setLayout(layout);
 			
 			CTabFolder folder= new CTabFolder(border, SWT.BORDER | SWT.FLAT);
-//			folder.setBackground(folder.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 			folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 			folder.setLayout(new TabFolderLayout());
 
@@ -195,7 +195,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			folder.setSelection(pageIndex);
 			
 			// Search scope
-			fScopePart= new ScopePart();
 			fScopePart.createPart(border);
 			
 			return border;

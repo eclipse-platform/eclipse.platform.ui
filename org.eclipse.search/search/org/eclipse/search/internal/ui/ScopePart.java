@@ -21,6 +21,7 @@ import org.eclipse.jface.util.Assert;
 
 import org.eclipse.search.internal.ui.util.SWTUtil;
 import org.eclipse.search.internal.workingsets.WorkingSet;
+import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
@@ -42,6 +43,9 @@ public class ScopePart {
 	private int			fScope;
 	private Text			fWorkingSetText;
 	private IWorkingSet	fWorkingSet;
+
+	// Reference to its search page container (can be null)
+	private ISearchPageContainer fSearchPageContainer;
 	
 	/**
 	 * Returns a new scope part with workspace as initial scope.
@@ -49,6 +53,15 @@ public class ScopePart {
 	 */
 	public ScopePart() {
 		this(WORKSPACE_SCOPE);
+	}
+
+	/**
+	 * Returns a new scope part with workspace as initial scope.
+	 * The part is not yet created.
+	 */
+	public ScopePart(ISearchPageContainer searchPageContainer) {
+		this(WORKSPACE_SCOPE);
+		fSearchPageContainer= searchPageContainer;
 	}
 
 	/**
@@ -115,9 +128,11 @@ public class ScopePart {
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(false);
 				fUseWorkingSet.setSelection(true);
-				fUseWorkingSet.setEnabled(true);
 				break;
 		}
+
+		if (fSearchPageContainer != null)
+			fSearchPageContainer.setPerformActionEnabled(fScope != WORKING_SET_SCOPE || fWorkingSet != null);
 	}
 
 	/**
@@ -143,10 +158,17 @@ public class ScopePart {
 	public void setSelectedWorkingSet(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet);
 		setSelectedScope(WORKING_SET_SCOPE);
-		fgLRUsedWorkingSetName= workingSet.getName();
-		fWorkingSet= workingSet;
+		String name= workingSet.getName();
+		workingSet= SearchUI.findWorkingSet(name);
+		if (workingSet != null) {
+			fWorkingSet= workingSet;
+			fgLRUsedWorkingSetName= name;
+		} else {
+			name= "";
+			fWorkingSet= null;
+		}
 		if (fWorkingSetText != null)
-			fWorkingSetText.setText(workingSet.getName());
+			fWorkingSetText.setText(name);
 	}
 
 	/**
@@ -178,7 +200,6 @@ public class ScopePart {
 		fUseWorkingSet= new Button(group, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
-		fUseWorkingSet.setEnabled(fWorkingSet != null);
 		fWorkingSetText= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		Button chooseWorkingSet= new Button(group, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
@@ -221,7 +242,7 @@ public class ScopePart {
 		if (source instanceof Button) {
 			Button button= (Button)source;
 			if (button.getSelection())
-				fScope= ((Integer)button.getData()).intValue();
+				setSelectedScope(((Integer)button.getData()).intValue());
 		}
 	}
 
