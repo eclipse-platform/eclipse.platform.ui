@@ -563,7 +563,7 @@ public void testLongProjectDescription() throws Throwable {
 public void testMultipleProjectDescriptions() throws Throwable {
 	URL whereToLook = null;
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.resources");
-	String pluginPath = tempPlugin.getLocation().concat("MultipleProjectTestFiles/");
+	String pluginPath = Platform.resolve(tempPlugin.getInstallURL()).toExternalForm().concat("MultipleProjectTestFiles/");
 	try {
 		whereToLook = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
