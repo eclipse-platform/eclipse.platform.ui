@@ -11,12 +11,18 @@
 
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -90,5 +96,24 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 		}
+	}
+	
+	/**
+	 * Set the available items on the JRE combo box
+	 */
+	protected void populateJREComboBox() {
+		int numVMs = fVMStandins.size();
+		
+		List vmNames = new ArrayList(numVMs);
+
+		// Add all installed VMs
+		Iterator iterator = fVMStandins.iterator();
+		while (iterator.hasNext()) {
+			VMStandin standin = (VMStandin)iterator.next();
+			String vmName = standin.getName();
+			vmNames.add(vmName);
+		}
+		Collections.sort(vmNames);
+		fJRECombo.setItems((String[])vmNames.toArray(new String[vmNames.size()]));
 	}
 }

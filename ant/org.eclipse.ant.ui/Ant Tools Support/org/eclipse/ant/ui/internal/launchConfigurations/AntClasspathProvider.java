@@ -12,6 +12,9 @@
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
@@ -41,9 +44,14 @@ public class AntClasspathProvider implements IRuntimeClasspathProvider {
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		
 		URL[] antURLs= AntUtil.getCustomClasspath(configuration);
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		if (antURLs == null) {
-			AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-			antURLs = prefs.getAntURLs();
+			antURLs = prefs.getURLs();
+		} else {
+			List fullClasspath= new ArrayList();
+			fullClasspath.addAll(Arrays.asList(antURLs));
+			fullClasspath.addAll(Arrays.asList(prefs.getExtraClasspathURLs()));
+			antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
 		}
 		
 		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
