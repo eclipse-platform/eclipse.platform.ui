@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.DialogUtil;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.Iterator;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Standard action for opening a system editor on the currently selected file 
@@ -77,7 +82,7 @@ void openFile(IFile file) {
 		return;
 	}
 	try {
-		getWorkbenchPage().openSystemEditor(file);
+		getWorkbenchPage().openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			getWorkbenchPage().getWorkbenchWindow().getShell(),

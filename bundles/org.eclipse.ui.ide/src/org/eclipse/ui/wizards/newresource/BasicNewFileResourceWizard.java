@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 
 /**
@@ -98,8 +99,7 @@ public boolean performFinish() {
 		if (dw != null) {
 			IWorkbenchPage page = dw.getActivePage();
 			if (page != null) {
-				// @issue use of code snippet to open IFile editor
-				page.openEditor(file);
+				IDE.openEditor(page, file, true);
 			}
 		}
 	} catch (PartInitException e) {

@@ -10,17 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Standard action for opening an editor on the currently selected file 
@@ -92,13 +96,15 @@ void openFile(IFile file) {
 		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("OpenFileAction.openFileErrorTitle"), status); //$NON-NLS-1$
 		return;
 	}
+	IEditorInput fileInput = new FileEditorInput(file);
 	try {
 		boolean activate = OpenStrategy.activateOnOpen();
-		if (editorDescriptor == null)
-			getWorkbenchPage().openEditor(file,null,activate);
-		else {
+		if (editorDescriptor == null) {
+			// @issue must fix - not kosher to pass null for editor id
+			getWorkbenchPage().openEditor(fileInput, null, activate);
+		} else {
 			if (ensureFileLocal(file))
-				getWorkbenchPage().openEditor(file, editorDescriptor.getId(),activate);
+				getWorkbenchPage().openEditor(fileInput, editorDescriptor.getId(),activate);
 		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(

@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -92,8 +93,7 @@ public void run(IAction action) {
 	try {
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 		if (page != null) {
-			// @issue need snip in porting guide
-			page.openEditor(file);
+			IDE.openEditor(page, file, true);
 		}
 	} catch (CoreException x) {
 		String title = IDEWorkbenchMessages.getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
