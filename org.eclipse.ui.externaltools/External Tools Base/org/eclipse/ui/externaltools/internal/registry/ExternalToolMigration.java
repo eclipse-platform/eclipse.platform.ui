@@ -159,26 +159,26 @@ public final class ExternalToolMigration {
 		} catch (FileNotFoundException e) {
 			// Silently ignore this...
 		} catch (IOException e) {
-			ExternalToolsPlugin.getDefault().log("File I/O error with reading old external tools.", e); //$NON-NLS-1$
+			ExternalToolsPlugin.getDefault().log("File I/O error with reading old external tools.", e); 
 			migrationSuccessful = false;
 		} catch (WorkbenchException e) {
 			ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
-			System.err.println("Error reading old external tools. See .log file for more details"); //$NON-NLS-1$
+			System.err.println("Error reading old external tools. See .log file for more details"); 
 			migrationSuccessful = false;
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					ExternalToolsPlugin.getDefault().log("Unable to close external tool old state reader.", e); //$NON-NLS-1$
+					ExternalToolsPlugin.getDefault().log("Unable to close external tool old state reader.", e); 
 				}
 			}
 		}
 
 		if (migrationSuccessful) {
 			if (!file.renameTo(path.append(STATE_FILE_NAME_OLD).toFile())) {
-				ExternalToolsPlugin.getDefault().log("Unable to rename old external tool state file. Please rename externaltools.xml to oldexternaltools.xml manually.", null); //$NON-NLS-1$
-				System.err.println("Unable to rename old external tool state file. Please rename externaltools.xml to oldexternaltools.xml manually."); //$NON-NLS-1$
+				ExternalToolsPlugin.getDefault().log("Unable to rename old external tool state file. Please rename externaltools.xml to oldexternaltools.xml manually.", null); 
+				System.err.println("Unable to rename old external tool state file. Please rename externaltools.xml to oldexternaltools.xml manually."); 
 			}
 		}
 	}
