@@ -310,7 +310,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		// fPattern.setItems(getPreviousSearchPatterns());
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
+				getContainer().setPerformActionEnabled(true);
 			}
 		});
 		fPattern.addSelectionListener(new SelectionAdapter() {
