@@ -797,7 +797,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action = new CollapseAllAction(getVariablesViewer());
 		setAction("CollapseAll", action); //$NON-NLS-1$
 
-		action = new ChangeVariableValueAction(getViewer());
+		action = new ChangeVariableValueAction(this);
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);

@@ -40,7 +40,8 @@
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
    <extension-point id="debugModelContextBindings" name="%DebugModelContextBindingsName" schema="schema/debugModelContextBindings.exsd"/>
    <extension-point id="contextViewBindings" name="%ContextViewBindingsName" schema="schema/contextViewBindings.exsd"/>
-   <extension-point id="breakpointContainerFactories" name="Breakpoint Container Factories" schema="schema/breakpointContainerFactories.exsd"/>
+   <extension-point id="breakpointContainerFactories" name="%BreakpointContainerFactoriesName" schema="schema/breakpointContainerFactories.exsd"/>
+   <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
 
 <!-- Extensions -->
    <extension

@@ -937,6 +937,20 @@ public interface IDebugUIConstants {
 	 */
 	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$
 	
+	/**
+	 * Breakpoint container factories extension point identifier (value
+	 * <code>"breakpointContainerFactories"</code>
+     * 
+     * @since 3.1
+	 */
 	public static final String EXTENSION_POINT_BREAKPOINT_CONTAINER_FACTORIES = "breakpointContainerFactories"; //$NON-NLS-1$
+	
+	/**
+	 * Variable value editors extension point identifier (value
+	 * <code>"variableValueEditors"</code>
+     * 
+     * @since 3.1
+	 */
+	public static final String EXTENSION_POINT_VARIABLE_VALUE_EDITORS = "variableValueEditors"; //$NON-NLS-1$
 		
 }
