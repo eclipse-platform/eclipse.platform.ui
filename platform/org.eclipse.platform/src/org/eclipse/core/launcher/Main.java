@@ -179,7 +179,7 @@ public class Main {
 	protected static boolean newSession = true;
 
 	static class Identifier {
-		private static final String SEPARATOR = "."; //$NON-NLS-1$
+		private static final String DELIM = ". "; //$NON-NLS-1$
 		private int major, minor, service;
 		private Identifier(int major, int minor, int service) {
 			super();
@@ -189,23 +189,19 @@ public class Main {
 		}
 		private Identifier(String versionString) {
 			super();
-			StringTokenizer tokenizer = new StringTokenizer(versionString, SEPARATOR);
+			StringTokenizer tokenizer = new StringTokenizer(versionString, DELIM);
 			
-			try {
-				// major
-				if (tokenizer.hasMoreTokens())
-					major = Integer.parseInt(tokenizer.nextToken());
-	
-				// minor
-				if (tokenizer.hasMoreTokens())
-					minor = Integer.parseInt(tokenizer.nextToken());
-	
-				// service
-				if (tokenizer.hasMoreTokens())
-					service = Integer.parseInt(tokenizer.nextToken());
-			} catch (NumberFormatException e) {
-				// if we get an exception then bail and return.
-			}
+			// major
+			if (tokenizer.hasMoreTokens())
+				major = Integer.parseInt(tokenizer.nextToken());
+
+			// minor
+			if (tokenizer.hasMoreTokens())
+				minor = Integer.parseInt(tokenizer.nextToken());
+
+			// service
+			if (tokenizer.hasMoreTokens())
+				service = Integer.parseInt(tokenizer.nextToken());
 		}
 		/**
 		 * Returns true if this id is considered to be greater than or equal to the given baseline.
@@ -217,9 +213,17 @@ public class Main {
 		 * 2.0.0 >= 1.3.1 -> true
 		 */
 		private boolean isGreaterEqualTo(Identifier minimum) {
-			return major >= minimum.major 
-				&& minor >= minimum.minor 
-				&& service >= minimum.service;
+			if (major < minimum.major)
+				return false;
+			if (major > minimum.major)
+				return true;
+			// major numbers are equivalent so check minor
+			if (minor < minimum.minor)
+				return false;
+			if (minor > minimum.minor)
+				return true;
+			// minor numbers are equivalent so check service
+			return service >= minimum.service;
 		}
 	}
 /**
@@ -1321,10 +1325,20 @@ private static void closeLogFile() throws IOException {
  * deemed to be compatible with Eclipse.
  */
 private static boolean isCompatible() {
-	String vmVersionString = System.getProperty("java.vm.version"); //$NON-NLS-1$
-	Identifier minimum = new Identifier(1, 3, 0);
-	Identifier version = new Identifier(vmVersionString);
-	return version.isGreaterEqualTo(minimum);
+	try {
+		String vmVersionString = System.getProperty("java.version"); //$NON-NLS-1$
+		Identifier minimum = new Identifier(1, 3, 0);
+		Identifier version = new Identifier(vmVersionString);
+		return version.isGreaterEqualTo(minimum);
+	} catch (SecurityException e) {
+		// If the security manager won't allow us to get the system property, continue for
+		// now and let things fail later on their own if necessary.
+		return true;
+	} catch (NumberFormatException e) {
+		// If the version string was in a format that we don't understand, continue and
+		// let things fail later on their own if necessary.
+		return true;
+	}
 }
 
 }
