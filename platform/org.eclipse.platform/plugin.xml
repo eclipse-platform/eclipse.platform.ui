@@ -16,7 +16,7 @@
 
 
 
-<!-- -->
+<!--
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -29,7 +29,7 @@
       		introId="org.eclipse.platform.intro"/>
    </extension>
 
-<!-- -->
+-->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
