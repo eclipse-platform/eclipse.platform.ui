@@ -32,7 +32,7 @@ import org.eclipse.jface.text.Position;
  * be used by clients. Subclasses may adapt this annotation model to other exsisting 
  * annotation mechanisms.
  */
-public class AnnotationModel implements IAnnotationModel {
+public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension {
 
 	/** The list of managed annotations */
 	protected Map fAnnotations;
@@ -46,6 +46,11 @@ public class AnnotationModel implements IAnnotationModel {
 	private IDocumentListener fDocumentListener;
 	/** The flag indicating whether the document positions might have been changed. */
 	private boolean fDocumentChanged= true;
+	/** 
+	 * The model's attachment.
+	 * @since 3.0
+	 */
+	private Map fAttachments= new HashMap();
 
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
@@ -138,6 +143,11 @@ public class AnnotationModel implements IAnnotationModel {
 			fDocument.addDocumentListener(fDocumentListener);
 			connected();
 		}
+		
+		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
+			IAnnotationModel model= (IAnnotationModel) fAttachments.get(it.next());
+			model.connect(document);
+		}
 	}
 	
 	/**
@@ -160,6 +170,11 @@ public class AnnotationModel implements IAnnotationModel {
 	public void disconnect(IDocument document) {
 		
 		Assert.isTrue(fDocument == document);
+
+		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
+			IAnnotationModel model= (IAnnotationModel) fAttachments.get(it.next());
+			model.disconnect(document);
+		}
 		
 		-- fOpenConnections;
 		if (fOpenConnections == 0) {
@@ -345,5 +360,39 @@ public class AnnotationModel implements IAnnotationModel {
 	 */
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.remove(listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#attach(java.lang.Object, java.lang.Object)
+	 * @since 3.0
+	 */
+	public void addAnnotationModel(Object key, IAnnotationModel attachment) {
+		Assert.isNotNull(attachment);
+		if (!fAttachments.containsValue(attachment)) {
+			fAttachments.put(key, attachment);
+			for (int i= 0; i < fOpenConnections; i++)
+				attachment.connect(fDocument);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#get(java.lang.Object)
+	 * @since 3.0
+	 */
+	public IAnnotationModel getAnnotationModel(Object key) {
+		return (IAnnotationModel) fAttachments.get(key);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#detach(java.lang.Object)
+	 * @since 3.0
+	 */
+	public IAnnotationModel removeAnnotationModel(Object key) {
+		IAnnotationModel ret= (IAnnotationModel) fAttachments.remove(key);
+		if (ret != null) {
+			for (int i= 0; i < fOpenConnections; i++)
+				ret.disconnect(fDocument);
+		}
+		return ret;
 	}
 }

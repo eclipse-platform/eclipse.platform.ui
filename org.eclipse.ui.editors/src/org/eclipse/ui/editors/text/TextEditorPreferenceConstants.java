@@ -151,6 +151,48 @@ public class TextEditorPreferenceConstants {
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
 	
+	/**
+	 * A named preference that controls the background color for changed lines in the line number bar.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 */
+	public static final String LINE_NUMBER_CHANGED_COLOR= "lineNumberBar.colors.changed"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the background color for added lines in the line number bar.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 */
+	public static final String LINE_NUMBER_ADDED_COLOR= "lineNumberBar.colors.added"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the color for the deleted lines indicator in the line number bar.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 */
+	public static final String LINE_NUMBER_DELETED_COLOR= "lineNumberBar.colors.deleted"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether quick diff colors are shown on the line number bar.
+	 * <p>
+	 * Value is of type <code>boolean</code>.
+	 */
+	public static final String LINE_NUMBER_BAR_QUICK_DIFF= "lineNumberBar.quickDiff"; //$NON-NLS-1$
 	
 	/**
 	 * @deprecated
@@ -258,6 +300,10 @@ public class TextEditorPreferenceConstants {
 
 		store.setDefault(TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
+		store.setDefault(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR, false);
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR, new RGB(255, 230, 230));
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR, new RGB(230, 230, 255));
+		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR, new RGB(0, 0, 0));
 
 		store.setDefault(TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 		

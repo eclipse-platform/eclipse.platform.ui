@@ -184,6 +184,20 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String MOVE_LINE_DOWN= "MoveLineDown"; //$NON-NLS-1$
 	
 	/** 
+	 * Name of the action to copy lines upwards 
+	 * Value: <code>"CopyLineUp"</code>
+	 * @since 3.0
+	 */
+	static final String COPY_LINE_UP= "CopyLineUp"; //$NON-NLS-1$;
+
+	/** 
+	 * Name of the action to copy lines downwards 
+	 * Value: <code>"CopyLineDown"</code>
+	 * @since 3.0
+	 */
+	static final String COPY_LINE_DOWN= "CopyLineDown"; //$NON-NLS-1$;
+
+	/** 
 	 * Name of the action to turn a selection to upper case 
 	 * Value: <code>"UpperCase"</code>
 	 * @since 3.0

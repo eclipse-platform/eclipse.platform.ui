@@ -1703,16 +1703,20 @@ public class TextViewer extends Viewer implements
 	protected ITextHover getTextHover(int offset, int stateMask) {
 		if (fTextHovers == null)
 			return null;
+			
+		IDocument document= getDocument();
+		if (document == null)
+			return null;
 
 		try {
-			TextHoverKey key= new TextHoverKey(getDocument().getContentType(offset), stateMask);
+			TextHoverKey key= new TextHoverKey(document.getContentType(offset), stateMask);
 			Object textHover= fTextHovers.get(key);
 			if (textHover == null) {
 				// Use default text hover
 				key.setStateMask(ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 				textHover= fTextHovers.get(key);
 			}
-			return (ITextHover)textHover;
+			return (ITextHover) textHover;
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$

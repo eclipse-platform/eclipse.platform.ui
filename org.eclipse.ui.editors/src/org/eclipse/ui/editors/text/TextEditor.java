@@ -46,6 +46,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -183,6 +184,7 @@ public class TextEditor extends StatusTextEditor {
 		initializeKeyBindingScopes();
 		initializeEditor();
 		fAnnotationPreferences= new MarkerAnnotationPreferences();
+		setSourceViewerConfiguration(new TextSourceViewerConfiguration());
 	}
 	
 	/**
@@ -670,6 +672,51 @@ public class TextEditor extends StatusTextEditor {
 			}
 			rulerColumn.setBackground(sharedColors.getColor(rgb));
 			
+			if (rulerColumn instanceof LineNumberChangeRulerColumn) {
+				LineNumberChangeRulerColumn changeColumn= (LineNumberChangeRulerColumn)rulerColumn;
+				
+				ISourceViewer v= getSourceViewer();
+				if (v != null && v.getAnnotationModel() != null) {
+					changeColumn.setModel(v.getAnnotationModel());
+				}
+				
+				rgb= null;
+				// change color
+				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR)) {
+					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR)) {
+						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR))
+							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR);
+						else
+							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR);
+					}
+				}
+				changeColumn.setChangedColor(sharedColors.getColor(rgb));
+				
+				rgb= null;
+				// addition color
+				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR)) {
+					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR)) {
+						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR))
+							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR);
+						else
+							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR);
+					}
+				}
+				changeColumn.setAddedColor(sharedColors.getColor(rgb));
+				
+				rgb= null;
+				// deletion indicator color
+				if (!store.getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR)) {
+					if (store.contains(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR)) {
+						if (store.isDefault(TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR))
+							rgb= PreferenceConverter.getDefaultColor(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR);
+						else
+							rgb= PreferenceConverter.getColor(store, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR);
+					}
+				}
+				changeColumn.setDeletedColor(sharedColors.getColor(rgb));
+			}
+			
 			rulerColumn.redraw();
 		}
 	}
@@ -680,7 +727,11 @@ public class TextEditor extends StatusTextEditor {
 	 * @since 2.1
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
-		fLineNumberRulerColumn= new LineNumberRulerColumn();
+		if (getPreferenceStore().getBoolean(TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF)) {
+			fLineNumberRulerColumn= new LineNumberChangeRulerColumn();
+		} else {
+			fLineNumberRulerColumn= new LineNumberRulerColumn();
+		}
 		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 		return fLineNumberRulerColumn;
 	}
@@ -726,11 +777,19 @@ public class TextEditor extends StatusTextEditor {
 					hideLineNumberRuler();
 				return;
 			}
-			
+
+			if (isLineNumberRulerVisible() && TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF.equals(property)) {
+				hideLineNumberRuler();
+				showLineNumberRuler();
+			}
+				
 			if (fLineNumberRulerColumn != null &&
 						(LINE_NUMBER_COLOR.equals(property) || 
 						PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)  ||
-						PREFERENCE_COLOR_BACKGROUND.equals(property))) {
+						PREFERENCE_COLOR_BACKGROUND.equals(property) ||
+						TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR.equals(property) ||
+						TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR.equals(property) ||
+						TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR.equals(property))) {
 					
 					initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 			}

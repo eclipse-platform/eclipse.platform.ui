@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="quickdiff">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="quickdiffreferenceprovider" name="Reference Provider"/>
+      </appInfo>
+      <documentation>
+         Allows contributors to add reference providers for the quick diff display.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="referenceprovider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of the extension point.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The optional id of this extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The optional name of this extension.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="referenceprovider">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            The definition of a reference provider for the quick diff display.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class of the reference provider, which must implement &lt;code&gt;org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  The display label for the provider, which will show up in the menu that allows the user to set the quick diff reference to this provider.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A string uniquely identifying this reference provider.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean">
+            <annotation>
+               <documentation>
+                  If this flag is set to &lt;code&gt;true&lt;/code&gt;, this reference provider will be installed per default the first time quick diff is enabled for a document. If multiple providers are installed with the flag set are encountered, the first one is taken.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a reference provider definition. It contributes a provider that uses the version of a document saved on disk as a reference.
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;quickdiff.referenceprovider&quot;&gt;
+  &lt;referenceprovider
+   id=&quot;default&quot;
+   name=&quot;%LastSavedProvider.name&quot;
+   label=&quot;%quickdiff.referenceprovider.label&quot;
+   class=&quot;org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider&quot;&gt;
+  &lt;/referenceprovider&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>

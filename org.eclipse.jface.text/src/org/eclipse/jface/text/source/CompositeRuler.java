@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -437,7 +438,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 			super.addHelpListener(listener);
 			addListener(HelpListener.class, listener);
 		}
-
+	
 		/*
 		 * @see Control#addKeyListener(KeyListener)
 		 */
@@ -453,7 +454,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 			super.addMouseListener(listener);
 			addListener(MouseListener.class, listener);
 		}
-
+	
 		/*
 		 * @see Control#addMouseMoveListener(MouseMoveListener)
 		 */
@@ -461,7 +462,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 			super.addMouseMoveListener(listener);
 			addListener(MouseMoveListener.class, listener);
 		}
-
+	
 		/* 
 		 * @see Control#addMouseTrackListener(MouseTrackListener)
 		 */
@@ -623,7 +624,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		while (e.hasNext()) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
 			column.setModel(model);
-		}	
+		}
 	}
 	
 	/*
@@ -741,4 +742,17 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		fLocation.y= y;
 		fLastMouseButtonActivityLine= -1;
 	}
+
+	/**
+	 * Returns an iterator over the <code>IVerticalRulerColumns</code> that make up this 
+	 * composite column.
+	 * 
+	 * @return an iterator over the contained columns.
+	 * @since 3.0
+	 */
+	public Iterator getDecoratorIterator() {
+		Assert.isNotNull(fDecorators, "fDecorators must be initialized"); //$NON-NLS-1$
+		return fDecorators.iterator();
+	}
+
 }

@@ -12,37 +12,201 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Event;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
 
 /**
  * Action for moving selected lines in an editor.
  * @since 3.0
  */
 public class MoveLinesAction extends ResourceAction implements IUpdate {
+	
+	/**
+	 * Describes a text change with sufficient precision so the <code>ExitStrategy</code> can 
+	 * determine whether a received <code>DocumentEvent</code> is a result of this action or
+	 * originates from another edition
+	 */
+	private static class EditDescription {
+		private int fOffset;
+		private int fLength;
+		private int fReplacementLength;
+		
+		/** Creates a description that will not correspond to any <code>DocumentEvent</code>. */
+		public EditDescription() {
+			this(-1, -1, -1);
+		}
+		
+		/** Creates a description. */
+		public EditDescription(int offset, int length, int replacementLength) {
+			fOffset= offset;
+			fLength= length;
+			fReplacementLength= replacementLength;
+		}
+		
+		/**
+		 * Returns <code>true</code> if <code>event</code> was triggered by the edition described
+		 * by this instance.
+		 * 
+		 * @param event a <code>DocumentEvent</code>
+		 * @return <code>true</code> if <code>event</code> corresponds to this edition description
+		 */
+		public boolean correspondsTo(DocumentEvent event) {
+			int replacementLength= event.fText == null ? 0 : event.fText.length();
+			return fOffset == event.fOffset && fLength == event.fLength && fReplacementLength == replacementLength;
+		}
+	}
 
-	/** The editor we are working on. */
-	private final AbstractTextEditor fEditor;
+	/**
+	 * Detects the end of a compound edit command. The user is assumed to have ended the command
+	 * when
+	 * <ul>
+	 * <li>entering any text with a different key combination than the one used to move / copy</li>
+	 * <li>clicking anywhere in the editor</li>
+	 * <li>the viewer loses focus</li>
+	 * <li>the underlying document gets changed due to anything but this action</li>
+	 * </ul>
+	 */
+	private class ExitStrategy implements VerifyKeyListener, MouseListener, FocusListener, IDocumentListener {
+
+		/** 
+		 * The widget this instance is registered with for <code>VerifyKey</code>-, <code>Mouse</code>-
+		 * and <code>FocusEvent</code>s, or <code>null</code> if not registered.
+		 */
+		private StyledText fWidgetEventSource;
+		/**
+		 * The document this instance is registered with for <code>DocumentEvent</code>s, 
+		 * or <code>null</code> if not registered.
+		 */
+		private IDocument fDocumentEventSource;
+		/** 
+		 * Indicates whether there are any pending registrations.<br/>
+		 * Invariant: <code>fIsInstalled || (fWidgetEventSource == fDocumentEventSource == null)</code>
+		 */ 
+		private boolean fIsInstalled;
+		
+		/** 
+		 * Installs the exit strategy with all event sources. 
+		 */
+		public void install() {
+			if (fIsInstalled)
+				uninstall();
+			fIsInstalled= true;
+			
+			ISourceViewer viewer= fEditor.getSourceViewer();
+			if (viewer == null)
+				return;
+
+			fWidgetEventSource= viewer.getTextWidget();
+			if (fWidgetEventSource == null)
+				return;
+			
+			fWidgetEventSource.addVerifyKeyListener(this);
+			fWidgetEventSource.addMouseListener(this);
+			fWidgetEventSource.addFocusListener(this);
+		
+			fDocumentEventSource= viewer.getDocument();
+			if (fDocumentEventSource != null)
+				fDocumentEventSource.addDocumentListener(this);
+		}
+		
+		/**
+		 * Uninstalls the exit strategy with all event sources it was previously registered with. 
+		 */
+		public void uninstall() {
+			if (fWidgetEventSource != null) {
+				fWidgetEventSource.removeVerifyKeyListener(this);
+				fWidgetEventSource.removeMouseListener(this);
+				fWidgetEventSource.removeFocusListener(this);
+				fWidgetEventSource= null;
+			}
+			if (fDocumentEventSource != null) {
+				fDocumentEventSource.removeDocumentListener(this);
+				fDocumentEventSource= null;
+			}
+			fIsInstalled= false;
+		}
+
+		public void verifyKey(VerifyEvent event) {
+			if (event.stateMask != fStateMask) {
+				endCompoundEdit();
+			}
+		}
+
+		public void mouseDoubleClick(MouseEvent e) {
+			endCompoundEdit();
+		}
+
+		public void mouseDown(MouseEvent e) {
+			endCompoundEdit();
+		}
+
+		public void mouseUp(MouseEvent e) {}
+
+		public void focusLost(FocusEvent e) {
+			endCompoundEdit();
+		}
+
+		public void focusGained(FocusEvent e) {}
+
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			// don't do this since it will break interaction between the moveUp and moveDown actions.
+//			if (!fDescription.correspondsTo(event)) endCompoundEdit();
+		}
+
+		public void documentChanged(DocumentEvent event) {}
+	}
+
+	/* keys */	
+	
+	/** Key for status message upon illegal move. <p>Value {@value}</p> */
+	private static final String ILLEGAL_MOVE= "Editor.MoveLines.IllegalMove.status"; //$NON-NLS-1$
+	
+	/* state variables - define what this action does */
 
 	/** <code>true</code> if lines are shifted upwards, <code>false</code> otherwise. */
 	private final boolean fUpwards;
+	/** <code>true</code> if lines are to be copied instead of moved. */
+	private final boolean fCopy;
+	/** The editor we are working on. */
+	private final  AbstractTextEditor fEditor;
+	
+	/* compound members of this action */
+	
+	/** The exit strategy that will detect the ending of a compound edit */  
+	private final ExitStrategy fExitStrategy= new ExitStrategy();
 
+	/* process variables - may change in every run() */
+	
 	/** 
 	 * Set to <code>true</code> by <code>getMovingSelection</code> if the resulting selection
 	 * should include the last delimiter.
 	 */
-	private boolean addDelimiter= false;
-	
-	/** Key for status message upon illegal move. <p>Value {@value}</p> */
-	private static final String ILLEGAL_MOVE= "Editor.MoveLines.IllegalMove.status"; //$NON-NLS-1$
+	private boolean fAddDelimiter;
+	/** <code>true</code> if a compound move / copy is going on. */
+	private boolean fEditInProgress= false;
+	/** stateMask for this action - if it changes, the edition is considered to be ended */
+	private int fStateMask;
+//	/** Descrition of the last edition triggered by this action */
+//	private EditDescription fDescription= new EditDescription();
 
 	/**
 	 * Creates and initializes the action for the given text editor. 
@@ -55,107 +219,45 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * @param editor the text editor
 	 * @param upwards <code>true</code>if the selected lines should be moved upwards,
 	 * <code>false</code> if downwards
+	 * @param copy if <code>true</code>, the action will copy lines instead of moving them
 	 * @see ResourceAction#ResourceAction
 	 */
-	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards) {
+	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
 		super(bundle, prefix);
 		fEditor= editor;
 		fUpwards= upwards;
+		fCopy= copy;
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
+	/**
+	 * Ends the compound change.
 	 */
-	public void run() {
-
-		// get involved objects
-		if (fEditor == null)
+	private void beginCompoundEdit() {
+		if (fEditInProgress || fEditor == null)
 			return;
+			
+		fEditInProgress= true;
+		
+		fExitStrategy.install();
 
-		ISourceViewer viewer= fEditor.getSourceViewer();
-		if (viewer == null)
-			return;
-
-		IDocument document= viewer.getDocument();
-		if (document == null)
-			return;
-
-		StyledText widget= viewer.getTextWidget();
-		if (widget == null)
-			return;
-
-		// get selection
-		Point p= viewer.getSelectedRange();
-		if (p == null)
-			return;
-		ITextSelection sel= new TextSelection(document, p.x, p.y);
-
-		try {
-			ITextSelection movingArea= getMovingSelection(document, sel, viewer);
-			ITextSelection skippedLine= getSkippedLine(document, sel);
-			if (skippedLine == null)
-				return;
-
-			// if either the skipped line or the moving lines are outside the widget's 
-			// visible area, bail out
-			if (!containedByVisibleRegion(movingArea, viewer)
-				|| !containedByVisibleRegion(skippedLine, viewer))
-				return;
-
-			// get the content to be moved around: the moving (selected) area and the skipped line
-			String moving= movingArea.getText();
-			String skipped= skippedLine.getText();
-			if (moving == null || skipped == null)
-				return;
-			String delim;
-			String insertion;
-			int offset, deviation;
-			if (fUpwards) {
-				delim= document.getLineDelimiter(skippedLine.getEndLine());
-				Assert.isNotNull(delim);
-				insertion= moving + delim + skipped;
-				offset= skippedLine.getOffset();
-				deviation= -skippedLine.getLength() - delim.length();
-			} else {
-				delim= document.getLineDelimiter(movingArea.getEndLine());
-				Assert.isNotNull(delim);
-				insertion= skipped + delim + moving;
-				offset= movingArea.getOffset();
-				deviation= skipped.length() + delim.length();
-			}
-
-			// modify the document 
-			document.replace(offset, insertion.length(), insertion);
-
-			// move the selection along
-			int selOffset= movingArea.getOffset() + deviation;
-			int selLength= movingArea.getLength() + (addDelimiter ? delim.length() : 0);
-			selLength=
-				Math.min(
-					selLength,
-					viewer.getVisibleRegion().getOffset()
-						+ viewer.getVisibleRegion().getLength()
-						- selOffset);
-			selectAndReveal(viewer, selOffset, selLength);
-		} catch (BadLocationException x) {
-			// won't happen without concurrent modification - bail out
-			return;
+		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
+		if (target != null) {
+			target.beginCompoundChange();
 		}
 	}
 
 	/**
 	 * Checks if <code>selection</code> is contained by the visible region of <code>viewer</code>.
 	 * As a special case, a selection is considered contained even if it extends over the visible
-	 * region, but the extension stays on a partially contained line and contains only white space. 
+	 * region, but the extension stays on a partially contained line and contains only white space.
+	 * 
 	 * @param selection the selection to be checked
 	 * @param viewer the viewer displaying a visible region of <code>selection</code>'s document.
-	 * @return <code>true</code>, if <code>selection</code> is contained, <code>false</code> 
-	 * otherwise.
+	 * @return <code>true</code>, if <code>selection</code> is contained, <code>false</code> otherwise.
 	 * @throws BadLocationException
 	 */
-	private boolean containedByVisibleRegion(ITextSelection selection, ISourceViewer viewer)
-		throws BadLocationException {
+	private boolean containedByVisibleRegion(ITextSelection selection, ISourceViewer viewer) throws BadLocationException {
 		int min= selection.getOffset();
 		int max= min + selection.getLength();
 		IDocument document= viewer.getDocument();
@@ -180,61 +282,22 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Displays information in the status line why a line move is not possible
+	 * Ends the compound change.
 	 */
-	private void showStatus() {
-		IEditorStatusLine status= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
-		if (status == null)
+	private void endCompoundEdit() {
+		if (!fEditInProgress || fEditor == null)
 			return;
-		status.setMessage(false, EditorMessages.getString(ILLEGAL_MOVE), null);
-	}
+			
+		fExitStrategy.uninstall();
 
-	/**
-	 * Checks for white space in a string.
-	 * @param string the string to be checked or <code>null</code>
-	 * @return <code>true</code> if <code>string</code> contains only white space or is 
-	 * <code>null</code>, <code>false</code> otherwise
-	 */
-	private boolean isWhitespace(String string) {
-		if (string == null)
-			return true;
-		return string.trim().length() == 0;
-	}
-	
-	/**
-	 * Performs similar to AbstractTextEditor.selectAndReveal, but does not update
-	 * the viewers highlight area.
-	 * @param viewer the viewer that we want to select on
-	 * @param offset the offset of the selection
-	 * @param length the length of the selection
-	 */
-	private void selectAndReveal(ITextViewer viewer, int offset, int length) {
-		// invert selection to avoid jumping to the end of the selection in st.showSelection()
-		viewer.setSelectedRange(offset + length, -length);
-		//viewer.revealRange(offset, length); // will trigger jumping
-		StyledText st= viewer.getTextWidget();
-		if (st != null)
-			st.showSelection(); // only minimal scrolling
-	}
-
-	/**
-	 * Computes the region of the skipped line given the text block to be moved. If 
-	 * <code>fUpwards</code> is <code>true</code>, the line above <code>selection</code>
-	 * is selected, otherwise the line below.
-	 * @param document the document <code>selection</code> refers to
-	 * @param movingArea the selection on <code>document</code> that will be moved.
-	 * @return the region comprising the line that <code>selection</code> will be moved over, 
-	 * without its terminating delimiter.
-	 */
-	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection)
-		throws BadLocationException {
-		int skippedLineN= (fUpwards ? selection.getStartLine() - 1 : selection.getEndLine() + 1);
-		if (skippedLineN < 0 || skippedLineN >= document.getNumberOfLines())
-			return null;
-		IRegion line= document.getLineInformation(skippedLineN);
-		return new TextSelection(document, line.getOffset(), line.getLength());
+		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
+		if (target != null) {
+			target.endCompoundChange();
+		}
+		
+		fEditInProgress= false;
 	}
 
 	/**
@@ -248,19 +311,15 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * at any position in the line, including between the delimiter and the start of the line. The 
 	 * line containing the delimiter is not considered covered in that case.
 	 * </p>
+	 * 
 	 * @param document the document <code>selection</code> refers to 
 	 * @param selection a selection on <code>document</code>
 	 * @param viewer the <code>ISourceViewer</code> displaying <code>document</code>
 	 * @return a selection describing the range of lines (partially) covered by 
 	 * <code>selection</code>, without any terminating line delimiters
-	 * @throws BadLocationException if the selection is out of bounds (when the underlying
-	 * document has changed during the call)
+	 * @throws BadLocationException if the selection is out of bounds (when the underlying document has changed during the call)
 	 */
-	private ITextSelection getMovingSelection(
-		IDocument document,
-		ITextSelection selection,
-		ISourceViewer viewer)
-		throws BadLocationException {
+	private ITextSelection getMovingSelection(IDocument document, ITextSelection selection, ISourceViewer viewer) throws BadLocationException {
 		int low= document.getLineOffset(selection.getStartLine());
 		int endLine= selection.getEndLine();
 		int high= document.getLineOffset(endLine) + document.getLineLength(endLine);
@@ -274,11 +333,185 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 		// delimiter. The exception to this rule is an empty last line, which will stay covered
 		// including its delimiter
 		if (delim != null && document.getLineLength(endLine) == delim.length())
-			addDelimiter= true;
+			fAddDelimiter= true;
 		else
-			addDelimiter= false;
+			fAddDelimiter= false;
 
 		return new TextSelection(document, low, high - low);
+	}
+
+	/**
+	 * Computes the region of the skipped line given the text block to be moved. If 
+	 * <code>fUpwards</code> is <code>true</code>, the line above <code>selection</code>
+	 * is selected, otherwise the line below.
+	 * 
+	 * @param document the document <code>selection</code> refers to
+	 * @param movingArea the selection on <code>document</code> that will be moved.
+	 * @return the region comprising the line that <code>selection</code> will be moved over, without its terminating delimiter.
+	 */
+	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) throws BadLocationException {
+		int skippedLineN= (fUpwards ? selection.getStartLine() - 1 : selection.getEndLine() + 1);
+		if (skippedLineN < 0 || skippedLineN >= document.getNumberOfLines())
+			return null;
+		IRegion line= document.getLineInformation(skippedLineN);
+		return new TextSelection(document, line.getOffset(), line.getLength());
+	}
+
+	/**
+	 * Checks for white space in a string.
+	 * 
+	 * @param string the string to be checked or <code>null</code>
+	 * @return <code>true</code> if <code>string</code> contains only white space or is 
+	 * <code>null</code>, <code>false</code> otherwise
+	 */
+	private boolean isWhitespace(String string) {
+		return string == null ? true : string.trim().length() == 0;
+	}
+
+	/*
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	public void runWithEvent(Event event) {
+		
+		updateShortCut(event);
+
+		// get involved objects
+		if (fEditor == null)
+			return;
+
+		ISourceViewer viewer= fEditor.getSourceViewer();
+		if (viewer == null)
+			return;
+
+		IDocument document= viewer.getDocument();
+		if (document == null)
+			return;
+
+		StyledText widget= viewer.getTextWidget();
+		if (widget == null)
+			return;
+
+		// get selection
+		Point p= viewer.getSelectedRange();
+		if (p == null)
+			return;
+			
+		ITextSelection sel= new TextSelection(document, p.x, p.y);
+
+		try {
+			
+			ITextSelection skippedLine= getSkippedLine(document, sel);
+			if (skippedLine == null)
+				return;
+
+			ITextSelection movingArea= getMovingSelection(document, sel, viewer);
+			
+			// if either the skipped line or the moving lines are outside the widget's 
+			// visible area, bail out
+			if (!containedByVisibleRegion(movingArea, viewer) || !containedByVisibleRegion(skippedLine, viewer))
+				return;
+
+			// get the content to be moved around: the moving (selected) area and the skipped line
+			String moving= movingArea.getText();
+			String skipped= skippedLine.getText();
+			if (moving == null || skipped == null)
+				return;
+				
+			String delim;
+			String insertion;
+			int offset, deviation;
+			if (fUpwards) {
+				delim= document.getLineDelimiter(skippedLine.getEndLine());
+				Assert.isNotNull(delim);
+				if (fCopy) {
+					insertion= moving + delim;
+					offset= movingArea.getOffset();
+					deviation= 0;
+				} else {
+					insertion= moving + delim + skipped;
+					offset= skippedLine.getOffset();
+					deviation= -skippedLine.getLength() - delim.length();
+				}
+			} else {
+				delim= document.getLineDelimiter(movingArea.getEndLine());
+				Assert.isNotNull(delim);
+				if (fCopy) {
+					insertion= moving + delim;
+					offset= skippedLine.getOffset();
+					deviation= movingArea.getLength() + delim.length();
+				} else {
+					insertion= skipped + delim + moving;
+					offset= movingArea.getOffset();
+					deviation= skipped.length() + delim.length();
+				}
+			}
+
+			// modify the document
+			beginCompoundEdit(); 
+			if (fCopy) {
+//				fDescription= new EditDescription(offset, 0, insertion.length());
+// 				This is a try for auto-indentation... not so good yet. Wait until we have a suitable "indent line" thing
+//				if (viewer instanceof TextViewer) {
+//					offset= ((TextViewer)viewer).modelOffset2WidgetOffset(offset);
+//					widget.replaceTextRange(offset, 0, insertion);
+//				} else {
+//					document.replace(offset, 0, insertion);
+//				}
+				document.replace(offset, 0, insertion);
+			} else {
+//				fDescription= new EditDescription(offset, insertion.length(), insertion.length());
+//				if (viewer instanceof TextViewer) {
+//					offset= ((TextViewer)viewer).modelOffset2WidgetOffset(offset);
+//					widget.replaceTextRange(offset, insertion.length(), insertion);
+//				} else {
+//					document.replace(offset, insertion.length(), insertion);
+//				}
+				document.replace(offset, insertion.length(), insertion);
+			}
+
+			// move the selection along
+			int selOffset= movingArea.getOffset() + deviation;
+			int selLength= movingArea.getLength() + (fAddDelimiter ? delim.length() : 0);
+			selLength= Math.min(selLength, viewer.getVisibleRegion().getOffset() + viewer.getVisibleRegion().getLength() - selOffset);
+			selectAndReveal(viewer, selOffset, selLength);
+		} catch (BadLocationException x) {
+			// won't happen without concurrent modification - bail out
+			return;
+		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void updateShortCut(Event event) {
+		fStateMask= event.stateMask;
+	}
+
+	/**
+	 * Performs similar to AbstractTextEditor.selectAndReveal, but does not update
+	 * the viewers highlight area.
+	 * 
+	 * @param viewer the viewer that we want to select on
+	 * @param offset the offset of the selection
+	 * @param length the length of the selection
+	 */
+	private void selectAndReveal(ITextViewer viewer, int offset, int length) {
+		// invert selection to avoid jumping to the end of the selection in st.showSelection()
+		viewer.setSelectedRange(offset + length, -length);
+		//viewer.revealRange(offset, length); // will trigger jumping
+		StyledText st= viewer.getTextWidget();
+		if (st != null)
+			st.showSelection(); // only minimal scrolling
+	}
+	
+	/**
+	 * Displays information in the status line why a line move is not possible
+	 */
+	private void showStatus() {
+		IEditorStatusLine status= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
+		if (status == null)
+			return;
+		status.setMessage(false, EditorMessages.getString(ILLEGAL_MOVE), null);
 	}
 
 	/*

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> bug 38745
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -166,8 +167,16 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		fMarkers= getMarkers();
-		setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
+		//bug 38745
+		int line= getVerticalRuler().getLineOfLastMouseButtonActivity() + 1;
+		if (line > getDocument().getNumberOfLines()) {
+			setEnabled(false);
+			setText(fAddLabel);
+		} else {
+			setEnabled(true);
+			fMarkers= getMarkers();
+			setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
+		}
 	}
 
 	/*

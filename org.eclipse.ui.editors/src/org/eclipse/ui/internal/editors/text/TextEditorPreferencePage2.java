@@ -58,11 +58,31 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
  * @since 2.1
  */
 public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
+	
+	private static void indent(Control control) {
+		GridData gridData= new GridData();
+		gridData.horizontalIndent= 20;
+		control.setLayoutData(gridData);		
+	}
+	
+	private static void createDependency(final Button master, final Control slave) {
+		indent(slave);
+		master.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				slave.setEnabled(master.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});		
+	}
 		
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{TextEditorMessages.getString("TextEditorPreferencePage.lineNumberForegroundColor"), TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
 		{TextEditorMessages.getString("TextEditorPreferencePage.currentLineHighlighColor"), TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
 		{TextEditorMessages.getString("TextEditorPreferencePage.printMarginColor"), TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.changedLineColor"), TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.addedLineColor"), TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR}, //$NON-NLS-1$
+		{TextEditorMessages.getString("TextEditorPreferencePage.deletedLineColor"), TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR}, //$NON-NLS-1$
 	};
 	
 	private final String[][] fAnnotationColorListModel;
@@ -136,6 +156,10 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.LINE_NUMBER_CHANGED_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR));
 		
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -188,6 +212,17 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		key= fAnnotationColorListModel[i][3];
 		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));				
 	}
+	
+	// sets enabled flag for a control and all its sub-tree
+	private static void setEnabled(Control control, boolean enable) {
+		control.setEnabled(enable);
+		if (control instanceof Composite) {
+			Composite composite= (Composite) control;
+			Control[] children= composite.getChildren();
+			for (int i= 0; i < children.length; i++)
+				setEnabled(children[i], enable);
+		}
+	}
 
 	private Control createAppearancePage(Composite parent) {
 
@@ -202,7 +237,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
 		label= TextEditorMessages.getString("TextEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		Button lineNumberBarButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.enableQuickDiff"); //$NON-NLS-1$
+		Button quickDiffButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF, 0);
+		createDependency(lineNumberBarButton, quickDiffButton);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);

@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.jface.text.IInformationControlCreator;
 
 /**
- * Extension to <code>IAnnotationHover</code> for providing its own information control creator.
+ * Extension to <code>IAnnotationHover</code> for
+ * <ul>
+ * <li>providing its own information control creator</li>
+ * <li>providing the range of lines for which the hover for a given line is valid
+ * </ul>
  * 
  * @see org.eclipse.jface.text.IInformationControlCreator
  * @see org.eclipse.jface.text.source.IAnnotationHover
@@ -27,4 +33,15 @@ public interface IAnnotationHoverExtension {
 	 * @return the information control creator
 	 */
 	IInformationControlCreator getInformationControlCreator();
+	
+	/**
+	 * Returns the range of lines that are covered by this hover for the given
+	 * <code>ISourceViewer</code> at model line <code>line</code>.
+	 * 
+	 * @param viewer the viewer which the hover is queried for
+	 * @param line the line which a hover is displayed for
+	 * @return the inclusive range of lines containing the given line in which a hover computer for
+	 * 	the given line is valid.
+	 */
+	Point getLineRange(ISourceViewer viewer, int line);
 }

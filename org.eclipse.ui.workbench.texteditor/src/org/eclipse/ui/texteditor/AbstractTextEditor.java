@@ -3745,15 +3745,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true); //$NON-NLS-1$
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false); //$NON-NLS-1$
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
+		
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_UP);
+		setAction(ITextEditorActionConstants.COPY_LINE_UP, action);
+		
+		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_DOWN);
+		setAction(ITextEditorActionConstants.COPY_LINE_DOWN, action);
 		
 		action = new CaseAction(EditorMessages.getResourceBundle(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UPPER_CASE_ACTION);
@@ -3872,15 +3882,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param menu the menu
 	 */
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 
 		for (Iterator i = fRulerContextMenuListeners.iterator(); i.hasNext();)
 			((IMenuListener) i.next()).menuAboutToShow(menu);					
 		
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
-		
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
-		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 	}
 	
 	/**

@@ -102,6 +102,36 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            name="%copyLineUp.label"
+            description="%copyLineUp.description"
+            category="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.copyLineUp">
+      </command>
+      <keyBinding
+            string="Alt+Ctrl+ARROW_UP"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.copyLineUp"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%copyLineDown.label"
+            description="%copyLineDown.description"
+            category="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.copyLineDown">
+      </command>
+      <keyBinding
+            string="Alt+Ctrl+ARROW_DOWN"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.copyLineDown"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
             name="%upperCase.label"
             description="%upperCase.description"
             category="org.eclipse.ui.category.textEditor"

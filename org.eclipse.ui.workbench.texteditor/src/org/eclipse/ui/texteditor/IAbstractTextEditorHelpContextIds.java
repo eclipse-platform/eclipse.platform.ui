@@ -268,6 +268,13 @@ public interface IAbstractTextEditorHelpContextIds {
 
 	/**
 	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.copy_lines_action_context"</code>
+	 * @since 3.0
+	 */
+	public static final String COPY_LINES_ACTION= PREFIX + "copy_lines" + ACTION_POSTFIX; //$NON-NLS-1$;
+
+	/**
+	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.upper_case_action_context"</code>
 	 * @since 3.0
 	 */

@@ -50,7 +50,7 @@ import org.eclipse.jface.text.TextEvent;
  * 
  * @since 2.0
  */
-public final class LineNumberRulerColumn implements IVerticalRulerColumn {
+public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	
 	/**
 	 * Internal listener class.
@@ -79,20 +79,11 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			if (!event.getViewerRedrawState())
 				return;
 				
-			if (fSensitiveToTextChanges || event.getDocumentEvent() == null) {
-				if (fCanvas != null && !fCanvas.isDisposed()) {
-					Display d= fCanvas.getDisplay();
-					if (d != null) {
-						d.asyncExec(new Runnable() {
-							public void run() {
-								redraw();
-							}
-						});
-					}	
-				}
-			}
+			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
+				postRedraw();
+
 		}
-	};
+	}
 	
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
@@ -309,7 +300,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 			return -1;
 		}
-	};
+	}
 	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
@@ -357,6 +348,16 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	}
 	
 	/**
+	 * Returns the foreground color being used to print the line numbers.
+	 * 
+	 * @return the configured foreground color
+	 * @since 3.0
+	 */
+	protected Color getForeground() {
+		return fForeground;
+	}
+	
+	/**
 	 * Sets the background color of this column.
 	 * 
 	 * @param background the background color
@@ -376,6 +377,16 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected Color getBackground(Display display) {
 		if (fBackground == null)
 			return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		return fBackground;
+	}
+	
+	/**
+	 * Returns the current background color.
+	 * 
+	 * @return the currently set background color or <code>null</code>
+	 * @since 3.0
+	 */
+	protected Color getBackground() {
 		return fBackground;
 	}
 	
@@ -521,7 +532,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Disposes the column's resources.
 	 */
-	private void handleDispose() {
+	protected void handleDispose() {
 		
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.removeViewportListener(fInternalListener);
@@ -599,6 +610,9 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		if (fCachedTextViewer == null)
 			return;
 			
+		if (fCachedTextWidget == null)
+			return;
+			
 		
 		int firstLine= 0;
 			
@@ -609,6 +623,9 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			
 			IRegion region= fCachedTextViewer.getVisibleRegion();
 			IDocument doc= fCachedTextViewer.getDocument();
+			
+			if (doc == null)
+				return;
 			
 			firstLine= doc.getLineOfOffset(region.getOffset());
 			if (firstLine > topLine)
@@ -633,10 +650,12 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			
 			if (y >= canvasheight)
 				break;
+			
+			paintLine(line, y, lineheight, gc);
 				
 			String s= Integer.toString(line + 1);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(s, indentation, y);
+			gc.drawString(s, indentation, y, true);
 		}
 	}
 	
@@ -669,6 +688,9 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			IRegion region= extension.getModelCoverage();
 			IDocument doc= fCachedTextViewer.getDocument();
+			
+			if (doc == null)
+				 return;
 
 			firstLine= doc.getLineOfOffset(region.getOffset());
 			if (firstLine > topLine || topLine == -1)
@@ -697,11 +719,45 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			int widgetLine= extension.modelLine2WidgetLine(modelLine);
 			if (widgetLine == -1)
 				continue;
+			
+			paintLine(modelLine, y, lineheight, gc);
 
 			String s= Integer.toString(modelLine + 1);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(s, indentation, y);
+			gc.drawString(s, indentation, y, true);
 			y+= lineheight;
+		}
+	}
+	
+	/**
+	 * Paints the line. After this method is called the line numbers are painted on top
+	 * of the result of this method.
+	 * <p>This default implementation does nothing.</p>
+	 * 
+	 * @param line the line of the document which the ruler is painted for
+	 * @param y the y-coordinate of the box being painted for <code>line</code>, relative to <code>gc</code>
+	 * @param lineheight the height of one line (and therefore of the box being painted)
+	 * @param gc the drawing context the client may choose to draw on.
+	 * @since 3.0
+	 */
+	protected void paintLine(int line, int y, int lineheight, GC gc) {
+	}
+	
+	/**
+	 * Triggers a redraw in the display thread.
+	 * 
+	 * @since 3.0
+	 */
+	protected final void postRedraw() {
+		if (fCanvas != null && !fCanvas.isDisposed()) {
+			Display d= fCanvas.getDisplay();
+			if (d != null) {
+				d.asyncExec(new Runnable() {
+					public void run() {
+						redraw();
+					}
+				});
+			}
 		}
 	}
 	
@@ -738,5 +794,15 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			computeNumberOfDigits();
 			computeIndentations();
 		}
+	}
+	
+	/**
+	 * Returns the parent (composite) ruler of this ruler column.
+	 * 
+	 * @return the parent ruler
+	 * @since 3.0
+	 */
+	protected CompositeRuler getParentRuler() {
+		return fParentRuler;
 	}
 }

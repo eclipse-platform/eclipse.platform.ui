@@ -106,6 +106,20 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String MOVE_LINES_DOWN= "org.eclipse.ui.edit.text.moveLineDown"; //$NON-NLS-1$
 	
 	/**
+	 * Action definition id of the copy lines upwards action.
+	 * Value: <code>"org.eclipse.ui.edit.text.copyLineUp"</code>
+	 * @since 3.0
+	 */
+	public static final String COPY_LINES_UP= "org.eclipse.ui.edit.text.copyLineUp"; //$NON-NLS-1$;
+
+	/**
+	 * Action definition id of the copy lines downwards action.
+	 * Value: <code>"org.eclipse.ui.edit.text.copyLineDown"</code>
+	 * @since 3.0
+	 */
+	public static final String COPY_LINES_DOWN= "org.eclipse.ui.edit.text.copyLineDown"; //$NON-NLS-1$;
+
+	/**
 	 * Action definition id of the upper case action.
 	 * Value: <code>"org.eclipse.ui.edit.text.upperCase"</code>
 	 * @since 3.0
