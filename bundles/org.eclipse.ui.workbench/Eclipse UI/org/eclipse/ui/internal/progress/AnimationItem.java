@@ -162,14 +162,14 @@ public class AnimationItem {
 	 * @param event
 	 */
 	void openFloatingWindow() {
-		//Do we already have one?
-		if (floatingWindow != null)
-			return;
-		//Don't bother if there is nothing showing yet
-		if (!window.getShell().isVisible())
-			return;
 		
-		synchronized(windowLock){
+		synchronized(windowLock){	
+			//Do we already have one?
+			if (floatingWindow != null)
+				return;
+			//Don't bother if there is nothing showing yet
+			if (!window.getShell().isVisible())
+				return;
 			floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
 		}
 		
@@ -200,9 +200,11 @@ public class AnimationItem {
 			public boolean shouldRun() {
 				if (AnimationManager.getInstance().isAnimated())
 					return true;
-				//If there is no window than do not run
-				floatingWindow = null;
-				return false;
+				synchronized(windowLock){
+					//If there is no window than do not run
+					floatingWindow = null;
+					return false;
+				}
 			}
 		};
 		floatingJob.setSystem(true);
