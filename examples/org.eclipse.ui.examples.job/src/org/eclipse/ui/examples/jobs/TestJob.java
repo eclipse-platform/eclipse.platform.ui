@@ -15,10 +15,29 @@ import org.eclipse.core.runtime.jobs.Job;
  * Base class for a simple test job with configurable parameters
  */
 public class TestJob extends Job {
+	/**
+	 * A family identifier for all test jobs
+	 */
+	public static final Object FAMILY_TEST_JOB = new Object();
+	/**
+	 * Total duration that the test job should sleep, in milliseconds.
+	 */
 	private long duration;
+	/**
+	 * Whether the test job should fail.
+	 */
 	private boolean failure;
+	/**
+	 * Whether the job should report unknown progress.
+	 */
 	private boolean unknown;
-	
+	/**
+	 * Creates a new test job
+	 * @param duration Total time that the test job should sleep, in milliseconds.
+	 * @param lock Whether the job should use a workspace scheduling rule
+	 * @param failure Whether the job should fail
+	 * @param indeterminate Whether the job should report indeterminate progress
+	 */
 	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate) {
 		super("Test job");
 		this.duration = duration;
@@ -27,6 +46,15 @@ public class TestJob extends Job {
 		if (lock)
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
+	 */
+	public boolean belongsTo(Object family) {
+		return family == FAMILY_TEST_JOB;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public IStatus run(IProgressMonitor monitor) {
 		if (failure) {
 			MultiStatus result = new MultiStatus("org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception"));
