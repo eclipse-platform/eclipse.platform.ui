@@ -245,6 +245,19 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 			fail("5.0 Accepted invalid variable value in setValue()");
 		} catch (CoreException ce) {
 			// success
+		}
+		
+		// set invalid value (with invalid segment)
+		String invalidPathString = "/a/\\:/b";
+		IPath invalidPath = new Path(invalidPathString);
+		assertTrue("6.0",invalidPath.isAbsolute());				
+		assertTrue("6.1",!Path.EMPTY.isValidPath(invalidPath.toString()));
+		assertTrue("6.2", !manager.validateValue(invalidPath).isOK());
+		try {
+			manager.setValue("one", invalidPath);
+			fail("6.3 Accepted invalid variable value in setValue()");
+		} catch (CoreException ce) {
+			// success
 		}		
 
 	}
