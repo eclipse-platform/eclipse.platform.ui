@@ -114,7 +114,7 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public class TextMergeViewer extends ContentMergeViewer  {
 	
-	private static final boolean DEBUG= true;
+	private static final boolean DEBUG= false;
 	
 	private static final String[] GLOBAL_ACTIONS= {
 		IWorkbenchActionConstants.UNDO,
