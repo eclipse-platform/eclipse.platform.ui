@@ -69,6 +69,20 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$
 	
+	/**
+	 * Menu group for open actions.
+	 * Value <code>"group.open"</code>
+	 * @since 3.1
+	 */
+	static final String GROUP_OPEN= "group.open"; //$NON-NLS-1$
+	
+	/**
+	 * Menu group for code generation and code assist actions.
+	 * Value <code>"group.generate"</code>).
+	 * @since 3.1
+	 */	
+	static final String GROUP_GENERATE=	"group.generate"; //$NON-NLS-1$
+
 	/** 
 	 * Name of the action for shifting text blocks to the right. 
 	 * Value: <code>"ShiftRight"</code>

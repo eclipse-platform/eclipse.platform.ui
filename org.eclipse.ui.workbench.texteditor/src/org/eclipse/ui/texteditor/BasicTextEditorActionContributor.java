@@ -15,10 +15,12 @@ package org.eclipse.ui.texteditor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.Separator;
 
 import org.eclipse.jface.text.Assert;
 
@@ -123,6 +125,11 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The go to line action.
 	 */
 	private RetargetTextEditorAction fGotoLine;
+	/**
+	 * The hippie completion action.
+	 * @since 3.1
+	 */
+	private RetargetTextEditorAction fHippieCompletion;
 	/** 
 	 * The map of status fields.
 	 * @since 2.0
@@ -148,6 +155,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
+		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
+		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
@@ -209,6 +218,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fIncrementalFind.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL));
 		fIncrementalFindReverse.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
+		fHippieCompletion.setAction(getAction(editor, ITextEditorActionConstants.HIPPIE_COMPLETION));
 		
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
@@ -245,6 +255,14 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFind);
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
+			
+			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_OPEN));			
+			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_GENERATE));
+			final String GENERATE_END= "group.generate.end"; //$NON-NLS-1$
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new GroupMarker(GENERATE_END));
+			editMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
+			editMenu.appendToGroup(GENERATE_END, fHippieCompletion);
 		}
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);

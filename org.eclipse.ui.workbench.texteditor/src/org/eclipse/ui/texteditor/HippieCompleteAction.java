@@ -363,11 +363,21 @@ final class HippieCompleteAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
+		if (!validateEditorInputState())
+			return;
+		
 		if (!isStateValid())
 			updateState();
 		
 		if (isStateValid())
 			completeNext();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.action.IAction#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return canModifyEditor();
 	}
 	
 	/*
