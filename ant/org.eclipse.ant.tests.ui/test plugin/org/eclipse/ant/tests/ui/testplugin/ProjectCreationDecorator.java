@@ -86,23 +86,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 		 
 		setVM(config);
-		setClasspath(config);		
-		
-//				String workingDirectory= workDirectoryField.getText().trim();
-//				if (workingDirectory.length() == 0) {
-//					configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
-//				} else {
-//					configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
-//				}
-		
-		
-
-//			String arguments= argumentField.getText().trim();
-//			if (arguments.length() == 0) {
-//				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String)null);
-//			} else {
-//				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
-//			}
+		setClasspath(config);
 				
 		config.doSave();
 	}
@@ -118,24 +102,6 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
-	 
-		//setClasspath(config);		
-	
-//					String workingDirectory= workDirectoryField.getText().trim();
-//					if (workingDirectory.length() == 0) {
-//						configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
-//					} else {
-//						configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
-//					}
-	
-	
-
-//				String arguments= argumentField.getText().trim();
-//				if (arguments.length() == 0) {
-//					config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String)null);
-//				} else {
-//					config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
-//				}
 			
 		config.doSave();
 	}
