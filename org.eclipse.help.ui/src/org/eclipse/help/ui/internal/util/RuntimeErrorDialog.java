@@ -4,7 +4,7 @@ package org.eclipse.help.ui.internal.util;
  * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 /**

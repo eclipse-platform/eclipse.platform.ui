@@ -5,24 +5,24 @@ package org.eclipse.help.ui.internal.workingset;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
+import java.util.*;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
-import org.eclipse.help.ui.internal.util.WorkbenchResources;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.IWorkingSetPage;
+import org.eclipse.ui.dialogs.*;
 
 /**
  * Page for help working sets.
@@ -30,7 +30,7 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
 public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
 	public final static String PAGE_ID =
-		"org.eclipse.help.ui.HelpWorkingSetPage";
+		WorkbenchHelpPlugin.PLUGIN_ID + ".HelpWorkingSetPage";
 	public final static String PAGE_TITLE =
 		WorkbenchResources.getString("WorkingSetPageTitle");
 	public final static String PAGE_DESCRIPTION =
@@ -143,7 +143,11 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		if (workingSet != null) {
 			workingSetName.setText(workingSet.getName());
 			// May need to reconcile working sets
-			WorkbenchHelpPlugin.getDefault().getWorkingSetSynchronizer().addWorkingSet(workingSet);
+			WorkbenchHelpPlugin
+				.getDefault()
+				.getWorkingSetSynchronizer()
+				.addWorkingSet(
+				workingSet);
 		}
 		initializeCheckedState();
 		validateInput();

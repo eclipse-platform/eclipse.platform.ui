@@ -5,6 +5,7 @@
 package org.eclipse.help.ui.browser;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.browser.*;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.util.*;

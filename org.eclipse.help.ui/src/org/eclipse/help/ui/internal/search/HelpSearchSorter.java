@@ -3,9 +3,9 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.search;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.*;
 /**
  * Sorts results of help sarch in search view.
  */

@@ -16,7 +16,7 @@ import org.eclipse.ui.*;
 public class OpenHelpSearchPageAction
 	implements IWorkbenchWindowActionDelegate {
 
-	private static final String HELP_SEARCH_PAGE_ID = "org.eclipse.help.ui.searchPage"; //$NON-NLS-1$
+	private static final String HELP_SEARCH_PAGE_ID = WorkbenchHelpPlugin.PLUGIN_ID+".searchPage"; //$NON-NLS-1$
 
 	private IWorkbenchWindow fWindow;
 

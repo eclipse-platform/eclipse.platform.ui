@@ -4,14 +4,14 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.help.internal.appserver.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 

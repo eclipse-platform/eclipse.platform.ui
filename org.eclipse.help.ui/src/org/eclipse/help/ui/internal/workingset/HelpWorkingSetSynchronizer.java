@@ -5,6 +5,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
 
@@ -98,14 +99,17 @@ public class HelpWorkingSetSynchronizer
 		} else if (
 			event.getProperty().equals(
 				WorkingSetManager.CHANGE_WORKING_SETS_SYNCH)) {
-			
+
 			// remove working sets not present in the UI
-			WorkingSet[] baseWorkingSets = getHelpWorkingSetManager().getWorkingSets();
-			for (int i=0; i<baseWorkingSets.length; i++) {
+			WorkingSet[] baseWorkingSets =
+				getHelpWorkingSetManager().getWorkingSets();
+			for (int i = 0; i < baseWorkingSets.length; i++) {
 				IWorkingSet iws =
-					getEclipseWorkingSetManager().getWorkingSet(baseWorkingSets[i].getName());
-				if (iws == null) 
-					getHelpWorkingSetManager().removeWorkingSet(baseWorkingSets[i]);
+					getEclipseWorkingSetManager().getWorkingSet(
+						baseWorkingSets[i].getName());
+				if (iws == null)
+					getHelpWorkingSetManager().removeWorkingSet(
+						baseWorkingSets[i]);
 			}
 		}
 	}
@@ -195,8 +199,8 @@ public class HelpWorkingSetSynchronizer
 			getEclipseWorkingSetManager().createWorkingSet(
 				ws.getName(),
 				ws.getElements());
-			// the id of the workingSet extension point in plugin.xml
-			w.setId("org.eclipse.help.ui.HelpWorkingSetPage");
+		// the id of the workingSet extension point in plugin.xml
+		w.setId(WorkbenchHelpPlugin.PLUGIN_ID + ".HelpWorkingSetPage");
 		return w;
 	}
 

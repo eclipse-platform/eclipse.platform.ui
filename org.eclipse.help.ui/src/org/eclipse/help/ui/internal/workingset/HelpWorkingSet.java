@@ -5,9 +5,9 @@ package org.eclipse.help.ui.internal.workingset;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.ui.*;
 

@@ -8,7 +8,8 @@ package org.eclipse.help.ui.internal;
  */
 public interface IHelpUIConstants {
 	// Help UI pluging id with a "." for convenience.
-	public static final String HELP_UI_PLUGIN_ID = "org.eclipse.help.ui.";
+	public static final String HELP_UI_PLUGIN_ID =
+		WorkbenchHelpPlugin.PLUGIN_ID + ".";
 	// F1 ids
 	public static final String F1_SHELL = HELP_UI_PLUGIN_ID + "f1Shell";
 	public static final String PREF_PAGE_BROWSERS =

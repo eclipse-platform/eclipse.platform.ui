@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.browser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.browser.*;
+import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.*;
@@ -17,7 +18,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
-import org.eclipse.help.internal.browser.BrowserManager;
 
 /**
  * Preference page for selecting default web browser.
@@ -37,7 +37,7 @@ public class BrowsersPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		noDefaultAndApplyButton();
 		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
@@ -47,17 +47,17 @@ public class BrowsersPreferencePage
 		//data.grabExcessHorizontalSpace = true;
 		mainComposite.setLayoutData(data);
 		mainComposite.setFont(font);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
-		
+
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setFont(font);
 		description.setText(WorkbenchResources.getString("select_browser"));
 		createSpacer(mainComposite);
-		
+
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
 		tableDescription.setFont(font);
 		tableDescription.setText(
@@ -114,7 +114,7 @@ public class BrowsersPreferencePage
 	}
 	protected void createCustomBrowserPathPart(Composite mainComposite) {
 		Font font = mainComposite.getFont();
-		
+
 		// vertical space
 		new Label(mainComposite, SWT.NULL);
 
@@ -179,8 +179,7 @@ public class BrowsersPreferencePage
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref =
-			HelpPlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
@@ -219,7 +218,7 @@ public class BrowsersPreferencePage
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
 				boolean enabled =
-					"org.eclipse.help.custombrowser".equals(
+					(HelpPlugin.PLUGIN_ID + ".custombrowser").equals(
 						BrowserManager
 							.getInstance()
 							.getBrowserDescriptors()[i]

@@ -3,11 +3,11 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.util;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 /**
  * Utility class to simplify access to some SWT resources. 

@@ -13,7 +13,7 @@ import org.eclipse.jface.window.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;

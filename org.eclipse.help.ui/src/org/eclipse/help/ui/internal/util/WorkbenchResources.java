@@ -4,10 +4,10 @@ package org.eclipse.help.ui.internal.util;
  * All Rights Reserved.
  */
 import java.net.*;
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.*;
 
-import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
+import org.eclipse.help.ui.internal.*;
 /**
  * Uses a resource bundle to load images and strings from
  * a property file.
