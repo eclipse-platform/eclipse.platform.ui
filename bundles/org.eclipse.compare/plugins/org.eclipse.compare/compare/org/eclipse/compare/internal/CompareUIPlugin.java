@@ -693,17 +693,17 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		if (ancestor != null) {
 			String type= ancestor.getType();
 			if (type != null)
-				types[cnt++]= type;
+				types[cnt++]= normalizeCase(type);
 		}
 		if (left != null) {
 			String type= left.getType();
 			if (type != null)
-				types[cnt++]= type;
+				types[cnt++]= normalizeCase(type);
 		}
 		if (right != null) {
 			String type= right.getType();
 			if (type != null)
-				types[cnt++]= type;
+				types[cnt++]= normalizeCase(type);
 		}
 		boolean homogenous= false;
 		switch (cnt) {
