@@ -32,14 +32,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -49,12 +47,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
@@ -385,7 +383,7 @@ public static void updatePerspective(IConfigurationElement configElement) {
 		// @issue IWorkbenchConstants is internal 
 		//Enable the role if required.
 		IObjectActivityManager activityManager = 
-			PlatformUI.getWorkbench().
+		(/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).
 				getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
 		if (activityManager != null) {
 			activityManager.setEnablementFor(finalPerspId, true);

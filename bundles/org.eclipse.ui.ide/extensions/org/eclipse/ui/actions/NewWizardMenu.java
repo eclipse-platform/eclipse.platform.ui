@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -26,12 +24,14 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
@@ -105,7 +105,7 @@ public class NewWizardMenu extends ContributionItem {
 				actions = new ArrayList(((WorkbenchPage) page).getNewWizardActionIds());
 			
 			if (actions != null) {
-				IObjectActivityManager manager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_NEW, false);
+				IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_NEW, false);
 				
 				if (manager != null) {
 					// prune away all IDs that arent active based on the managers opinion.

@@ -16,9 +16,9 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.registry.Category;
@@ -43,8 +43,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 			Category[] categories = reg.getCategories();
 
             IObjectActivityManager objectManager = 
-            	PlatformUI
-            		.getWorkbench()
+            (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench())
             		.getObjectActivityManager(
             			IWorkbenchConstants.PL_VIEWS, false);
             if (objectManager != null) {
@@ -67,8 +66,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 			if (list != null) {
 
 				IObjectActivityManager objectManager = 
-					PlatformUI
-						.getWorkbench()
+				(/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench())
 						.getObjectActivityManager(
 							IWorkbenchConstants.PL_VIEWS, false);              
                 if (objectManager != null) {

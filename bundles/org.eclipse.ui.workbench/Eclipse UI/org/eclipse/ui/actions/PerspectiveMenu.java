@@ -16,20 +16,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -39,6 +37,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -215,7 +214,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 			return list;
 		ids = new ArrayList(ids);
 
-        IObjectActivityManager activityManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IObjectActivityManager activityManager = (/* TODO bad cast */ (Workbench) window.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
         if (activityManager != null) {
             // prune all non-active contributions.
             ids.retainAll(activityManager.getEnabledObjects());

@@ -20,7 +20,6 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.activities.service.ICompoundActivityService;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -357,18 +356,6 @@ public boolean saveAllEditors(boolean confirm);
  * @since 3.0
  */
 public IElementFactory getElementFactory(String factoryId);
-
-/**
- * Get the manager for a given id, optionally creating it if it 
- * doesn't exist.
- * @param id. The id for the type of contribution that is to be looked
- *  	up. The id is determined by the initial creator of the registry.
- * @param create Create the activity manager if it does not exist yet.
- * 		If this flag is false and the manager for this id has not been
- * 		created return false.
- * @return IObjectActivityManager or <code>null</code>.
- */
-public IObjectActivityManager getObjectActivityManager(String id, boolean create);
 
 /**
  * Returns the activity manager for the workbench. 

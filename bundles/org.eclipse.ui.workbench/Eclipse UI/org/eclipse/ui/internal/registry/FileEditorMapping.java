@@ -15,12 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.activities.IObjectContributionRecord;
@@ -102,7 +102,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
      */
     private IObjectActivityManager getObjectActivityManager() {
         return 
-        	PlatformUI.getWorkbench().
+        (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).
 				getObjectActivityManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
     }
     /**

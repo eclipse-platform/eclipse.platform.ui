@@ -17,11 +17,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -179,7 +177,7 @@ public class WorkbenchActivityHelper {
     private void createNewWizardMappings() {
         NewWizardsRegistryReader reader = new NewWizardsRegistryReader(false);
         WizardCollectionElement wizardCollection = reader.getWizardElements();
-        IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_NEW, true);
+        IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_NEW, true);
         Object[] wizards = flattenWizards(wizardCollection);
         for (int i = 0; i < wizards.length; i++) {
             WorkbenchWizardElement element = (WorkbenchWizardElement) wizards[i];
@@ -199,7 +197,7 @@ public class WorkbenchActivityHelper {
     private void createPerspectiveMappings() {
         IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
         IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
-        IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, true);
+        IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, true);
         for (int i = 0; i < descriptors.length; i++) {
             String localId = descriptors[i].getId();
             if (!(descriptors[i] instanceof PerspectiveDescriptor)) {
@@ -234,7 +232,7 @@ public class WorkbenchActivityHelper {
     private void createPreferenceMappings() {
         PreferenceManager preferenceManager = WorkbenchPlugin.getDefault().getPreferenceManager();
         //add all WorkbenchPreferenceNodes to the manager
-        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PREFERENCES, true);
+        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PREFERENCES, true);
         for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext();) {
             IPreferenceNode node = (IPreferenceNode) i.next();
             if (node instanceof WorkbenchPreferenceNode) {
@@ -252,7 +250,7 @@ public class WorkbenchActivityHelper {
      */
     private void createPropertyContributionMappings() {
     	Collection contributors = PropertyPageContributorManager.getManager().getContributors();
-    	IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, true);
+    	IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, true);
     	for (Iterator i = contributors.iterator(); i.hasNext();) {
     		for (Iterator j = ((Collection) i.next()).iterator(); j.hasNext();) {
     			RegistryPageContributor pageContributor = (RegistryPageContributor) j.next();
@@ -270,7 +268,7 @@ public class WorkbenchActivityHelper {
 	 */
     private void createViewMappings() {
         IViewRegistry viewRegistry = WorkbenchPlugin.getDefault().getViewRegistry();
-        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, true);
+        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, true);
 
         IViewDescriptor[] viewDescriptors = viewRegistry.getViews();
         for (int i = 0; i < viewDescriptors.length; i++) {

@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -32,10 +30,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
@@ -123,7 +122,7 @@ public class ShowViewMenu extends ContributionItem {
 		// Get visible actions. (copy, we're going to be modifying it)
 		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());
         
-        IObjectActivityManager objectManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, false);
+        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, false);
         if (objectManager != null) {
             // prune off all filtered views
             viewIds.retainAll(objectManager.getEnabledObjects());

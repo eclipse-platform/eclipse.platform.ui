@@ -12,16 +12,15 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
 
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
 
 /**
@@ -82,7 +81,7 @@ public class PropertyDialog extends PreferenceDialog {
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
 		IObjectActivityManager propManager =
-			WorkbenchPlugin.getDefault().getWorkbench().getObjectActivityManager(
+		(/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(
 				IWorkbenchConstants.PL_PROPERTY_PAGES,
 				false);
 		if (propManager != null) {

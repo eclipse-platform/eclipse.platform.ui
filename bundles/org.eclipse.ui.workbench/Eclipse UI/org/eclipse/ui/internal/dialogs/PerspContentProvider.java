@@ -15,11 +15,11 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
@@ -53,7 +53,7 @@ public class PerspContentProvider implements IStructuredContentProvider {
      * @return IPerspectiveDescriptor[] the active descriptors.
      */
     IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
-        IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
         IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
         if (manager == null) {
             return descriptors;
