@@ -71,7 +71,6 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 		if (status != null) {
 			handleStatus(status);
 		}		
-		resize();
 	}
 		
 	/**

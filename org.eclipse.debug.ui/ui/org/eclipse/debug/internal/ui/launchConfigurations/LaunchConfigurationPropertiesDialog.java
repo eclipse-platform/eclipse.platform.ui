@@ -80,7 +80,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 
 	protected void initializeContent() {
 		getTabViewer().setInput(getLaunchConfiguration());
-		resize();
 	}
 			
 	/**
