@@ -114,13 +114,13 @@ public class MemoryRenderingInfo implements IMemoryRenderingInfo
 	 */
 	public IConfigurationElement[] getAllProperties() {
 		
-		Enumeration enum = fProperties.elements();
+		Enumeration enumeration = fProperties.elements();
 		IConfigurationElement[] elements = new IConfigurationElement[fProperties.size()];
 		
 		int i=0;
-		while (enum.hasMoreElements())
+		while (enumeration.hasMoreElements())
 		{
-			elements[i] = (IConfigurationElement)enum.nextElement(); 
+			elements[i] = (IConfigurationElement)enumeration.nextElement(); 
 			i++;
 		}
 		

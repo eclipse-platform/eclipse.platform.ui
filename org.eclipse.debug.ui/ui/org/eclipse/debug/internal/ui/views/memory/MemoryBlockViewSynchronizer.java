@@ -167,11 +167,11 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 	{
 		if (fSynchronizeInfo != null)
 		{	
-			Enumeration enum = fSynchronizeInfo.elements();
+			Enumeration enumeration = fSynchronizeInfo.elements();
 			
 			// clean up all synchronize info objects
-			while (enum.hasMoreElements()){
-				SynchronizeInfo info = (SynchronizeInfo)enum.nextElement();
+			while (enumeration.hasMoreElements()){
+				SynchronizeInfo info = (SynchronizeInfo)enumeration.nextElement();
 				info.delete();
 			}
 			

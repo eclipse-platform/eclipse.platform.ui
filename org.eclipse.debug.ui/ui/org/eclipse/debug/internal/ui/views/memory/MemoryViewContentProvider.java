@@ -767,11 +767,11 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 	 */
 	public void resetDeltas()
 	{
-		Enumeration enum = contentCache.elements();
+		Enumeration enumeration = contentCache.elements();
 		
-		while (enum.hasMoreElements())
+		while (enumeration.hasMoreElements())
 		{
-			MemoryViewLine line = (MemoryViewLine)enum.nextElement();
+			MemoryViewLine line = (MemoryViewLine)enumeration.nextElement();
 			line.unmarkDeltas();
 		}
 	}

@@ -1632,11 +1632,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				if (!file.delete()) {
 					file.deleteOnExit(); // if delete() fails try again on VM close
 				}
-				for (Enumeration enum = p.keys(); enum.hasMoreElements();) {
+				for (Enumeration enumeration = p.keys(); enumeration.hasMoreElements();) {
 					// Win32's environment vars are case insensitive. Put everything
 					// to uppercase so that (for example) the "PATH" variable will match
 					// "pAtH" correctly on Windows.
-					String key= ((String) enum.nextElement()).toUpperCase();
+					String key= ((String) enumeration.nextElement()).toUpperCase();
 					//no need to cast value
 					fgNativeEnv.put(key, p.get(key));
 				}

@@ -216,11 +216,11 @@ public class SynchronizeInfo
 				Object value = fProperties.get(propertyId);
 				if (value != null)
 				{				
-					Enumeration enum = fPropertyListeners.elements();
+					Enumeration enumeration = fPropertyListeners.elements();
 					
-					while(enum.hasMoreElements())
+					while(enumeration.hasMoreElements())
 					{
-						PropertyListener listener = (PropertyListener)enum.nextElement();
+						PropertyListener listener = (PropertyListener)enumeration.nextElement();
 						
 						ISynchronizedMemoryBlockView view = listener.getView();
 						

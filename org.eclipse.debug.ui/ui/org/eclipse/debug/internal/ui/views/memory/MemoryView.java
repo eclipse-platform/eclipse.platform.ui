@@ -561,10 +561,10 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 				// find memory from other folder and dispose the view tab
 				if (!foundTab)
 				{
-					Enumeration enum = tabFolderHashtable.elements();
-					while (enum.hasMoreElements())
+					Enumeration enumeration = tabFolderHashtable.elements();
+					while (enumeration.hasMoreElements())
 					{
-						tabFolder = (TabFolder) enum.nextElement();
+						tabFolder = (TabFolder) enumeration.nextElement();
 						tabs = tabFolder.getItems();
 						IMemoryViewTab viewTab = null;
 						for (int i = 0; i < tabs.length; i++)
@@ -629,11 +629,11 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 		try {
 			
 			if (tabFolderHashtable != null) {
-				Enumeration enum = tabFolderHashtable.elements();
+				Enumeration enumeration = tabFolderHashtable.elements();
 				
-				while (enum.hasMoreElements())
+				while (enumeration.hasMoreElements())
 				{
-					TabFolder tabFolder = (TabFolder)enum.nextElement();
+					TabFolder tabFolder = (TabFolder)enumeration.nextElement();
 					
 					if (tabFolder.isDisposed())
 						continue;

@@ -807,11 +807,11 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 						addRenderingInfo(dynamicRenderingTypes);
 						
 						// now compare the returned list to what is orginally cached
-						Enumeration enum = fDynamicRenderingMap.keys();
+						Enumeration enumeration = fDynamicRenderingMap.keys();
 						
-						while (enum.hasMoreElements())
+						while (enumeration.hasMoreElements())
 						{
-							String dynamicRenderingId = (String)enum.nextElement();
+							String dynamicRenderingId = (String)enumeration.nextElement();
 							String staticRenderingId = (String)fDynamicRenderingMap.get(dynamicRenderingId);
 													
 							if (staticRenderingId.equals(rendering.getRenderingId()))
