@@ -26,4 +26,10 @@ package org.eclipse.ui.commands;
  */
 public interface IGestureStroke {
 
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */
+	Object getDirection();
 }
