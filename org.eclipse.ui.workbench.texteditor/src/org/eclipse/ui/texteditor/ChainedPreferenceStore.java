@@ -28,10 +28,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <p>
  * This preference store is read-only i.e. write access
  * throws an {@link java.lang.UnsupportedOperationException}.</p>
- * <p>
- * XXX: This is work in progress and can change any time until API for 3.0 is frozen.
- *      This whole class might be replaced by the upcoming Settings API.
- * </p>
+ *
  * @since 3.0
  */
 public class ChainedPreferenceStore implements IPreferenceStore {

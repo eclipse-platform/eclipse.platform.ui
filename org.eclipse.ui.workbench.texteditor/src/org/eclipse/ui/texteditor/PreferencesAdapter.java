@@ -21,9 +21,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * Adapts {@link org.eclipse.core.runtime.Preferences} to
  * {@link org.eclipse.jface.preference.IPreferenceStore}
- * <p>
- * XXX: This is work in progress and can change any time until API for 3.0 is frozen.
- * </p>
  * 
  * @since 3.0
  */
@@ -36,8 +33,9 @@ public class PreferencesAdapter implements IPreferenceStore {
 	 * adapter with arguments from the received event.
 	 */
 	private class PropertyChangeListener implements Preferences.IPropertyChangeListener {
-		/**
-		 * {@inheritDoc}
+
+		/*
+		 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 		 */
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			firePropertyChangeEvent(event.getProperty(), event.getOldValue(), event.getNewValue());
