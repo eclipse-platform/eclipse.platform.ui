@@ -110,7 +110,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	protected Label createLabel(Composite parent, String text) {
+	public static Label createLabel(Composite parent, String text) {
 		return createIndentedLabel(parent, text, 0);
 	}
 	/**
@@ -122,7 +122,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @param indent  the indent in pixels, or 0 for none
 	 * @return the new label
 	 */
-	protected Label createIndentedLabel(Composite parent, String text, int indent) {
+	public static Label createIndentedLabel(Composite parent, String text, int indent) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
@@ -160,7 +160,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @param parent  the parent of the new text field
 	 * @return the new text field
 	 */
-	protected Text createTextField(Composite parent) {
+	static public Text createTextField(Composite parent) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = GridData.CENTER;

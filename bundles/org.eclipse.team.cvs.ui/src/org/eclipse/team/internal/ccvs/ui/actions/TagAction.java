@@ -54,24 +54,31 @@ public class TagAction extends TeamAction {
 		final int[] failureCount = new int[] {0};
 		final int[] resourceCount = new int[] {0};
 		
+		PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
+		getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
+		final IResource[] resources;
+		try {
+			 resources = prompt.promptForMultiple();
+		} catch(InterruptedException e) {
+			return;
+		}
+		if(resources.length == 0) {
+			// nothing to do
+			return;						
+		}
+		
+		resourceCount[0] = resources.length;
+		final String[] result = new String[1];
+		getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resources[0].getProject());
+				result[0] = promptForTag(folder);
+			}
+		});
+		if (result[0] == null) return;
+		
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-					getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
-				IResource[] resources = prompt.promptForMultiple();
-				if(resources.length == 0) {
-					// nothing to do
-					return;						
-				}
-				
-				resourceCount[0] = resources.length;
-				final String[] result = new String[1];
-				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-						result[0] = promptForTag();
-					}
-				});
-				if (result[0] == null) return;
 				Hashtable table = getProviderMapping(resources);
 				Set keySet = table.keySet();
 				monitor.beginTask(null, keySet.size() * 1000);
@@ -159,22 +166,12 @@ public class TagAction extends TeamAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return the tag, or null to cancel
 	 */
-	protected String promptForTag() {
-		// Prompt for the tag
-		IInputValidator validator = new IInputValidator() {
-			public String isValid(String tagName) {
-				IStatus status = CVSTag.validateTagName(tagName);
-				if (status.isOK()) {
-					return null;
-				} else {
-					return status.getMessage();
-				}
-			}
-		};
-		InputDialog dialog = new InputDialog(getShell(),
-			Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator); //$NON-NLS-1$ //$NON-NLS-2$
+	protected String promptForTag(ICVSFolder folder) {
+		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
+											Policy.bind("TagAction.tagResources"),
+											folder);
 		if (dialog.open() != InputDialog.OK) return null;
-		return dialog.getValue();
+		return dialog.getTagName();
 	}
 	/**
 	 * Note: This method is designed to be overridden by test cases.

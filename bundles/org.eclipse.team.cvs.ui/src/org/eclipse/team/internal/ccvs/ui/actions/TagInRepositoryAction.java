@@ -71,15 +71,15 @@ public class TagInRepositoryAction extends TagAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
+					final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 					final String[] result = new String[1];
 					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							result[0] = promptForTag();
+							result[0] = promptForTag(folders[0]);
 						}
 					});
 					if (result[0] == null) return;
 
-					ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 					monitor.beginTask(null, 1000 * folders.length);
 					CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
 					

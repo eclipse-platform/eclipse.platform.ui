@@ -627,7 +627,7 @@ public class TagConfigurationDialog extends Dialog {
 	private static void updateToolTipHelpForRefreshButton(Button button, ICVSFolder folder) {
 		StringBuffer tooltip = new StringBuffer(Policy.bind("TagConfigurationDialog.15")); //$NON-NLS-1$
 		String[] autoFiles = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(folder);
-		tooltip.append(" - .project\n"); //$NON-NLS-1$
+		tooltip.append("\n - .project\n"); //$NON-NLS-1$
 		for (int i = 0; i < autoFiles.length; i++) {
 			tooltip.append("-  " + autoFiles[i] + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
