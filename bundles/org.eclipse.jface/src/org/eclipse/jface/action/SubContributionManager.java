@@ -91,9 +91,15 @@ public abstract class SubContributionManager implements IContributionManager {
 	 * @since 3.0
 	 */
 	public void disposeManager() {
+	    // do not use getItems() here as subclasses can override that
+		Iterator enum = mapItemToWrapper.values().iterator();
+		while (enum.hasNext()) {
+			IContributionItem item = (IContributionItem) enum.next();
+			item.dispose();
+		}
 	    removeAll();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContributionManager.
 	 *

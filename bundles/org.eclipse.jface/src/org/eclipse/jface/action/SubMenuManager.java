@@ -97,6 +97,18 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
             menuListener = null;
             menuListeners.clear();
         }
+        // important to dispose menu wrappers before call to super,
+        // otherwise super's call to removeAll will remove them 
+        // before they can be disposed
+		if (mapMenuToWrapper != null) {
+			Iterator iter = mapMenuToWrapper.values().iterator();
+			while (iter.hasNext()) {
+				SubMenuManager wrapper = (SubMenuManager) iter.next();
+				wrapper.disposeManager();
+			}
+			mapMenuToWrapper.clear();
+			mapMenuToWrapper = null;
+		}
         super.disposeManager();
     }
     
