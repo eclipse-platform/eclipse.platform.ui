@@ -10,20 +10,37 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.*;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
 
 /**
@@ -118,74 +135,6 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		}
 	}
 	
-	public static class CheckboxSelectionProvider implements ISelectionProvider {
-
-		ContainerCheckedTreeViewer viewer;
-		ISynchronizePageConfiguration configuration;
-		Map listeners = new HashMap();
-		
-		public CheckboxSelectionProvider(ContainerCheckedTreeViewer viewer, ISynchronizePageConfiguration configuration) {
-			this.viewer = viewer;
-			this.configuration = configuration;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
-		public void addSelectionChangedListener(final ISelectionChangedListener listener) {
-			ICheckStateListener checkListener = new ICheckStateListener() {
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					SelectionChangedEvent se = new SelectionChangedEvent(CheckboxSelectionProvider.this, getSelection());
-					listener.selectionChanged(se);
-				}
-			};
-			viewer.addCheckStateListener(checkListener);
-			listeners.put(listener, checkListener);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-		 */
-		public ISelection getSelection() {
-			if (viewer == null) {
-				return StructuredSelection.EMPTY;
-			}
-			IResource[] resources = Utils.getResources(viewer.getCheckedElements());
-			ArrayList result = new ArrayList();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if (configuration.getSyncInfoSet().getSyncInfo(resource) != null) {
-					result.add(resource);
-				}
-			}
-			return new StructuredSelection((IResource[]) result.toArray(new IResource[result.size()]));
-
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
-		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-			ICheckStateListener checkListener = (ICheckStateListener)listeners.get(listener);
-			if (checkListener != null) {
-				viewer.removeCheckStateListener(checkListener);
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-		 */
-		public void setSelection(ISelection selection) {
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				for (Iterator iter = ss.iterator(); iter.hasNext();) {
-					Object element = (Object) iter.next();
-					// TODO:
-				}
-			}
-		}
-	}
-	
 	/**
 	 * A navigable tree viewer that will work with the <code>navigate</code> method of
 	 * this advisor.
@@ -208,7 +157,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		int style = ((SynchronizePageConfiguration)configuration).getViewerStyle();
 		if ((style & CHECKBOX) > 0) {
 			NavigableCheckboxTreeViewer v = new TreeViewerAdvisor.NavigableCheckboxTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-			configuration.getSite().setSelectionProvider(new CheckboxSelectionProvider(v, configuration));
+			configuration.getSite().setSelectionProvider(v);
 			return v;
 		} else {
 			NavigableTreeViewer v = new TreeViewerAdvisor.NavigableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);

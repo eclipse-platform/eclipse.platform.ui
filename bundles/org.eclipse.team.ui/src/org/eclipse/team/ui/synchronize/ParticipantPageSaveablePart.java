@@ -53,7 +53,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private CompareConfiguration cc;
 	private ISynchronizeParticipant participant;
 	private ISynchronizePageConfiguration pageConfiguration;
-	private IPageBookViewPage page;
 	private Image titleImage;
 	private Shell shell;
 	private Shell dialogShell;
