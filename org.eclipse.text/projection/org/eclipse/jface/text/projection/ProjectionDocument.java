@@ -222,9 +222,12 @@ public class ProjectionDocument extends AbstractDocument {
 	 * 
 	 * @param offsetInMaster offset of the master document range
 	 * @param lengthInMaster length of the master document range
-	 * @throws BadLocationException if the given range is invalid in the master document
+	 * @param masterDocumentEvent the master document event that causes this
+	 *            projection change or <code>null</code> if none
+	 * @throws BadLocationException if the given range is invalid in the master
+	 *             document
 	 */
-	private void internalAddMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+	private void internalAddMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
 		
 		if (lengthInMaster == 0)
 			return;
@@ -259,7 +262,7 @@ public class ProjectionDocument extends AbstractDocument {
 				offsetInSlave= segment.getOffset() + segment.getLength();
 			}
 			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster), offsetInMaster, lengthInMaster);
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster), offsetInMaster, lengthInMaster, masterDocumentEvent);
 			super.fireDocumentAboutToBeChanged(event);
 
 			// check for neighboring fragment
@@ -425,6 +428,20 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @throws BadLocationException in case the master event is not valid
 	 */
 	public void addMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+		addMasterDocumentRange(offsetInMaster, lengthInMaster, null);
+	}
+
+	/**
+	 * Ensures that the given range of the master document is part of this
+	 * projection document.
+	 * 
+	 * @param offsetInMaster the offset of the master document range
+	 * @param lengthInMaster the length of the master document range
+	 * @param masterDocumentEvent the master document event which causes this
+	 *            projection change, or <code>null</code> if none
+	 * @throws BadLocationException in case the master event is not valid
+	 */
+	private void addMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
 		
 		IRegion[] gaps= computeUnprojectedMasterRegions(offsetInMaster, lengthInMaster);
 		if (gaps == null)
@@ -432,7 +449,7 @@ public class ProjectionDocument extends AbstractDocument {
 		
 		for (int i= 0; i < gaps.length; i++) {
 			IRegion gap= gaps[i];
-			internalAddMasterDocumentRange(gap.getOffset(), gap.getLength());
+			internalAddMasterDocumentRange(gap.getOffset(), gap.getLength(), masterDocumentEvent);
 		}
 	}
 	
@@ -604,7 +621,7 @@ public class ProjectionDocument extends AbstractDocument {
 			IRegion[] gaps= computeCoverageGap(masterEvent);
 			for (int i= 0; i < gaps.length; i++) {
 				IRegion gap= gaps[i];
-				addMasterDocumentRange(gap.getOffset(), gap.getLength());
+				addMasterDocumentRange(gap.getOffset(), gap.getLength(), masterEvent);
 			}
 			return true;				
 		

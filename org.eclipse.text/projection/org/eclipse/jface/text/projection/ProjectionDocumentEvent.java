@@ -39,6 +39,13 @@ public class ProjectionDocumentEvent extends SlaveDocumentEvent {
 		fMasterOffset= masterOffset;
 		fMasterLength= masterLength;
 	}
+
+	public ProjectionDocumentEvent(IDocument doc, int offset, int length, String text, int masterOffset, int masterLength, DocumentEvent masterEvent) {
+		super(doc, offset, length, text, masterEvent);
+		fChangeType= PROJECTION_CHANGE;
+		fMasterOffset= masterOffset;
+		fMasterLength= masterLength;
+	}
 	
 	public Object getChangeType() {
 		return fChangeType;

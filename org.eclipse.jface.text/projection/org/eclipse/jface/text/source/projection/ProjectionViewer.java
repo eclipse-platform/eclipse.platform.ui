@@ -160,7 +160,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			fReplaceVisibleDocumentExecutionTrigger= event.getDocument();
 			fRememberedTopIndex= getTopIndex();
 		}
 
@@ -168,7 +167,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent event) {
-			fReplaceVisibleDocumentExecutionTrigger= null;
 			fRememberedTopIndex= -1;
 		}
 	}
@@ -1062,8 +1060,30 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected void handleVisibleDocumentChanged(DocumentEvent event) {
 		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent && isProjectionMode()) {
 			ProjectionDocumentEvent e= (ProjectionDocumentEvent) event;
-			if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType() && e.getLength() == 0 && e.getText().length() != 0)
-				fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
+				
+			DocumentEvent master= e.getMasterEvent();
+			if (master != null)
+				fReplaceVisibleDocumentExecutionTrigger= master.getDocument();
+			
+			try {
+				
+				int replaceLength= e.getText() == null ? 0 : e.getText().length();
+				if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType()) {
+					if (e.getLength() == 0 && replaceLength != 0)
+						fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
+				} else if (master != null && replaceLength > 0 ) {
+					try {
+						int numberOfLines= e.getDocument().getNumberOfLines(e.getOffset(), replaceLength);
+						if (numberOfLines > 1)
+							fProjectionAnnotationModel.expandAll(master.getOffset(), master.getLength());
+					} catch (BadLocationException x) {
+					}
+				}
+				
+			} finally {
+				fReplaceVisibleDocumentExecutionTrigger= null;
+			}
+			
 		}
 	}
 	
