@@ -21,6 +21,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -88,12 +89,12 @@ public class SyncAction implements IObjectActionDelegate {
 					TeamUIPlugin.log(e.getStatus());
 				}
 				// What happens when resources from the same project are selected?
-				IRemoteSyncElement[] input = new IRemoteSyncElement[resources.length];
-				for (int i = 0; i < input.length; i++) {
+				IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
+				for (int i = 0; i < trees.length; i++) {
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-					input[i] = provider.getRemoteSyncTree(resources[i], CVSTag.DEFAULT, new NullProgressMonitor());
+					trees[i] = provider.getRemoteSyncTree(resources[i], CVSTag.DEFAULT, new NullProgressMonitor());
 				}
-				view.showSync(input);
+				view.showSync(new CVSSyncCompareInput(trees));
 			}
 		} catch (TeamException e) {
 			ErrorDialog.openError(getShell(), title, null, e.getStatus());
