@@ -30,4 +30,11 @@ public interface IStreamListener {
 	 * @param monitor the stream monitor to which text was appended
 	 */
 	public void streamAppended(String text, IStreamMonitor monitor);
+	/**
+	 * Notifies this listener that given monitor's stream has closed.
+	 * 
+	 * @param monitor the stream monitor whose stream closed
+	 * @since 3.0
+	 */
+	public void streamClosed(IStreamMonitor monitor);
 }

@@ -105,6 +105,24 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	private void fireStreamAppended(String text) {
 		getNotifier().notifyAppend(text);
 	}
+	
+	/**
+	 * Notifies the listeners that the stream
+	 * has been closed.
+	 */
+	private void fireStreamClosed() {
+		IStreamListener[] listeners= (IStreamListener[]) fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final IStreamListener listener= listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+				}
+				public void run() throws Exception {
+					listener.streamClosed(OutputStreamMonitor.this);
+				}
+			});
+		}
+	}
 
 	/**
 	 * @see IStreamMonitor#getContents()
@@ -154,6 +172,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		} catch (IOException e) {
 			DebugPlugin.log(e);
 		}
+		fireStreamClosed();
 	}
 	
 	protected void kill() {
