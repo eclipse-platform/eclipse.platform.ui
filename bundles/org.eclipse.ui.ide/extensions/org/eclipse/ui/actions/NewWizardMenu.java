@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -23,17 +26,15 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-// @issue illegal reference to org.eclipse.ui.internal.WorkbenchPage
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
-//@issue illegal reference to org.eclipse.ui.internal.dialogs.WizardCollectionElement 
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-//@issue illegal reference to org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
-//@issue illegal reference to org.eclipse.ui.internal.registry.NewWizardsRegistryReader
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
@@ -100,10 +101,17 @@ public class NewWizardMenu extends ContributionItem {
 			// Get visible actions.
 			List actions = null;
 			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				actions = ((WorkbenchPage) page).getNewWizardActionIds();
-			}
+			if (page != null) // get a copy of the list, not the list (as we're going to muck about with it)
+				actions = new ArrayList(((WorkbenchPage) page).getNewWizardActionIds());
+			
 			if (actions != null) {
+				IObjectActivityManager manager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_NEW, false);
+				
+				if (manager != null) {
+					// prune away all IDs that arent active based on the managers opinion.
+					actions.retainAll(manager.getActiveObjects());
+				}
+				
 				if(actions.size() > 0)
 					innerMgr.add(new Separator());
 				for (Iterator i = actions.iterator(); i.hasNext();) {

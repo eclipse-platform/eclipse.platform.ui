@@ -198,7 +198,7 @@ protected void createTreeViewer(int heightHint) {
 	cp.showClosedProjects(showClosedProjects);
 	treeViewer.setContentProvider(cp);
 	treeViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
-	treeViewer.setSorter(new ViewerSorter() {});
+	treeViewer.setSorter(new ViewerSorter());
 	treeViewer.addSelectionChangedListener(
 		new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

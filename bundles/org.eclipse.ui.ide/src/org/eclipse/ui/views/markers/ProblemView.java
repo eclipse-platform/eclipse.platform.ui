@@ -48,6 +48,7 @@ import org.eclipse.ui.views.markers.internal.IFilter;
 import org.eclipse.ui.views.markers.internal.MarkerRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
+import org.eclipse.ui.views.markers.internal.TableSorter;
 
 public class ProblemView extends MarkerView {
 	
@@ -59,15 +60,9 @@ public class ProblemView extends MarkerView {
 		new ColumnWeightData(60) 
 	};
 		
-	private final static IField[] HIDDEN_FIELDS = { 
-		new FieldCreationTime() 
-	};
-	
-	private final static String[] ROOT_TYPES = { 
-		IMarker.PROBLEM 
-	};
-	
-	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.problem"; //$NON-NLS-1$
+	// Direction constants - use the ones on TableSorter to stay sane
+	private final static int ASCENDING = TableSorter.ASCENDING;
+	private final static int DESCENDING = TableSorter.DESCENDING;
 	
 	private final static IField[] VISIBLE_FIELDS = { 
 		new FieldSeverity(), 
@@ -77,9 +72,52 @@ public class ProblemView extends MarkerView {
 		new FieldLineNumber() 
 	};
 	
+	private final static IField[] HIDDEN_FIELDS = { 
+		new FieldCreationTime() 
+	};
+	
+	// Field Tags
+	// These tags MUST occur in the same order as the VISIBLE_FIELDS +
+	// HIDDEN_FIELDS appear.  The TableSorter holds the priority and
+	// direction order as a set of indices into an array of fields.  This
+	// array of fields is set on instantiation of TableSorter (see method
+	// getSorter() in this (i.e. ProblemView) class).  When we instantiate
+	// TableSorter, we use the method TableView.getFields() as it is 
+	// inherited and we don't override it.  TableView.getFields() will
+	// return VISIBLE_FIELDS and then HIDDEN_FIELDS
+	private final static int SEVERITY = 0;
+	private final static int DESCRIPTION = 1;
+	private final static int RESOURCE = 2;
+	private final static int FOLDER = 3;
+	private final static int LOCATION = 4;
+	private final static int CREATION_TIME = 5;
+	
+	private final static int[] DEFAULT_PRIORITIES = 
+		{ SEVERITY,
+		  FOLDER,
+		  RESOURCE,
+		  LOCATION,
+		  DESCRIPTION,
+		  CREATION_TIME };
+
+	private final static int[] DEFAULT_DIRECTIONS = 
+		{ DESCENDING,	// severity
+		  ASCENDING,    // folder
+		  ASCENDING,	// resource
+		  ASCENDING,	// location
+		  ASCENDING,	// description
+		  ASCENDING, };	// creation time
+									
+	private final static String[] ROOT_TYPES = { 
+		IMarker.PROBLEM 
+	};
+	
+	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.problem"; //$NON-NLS-1$
+	
 	private MarkerRegistry markerRegistry;
 	private ProblemFilter problemFilter;
 	private ActionResolveMarker resolveMarkerAction;
+	private TableSorter sorter;
 
 	public void dispose() {
 		if (resolveMarkerAction != null)
@@ -139,7 +177,7 @@ public class ProblemView extends MarkerView {
 		if (columns != null && columns.length >= 1)
 			columns[0].setResizable(false);
 	}
-
+	
 	protected void fillContextMenuAdditions(IMenuManager manager) {
 		manager.add(new Separator());
 		manager.add(resolveMarkerAction);
@@ -163,6 +201,12 @@ public class ProblemView extends MarkerView {
 
 	protected String[] getRootTypes() {
 		return ROOT_TYPES;
+	}
+	
+	protected TableSorter getSorter() {
+		if (sorter == null)
+			sorter = new TableSorter(getFields(), DEFAULT_PRIORITIES, DEFAULT_DIRECTIONS);
+		return sorter;
 	}
 
 	protected Object getViewerInput() {

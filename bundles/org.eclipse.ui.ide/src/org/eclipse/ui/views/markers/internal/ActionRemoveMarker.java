@@ -42,6 +42,7 @@ public class ActionRemoveMarker extends SelectionProviderAction {
 		setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		setToolTipText(Messages.getString("deleteAction.tooltip")); //$NON-NLS-1$
 		setEnabled(false);
 	}
 	

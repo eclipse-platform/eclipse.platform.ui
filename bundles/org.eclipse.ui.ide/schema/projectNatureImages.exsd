@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui.ide">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="projectNatureImages" name="Project Nature Images"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to associate an image with a project nature.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.ide" id="projectNatureImages" name="Project Nature Images"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to associate an image with a project nature.
 The supplied image is used to form a composite image consisting of the standard project image combined with the image of its nature.
 The supplied image is drawn over the top right corner of the base image.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -90,11 +90,11 @@ The supplied image is drawn over the top right corner of the base image.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.ui.projectNatureImages"&gt;
+ &lt;extension point=&quot;org.eclipse.ui.projectNatureImages&quot;&gt;
   &lt;image 
-    id="org.eclipse.ui.javaNatureImage"
-    natureId="Resource"
-    icon="icons/javaNature.gif"&gt;
+    id=&quot;org.eclipse.ui.javaNatureImage&quot;
+    natureId=&quot;Resource&quot;
+    icon=&quot;icons/javaNature.gif&quot;&gt;
   &lt;/image&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -125,8 +125,11 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2003 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

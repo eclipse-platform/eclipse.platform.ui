@@ -155,6 +155,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		this.configurer = configurer;		
 
 		// setup the IDE specific role manager
+		// @issue RoleManager is internal
 		RoleManager.setManager(new IDERoleManager());
 
 		// setup the event loop exception handler

@@ -30,12 +30,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -45,15 +47,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
-
-// @issue illegal reference to RoleManager (internal to org.eclipse.ui plug-in)
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * Standard workbench wizard that creates a new project resource in
@@ -376,21 +377,22 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
-	if (finalPersp == null) {
+	if (finalPersp != null) {
+		// @issue IWorkbenchConstants is internal 
 		//Enable the role if required.
-		if (RoleManager.getInstance().isFiltering()) {
-			RoleManager.getInstance().enableActivities(finalPerspId);
-			finalPersp = reg.findPerspectiveWithId(finalPerspId);
-		}
-		if (finalPersp == null) {
-			IDEWorkbenchPlugin.log(
-				"Unable to find persective " //$NON-NLS-1$
-					+ finalPerspId
-					+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
-			return;
+		IObjectActivityManager activityManager = 
+		PlatformUI.getWorkbench().
+		getActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+		if (activityManager != null) {
+			activityManager.setEnablementFor(finalPerspId, true);
 		}
 	}
-
+	else {
+		IDEWorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$
+				+finalPerspId + " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
+		return;
+	}
+	
 	// gather the preferred perspectives
 	// always consider the final perspective to be preferred
 	ArrayList preferredPerspIds = new ArrayList();

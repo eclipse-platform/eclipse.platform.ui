@@ -15,6 +15,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -34,6 +35,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IDEContributionItemFactory;
+import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
  * Adds actions to a workbench window.
@@ -112,7 +115,8 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction rebuildAllAction; // Full build
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
-
+	private IWorkbenchAction roleManagerAction;
+	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
 	private IWorkbenchAction addTaskAction;
@@ -120,8 +124,14 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction openProjectAction;
 	private IWorkbenchAction closeProjectAction;
 
+	// contribution items
+	// @issue should obtain from ContributionItemFactory
 	private NewWizardMenu newWizardMenu;
-
+	
+	// @issue class is workbench internal
+	private StatusLineContributionItem statusLineItem;
+	
+	
 	/**
 	 * Constructs a new action builder which contributes actions
 	 * to the given window.
@@ -194,6 +204,7 @@ public final class WorkbenchActionBuilder {
 		makeActions(windowConfigurer, actionBarConfigurer);
 		populateMenuBar(actionBarConfigurer);
 		populateCoolBar(actionBarConfigurer);
+		populateStatusLine(actionBarConfigurer);
 		hookListeners();
 	}
 	
@@ -485,6 +496,11 @@ public final class WorkbenchActionBuilder {
 		// See if a welcome page is specified
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
+
+		//Only add it if role filtering is on
+		if(roleManagerAction != null)
+			menu.add(roleManagerAction);
+		
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
@@ -502,6 +518,11 @@ public final class WorkbenchActionBuilder {
 	 * Called when the window is closed.
 	 */
 	public void dispose() {
+		actionBarConfigurer.getStatusLineManager().remove(statusLineItem);
+	}
+
+	void updateModeLine(final String text) {
+		statusLineItem.setText(text);
 	}
 
 	/**
@@ -531,13 +552,24 @@ public final class WorkbenchActionBuilder {
 	}
 
 	/**
-	 * Create actions for the menu bar and toolbar
+	 * Fills the status line with the workbench contribution items.
+	 */
+	public void populateStatusLine(IActionBarConfigurer configurer) {
+		IStatusLineManager statusLine = configurer.getStatusLineManager();
+		statusLine.add(statusLineItem);
+	}
+	
+	/**
+	 * Creates actions (and contribution items) for the menu bar, toolbar and status line.
 	 */
 	private void makeActions(IWorkbenchConfigurer workbenchConfigurer, IActionBarConfigurer actionBarConfigurer) {
 
 		// The actions in jface do not have menu vs. enable, vs. disable vs. color
 		// There are actions in here being passed the workbench - problem 
 		setCurrentActionBarConfigurer(actionBarConfigurer);
+		
+		// @issue should obtain from ConfigurationItemFactory
+		statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 		
 		newWizardAction = ActionFactory.NEW.create(getWindow());
 		registerGlobalAction(newWizardAction);
@@ -755,6 +787,13 @@ public final class WorkbenchActionBuilder {
 		
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);
+
+		//Only add the role manager action if we are using role support
+		// @issue RoleManager is internal
+		if(RoleManager.getInstance().isFiltering()){
+			roleManagerAction = ActionFactory.ROLE_CONFIGURATION.create(getWindow());
+			registerGlobalAction(roleManagerAction);
+		}
 	}
 
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)
