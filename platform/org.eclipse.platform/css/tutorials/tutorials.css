@@ -1,67 +1,16 @@
 body {
-	min-height : 600px;
-	min-width : 850px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );
 	background-image : url(../graphics/watermark/tutorials_wmk.gif);
 	background-repeat : no-repeat;
 	background-position : bottom right;
-	
-}
-/* The presentation title */
-#presentation-header {
-	background-color : #BCCEE4;
-	min-width : 850px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );
 }
 
-.page-content {
-	overflow : visible;
-	min-height : 600px;
-	min-width : 850px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );
-}
+/* show the "selected" image for this page */
+#navigation-links a#tutorials img { background-image : url(../graphics/obj_32/seltutorials_obj.gif); }
 
-
-#background-image {
-	position : relative;
-	height : 120px;
-	width : 100%;
-	background-image : url(../graphics/background/content_background.jpg);
-	background-repeat : repeat-x;
-	text-align : left;
-}
-
-#curve-image {
-	height : 120px;
-	width : 600px;
-	background-image : url(../graphics/background/content_curve.gif);
-	background-repeat : no-repeat;
-	position : relative;
-	left : 50%;
-	margin-left : -300px;
-}
-
-/* don't display the page title */
-#page-header { display : none; }
-
-/* use this as the page title */
-p #page-title {
-	position : relative;
-	top : -100px;
-	left : 10px;
-}
-
-/* The real content of the tutorials page: */
-p #page-description { 
-	position : relative;
-	top : -90px;
-	width : 90%;
-	padding : 10px;
-}
-
+/* 
+ * Set up the content of the tutorials page into two
+ * columns that are centered in the page
+ */
 a { 
 	display : block; 
 	height : 60px;
@@ -84,7 +33,7 @@ a .link-label {
 
 a p .text {
 	display : block;
-	margin-left : 60px;
+	margin-left : 50px;
 	margin-top : -20px;
 }
 
@@ -95,13 +44,4 @@ a img {
 }
 
 a:hover { border-right : 5px; }
-
-
-#eclipse-wordmark {
-	position : absolute;
-	bottom : 10px;
-	left : 20px;	
-	height : 23px;
-	width : 71px;
-}
 

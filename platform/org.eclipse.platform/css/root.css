@@ -1,3 +1,8 @@
+/*
+ * Set up the content for the root page.  Note that the settings
+ * for the background images and navigation bar override 
+ * settings in the shared CSS
+ */
 body {
 	min-width : 611px;
 	/* since IE doesn't support min-width, try expression */
@@ -5,7 +10,7 @@ body {
 	background-image : url(graphics/watermark/eclipse_logo.gif);
 	background-position : bottom left;
 }
-/* The presentation title */
+
 #presentation-header {
 	background-color : #BCCEE4;
 	min-width : 611px;
@@ -49,6 +54,9 @@ body {
 	margin-left : -305px;
 }
 
+/* 
+ * Set up the navigation bar
+ */
 #navigation-links {
 	position : relative;
 	top : 10%;
@@ -74,10 +82,11 @@ body {
 
 #navigation-links a .link-label, #navigation-links a .text {
 	font-size : 10pt;
+	display : block;
 }
 
 
-#navigation-links a span, a#workbench span {
+#navigation-links a span {
 	display : block;
 	font-size : 10pt;
 	font-weight : normal;
@@ -94,7 +103,7 @@ body {
 	/* width should be same as navigation-links width */
 	width : 320px;
 	position : relative;
-	top : 30px;
+	top : 35px;
 }
 
 /* properties for each of the navigation-links  */
@@ -138,7 +147,10 @@ a#workbench:hover img {
 	height : 56px;
 	width : 56px;
 }
-
 a#workbench:hover p .text {
-	display : none;
+	width : 360px;
+	position : relative;
+	top : -105px;
+	left : 50%;
+	margin-left : -180px;
 }
