@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.ui.win32;
+package org.eclipse.help.internal.ui;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -21,6 +21,7 @@ import java.util.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.core.runtime.*;
 import java.io.*;
+import org.eclipse.help.internal.ui.win32.*;
 /**
  * Handles printing of topics tree
  */
@@ -29,6 +30,7 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 	private ITopic rootTopic;
 	private List topicList;
 	private int currentTopic;
+	private File tocFile;
 	public static boolean busy=false;
 	/**
 	 * @param selection - IStructuredSelection containing
@@ -82,7 +84,10 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		printBrowser.addDocumentCompleteListener(this);
 		buildPrintList(rootTopic);
 		currentTopic=0;
-		printBrowser.navigate(qualifyURL((String)topicList.get(currentTopic)));
+		if(tocFile!=null)
+			printBrowser.navigate((String)topicList.get(currentTopic));
+		else
+			printBrowser.navigate(qualifyTopicURL((String)topicList.get(currentTopic)));
 	}
 	/*
 	 * @see IDocumentCompleteListener#documentComplete()
@@ -91,7 +96,7 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		printBrowser.print(false);
 		currentTopic++;
 		if(currentTopic<topicList.size())
-			printBrowser.navigate(qualifyURL((String)topicList.get(currentTopic)));
+			printBrowser.navigate(qualifyTopicURL((String)topicList.get(currentTopic)));
 		else
 			endPrinting();
 	}
@@ -101,10 +106,8 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 	private void endPrinting() {
 		printBrowser.removeDocumentCompleteListener(this);
 		((WebBrowser)printBrowser).dispose();
-		if(topicList.size()>0){
-			File tocFile=new File((String)topicList.get(0));
+		if(tocFile!=null)
 			tocFile.delete();
-		}
 		busy=false;
 	}
 	/**
@@ -113,8 +116,9 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 	private void buildPrintList(ITopic rootTopic){
 		topicList=new ArrayList();
 		buildTopicList(topicList, rootTopic);
-		String url=createTableOfContents(rootTopic);
-		topicList.add(0, url);
+		createTOC(rootTopic);
+		if(tocFile!=null)
+			topicList.add(0, tocFile.getAbsolutePath());
 	}
 	/**
 	 * Adds hrefs of this topic and its children to topicList
@@ -130,7 +134,7 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 	/**
 	 * Corrects topic's url for use by the browser
 	 */
-	private String qualifyURL(String url){
+	private String qualifyTopicURL(String url){
 		if (url.indexOf("?resultof=") != -1) {
 			Locale locale = Locale.getDefault();
 			url = url.concat("&lang=") + locale.getDefault().toString();
@@ -143,12 +147,55 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		return url;
 	}
 	/**
-	 * @return URL of table of contents document
+	 * Creates table of contents in a temporary file tocFile
 	 */
-	private String createTableOfContents(ITopic rootTopic){
-		IPath tocPath=WorkbenchHelpPlugin.getDefault().getStateLocation().append("toc"+System.currentTimeMillis()+".html");
-		String tocFilename=tocPath.toOSString();
-		new TableOfContentsGenerator(tocFilename, rootTopic).generate();
-		return tocFilename;
+	private void createTOC(ITopic rootTopic){
+		try {
+			File dir=WorkbenchHelpPlugin.getDefault().getStateLocation().toFile();
+			File file=File.createTempFile("toc", ".html", dir);
+			PrintWriter writer =
+				new PrintWriter(
+					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF8")),
+					false /* no aotoFlush */
+			);
+			writer.println("<html>");
+			writer.println("<head>");
+			// officially, a HEAD element needs a TITLE. fake it.
+			writer.println(
+				"<title>" + WorkbenchResources.getString("Table_Of_Contents") + "</title>");
+			// make sure that we have everything in UTF-8 because this is
+			// what this string buffer will converted to.
+			writer.println("<META http-equiv=\"Content-Type\" ");
+			writer.println("content=\"text/html; charset=utf-8\">");
+			// set Expires to any old date to avoid caching by IE.
+			// HTTP servers sometimes return this info as part of the
+			// respone.  
+			writer.println("<META HTTP-EQUIV=\"Expires\" ");
+			writer.println("CONTENT=\"Mon, 04 Dec 2000 11:11:11 GMT\"> ");
+			writer.println("</head>");
+			writer.println("<body>");
+			writer.println("<h1 ALIGN=CENTER>");
+			writer.println(WorkbenchResources.getString("Table_Of_Contents"));
+			writer.println("</h1>");
+			addTopicToTOC(writer, rootTopic);
+			writer.println("</ul>");
+			writer.println("</body>");
+			writer.println("</html>");
+			writer.flush();
+			writer.close();
+			tocFile=file;
+		} catch (IOException ioe) {
+		}
+
+	}
+	private void addTopicToTOC(PrintWriter writer, ITopic topic) {
+		writer.println("<ul>");
+		writer.println("<li>");
+		writer.println(topic.getLabel());
+		for (Iterator it = topic.getChildTopics().iterator(); it.hasNext();) {
+			addTopicToTOC(writer, (ITopic) it.next());
+		}
+		writer.println("</li>");
+		writer.println("</ul>");
 	}
 }

@@ -114,7 +114,7 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		// For now, do this only for win32. 
 		if (!System.getProperty("os.name").startsWith("Win"))
 			return;
-		// create the Menu Manager for this control. and do
+		// create the Menu Manager for tree viewer,and do
 		// proper initialization
 		MenuManager mgr = new MenuManager();
 		Menu shellMenu = mgr.createContextMenu(viewer.getControl());
@@ -151,14 +151,20 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		}
 	}
 	public void menuAboutToShow(IMenuManager mgr) {
-		ISelection selection = getSelection();
-		if (!(selection instanceof IStructuredSelection))
+		if (!(getSelection() instanceof IStructuredSelection))
 			return;
-		// Show printing menu if and and only one topic is selected.
+		IStructuredSelection selection = (IStructuredSelection)getSelection();
 		if (((IStructuredSelection) selection).size() == 1) {
-			mgr.add(new PrintTopicTreeAction((IStructuredSelection) selection));
-			mgr.add(new Separator());
-			mgr.update(true);
+			// Menu items for single selection
+			if (!(selection.getFirstElement() instanceof ITopic))
+				return;
+			ITopic topic = (ITopic) selection.getFirstElement();
+			if (!topic.getChildTopics().isEmpty()) {
+				// add print tree action
+				mgr.add(new PrintTopicTreeAction((IStructuredSelection) selection));
+				mgr.add(new Separator());
+				mgr.update(true);
+			}
 		}
 	}
 	/**
