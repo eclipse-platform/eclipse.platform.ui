@@ -102,9 +102,14 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	public void init(IViewPart view) {
 		super.init(view);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 		
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
 	public void dispose() {
+		//removes as a debug event listener
 		super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
