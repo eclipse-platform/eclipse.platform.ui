@@ -85,7 +85,7 @@ for the library containing the task.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string">
+         <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this task is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
@@ -94,7 +94,7 @@ for the library containing the task.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string">
+         <attribute name="eclipseRuntime" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this task requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is true, when not specified.

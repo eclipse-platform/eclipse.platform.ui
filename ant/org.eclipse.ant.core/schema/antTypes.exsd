@@ -86,7 +86,7 @@ for the library containing the type.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string">
+         <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this type is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
@@ -95,7 +95,7 @@ for the library containing the type.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string">
+         <attribute name="eclipseRuntime" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this type requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is true, when not specified.

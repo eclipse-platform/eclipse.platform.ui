@@ -54,7 +54,7 @@ JAR is also added to the classpath.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string">
+         <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this extra classpath entry is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
@@ -63,7 +63,7 @@ JAR is also added to the classpath.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string">
+         <attribute name="eclipseRuntime" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this extra classpath entry should only be considered for builds run in the same VM as Eclipse. The implied value is true, when not specified.

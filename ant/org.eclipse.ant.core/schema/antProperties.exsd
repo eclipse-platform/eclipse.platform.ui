@@ -71,7 +71,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string">
+         <attribute name="headless" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this property is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
@@ -80,7 +80,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string">
+         <attribute name="eclipseRuntime" type="boolean">
             <annotation>
                <documentation>
                   indicates whether this property should only be considered when run in the same VM as Eclipse. The implied value is true, when not specified.
