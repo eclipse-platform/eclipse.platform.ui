@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -858,8 +860,18 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		// Overridden to change how the workspace is deleted on teardown
 		if (resource.getType() == IResource.ROOT) {
 			// Delete each project individually
+			Job[] allJobs = Platform.getJobManager().find(null /* all families */);
 			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
-			ensureDoesNotExistInWorkspace(projects);
+			try {
+				ensureDoesNotExistInWorkspace(projects);
+			} catch (AssertionFailedError e) {
+				// The delete failed. Write the active jobs to stdout
+				System.out.println("Jobs active at time of deletion failure:"); //$NON-NLS-1$
+				for (int i = 0; i < allJobs.length; i++) {
+					Job job = allJobs[i];
+					System.out.println(job.getName());
+				}
+			}
 		} else {
 			super.ensureDoesNotExistInWorkspace(resource);
 		}
