@@ -298,7 +298,7 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
+                   <instanceof value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
                    <and>
                      <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
                      <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
@@ -326,7 +326,7 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <test property="org.eclipse.debug.ui.instanceof" value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
+                   <instanceof value="org.eclipse.ant.internal.ui.editor.model.AntElementNode"/>
                    <and>
                      <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
                      <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
