@@ -341,7 +341,7 @@ private String getDefaultLocationForName(String nameValue) {
  * @return <code>true</code> if all controls are valid, and
  *   <code>false</code> if at least one is invalid
  */
-private boolean validatePage() {
+protected boolean validatePage() {
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 
 	String projectFieldContents = getProjectNameFieldValue();
