@@ -221,6 +221,8 @@ public final class WorkbenchActionBuilder {
 		closeAllPerspsAction.setEnabled(value);
 		newWizardMenu.setEnabled(value);
 		newWizardDropDownAction.setEnabled(value);
+		// Bug 53560.  "Ctrl+N" shouldn't work if the menus are all disabled.
+		newWizardAction.setEnabled(value);
 		importResourcesAction.setEnabled(value);
 		exportResourcesAction.setEnabled(value);
 	}
