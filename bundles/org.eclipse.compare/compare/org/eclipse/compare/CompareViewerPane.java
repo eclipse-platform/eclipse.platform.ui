@@ -13,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.action.ToolBarManager;
@@ -53,11 +54,18 @@ public class CompareViewerPane extends ViewForm {
 		marginWidth= 0;
 		marginHeight= 0;
 		
-		CLabel label= new CLabel(this, SWT.NONE);
+		CLabel label= new CLabel(this, SWT.NONE) {
+			public Point computeSize(int wHint, int hHint, boolean changed) {
+				return super.computeSize(wHint, Math.max(23, hHint), changed);
+			}
+		};
 		setTopLeft(label);
 		
 		MouseAdapter ml= new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
+				Control content= getContent();
+				if (content != null && content.getBounds().contains(e.x, e.y))
+					return;
 				Control parent= getParent();
 				if (parent instanceof Splitter)
 					((Splitter)parent).setMaximizedControl(CompareViewerPane.this);
