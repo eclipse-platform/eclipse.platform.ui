@@ -12,6 +12,7 @@ package org.eclipse.ui.externaltools.internal.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -33,7 +34,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -55,12 +55,10 @@ public class FileSelectionDialog extends MessageDialog {
 	 * The file(s) selected by the user.
 	 */
 	private IStructuredSelection result = null;
-	/**
-	 * String matcher used to filter content
-	 */
-	private StringMatcher stringMatcher = null;
 
 	private boolean allowMultiselection= false;
+
+    private Pattern fPattern;
 	/**
 	 * Creates a resource selection dialog rooted at the given element.
 	 * 
@@ -93,11 +91,15 @@ public class FileSelectionDialog extends MessageDialog {
 	 *            this argument is ignored.
 	 */
 	public void setFileFilter(String pattern, boolean ignoreCase) {
-		if (pattern != null) {
-			stringMatcher = new StringMatcher(pattern, ignoreCase, false);
-		} else {
-			stringMatcher = null;
-		}
+	    if (pattern != null) {
+	        if (ignoreCase) {
+	            fPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+	        } else {
+	            fPattern = Pattern.compile(pattern);
+	        }
+	    } else {
+	        fPattern = null;
+	    }
 	}
 	
 	/*
@@ -188,8 +190,8 @@ public class FileSelectionDialog extends MessageDialog {
 						// they are what we want
 						if ((members[i].getType() & resourceType) > 0) {
 							if (members[i].getType() == IResource.FILE
-								&& stringMatcher != null
-								&& !stringMatcher.match(members[i].getName())) {
+								&& fPattern != null
+								&& !fPattern.matcher(members[i].getName()).find()) {
 								continue;
 							}
 							results.add(members[i]);
