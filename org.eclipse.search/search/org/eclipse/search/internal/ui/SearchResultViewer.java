@@ -48,6 +48,7 @@ import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
@@ -291,8 +292,11 @@ public class SearchResultViewer extends TableViewer {
 			if (enableRemoveMatchMenuItem())
 				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveMatchAction(this));
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this, true));
+
+			if (isPotentialMatchSelected())
+				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemovePotentialMatchesAction(fOuterPart.getViewSite()));
 		}
-		
+
 		// If we have elements
 		if (getItemCount() > 0)
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveAllResultsAction());
@@ -302,6 +306,15 @@ public class SearchResultViewer extends TableViewer {
 			menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
 	}
 
+	private boolean isPotentialMatchSelected() {
+		ISelection selection= getSelection();
+		if (selection instanceof IStructuredSelection) {
+			Object entry= ((IStructuredSelection)selection).getFirstElement();
+			return (entry instanceof ISearchResultViewEntry) && 
+				((ISearchResultViewEntry)entry).getSelectedMarker().getAttribute(SearchUI.POTENTIAL_MATCH, false);
+		}
+		return false;
+	}
 
 	IAction getGotoMarkerAction() {
 		// null as return value is covered (no action will take place)
