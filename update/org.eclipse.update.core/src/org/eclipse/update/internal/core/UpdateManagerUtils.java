@@ -194,13 +194,11 @@ public class UpdateManagerUtils {
 
 		// transfer the content of the File
 		if (!localFile.isDirectory()) {
-			FileOutputStream localContentReferenceStream = new FileOutputStream(localFile);
+			OutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			try {
 				Utilities.copy(sourceContentReferenceStream, localContentReferenceStream, monitor);
 			} finally {
 				try {
-					localContentReferenceStream.flush();
-					localContentReferenceStream.getFD().sync();
 					localContentReferenceStream.close();
 				} catch (IOException e){}
 			}
