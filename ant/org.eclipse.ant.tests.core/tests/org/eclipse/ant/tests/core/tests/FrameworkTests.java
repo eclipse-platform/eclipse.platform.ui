@@ -150,7 +150,7 @@ public class FrameworkTests extends AbstractAntTest {
 			assertTrue("ANT_HOME not set correctly", getAntHome().equals(System.getProperty("ant.home")));
 			AntCorePlugin.getPlugin().getPreferences().setAntHome("");
 			run("echoing.xml");
-			assertTrue("ANT_HOME not set correctly", "".equals(System.getProperty("ant.home")));
+			assertTrue("ANT_HOME not set correctly", null == System.getProperty("ant.home"));
 		} finally {
 			restorePreferenceDefaults();
 		}
