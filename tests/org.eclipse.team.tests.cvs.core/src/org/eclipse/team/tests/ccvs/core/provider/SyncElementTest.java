@@ -477,6 +477,7 @@ public class SyncElementTest extends EclipseTest {
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete2.txt"}, false);
 		file = project.getFile("delete3.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		file = project.getFile("delete4.txt");
 		file.delete(false, DEFAULT_MONITOR);
@@ -485,8 +486,10 @@ public class SyncElementTest extends EclipseTest {
 		// Checkout a copy and commit the deletion
 		copy = checkoutCopy(project, "-copy");
 		file = copy.getFile("delete1.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		file = copy.getFile("delete2.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		deleteResources(copy, new String[] {"delete3.txt", "delete4.txt", "delete5.txt"}, false);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
@@ -667,6 +670,7 @@ public class SyncElementTest extends EclipseTest {
 		IFile file = copy.getFile("file1.txt");
 		appendText(file, "", true);
 		file = copy.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
