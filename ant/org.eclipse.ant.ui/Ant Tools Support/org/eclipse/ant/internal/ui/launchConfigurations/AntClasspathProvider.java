@@ -25,24 +25,16 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.StandardClasspathProvider;
 
-public class AntClasspathProvider implements IRuntimeClasspathProvider {
+public class AntClasspathProvider extends StandardClasspathProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) {
-		return new IRuntimeClasspathEntry[0];
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		//no need to add Eclipse extension point URLs if going to build
 		//in separate VM..except for the remoteAnt.jar
 		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
@@ -72,24 +64,19 @@ public class AntClasspathProvider implements IRuntimeClasspathProvider {
 		}
 		
 		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
-		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
-		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length + antURLs.length];
-		int i= 0;
-		for (; i < libs.length; i++) {
-			IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-			r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-			r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-			r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-			rtes[i] = r;
-		}
+		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[antURLs.length + 1];
+		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		containerPath = containerPath.append(new Path(vm.getVMInstallType().getId()));
+		containerPath = containerPath.append(new Path(vm.getName()));
+		
+		rtes[0] = JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.STANDARD_CLASSES);
 		
 		for (int j = 0; j < antURLs.length; j++) {
 			URL url = antURLs[j];
 			IPath path= new Path(url.getPath());
 			IRuntimeClasspathEntry antEntry= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 			antEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-			rtes[i]= antEntry;
-			i++;
+			rtes[j+1]= antEntry;
 		}
 		return rtes;		
 	}
