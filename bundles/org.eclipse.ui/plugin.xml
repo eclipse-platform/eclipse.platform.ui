@@ -468,7 +468,7 @@
                id="org.eclipse.ui.edit.selectAll">
          </accelerator>
          <accelerator
-               key="Ctrl+@"
+               key="Ctrl+Space || Ctrl+2"
                id="org.eclipse.ui.edit.text.set.mark">
          </accelerator>
          <accelerator
@@ -807,7 +807,7 @@
                id="org.eclipse.ui.edit.delete">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+E"
                id="org.eclipse.ui.edit.text.delete.line">
          </accelerator>
          <accelerator
@@ -815,7 +815,7 @@
                id="org.eclipse.ui.edit.text.delete.line.to.beginning">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+Shift+E"
                id="org.eclipse.ui.edit.text.delete.line.to.end">
          </accelerator>
          <accelerator

@@ -265,6 +265,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (originalElement != null && originalElement.equals(getEditorInput())) {
 				
 				enableSanityChecking(true);
+				
+				if (!canHandleMove((IEditorInput) originalElement, (IEditorInput) movedElement)) {
+					close(true);
+					return;
+				}
 			
 				if (movedElement == null || movedElement instanceof IEditorInput) {	
 					rememberSelection();
@@ -3130,18 +3135,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return true;
 	}
-
+	
 	/*
 	 * @see ITextEditorExtension#addRulerContextMenuListener(IMenuListener)
 	 */
 	public void addRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.add(listener);	
 	}
-
+	
 	/*
 	 * @see ITextEditorExtension#removeRulerContextMenuListener(IMenuListener)
 	 */
 	public void removeRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.remove(listener);
+	}
+	
+	/**
+	 * Returns wether this editor can handle the move of the original element
+	 * so that it ends up being the moved element. By default this method returns
+	 * <code>true</code>. Subclasses may reimplement. 
+	 * @param originalElement the original element
+	 * @param movedElement the moved element
+	 */
+	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
+		return true;
 	}
 }
