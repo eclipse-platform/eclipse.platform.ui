@@ -70,6 +70,13 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * The command identifier to which the verbose output should be restricted.
      */
     private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+    
+    static {
+        MutableCommandManager.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
+                && Policy.DEBUG_HANDLERS_VERBOSE;
+        MutableCommandManager.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+        MutableCommandManager.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+    }
 
     /**
      * Listens for shell activation events, and updates the list of enabled

@@ -23,21 +23,9 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
-
-    /**
-     * Whether commands should print out information about handler changes.
-     */
-    private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
-            && Policy.DEBUG_HANDLERS_VERBOSE;
-
-    /**
-     * Which command should print out debugging information.
-     */
-    private static final String DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
 
     private final static int HASH_FACTOR = 89;
 
@@ -123,6 +111,23 @@ final class Command implements ICommand {
     public Object execute(Map parameterValuesByName) throws ExecutionException,
             NotHandledException {
         IHandler handler = this.handler;
+        
+        // Debugging output
+        if (MutableCommandManager.DEBUG_COMMAND_EXECUTION) {
+            System.out.print("KEYS >>>     executing "); //$NON-NLS-1$
+            if (handler == null) {
+                System.out.print("no handler"); //$NON-NLS-1$
+            } else {
+                System.out.print("'"); //$NON-NLS-1$
+                System.out.print(handler.getClass().getName());
+                System.out.print("' ("); //$NON-NLS-1$
+                System.out.print(handler.hashCode());
+                System.out.print(")"); //$NON-NLS-1$
+            }
+            System.out.println();
+        }
+        
+        // Perform the execution, if there is a handler.
         if (handler != null)
             return handler.execute(parameterValuesByName);
         else {
@@ -251,8 +256,10 @@ final class Command implements ICommand {
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
-            if ((DEBUG_HANDLERS)
-                    && ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
+            
+            // Debugging output
+            if ((MutableCommandManager.DEBUG_HANDLERS)
+                    && ((MutableCommandManager.DEBUG_HANDLERS_COMMAND_ID == null) || (MutableCommandManager.DEBUG_HANDLERS_COMMAND_ID
                             .equals(id)))) {
                 System.out.print("HANDLERS >>> Command('" + id //$NON-NLS-1$
                         + "' has changed to "); //$NON-NLS-1$
@@ -264,6 +271,7 @@ final class Command implements ICommand {
                     System.out.println("' as its handler"); //$NON-NLS-1$
                 }
             }
+            
             return true;
         }
         return false;

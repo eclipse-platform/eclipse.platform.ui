@@ -41,7 +41,30 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 public final class MutableCommandManager implements IMutableCommandManager {
-	public final static String SEPARATOR = "_"; //$NON-NLS-1$
+    
+    /**
+     * Whether commands should print out information about which handlers are
+     * being executed.  Change this value if you want console output on command
+     * execution.
+     */
+    public static boolean DEBUG_COMMAND_EXECUTION = false;
+    
+    /**
+     * Whether commands should print out information about handler changes.
+     * Change this value if you want console output when commands change
+     * handlers.
+     */
+    public static boolean DEBUG_HANDLERS = false;
+
+    /**
+     * Which command should print out debugging information. Change this value
+     * if you want to only here when a command with a particular identifier
+     * changes its handler.
+     */
+    public static String DEBUG_HANDLERS_COMMAND_ID = null;
+
+    public final static String SEPARATOR = "_"; //$NON-NLS-1$
+	
 	static String[] extend(String[] strings) {
 		String[] strings2 = new String[strings.length + 1];
 		System.arraycopy(strings, 0, strings2, 0, strings.length);
