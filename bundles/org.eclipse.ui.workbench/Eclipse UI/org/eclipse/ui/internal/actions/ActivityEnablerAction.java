@@ -16,12 +16,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
@@ -30,9 +33,7 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
  * 
  * @since 3.0
  */
-public class ActivityEnablerAction
-	extends Action
-	implements ActionFactory.IWorkbenchAction {
+public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
 	private IWorkbenchActivitySupport activitySupport;
 	private ActivityEnabler enabler;
 	private IWorkbenchWindow workbenchWindow;
@@ -80,16 +81,15 @@ public class ActivityEnablerAction
 			protected void configureShell(Shell shell) {
 				super.configureShell(shell);
 				shell.setText(ActivityMessages.getString("ActivityEnablementAction.title")); //$NON-NLS-1$
-			}			
-			
+			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 			 */
 			protected Control createDialogArea(Composite parent) {
-				Composite composite =
-					(Composite) super.createDialogArea(parent);
+				Composite composite = (Composite) super.createDialogArea(parent);
 				GridData data = new GridData(GridData.FILL_BOTH);
 				data.widthHint = 600;
 				data.heightHint = 240;
@@ -108,6 +108,26 @@ public class ActivityEnablerAction
 			protected void okPressed() {
 				if (enabler != null) {
 					enabler.updateActivityStates();
+
+					// refresh the managers on all windows.
+					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						if (windows[i] instanceof WorkbenchWindow) {
+							WorkbenchWindow window = (WorkbenchWindow) windows[i];
+							IContributionManager manager = window.getMenuBarManager();
+							if (manager != null)
+								manager.update(true);
+							manager = window.getCoolBarManager();
+							if (manager != null)
+								manager.update(true);
+							manager = window.getToolBarManager();
+							if (manager != null)
+								manager.update(true);
+							manager = window.getStatusLineManager();
+							if (manager != null)
+								manager.update(true);
+						}
+					}
 				}
 				super.okPressed();
 			}
