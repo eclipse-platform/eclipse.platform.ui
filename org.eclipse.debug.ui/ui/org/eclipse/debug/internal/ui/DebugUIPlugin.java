@@ -565,7 +565,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public void launchAdded(final ILaunch launch) {
-		if (launch.getLaunchConfiguration() != null) {
+		if (launch.getLaunchConfiguration() != null || launch.getLauncher() == null) {
 			// new launch configuration processing
 			//return;
 		} else {		

@@ -101,7 +101,6 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		relaunch(launch.getLauncher(), mode, launch.getElement());
 	}
 	
-
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
@@ -121,12 +120,17 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		}
 		if (launch.getLaunchConfiguration() == null) {
 			// old launcher support
-			return DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
+			if (launch.getLauncher() != null) {
+				return DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
+			} 
+			return false;
 		} else {
 			// new launch configuration support
-			return true;
-		}
-			
+			//relaunch is based on the launch history which is either
+			//in the new or old mode.  Currently relaunch does not work for
+			//launch configuration.
+			return false;
+		}	
 	}
 	
 	protected String getHelpContextId() {
