@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.model;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -444,7 +445,18 @@ public final class AntUtil {
 		
 		if (file.exists()) {
 			return file;
+		} 
+		File ioFile= file.getLocation().toFile();
+		if (ioFile.exists()) {//needs to handle case insensitivity on WINOS
+			try {
+				files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(ioFile.getCanonicalPath()));
+				if (files.length > 0) {
+					return files[0];
+				}
+			} catch (IOException e) {
+			}			
 		}
+			
 		return null;
 	}
 
