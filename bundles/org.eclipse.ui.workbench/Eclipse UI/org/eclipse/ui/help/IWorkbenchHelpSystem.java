@@ -12,11 +12,9 @@ package org.eclipse.ui.help;
 
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.commands.ICommand;
 
 /**
  * <p>
@@ -106,18 +104,6 @@ public interface IWorkbenchHelpSystem {
 	 *            </p>
 	 */
 	void displayHelpResource(String href);
-
-	/**
-	 * Creates a new help listener for the given command. This retrieves the
-	 * help context ID from the command, and creates an appropriate listener
-	 * based on this.
-	 * 
-	 * @param command
-	 *            The command for which the listener should be created; must not
-	 *            be <code>null</code>.
-	 * @return A help listener; never <code>null</code>.
-	 */
-	HelpListener createHelpListener(ICommand command);
 
 	/**
 	 * Calls the help support system to display the given help context id.

@@ -127,7 +127,7 @@ public class WorkbenchHelp {
      * @return A help listener; never <code>null</code>.
      */
     public static HelpListener createHelpListener(ICommand command) {
-    	return PlatformUI.getWorkbench().getHelpSystem().createHelpListener(command);
+    	return WorkbenchHelpSystem.getInstance().createHelpListener(command);
     }
 
     /**

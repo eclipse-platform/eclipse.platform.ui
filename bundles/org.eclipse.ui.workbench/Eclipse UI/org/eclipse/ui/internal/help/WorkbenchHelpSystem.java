@@ -728,6 +728,34 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		item.removeHelpListener(getHelpListener());
 		item.addHelpListener(getHelpListener());
 	}
+	
+    /**
+     * Creates a new help listener for the given command. This retrieves the
+     * help context ID from the command, and creates an appropriate listener
+     * based on this.
+     * 
+     * @param command
+     *            The command for which the listener should be created; must
+     *            not be <code>null</code>.
+     * @return A help listener; never <code>null</code>.
+     */
+	public HelpListener createHelpListener(ICommand command) {
+		// TODO Need a help ID from the context
+		// final String contextId = command.getHelpId();
+		final String contextId = ""; //$NON-NLS-1$
+		return new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				if (getHelpUI() != null) {
+					IContext context = HelpSystem.getContext(contextId);
+					if (context != null) {
+						Point point = computePopUpLocation(event.widget
+								.getDisplay());
+						displayContext(context, point.x, point.y);
+					}
+				}
+			}
+		};
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -794,29 +822,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		if (helpUI != null) {
 			helpUI.displayHelpResource(href);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#createHelpListener(org.eclipse.ui.commands.ICommand)
-	 */
-	public HelpListener createHelpListener(ICommand command) {
-		// TODO Need a help ID from the context
-		// final String contextId = command.getHelpId();
-		final String contextId = ""; //$NON-NLS-1$
-		return new HelpListener() {
-			public void helpRequested(HelpEvent event) {
-				if (getHelpUI() != null) {
-					IContext context = HelpSystem.getContext(contextId);
-					if (context != null) {
-						Point point = computePopUpLocation(event.widget
-								.getDisplay());
-						displayContext(context, point.x, point.y);
-					}
-				}
-			}
-		};
 	}
 
 	/*
