@@ -2,6 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Workbench Extension Points</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -11,19 +12,47 @@
 Project Natures</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.core.resources.natures
 <p><b><i>Description:</i></b> The workspace supports the notion of project
-natures (or "natures" for short").&nbsp; A nature associates lifecycle
-behaviour with a project.&nbsp; Natures are installed on a per-project
-basis and are configured automatically when a project is opened and deconfigured
-when a project is closed.&nbsp; For example, the Java nature might install
-a Java builder and do other project configuration when a project is opened.
+natures (or "natures" for short).&nbsp; A nature associates lifecycle behaviour
+with a project.&nbsp; Natures are installed on a per-project basis using
+the <tt>setDescription</tt> method defined on <tt>org.eclipse.core.resources.IProject.</tt>&nbsp;
+They are configured automatically when added to a project and deconfigured
+when removed from a project.&nbsp; For example, the Java nature might install
+a Java builder and do other project configuration when added to a project.
 <p>The natures extension-point allows nature writers to register their
 nature implementation under a symbolic name that is then used from within
 the workspace to find and configure natures. The symbolic name is the id
 of the nature extension.&nbsp; When defining a nature extension, users
-are encouraged to include a human-readable value for the "name" attribute
-which indentifies their nature and potentially may be presented to users.
+are encouraged to include a human-readable value for the "<tt>name</tt>"
+attribute which indentifies their meaning and potentially may be presented
+to users.
+<p>Natures can specify relationship constraints with other natures.&nbsp;
+The "one-of-nature" constraint species that at most one nature belonging
+to a given set can exist on a project at any given time.&nbsp; This enforces
+mutual exclusion between natures that are not compatible with each other.&nbsp;
+The "requires-nature" constraint specifies a dependency on another nature.&nbsp;
+When a nature is added to a project, all required natures must also be
+added.&nbsp; The natures are guaranteed to be configured and deconfigured
+in such a way that their required natures will always be configured before
+them and deconfigured after them.&nbsp; For this reason, cyclic dependencies
+between natures are not permitted.
+<p>Natures cannot be added to or removed from a project if that change
+would violate any constraints that were previously satisfied.&nbsp; If
+a nature is configured on a project, but later finds that its constraints
+are not satisfied, that nature and all natures that require it are marked
+as <i>disabled</i>, but remain on the project.&nbsp; This can happen, for
+example, when a required nature goes missing from the install.&nbsp; Natures
+that are missing from the install, and natures involved in dependency cycles
+are also marked as disabled.
+<p>Natures can also specify which incremental project builders, if any,
+are configured by them.&nbsp; With this information, the workspace will
+ensure that builders will only run when their corresponding nature is present
+and enabled on the project being built.&nbsp; If a nature is removed from
+a project, but the nature's deconfigure method fails to remove its corresponding
+builders, the workspace will remove those builders from the build spec
+automatically.&nbsp; It is not permitted for two natures to specify the
+same incremental project builder in their markup.
 <p><b><i>Configuration Markup:</i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT runtime run?></tt><tt></tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT runtime run?></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT run parameter*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST run</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -47,24 +76,81 @@ the specified nature class</li>
 
 <li>
 <b>value</b> - an arbitrary value associated with the given name and made
-available to instances of the specificed nature class</li>
+available to instances of the specified nature class</li>
 </ul>
-<b><i>Examples:</i></b>
-<p>Following is an example of a nature configuration:
-<p><tt>&nbsp;&nbsp; &lt;extension id="com.xyz.coolNature" name="Cool Nature"
-point="org.eclipse.core.resources.natures" ></tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT one-of-nature EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST one-of-nature</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br>&nbsp;
+<ul>
+<li>
+<b>id -</b> the name of an exclusive project nature category.</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT requires-nature EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST requires-nature</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br>&nbsp;
+<ul>
+<li>
+<b>id -</b> the fully-qualified id of another nature extension that this
+nature extension requires.</li>
+</ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT builder EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST builder</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id -</b> the fully-qualified id of an incremental project builder extension
+that this nature controls.</li>
+</ul>
+
+<p><br><b><i>Examples:</i></b>
+<p>Following is an example of three nature configurations.&nbsp; The waterNature
+and fireNature belong to the same exclusive set, so they cannot co-exist
+on the same project.&nbsp; The snowNature requires
+waterNature, so snowNature
+will be disabled on a project that is missing
+waterNature.&nbsp; It naturally
+follows that snowNature cannot be enabled on a project with fireNature.
+<p><tt>&nbsp;&nbsp; &lt;extension id="fireNature" name="Fire Nature" point="org.eclipse.core.resources.natures"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;runtime></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;run class="com.xyz.natures.Cool"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;run class="com.xyz.natures.Fire"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;one-of-nature id="com.xyz.stateSet"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt><tt></tt>
+<p><tt>&nbsp;&nbsp; &lt;extension id="waterNature" name="Water Nature"
+point="org.eclipse.core.resources.natures"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;run class="com.xyz.natures.Water"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;one-of-nature id="com.xyz.stateSet"/></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><tt>&nbsp;&nbsp; &lt;extension id="snowNature" name="Snow Nature" point="org.eclipse.core.resources.natures"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;run class="com.xyz.natures.Snow"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;parameter name="installBuilder" value="true"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/run></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/runtime></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;requires-nature id="com.xyz.coolplugin.waterNature"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;builder id="com.xyz.snowMaker"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p>If these extensions were defined in a plug-in with id "com.xyz.coolplugin",
+the fully qualified name of these natures would be "com.xyz.coolplugin.fireNature",
+"com.xyz.coolplugin.waterNature" and "com.xyz.coolplugin.snowNature".
 <p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
 must represent an implementor of <tt>org.eclipse.core.resources.IProjectNature</tt>.
+Nature definitions can be examined using the <tt>org.eclipse.core.resources.IProjectNatureDescriptor</tt>
+interface. These descriptor objects can be obtained using the methods <tt>getNatureDescriptor(String)</tt>
+and
+<tt>getNatureDescriptors()</tt> on <tt>org.eclipse.core.resources.IWorkspace</tt>.
 <p><b><i>Supplied Implementation:</i></b> The platform itself does not
 have any predefined natures. Particular product installs may include natures
 as required.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
