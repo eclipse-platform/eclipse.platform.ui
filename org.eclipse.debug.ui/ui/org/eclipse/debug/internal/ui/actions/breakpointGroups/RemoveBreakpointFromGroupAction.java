@@ -37,6 +37,8 @@ public class RemoveBreakpointFromGroupAction extends AbstractBreakpointsViewActi
             } catch (CoreException e) {
             }
         }
+        // Disable until a new valid selection is made
+        action.setEnabled(false);
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
@@ -44,7 +46,16 @@ public class RemoveBreakpointFromGroupAction extends AbstractBreakpointsViewActi
         Iterator iter = ((IStructuredSelection) selection).iterator();
         while (iter.hasNext()) {
             Object element = iter.next();
+            boolean breakpointInGroup= false;
             if (element instanceof IBreakpoint) {
+                try {
+                    if (((IBreakpoint) element).getGroup() != null) {
+                        breakpointInGroup= true;
+                    }
+                } catch (CoreException e) {
+                }
+            }
+            if (breakpointInGroup) {
                 selectedBreakpoints.add(element);
             } else {
                 selectedBreakpoints.clear();
