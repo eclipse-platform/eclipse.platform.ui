@@ -51,7 +51,7 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public class ProductInfo {
+public class ProductInfo extends ConfigurationInfo {
 
 	// -- variables
 	private String copyright;
@@ -66,8 +66,6 @@ public class ProductInfo {
 	private ImageDescriptor productImage = null;
 	private ImageDescriptor splashImage = null;
 	private ImageDescriptor aboutImage = null;
-	private IPluginDescriptor desc;
-	private URL baseURL;
 	private Hashtable configurationPreferences;
 
 	/**
@@ -75,6 +73,15 @@ public class ProductInfo {
 	 * <code>"preferences.ini"</code>).
 	 */
 	private static final String DEFAULT_PREFERENCES = "preferences.ini";//$NON-NLS-1$
+	
+/**
+ * Create a new instance of the product info
+ */
+public ProductInfo() {
+	super("product.ini", "product.properties");
+}
+	
+	
 /**
  * Returns a new image which can be shown in an "about" dialog for this product.
  * Products designed to run "headless" typically would not have such an image.
@@ -224,7 +231,7 @@ public URL getWelcomePageURL() {
 private Hashtable readConfigurationPreferences() {
 	URL preferenceURL= null;
 	try {
-		preferenceURL= new URL(baseURL, DEFAULT_PREFERENCES);
+		preferenceURL= new URL(getBaseURL(), DEFAULT_PREFERENCES);
 	} catch(MalformedURLException e) {
 		return null;
 	}
@@ -270,50 +277,12 @@ private Hashtable readConfigurationPreferences() {
 	return table;
 	
 }
-/**
- * R1.0 product.ini handling using "main" plugin and fragments for NL
- */
-public boolean readINIFile() throws CoreException {
-	// determine the identifier of the "dominant" application 
-	IInstallInfo ii= BootLoader.getInstallationInfo();
-	String configName= ii.getApplicationConfigurationIdentifier();
-	if (configName == null)
-		return false;
-		
-	// attempt to locate its corresponding "main" plugin
-	IPluginRegistry reg = Platform.getPluginRegistry();
-	if (reg == null)
-		return false;
-	int index = configName.lastIndexOf("_");
-	if (index == -1) 	
-		this.desc = reg.getPluginDescriptor(configName);
-	else {
-		String mainPluginName = configName.substring(0,index);
-		PluginVersionIdentifier mainPluginVersion = null;
-		try {
-			mainPluginVersion = new PluginVersionIdentifier(configName.substring(index+1));
-		} catch(Exception e) {
-			return false;
-		}
-		this.desc = reg.getPluginDescriptor(mainPluginName, mainPluginVersion);
-	}	
-	if (this.desc == null)
-		return false;
-	this.baseURL = desc.getInstallURL();
-				
-	// load the product.ini file	
-	URL iniURL = PluginFileFinder.getResource(this.desc, "product.ini");
-	if (iniURL == null)
-		return false;
-	readINIFile(iniURL);
-	return true;
-}
 
 /**
  * Read the ini file.
  */
-private void readINIFile(URL iniURL) throws CoreException {
-
+protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
+
 	Properties ini = new Properties();
 	InputStream is = null;
 	try {
@@ -330,14 +299,34 @@ private void readINIFile(URL iniURL) throws CoreException {
 		} catch (IOException e) {}
 	}
 
-	if ((copyright = (String) ini.get("copyright") ) == null)//$NON-NLS-1$
+	PropertyResourceBundle bundle = null;
+
+	if (propertiesURL != null) {
+		InputStream bundleStream = null;
+		try {
+			bundleStream = propertiesURL.openStream();
+			bundle = new PropertyResourceBundle(bundleStream);
+		}
+		catch (IOException e) {
+			reportINIFailure(e, "Cannot read platform properties file " + propertiesURL);//$NON-NLS-1$
+		}
+		finally {
+			try { 
+				if (bundleStream != null)
+					bundleStream.close(); 
+			} catch (IOException e) {}
+		}
+	}
+	if ((copyright = (String) ini.get("copyright") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'copyright'");//$NON-NLS-2$//$NON-NLS-1$
+	copyright = getResourceString(copyright, bundle);
 
 	if ((name = (String) ini.get("name") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'name'");//$NON-NLS-2$//$NON-NLS-1$
-
-	if ((detailedName = (String) ini.get("detailedName") ) == null)//$NON-NLS-1$
+	name = getResourceString(name, bundle);
+	if ((detailedName = (String) ini.get("detailedName") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'detailedName'");//$NON-NLS-2$//$NON-NLS-1$
+	detailedName = getResourceString(detailedName, bundle);
 			
 	if ((version = (String) ini.get("version") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'version'");//$NON-NLS-2$//$NON-NLS-1$
@@ -347,12 +336,15 @@ private void readINIFile(URL iniURL) throws CoreException {
 				
 	if ((productURL = (String) ini.get("productURL") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Product info file "+iniURL+" missing 'productURL'");//$NON-NLS-2$//$NON-NLS-1$
-
-	appName = (String) ini.get("appName"); //$NON-NLS-1$
+	productURL = getResourceString(productURL, bundle);
+	appName = (String) ini.get("appName"); //$NON-NLS-1$
+	if (appName != null) {
+		appName = getResourceString(appName, bundle);
+	}
 
 	String welcomePageFileName = (String) ini.get("welcomePage");//$NON-NLS-1$
 	if (welcomePageFileName != null) {
-		welcomePageURL = PluginFileFinder.getResource(this.desc, welcomePageFileName);
+		welcomePageURL = PluginFileFinder.getResource(getDescriptor(), welcomePageFileName);
 		if (welcomePageURL == null) 
 			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName);//$NON-NLS-1$
 	}
@@ -368,38 +360,30 @@ private void readINIFile(URL iniURL) throws CoreException {
 	if (fileName == null)
 		fileName = (String) ini.get("image");//$NON-NLS-1$
 	if (fileName != null) {
-		url = PluginFileFinder.getResource(this.desc, fileName);
+		url = PluginFileFinder.getResource(getDescriptor(), fileName);
 		if (url != null)
 			productImage = ImageDescriptor.createFromURL(url);
 	}
-
+
 	fileName = (String) ini.get("aboutImage" + suffix);//$NON-NLS-1$
 	if(fileName == null)
 		fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
 	if (fileName != null) {
-		url = PluginFileFinder.getResource(this.desc, fileName);
+		url = PluginFileFinder.getResource(getDescriptor(), fileName);
 		if (url != null)
 			aboutImage = ImageDescriptor.createFromURL(url);
 	}
-
+
 	if ((fileName = (String) ini.get("splashImage") ) != null) {//$NON-NLS-1$
-		url = PluginFileFinder.getResource(this.desc, fileName);
+		url = PluginFileFinder.getResource(getDescriptor(), fileName);
 		if (url != null)
 			splashImage = ImageDescriptor.createFromURL(url);
 	}
-
+
 	if ((defaultPerspId = (String) ini.get("defaultPerspectiveId") ) == null) {//$NON-NLS-1$
 		defaultPerspId = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
 	}
-
+
 	configurationPreferences= readConfigurationPreferences();
-}
-private void reportINIFailure(Exception e, String message) throws CoreException {
-	throw new CoreException(new Status(
-		IStatus.ERROR,
-		WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-		0,
-		message,
-		e));
 }
 }

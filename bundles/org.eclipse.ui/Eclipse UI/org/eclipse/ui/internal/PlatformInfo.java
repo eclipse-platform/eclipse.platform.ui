@@ -51,7 +51,7 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public class PlatformInfo {
+public class PlatformInfo extends ConfigurationInfo {
 
 	// -- variables
 	private String copyright;
@@ -61,8 +61,13 @@ public class PlatformInfo {
 	private String appName;
 	private String platformURL;
 	private String detailedName;
-	private IPluginDescriptor desc;
-	private URL baseURL;
+
+/**
+ * Create a new instance of the platform info
+ */
+public PlatformInfo() {
+	super("platform.ini", "platform.properties");
+}
 
 /**
  * Returns the build id for this platform.
@@ -129,49 +134,12 @@ public String getplatformURL() {
 public String getVersion() {
 	return version;
 }
-/**
- * R1.0 platform.ini handling using "main" plugin and fragments for NL
- */
-public boolean readINIFile() throws CoreException {
-	// determine the identifier of the "dominant" application 
-	IInstallInfo ii= BootLoader.getInstallationInfo();
-	String configName= ii.getApplicationConfigurationIdentifier();
-	if (configName == null)
-		return false;
-		
-	// attempt to locate its corresponding "main" plugin
-	IPluginRegistry reg = Platform.getPluginRegistry();
-	if (reg == null)
-		return false;
-	int index = configName.lastIndexOf("_");
-	if (index == -1) 	
-		this.desc = reg.getPluginDescriptor(configName);
-	else {
-		String mainPluginName = configName.substring(0,index);
-		PluginVersionIdentifier mainPluginVersion = null;
-		try {
-			mainPluginVersion = new PluginVersionIdentifier(configName.substring(index+1));
-		} catch(Exception e) {
-			return false;
-		}
-		this.desc = reg.getPluginDescriptor(mainPluginName, mainPluginVersion);
-	}	
-	if (this.desc == null)
-		return false;
-	this.baseURL = desc.getInstallURL();
-				
-	// load the platform.ini file	
-	URL iniURL = PluginFileFinder.getResource(this.desc, "platform.ini");
-	if (iniURL == null)
-		return false;
-	readINIFile(iniURL);
-	return true;
-}
+
 
 /**
  * Read the ini file.
  */
-private void readINIFile(URL iniURL) throws CoreException {
+protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 
 	Properties ini = new Properties();
 	InputStream is = null;
@@ -188,15 +156,37 @@ private void readINIFile(URL iniURL) throws CoreException {
 				is.close(); 
 		} catch (IOException e) {}
 	}
+	
+	PropertyResourceBundle bundle = null;
+
+	if (propertiesURL != null) {
+		InputStream bundleStream = null;
+		try {
+			bundleStream = propertiesURL.openStream();
+			bundle = new PropertyResourceBundle(bundleStream);
+		}
+		catch (IOException e) {
+			reportINIFailure(e, "Cannot read platform properties file " + propertiesURL);//$NON-NLS-1$
+		}
+		finally {
+			try { 
+				if (bundleStream != null)
+					bundleStream.close(); 
+			} catch (IOException e) {}
+		}
+	}
 
 	if ((copyright = (String) ini.get("copyright") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Platform info file "+iniURL+" missing 'copyright'");//$NON-NLS-2$//$NON-NLS-1$
+	copyright = getResourceString(copyright, bundle);
 
 	if ((name = (String) ini.get("name") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Platform info file "+iniURL+" missing 'name'");//$NON-NLS-2$//$NON-NLS-1$
+	name = getResourceString(name, bundle);
 
 	if ((detailedName = (String) ini.get("detailedName") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Platform info file "+iniURL+" missing 'detailedName'");//$NON-NLS-2$//$NON-NLS-1$
+	detailedName = getResourceString(detailedName, bundle);
 			
 	if ((version = (String) ini.get("version") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Platform info file "+iniURL+" missing 'version'");//$NON-NLS-2$//$NON-NLS-1$
@@ -206,14 +196,8 @@ private void readINIFile(URL iniURL) throws CoreException {
 				
 	if ((platformURL = (String) ini.get("platformURL") ) == null)//$NON-NLS-1$
 		reportINIFailure(null, "Platform info file "+iniURL+" missing 'platformURL'");//$NON-NLS-2$//$NON-NLS-1$
+	platformURL = getResourceString(platformURL, bundle);
 
 }
-private void reportINIFailure(Exception e, String message) throws CoreException {
-	throw new CoreException(new Status(
-		IStatus.ERROR,
-		WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-		0,
-		message,
-		e));
-}
+
 }
