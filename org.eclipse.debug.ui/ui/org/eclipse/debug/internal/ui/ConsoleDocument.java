@@ -7,18 +7,20 @@ package org.eclipse.debug.internal.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStreamMonitor;
-import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-public class ConsoleDocument extends AbstractDocument implements IDebugEventListener {
+public class ConsoleDocument extends AbstractDocument implements IDebugEventListener, IPropertyChangeListener {
 
 	private boolean fClosed= false;
 
@@ -29,10 +31,15 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	private int fNewStreamWriteEnd= 0;
 	protected boolean fNeedsToStartReading= true;
 	
+	private int fLastSourceStream= ConsoleDocument.OUT;
+	private int fMaxSysText= 0; // Maximum amount of text displayed from sys.out and sys.err
+	private boolean fCropping= false;
+	
+	private List fStyleRanges= new ArrayList(2);
+	
 	public static final int OUT= 0;
 	public static final int ERR= 1;
-	
-	protected List fStyleRanges= new ArrayList(2);
+	public static final int IN= 2;
 
 	protected ConsoleViewer fConsoleViewer= null;
 	
@@ -51,13 +58,20 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	public ConsoleDocument(IProcess process) {
 		super();
 		fProcess= process;
-		setTextStore(new ConsoleOutputTextStore(2500));
+		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
+		store.addPropertyChangeListener(this);
+		fMaxSysText= store.getInt(ConsolePreferencePage.CONSOLE_MAX_OUTPUT_SIZE);
+		if (fMaxSysText > 0) {
+			setTextStore(new ConsoleOutputTextStore(fMaxSysText));
+		} else {			
+			setTextStore(new ConsoleOutputTextStore(2500));
+		}
 		setLineTracker(new DefaultLineTracker());
 		
 		if (process != null) {
 			fProxy= process.getStreamsProxy();
 			DebugPlugin.getDefault().addDebugEventListener(this);			
-		}
+		}		
 		completeInitialization();
 	}
 
@@ -65,7 +79,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		stopReading();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		fClosed= true;
-		fStyleRanges= Collections.EMPTY_LIST;
+		fStyleRanges= new ArrayList(0);
 		set("");
 	}
 
@@ -76,6 +90,12 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	 */
 	protected void fireDocumentChanged(DocumentEvent event) {
 		super.fireDocumentChanged(event);
+		if (fCropping) {
+			// Our user input detection could get a false positive from
+			// cropping if the crop results in the event text being
+			// trimmed to a single line delimeter
+			return;
+		}
 		String eventText= event.getText();
 		if (eventText == null || 0 >= eventText.length() || eventText.length() > 2) {
 			return;
@@ -83,6 +103,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		String[] lineDelimiters= event.getDocument().getLegalLineDelimiters();
 		for (int i= 0; i < lineDelimiters.length; i++) {
 			if (lineDelimiters[i].equals(eventText)) {
+				// Input was a single line delimeter - user hit enter
 				try {
 					String inText= event.getDocument().get();
 					fLastWritePosition = fLastStreamWriteEnd;
@@ -108,30 +129,20 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		if (isReadOnly() || pos < getStartOfEditableContent()) {
 			return;
 		}
-
-		replace0(pos, replaceLength, text);
-		int docLength= getLength();
-		if (docLength == fNewStreamWriteEnd) {
-			//removed all of the user input text
-			fStyleRanges.remove(fStyleRanges.size() - 1);
-		} else {
-			updateInputStyleRange(docLength);
-			//notify the viewer that the style ranges have changed.
-			fireDocumentChanged(new DocumentEvent(this, 0, 0, ""));
-		}
+		replace0(pos, replaceLength, text, IN);
 	}
 	
 	/**
 	 * Replace text used to add content from streams even though
 	 * the process is terminated (and therefore the doc is "read only")
 	 */
-	protected void replace0(int pos, int replaceLength, String text) {
+	protected void replace0(int pos, int replaceLength, String text, int sourceStream) {
 		try {		
 			super.replace(pos, replaceLength, text);
+			colorText(pos, text.length(), sourceStream);
 		} catch (BadLocationException ble) {
 			DebugUIUtils.logError(ble);
 		}
-		
 	}
 
 	public void set(String text) {
@@ -186,14 +197,71 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		update(new Runnable() {
 			public void run() {
 				int appendedLength= text.length();
+				int totalSize= getStore().getLength() + appendedLength;
 				fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
-				ConsoleDocument.this.replace0(fLastStreamWriteEnd, 0, text);
-				updateOutputStyleRanges(source);
+				if (fMaxSysText > 0 && totalSize > fMaxSysText) {
+					crop(totalSize - fMaxSysText);
+				}
+				ConsoleDocument.this.replace0(fLastStreamWriteEnd, 0, text, source);
 				fLastStreamWriteEnd= fNewStreamWriteEnd;
 			}
 		});
 	}
-		
+	
+	/**
+	 * Delete <code>amountToLose</code> characters from the text store.
+	 * Text is removed from the beginning of the document.
+	 * If amountToLose <= 0, do nothing.
+	 */
+	private void crop(int amountToLose) {
+		if (amountToLose <= 0) {
+			return;
+		}
+		fCropping= true;
+		ConsoleDocument.this.replace0(0, amountToLose, "", OUT); // empty text. color shouldn't matter.
+		fCropping= false;
+		fNewStreamWriteEnd= fNewStreamWriteEnd - amountToLose;
+		fLastStreamWriteEnd= fLastStreamWriteEnd - amountToLose;
+	}
+	
+	/**
+	 * Sets the style ranges to the given ranges
+	 */
+	protected void setStyleRanges(StyleRange[] ranges) {
+		int length= ranges.length;
+		List tempRanges= new ArrayList(length);
+		for (int i=0; i < length; i++) {
+			tempRanges.add(ranges[i]);
+		}
+		fStyleRanges= tempRanges;
+	}
+
+	/**
+	 * Returns the cached style ranges that this document stores
+	 * when it loses its viewer.
+	 */
+	protected StyleRange[] getStyleRanges() {
+		StyleRange[] ranges= new StyleRange[fStyleRanges.size()];
+		for (int i=0; i < ranges.length; i++) {
+			ranges[i]= (StyleRange) fStyleRanges.get(i);
+		}
+		return ranges;
+	}
+	
+	/**
+	 * Crop the contents of the store to fit the specified maximum
+	 * size (fMaxSysText).
+	 * Do nothing if the document has 1 or fewer characters.
+	 */
+	private void cropContentToFit() {
+		int totalSize= getStore().getLength();
+		int amountToLose= totalSize-fMaxSysText;
+		if (fMaxSysText <= 0 || totalSize <= 1 || amountToLose <= 0) {
+			return;
+		}
+		crop(amountToLose);
+	}	
+	
 	/**
 	 * @see IInputStreamListener
 	 */
@@ -220,31 +288,6 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
     public int hashCode() {
     	return (fProcess != null) ? fProcess.hashCode() : super.hashCode();
     }
-    
-	protected StyleRange[] getStyleRanges() {
-		if (fStyleRanges.isEmpty()) {
-			return new StyleRange[]{};
-		} 
-		StyleRange[] sRanges= new StyleRange[fStyleRanges.size()];
-		return (StyleRange[])fStyleRanges.toArray(sRanges);
-	}
-	
-	/**
-	 * Coalese that last two style ranges if they are similar
-	 */
-	protected void coaleseRanges() {
-		int size= fStyleRanges.size();
-		if (size > 1) {
-			StyleRange last= (StyleRange) fStyleRanges.get(size - 1);
-			StyleRange nextToLast= (StyleRange) fStyleRanges.get(size - 2);
-			if (last.similarTo(nextToLast)) {//same color?
-				StyleRange newRange= new StyleRange(nextToLast.start, last.length + nextToLast.length, last.foreground, null);
-				fStyleRanges.remove(size - 1);
-				fStyleRanges.remove(size - 2);
-				addNewStyleRange(newRange);
-			}
-		}
-	}
 
 	/**
 	 * Returns whether the document's underlying process is
@@ -254,84 +297,33 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		return (fProcess != null) ? fProcess.isTerminated() : true;
 	}
 	
-	/**
-	 * Updates the current input style range.
-	 */
-	protected void updateInputStyleRange(int docLength) {
-		if (fClosed) {
-			return;
+	protected void colorText(int start, int length, int sourceStream) {
+		Color newRangeColor;
+		switch (sourceStream) {
+			case OUT:
+				newRangeColor= ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_OUT_RGB);
+				break;
+			case ERR:
+				newRangeColor= ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_ERR_RGB);
+				break;
+			case IN:
+				newRangeColor= ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_IN_RGB);
+				break;
+			default:
+				newRangeColor= ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_OUT_RGB);
 		}
-		if (docLength != fNewStreamWriteEnd) {
-			StyleRange input= 
-				new StyleRange(fNewStreamWriteEnd, docLength - fNewStreamWriteEnd, 
-								ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_IN_RGB),
-								null);
-			if (!fStyleRanges.isEmpty()) {
-				if (((StyleRange)fStyleRanges.get(fStyleRanges.size() - 1)).similarTo(input)) {
-					//remove the top "input" range...continuing input
-					fStyleRanges.remove(fStyleRanges.size() - 1);
-				}
-			} 
-			
-			addNewStyleRange(input);
+		StyleRange newRange= new StyleRange(start, length, newRangeColor, null);
+		if (fConsoleViewer != null) {
+			// Add the style range directly to the widget if we have a viewer
+			fConsoleViewer.getTextWidget().setStyleRange(newRange);
+		} else {
+			// If we don't have a viewer, add the range to the backup ranges. The backup
+			// ranges will be applied to the viewer when we get one.
+			fStyleRanges.add(newRange);
 		}
 	}
 
-	protected void updateOutputStyleRanges(int sourceStream) {
-		if (fClosed) {
-			return;
-		}
-		int docLength= getLength();
-		if (docLength == 0) {
-			return;
-		}
-		
-		if ((fNewStreamWriteEnd == 0) && (0 == fLastStreamWriteEnd)) {
-			return;
-		}
-		
-		if (fNewStreamWriteEnd == fLastStreamWriteEnd) {
-			return;
-		}
-
-		Color newRangeColor= 
-			(sourceStream == ConsoleDocument.OUT) ? ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_OUT_RGB) : ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_ERR_RGB);
-
-		StyleRange newRange= new StyleRange(fLastStreamWriteEnd, fNewStreamWriteEnd - fLastStreamWriteEnd, newRangeColor, null);
-		if (!fStyleRanges.isEmpty()) {
-			if ((docLength != fNewStreamWriteEnd) && 
-				((StyleRange)fStyleRanges.get(fStyleRanges.size() - 1)).foreground ==
-				ConsolePreferencePage.getPreferenceColor(ConsolePreferencePage.CONSOLE_SYS_IN_RGB)) {
-				//remove the top "input" range..it will get recalculated in updateInputStyleRanges
-				fStyleRanges.remove(fStyleRanges.size() - 1);
-			}
-		}
-		
-		addNewStyleRange(newRange);
-		coaleseRanges();
-		updateInputStyleRange(docLength);
-		//notify the viewer that the style ranges have changed.
-		fireDocumentChanged(new DocumentEvent(this, 0, 0, null));
-	}	
-	
-	/**
-	 * Adds a new style range if the document is not closed.
-	 * Note that the document can be closed by a separate thread.
-	 * This is the reason for the copy of the style ranges.
-	 */
-	protected void addNewStyleRange(StyleRange newRange) {
-		List tempRanges= fStyleRanges;
-		if (fClosed) {
-			return;
-		}
-		tempRanges.add(newRange);
-	}
-	
-	protected void setStyleRanges(List ranges) {
-		fStyleRanges= ranges;
-	}
-
-	protected void clearDocument() {
+	protected void clearDocument() {		
 		fStyleRanges= new ArrayList(2);
 		set("");
 	}
@@ -389,9 +381,43 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	 * Sets the console viewer that this document is viewed within.
 	 * Can be set to <code>null</code> if no longer currently being
 	 * viewed.
+	 * When the viewer is set to null, the document stores a copy of
+	 * the viewers current style ranges.
+	 * When the viewer is set non-null, the document clears its
+	 * backup of the style ranges. Clients who want to access
+	 * the backup style ranges should do so before setting the
+	 * document's viewer.
 	 */
 	protected void setConsoleViewer(ConsoleViewer viewer) {
+		if (viewer == null) {
+			// Removing this document from the viewer.
+			// Backup the style ranges so we have them if this
+			// document is added to the viewer again
+			if (fConsoleViewer != null) {
+				setStyleRanges(fConsoleViewer.getTextWidget().getStyleRanges());
+			}
+		} else {
+			// Adding this document to a viewer.
+			// Clear the style ranges backup.
+			fStyleRanges= new ArrayList(2);
+		}
 		fConsoleViewer = viewer;
 	}
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty() != ConsolePreferencePage.CONSOLE_MAX_OUTPUT_SIZE || fProcess == null) {
+			return;
+		}
+
+		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
+		int newMax= store.getInt(ConsolePreferencePage.CONSOLE_MAX_OUTPUT_SIZE);
+		if (newMax != fMaxSysText) {
+			fMaxSysText= newMax;
+			cropContentToFit();
+		}	
+	}
+
 }
 

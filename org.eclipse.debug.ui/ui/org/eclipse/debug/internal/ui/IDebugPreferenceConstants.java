@@ -23,6 +23,8 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_SYS_ERR_RGB= "Console.stdErrColor";
 	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor";
 	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor";
+	
+	public static final String CONSOLE_MAX_OUTPUT_SIZE= "Console.maxOutputSize";	
 			
 	/**
 	 * The name of the font to use for the Console
