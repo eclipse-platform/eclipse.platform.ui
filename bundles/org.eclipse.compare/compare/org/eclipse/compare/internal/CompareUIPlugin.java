@@ -255,6 +255,28 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * Frees all resources of the compare plug-in.
 	 */
 	public void shutdown() throws CoreException {
+			
+		/*
+		 * Converts the aliases into a single string before they are stored
+		 * in the preference store.
+		 * The format is:
+		 * <key> '.' <alias> ' ' <key> '.' <alias> ...
+		 */
+		IPreferenceStore ps= getPreferenceStore();
+		if (ps != null) {
+			StringBuffer sb= new StringBuffer();
+			Iterator iter= fgStructureViewerAliases.keySet().iterator();
+			while (iter.hasNext()) {
+				String key= (String) iter.next();
+				String alias= (String) fgStructureViewerAliases.get(key);
+				sb.append(key);
+				sb.append('.');
+				sb.append(alias);
+				sb.append(' ');
+			}
+			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
+		}
+		
 		super.shutdown();
 		
 		if (fgDisposeOnShutdownImages != null) {
@@ -783,32 +805,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}		
 	}
 	
-	/**
-	 * Converts the aliases into a single string before they are stored
-	 * in the preference store.
-	 * The format is:
-	 * <key> '.' <alias> ' ' <key> '.' <alias> ...
-	 */
-	protected void savePreferenceStore() {
-		//System.out.println("savePreferenceStore");
-		IPreferenceStore ps= getPreferenceStore();
-		if (ps != null) {
-			StringBuffer sb= new StringBuffer();
-			Iterator iter= fgStructureViewerAliases.keySet().iterator();
-			while (iter.hasNext()) {
-				String key= (String) iter.next();
-				String alias= (String) fgStructureViewerAliases.get(key);
-				sb.append(key);
-				sb.append('.');
-				sb.append(alias);
-				sb.append(' ');
-			}
-			//System.out.println("  <" + sb.toString() + ">");
-			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
-		}
-		super.savePreferenceStore();
-	}
-
 	public static void addStructureViewerAlias(String type, String alias) {
 		//System.out.println("addStructureViewerAlias: " + type + " " + alias);
 		fgStructureViewerAliases.put(normalizeCase(alias), normalizeCase(type));
