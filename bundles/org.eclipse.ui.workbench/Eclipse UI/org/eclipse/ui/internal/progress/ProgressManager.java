@@ -62,6 +62,7 @@ import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -1196,7 +1197,7 @@ public class ProgressManager extends ProgressProvider implements
      * @return <code>true</code> if the dialog should not be shown.
      */
     private boolean shouldRunInBackground() {
-        return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+        return PrefUtil.getAPIPreferenceStore().getBoolean(
         		IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND);
     }
 
