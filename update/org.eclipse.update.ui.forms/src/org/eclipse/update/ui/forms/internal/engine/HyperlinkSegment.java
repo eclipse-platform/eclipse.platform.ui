@@ -23,6 +23,7 @@ public class HyperlinkSegment
 	extends TextSegment
 	implements IHyperlinkSegment {
 	private String actionId;
+	private String arg;
 	private HyperlinkSettings settings;
 	
 	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
@@ -74,4 +75,18 @@ public class HyperlinkSegment
 			}
 		}
 	}
+	/**
+	 * @return
+	 */
+	public String getArg() {
+		return arg;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setArg(String string) {
+		arg = string;
+	}
+
 }

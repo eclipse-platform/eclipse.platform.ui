@@ -23,5 +23,7 @@ public interface IHyperlinkSegment extends ITextSegment, IObjectReference {
 	
 	boolean contains(int x, int y);
 	
+	String getArg();
+	
 	public void repaint(GC gc, boolean hover);
 }

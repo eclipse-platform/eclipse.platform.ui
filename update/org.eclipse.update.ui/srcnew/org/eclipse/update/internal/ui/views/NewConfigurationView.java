@@ -9,20 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -68,6 +70,8 @@ public class NewConfigurationView
 	private SaveConfigurationAction preserveAction;
 	private Action propertiesAction;
 	private SiteStateAction2 siteStateAction;
+	private SashForm splitter;
+	private ConfigurationPreview preview;
 
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
@@ -392,6 +396,8 @@ public class NewConfigurationView
 			initialized = false;
 		}
 		UpdateManager.getOperationsManager().removeUpdateModelChangedListener(modelListener);
+		if (preview!=null)
+			preview.dispose();
 		super.dispose();
 	}
 
@@ -419,6 +425,7 @@ public class NewConfigurationView
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
 				getTreeViewer());
+		propertiesAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
 			propertiesAction,
 			"org.eclipse.update.ui.CofigurationView_propertiesAction");
@@ -432,7 +439,7 @@ public class NewConfigurationView
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
-
+		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
 	}
 
 	private void makeShowNestedFeaturesAction() {
@@ -737,8 +744,16 @@ public class NewConfigurationView
 	}
 	
 	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
+		splitter = new SashForm(parent, SWT.HORIZONTAL);
+		super.createPartControl(splitter);
+		preview = new ConfigurationPreview(this);
+		preview.createControl(splitter);
+		splitter.setWeights(new int [] {1, 2});
 		getTreeViewer().expandToLevel(2);
+	}
+	
+	public Control getControl() {
+		return splitter;
 	}
 
 	private int getStatusCode(IFeature feature, IStatus status) {
@@ -767,5 +782,14 @@ public class NewConfigurationView
 		}
 		return code;
 	}
-
+	protected void handleSelectionChanged(SelectionChangedEvent e) {
+		IStructuredSelection ssel = (IStructuredSelection)e.getSelection();
+		preview.setSelection(ssel);
+		Object obj = ssel.getFirstElement();
+		if (obj instanceof IFeatureAdapter) {
+			propertiesAction.setEnabled(true);
+		}		
+		else
+			propertiesAction.setEnabled(false);
+	}
 }

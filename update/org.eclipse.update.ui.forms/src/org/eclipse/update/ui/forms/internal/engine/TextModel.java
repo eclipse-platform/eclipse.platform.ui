@@ -29,6 +29,10 @@ public class TextModel implements ITextModel {
 	IHyperlinkSegment[] hyperlinks;
 	int selectedLinkIndex = -1;
 	HyperlinkSettings hyperlinkSettings;
+	
+	public TextModel() {
+		reset();
+	}
 
 	class LocalHyperlinkSettings extends HyperlinkSettings {
 	}
@@ -275,6 +279,11 @@ public class TextModel implements ITextModel {
 		if (href != null) {
 			String value = href.getNodeValue();
 			segment.setActionId(value);
+		}
+		Node arg = atts.getNamedItem("arg");
+		if (arg != null) {
+			String value = arg.getNodeValue();
+			segment.setArg(value);
 		}
 		return segment;
 	}

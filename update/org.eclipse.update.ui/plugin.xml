@@ -37,6 +37,9 @@
                path="help/helpEnd"
                id="org.eclipse.update.ui.updateMenu">
             <separator
+                  name="group0">
+            </separator>
+            <separator
                   name="group1">
             </separator>
             <separator
@@ -56,7 +59,7 @@
                icon="icons/full/obj16/usearch_obj.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.UnifiedWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.newUpdates">
          </action>
          <action
@@ -73,6 +76,14 @@
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
                id="org.eclipse.update.ui.updateManager">
+         </action>
+         <action
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
+               label="%actionSets.configManager.label"
+               icon="icons/full/eview16/configs.gif"
+               class="org.eclipse.update.internal.ui.ConfigurationManagerAction"
+               id="org.eclipse.update.ui.configManager"
+               helpContextId="org.eclipse.update.ui.newUpdates">
          </action>
       </actionSet>
    </extension>
