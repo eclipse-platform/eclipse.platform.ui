@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.team.tests.cvs.core"
    name="Eclipse CVS Tests Core"
-   version="2.0.0"
+   version="2.1.0"
    provider-name="Eclipse.org">
 
    <runtime>
