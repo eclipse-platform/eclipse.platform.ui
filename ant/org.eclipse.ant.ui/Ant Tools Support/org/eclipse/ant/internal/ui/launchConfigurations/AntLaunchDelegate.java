@@ -28,6 +28,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.debug.model.RemoteAntDebugBuildListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -67,9 +68,12 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.AntProcessBuildLogger"; //$NON-NLS-1$
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
 	private static final String REMOTE_ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger"; //$NON-NLS-1$
+	private static final String REMOTE_ANT_DEBUG_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntDebugBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$
 	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.ProxyInputHandler"; //$NON-NLS-1$
+	
+	private String fMode;
 	
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
@@ -78,6 +82,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (monitor.isCanceled()) {
 			return;
 		}
+		
+		fMode= mode;
 		
 		// migrate the config to the new classpath format if required
 		AntUtil.migrateToNewClasspathFormat(configuration);
@@ -159,6 +165,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
 		launch.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, captureOutput ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		int port= -1;
+		int requestPort= -1;
 		if (vmTypeID != null && captureOutput) {
 			if (userProperties == null) {
 				userProperties= new HashMap();
@@ -166,13 +173,17 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			port= SocketUtil.findFreePort();
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
+			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+				requestPort= SocketUtil.findFreePort();
+				userProperties.put("eclipse.connect.request_port", Integer.toString(requestPort)); //$NON-NLS-1$
+			}
 		}
 		
 		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null, captureOutput, setInputHandler);
 		
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine, captureOutput, setInputHandler);
+			runInSeparateVM(configuration, launch, monitor, idStamp, port, requestPort, commandLine, captureOutput, setInputHandler);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine, captureOutput);
 		}
@@ -380,7 +391,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (separateVM) { 
 			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
 				commandLine.append(" -logger "); //$NON-NLS-1$
-				if (captureOutput) {
+				if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+					commandLine.append(REMOTE_ANT_DEBUG_LOGGER_CLASS);
+				} else if (captureOutput) {
 					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
 				}
 			}
@@ -449,8 +462,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		commandLine.append(" \""); //$NON-NLS-1$
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
-		if (captureOutput) {
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
+		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+			RemoteAntDebugBuildListener listener= new RemoteAntDebugBuildListener(launch);
+			if (requestPort != -1) {
+				listener.startListening(port, requestPort);
+			}
+		} else if (captureOutput) {
 			RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
 			if (port != -1) {
 				client.startListening(port);

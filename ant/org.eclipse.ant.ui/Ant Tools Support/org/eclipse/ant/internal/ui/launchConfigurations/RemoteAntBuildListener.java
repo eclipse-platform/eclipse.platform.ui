@@ -52,7 +52,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	private Socket fSocket;
 	private int fPort= -1;
 	private BufferedReader fBufferedReader;
-	private boolean fDebug= false;
+	protected boolean fDebug= false;
 	private IProcess fProcess;
 	private String fProcessId;
 	private File fBuildFileParent= null;

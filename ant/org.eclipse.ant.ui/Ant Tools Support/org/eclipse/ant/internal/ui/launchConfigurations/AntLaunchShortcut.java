@@ -84,7 +84,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 					launch(resource, mode);
 					return;
 				} else if (object instanceof AntElementNode){
-					launch((AntElementNode) object);
+					launch((AntElementNode) object, mode);
 					return;
 				}
 			}
@@ -100,7 +100,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * </ul>
 	 * @param node the Ant node to use as the context for the launch
 	 */
-	public void launch(AntElementNode node) {
+	public void launch(AntElementNode node, String mode) {
 		String selectedTargetName= null;
 		if (node instanceof AntTargetNode) {
 			AntTargetNode targetNode= (AntTargetNode) node;
@@ -121,13 +121,13 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		}
 		IFile file= node.getBuildFileResource();
 		if (file != null) {
-			launch(file, ILaunchManager.RUN_MODE, selectedTargetName);
+			launch(file, mode, selectedTargetName);
 			return;
 		} 
 		//external buildfile
 		IPath filePath= getExternalBuildFilePath();
 		if (filePath != null) {
-			launch(filePath, ILaunchManager.RUN_MODE, selectedTargetName);
+			launch(filePath, mode, selectedTargetName);
 			return;
 		}
 		
@@ -189,19 +189,18 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public void launch(IFile file, String mode, String targetAttribute) {
 		ILaunchConfiguration configuration= null;
-		if (verifyMode(mode)) {
-			List configurations = findExistingLaunchConfigurations(file);
-			if (configurations.isEmpty()) {
-				configuration = createDefaultLaunchConfiguration(file);
+		
+		List configurations = findExistingLaunchConfigurations(file);
+		if (configurations.isEmpty()) {
+			configuration = createDefaultLaunchConfiguration(file);
+		} else {
+			if (configurations.size() == 1) {
+				configuration= (ILaunchConfiguration)configurations.get(0);
 			} else {
-				if (configurations.size() == 1) {
-					configuration= (ILaunchConfiguration)configurations.get(0);
-				} else {
-					configuration= chooseConfig(configurations);
-					if (configuration == null) {
-						// User cancelled selection
-						return;
-					}
+				configuration= chooseConfig(configurations);
+				if (configuration == null) {
+					// User cancelled selection
+					return;
 				}
 			}
 		}
@@ -287,23 +286,22 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public void launch(IPath filePath, String mode, String targetAttribute) {
 		ILaunchConfiguration configuration= null;
-		if (verifyMode(mode)) {
-			List configurations = findExistingLaunchConfigurations(filePath);
-			if (configurations.isEmpty()) {
-				configuration = createDefaultLaunchConfiguration(filePath, null);
+		
+		List configurations = findExistingLaunchConfigurations(filePath);
+		if (configurations.isEmpty()) {
+			configuration = createDefaultLaunchConfiguration(filePath, null);
+		} else {
+			if (configurations.size() == 1) {
+				configuration= (ILaunchConfiguration)configurations.get(0);
 			} else {
-				if (configurations.size() == 1) {
-					configuration= (ILaunchConfiguration)configurations.get(0);
-				} else {
-					configuration= chooseConfig(configurations);
-					if (configuration == null) {
-						// User cancelled selection
-						return;
-					}
+				configuration= chooseConfig(configurations);
+				if (configuration == null) {
+					// User cancelled selection
+					return;
 				}
 			}
 		}
-
+		
 		if (configuration == null) {
 			antFileNotFound();
 		}
@@ -501,20 +499,6 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;
-	}
-	
-	/**
-	 * Verifies the mode is supported
-	 * 
-	 * @param mode
-	 * @return boolean
-	 */
-	protected boolean verifyMode(String mode) {
-		if (!mode.equals(ILaunchManager.RUN_MODE)) {
-			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.6"), null); //$NON-NLS-1$
-			return false;
-		}
-		return true;
 	}
 
 	/**
