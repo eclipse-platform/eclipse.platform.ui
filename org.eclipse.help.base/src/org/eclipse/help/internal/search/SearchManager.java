@@ -20,38 +20,29 @@ import org.eclipse.help.internal.search.IndexingOperation.*;
 /**
  * Manages indexing and search for all infosets
  */
-public class SearchManager {
+public class SearchManager implements ITocsChangedListener{
 	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
-	/** Progress Distributors indexed by index */
-	private Map progressDistibutors = new HashMap();
-
 	/**
 	 * Constructs a Search manager.
 	 */
 	public SearchManager() {
 		super();
+		HelpPlugin.getDefault().addTocsChangedListener(this);
 	}
-	public SearchIndex getIndex(String locale) {
+	/**
+	 * Public for use by indexing tool
+	 */
+	public SearchIndexWithIndexingProgress getIndex(String locale) {
 		synchronized (indexes) {
 			Object index = indexes.get(locale);
 			if (index == null) {
-				index = new SearchIndex(locale, getAnalyzer(locale), HelpPlugin.getTocManager());
+				index = new SearchIndexWithIndexingProgress(locale, getAnalyzer(locale), HelpPlugin.getTocManager());
 				indexes.put(locale, index);
 			}
-			return (SearchIndex) index;
-		}
-	}
-	private ProgressDistributor getProgressDistributor(SearchIndex index) {
-		synchronized (progressDistibutors) {
-			Object distributor = progressDistibutors.get(index);
-			if (distributor == null) {
-				distributor = new ProgressDistributor();
-				progressDistibutors.put(index, distributor);
-			}
-			return (ProgressDistributor) distributor;
+			return (SearchIndexWithIndexingProgress) index;
 		}
 	}
 	/**
@@ -85,7 +76,8 @@ public class SearchManager {
 		ISearchHitCollector collector,
 		IProgressMonitor pm)
 		throws QueryTooComplexException {
-		SearchIndex index = getIndex(searchQuery.getLocale());
+		
+		SearchIndexWithIndexingProgress index = getIndex(searchQuery.getLocale());
 		try {
 			ensureIndexUpdated(pm, index);
 			if (!index.exists()) {
@@ -105,22 +97,22 @@ public class SearchManager {
 
 	/**
 	 * Updates index.  Checks if all contributions were indexed.
-	 * If not, it indexes them (Currently reindexes everything).
+	 * If not, it indexes them.
 	 * @throws OperationCanceledException if indexing was cancelled
 	 * @throws Exception if error occured
 	 */
-	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndex index)
+	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndexWithIndexingProgress index)
 		throws OperationCanceledException, IndexingOperation.IndexingException {
-		ProgressDistributor progressDistrib = getProgressDistributor(index);
-		progressDistrib.addMonitor(pm);
 		
+		ProgressDistributor progressDistrib = index.getProgressDistributor();
+		progressDistrib.addMonitor(pm);
 		try {
 			// Only one index update occurs in VM at a time,
 			// but progress SearchProgressMonitor for other locales
 			// are waiting until we know if indexing is needed
 			// to prevent showing progress on first search after launch
 			// if no indexing is needed
-			if (!index.needsUpdating()) {
+			if (index.isClosed() || !index.needsUpdating()) {
 				pm.beginTask("", 1);
 				pm.worked(1);
 				pm.done();
@@ -143,7 +135,7 @@ public class SearchManager {
 	 * @throws IndexingException
 	 */
 	private synchronized void updateIndex(IProgressMonitor pm, SearchIndex index, ProgressDistributor progressDistrib) throws IndexingException {
-		if (!index.needsUpdating()) {
+		if (index.isClosed() || !index.needsUpdating()) {
 			pm.beginTask("", 1);
 			pm.worked(1);
 			pm.done();
@@ -175,8 +167,29 @@ public class SearchManager {
 	 * Closes all indexes.
 	 */
 	public void close() {
-		for (Iterator it = indexes.values().iterator(); it.hasNext();) {
-			((SearchIndex) it.next()).close();
+		synchronized (indexes) {
+			for (Iterator it = indexes.values().iterator(); it.hasNext();) {
+				((SearchIndex) it.next()).close();
+			}
 		}
+	}
+	public synchronized void tocsChanged(){
+		Collection activeIndexes = new ArrayList();
+		synchronized (indexes){
+			 activeIndexes.addAll(indexes.values());
+		}
+		for(Iterator it = activeIndexes.iterator(); it.hasNext();){
+			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress)it.next();
+			ix.close();
+			synchronized(indexes){
+				indexes.remove(ix.getLocale());
+				ProgressDistributor pm = ix.getProgressDistributor();
+				pm.beginTask("", 1);
+				pm.worked(1);
+				pm.done();
+				SearchProgressMonitor.reinit(ix.getLocale());
+			}
+		}
+		
 	}
 }

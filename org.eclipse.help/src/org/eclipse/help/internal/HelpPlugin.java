@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal;
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.toc.*;
@@ -24,6 +26,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	public static boolean DEBUG_PROTOCOLS = false;
 	protected static HelpPlugin plugin;
 	private static BundleContext bundleContext;
+	private List tocsChangedListeners = new Vector();
 
 	public final static String BASE_TOCS_KEY = "baseTOCS";
 
@@ -123,13 +126,25 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
-		synchronized (tocManagerCreateLock) {
-			IExtensionDelta[] deltas = event.getExtensionDeltas(
-					HelpPlugin.PLUGIN_ID, TocManager.TOC_XP_NAME);
-			if (deltas.length > 0) {
-				tocManager = null;
+		IExtensionDelta[] deltas = event.getExtensionDeltas(
+				HelpPlugin.PLUGIN_ID, TocManager.TOC_XP_NAME);
+		if (deltas.length > 0) {
+			tocManager = null;
+		}
+		// notifiy listeners
+		if (deltas.length > 0) {
+			for (Iterator it = tocsChangedListeners.iterator(); it.hasNext();) {
+				((ITocsChangedListener) it.next()).tocsChanged();
 			}
 		}
+	}
+	public void addTocsChangedListener(ITocsChangedListener listener) {
+		if (!tocsChangedListeners.contains(listener)){
+			tocsChangedListeners.add(listener);
+		}
+	}
+	public void removeTocsChangedListener(ITocsChangedListener listener) {
+		tocsChangedListeners.remove(listener);
 	}
 
 }

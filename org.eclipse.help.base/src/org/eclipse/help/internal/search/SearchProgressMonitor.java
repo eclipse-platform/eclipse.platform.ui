@@ -212,5 +212,8 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return l;
 		}
 	}
+	public synchronized static void reinit(String locale){
+		progressMonitors.remove(locale);
+	}
 
 }

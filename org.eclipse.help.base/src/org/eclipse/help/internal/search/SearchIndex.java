@@ -48,7 +48,11 @@ public class SearchIndex {
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
 	private IndexSearcher searcher;
+	private Object searcherCreateLock = new Object();
 	private HelpProperties dependencies;
+	private boolean closed = false;
+	// Collection of searches occuring now
+	private Collection searches = new ArrayList();
 	/**
 	 * Constructor.
 	 * @param locale the locale this index uses
@@ -272,6 +276,12 @@ public class SearchIndex {
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector)
 		throws QueryTooComplexException {
 		try {
+			if(closed)
+				return;
+			registerSearch(Thread.currentThread());
+			if(closed)
+				return;
+
 			QueryBuilder queryBuilder =
 				new QueryBuilder(
 					searchQuery.getSearchWord(),
@@ -296,6 +306,8 @@ public class SearchIndex {
 					"ES21",
 					searchQuery.getSearchWord()),
 				e);
+		} finally{
+			unregisterSearch(Thread.currentThread());
 		}
 	}
 	public String getLocale() {
@@ -411,21 +423,34 @@ public class SearchIndex {
 			inconsistencyFile.delete();
 	}
 
-	public synchronized void openSearcher() throws IOException {
-		if (searcher == null) {
-			searcher = new IndexSearcher(indexDir.getAbsolutePath());
+	public void openSearcher() throws IOException {
+		synchronized (searcherCreateLock) {
+			if (searcher == null) {
+				searcher = new IndexSearcher(indexDir.getAbsolutePath());
+			}
 		}
 	}
 	/**
-	 * Closes IndexReader used by Searcher.
-	 * Should be called on platform shutdown,
-	 * when no more reading from index is performed.
+	 * Closes IndexReader used by Searcher. Should be called on platform
+	 * shutdown, or when TOCs have changed when no more reading from this index
+	 * is to be performed.
 	 */
 	public void close() {
-		if (searcher != null) {
-			try {
-				searcher.close();
-			} catch (IOException ioe) {
+		closed = true;
+		// wait for all sarches to finish
+		synchronized (searches) {
+			while (searches.size() > 0) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ie) {
+				}
+			}
+			//
+			if (searcher != null) {
+				try {
+					searcher.close();
+				} catch (IOException ioe) {
+				}
 			}
 		}
 	}
@@ -514,5 +539,21 @@ public class SearchIndex {
 	 */
 	public TocManager getTocManager() {
 		return tocManager;
+	}
+	private void registerSearch(Thread t) {
+		synchronized (searches) {
+			searches.add(t);
+		}
+	}
+	private void unregisterSearch(Thread t) {
+		synchronized (searches) {
+			searches.remove(t);
+		}
+	}
+	/**
+	 * @return Returns the closed.
+	 */
+	public boolean isClosed() {
+		return closed;
 	}
 }
