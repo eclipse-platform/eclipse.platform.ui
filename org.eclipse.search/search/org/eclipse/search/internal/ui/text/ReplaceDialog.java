@@ -32,10 +32,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchResultView;
 import org.eclipse.search.internal.ui.SearchResultViewEntry;
+import org.eclipse.search.internal.ui.SearchResultViewer;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
@@ -49,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -524,6 +529,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		if (fMarkers.size() > 0) {
 			ReplaceMarker marker= getCurrentMarker();
 			try {
+				selectEntry(marker);
 				ITextEditor editor= null;
 				if (SearchUI.reuseEditor())
 					editor= openEditorReuse(marker);
@@ -537,6 +543,34 @@ class ReplaceDialog extends ExtendedDialogWindow {
 		}
 	}
 	
+	private void selectEntry(ReplaceMarker marker) {
+		SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
+		if (view == null)
+			return;
+		SearchResultViewer viewer= view.getViewer();
+		if (viewer == null)
+			return;
+		ISelection sel= viewer.getSelection();
+		if (!(sel instanceof IStructuredSelection))
+			return;
+		IStructuredSelection ss= (IStructuredSelection) sel;
+		IFile file= marker.getFile();
+		if (ss.size() == 1 && file.equals(ss.getFirstElement()))
+			return;
+		Table table= viewer.getTable();
+		if (table == null || table.isDisposed())
+			return;
+		int selectionIndex= table.getSelectionIndex();
+		for (int i= 0; i < table.getItemCount(); i++) {
+			int currentTableIndex= (selectionIndex+i) % table.getItemCount();
+			SearchResultViewEntry entry= (SearchResultViewEntry) viewer.getElementAt(currentTableIndex);
+			if (file.equals(entry.getGroupByKey())) {
+				viewer.setSelection(new StructuredSelection(entry));
+				return;
+			}
+		}
+	}
+
 	// opening editors ------------------------------------------
 	private ITextEditor openEditorNoReuse(ReplaceMarker marker) throws PartInitException {
 		IFile file= marker.getFile();
