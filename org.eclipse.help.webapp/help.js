@@ -154,17 +154,26 @@ function displayTocFor(topic)
 	if (!selected) {
 		// save the current navigation, so we can retrieve it when synch does not work
 		saveNavigation();
-		NavFrame.toc.location = "toc.jsp?topic="+topic+"&synch=yes";		
+		NavFrame.toc.location.replace("toc.jsp?topic="+topic+"&synch=yes");			
 	}
 }
 
 function saveNavigation()
 {
 	if (NavFrame.toc.location.href.indexOf("tocs.jsp") == -1) {
-		temp = NavFrame.toc.document.body.innerHTML;
+					
 		if (NavFrame.toc.oldActive)
 			tempActive = NavFrame.toc.oldActive;
-	}else {
+		// on mozilla, we will not preserve selection, the object is no longer valid.
+		// in the future, we could look up the topic, but this should suffice for now
+		if (isMozilla)
+			tempActive.className ="";
+			
+		if (isIE)
+			temp = NavFrame.toc.document.body.innerHTML;
+		else if (isMozilla)
+			temp = NavFrame.document.getElementById("toc").contentDocument.documentElement.innerHTML;
+	} else {
 		temp = null;
 	}
 }
@@ -178,7 +187,11 @@ function restoreNavigation()
 	
 	if (temp){
 		// Restore old navigation
-		NavFrame.toc.document.body.innerHTML = temp;
+		if (isIE)
+			NavFrame.toc.document.body.innerHTML = temp;
+		else if (isMozilla)
+			NavFrame.document.getElementById("toc").contentDocument.documentElement.innerHTML = temp;
+
 		if (tempActive)
 			NavFrame.oldActive = tempActive;
 		if (oldTab == "toc")
