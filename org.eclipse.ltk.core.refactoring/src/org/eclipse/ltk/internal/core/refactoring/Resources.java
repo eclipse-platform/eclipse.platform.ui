@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
@@ -98,7 +100,7 @@ public class Resources {
 		List readOnlyFiles= new ArrayList();
 		for (int i= 0; i < resources.length; i++) {
 			IResource resource= resources[i];
-			if (resource.getType() == IResource.FILE && resource.isReadOnly())	
+			if (resource.getType() == IResource.FILE &&  isReadOnly(resource))	
 				readOnlyFiles.add(resource);
 		}
 		if (readOnlyFiles.size() == 0)
@@ -183,5 +185,25 @@ public class Resources {
 				result.add(location.toOSString());
 		}
 		return (String[]) result.toArray(new String[result.size()]);
+	}
+	
+	public static boolean isReadOnly(IResource resource) {
+		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
+		if (resourceAttributes == null)  // not supported on this platform for this resource 
+			return false;
+		return resourceAttributes.isReadOnly();
+	}
+	
+	static void setReadOnly(IResource resource, boolean readOnly) {
+		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
+		if (resourceAttributes == null) // not supported on this platform for this resource
+			return;
+		
+		resourceAttributes.setReadOnly(readOnly);
+		try {
+			resource.setResourceAttributes(resourceAttributes);
+		} catch (CoreException e) {
+			RefactoringCorePlugin.log(e);
+		}
 	}
 }
