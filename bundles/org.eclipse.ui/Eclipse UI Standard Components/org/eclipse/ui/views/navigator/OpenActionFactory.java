@@ -10,11 +10,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.navigator.*;
 
 public class OpenActionFactory extends ActionFactory {
 
@@ -22,6 +21,7 @@ public class OpenActionFactory extends ActionFactory {
 	protected OpenSystemEditorAction openSystemEditorAction;
 	protected IWorkbenchPartSite site;
 	protected Shell shell;
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenWithSubMenu";//$NON-NLS-1$
 
 	public OpenActionFactory(
 		IWorkbenchPartSite partSite,
@@ -109,8 +109,7 @@ public class OpenActionFactory extends ActionFactory {
 		// Create a menu flyout.
 		MenuManager submenu =
 			new MenuManager(
-				ResourceNavigatorMessages.getString("ResourceNavigator.openWith"));
-		//$NON-NLS-1$
+				ResourceNavigatorMessages.getString("ResourceNavigator.openWith"),ID);//$NON-NLS-1$
 		submenu.add(new OpenWithMenu(site.getPage(), (IFile) element));
 
 		// Add the submenu.
