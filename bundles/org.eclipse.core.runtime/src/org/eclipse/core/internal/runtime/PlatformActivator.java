@@ -14,13 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.FileManager;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.service.systembundle.EntryLocator;
@@ -94,9 +96,22 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
 			File cacheFile = null;
 			try {
-				cacheFile = InternalPlatform.getDefault().getRuntimeFileManager().lookup(".registry", true); //$NON-NLS-1$
+				cacheFile = InternalPlatform.getDefault().getRuntimeFileManager().lookup(".registry", false); //$NON-NLS-1$
 			} catch (IOException e) {
 				//Ignore the exception. The registry will be rebuilt from the xml files.
+			}
+			if (cacheFile == null || !cacheFile.isFile()) {
+				Location currentLocation = Platform.getConfigurationLocation();
+				Location parentLocation = null;
+				if (currentLocation != null && (parentLocation = currentLocation.getParentLocation()) != null) {
+					try {
+						FileManager fileManagerShared = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), "none"); //$NON-NLS-1$
+						fileManagerShared.open(false);
+						cacheFile = fileManagerShared.lookup(".registry", false);
+					} catch (IOException e) {
+						//Ignore the exception. The registry will be rebuilt from the xml files.
+					}
+				}
 			}
 			if (cacheFile != null && cacheFile.isFile()) {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
@@ -174,7 +189,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.getDefault().getRuntimeFileManager().close();
 	}
 
-	private void stopRegistry(BundleContext runtimeContext) throws IOException {
+	private void stopRegistry(BundleContext runtimeContext) {
 		runtimeContext.removeBundleListener(this.pluginBundleListener);
 		ExtensionRegistry registry = (ExtensionRegistry) InternalPlatform.getDefault().getRegistry();
 		if (registry == null)

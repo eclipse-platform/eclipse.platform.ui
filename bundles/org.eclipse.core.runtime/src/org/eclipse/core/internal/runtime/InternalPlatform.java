@@ -386,7 +386,7 @@ public final class InternalPlatform {
 	private void initializeRuntimeFileManager() throws IOException {
 		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 		controlledDir.mkdirs();
-		runtimeFileManager = new FileManager(controlledDir);
+		runtimeFileManager = new FileManager(controlledDir, null);
 		runtimeFileManager.open(true);
 	}
 
