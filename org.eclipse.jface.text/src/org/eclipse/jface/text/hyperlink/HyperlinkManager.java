@@ -223,11 +223,16 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 		if (offset == -1)
 			return null;
 		
+		boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks(); 
 		IRegion region= new Region(offset, 0);
 		List allHyperlinks= new ArrayList(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
 			for (int i= 0, length= fHyperlinkDetectors.length; i < length; i++) {
-				IHyperlink[] hyperlinks= fHyperlinkDetectors[i].detectHyperlinks(fTextViewer, region);
+				IHyperlinkDetector detector= fHyperlinkDetectors[i];
+				if (detector == null)
+					continue;
+				
+				IHyperlink[] hyperlinks= detector.detectHyperlinks(fTextViewer, region, canShowMultipleHyperlinks);
 				if (hyperlinks == null)
 					continue;
 				

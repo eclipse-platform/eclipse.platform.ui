@@ -36,8 +36,14 @@ public interface IHyperlinkDetector {
 	 * </p>
 	 * @param textViewer the text viewer on which the hover popup should be shown
 	 * @param region the text range in the text viewer which is used to detect the hyperlinks
+	 * @param canShowMultipleHyperlinks tells whether the caller is able to show multiple links
+	 * 						to the user.
+	 * 						If <code>true</code> {@link IHyperlink#open()} should directly open
+	 * 							the link and not show any additional UI to select from a list.
+	 * 						If <code>false</code> this method should only return one hyperlink
+	 * 							which upon {@link IHyperlink#open()} may allow to select from a list. 
 	 * @return the hyperlinks or <code>null</code> if no hyperlink was detected
 	 */
-	IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region);
+	IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks);
 
 }

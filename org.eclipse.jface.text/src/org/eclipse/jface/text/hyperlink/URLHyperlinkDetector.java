@@ -46,9 +46,9 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkDetector#detectHyperlink(org.eclipse.jface.text.IRegion)
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region) {
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		if (region == null || fTextViewer == null)
 			return null;
 
