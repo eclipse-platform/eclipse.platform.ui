@@ -275,6 +275,44 @@ public final class BindingInteractionsTest extends UITestCase {
 	}
 
 	/**
+	 * This tests the case where a plug-in developer unbinds a key, and then a
+	 * user tries to bind to that key. The user should be allowed to bind.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public void testDeletedBindingWithUserOverride() throws NotDefinedException {
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final Binding generalBinding = new TestBinding("general", scheme
+				.getId(), context.getId(), null, null, Binding.SYSTEM);
+		final Binding cancelOnPlatform = new TestBinding(null, scheme.getId(),
+				context.getId(), null, bindingManager.getPlatform(),
+				Binding.SYSTEM);
+		final Binding userOverride = new TestBinding("user", scheme.getId(),
+				context.getId(), null, bindingManager.getPlatform(),
+				Binding.USER);
+		final Set bindings = new HashSet();
+		bindings.add(generalBinding);
+		bindings.add(cancelOnPlatform);
+		bindings.add(userOverride);
+		bindingManager.setBindings(bindings);
+		assertEquals("The user redefine a binding deleted in the system",
+				userOverride.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+
+	}
+
+	/**
 	 * This tests a complicated scenario that arises with the Emacs key binding
 	 * set in the Eclipse workbench. The first binding belongs to a parent
 	 * context, but a child scheme. The trigger sequences are not the same.
