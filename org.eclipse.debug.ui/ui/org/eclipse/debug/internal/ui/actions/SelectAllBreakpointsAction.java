@@ -30,5 +30,7 @@ public class SelectAllBreakpointsAction extends SelectAllAction {
 			return;
 		}
 		((TableViewer) viewer).getTable().selectAll();
+		//ensure that the selection change callback is fired
+		viewer.setSelection(viewer.getSelection());
 	}
 }
