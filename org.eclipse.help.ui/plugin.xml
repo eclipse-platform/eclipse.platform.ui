@@ -63,6 +63,7 @@
 	<perspective
 		id="org.eclipse.help.internal.ui.HelpPerspective"
 		name="%help_perspective"
+		icon="icons/help_persp.gif"
 		class="org.eclipse.help.internal.ui.HelpPerspective">
 	</perspective>
    </extension>
