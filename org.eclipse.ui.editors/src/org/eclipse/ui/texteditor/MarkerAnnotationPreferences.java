@@ -21,10 +21,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.graphics.RGB;
@@ -258,7 +259,7 @@ public class MarkerAnnotationPreferences {
 		fPreferences= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {
@@ -484,9 +485,13 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private ImageDescriptor getImageDescriptor(String iconPath, IConfigurationElement element) {
-		IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+		String pluginId= element.getDeclaringExtension().getNamespace();
+		Bundle bundle= Platform.getBundle(pluginId);
+		if (bundle == null)
+			return null;
+		
 		try {
-			return ImageDescriptor.createFromURL(new URL(descriptor.getInstallURL(), iconPath));
+			return ImageDescriptor.createFromURL(new URL(bundle.getEntry("/"), iconPath)); //$NON-NLS-1$
 		} catch (MalformedURLException x) {
 			EditorsPlugin.log(x);
 		}

@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -272,7 +274,8 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param message the message to be logged with the given exception
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+		ILog log= Platform.getLog(bundle);		
 		
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));

@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -32,9 +34,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
@@ -111,11 +114,12 @@ public class DocumentProviderRegistry {
 	private void initialize() {
 		
 		IExtensionPoint extensionPoint;
-		extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "documentProviders"); //$NON-NLS-1$
+		extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "documentProviders"); //$NON-NLS-1$
 		
 		if (extensionPoint == null) {
 			String msg= MessageFormat.format(TextEditorMessages.getString("DocumentProviderRegistry.error.extension_point_not_found"), new Object[] { PlatformUI.PLUGIN_ID }); //$NON-NLS-1$
-			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
+			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+			ILog log= Platform.getLog(bundle);		
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, null));
 			return;
 		}

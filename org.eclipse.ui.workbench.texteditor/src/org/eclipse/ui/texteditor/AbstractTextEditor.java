@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
@@ -3234,7 +3236,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			extension.validateState(input, getSite().getShell());	
 		} catch (CoreException exception) {
 		
-			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+			ILog log= Platform.getLog(bundle);
 			log.log(exception.getStatus());
 
 			Shell shell= getSite().getShell();
@@ -3316,7 +3319,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					updateStateDependentActions();
 				
 			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+				ILog log= Platform.getLog(bundle);
 				log.log(x.getStatus());
 			}
 		}

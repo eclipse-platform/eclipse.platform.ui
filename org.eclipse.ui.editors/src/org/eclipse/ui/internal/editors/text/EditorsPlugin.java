@@ -14,7 +14,6 @@ import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
@@ -78,8 +77,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	
-	public EditorsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public EditorsPlugin() {
 		Assert.isTrue(fgInstance == null);
 		fgInstance= this;
 	}

@@ -168,7 +168,7 @@ public final class AnnotationTypeLookup {
 	 *            type
 	 */
 	private void readExtensionPoint(List annotationTypeMappings, String extensionPointName, String typeAttributeName) {
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, extensionPointName);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, extensionPointName);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {

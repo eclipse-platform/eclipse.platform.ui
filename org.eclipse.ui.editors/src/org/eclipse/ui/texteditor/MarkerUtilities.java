@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
@@ -96,7 +99,7 @@ public final class MarkerUtilities {
 		
 		private Map readTypes() {
 			HashMap allTypes= new HashMap();
-			IExtensionPoint point= Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
+			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				for (int i= 0; i < extensions.length; i++) {
@@ -215,7 +218,9 @@ public final class MarkerUtilities {
 	 * @param e the core exception
 	 */
 	private static void handleCoreException(CoreException e) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(e.getStatus());
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+		ILog log= Platform.getLog(bundle);		
+		log.log(e.getStatus());
 	}
 	
 	/**

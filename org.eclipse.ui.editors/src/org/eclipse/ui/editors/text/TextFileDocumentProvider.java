@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -58,6 +60,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
+import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -67,9 +71,6 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
-
-import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
-import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 
 /**
  * @since 3.0
@@ -980,7 +981,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @param message the message to be logged
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+		ILog log= Platform.getLog(bundle);		
 		IStatus status= message != null ? new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception) : exception.getStatus();
 		log.log(status);
 	}

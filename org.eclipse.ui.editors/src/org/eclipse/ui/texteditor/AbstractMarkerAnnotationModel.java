@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +27,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 
 import org.eclipse.jface.text.Assert;
@@ -163,8 +166,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
 		
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
-		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+		ILog log= Platform.getLog(bundle);		
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
 		else
@@ -259,7 +262,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++)

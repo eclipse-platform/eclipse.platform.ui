@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -262,7 +264,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 2.0
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
+
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+		ILog log= Platform.getLog(bundle);		
 		
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));

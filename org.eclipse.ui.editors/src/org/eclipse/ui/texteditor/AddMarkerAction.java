@@ -16,9 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.widgets.Shell;
@@ -26,10 +29,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
@@ -126,7 +130,9 @@ public class AddMarkerAction extends TextEditorAction {
 			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
 		} catch (CoreException x) {
 			
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(x.getStatus());
+			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+			ILog log= Platform.getLog(bundle);		
+			log.log(x.getStatus());
 			
 			Shell shell= getTextEditor().getSite().getShell();
 			String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
