@@ -65,7 +65,8 @@ public class AnnotationLayerLookup {
 	 */
 	public final static int ERROR_LAYER= getAnnotationLayer(IMarker.PROBLEM, IMarker.SEVERITY_ERROR);
 
-	private static IAnnotationAccessExtension fAnnotationAccess= new DefaultMarkerAnnotationAccess();
+	private static IAnnotationAccessExtension fgAnnotationAccess;
+
 	
 	/**
 	 * Computes the annotation's presentation layer that corresponds to the given marker type.
@@ -87,10 +88,22 @@ public class AnnotationLayerLookup {
 	 */
 	private static int getAnnotationLayer(String markerType, int markerSeverity) {
 		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(markerType, markerSeverity);
-		if (annotationType != null)
+		if (annotationType == null)
 			return IAnnotationAccessExtension.DEFAULT_LAYER;
 		
 		Annotation a= new Annotation(annotationType, false, null);
-		return fAnnotationAccess.getLayer(a);
+		
+		return getAnnotationAccess().getLayer(a);
+	}
+	
+	/**
+	 * Returns the annotation access. 
+	 * 
+	 * @return the annotation access
+	 */
+	private static IAnnotationAccessExtension getAnnotationAccess() {
+		if (fgAnnotationAccess == null)
+			fgAnnotationAccess= new DefaultMarkerAnnotationAccess();
+		return fgAnnotationAccess;
 	}
 }
