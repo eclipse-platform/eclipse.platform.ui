@@ -65,8 +65,8 @@ public class PageWidgetFactory {
                 return;
             }
             DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
-                    IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                            + " " + url); //$NON-NLS-1$
+                IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                        + " " + url); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -149,11 +149,11 @@ public class PageWidgetFactory {
                 if (embddedLink == null)
                     break;
                 String linkText = StringUtil
-                        .concat(
-                                "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
-                                embddedLink, "\">", //$NON-NLS-1$
-                                IntroPlugin.getString("HTML.embeddedLink"), //$NON-NLS-1$
-                                "</a></p>").toString(); //$NON-NLS-1$
+                    .concat(
+                        "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
+                        embddedLink, "\">", //$NON-NLS-1$
+                        IntroPlugin.getString("HTML.embeddedLink"), //$NON-NLS-1$
+                        "</a></p>").toString(); //$NON-NLS-1$
                 linkText = generateFormText(linkText);
                 c = createFormText(parent, linkText, null);
             }
@@ -175,15 +175,15 @@ public class PageWidgetFactory {
         TableWrapData currentTd = (TableWrapData) c.getLayoutData();
         if (currentTd == null) {
             currentTd = new TableWrapData(TableWrapData.FILL,
-                    TableWrapData.FILL);
+                TableWrapData.FILL);
             currentTd.grabHorizontal = true;
             c.setLayoutData(currentTd);
         }
 
         currentTd.colspan = styleManager
-                .getColSpan((AbstractBaseIntroElement) element);
+            .getColSpan((AbstractBaseIntroElement) element);
         currentTd.rowspan = styleManager
-                .getRowSpan((AbstractBaseIntroElement) element);
+            .getRowSpan((AbstractBaseIntroElement) element);
 
     }
 
@@ -215,7 +215,7 @@ public class PageWidgetFactory {
         layout.verticalSpacing = styleManager.getVerticalSpacing(group);
         layout.horizontalSpacing = styleManager.getHorizantalSpacing(group);
         client.setLayout(layout);
-        //Util.highlight(client, SWT.COLOR_YELLOW);
+        // Util.highlight(client, SWT.COLOR_YELLOW);
         return control;
     }
 
@@ -230,7 +230,7 @@ public class PageWidgetFactory {
         Hyperlink linkControl;
         boolean showLinkDescription = styleManager.getShowLinkDescription();
         Image linkImage = styleManager.getImage(link, "link-icon", //$NON-NLS-1$
-                ImageUtil.DEFAULT_LINK);
+            ImageUtil.DEFAULT_LINK);
 
         if (showLinkDescription && link.getText() != null) {
             Composite container = toolkit.createComposite(parent);
@@ -252,8 +252,8 @@ public class PageWidgetFactory {
             td = new TableWrapData(TableWrapData.LEFT, TableWrapData.BOTTOM);
             td.grabVertical = true;
             linkControl.setLayoutData(td);
-            //Util.highlight(linkControl, SWT.COLOR_RED);
-            //Util.highlight(container, SWT.COLOR_DARK_YELLOW);
+            // Util.highlight(linkControl, SWT.COLOR_RED);
+            // Util.highlight(container, SWT.COLOR_DARK_YELLOW);
 
             Control desc = createText(container, link.getIntroText());
             td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
@@ -263,10 +263,10 @@ public class PageWidgetFactory {
             control = container;
         } else {
             ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
-                    SWT.WRAP | SWT.CENTER);
+                SWT.WRAP | SWT.CENTER);
             imageLink.setImage(linkImage);
             imageLink.setHoverImage(styleManager.getImage(link, "hover-icon", //$NON-NLS-1$
-                    null));
+                null));
             TableWrapData td = new TableWrapData();
             td.grabHorizontal = true;
             imageLink.setLayoutData(td);
@@ -278,7 +278,7 @@ public class PageWidgetFactory {
         colorControl(linkControl, link);
         linkControl.setHref(link.getUrl());
         linkControl.addHyperlinkListener(hyperlinkAdapter);
-        //Util.highlight(linkControl, SWT.COLOR_DARK_YELLOW);
+        // Util.highlight(linkControl, SWT.COLOR_DARK_YELLOW);
         return control;
     }
 
@@ -299,7 +299,7 @@ public class PageWidgetFactory {
         // non formatted case.
         if (isBold)
             return createFormText(parent, generateBoldFormText(text.getText()),
-                    fg);
+                fg);
         else
             return createText(parent, text.getText(), fg);
     }
@@ -361,20 +361,20 @@ public class PageWidgetFactory {
 
 
         IIntroContentProvider providerClass = ContentProviderManager.getInst()
-                .getContentProvider(provider);
+            .getContentProvider(provider);
         if (providerClass == null)
             // content provider never created before, create it.
             providerClass = ContentProviderManager.getInst()
-                    .createContentProvider(provider, site);
+                .createContentProvider(provider, site);
 
         if (providerClass != null) {
             try {
                 providerClass.createContent(provider.getId(), container,
-                        toolkit);
+                    toolkit);
             } catch (Exception e) {
-                Log
-                        .warning("Failed to create the content of Intro model content provider: " //$NON-NLS-1$
-                                + provider.getClassName());
+                Log.error(
+                    "Failed to create the content of Intro model content provider: " //$NON-NLS-1$
+                            + provider.getClassName(), e);
                 // null provider.
                 providerClass = null;
             }
@@ -451,6 +451,3 @@ public class PageWidgetFactory {
 
 
 }
-
-
-
