@@ -4,12 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
+
+import org.eclipse.swt.SWT;
+
+import org.eclipse.ui.*;
 
 /**
  * The action bars for an editor.
@@ -20,6 +19,7 @@ public class EditorActionBars extends SubActionBars
 	private int refCount;
 	private IEditorActionBarContributor editorContributor;
 	private IEditorActionBarContributor extensionContributor;
+	private CoolBarContributionItem coolBarItem;
 /**
  * Constructs the EditorActionBars for an editor.  
  */
@@ -58,6 +58,14 @@ public void deactivate(boolean forceVisibility) {
 	setActive(false, forceVisibility);
 }
 /**
+ * Dispose the contributions.
+ */
+public void dispose() {
+	super.dispose();
+	if (coolBarItem != null)
+		coolBarItem.removeAll();
+}
+/**
  * Gets the editor contributor
  */
 public IEditorActionBarContributor getEditorContributor() {
@@ -68,6 +76,28 @@ public IEditorActionBarContributor getEditorContributor() {
  */
 public String getEditorType() {
 	return type;
+}
+/**
+ * Returns the tool bar manager.  If items are added or
+ * removed from the manager be sure to call <code>updateActionBars</code>.
+ * Overridden to support CoolBars.
+ *
+ * @return the tool bar manager
+ */
+public IToolBarManager getToolBarManager() {
+	IToolBarManager parentMgr = parent.getToolBarManager();
+	if (parentMgr instanceof ToolBarManager) {
+		return super.getToolBarManager();
+	} else if (parentMgr instanceof CoolBarManager) {
+		if (coolBarItem == null) {
+			// Create a CoolBar item for this action bar.
+			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
+			coolBarItem = new CoolBarContributionItem(cBarMgr, type);
+			coolBarItem.setVisible(active);
+		}
+		return coolBarItem;
+	}
+	return null;
 }
 /**
  * Returns the reference count.
@@ -114,6 +144,9 @@ private void setActive(boolean set, boolean forceVisibility) {
 		
 	if (toolBarMgr != null)
 		((EditorToolBarManager)toolBarMgr).setVisible(set, forceVisibility);
+
+	if (coolBarItem != null)
+		coolBarItem.setVisible(set, forceVisibility);
 }
 /**
  * Sets the editor contributor

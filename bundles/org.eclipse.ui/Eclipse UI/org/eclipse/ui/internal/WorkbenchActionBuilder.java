@@ -122,13 +122,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				// action not found!
 			}
 		}
-
-		ToolBarManager toolbar = window.getToolBarManager();
+		IContributionManager toolManager = window.getToolsManager();
 		try {
-			toolbar.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
-			toolbar.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
-			toolbar.update(true);
+			toolManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+			toolManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
+			toolManager.update(true);
 		} catch (IllegalArgumentException e) {
+			System.out.println("build action not found");
 			// group not found
 		}
 	}
@@ -394,26 +394,38 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * and invariant (static) menus and menu items, as defined in MenuConstants interface.
 	 */
 	private void createToolBar() {
-		ToolBarManager toolbar = window.getToolBarManager();
-		toolbar.add(newWizardDropDownAction);
-		toolbar.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
-		toolbar.add(new Separator());
-		toolbar.add(saveAction);
-		toolbar.add(saveAsAction);
-		toolbar.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-		toolbar.add(printAction);
+		IContributionManager manager = window.getToolsManager();
+		IContributionManager toolsManager;
+		if (manager instanceof ToolBarManager) {
+			toolsManager = manager;
+		} else if (manager instanceof CoolBarManager) {
+			// Create a CoolBar item for the workbench
+			CoolBarManager cBarMgr = (CoolBarManager)manager;
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, "org.eclipse.ui.internal");
+			coolBarItem.setVisible(true);
+			toolsManager = (IContributionManager)coolBarItem;
+		} else {
+			toolsManager = manager;
+		}
+		toolsManager.add(newWizardDropDownAction);
+		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
+		toolsManager.add(new Separator());
+		toolsManager.add(saveAction);
+		toolsManager.add(saveAsAction);
+		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+		toolsManager.add(printAction);
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolbar.add(new Separator());
-			toolbar.add(buildAction);
+			toolsManager.add(new Separator());
+			toolsManager.add(buildAction);
 		}
-		toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
-		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		toolbar.add(new GroupMarker(pinEditorGroup));
+		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
+		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		toolsManager.add(new GroupMarker(pinEditorGroup));
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			pinEditorAction.setVisible(true);
-			toolbar.add(pinEditorAction);
+			toolsManager.add(pinEditorAction);
 		}
 	}
 	/**
@@ -732,11 +744,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				// action was not in menu
 			}
 		}
-
-		ToolBarManager toolbar = window.getToolBarManager();
+		IContributionManager toolManager = window.getToolsManager();
 		try {
-			toolbar.remove(IWorkbenchActionConstants.BUILD);
-			toolbar.update(true);
+			toolManager.remove(IWorkbenchActionConstants.BUILD);
+			toolManager.update(true);
 		} catch (IllegalArgumentException e) {
 			// action was not in toolbar
 		}

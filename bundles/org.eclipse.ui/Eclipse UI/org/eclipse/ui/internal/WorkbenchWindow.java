@@ -57,6 +57,8 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean shellActivated = false;
 	private String workspaceLocation;
 	private Menu shortcutBarMenu;
+	// temporary, work in progress for CoolBars
+	private CoolBarManager coolBarManager;
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -82,9 +84,8 @@ public class WorkbenchWindow extends ApplicationWindow
 		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 			Composite parent= toolBar.getParent();
 			parent.layout();
-		}       
-	}
-	
+		} 
+	}      
 	/**
 	 * This vertical layout supports a fixed size Toolbar area, a separator line,
 	 * the variable size content area,
@@ -102,7 +103,7 @@ public class WorkbenchWindow extends ApplicationWindow
 			for (int i= 0; i < ws.length; i++) {
 				Control w= ws[i];
 				boolean skip = false;
-				if (getToolBarManager() != null && w == getToolBarManager().getControl()) {
+				if (w == getToolBarControl()) {
 					skip = true;
 					result.y+= BAR_SIZE;  
 				} else if (w == shortcutBar.getControl()) {
@@ -126,7 +127,6 @@ public class WorkbenchWindow extends ApplicationWindow
 		protected void layout(Composite composite, boolean flushCache) 
 		{
 			Rectangle clientArea= composite.getClientArea();
-		
 			// Loop through the children.  
 			// Expected order == sep1, toolbar, status, sep2, shortcuts, sep3, client
 			Control[] ws= composite.getChildren();
@@ -137,14 +137,11 @@ public class WorkbenchWindow extends ApplicationWindow
 					w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
 					clientArea.y+= e.y;
 					clientArea.height-= e.y;
-				} else if (getToolBarManager() != null && w == getToolBarManager().getControl()) {
+				} else if (w == getToolBarControl()) {
 					int height = BAR_SIZE;
-					if (w instanceof ToolBar) {
-						ToolBar bar = (ToolBar) w;
-						if (bar.getItemCount() > 0) { 
-							Point e = bar.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
-							height = e.y;
-						}
+					if (toolBarChildrenExist()) { 
+						Point e = w.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
+						height = e.y;
 					}
 					w.setBounds(clientArea.x, clientArea.y, clientArea.width, height);
 					clientArea.y+= height;
@@ -203,10 +200,11 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	super(null);
 	this.workbench = workbench;
 	this.number = number;
-
+	
 	// Setup window.
 	addMenuBar();
 	addToolBar(SWT.FLAT | SWT.WRAP);
+//	addCoolBar(SWT.FLAT);
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
@@ -231,6 +229,16 @@ public WorkbenchWindow(Workbench workbench, int number) {
 			workspaceLocation = location;
 			break;
 		}
+	}
+}
+/**
+ * Configures this window to have a cool bar.
+ * Does nothing if it already has one.
+ * This method must be called before this window's shell is created.
+ */
+protected void addCoolBar(int style) {
+	if ((getShell() == null) && (coolBarManager == null)) {
+		coolBarManager = createCoolBarManager(style);
 	}
 }
 /*
@@ -430,7 +438,7 @@ protected void configureShell(Shell shell) {
 			}
 		}
 	};
-	getToolBarManager().getControl().addListener(SWT.MouseDown, listener);
+	getToolBarControl().addListener(SWT.MouseDown, listener);
 	Control[] children = ((Composite)getStatusLineManager().getControl()).getChildren();
 	for (int i = 0; i < children.length; i++) {
 		if (children[i] != null)
@@ -510,6 +518,29 @@ protected MenuManager createMenuManager() {
  */
 protected ToolBarManager createToolBarManager(int style) {
 	return new WindowToolBarManager(style);
+}
+/**
+ * Creates the cool bar manager.
+ * </p>
+ * @return a CoolBarManager
+ */
+protected CoolBarManager createCoolBarManager(int style) {
+	return new CoolBarManager(style);
+}
+/**
+ * Creates the control for the tool bar manager.  Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
+ */
+protected Control createToolBarControl(Shell shell) {
+	IToolBarManager manager = getToolsManager();
+	if (manager instanceof ToolBarManager) {
+		return ((ToolBarManager)manager).createControl(shell);
+	} else if (manager instanceof CoolBarManager) {
+		return ((CoolBarManager)manager).createControl(shell);
+	}
+	return null;
 }
 /**
  * Returns the shortcut for a page.
@@ -701,14 +732,32 @@ protected StatusLineManager getStatusLineManager() {
 	return super.getStatusLineManager();
 }
 /**
- * Returns the tool bar manager for this window (if it has one).
- *
- * @return the tool bar manager, or <code>null</code> if
- *   this window does not have a tool bar
- * @see #addToolBar
+ * Returns tool bar control for the window. Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
  */
-public ToolBarManager getToolBarManager() {
-	return super.getToolBarManager();
+protected Control getToolBarControl() {
+	IToolBarManager manager = getToolsManager();
+	if (manager instanceof ToolBarManager) {
+		return ((ToolBarManager)manager).getControl();
+	}
+	if (manager instanceof CoolBarManager) {
+		return ((CoolBarManager)manager).getControl();
+	}
+	return null;
+}
+/**
+ * Returns the tool bar manager for this window (if it has one).
+ * Introduced to support different types of IToolBarManagers.
+ * 
+ * @return the IToolBarManager, or <code>null</code> if
+ *   this window does not have a ToolBar or CoolBar.
+ * @see #addToolBar, #addCoolBar
+ */
+public IToolBarManager getToolsManager() {
+	if (coolBarManager != null) return coolBarManager;
+	return getToolBarManager();
 }
 /**
  * @see IWorkbenchWindow
@@ -1085,6 +1134,22 @@ private void showShortcutBarPopup(MouseEvent e) {
 	}
 }
 /**
+ * Answer whether or not children exist for the Application WIndow's
+ * toolbar control.  Overridden to support CoolBars.
+ * <p>
+ * @return boolean true if children exist, false otherwise
+ */
+protected boolean toolBarChildrenExist() {
+	Control toolControl = getToolBarControl();
+	if (toolControl instanceof ToolBar) {
+		return ((ToolBar)toolControl).getItemCount() > 0;
+	}
+	if (toolControl instanceof CoolBar) {
+		return ((CoolBar)toolControl).getItemCount() > 0;
+	}
+	return false;
+}
+/**
  * Hooks a listener to track the activation and
  * deactivation of the window's shell. Notifies
  * the active part and editor of the change
@@ -1133,7 +1198,7 @@ public void updateActionBars() {
 		return;
 	// updateAll required in order to enable accelerators on pull-down menus
 	getMenuBarManager().updateAll(false);
-	getToolBarManager().update(false);
+	getToolsManager().update(false);
 	getStatusLineManager().update(false);
 }
 /**
@@ -1182,7 +1247,7 @@ public void updateActionSets() {
 public void updateTitle() {
 	if(updateDisabled)
 		return;
-
+		
 	String title = workbench.getProductInfo().getName();
 	if (workspaceLocation != null)
 		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {title, workspaceLocation}); //$NON-NLS-1$

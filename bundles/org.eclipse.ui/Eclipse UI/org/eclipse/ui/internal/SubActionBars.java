@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class SubActionBars implements IActionBars
 {
-	private IActionBars parent;
+	protected IActionBars parent;
 	protected boolean active = false;
 	private Map actionHandlers;
 	protected SubMenuManager menuMgr;
@@ -223,7 +223,7 @@ public void removePropertyChangeListener(IPropertyChangeListener listener) {
 /**
  * Activate / Deactivate the contributions.
  */
-private void setActive(boolean set) {
+protected void setActive(boolean set) {
 	active = set;
 	if (menuMgr != null)
 		menuMgr.setVisible(set);

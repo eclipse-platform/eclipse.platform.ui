@@ -52,6 +52,7 @@ public class Perspective
 	private Color borderColor3;
 	private Map mapFastViewToWidthRatio = new HashMap();
 	private Sash fastViewSash;
+	private CoolBarLayout toolBarLayout;
 	
 	//Number of open editors before reusing. If < 0, use the 
 	//user preference settings.
@@ -331,6 +332,12 @@ private float getFastViewWidthRatio(String id) {
  */
 public ArrayList getShowViewActions() {
 	return showViewActions;
+}
+/**
+ * Returns the toolbar layout for this perspective.
+ */
+public CoolBarLayout getToolBarLayout() {
+	return toolBarLayout;
 }
 /**
  * Returns the view factory.
@@ -1044,6 +1051,12 @@ public void setPerspectiveActions(ArrayList list) {
  */
 public void setShowViewActions(ArrayList list) {
 	showViewActions = list;
+}
+/**
+ * Sets the toolbar layout for this perspective.
+ */
+public void setToolBarLayout(CoolBarLayout layout) {
+	toolBarLayout = layout;
 }
 /**
  * @see IWorkbenchPage

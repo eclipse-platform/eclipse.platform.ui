@@ -24,6 +24,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.part.MultiEditor;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -1722,6 +1723,16 @@ private void setPerspective(Perspective newPersp) {
 	Perspective oldPersp = getActivePerspective();
 	if (oldPersp == newPersp)
 		return;
+	// Save the toolbar layout for the perspective before the
+	// active part is closed, so that any editor-related tool
+	// items are saved as part of the layout.
+	IToolBarManager toolsMgr = window.getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		if (oldPersp != null) {
+			oldPersp.setToolBarLayout(coolBarMgr.getLayout());
+		} 
+	}
 	
 	// Deactivate active part.
 	IWorkbenchPart oldActivePart = activePart;
@@ -1757,6 +1768,14 @@ private void setPerspective(Perspective newPersp) {
 	window.updateActionSets();
 	window.updateTitle();
 	window.getShortcutBar().update(true);
+	IToolBarManager mgr = window.getToolsManager();
+	if (mgr instanceof CoolBarManager) {
+		CoolBarManager cBarMgr = (CoolBarManager)mgr;
+		if (newPersp != null) {
+			CoolBarLayout layout = newPersp.getToolBarLayout();
+			cBarMgr.setLayout(newPersp.getToolBarLayout());
+		}
+	}
 	
 	// Reactivate active part.
 	if (oldActivePart != null) {
