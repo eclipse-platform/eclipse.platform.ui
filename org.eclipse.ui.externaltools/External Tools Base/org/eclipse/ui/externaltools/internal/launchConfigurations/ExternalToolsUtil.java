@@ -85,7 +85,7 @@ public class ExternalToolsUtil {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
 				} else {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					abort(msg, null, 0);
 				}
 			} else {
