@@ -47,12 +47,14 @@ public class MarkerAnnotation extends Annotation {
 	/** 
 	 * The layer in which markers representing problem are located.
 	 * @since 2.0
-	 * XXX to be deprecated as of 3.0 use {@link DefaultAnnotation#ERROR_LAYER}
+	 * XXX to be deprecated as of 3.0 use {@link AnnotationLayerLookup#ERROR_LAYER}
 	 */
 	public final static int PROBLEM_LAYER= 5;
 	
 	/** Internal image registry */
 	private static Map fgImageRegistry;
+
+
 	
 	/**
 	 * Returns an image for the given display as specified by the given image descriptor.
@@ -176,10 +178,10 @@ public class MarkerAnnotation extends Annotation {
 		
 		if (MarkerUtilities.isMarkerType(fMarker, IMarker.TASK)) {
 			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
-			layer= DefaultAnnotation.TASK_LAYER;
+			layer= AnnotationLayerLookup.TASK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.BOOKMARK)) {
 			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
-			layer= DefaultAnnotation.BOOKMARK_LAYER;
+			layer= AnnotationLayerLookup.BOOKMARK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.PROBLEM)) {
 			switch (MarkerUtilities.getSeverity(fMarker)) {
 				case IMarker.SEVERITY_INFO:
@@ -188,11 +190,11 @@ public class MarkerAnnotation extends Annotation {
 					break;
 				case IMarker.SEVERITY_WARNING:
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
-					layer= DefaultAnnotation.WARNING_LAYER;
+					layer= AnnotationLayerLookup.WARNING_LAYER;
 					break;
 				case IMarker.SEVERITY_ERROR:
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
-					layer= DefaultAnnotation.ERROR_LAYER;
+					layer= AnnotationLayerLookup.ERROR_LAYER;
 					break;
 			}
 		}

@@ -23,11 +23,12 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.DefaultAnnotation;
+import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.ISearchResultChangedListener;
 import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.ITextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
@@ -42,6 +43,7 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 	private ITextSearchResult fResult;
 	private Map fMatchesToAnnotations;
 	private ITextEditor fEditor;
+	private AnnotationTypeLookup fAnnotationTypeLookup= new AnnotationTypeLookup();
 	
 	public AnnotationManager() {
 		fMatchesToAnnotations= new HashMap();
@@ -125,7 +127,7 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 	private void addAnnotation(ITextEditor textEditor, Match match) {
 		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
 		if (model != null) {
-			Annotation annotation= new DefaultAnnotation("org.eclipse.search.searchmarker", IMarker.SEVERITY_INFO, false, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
 			fMatchesToAnnotations.put(match, annotation);
 			model.addAnnotation(annotation, new Position(match.getOffset(), match.getLength()));
 		}
