@@ -40,6 +40,8 @@ public class FormEngine extends Canvas {
 	Point dragOrigin;
 	private Action openAction;
 	private Action copyShortcutAction;
+	private boolean loading=true;
+	private String loadingText="Loading...";
 
 	public boolean getFocus() {
 		return hasFocus;
@@ -371,7 +373,6 @@ public class FormEngine extends Canvas {
 
 	protected void paint(PaintEvent e) {
 		int width = getClientArea().width;
-		IParagraph[] paragraphs = model.getParagraphs();
 
 		GC gc = e.gc;
 		gc.setFont(getFont());
@@ -386,6 +387,14 @@ public class FormEngine extends Canvas {
 
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
+		
+		if (loading) {
+			int textWidth = gc.textExtent(loadingText).x;
+			gc.drawText(loadingText, width/2-textWidth/2, getClientArea().height/2-lineHeight/2);
+			return;
+		}
+		
+		IParagraph[] paragraphs = model.getParagraphs();
 
 		IHyperlinkSegment selectedLink = model.getSelectedLink();
 
@@ -415,12 +424,18 @@ public class FormEngine extends Canvas {
 		} catch (CoreException e) {
 			FormsPlugin.logException(e);
 		}
+		finally {
+			loading = false;
+		}
 	}
 	public void load(InputStream is, boolean expandURLs) {
 		try {
 			model.parseInputStream(is, expandURLs);
 		} catch (CoreException e) {
 			FormsPlugin.logException(e);
+		}
+		finally {
+			loading = false;
 		}
 	}
 

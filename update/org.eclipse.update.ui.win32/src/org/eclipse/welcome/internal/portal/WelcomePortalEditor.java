@@ -22,9 +22,13 @@ public class WelcomePortalEditor extends EditorPart {
 	private WelcomePortalPart welcomePart;
 	
 	public WelcomePortalEditor() {
-		welcomePart = new WelcomePortalPart();
+		welcomePart = new WelcomePortalPart(this);
 	}
 
+	public void dispose() {
+		if (welcomePart!=null)
+			welcomePart.dispose();
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -72,7 +76,6 @@ public class WelcomePortalEditor extends EditorPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		welcomePart = new WelcomePortalPart();
 		welcomePart.createControl(parent);
 	}
 

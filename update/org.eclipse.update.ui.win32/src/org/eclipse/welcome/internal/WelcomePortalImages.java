@@ -149,7 +149,7 @@ public class WelcomePortalImages {
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_FORMS, "form_banner.jpg");
 	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif");
-	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline.jpg");
+	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline2.jpg");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.jpg");
 	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif");
 	public static final ImageDescriptor DESC_NEW_BOOKMARK  = create(PATH_WIZBAN, "new_bookmark_wiz.gif");

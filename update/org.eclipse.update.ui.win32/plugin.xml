@@ -19,6 +19,9 @@
    </requires>
 
 
+   <extension-point id="welcomePages" name="Welcome Pages" schema="schema/welcomePages.exsd"/>
+   <extension-point id="welcomeSections" name="Welcome Sections" schema="schema/welcomeSections.exsd"/>
+
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -70,6 +73,70 @@
             class="org.eclipse.welcome.internal.portal.WelcomePortalEditorInputFactory"
             id="org.eclipse.welcome.internal.portal.WelcomePortalEditorInputFactory">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.update.ui.win32.welcomePages">
+      <page
+            name="Home"
+            numColumns="2"
+            id="org.eclipse.update.ui.win32.homePage">
+         <section
+               id="tasks.softwareUpdates">
+         </section>
+      </page>
+      <page
+            name="News"
+            id="org.eclipse.update.ui.win32.news">
+      </page>
+      <page
+            name="Community"
+            numColumns="1"
+            id="org.eclipse.update.ui.win32.community">
+         <section
+               id="community.links">
+         </section>
+         <section
+               id="community.articles.remote">
+         </section>
+         <section
+               id="community.articles">
+         </section>
+      </page>
+      <page
+            name="Samples"
+            id="org.eclipse.update.ui.win32.samples">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.update.ui.win32.welcomeSections">
+      <section
+            name="Software Updates"
+            id="tasks.softwareUpdates">
+      </section>
+      <section
+            name="Eclipse Community Sites"
+            id="community.links">
+         <form>
+            &lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://www.eclipse.org&quot;&gt;Eclipse.org&lt;/a&gt;&lt;/li&gt;
+         </form>
+      </section>
+      <section
+            name="New Eclipse Articles (remote)"
+            id="community.articles.remote">
+         <form
+               url="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-update-home/welcome-articles.xml"
+               type="remote">
+         </form>
+      </section>
+      <section
+            name="New Eclipse Articles"
+            id="community.articles">
+         <form>
+            &lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Builders/builders.html&quot;&gt;Project Natures and Builders&lt;/a&gt; John Arthorne (IBM) January 27, 2003&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Decorators/decorators.html&quot;&gt;Understanding Decorators in Eclipse&lt;/a&gt; Balaji Krish-Sampath (IBM) January 16, 2003&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Launch-Framework/launch.html&quot;&gt;We Have Lift-off: The Launching Framework in Eclipse&lt;/a&gt; Joe Szurszewski (IBM) January 8, 2003&lt;/li&gt;
+         </form>
+      </section>
    </extension>
 
 </plugin>

@@ -6,12 +6,17 @@
  */
 package org.eclipse.welcome.internal.portal;
 
+import java.util.Hashtable;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.welcome.internal.WelcomePortal;
 
 /**
  * @author dejan
@@ -20,9 +25,11 @@ import org.eclipse.update.ui.forms.internal.*;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class WelcomePortalPart {
+	private static final int TAB_PADDING = 5;
+	private Hashtable sectionDescriptors;
 	class TabListener implements IHyperlinkListener {
 		public void linkActivated(Control linkLabel) {
-			IFormPage page = (IFormPage)linkLabel.getData();
+			IFormPage page = (IFormPage) linkLabel.getData();
 			workbook.selectPage(page, false);
 		}
 
@@ -30,91 +37,38 @@ public class WelcomePortalPart {
 		}
 
 		public void linkExited(Control linkLabel) {
+			if (linkLabel==selectedTab)
+				highlightTab(selectedTab, true);
 		}
 	}
-	
-	class DummyPage implements IFormPage {
-		private Control control;
-		private String label;
-		private SelectableFormLabel tab;
-			/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#becomesInvisible(org.eclipse.update.ui.forms.internal.IFormPage)
-		 */
-		 
-		public DummyPage(String label) {
-			this.label = label;
-		}
-		public SelectableFormLabel getTab() {
-			return tab;
-		}
-		public void setTab(SelectableFormLabel tab) {
-			this.tab = tab;
-		}
-		public boolean becomesInvisible(IFormPage newPage) {
-			return true;
-		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#becomesVisible(org.eclipse.update.ui.forms.internal.IFormPage)
-		 */
-		public void becomesVisible(IFormPage previousPage) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#createControl(org.eclipse.swt.widgets.Composite)
-		 */
-		public void createControl(Composite parent) {
-			control = factory.createLabel(parent, label);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#getControl()
-		 */
-		public Control getControl() {
-			// TODO Auto-generated method stub
-			return control;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#getLabel()
-		 */
-		public String getLabel() {
-			return label;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#getTitle()
-		 */
-		public String getTitle() {
-			return label;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#isSource()
-		 */
-		public boolean isSource() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.update.ui.forms.internal.IFormPage#isVisible()
-		 */
-		public boolean isVisible() {
-			// TODO Auto-generated method stub
-			return workbook.getCurrentPage()==this;
-		}
-
-}
-	
 	private TabListener tabListener = new TabListener();
+	private Composite tabContainer;
 	private FormWidgetFactory factory;
+	private HyperlinkHandler hhandler;
+	private WelcomePortalEditor editor;
+	private Color tabColor;
 	private NoTabsWorkbook workbook;
 	private SelectableFormLabel selectedTab;
-	
-	public WelcomePortalPart() {
+
+	public WelcomePortalPart(WelcomePortalEditor editor) {
 		factory = new FormWidgetFactory();
+		hhandler = new HyperlinkHandler();
 		workbook = new NoTabsWorkbook();
+		this.editor = editor;
+	}
+	
+	public WelcomePortalEditor getEditor() {
+		return editor;
+	}
+
+	public void dispose() {
+		factory.dispose();
+		hhandler.dispose();
+	}
+	
+	public boolean isVisible(IFormPage page) {
+		return workbook.getCurrentPage().equals(page);
 	}
 
 	public void createControl(Composite parent) {
@@ -131,7 +85,7 @@ public class WelcomePortalPart {
 		workbook.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		workbook.addFormSelectionListener(new IFormSelectionListener() {
 			public void formSelected(IFormPage page, boolean setFocus) {
-				hightlightTab((DummyPage)page);
+				hightlightTab((WelcomePortalPage) page);
 			}
 		});
 		workbook.selectPage(workbook.getPages()[0], true);
@@ -149,44 +103,81 @@ public class WelcomePortalPart {
 	}
 
 	private void createTabs(Composite parent) {
-		Composite tabContainer = factory.createComposite(parent);
-		tabContainer.setBackground(factory.getColor(FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR));
+		tabContainer = factory.createComposite(parent);
+		tabContainer.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				Point size = tabContainer.getSize();
+				Rectangle tabBounds = selectedTab.getBounds();
+				GC gc = e.gc;
+				gc.setBackground(factory.getBackgroundColor());
+				gc.fillRectangle(0, tabBounds.y-TAB_PADDING, size.x, tabBounds.height+TAB_PADDING+TAB_PADDING);
+			}
+		});
+		tabColor =
+			factory.getColor(FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR);
+		tabContainer.setBackground(tabColor);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 10;
+		layout.marginWidth = 10;
+		layout.marginHeight = TAB_PADDING;
+		layout.verticalSpacing = TAB_PADDING + TAB_PADDING;
 		tabContainer.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		tabContainer.setLayoutData(gd);
-		factory.getHyperlinkHandler().setBackground(factory.getColor(FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR));
-		factory.getHyperlinkHandler().setForeground(factory.getBackgroundColor());
-		factory.getHyperlinkHandler().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
-		createTab(tabContainer, "Home", factory);
-		createTab(tabContainer, "News", factory);
-		createTab(tabContainer, "Samples", factory);
-		createTab(tabContainer, "Community", factory);
+		hhandler.setBackground(tabColor);
+		hhandler.setForeground(factory.getBackgroundColor());
+		hhandler.setHyperlinkUnderlineMode(
+			HyperlinkSettings.UNDERLINE_ROLLOVER);
+		loadTabs(tabContainer);
 	}
 	
-	private void createTab(Composite parent, String name, FormWidgetFactory factory) {
-		SelectableFormLabel tab = factory.createSelectableLabel(parent, name);
-		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING|GridData.FILL_HORIZONTAL);
-		factory.turnIntoHyperlink(tab, tabListener);
+	private void loadTabs(Composite parent) {
+		IConfigurationElement [] pages = Platform.getPluginRegistry().getConfigurationElementsFor(WelcomePortal.getPluginId(), "welcomePages");
+		for (int i=0; i<pages.length; i++) {
+			createTab(parent, pages[i]);
+		}
+	}
+
+	private void createTab(
+		Composite parent,
+		IConfigurationElement config) {
+		WelcomePortalPage page = new WelcomePortalPage(this, config);
+		SelectableFormLabel tab = factory.createSelectableLabel(parent, page.getTitle());
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		tab.setBackground(tabColor);
+		tab.setForeground(factory.getBackgroundColor());
+		hhandler.registerHyperlink(tab, tabListener);
 		tab.setFont(JFaceResources.getBannerFont());
 		tab.setLayoutData(gd);
-		DummyPage page = new DummyPage(name);
 		tab.setData(page);
 		page.setTab(tab);
 		workbook.addPage(page);
 	}
-	
-	private void hightlightTab(DummyPage page) {
-		if (selectedTab!=null) toggleTab(selectedTab);
+
+	private void hightlightTab(WelcomePortalPage page) {
+		if (selectedTab != null)
+			highlightTab(selectedTab, false);
 		SelectableFormLabel tab = page.getTab();
-		toggleTab(tab);
+		highlightTab(tab, true);
 		selectedTab = tab;
+		tabContainer.redraw();
 	}
-	private void toggleTab(SelectableFormLabel tab) {
-		Color bg = tab.getBackground();
-		Color fg = tab.getForeground();
-		tab.setForeground(bg);
-		tab.setBackground(fg);
+
+	private void highlightTab(SelectableFormLabel tab, boolean selected) {
+		Color bg = tabColor;
+		Color fg = factory.getBackgroundColor();
+		tab.setForeground(selected ? bg : fg);
+		tab.setBackground(selected ? fg : bg);
+	}
+
+	public SectionDescriptor findSection(String id) {
+		if (sectionDescriptors==null) {
+			sectionDescriptors=new Hashtable();
+			IConfigurationElement [] sections = Platform.getPluginRegistry().getConfigurationElementsFor(WelcomePortal.getPluginId(), "welcomeSections");
+			for (int i=0; i<sections.length; i++) {
+				SectionDescriptor desc = new SectionDescriptor(sections[i]);
+				sectionDescriptors.put(desc.getId(), desc);
+			}
+		}
+		return (SectionDescriptor)sectionDescriptors.get(id);
 	}
 }
