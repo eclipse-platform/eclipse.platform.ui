@@ -218,5 +218,83 @@ public interface IExternalToolConstants {
 	/**
 	 * External tools wizard banner image
 	 */
-	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS";
+	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS"; //$NON-NLS-1$
+	
+	// ------- Common External Tool Launch Configuration Attributes -------
+	/**
+	 * String attribute identifying the location of an external. Default value
+	 * is <code>null</code>. Encoding is tool specific.
+	 */
+	public static final String ATTR_LOCATION = PLUGIN_ID + ".ATTR_LOCATION"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute identifying the working directory of an external tool.
+	 * Default value is <code>null</code>, which indicates a default working
+	 * directory, which is tool specific.
+	 */
+	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$		
+	
+	/**
+	 * String attribute containing a (optional) description of an external tool.
+	 * Default value is <code>null</code>.
+	 */
+	public static final String ATTR_TOOL_DESCRIPTION = PLUGIN_ID + ".ATTR_TOOL_DESCRIPTION"; //$NON-NLS-1$
+		
+	/**
+	 * Boolean attribute indicating if an external tool should be run in the
+	 * background. Default value is <code>false</code>.
+	 */
+	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating if output should be captured from an
+	 * external tool when run. Default value is <code>true</code>.
+	 */
+	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
+
+	/**
+	 * String attribute corresponding to the perspective identifier of the
+	 * perspective to display when an external tool is run. Default value is
+	 * <code>null</code>, indicating no perspective changes.
+	 */
+	public static final String ATTR_RUN_PERSPECTIVE_ID = PLUGIN_ID + ".ATTR_RUN_PERSPECTIVE_ID"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating whether an external tool should be placed
+	 * in the external tools menu. . Default value is <code>false</code>.
+	 */
+	public static final String ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU = PLUGIN_ID + ".ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating whether ditry editors should be saved
+	 * before running an external tool. Default value is <code>false</code>.
+	 * When <code>null</code>, the user is prompted to save editors before a
+	 * tool is run.
+	 */
+	public static final String ATTR_SAVE_DIRTY_EDITORS = PLUGIN_ID + ".ATTR_SAVE_DIRTY_EDITORS"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute containing the arguments that should be passed to the
+	 * tool. Default value is <code>null</code>, and encoding is tool specific.
+	 */
+	public static final String ATTR_TOOL_ARGUMENTS = PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating if the user should be prompted for
+	 * arguments before running a tool. Default value is <code>false</code>.
+	 */
+	public static final String ATTR_PROMPT_FOR_ARGUMENTS = PLUGIN_ID + ".ATTR_PROMPT_FOR_ARGUMENTS"; //$NON-NLS-1$									
+	
+	/**
+	 * String attribute identifying the scope of resources that should be
+	 * refreshed after an external tool is run. Default value is
+	 * <code>null</code>, indicating no refresh. Format is ???
+	 */
+	public static final String ATTR_REFRESH_SCOPE = PLUGIN_ID + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating if a refresh scope is recursive. Default
+	 * value is <code>false</code>.
+	 */
+	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$		
 }
