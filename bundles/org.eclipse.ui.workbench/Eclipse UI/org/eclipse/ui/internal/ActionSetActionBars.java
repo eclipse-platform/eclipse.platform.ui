@@ -158,7 +158,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 			
 			// Now add the  tool bar contribution Item to the cool bar manager
 			IContributionItem refItem = findAlphabeticalOrder(IWorkbenchActionConstants.MB_ADDITIONS,toolBarId,coolBarManager);
-			coolBarManager.insertAfter(refItem.getId(),toolBarContributionItem);
+			if (refItem != null) {
+				coolBarManager.insertAfter(refItem.getId(),toolBarContributionItem);
+			}
 		}	
 		return coolItemToolBarMgr;
 	}
@@ -235,6 +237,9 @@ public class ActionSetActionBars extends SubActionBars2 {
 	 */
 	private IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
 		IContributionItem[] items = mgr.getItems();
+		if (items.length == 0) {
+			return null;
+		}
 		int insertIndex = 0;
 		
 		// look for starting point
