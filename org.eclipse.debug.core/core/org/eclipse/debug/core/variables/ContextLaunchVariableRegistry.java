@@ -57,20 +57,15 @@ public class ContextLaunchVariableRegistry implements IContextLaunchVariableRegi
 	 * The extension point id to read the variables from
 	 */
 	protected String extensionPointId;
-	/**
-	 * The plugin id to read the extension point from
-	 */
-	protected String pluginId;
 	
 	public ContextLaunchVariableRegistry() {
-		this(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES);
+		this(DebugPlugin.EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES);
 	}
 	
 	/**
 	 * Creates a new registry and loads the variables.
 	 */
-	protected ContextLaunchVariableRegistry(String pluginId, String extensionPointId) {
-		this.pluginId= pluginId;
+	protected ContextLaunchVariableRegistry(String extensionPointId) {
 		this.extensionPointId = extensionPointId;
 		loadVariables();
 	}
@@ -112,7 +107,7 @@ public class ContextLaunchVariableRegistry implements IContextLaunchVariableRegi
 	private void loadVariables() {
 		variables = new TreeMap();
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPointId);
+		IExtensionPoint point = registry.getExtensionPoint(DebugPlugin.getUniqueIdentifier(), extensionPointId);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {

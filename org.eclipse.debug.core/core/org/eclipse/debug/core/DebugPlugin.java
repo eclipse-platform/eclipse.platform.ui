@@ -33,6 +33,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.ContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.RefreshScopeVariableRegistry;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
@@ -57,7 +58,7 @@ import org.eclipse.debug.internal.core.SimpleVariableRegistry;
  * </p>
  */
 public class DebugPlugin extends Plugin {
-		
+
 	/**
 	 * Simple identifier constant (value <code>"launchConfigurationTypes"</code>)
 	 * for the launch configuration types extension point.
@@ -128,6 +129,13 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES = "contextLaunchVariables"; //$NON-NLS-1$
+	/**
+	 * Simple identifier constant (value <code>"refreshLaunchVariables"</code>) for the
+	 * refresh launch variables extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_REFRESH_LAUNCH_VARIABLES = "refreshLaunchVariables"; //$NON-NLS-1$
 		
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -175,6 +183,11 @@ public class DebugPlugin extends Plugin {
 	 * The singleton context variable registry.
 	 */
 	private IContextLaunchVariableRegistry fContextVariableRegistry;
+	
+	/**
+	 * The singleton refresh variable registry.
+	 */
+	private RefreshScopeVariableRegistry fRefreshVariableRegistry;
 
 	/**
 	 * The collection of debug event listeners.
@@ -382,6 +395,13 @@ public class DebugPlugin extends Plugin {
 			fContextVariableRegistry = new ContextLaunchVariableRegistry();
 		}
 		return fContextVariableRegistry;
+	}
+	
+	public IContextLaunchVariableRegistry getRefreshVariableRegistry() {
+		if (fRefreshVariableRegistry == null) {
+			fRefreshVariableRegistry = new RefreshScopeVariableRegistry();
+		}
+		return fRefreshVariableRegistry;
 	}
 	
 	/**

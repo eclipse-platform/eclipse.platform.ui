@@ -1209,29 +1209,6 @@
       </keyBinding>
    </extension>
 <!-- Context Variable Extensions -->
-	<extension
-		point="org.eclipse.debug.ui.launchVariableComponents">
-		<component
-			variableName="resource_path"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
-		</component>
-		<component
-			variableName="resource_loc"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
-		</component>
-		<component
-			variableName="resource_name"
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
-		</component>
-		<component
-			variableName="resource"
-			componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
-		</component>
-		<component
-			variableName="working_set"
-			componentClass="org.eclipse.debug.internal.ui.launchVariables.WorkingSetComponent">
-		</component>
-	</extension>
    <extension
          point="org.eclipse.debug.core.contextLaunchVariables">
       <variable
@@ -1299,6 +1276,58 @@
             expanderClass="org.eclipse.debug.ui.launchVariables.expanders.FolderPromptExpander"
             description="%folder_prompt.description">
       </variable>
-   </extension>
+   </extension>   
+   <!-- Refresh variables -->
+	<extension point="org.eclipse.debug.core.refreshLaunchVariables">
+		<variable
+			name="workspace"
+			description="%workspace.description"
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkspaceExpander">
+		</variable>
+		<variable
+			name="project"
+			description="%project.description"
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander">
+		</variable>
+		<variable
+			name="container"
+			description="%container.description"
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander">
+		</variable>
+		<variable
+			name="resource"
+			description="%resource.description"
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander">
+		</variable>
+		<variable
+			name="working_set"
+			description="%working_set.description"
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander">
+		</variable>
+	</extension>
+	<!-- Variable Components -->
+	<extension
+		point="org.eclipse.debug.ui.launchVariableComponents">
+		<component
+			variableName="resource_path"
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+		</component>
+		<component
+			variableName="resource_loc"
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+		</component>
+		<component
+			variableName="resource_name"
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+		</component>
+		<component
+			variableName="resource"
+			componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
+		</component>
+		<component
+			variableName="working_set"
+			componentClass="org.eclipse.debug.internal.ui.launchVariables.WorkingSetComponent">
+		</component>
+	</extension>
 
 </plugin>
