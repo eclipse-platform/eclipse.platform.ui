@@ -79,8 +79,17 @@ public abstract class ResponseHandler {
 			folder.mkdir();
 		}
 		if (! folder.isCVSFolder()) {
-			folder.setFolderSyncInfo(new FolderSyncInfo(
-				Util.getRelativePath(session.getRepositoryRoot(), repositoryDir),
+			String repositoryRoot = session.getRepositoryRoot();
+            String relativePath;
+            if (repositoryDir.startsWith(repositoryRoot)) {
+                // The repositoryDir is an absolute path
+                relativePath = Util.getRelativePath(repositoryRoot, repositoryDir);
+            } else {
+                // The repositoryDir is already a relative path
+                relativePath = repositoryDir;
+            }
+            folder.setFolderSyncInfo(new FolderSyncInfo(
+				relativePath,
 				session.getCVSRepositoryLocation().getLocation(false),
 				null, false));
 		}
