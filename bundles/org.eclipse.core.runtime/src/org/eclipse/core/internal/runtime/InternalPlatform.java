@@ -864,6 +864,9 @@ public final class InternalPlatform implements IPlatform {
 				throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME, FAILED_WRITE_METADATA, message, null));
 			}
 		}
+		//try infer the device if there isn't one (windows)
+		if (location.getDevice()==null)
+			location = new Path(location.toFile().getAbsolutePath());
 		metaArea = new PlatformMetaArea(location);
 		metaArea.createLocation();
 		if (keyringFile == null)
