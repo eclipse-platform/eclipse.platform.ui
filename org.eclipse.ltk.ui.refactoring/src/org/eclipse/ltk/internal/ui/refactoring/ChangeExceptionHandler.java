@@ -71,6 +71,7 @@ public class ChangeExceptionHandler {
 	}
 	
 	public void handle(Change change, RuntimeException exception) {
+		RefactoringUIPlugin.log(exception);
 		IStatus status= null;
 		if (exception.getMessage() == null) {
 			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR, 
@@ -83,6 +84,7 @@ public class ChangeExceptionHandler {
 	}
 	
 	public void handle(Change change, CoreException exception) {
+		RefactoringUIPlugin.log(exception);
 		handle(change, exception.getStatus());
 	}
 	
