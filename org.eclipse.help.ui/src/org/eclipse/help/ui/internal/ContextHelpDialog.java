@@ -89,7 +89,7 @@ public class ContextHelpDialog {
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out
 						.println("ContextHelpDialog.ContextHelpDialog(): ParentShell: " //$NON-NLS-1$
-								+ shell.toString() + " is " //$NON-NLS-1$
+								+ parentShell.toString() + " is " //$NON-NLS-1$
 								+ (isModal ? "modal" : "modeless")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
