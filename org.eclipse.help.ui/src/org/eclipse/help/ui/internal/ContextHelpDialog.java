@@ -336,16 +336,7 @@ public class ContextHelpDialog {
 	}
 
 	private Image getImage() {
-		if (imgRegistry == null) {
-			imgRegistry = HelpUIPlugin.getDefault().getImageRegistry();
-			imgRegistry
-					.put(
-							IHelpUIConstants.IMAGE_FILE_F1TOPIC,
-							ImageDescriptor
-									.createFromURL(HelpUIResources
-											.getImagePath(IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
-		}
-		return imgRegistry.get(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
+		return HelpUIResources.getImage(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 	}
 
 	public boolean isShowing() {
