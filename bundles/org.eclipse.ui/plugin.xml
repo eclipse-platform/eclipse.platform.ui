@@ -1830,6 +1830,7 @@
             lightweight="true"
             quadrant="BOTTOM_RIGHT"
             adaptable="true"
+            state="true"
             label="%DecoratorLinkedResource.label"
             class="org.eclipse.ui.internal.LinkedResourceDecorator"
             id="org.eclipse.ui.LinkedResourceDecorator">
