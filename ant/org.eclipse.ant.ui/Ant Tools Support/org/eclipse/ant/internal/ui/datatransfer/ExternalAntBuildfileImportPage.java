@@ -72,7 +72,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 	private ModifyListener fLocationModifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			fAntModel= AntUtil.getAntModel(getProjectLocationFieldValue(), true, false, false);
+		    //no lexical or position, has task info
+			fAntModel= AntUtil.getAntModel(getProjectLocationFieldValue(), false, false, true);
 			if (fAntModel != null && fAntModel.getProjectNode() != null) {
 			    setProjectName(); // page will be validated on setting the project name
 			} else {

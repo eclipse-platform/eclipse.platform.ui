@@ -33,7 +33,7 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.ant.internal.ui.model.AntModelLite;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
@@ -174,10 +174,8 @@ public final class AntUtil {
 	public static AntTargetNode[] getTargets(String path, ILaunchConfiguration config) throws CoreException {
 		File buildfile= getBuildFile(path);
 		URL[] urls= getCustomClasspath(config);
-		IAntModel model= getAntModel(buildfile, urls);
-		model.setCanGetLexicalInfo(false);
-		model.setCanGetPositionInfo(false);
-		model.setCanGetTaskInfo(true);
+		//no lexical, no position, no task
+		IAntModel model= getAntModel(buildfile, urls, false, false, false);
 		AntProjectNode project= model.getProjectNode();
 		List targets= new ArrayList();
 		if (project.hasChildren()) {
@@ -198,9 +196,8 @@ public final class AntUtil {
 		if (buildfile == null) {
 		    return new AntTargetNode[0];
 		}
-		IAntModel model= getAntModel(buildfile, null);
-		model.setCanGetTaskInfo(true);
-		model.setCanGetPositionInfo(true);
+		//tasks and position info but no lexical info
+		IAntModel model= getAntModel(buildfile, null, false, true, true);
 		AntProjectNode project= model.getProjectNode();
 		List targets= new ArrayList();
 		if (project != null && project.hasChildren()) {
@@ -216,14 +213,11 @@ public final class AntUtil {
 		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
 	}
 	
-	public static IAntModel getAntModel(String buildFilePath, boolean needsTaskResolution, boolean needsLexicalResolution, boolean needsPositionResolution) {
-	    IAntModel model= getAntModel(getBuildFile(buildFilePath), null);
+	public static IAntModel getAntModel(String buildFilePath, boolean needsLexicalResolution, boolean needsPositionResolution, boolean needsTaskResolution) {
+	    IAntModel model= getAntModel(getBuildFile(buildFilePath), null, needsLexicalResolution, needsPositionResolution, needsTaskResolution);
 	    if (model == null) {
 	        return null;
 	    }
-	    model.setCanGetTaskInfo(needsTaskResolution);
-	    model.setCanGetLexicalInfo(needsLexicalResolution);
-	    model.setCanGetPositionInfo(needsPositionResolution);
 	    return model;   
 	}
 	
@@ -240,7 +234,7 @@ public final class AntUtil {
 		return buildFile;
 	}
 	
-	private static IAntModel getAntModel(final File buildFile, URL[] urls) {
+	private static IAntModel getAntModel(final File buildFile, URL[] urls, boolean needsLexical, boolean needsPosition, boolean needsTask) {
 	    if (buildFile == null || !buildFile.exists()) {
 	        return null;
 	    }
@@ -249,7 +243,7 @@ public final class AntUtil {
 			return null;
 		}
 		final IFile file= getFileForLocation(buildFile.getAbsolutePath(), null);
-		IAntModel model= new AntModelLite(doc, null, new LocationProvider(null) {
+		LocationProvider provider= new LocationProvider(null) {
 		    /* (non-Javadoc)
 		     * @see org.eclipse.ant.internal.ui.model.LocationProvider#getFile()
 		     */
@@ -265,7 +259,8 @@ public final class AntUtil {
 			    } 
 			    return file.getLocation();
 			}
-		});
+		};
+		IAntModel model= new AntModel(doc, null, provider, needsLexical, needsPosition, needsTask);
 		
 		if (urls != null) {
 		    model.setClassLoader(AntCorePlugin.getPlugin().getNewClassLoader(urls));

@@ -207,27 +207,6 @@ public interface IAntModel {
     void errorFromElementText(Exception e, int offset, int columnNumber);
 
     /**
-     * Sets whether this model contains task information
-     * Needs to be set before <code>reconcile()</code>
-     * @param needsTaskInfo whether to resolve task information for this model
-     */
-    void setCanGetTaskInfo(boolean needsTaskInfo);
-
-    /**
-     * Sets whether this model contains lexical information
-     * Needs to be set before <code>reconcile()</code>
-     * @param needsLexicalInfo whether to resolve lexical information for this model
-     */
-    void setCanGetLexicalInfo(boolean needsLexicalInfo);
-
-    /**
-     * Sets whether this model contains position information
-     * Needs to be set before <code>reconcile()</code>
-     * @param needsPositionInfo whether to resolve position information for this model
-     */
-    void setCanGetPositionInfo(boolean needsPositionInfo);
-
-    /**
      * Returns the text in the document of this Ant model for the given offset and length
      * @param offset the offset within the document
      * @param length the length of text to retrieve
