@@ -153,16 +153,14 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		// if the selection is an IResource, save it and enable our action
 		if (selection instanceof IStructuredSelection) {
 			fFillMenu = true;
-			if (action != null) {
-				if (fDelegateAction != action) {
-					fDelegateAction = action;
-					fDelegateAction.setMenuCreator(this);
-				}
-				// save selection and enable our menu
-				fSelection = (IStructuredSelection) selection;
-				action.setEnabled(true);
-				return;
+			if (fDelegateAction != action) {
+				fDelegateAction = action;
+				fDelegateAction.setMenuCreator(this);
 			}
+			// save selection and enable our menu
+			fSelection = (IStructuredSelection) selection;
+			action.setEnabled(true);
+			return;
 		}
 		action.setEnabled(false);
 	}
