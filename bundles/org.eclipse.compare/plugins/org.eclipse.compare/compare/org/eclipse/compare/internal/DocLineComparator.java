@@ -157,35 +157,38 @@ public class DocLineComparator implements ITokenComparator {
 		}
 		return ""; //$NON-NLS-1$
 	}
-
+	
 	private boolean compare(String s1, String s2) {
-		int i1= 0;
-		int i2= 0;
 		int l1= s1.length();
 		int l2= s2.length();
-		char c1= ' ';
-		char c2= ' ';
-		while (i1 < l1 || i2 < l2) {
-			if (i1 < l1) {
-				c1= s1.charAt(i1);
-				if (Character.isWhitespace(c1)) {
-					i1++;
-					continue;
+		int c1= 0, c2= 0;
+		int i1= 0, i2= 0;
+		
+		while (c1 != -1) {
+			
+			c1= -1;
+			while (i1 < l1) {
+				char c= s1.charAt(i1++);
+				if (! Character.isWhitespace(c)) {
+					c1= c;
+					break;
 				}
 			}
-			if (i2 < l2) {
-				c2= s2.charAt(i2);
-				if (Character.isWhitespace(c2)) {
-					i2++;
-					continue;
+			
+			c2= -1;
+			while (i2 < l2) {
+				char c= s2.charAt(i2++);
+				if (! Character.isWhitespace(c)) {
+					c2= c;
+					break;
 				}
 			}
+				
 			if (c1 != c2)
 				return false;
-			i1++;
-			i2++;
 		}
 		return true;
 	}
+
 }
 
