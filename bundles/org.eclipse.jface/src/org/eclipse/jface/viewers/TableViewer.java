@@ -14,10 +14,13 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +29,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
@@ -59,7 +60,7 @@ public class TableViewer extends StructuredViewer {
 	 * This viewer's table editor.
 	 */
 	private TableEditor tableEditor;
-	
+
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
 	 * parent. The table control is created using the SWT style bits
@@ -145,19 +146,6 @@ public class TableViewer extends StructuredViewer {
 	public void add(Object element) {
 		add(new Object[] { element });
 	}
-	
-	/**
-	 * Add element and map it to item. This is generally
-	 * used when the item was created as a result of an
-	 * SWT.SetItem callback.
-	 * @param element The element being displayed
-	 * @param item The widget displaying it
-	 * @see SWT#VIRTUAL
-	 */
-	public void add(Object element, Widget item){
-		mapElement(element,item);
-		updateItem(item,element);
-	}
 
 	/**
 	 * Cancels a currently active cell editor. All changes already done in the
@@ -182,9 +170,9 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		
-		for (int i = 0; i < getTable().getItemCount(); i++) {
-			TableItem item = getTable().getItem(i);
+		TableItem[] children = table.getItems();
+		for (int i = 0; i < children.length; i++) {
+			TableItem item = children[i];
 			Object data = item.getData();
 			if (data != null && equals(data, element))
 				return item;
@@ -215,6 +203,10 @@ public class TableViewer extends StructuredViewer {
 
 			if (prov instanceof ITableLabelProvider) {
 				tprov = (ITableLabelProvider) prov;
+			} 
+			
+			if (prov instanceof ITableColorProvider) {
+				cprov = (ITableColorProvider) prov;
 			} 
 			
 			int columnCount = table.getColumnCount();
@@ -535,20 +527,18 @@ public class TableViewer extends StructuredViewer {
 			// the associate of b to item 0.
 
 			Object[] children = getSortedChildren(getRoot());
-			int itemCount = getTable().getItemCount();
-			int min = Math.min(children.length, itemCount);
-			Table visibleTable = getTable();
+			TableItem[] items = table.getItems();
+			int min = Math.min(children.length, items.length);
 			for (int i = 0; i < min; ++i) {
-				TableItem currentItem = visibleTable.getItem(i);
 				// if the element is unchanged, update its label if appropriate
-				if (equals(children[i], currentItem.getData())) {
+				if (equals(children[i], items[i].getData())) {
 					if (updateLabels) {
-						updateItem(currentItem, children[i]);
+						updateItem(items[i], children[i]);
 					} else {
 						// associate the new element, even if equal to the old
 						// one,
 						// to remove stale references (see bug 31314)
-						associate(children[i], currentItem);
+						associate(children[i], items[i]);
 					}
 				} else {
 					// updateItem does an associate(...), which can mess up
@@ -557,21 +547,18 @@ public class TableViewer extends StructuredViewer {
 					// replaces b->1 with a->1, but this actually removes b->0.
 					// So, if the object associated with this item has changed,
 					// just disassociate it for now, and update it below.
-					currentItem.setText(""); //$NON-NLS-1$
-					currentItem.setImage(new Image[table.getItemCount()]);//Clear all images
-					disassociate(currentItem);
+					items[i].setText(""); //$NON-NLS-1$
+					items[i].setImage(new Image[table.getItemCount()]);//Clear all images
+					disassociate(items[i]);
 				}
 			}
 
 			// dispose of all items beyond the end of the current elements
-			
-			if (itemCount < children.length) {
-				for (int i = itemCount; --i >= min;) {
-					TableItem item = visibleTable.getItem(i);
-					if(item != null && item.getData() != null)//May have never created the item if VIRTUAL
-						disassociate(item);
+			if (min < items.length) {
+				for (int i = items.length; --i >= min;) {
+					disassociate(items[i]);
 				}
-				table.remove(min, itemCount - 1);
+				table.remove(min, items.length - 1);
 			}
 
 			// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get
@@ -582,9 +569,8 @@ public class TableViewer extends StructuredViewer {
 
 			// Update items which were removed above
 			for (int i = 0; i < min; ++i) {
-				TableItem next = table.getItem(i);
-				if (next.getData() == null) {
-					updateItem(next, children[i]);
+				if (items[i].getData() == null) {
+					updateItem(items[i], children[i]);
 				}
 			}
 
