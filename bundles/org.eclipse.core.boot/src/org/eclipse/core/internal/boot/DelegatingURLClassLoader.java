@@ -10,12 +10,12 @@
  **********************************************************************/
 package org.eclipse.core.internal.boot;
 
-import java.net.*;
-import java.util.*;
 import java.io.*;
+import java.net.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import org.eclipse.core.boot.BootLoader;
+import java.util.*;
+
 import com.ibm.oti.vm.VM;
 
 public abstract class DelegatingURLClassLoader extends URLClassLoader {

@@ -15,9 +15,8 @@ package org.eclipse.core.internal.boot;
  * platform:/base/	maps to platform installation location
  */
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.URL;
  
 public class PlatformURLBaseConnection extends PlatformURLConnection {
 

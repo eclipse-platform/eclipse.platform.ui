@@ -13,9 +13,9 @@ package org.eclipse.core.internal.boot;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.boot.IPlatformConfiguration.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
@@ -722,7 +722,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (selector == null)
 				return null;
 			
-			int result;
 			String element;
 			for (int i=0; i<elements.size(); i++) {
 				// make pre-parse selector call
