@@ -41,7 +41,7 @@ function liveActionInternal(topHelpWindow, pluginId, className, argument)
 
 	// we need to find the toolbar frame.
 	// to do: cleanup this, including the location of the hidden livehelp frame.	
-	var toolbarFrame = topHelpWindow.HelpFrame.ContentFrame.ToolbarFrame;
+	var toolbarFrame = topHelpWindow.HelpFrame.ContentFrame.ContentToolbarFrame;
 	if (!toolbarFrame){
 		return;
 	}

@@ -53,8 +53,8 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
  */
 function setContentToolbarTitle(title)
 {
-	if(parent.ContentFrame.ToolbarFrame && parent.ContentFrame.ToolbarFrame.setTitle ){
-		parent.ContentFrame.ToolbarFrame.setTitle(title);
+	if(parent.ContentFrame.ContentToolbarFrame && parent.ContentFrame.ContentToolbarFrame.setTitle ){
+		parent.ContentFrame.ContentToolbarFrame.setTitle(title);
 	}
 }
 
