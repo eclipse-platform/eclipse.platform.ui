@@ -20,11 +20,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 
 /**
  *	Instances of this class provide a simple API to the workbench for
@@ -37,12 +37,14 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private WizardCollectionElement wizardElements = null;
 	private ArrayList deferWizards = null;
 	private ArrayList deferCategories = null;
+	private ArrayList deferPrimary;
 	
 	// constants
 	public final static String		BASE_CATEGORY = "Base";//$NON-NLS-1$
 	public final static String		EXAMPLES_WIZARD_CATEGORY = "Examples";//$NON-NLS-1$
 	public final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
+	private final static String		TAG_PRIMARYWIZARD = "primaryWizard";	//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
@@ -50,6 +52,8 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	// @issue project-specific attribute and behavior
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
+	
+	private WorkbenchWizardElement [] primaryWizards = new WorkbenchWizardElement[0];
 
 	private class CategoryNode {
 		private Category category;
@@ -190,7 +194,7 @@ private void finishCategories() {
 
 	// Add each category.
 	for (int nX = 0; nX < flatArray.length; nX ++) {
-		Category cat = ((CategoryNode)flatArray[nX]).getCategory();
+		Category cat = flatArray[nX].getCategory();
 		finishCategory(cat);
 	}
 
@@ -226,6 +230,27 @@ private void finishCategory(Category category) {
 	if (parent != null)
 		createCollectionElement(parent, category.getId(), category.getPluginId(), category.getLabel());
 }
+
+/**
+ * Finishes the recognition of primary wizards.
+ */
+private void finishPrimary() {
+    if (deferPrimary != null) {
+        ArrayList primary = new ArrayList();
+        for (Iterator i = deferPrimary.iterator(); i.hasNext();) {
+            String id = (String) i.next();
+            WorkbenchWizardElement element = getWizardElements().findWizard(id, true);
+            if (element != null) {
+                primary.add(element);
+            }
+        }
+        
+        primaryWizards = (WorkbenchWizardElement []) primary.toArray(new WorkbenchWizardElement [primary.size()]);
+                
+        deferPrimary = null;
+    } 
+}
+
 /**
  *	Insert the passed wizard element into the wizard collection appropriately
  *	based upon its defining extension's CATEGORY tag value
@@ -332,7 +357,16 @@ public boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_CATEGORY)) {
 		deferCategory(element);
 		return true;
-	} else {
+	} 
+	else if (element.getName().equals(TAG_PRIMARYWIZARD)) {
+		if (deferPrimary == null)
+		    deferPrimary = new ArrayList(50);
+		deferPrimary.add(element.getAttribute(ATT_ID));
+
+	    return true;
+	}
+	else {
+	
 		return super.readElement(element);
 	}
 }
@@ -350,10 +384,25 @@ protected void readWizards() {
 	super.readWizards();
 	finishCategories();
 	finishWizards();
+	finishPrimary();
 	if (wizardElements != null) {
 		pruneEmptyCategories(wizardElements);
 	}
 }
+
+/**
+ * Returns the list of wizards that are considered 'primary'.
+ * 
+ * The return value for this method is cached since computing its value
+ * requires non-trivial work.  
+ */
+public WorkbenchWizardElement [] getPrimaryWizards() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
+	return primaryWizards;    
+}
+
 /**
  * Returns whether the wizards have been read already
  */

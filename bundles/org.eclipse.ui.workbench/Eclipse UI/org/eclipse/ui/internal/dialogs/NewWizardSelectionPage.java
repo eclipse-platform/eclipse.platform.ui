@@ -32,14 +32,17 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	
 	// widgets
 	private NewWizardNewPage		newResourcePage;
+
+    private WorkbenchWizardElement[] primaryWizards;
 /**
  *	Create an instance of this class
  */
-public NewWizardSelectionPage(IWorkbench aWorkbench , IStructuredSelection currentSelection, WizardCollectionElement elements) {
+public NewWizardSelectionPage(IWorkbench aWorkbench , IStructuredSelection currentSelection, WizardCollectionElement elements, WorkbenchWizardElement[] primary) {
 	// override what superclass does with elements
 	super("newWizardSelectionPage", aWorkbench, currentSelection, null);//$NON-NLS-1$
-	setDescription(WorkbenchMessages.getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
-	wizardCategories = elements;	
+	setTitle(WorkbenchMessages.getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
+	wizardCategories = elements;
+	primaryWizards = primary;
 }
 /**
  * Makes the next page visible.
@@ -52,7 +55,7 @@ public void advanceToNextPage() {
  */
 public void createControl(Composite parent) {
 	IDialogSettings settings = getDialogSettings();
-    newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories);
+    newResourcePage = new NewWizardNewPage(this, this.workbench, wizardCategories, primaryWizards);
     newResourcePage.setDialogSettings(settings);
     
     Control control = newResourcePage.createControl(parent);

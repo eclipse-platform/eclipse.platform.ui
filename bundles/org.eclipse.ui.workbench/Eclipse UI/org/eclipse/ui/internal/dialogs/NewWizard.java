@@ -40,6 +40,7 @@ public class NewWizard extends Wizard {
 	public void addPages() {
 		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(projectsOnly);
 		WizardCollectionElement wizards = rdr.getWizardElements();
+		WorkbenchWizardElement [] primary = rdr.getPrimaryWizards();
 
 		if (categoryId != null) {
 			WizardCollectionElement categories = wizards;
@@ -53,7 +54,7 @@ public class NewWizard extends Wizard {
 				wizards = categories;
 		}
 
-		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards);
+		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards, primary);
 		addPage(mainPage);
 	}
 	

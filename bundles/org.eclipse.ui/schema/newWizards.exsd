@@ -22,6 +22,7 @@ Wizards may optionally specify a description subelement whose body should contai
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="category"/>
             <element ref="wizard"/>
+            <element ref="primaryWizard"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -180,6 +181,23 @@ Also causes the wizard to appear as a choice within the &quot;New Project Dialog
             <annotation>
                <documentation>
                   an optional name filter.  Each object in the workbench selection must match the name filter to be passed to the wizard
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="primaryWizard">
+      <annotation>
+         <documentation>
+            a means of declaring that a wizard is &quot;primary&quot; in the UI.  A primary wizard is emphasized in the new wizard dialog.  Please not that this element is not intended to be used by plug in developers!  This element exists so that product managers may emphasize a set of wizards for their products.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of a wizard that should be made primary.
                </documentation>
             </annotation>
          </attribute>

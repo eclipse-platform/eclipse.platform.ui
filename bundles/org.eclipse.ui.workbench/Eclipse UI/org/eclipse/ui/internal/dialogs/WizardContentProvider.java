@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.activities.ws.FilterableObject;
 import org.eclipse.ui.model.AdaptableList;
 
@@ -26,6 +25,8 @@ import org.eclipse.ui.model.AdaptableList;
 public class WizardContentProvider
 	extends FilterableObject
 	implements ITreeContentProvider {
+    
+    private Viewer viewer;
 
 	/**
 	 * @param filtering the initial filtering state.
@@ -46,7 +47,7 @@ public class WizardContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-	    //no-op
+	    viewer = null;
 	}
 
 	/*
@@ -121,13 +122,10 @@ public class WizardContentProvider
 	 */
 	private void handleChild(Object element, ArrayList list) {
 	    if (element instanceof WizardCollectionElement) {
-	        if (hasChildren(element))
+	        if (!getFiltering() && hasChildren(element))
 	            list.add(element);
 	    }
 	    else {
-			if (getFiltering() && WorkbenchActivityHelper.filterItem(element)) {
-				return;
-			}
 			list.add(element);
 	    }
 	}
@@ -152,6 +150,15 @@ public class WizardContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	    //no-op
+	    this.viewer = viewer;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.activities.ws.FilterableObject#setFiltering(boolean)
+     */
+    public void setFiltering(boolean filtering) {
+        super.setFiltering(filtering);
+        if (viewer != null)
+            viewer.refresh();
+    }
 }

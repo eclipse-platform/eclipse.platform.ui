@@ -48,6 +48,12 @@ private NewWizardCollectionSorter() {
  *			and a value greater than <code>0</code> if o1 is greater than o2.
  */
 public int compare(Viewer viewer,Object o1,Object o2) {
+    // wizards before categories
+    if (o1 instanceof WorkbenchWizardElement && o2 instanceof WizardCollectionElement) 
+        return -1;
+    if (o2 instanceof WorkbenchWizardElement && o1 instanceof WizardCollectionElement) 
+        return 1; 
+
 	String name1 = ((WorkbenchAdapter)o1).getLabel(o1);
 	String name2 = ((WorkbenchAdapter)o2).getLabel(o2);
 	if (name1.equals(name2))
