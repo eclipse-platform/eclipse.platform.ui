@@ -185,8 +185,12 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	public void targetStarted(BuildEvent event) {
 		super.targetStarted(event);
 		if (!fSentProcessId) {
-			fPort= Integer.parseInt(event.getProject().getProperty("eclipse.connect.port")); //$NON-NLS-1$
-			connect();
+			String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
+			if (portProperty != null) {
+				fPort= Integer.parseInt(portProperty);
+				connect();
+			}
+			
 			fSentProcessId= true;
 			StringBuffer message= new StringBuffer(MessageIds.PROCESS_ID);
 			message.append(event.getProject().getProperty("org.eclipse.ant.ui.ATTR_ANT_PROCESS_ID")); //$NON-NLS-1$
@@ -254,12 +258,5 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			message.append(event.getTask().getLocation());
 			sendMessage(message.toString());
 		}
-//		if (event.getTarget() == null) {
-//			// look for "Buildfile:" message
-//			String message= event.getMessage();
-//			if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
-//				sendMessage(message);
-//			}
-//		}
 	}
 }

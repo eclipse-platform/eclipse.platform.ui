@@ -16,27 +16,23 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.ui.internal.antsupport.AntSupportMessages;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntProcess;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.ui.internal.launchConfigurations.TaskLinkManager;
+import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Region;
-import org.eclipse.ant.ui.internal.antsupport.AntSupportMessages;
 	
 /**
  */
@@ -76,10 +72,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			// look for "Buildfile:" message
 			if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
 				String fileName = message.substring(10).trim();
-				IFile file = getFileForLocation(fileName);
+				IFile file = AntUtil.getFileForLocation(fileName, fBuildFileParent);
 				if (file != null) {
 					FileLink link = new FileLink(file, null,  -1, -1, -1);
-					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName); //$NON-NLS-1$
+					TaskLinkManager.addTaskHyperlink(antProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName); //$NON-NLS-1$
 					fBuildFileParent= file.getLocation().toFile().getParentFile();
 				}
 			}
@@ -121,7 +117,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		int length = LEFT_COLUMN_SIZE - size - 3;
 		IConsoleHyperlink taskLink = getTaskLink(event);
 		if (taskLink != null) {
-			TaskLinkManager.addTaskHyperlink(fProcess, taskLink, new Region(offset, length), name);
+			TaskLinkManager.addTaskHyperlink(getAntProcess(null), taskLink, new Region(offset, length), name);
 		}
 	}
 
@@ -174,32 +170,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (task != null) {
 			Location location = task.getLocation();
 			if (location != null) {
-				String path = location.toString().trim();
-				if (path.length() == 0) {
-					return null;
-				}
-				if (path.startsWith("file:")) { //$NON-NLS-1$
-					// remove "file:"
-					path= path.substring(5, path.length());
-				}
-				// format is file:F:L: where F is file path, and L is line number
-				int index = path.lastIndexOf(':');
-				if (index == path.length() - 1) {
-					// remove trailing ':'
-					path = path.substring(0, index);
-					index = path.lastIndexOf(':');
-				}
-				// split file and line number
-				String fileName = path.substring(0, index);
-				IFile file = getFileForLocation(fileName);
-				if (file != null) {
-					try {
-						String lineNumber = path.substring(index + 1);
-						int line = Integer.parseInt(lineNumber);
-						return new FileLink(file, null, -1, -1, line);
-					} catch (NumberFormatException e) {
-					}
-				}
+				return AntUtil.getTaskLink(location.toString(), fBuildFileParent);
 			}
 		}
 		return null;
@@ -310,35 +281,4 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		logMessage(msg.toString(), event, Project.MSG_INFO);
 	}
 
-	/**
-	 * Returns the workspace file associated with the given absolute path in the
-	 * local file system, or <code>null</code> if none.
-	 *   
-	 * @param absolutePath
-	 * @return file or <code>null</code>
-	 */
-	private IFile getFileForLocation(String absolutePath) {
-		IPath filePath= new Path(absolutePath);
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-		if (file == null) {
-			//relative path
-			File relativeFile= null;
-			try {
-				//this call is ok if fBuildFileParent is null
-				relativeFile= FileUtils.newFileUtils().resolveFile(fBuildFileParent, absolutePath);
-				filePath= new Path(relativeFile.getAbsolutePath());
-				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-				if (file == null) {
-					return null;
-				}
-			} catch (BuildException be) {
-				return null;
-			}
-		}
-		
-		if (file.exists()) {
-			return file;
-		}
-		return null;
-	}
 }

@@ -40,17 +40,19 @@ import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 
 /**
- * Launch delegate for ant builds
+ * Launch delegate for Ant builds
  */
 public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.ui.internal.antsupport.logger.AntProcessBuildLogger"; //$NON-NLS-1$
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.ui.internal.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
+	private static final String REMOTE_ANT_LOGGER_CLASS = "org.eclipse.ant.ui.internal.antsupport.logger.RemoteAntBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.ui.internal.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$	
 
@@ -64,6 +66,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		String vmTypeID= null;
 		try {
+			//check if set to run in a separate VM
 			vmTypeID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(ce);			
@@ -169,10 +172,19 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
+		int port= -1;
+		if (vmTypeID != null) {
+			if (userProperties == null) {
+				userProperties= new HashMap();
+			}
+			port= SocketUtil.findFeePort();
+			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
+			userProperties.put("eclipse.connect.port", Integer.toString(port));
+		}
 		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, vmTypeID != null);
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, idStamp, commandLine);
+			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine);
 			return;
 		}
 		Map attributes= new HashMap();
@@ -225,7 +237,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 
 	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine) {
 		// link the process to its build logger via a timestamp
-		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		
 		// create "fake" command line for the process
@@ -291,7 +302,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(antHome);
 		}
 		
-		if (!separateVM) {
+		if (separateVM) {
+			commandLine.append(" -logger "); //$NON-NLS-1$
+			commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+		} else {
 			commandLine.append(" -inputhandler "); //$NON-NLS-1$
 			commandLine.append(INPUT_HANDLER_CLASS);
 		
@@ -318,9 +332,16 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		commandLine.append(value);
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, StringBuffer commandLine) throws CoreException {
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
+		RemoteAntBuildListener client= new RemoteAntBuildListener();
+		
+		if (port != -1) {
+			client.startListening(port);
+		}
+		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
+		copy.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
 		IProcess[] processes= launch.getProcesses();
