@@ -77,13 +77,15 @@ public final class URLEncoder {
 		String query = url.getQuery();
 		String ref = url.getRef();
 		String auth = url.getAuthority();
+		String host = url.getHost();
+		int port = url.getPort();
 
 		// do not encode if there is an authority, such as in
 		// ftp://user:password@host:port/path 
 		// because the URL constructor does not allow it
 		URL result = url;
-		if (auth == null || auth.equals("")) // $NON-NLS-1$
-			result =  new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, query, ref));
+		if (auth == null || auth.equals("") || auth.equals(host+":"+ port)) // $NON-NLS-1$ $NON-NLS-2$
+			result =  new URL(url.getProtocol(), host, port, encode(file, query, ref));
 		return result;
 	}
 	private static String encodeSegment(String segment) {
