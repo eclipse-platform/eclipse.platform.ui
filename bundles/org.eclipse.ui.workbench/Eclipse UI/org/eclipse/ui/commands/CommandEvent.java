@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
@@ -113,10 +114,15 @@ public final class CommandEvent {
                 && previousAttributeValuesByName != null)
             throw new IllegalArgumentException();
 
-        if (attributeValuesByNameChanged)
-            this.previousAttributeValuesByName = Util.safeCopy(
-                    previousAttributeValuesByName, String.class, Object.class,
-                    false, true);
+        if (attributeValuesByNameChanged) {
+        	if (previousAttributeValuesByName == null) {
+				this.previousAttributeValuesByName = Collections.EMPTY_MAP;
+			} else {
+				this.previousAttributeValuesByName = Util.safeCopy(
+						previousAttributeValuesByName, String.class,
+						Object.class, false, true);
+			}
+        }
 
         this.command = command;
         this.attributeValuesByNameChanged = attributeValuesByNameChanged;
