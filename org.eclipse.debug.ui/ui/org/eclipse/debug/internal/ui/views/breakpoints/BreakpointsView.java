@@ -220,6 +220,7 @@ public class BreakpointsView extends AbstractDebugView {
 	protected void becomesVisible() {
 		super.becomesVisible();
 		getViewer().refresh();
+		initializeCheckedState();
 	}
 
 }
