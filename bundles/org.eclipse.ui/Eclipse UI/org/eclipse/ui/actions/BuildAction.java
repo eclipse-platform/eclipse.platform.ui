@@ -52,8 +52,8 @@ public class BuildAction extends WorkspaceAction {
  *
  * @param shell the shell for any dialogs
  * @param type the type of build; one of
- *  <code>BaseBuilder.INCREMENTAL_BUILD</code> or 
- *  <code>BaseBuilder.FULL_BUILD</code>
+ *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or 
+ *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
  */
 public BuildAction(Shell shell, int type) {
 	super(shell, "");//$NON-NLS-1$
