@@ -11,59 +11,29 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageCache;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ui.OverlayIcon;
-import org.eclipse.team.internal.ui.PixelConverter;
-import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE.SharedImages;
@@ -403,11 +373,11 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	
 	public class Preview extends LabelProvider implements Observer, ITreeContentProvider {
 		
-		private final ImageCache fImageCache;
+		private final ResourceManager fImageCache;
 		private final TreeViewer fViewer; 
 
 		public Preview(Composite composite) {
-			fImageCache= new ImageCache();
+			fImageCache= new DeviceResourceManager(composite.getDisplay());
 			fViewer = new TreeViewer(composite);
 			fViewer.getControl().setLayoutData(SWTUtils.createHVFillGridData());
 			fViewer.setContentProvider(this);
@@ -441,6 +411,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		}
 
 		public void dispose() {
+            fImageCache.dispose();
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -492,7 +463,12 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			final ImageDescriptor overlay = getDecoration(element).getOverlay();
 			if (overlay == null)
 				return baseImage;
-			return fImageCache.getImage(new OverlayIcon(baseImage, new ImageDescriptor[] {overlay}, new int[] {OverlayIcon.BOTTOM_RIGHT}, new Point(baseImage.getBounds().width, baseImage.getBounds().height)));
+			try {
+                return fImageCache.createImage(new OverlayIcon(baseImage, new ImageDescriptor[] {overlay}, new int[] {OverlayIcon.BOTTOM_RIGHT}, new Point(baseImage.getBounds().width, baseImage.getBounds().height)));
+            } catch (DeviceResourceException e) {
+                CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, "Error creating decorator image", e)); //$NON-NLS-1$
+            }
+            return null;
 		}
 	}
 	
@@ -586,6 +562,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	public void dispose() {
 		if (fThemeListener != null)
 			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+        if (fPreview != null)
+            fPreview.dispose();
 	}
 	
 	/**
