@@ -63,15 +63,7 @@ public class AntTypesPage extends AntPage {
 	 * Allows the user to enter a custom type.
 	 */
 	private void addType() {
-		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
-		
-		Iterator types= getContents(true).iterator();
-		List names= new ArrayList();
-		while (types.hasNext()) {
-			Type aTask = (Type) types.next();
-			names.add(aTask.getTypeName());
-		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTypesPage.type_1")); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog();
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -125,17 +117,7 @@ public class AntTypesPage extends AntPage {
 		if (type == null) {
 			return;
 		}
-		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
-		
-		Iterator types= getContents(true).iterator();
-		List names= new ArrayList();
-		while (types.hasNext()) {
-			Type aTask = (Type) types.next();
-			names.add(aTask.getTypeName());
-		}
-		
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTypesPage.type_1")); //$NON-NLS-1$
-		
+		AddCustomDialog dialog = getCustomDialog();
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());
 		dialog.setLibrary(type.getLibrary());
@@ -149,6 +131,23 @@ public class AntTypesPage extends AntPage {
 		updateContent(type);
 	}
 	
+	private AddCustomDialog getCustomDialog() {
+		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
+		
+		Iterator types= getContents(true).iterator();
+		List names= new ArrayList();
+		while (types.hasNext()) {
+			Type aTask = (Type) types.next();
+			names.add(aTask.getTypeName());
+		}
+		
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names);
+		dialog.setTitle(title);
+		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTypesPage.8")); //$NON-NLS-1$
+		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTypesPage.9")); //$NON-NLS-1$
+		return dialog;
+	}
+
 	/* (non-Javadoc)
 	 * Method declared on AntPage.
 	 */

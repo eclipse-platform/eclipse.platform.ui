@@ -44,7 +44,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -70,19 +69,16 @@ public class AddCustomDialog extends StatusDialog {
 	//A boolean to indicate if the user has typed anything
 	private boolean entryChanged = false;
 
-	protected Combo sourceNameField;
-
-	private String title;
+	private Combo sourceNameField;
 	private List libraryUrls;
 	private List existingNames;
 	
+	private String noNameErrorMsg;
+	private String alreadyExistsErrorMsg;
+	
 	private TreeAndListGroup selectionGroup;
 	
-	protected Button sourceBrowseButton;
-	
 	private Text nameField;
-	
-	private String customLabel;
 	
 	private String name=""; //$NON-NLS-1$
 	private URL library= null;
@@ -93,12 +89,10 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames, String title, String customLabel) {
+	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames) {
 		super(parent);
-		this.title = title;
 		this.libraryUrls = libraryUrls;
 		this.existingNames= existingNames;
-		this.customLabel= customLabel;
 	}
 	
 	/* (non-Javadoc)
@@ -155,14 +149,13 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(title);
 		WorkbenchHelp.setHelp(newShell, IExternalToolsHelpContextIds.ADD_CUSTOM_DIALOG);
 	}
 	/**
 	 * Clears the cached structure provider after first finalizing
 	 * it properly.
 	 */
-	protected void clearProviderCache() {
+	private void clearProviderCache() {
 		if (providerCache != null) {
 			closeZipFile(providerCache.getZipFile());
 			providerCache = null;
@@ -171,7 +164,7 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 * Attempts to close the passed zip file, and answers a boolean indicating success.
 	 */
-	protected boolean closeZipFile(ZipFile file) {
+	private boolean closeZipFile(ZipFile file) {
 		try {
 			file.close();
 		} catch (IOException e) {
@@ -259,13 +252,13 @@ public class AddCustomDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String customName= nameField.getText().trim();
 		if (customName.length() == 0) {
-			status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.name"), new String[]{customLabel})); //$NON-NLS-1$
+			status.setError(noNameErrorMsg);
 		} else if (!editing){
 			Iterator names= existingNames.iterator();
 			while (names.hasNext()) {
 				String aName = (String) names.next();
 				if(aName.equals(customName)) {
-					status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.exists"), new String[]{customLabel, customName})); //$NON-NLS-1$
+					status.setError(MessageFormat.format(alreadyExistsErrorMsg, new String[]{customName}));
 					updateStatus(status);
 					return;
 				}
@@ -285,7 +278,7 @@ public class AddCustomDialog extends StatusDialog {
 	 *
 	 * @param path the path to be added
 	 */
-	protected void setSourceName(String path) {
+	private void setSourceName(String path) {
 
 		if (path.length() > 0) {
 
@@ -314,7 +307,7 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	*	Create the import source selection widget
 	*/
-	protected void createFileSelectionGroup(Composite parent) {
+	private void createFileSelectionGroup(Composite parent) {
 		//Just create with a dummy root.
 		FileSystemElement dummyRoot= new FileSystemElement("Dummy", null, true); //$NON-NLS-1$
 		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, 
@@ -341,14 +334,15 @@ public class AddCustomDialog extends StatusDialog {
 	}
 	
 	/**
-	 *	Answer a boolean indicating whether the specified source currently exists
+	 *	Returns whether the specified source currently exists
 	 *	and is valid (ie.- proper format)
 	 */
 	protected boolean ensureSourceIsValid() {
 		ZipFile specifiedFile = getSpecifiedSourceFile();
 
-		if (specifiedFile == null)
+		if (specifiedFile == null){
 			return false;
+		}
 
 		return closeZipFile(specifiedFile);
 	}
@@ -357,7 +351,7 @@ public class AddCustomDialog extends StatusDialog {
 	*	currently-specified .zip file.  If this FileSystemElement is not
 	*	currently defined then create and return it.
 	*/
-	protected MinimizedFileSystemElement getFileSystemTree() {
+	private MinimizedFileSystemElement getFileSystemTree() {
 		IImportStructureProvider provider= null;
 		MinimizedFileSystemElement element= null;
 		ZipFile sourceFile = getSpecifiedSourceFile();
@@ -381,7 +375,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * structure provider.  If the user specifies files then this selection is
 	 * cached for later retrieval and is returned.
 	 */
-	protected MinimizedFileSystemElement selectFiles(final Object rootFileSystemObject, final IImportStructureProvider structureProvider) {
+	private MinimizedFileSystemElement selectFiles(final Object rootFileSystemObject, final IImportStructureProvider structureProvider) {
 
 		final MinimizedFileSystemElement[] results = new MinimizedFileSystemElement[1];
 
@@ -399,7 +393,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * Creates and returns a <code>MinimizedFileSystemElement</code> if the specified
 	 * file system object merits one.
 	 */
-	protected MinimizedFileSystemElement createRootElement(Object fileSystemObject, IImportStructureProvider provider) {
+	private MinimizedFileSystemElement createRootElement(Object fileSystemObject, IImportStructureProvider provider) {
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = provider.getLabel(fileSystemObject);
 
@@ -422,7 +416,7 @@ public class AddCustomDialog extends StatusDialog {
 	 *	Answer a handle to the zip file currently specified as being the source.
 	 *	Return null if this file does not exist or is not of valid format.
 	 */
-	protected ZipFile getSpecifiedSourceFile() {
+	private ZipFile getSpecifiedSourceFile() {
 		try {
 			return new ZipFile(sourceNameField.getText());
 		} catch (ZipException e) {
@@ -441,7 +435,7 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 * Returns a structure provider for the specified zip file.
 	 */
-	protected ZipFileStructureProvider getStructureProvider(ZipFile targetZip) {
+	private ZipFileStructureProvider getStructureProvider(ZipFile targetZip) {
 		if (providerCache == null) {
 			providerCache = new ZipFileStructureProvider(targetZip);
 		} else if (!providerCache.getZipFile().getName().equals(targetZip.getName())) {
@@ -458,7 +452,7 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 *	Repopulate the view based on the currently entered directory.
 	 */
-	protected void resetSelection() {
+	private void resetSelection() {
 		MinimizedFileSystemElement currentRoot = getFileSystemTree();
 		selectionGroup.setRoot(currentRoot);
 		
@@ -509,7 +503,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * Returns a content provider for <code>MinimizedFileSystemElement</code>s that returns
 	 * only files as children.
 	 */
-	protected ITreeContentProvider getFileProvider() {
+	private ITreeContentProvider getFileProvider() {
 		return new WorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement) {
@@ -525,7 +519,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * Returns a content provider for <code>MinimizedFileSystemElement</code>s that returns
 	 * only folders as children.
 	 */
-	protected ITreeContentProvider getFolderProvider() {
+	private ITreeContentProvider getFolderProvider() {
 		return new WorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement) {
@@ -619,5 +613,13 @@ public class AddCustomDialog extends StatusDialog {
 	public void create() {
 		super.create();
 		getButton(IDialogConstants.OK_ID).setEnabled(!(library == null));
+	}
+	
+	protected void setAlreadyExistsErrorMsg(String alreadyExistsErrorMsg) {
+		this.alreadyExistsErrorMsg = alreadyExistsErrorMsg;
+	}
+
+	protected void setNoNameErrorMsg(String noNameErrorMsg) {
+		this.noNameErrorMsg = noNameErrorMsg;
 	}
 }

@@ -63,15 +63,7 @@ public class AntTasksPage extends AntPage {
 	 * Allows the user to enter a custom task.
 	 */
 	private void addTask() {
-		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
-
-		Iterator tasks= getContents(true).iterator();
-		List names= new ArrayList();
-		while (tasks.hasNext()) {
-			Task task = (Task) tasks.next();
-			names.add(task.getTaskName());	
-		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog();
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -83,6 +75,22 @@ public class AntTasksPage extends AntPage {
 		addContent(task);
 	}
 	
+	private AddCustomDialog getCustomDialog() {
+		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
+
+		Iterator tasks= getContents(true).iterator();
+		List names= new ArrayList();
+		while (tasks.hasNext()) {
+			Task task = (Task) tasks.next();
+			names.add(task.getTaskName());	
+		}
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names);
+		dialog.setTitle(title);
+		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTasksPage.8")); //$NON-NLS-1$
+		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTasksPage.9")); //$NON-NLS-1$
+		return dialog;
+	}
+
 	/* (non-Javadoc)
 	 * Method declared on AntPage.
 	 */
@@ -125,16 +133,8 @@ public class AntTasksPage extends AntPage {
 		if (task == null) {
 			return;
 		}
-		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		
-		Iterator tasks= getContents(true).iterator();
-		List names= new ArrayList();
-		while (tasks.hasNext()) {
-			Task aTask = (Task) tasks.next();
-			names.add(aTask.getTaskName());
-		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
-		
+		AddCustomDialog dialog = getCustomDialog();
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
 		dialog.setLibrary(task.getLibrary());
