@@ -39,7 +39,7 @@ public class HrefUtil {
 		if (href.startsWith("/"))
 			// already normalized
 			return href;
-		if (href.startsWith("http://"))
+		if (href.startsWith("http://")|| href.startsWith("file://"))
 			// external doc
 			return href;
 		int ddIndex = href.indexOf("../");
