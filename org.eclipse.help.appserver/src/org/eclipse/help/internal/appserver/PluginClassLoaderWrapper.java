@@ -24,8 +24,8 @@ import org.osgi.framework.*;
  * properly return the list of url's (it misses required jars, etc.)
  */
 public class PluginClassLoaderWrapper extends URLClassLoader {
-	private Bundle bundle;
 	private String plugin;
+	private Bundle bundle;
 
 	public PluginClassLoaderWrapper(String plugin) {
 		super(new URL[0]);
@@ -47,38 +47,15 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 	 * NOTE: for now, assume that the web app plugin requires the tomcat plugin
 	 */
 	public URL[] getURLs() {
-		// Collect all classpath entries and avoid duplicates
-		List urlList = new ArrayList();
-		// explicitely add URLs to org.eclipse.core.runtime,
-		// as it might not appear in the required plug-ins
-		addAllNoDup(urlList, getPluginClasspath("org.eclipse.core.runtime"));
-		addAllNoDup(urlList, getPluginClasspath(plugin));
+		List urlList = getPluginClasspath(plugin);
 		return (URL[]) urlList.toArray(new URL[urlList.size()]);
 	}
-	/**
-	 * Appends objects from a list to another list
-	 * without creating duplicates in that list.
-	 * Useful when duplicates should be avoided,
-	 * but HashSet cannot be used since the order is important.
-	 * @param set List to add object to;
-	 * @param list List containg objects to possibly append to the set
-	 */
-	private void addAllNoDup(List set, List list) {
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			Object o = i.next();
-			if (!set.contains(o)) {
-				set.add(o);
-			}
-		}
-	}
-
 	private List getPluginClasspath(String pluginId) {
 		List urls = new ArrayList();
 		IPluginDescriptor pd = // TODO remove compatibility requirement
 			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		if (pd == null)
 			return urls;
-
 		ClassLoader loader = pd.getPluginClassLoader();
 
 		if (loader instanceof URLClassLoader) {
