@@ -251,7 +251,7 @@ public class DefaultHelp implements IHelp
 	
 	private String getBaseURL()
 	{
-		return "http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help";
+		return "http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help/index.jsp";
 	}
 	
 	private String getTopicURL(String topic) {
