@@ -19,13 +19,13 @@ import org.eclipse.search.internal.ui.SearchPluginImages;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
-public class RemoveAllResultsAction extends Action {
+public class RemoveAllMatchesAction extends Action {
 	AbstractTextSearchViewPage fPage;
 
-	public RemoveAllResultsAction(AbstractTextSearchViewPage page) {
-		super(SearchMessages.getString("RemoveAllResultsAction.label")); //$NON-NLS-1$
+	public RemoveAllMatchesAction(AbstractTextSearchViewPage page) {
+		super(SearchMessages.getString("RemoveAllMatchesAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
-		setToolTipText(SearchMessages.getString("RemoveAllResultsAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.getString("RemoveAllMatchesAction.tooltip")); //$NON-NLS-1$
 		fPage= page;
 	}
 	

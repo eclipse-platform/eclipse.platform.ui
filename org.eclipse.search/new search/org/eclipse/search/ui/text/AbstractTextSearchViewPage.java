@@ -28,7 +28,9 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -49,8 +51,9 @@ import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
-import org.eclipse.search2.internal.ui.basic.views.RemoveAllResultsAction;
+import org.eclipse.search2.internal.ui.basic.views.RemoveAllMatchesAction;
 import org.eclipse.search2.internal.ui.basic.views.RemoveMatchAction;
+import org.eclipse.search2.internal.ui.basic.views.RemoveSelectedMatchesAction;
 import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
@@ -103,7 +106,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private MenuManager fMenu;
 	// Actions
 	private Action fCopyToClipboardAction;
-	private Action fRemoveResultsAction;
+	private Action fRemoveSelectedMatches;
+	private Action fRemoveCurrentMatch;
 	private Action fRemoveAllResultsAction;
 	private Action fShowNextAction;
 	private Action fShowPreviousAction;
@@ -136,8 +140,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	protected AbstractTextSearchViewPage(int supportedLayouts) {
 		fSupportedLayouts = supportedLayouts;
 		initLayout();
-		fRemoveAllResultsAction = new RemoveAllResultsAction(this);
-		fRemoveResultsAction = new RemoveMatchAction(this);
+		fRemoveAllResultsAction = new RemoveAllMatchesAction(this);
+		fRemoveSelectedMatches = new RemoveSelectedMatchesAction(this);
+		fRemoveCurrentMatch = new RemoveMatchAction(this);
 		fShowNextAction = new ShowNextResultAction(this);
 		fShowPreviousAction = new ShowPreviousResultAction(this);
 		createLayoutActions();
@@ -287,17 +292,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @param tbm
 	 */
 	protected void fillContextMenu(IMenuManager mgr) {
-		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS,
-				fCopyToClipboardAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
-		mgr
-				.appendToGroup(IContextMenuConstants.GROUP_SHOW,
-						fShowPreviousAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
 		if (getCurrentMatch() != null)
-			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
-					fRemoveResultsAction);
-		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
-				fRemoveAllResultsAction);
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveCurrentMatch);
+		if (!getViewer().getSelection().isEmpty())
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
 	}
 	/**
 	 * {@inheritDoc}
@@ -458,6 +460,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fCurrentMatchIndex = 0;
+				fRemoveSelectedMatches.setEnabled(!event.getSelection().isEmpty());
 			}
 		});
 		Menu menu = fMenu.createContextMenu(fViewer.getControl());
@@ -675,7 +678,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				.appendToGroup(IContextMenuConstants.GROUP_SHOW,
 						fShowPreviousAction); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
-				fRemoveResultsAction); //$NON-NLS-1$
+				fRemoveSelectedMatches); //$NON-NLS-1$
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES,
 				fRemoveAllResultsAction); //$NON-NLS-1$
 		IActionBars actionBars = getSite().getActionBars();
@@ -796,6 +799,45 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public void saveState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {
 			memento.putInteger(KEY_LAYOUT, fCurrentLayout);
+		}
+	}
+	
+	public void removeSelected() {
+		AbstractTextSearchResult result= getInput();
+		if (result == null)
+			return;
+		StructuredViewer viewer= getViewer();
+		IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
+		HashSet set= new HashSet();
+		if (viewer instanceof TreeViewer) {
+			ITreeContentProvider cp= (ITreeContentProvider) viewer.getContentProvider();
+			collectAllMatchesBelow(result, set, cp, selection.toArray());
+		} else {
+			IStructuredContentProvider cp= (IStructuredContentProvider) viewer.getContentProvider();
+			collectAllMatches(result, set, cp, selection.toArray());
+		}
+		Match[] matches= new Match[set.size()];
+		set.toArray(matches);
+		result.removeMatches(matches);
+	}
+
+	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, IStructuredContentProvider cp, Object[] elements) {
+		for (int j= 0; j < elements.length; j++) {
+			Match[] matches= result.getMatches(elements[j]);
+			for (int i = 0; i < matches.length; i++) {
+				set.add(matches[i]);
+			}
+		}
+	}
+	
+	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set set, ITreeContentProvider cp, Object[] elements) {
+		for (int j= 0; j < elements.length; j++) {
+			Match[] matches= result.getMatches(elements[j]);
+			for (int i = 0; i < matches.length; i++) {
+				set.add(matches[i]);
+			}
+			Object[] children= cp.getChildren(elements[j]);
+			collectAllMatchesBelow(result, set, cp, children);
 		}
 	}
 }
