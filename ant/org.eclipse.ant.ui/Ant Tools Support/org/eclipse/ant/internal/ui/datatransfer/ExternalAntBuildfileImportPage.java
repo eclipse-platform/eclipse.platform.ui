@@ -73,7 +73,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private ModifyListener fLocationModifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			fAntModel= AntUtil.getAntModel(getProjectLocationFieldValue(), true, false, false);
-			if (fAntModel != null) {
+			if (fAntModel != null && fAntModel.getProjectNode() != null) {
 			    setProjectName(); // page will be validated on setting the project name
 			} else {
 				setPageComplete(validatePage());
@@ -295,6 +295,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			} 
 			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.17")); //$NON-NLS-1$
 			return false;
+		}
+		
+		if (fAntModel.getProjectNode() == null) {
+		    setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.2")); //$NON-NLS-1$
+		    return false;
 		}
 		
 		if (getProjectNameFieldValue().length() == 0) {
