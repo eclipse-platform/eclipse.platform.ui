@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPluginContribution;
@@ -76,7 +77,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private String id;
 
-    //Work in progress for OSEditors
+    private boolean matchingStrategyChecked = false;
+    private IEditorMatchingStrategy matchingStrategy;
+
     private Program program;
 
     //The id of the plugin which contributed this editor, null for external editors
@@ -107,7 +110,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         }
     };
 
-   
 	/**
      * Create a new instance of an editor descriptor. Limited
      * to internal framework calls.
@@ -631,4 +633,27 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     public IPartDescriptor getPartDescriptor() {
         return partInfo;
     }
+
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IEditorDescriptor#getEditorManagementPolicy()
+     */
+    public IEditorMatchingStrategy getEditorMatchingStrategy() {
+        if (matchingStrategy == null && !matchingStrategyChecked) {
+            matchingStrategyChecked = true;
+            if (program == null && configurationElement != null) {
+                if (configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_MATCHING_STRATEGY) != null) {
+                    try {
+                        matchingStrategy = (IEditorMatchingStrategy) WorkbenchPlugin.createExtension(configurationElement, IWorkbenchRegistryConstants.ATT_MATCHING_STRATEGY);
+                    } catch (CoreException e) {
+                        WorkbenchPlugin.log("Error creating editor management policy for editor id " + getId(), e); //$NON-NLS-1$
+                    }
+                }
+            }
+        }
+        return matchingStrategy;
+    }
+    
+    
 }

@@ -62,8 +62,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorLauncher;
+import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
@@ -458,13 +460,45 @@ public class EditorManager implements IExtensionChangeHandler {
      * exists return null.
      */
     public IEditorPart findEditor(IEditorInput input) {
-        IEditorReference[] editors = editorPresentation.getEditors();
-        for (int i = 0; i < editors.length; i++) {
-            IEditorPart part = (IEditorPart) editors[i].getPart(false);
-            if (part != null && part.getEditorInput() != null && part.getEditorInput().equals(input)) {
-                return part;
+        ArrayList editorList = new ArrayList(Arrays.asList(editorPresentation.getEditors()));
+        
+        // Phase 1: check editors that have their own matching strategy
+        for (Iterator i = editorList.iterator(); i.hasNext();) {
+            Editor editor = (Editor) i.next();
+            IEditorDescriptor desc = editor.getDescriptor();
+            if (desc != null) {
+                IEditorMatchingStrategy matchingStrategy = desc.getEditorMatchingStrategy();
+                if (matchingStrategy != null) {
+                    // We're handling this one here, so remove it from the list.
+                    i.remove();
+                    try {
+                        IEditorInput editorInput = editor.getEditorInput();
+                        if (matchingStrategy.matches(editorInput, input)) {
+                            return editor.getEditor(true);
+                        }
+                    } catch (PartInitException e) {
+                        WorkbenchPlugin.log("Error restoring input for editor with id " + editor.getId(), e); //$NON-NLS-1$
+                    }
+                }
             }
         }
+        
+        // Phase 2: check materialized editors (without their own matching strategy)
+        for (Iterator i = editorList.iterator(); i.hasNext();) {
+            Editor editor = (Editor) i.next();
+            IEditorPart part = (IEditorPart) editor.getPart(false);
+            if (part != null) {
+                // We're handling this one here, so remove it from the list.
+                i.remove();
+                if (part.getEditorInput() != null && part.getEditorInput().equals(input)) {
+                    return part;
+                }
+            }
+        }
+        
+        // Phase 3: check unmaterialized editors for input equality,
+        // delaying plug-in activation further by only restoring the editor input
+        // if the editor reference's factory id and name match. 
         String name = input.getName();
         IPersistableElement persistable = input.getPersistable();
         if (name == null || persistable == null)
@@ -472,19 +506,17 @@ public class EditorManager implements IExtensionChangeHandler {
         String id = persistable.getFactoryId();
         if (id == null)
             return null;
-        for (int i = 0; i < editors.length; i++) {
-            Editor e = (Editor) editors[i];
-            if (e.getPart(false) == null) {
-                if (name.equals(e.getName()) && id.equals(e.getFactoryId())) {
-                    IEditorInput restoredInput;
-                    try {
-                        restoredInput = e.getRestoredInput();
-                        if (Util.equals(restoredInput, input)) {
-                            return e.getEditor(true);
-                        }
-                    } catch (PartInitException e1) {
-                        WorkbenchPlugin.log(e1);
+        for (Iterator i = editorList.iterator(); i.hasNext();) {
+            Editor editor = (Editor) i.next();
+            if (name.equals(editor.getName()) && id.equals(editor.getFactoryId())) {
+                IEditorInput restoredInput;
+                try {
+                    restoredInput = editor.getEditorInput();
+                    if (Util.equals(restoredInput, input)) {
+                        return editor.getEditor(true);
                     }
+                } catch (PartInitException e1) {
+                    WorkbenchPlugin.log(e1);
                 }
             }
         }
@@ -777,7 +809,7 @@ public class EditorManager implements IExtensionChangeHandler {
                     .setActiveEditorWorkbookFromID(workbookID);
         }
         
-        final IEditorInput input = ref.getRestoredInput();
+        final IEditorInput input = ref.getEditorInput();
         final EditorDescriptor desc = ref.getDescriptor();
         
         final PartInitException ex[] = new PartInitException[1];
@@ -1096,7 +1128,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 
                 IEditorInput input;
                 try {
-                    input = ref.getRestoredInput();
+                    input = ref.getEditorInput();
                 } catch (PartInitException e1) {
                     input = new NullEditorInput();
                 }
@@ -1149,7 +1181,7 @@ public class EditorManager implements IExtensionChangeHandler {
         EditorSite site = null;
         
         try {
-            IEditorInput editorInput = ref.getRestoredInput();
+            IEditorInput editorInput = ref.getEditorInput();
             
             // Get the editor descriptor.
             String editorID = ref.getId();
@@ -1682,6 +1714,14 @@ public class EditorManager implements IExtensionChangeHandler {
             editorMemento = null;
         }
 
+        public IEditorInput getEditorInput() throws PartInitException {
+            IEditorPart part = getEditor(false);
+            if (part != null) {
+                return part.getEditorInput();
+            }
+            return getRestoredInput();
+        }
+        
         public IEditorInput getRestoredInput() throws PartInitException {
             if (restoredInput != null) {
                 return restoredInput;

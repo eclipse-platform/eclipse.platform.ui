@@ -36,8 +36,8 @@ public interface IEditorReference extends IWorkbenchPartReference {
     public String getName();
 
     /**
-     * Returns the IEditorPart referenced by this object.
-     * Returns null if the editors was not instanciated or
+     * Returns the editor referenced by this object.
+     * Returns <code>null</code> if the editor was not instantiated or
      * it failed to be restored. Tries to restore the editor
      * if <code>restore</code> is true.
      */
@@ -52,4 +52,17 @@ public interface IEditorReference extends IWorkbenchPartReference {
      * Returns true if the editor is pinned otherwise returns false.
      */
     public boolean isPinned();
+
+    /**
+     * Returns the editor input for the editor referenced by this object.
+     * <p>
+     * Unlike most of the other methods on this type, this method
+     * can trigger plug-in activation.
+     * </p>
+     *  
+     * @return the editor input for the editor referenced by this object
+     * @throws PartInitException if there was an error restoring the editor input
+     * @since 3.1
+     */
+    public IEditorInput getEditorInput() throws PartInitException;
 }
