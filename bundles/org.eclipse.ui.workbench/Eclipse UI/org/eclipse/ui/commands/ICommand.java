@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * <p>
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface ICommand extends Comparable {
 
-	// TODO SortedSet getContextIds(), Map getImageUrisByStyle(), SortedSet getKeySequences()
+	// TODO ? SortedSet getContextIds(), Map getImageUrisByStyle(), SortedSet getKeySequences()
 	
 	/**
 	 * Registers an ICommandListener instance with this command.
@@ -51,7 +51,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	List getContextBindings()
+	SortedSet getContextBindings()
 		throws NotDefinedException;
 
 	/**
@@ -82,7 +82,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	List getImageBindings()
+	SortedSet getImageBindings()
 		throws NotDefinedException;
 
 	/**
@@ -90,7 +90,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	List getKeyBindings()
+	SortedSet getKeyBindings()
 		throws NotDefinedException;	
 	
 	/**

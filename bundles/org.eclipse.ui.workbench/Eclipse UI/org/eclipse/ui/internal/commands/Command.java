@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandEvent;
@@ -30,15 +31,15 @@ final class Command implements ICommand {
 
 	private boolean active;
 	private String categoryId;
-	private List contextBindings;
+	private SortedSet contextBindings;
 	private ICommandEvent commandEvent;
 	private List commandListeners;
 	private boolean defined;
 	private String description;
 	private String helpId;
 	private String id;
-	private List imageBindings;
-	private List keyBindings;
+	private SortedSet imageBindings;
+	private SortedSet keyBindings;
 	private String name;
 
 	private transient IContextBinding[] contextBindingsAsArray;
@@ -135,7 +136,7 @@ final class Command implements ICommand {
 		return categoryId;
 	}
 
-	public List getContextBindings()
+	public SortedSet getContextBindings()
 		throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
@@ -163,7 +164,7 @@ final class Command implements ICommand {
 		return id;	
 	}
 
-	public List getImageBindings()
+	public SortedSet getImageBindings()
 		throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
@@ -171,7 +172,7 @@ final class Command implements ICommand {
 		return imageBindings;
 	}
 
-	public List getKeyBindings()
+	public SortedSet getKeyBindings()
 		throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
@@ -275,7 +276,7 @@ final class Command implements ICommand {
 		return false;
 	}
 
-	boolean setContextBindings(List contextBindings) {
+	boolean setContextBindings(SortedSet contextBindings) {
 		contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
 		
 		if (!Util.equals(contextBindings, this.contextBindings)) {
@@ -338,7 +339,7 @@ final class Command implements ICommand {
 		return false;
 	}
 
-	boolean setImageBindings(List imageBindings) {
+	boolean setImageBindings(SortedSet imageBindings) {
 		imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
 		
 		if (!Util.equals(imageBindings, this.imageBindings)) {
@@ -353,7 +354,7 @@ final class Command implements ICommand {
 		return false;
 	}
 
-	boolean setKeyBindings(List keyBindings) {
+	boolean setKeyBindings(SortedSet keyBindings) {
 		keyBindings = Util.safeCopy(keyBindings, IKeyBinding.class);
 		
 		if (!Util.equals(keyBindings, this.keyBindings)) {

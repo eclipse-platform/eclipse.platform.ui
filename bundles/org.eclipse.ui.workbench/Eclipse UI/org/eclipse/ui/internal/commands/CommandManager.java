@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -320,6 +319,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private void calculateImageBindings() {
+		String[] activeLocales = getPath(activeLocale, SEPARATOR);
+		String[] activePlatforms = getPath(activePlatform, SEPARATOR);	
 		// TODO
 	}
 	
@@ -333,18 +334,22 @@ public final class CommandManager implements ICommandManager {
 		keyBindingMachine.setActivePlatforms(activePlatforms);
 		keyBindingMachine.setKeyBindings0(preferenceKeyBindingDefinitions);
 		keyBindingMachine.setKeyBindings1(pluginKeyBindingDefinitions);		
-				
+
+		/* TODO remove				
 		System.out.println("activeContextIds: " + activeContextIds);
 		System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
 		System.out.println("activeLocales: " + Arrays.asList(activeLocales));
 		System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
 		System.out.println("keyBindings0: " + preferenceKeyBindingDefinitions);
 		System.out.println("keyBindings1: " + pluginKeyBindingDefinitions);
+		*/
 		
 		keyBindingsByCommandId = keyBindingMachine.getKeyBindingsByCommandId();		
 
+		/* TODO remove
 		System.out.println(keyBindingMachine.getMatchesByKeySequence());		
 		System.out.println(keyBindingsByCommandId);
+		*/
 	}
 
 	private void fireCommandManagerChanged() {
@@ -586,14 +591,14 @@ public final class CommandManager implements ICommandManager {
 		updated |= command.setActive(inContext(contextBindings));
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		updated |= command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
-		updated |= command.setContextBindings(contextBindings != null ? new ArrayList(contextBindings) : Collections.EMPTY_LIST);
+		updated |= command.setContextBindings(contextBindings != null ? contextBindings : Util.EMPTY_SORTED_SET);
 		updated |= command.setDefined(commandDefinition != null);
 		updated |= command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);
 		updated |= command.setHelpId(commandDefinition != null ? commandDefinition.getHelpId() : null);
 		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
-		updated |= command.setImageBindings(imageBindings != null ? new ArrayList(imageBindings) : Collections.EMPTY_LIST);
+		updated |= command.setImageBindings(imageBindings != null ? imageBindings : Util.EMPTY_SORTED_SET);
 		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(command.getId());
-		updated |= command.setKeyBindings(keyBindings != null ? new ArrayList(keyBindings) : Collections.EMPTY_LIST);
+		updated |= command.setKeyBindings(keyBindings != null ? keyBindings : Util.EMPTY_SORTED_SET);
 		updated |= command.setName(commandDefinition != null ? commandDefinition.getName() : Util.ZERO_LENGTH_STRING);
 		return updated;
 	}
