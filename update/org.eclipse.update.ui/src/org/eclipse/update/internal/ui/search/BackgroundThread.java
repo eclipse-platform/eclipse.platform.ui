@@ -55,7 +55,8 @@ public class BackgroundThread extends Thread {
 		} catch (InterruptedException e) {
 			throwable= e;
 		} catch (RuntimeException e) {
-			throwable= e;
+			//throwable= e;
+			throw e;
 		} catch (ThreadDeath e) {
 			// Make sure to propagate ThreadDeath, or threads will never fully terminate
 			throw e;

@@ -3,28 +3,66 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.manager.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.manager.NewFolderDialog;
+import org.eclipse.update.internal.ui.manager.NewSiteDialog;
+import org.eclipse.update.internal.ui.model.BookmarkFolder;
+import org.eclipse.update.internal.ui.model.DiscoveryFolder;
+import org.eclipse.update.internal.ui.model.FeatureReferenceAdapter;
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
+import org.eclipse.update.internal.ui.model.MyComputer;
+import org.eclipse.update.internal.ui.model.MyComputerDirectory;
+import org.eclipse.update.internal.ui.model.MyComputerFile;
+import org.eclipse.update.internal.ui.model.NamedModelObject;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.update.internal.ui.model.SiteCategory;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.ui.search.DefaultUpdatesSearchObject;
+import org.eclipse.update.internal.ui.search.SearchCategoryDescriptor;
+import org.eclipse.update.internal.ui.search.SearchCategoryRegistryReader;
+import org.eclipse.update.internal.ui.search.SearchObject;
+import org.eclipse.update.internal.ui.search.SearchResultSite;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
-import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.internal.ui.wizards.NewFolderWizardPage;
+import org.eclipse.update.internal.ui.wizards.NewSearchWizardPage;
+import org.eclipse.update.internal.ui.wizards.NewSiteBookmarkWizardPage;
+import org.eclipse.update.internal.ui.wizards.NewWizard;
 
 /**
  * Insert the type's description here.
@@ -116,8 +154,8 @@ public class UpdatesView
 			if (parent instanceof SearchObject) {
 				return ((SearchObject) parent).getChildren(null);
 			}
-			if (parent instanceof UpdateSearchSite) {
-				return ((UpdateSearchSite) parent).getChildren(null);
+			if (parent instanceof SearchResultSite) {
+				return ((SearchResultSite) parent).getChildren(null);
 			}
 			if (parent instanceof MyComputer) {
 				return ((MyComputer) parent).getChildren(parent);
@@ -166,6 +204,9 @@ public class UpdatesView
 			if (parent instanceof SiteCategory) {
 				return ((SiteCategory) parent).getChildCount() > 0;
 			}
+			if (parent instanceof SearchResultSite) {
+				return ((SearchResultSite) parent).getChildCount() > 0;
+			}
 			return false;
 		}
 
@@ -180,9 +221,9 @@ public class UpdatesView
 				IFeature feature = (IFeature) obj;
 				return feature.getLabel();
 			}
-			if (obj instanceof FeatureReferenceAdapter) {
+			if (obj instanceof IFeatureAdapter) {
 				try {
-					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
+					IFeature feature = ((IFeatureAdapter) obj).getFeature();
 					VersionedIdentifier versionedIdentifier =
 						(feature != null) ? feature.getVersionedIdentifier() : null;
 					String version = "";
@@ -197,7 +238,7 @@ public class UpdatesView
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof SiteBookmark) {
+			if (obj instanceof SiteBookmark || obj instanceof SearchResultSite) {
 				return siteImage;
 			}
 			if (obj instanceof MyComputer) {
@@ -222,7 +263,7 @@ public class UpdatesView
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
 			}
-			if (obj instanceof IFeature || obj instanceof FeatureReferenceAdapter) {
+			if (obj instanceof IFeature || obj instanceof IFeatureAdapter) {
 				return featureImage;
 			}
 			return super.getImage(obj);
@@ -584,19 +625,26 @@ public class UpdatesView
 	}
 
 	public void objectsAdded(Object parent, Object[] children) {
-		if (children[0] instanceof NamedModelObject) {
+		Object child = children[0];
+		if (child instanceof NamedModelObject
+			|| child instanceof SearchResultSite
+			|| child instanceof IFeature
+			|| child instanceof IFeatureAdapter) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 			if (parent == null)
 				parent = model;
 			viewer.add(parent, children);
-			viewer.expandToLevel(parent, 1);
+			if (parent != model)
+				viewer.setExpandedState(parent, true);
 			viewer.setSelection(new StructuredSelection(children), true);
 		}
 	}
 
 	public void objectsRemoved(Object parent, Object[] children) {
-		if (children[0] instanceof NamedModelObject) {
+		if (children[0] instanceof NamedModelObject
+			|| children[0] instanceof SearchResultSite) {
 			viewer.remove(children);
+			viewer.setSelection(new StructuredSelection());
 		}
 	}
 

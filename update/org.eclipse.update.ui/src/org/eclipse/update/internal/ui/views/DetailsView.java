@@ -147,7 +147,8 @@ public void createPartControl(Composite parent) {
 
 public void showPageWithInput(String pageId, Object input) {
 	showPage(pageId, input);
-	history.add(pageId, input);
+	if (input!=null)
+		history.add(pageId, input);
    	backAction.update();
    	forwardAction.update();
    	IWorkbenchPage page = UpdateUIPlugin.getActivePage();
@@ -201,13 +202,15 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(SEARCH_PAGE, el);
 				return;
 			}
-			if (el instanceof UpdateSearchSite) {
+			if (el instanceof SearchResultSite) {
 				showPageWithInput(SITE_PAGE, el);
 				return;
 			}
 			//fallback - show empty page
 			showPageWithInput(UNKNOWN_PAGE, el);
 		}
+		else
+			showPageWithInput(UNKNOWN_PAGE, null);
 	}
 }
 

@@ -15,45 +15,47 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
 
-public class UpdateSearchSite extends ModelObject 
-							implements IWorkbenchAdapter,
-										ISiteAdapter {
+public class SearchResultSite
+	extends ModelObject
+	implements IWorkbenchAdapter, ISiteAdapter {
 	private ISite site;
 	private Vector candidates;
 	private String label;
-	
+
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IWorkbenchAdapter.class)) {
 			return this;
 		}
 		return super.getAdapter(adapter);
 	}
-	
-	public UpdateSearchSite(String label, ISite site) {
+
+	public SearchResultSite(String label, ISite site) {
 		this.label = label;
 		this.site = site;
 		candidates = new Vector();
 	}
-	
+
 	public ISite getSite() {
 		return site;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public String toString() {
 		return getLabel();
 	}
-	
+
 	/**
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
 	public Object[] getChildren(Object parent) {
 		return candidates.toArray();
 	}
-
+	public int getChildCount() {
+		return candidates.size();
+	}
 
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
@@ -62,7 +64,6 @@ public class UpdateSearchSite extends ModelObject
 		return null;
 	}
 
-
 	/**
 	 * @see IWorkbenchAdapter#getLabel(Object)
 	 */
@@ -70,14 +71,13 @@ public class UpdateSearchSite extends ModelObject
 		return getLabel();
 	}
 
-
 	/**
 	 * @see IWorkbenchAdapter#getParent(Object)
 	 */
 	public Object getParent(Object arg0) {
 		return null;
 	}
-	
+
 	public void addCandidate(IFeatureAdapter candidate) {
 		candidates.add(candidate);
 	}
@@ -87,6 +87,5 @@ public class UpdateSearchSite extends ModelObject
 	public URL getURL() {
 		return site.getURL();
 	}
-
 
 }

@@ -4,31 +4,69 @@ package org.eclipse.update.internal.ui.manager;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.graphics.*;
-
 import java.net.URL;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.views.*;
-import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.jface.wizard.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import java.text.MessageFormat;
-import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Version;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.model.IConfiguredSiteContext;
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
+import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.update.internal.ui.model.PendingChange;
+import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.parts.PropertyWebForm;
+import org.eclipse.update.internal.ui.parts.UpdateFormPage;
+import org.eclipse.update.internal.ui.search.PluginsSearchCategory;
+import org.eclipse.update.internal.ui.search.SearchCategoryDescriptor;
+import org.eclipse.update.internal.ui.search.SearchCategoryRegistryReader;
+import org.eclipse.update.internal.ui.search.SearchObject;
+import org.eclipse.update.internal.ui.views.DetailsView;
+import org.eclipse.update.internal.ui.wizards.InstallWizard;
+import org.eclipse.update.internal.ui.wizards.InstallWizardDialog;
+import org.eclipse.update.ui.forms.internal.ExpandableGroup;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.HTMLTableLayout;
+import org.eclipse.update.ui.forms.internal.HyperlinkHandler;
+import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
+import org.eclipse.update.ui.forms.internal.SelectableFormLabel;
+import org.eclipse.update.ui.forms.internal.TableData;
 
 public class DetailsForm extends PropertyWebForm {
 	// NL keys
@@ -70,6 +108,14 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DIALOG_CMESSAGE = "FeaturePage.dialog.cmessage";
 	private static final String KEY_DIALOG_UCMESSAGE =
 		"FeaturePage.dialog.ucmessage";
+	private static final String KEY_MISSING_TITLE = "FeaturePage.missing.title";
+	private static final String KEY_MISSING_MESSAGE = "FeaturePage.missing.message";
+	private static final String KEY_MISSING_SEARCH = "FeaturePage.missing.search";
+	private static final String KEY_MISSING_CONTINUE =
+		"FeaturePage.missing.continue";
+	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort";
+	private static final String KEY_SEARCH_OBJECT_NAME =
+		"FeaturePage.missing.searchObjectName";
 	//	
 
 	private Label imageLabel;
@@ -718,7 +764,27 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		if (missing.size() > 0) {
 			// show missing plug-in dialog and ask to search
-			return false;
+			MessageDialog dialog =
+				new MessageDialog(
+					getControl().getShell(),
+					UpdateUIPlugin.getResourceString(KEY_MISSING_TITLE),
+					(Image) null,
+					UpdateUIPlugin.getResourceString(KEY_MISSING_MESSAGE),
+					MessageDialog.WARNING,
+					new String[] {
+						UpdateUIPlugin.getResourceString(KEY_MISSING_SEARCH),
+						UpdateUIPlugin.getResourceString(KEY_MISSING_CONTINUE),
+						UpdateUIPlugin.getResourceString(KEY_MISSING_ABORT)},
+					0);
+			int result = dialog.open();
+			if (result == 0) {
+				initiatePluginSearch(missing);
+				return false;
+			} else if (result == 1) {
+				return true;
+			} else {
+				return false;
+			}
 		} else
 			return true;
 	}
@@ -741,6 +807,27 @@ public class DetailsForm extends PropertyWebForm {
 				return true;
 		}
 		return false;
+	}
+
+	private void initiatePluginSearch(ArrayList missing) {
+		SearchCategoryDescriptor desc =
+			SearchCategoryRegistryReader.getDefault().getDescriptor(
+				"org.eclipse.update.ui.plugins");
+		if (desc == null)
+			return;
+		String name =
+			UpdateUIPlugin.getFormattedMessage(
+				KEY_SEARCH_OBJECT_NAME,
+				currentFeature.getLabel());
+		SearchObject search = new SearchObject(name, desc);
+		String value = PluginsSearchCategory.encodeImports(missing);
+		search.getSettings().put("imports", value);
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		model.addBookmark(search);
+		try {
+			UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_UPDATES);
+		} catch (PartInitException e) {
+		}
 	}
 
 	private PendingChange createPendingChange(int type) {

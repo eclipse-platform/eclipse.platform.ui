@@ -30,6 +30,8 @@ public class SearchObject extends NamedModelObject {
 	private static final String KEY_CHECKING = "Search.checking";
 	private static final String SETTINGS_SECTION = "search";
 	private static final String S_MY_COMPUTER = "searchMyComputer";
+	private static final String S_BOOKMARKS = "searchBookmarks";
+	private static final String S_DISCOVERY = "searchDiscovery";
 
 	private Vector result = new Vector();
 	private boolean searchInProgress;
@@ -46,21 +48,24 @@ public class SearchObject extends NamedModelObject {
 			searchInProgress = false;
 		}
 	}
-	
+
 	public SearchObject() {
 		this("", null, false);
 	}
 	public SearchObject(String name, SearchCategoryDescriptor descriptor) {
 		this(name, descriptor, false);
 	}
-	public SearchObject(String name, SearchCategoryDescriptor descriptor, boolean categoryFixed) {
+	public SearchObject(
+		String name,
+		SearchCategoryDescriptor descriptor,
+		boolean categoryFixed) {
 		super(name);
 		this.categoryId = descriptor.getId();
 		this.categoryFixed = categoryFixed;
 		backgroundProgress = new BackgroundProgressMonitor();
 		backgroundProgress.addProgressMonitor(new SearchAdapter());
 	}
-	
+
 	public boolean isCategoryFixed() {
 		return categoryFixed;
 	}
@@ -68,9 +73,9 @@ public class SearchObject extends NamedModelObject {
 	public String getCategoryId() {
 		return categoryId;
 	}
-	
+
 	public void setCategoryId(String id) {
-		if (categoryId!=null && !categoryId.equals(id)) {
+		if (categoryId != null && !categoryId.equals(id)) {
 			settings.clear();
 		}
 		this.categoryId = id;
@@ -89,6 +94,20 @@ public class SearchObject extends NamedModelObject {
 		getSettingsSection().put(S_MY_COMPUTER, value);
 	}
 
+	public static void setSearchBookmarks(boolean value) {
+		getSettingsSection().put(S_BOOKMARKS, value);
+	}
+	public static boolean getSearchBookmarks() {
+		return getSettingsSection().getBoolean(S_BOOKMARKS);
+	}
+	
+	public static void setSearchDiscovery(boolean value) {
+		getSettingsSection().put(S_DISCOVERY, value);
+	}
+	public static boolean getSearchDiscovery() {
+		return getSettingsSection().getBoolean(S_DISCOVERY);
+	}
+
 	private static IDialogSettings getSettingsSection() {
 		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = master.getSection(SETTINGS_SECTION);
@@ -103,7 +122,7 @@ public class SearchObject extends NamedModelObject {
 	public Object[] getChildren(Object parent) {
 		return result.toArray();
 	}
-	
+
 	public boolean hasChildren() {
 		return result.size() > 0;
 	}
@@ -219,6 +238,7 @@ public class SearchObject extends NamedModelObject {
 
 	public void computeSearchSources(ArrayList sources) {
 		addMyComputerSites(sources);
+		addBookmarks(sources);
 	}
 
 	private void searchOneSite(
@@ -235,13 +255,13 @@ public class SearchObject extends NamedModelObject {
 
 		monitor.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 		IFeatureReference[] refs = site.getFeatureReferences();
-		UpdateSearchSite searchSite = null;
+		SearchResultSite searchSite = null;
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
 			if (query.matches(candidate)) {
 				// bingo - add this
 				if (searchSite == null) {
-					searchSite = new UpdateSearchSite(siteAdapter.getLabel(), site);
+					searchSite = new SearchResultSite(siteAdapter.getLabel(), site);
 					result.add(searchSite);
 					asyncFireObjectAdded(this, searchSite);
 				}
@@ -287,6 +307,15 @@ public class SearchObject extends NamedModelObject {
 			for (int i = 0; i < myComputerSites.length; i++) {
 				result.add(myComputerSites[i]);
 			}
+		}
+	}
+	private void addBookmarks(ArrayList result) {
+		if (getSearchBookmarks()==false) return;
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		SiteBookmark[] bookmarks = model.getBookmarkLeafs();
+		for (int i = 0; i < bookmarks.length; i++) {
+			SiteBookmark bookmark = bookmarks[i];
+			result.add(bookmark);
 		}
 	}
 }

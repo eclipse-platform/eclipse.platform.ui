@@ -151,7 +151,7 @@ public class SearchResultSection {
 		if (search != null) {
 			Object[] sites = search.getChildren(null);
 			for (int i = 0; i < sites.length; i++) {
-				UpdateSearchSite site = (UpdateSearchSite) sites[i];
+				SearchResultSite site = (SearchResultSite) sites[i];
 				Object[] features = site.getChildren(null);
 				for (int j = 0; j < features.length; j++) {
 					IFeatureAdapter adapter = (IFeatureAdapter) features[j];

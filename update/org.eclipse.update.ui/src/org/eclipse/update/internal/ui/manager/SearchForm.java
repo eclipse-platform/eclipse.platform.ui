@@ -43,6 +43,10 @@ public class SearchForm extends UpdateWebForm {
 		"SearchPage.options.myComputerSettings";
 	private static final String KEY_FULL_MODE_CHECK =
 		"SearchPage.options.fullModeCheck";
+	private static final String KEY_BOOKMARK_CHECK =
+		"SearchPage.options.bookmarkCheck";
+	private static final String KEY_DISCOVERY_CHECK =
+		"SearchPage.options.discoveryCheck";
 	private static final String UPDATES_IMAGE_ID = "updates";
 	private static final String SETTINGS_SECTION = "SearchForm";
 	private static final String S_FULL_MODE = "fullMode";
@@ -53,6 +57,8 @@ public class SearchForm extends UpdateWebForm {
 	private ExpandableGroup optionsGroup;
 	private CCombo categoryCombo;
 	private Button myComputerCheck;
+	private Button discoveryCheck;
+	private Button bookmarkCheck;
 	private Button myComputerSettings;
 	private Button fullModeCheck;
 	private Button searchButton;
@@ -102,10 +108,10 @@ public class SearchForm extends UpdateWebForm {
 			infoLabel.setText(text);
 			reflow(true);
 			searchObject.detachProgressMonitor(this);
-//			if (statusMonitor != null) {
-//				searchObject.detachProgressMonitor(statusMonitor);
-//				statusMonitor = null;
-//			}
+			//			if (statusMonitor != null) {
+			//				searchObject.detachProgressMonitor(statusMonitor);
+			//				statusMonitor = null;
+			//			}
 			enableOptions(true);
 		}
 	}
@@ -130,8 +136,8 @@ public class SearchForm extends UpdateWebForm {
 
 	private void detachFrom(SearchObject obj) {
 		obj.detachProgressMonitor(monitor);
-//		if (statusMonitor != null)
-//			obj.detachProgressMonitor(statusMonitor);
+		//		if (statusMonitor != null)
+		//			obj.detachProgressMonitor(statusMonitor);
 	}
 
 	public void initialize(Object modelObject) {
@@ -141,11 +147,11 @@ public class SearchForm extends UpdateWebForm {
 			UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 		super.initialize(modelObject);
 	}
-	
+
 	private void updateHeadingText(SearchObject obj) {
 		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
-		if (obj!=null)
-			title += " - "+obj.getName();
+		if (obj != null)
+			title += " - " + obj.getName();
 		setHeadingText(title);
 	}
 
@@ -222,6 +228,30 @@ public class SearchForm extends UpdateWebForm {
 						sd.open();
 					}
 				});
+				GridData gd;
+				discoveryCheck = factory.createButton(expansion, null, SWT.CHECK);
+				discoveryCheck.setText(UpdateUIPlugin.getResourceString(KEY_DISCOVERY_CHECK));
+				discoveryCheck.setSelection(searchObject.getSearchDiscovery());
+				discoveryCheck.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						searchObject.setSearchDiscovery(discoveryCheck.getSelection());
+					}
+				});
+				gd = new GridData();
+				gd.horizontalSpan = 2;
+				discoveryCheck.setLayoutData(gd);
+
+				bookmarkCheck = factory.createButton(expansion, null, SWT.CHECK);
+				bookmarkCheck.setText(UpdateUIPlugin.getResourceString(KEY_BOOKMARK_CHECK));
+				bookmarkCheck.setSelection(searchObject.getSearchBookmarks());
+				bookmarkCheck.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						searchObject.setSearchBookmarks(bookmarkCheck.getSelection());
+					}
+				});
+				gd = new GridData();
+				gd.horizontalSpan = 2;
+				bookmarkCheck.setLayoutData(gd);
 
 				fullModeCheck = factory.createButton(expansion, null, SWT.CHECK);
 				fullModeCheck.setText(UpdateUIPlugin.getResourceString(KEY_FULL_MODE_CHECK));
@@ -231,7 +261,7 @@ public class SearchForm extends UpdateWebForm {
 						toggleMode(fullModeCheck.getSelection());
 					}
 				});
-				GridData gd = new GridData();
+				gd = new GridData();
 				gd.horizontalSpan = 2;
 				fullModeCheck.setLayoutData(gd);
 			}
@@ -330,7 +360,8 @@ public class SearchForm extends UpdateWebForm {
 	private void switchTo(ISearchCategory category) {
 		pagebook.showPage(category.getControl());
 		currentCategory = category;
-		SearchCategoryDescriptor desc = (SearchCategoryDescriptor)descTable.get(category);
+		SearchCategoryDescriptor desc =
+			(SearchCategoryDescriptor) descTable.get(category);
 		descLabel.load(desc.getDescription(), true, true);
 		reflow();
 		updateSize();
@@ -420,16 +451,16 @@ public class SearchForm extends UpdateWebForm {
 		updateButtonText();
 	}
 
-//	private void attachStatusLineMonitor() {
-//		if (statusMonitor != null)
-//			return;
-//		IViewSite vsite = getPage().getView().getViewSite();
-//		IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
-//		manager = getRootManager(manager);
-//
-//		statusMonitor = new UpdateSearchProgressMonitor(manager);
-//		searchObject.attachProgressMonitor(statusMonitor);
-//	}
+	//	private void attachStatusLineMonitor() {
+	//		if (statusMonitor != null)
+	//			return;
+	//		IViewSite vsite = getPage().getView().getViewSite();
+	//		IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
+	//		manager = getRootManager(manager);
+	//
+	//		statusMonitor = new UpdateSearchProgressMonitor(manager);
+	//		searchObject.attachProgressMonitor(statusMonitor);
+	//	}
 
 	private IStatusLineManager getRootManager(IStatusLineManager manager) {
 		IContributionManager parent = manager;
