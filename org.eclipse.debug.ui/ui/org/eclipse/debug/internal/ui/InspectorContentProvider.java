@@ -6,15 +6,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2000
  */
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import java.util.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.core.model.IVariable;import org.eclipse.jface.viewers.*;
 
 public class InspectorContentProvider extends BasicContentProvider implements ITreeContentProvider, IDebugEventListener {
 	
@@ -119,7 +111,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 * @see IContentProvider
 	 */
 	public void dispose() {
-		fInspectorList = null;
+		fInspectorList = new InspectorList(0);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 
