@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import java.util.Vector;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.*;
-import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
  * This composite is capable of expanding or collapsing a single client that is
  * its direct child. The composite renders an expansion toggle affordance
@@ -62,9 +63,14 @@ public class ExpandableComposite extends Composite {
 	 */
 	public static final int EXPANDED = 1 << 6;
 	/**
+	 * If this style is used, title bar decoration will be painted behind
+	 * the text.
+	 */
+	public static final int TITLE_BAR = 1 << 8;
+	/**
 	 * Width of the margin that will be added around the control (default is
 	 * 0).
-	 */
+	 */	
 	public int marginWidth = 0;
 	/**
 	 * Height of the margin that will be added around the control (default is
@@ -84,13 +90,20 @@ public class ExpandableComposite extends Composite {
 	private class ExpandableLayout extends Layout implements ILayoutExtension {
 		protected void layout(Composite parent, boolean changed) {
 			Rectangle clientArea = parent.getClientArea();
-			int x = marginWidth;
-			int y = marginHeight;
+			int thmargin = 0;
+			int tvmargin = 0;
+			
+			if ((expansionStyle & TITLE_BAR)!=0) {
+				thmargin = GAP;
+				tvmargin = GAP;
+			}
+			int x = marginWidth + thmargin;
+			int y = marginHeight + tvmargin;
 			Point tsize = null;
 			Point tcsize = null;
 			if (toggle != null)
 				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
-			int twidth = clientArea.width - marginWidth - marginWidth;
+			int twidth = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
 			if (textClient !=null)
@@ -114,6 +127,7 @@ public class ExpandableComposite extends Composite {
 				gc.dispose();
 				int ty = fontHeight / 2 - tsize.y / 2 + 1;
 				ty = Math.max(ty, 0);
+				ty += marginHeight + tvmargin;
 				toggle.setLocation(x, ty);
 				toggle.setSize(tsize);
 				x += tsize.x + GAP;
@@ -124,6 +138,8 @@ public class ExpandableComposite extends Composite {
 				textClient.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			y += size.y;
+			if ((expansionStyle & TITLE_BAR) != 0) 
+				y += tvmargin;
 			if (getSeparatorControl() != null) {
 				y += VSPACE;
 				getSeparatorControl().setBounds(marginWidth, y,
@@ -166,6 +182,13 @@ public class ExpandableComposite extends Composite {
 				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 				twidth = tsize.x + GAP;
 			}
+			int thmargin = 0;
+			int tvmargin = 0;
+			
+			if ((expansionStyle & TITLE_BAR)!=0) {
+				thmargin = GAP;
+				tvmargin = GAP;
+			}
 			int innerwHint = wHint;
 			if (innerwHint != SWT.DEFAULT)
 				innerwHint -= twidth;
@@ -195,6 +218,8 @@ public class ExpandableComposite extends Composite {
 				if (expanded && client != null)
 					height += VSPACE;
 			}
+			if ((expansionStyle & TITLE_BAR) != 0) 
+				height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
@@ -229,8 +254,8 @@ public class ExpandableComposite extends Composite {
 				height = height - size.y + Math.max(size.y, tsize.y);
 				width += twidth;
 			}
-			return new Point(width + marginWidth + marginWidth, height
-					+ marginHeight + marginHeight);
+			return new Point(width + marginWidth + marginWidth+thmargin+thmargin, height
+					+ marginHeight + marginHeight+tvmargin+tvmargin);
 		}
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int width = 0;
@@ -239,6 +264,13 @@ public class ExpandableComposite extends Composite {
 			if (textClient!=null) {
 				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			}
+			int thmargin = 0;
+			int tvmargin = 0;
+			
+			if ((expansionStyle & TITLE_BAR)!=0) {
+				thmargin = GAP;
+				tvmargin = GAP;
+			}			
 			width = size.x;
 			if (tcsize!=null)
 				width += GAP + tcsize.x;
@@ -258,7 +290,7 @@ public class ExpandableComposite extends Composite {
 						changed);
 				width += tsize.x + GAP;
 			}
-			return width + marginWidth + marginWidth;
+			return width + marginWidth + marginWidth+thmargin+thmargin;
 		}
 		/*
 		 * (non-Javadoc)
@@ -271,6 +303,13 @@ public class ExpandableComposite extends Composite {
 			Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 					changed);
 			Point tcsize=null;
+			int thmargin = 0;
+			int tvmargin = 0;
+			
+			if ((expansionStyle & TITLE_BAR)!=0) {
+				thmargin = GAP;
+				tvmargin = GAP;
+			}			
 			if (textClient!=null) {
 				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			}
@@ -292,7 +331,7 @@ public class ExpandableComposite extends Composite {
 						changed);
 				width += tsize.x + GAP;
 			}
-			return width + marginWidth + marginWidth;
+			return width + marginWidth + marginWidth+thmargin+thmargin;
 		}
 	}
 	/**
@@ -322,6 +361,13 @@ public class ExpandableComposite extends Composite {
 		this.expansionStyle = expansionStyle;
 		super.setLayout(new ExpandableLayout());
 		listeners = new Vector();
+		if ((expansionStyle & TITLE_BAR) != 0) {
+			this.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					doPaint(e);
+				}
+			});
+		}
 		if ((expansionStyle & TWISTIE) != 0)
 			toggle = new Twistie(this, SWT.NULL);
 		else if ((expansionStyle & TREE_NODE) != 0)
@@ -541,6 +587,33 @@ public class ExpandableComposite extends Composite {
 		fireExpanding(newState, true);
 		internalSetExpanded(!isExpanded());
 		fireExpanding(newState, false);
+	}
+	private void doPaint(PaintEvent e) {
+		Rectangle bounds = getClientArea();
+		Point tsize = null;
+		Point tcsize = null;
+		if (toggle != null)
+			tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		int twidth = bounds.width - marginWidth - marginWidth;
+		if (tsize != null)
+			twidth -= tsize.x + GAP;
+		if (textClient !=null)
+			tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		if (tcsize!=null)
+			twidth -= tcsize.x + GAP;
+		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
+
+		int tvmargin = GAP;
+		int theight = 0;
+		if (tsize!=null)
+			theight += Math.max(theight, tsize.y);
+		if (tcsize!=null)
+			theight = Math.max(theight, tcsize.y);
+		theight = Math.max(theight, size.y);
+		theight += tvmargin + tvmargin;
+		GC gc = e.gc;
+		gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		gc.fillRectangle(marginWidth, marginHeight, bounds.width-1-marginWidth-marginWidth, theight-1);
 	}
 	private void fireExpanding(boolean state, boolean before) {
 		int size = listeners.size();
