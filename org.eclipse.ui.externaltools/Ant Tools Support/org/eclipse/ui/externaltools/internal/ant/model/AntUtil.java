@@ -263,19 +263,4 @@ public final class AntUtil {
 		
 		return results;
 	}
-	
-	/**
-	 * Returns whether the Ant class loader should be reused or a new one
-	 * created for each build of this launch configuration.
-	 * 
-	 * @param configuration  the launch configuration for the build
-	 * @return whether to reuse the class loader
-	 */
-	public static boolean shouldReuseClassLoader(ILaunchConfiguration config) {
-		try {
-			return config.getAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, true);
-		} catch (CoreException e) {
-			return true;
-		}
-	}
 }

@@ -376,15 +376,6 @@ public interface IExternalToolConstants {
 	public static final String ATTR_ANT_HOME = PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean attribute indicating whether the Ant classloader should be reused
-	 * for Ant builds.
-	 * Default value is <code>true</code>.
-	 */
-	public static final String ATTR_ANT_REUSE_CLASSLOADER = PLUGIN_ID + ".ATTR_ANT_REUSE_CLASSLOADER"; //$NON-NLS-1$
-	
-	
-	
-	/**
 	 * Identifier for ant processes (value <code>ant</code>). This identifier is
 	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
 	 * attribute in processes create by the ant launch delegate.

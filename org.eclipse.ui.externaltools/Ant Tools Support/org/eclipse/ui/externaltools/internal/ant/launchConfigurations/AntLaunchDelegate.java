@@ -135,9 +135,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			runner.setCustomClasspath(customClasspath);
 		}
 		
-		boolean reuseClassLoader= AntUtil.shouldReuseClassLoader(configuration);
-		runner.setReuseClassLoader(reuseClassLoader);
-		
 		monitor.worked(1);
 								
 		if (monitor.isCanceled()) {

@@ -58,7 +58,6 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 
 	private Button useDefaultButton;
-	private Button reuseClassLoader;
 
 	private TableViewer antTableViewer;
 	private ExternalToolsContentProvider antContentProvider;
@@ -446,7 +445,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 
 		useDefaultButton = new Button(changeClasspath, SWT.CHECK);
 		useDefaultButton.setFont(top.getFont());
-		useDefaultButton.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.Use_&global_classpath_as_specified_in_the_Ant_preferences_4")); //$NON-NLS-1$
+		useDefaultButton.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.Use_&global")); //$NON-NLS-1$
 		useDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				toggleUseDefaultClasspath();
@@ -454,28 +453,10 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			}
 
 		});
-		
-		Composite reuse = new Composite(changeClasspath, SWT.NONE);
-		reuse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 20;
-		reuse.setLayout(layout);
-		reuse.setFont(top.getFont());
-		reuseClassLoader = new Button(reuse, SWT.CHECK);
-		reuseClassLoader.setFont(reuse.getFont());
-		reuseClassLoader.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.Reuse_the_Ant_classloader_for_each_&build_5")); //$NON-NLS-1$
-		reuseClassLoader.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
 	}
 
 	private void toggleUseDefaultClasspath() {
 		boolean enable = !useDefaultButton.getSelection();
-		
-		reuseClassLoader.setEnabled(!enable);
 		
 		antHomeButton.setEnabled(enable);
 		
@@ -627,7 +608,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, true);
 	}
 
 	/**
@@ -662,7 +642,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 				antHome.setText(antHomeString);
 			}
 			useDefaultButton.setSelection(false);
-			reuseClassLoader.setEnabled(false);
+
 			List userURLs= new ArrayList();
 			List antURLs= new ArrayList();
 			AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);
@@ -670,11 +650,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			antTableViewer.setInput(antURLs);
 			
 		}
-		try {
-			reuseClassLoader.setSelection(configuration.getAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, true));
-		} catch (CoreException ce) {
-			reuseClassLoader.setSelection(true);
-		}
+
 		toggleUseDefaultClasspath();
 		initializing= false;
 	}
@@ -685,7 +661,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (useDefaultButton.getSelection()) {
 			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, reuseClassLoader.getSelection());
 			return;
 		}
 		List antUrls= getAntURLs();
