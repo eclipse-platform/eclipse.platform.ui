@@ -246,7 +246,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		return createSyncInfos(getSubscriber(), resources);
 	}
 	
-	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
+	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
 		runSubscriberOperation(new TestUpdateOperation(getElements(resources)));
 		return resources;
@@ -1312,5 +1312,30 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				true, new int[] { 
 				SyncInfo.INCOMING | SyncInfo.CHANGE
 		});
+	}
+	
+	public void testOverUpdateAfterExternalDeletion() throws TeamException, CoreException {
+		IProject project = createProject(new String[] { "file1.txt"});
+		int count = 0;
+		while (!project.getFile("file1.txt").getLocation().toFile().delete()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+			assertTrue(count++ < 5);
+		}
+		project.refreshLocal(IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		assertSyncEquals("testOverUpdateAfterExternalDeletion sync check", project,
+				new String[] {"file1.txt"},
+				true, new int[] { 
+				SyncInfo.OUTGOING | SyncInfo.DELETION
+		});
+		overrideAndUpdate(project, new String[] { "file1.txt"}, true);
+		assertSyncEquals("testOverUpdateAfterExternalDeletion sync check", project,
+				new String[] {"file1.txt"},
+				true, new int[] { 
+				SyncInfo.IN_SYNC
+		});
+		assertTrue(project.getFile("file1.txt").exists());
 	}
 }

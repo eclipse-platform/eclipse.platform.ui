@@ -142,12 +142,16 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		byte[] oldBytes = getCachedSyncBytes(resource);
 		try {
 			if (syncBytes == null) {
-				if (oldBytes != null && (resource.exists() || resource.isPhantom())) {
+				if (oldBytes != null) {
 					if (canModifyWorkspace) {
-						getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
+						if (resource.exists() || resource.isPhantom()) {
+							getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
+						}
 						pendingCacheWrites.remove(resource);
 					} else {
-						pendingCacheWrites.put(resource, BYTES_REMOVED);
+						if (resource.exists() || resource.isPhantom()) {
+							pendingCacheWrites.put(resource, BYTES_REMOVED);
+						}
 					}
 				}
 			} else {
