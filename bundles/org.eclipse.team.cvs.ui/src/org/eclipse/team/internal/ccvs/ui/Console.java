@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -411,7 +412,13 @@ public class Console extends ViewPart {
 		}
 		public void commandCompleted(IStatus status, Exception exception) {
 			long commandRuntime = System.currentTimeMillis() - commandStarted;
-			String time = TIME_FORMAT.format(new Date(commandRuntime));
+			String time;
+			try {
+				time = TIME_FORMAT.format(new Date(commandRuntime));
+			} catch (RuntimeException e) {
+				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("Console.couldNotFormatTime"), e)); //$NON-NLS-1$
+				time = "";
+			}
 			String statusText;
 			if (status != null) {
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
