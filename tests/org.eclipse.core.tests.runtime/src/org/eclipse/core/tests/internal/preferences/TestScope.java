@@ -21,19 +21,45 @@ import org.osgi.service.prefs.BackingStoreException;
 public class TestScope extends EclipsePreferences implements IScopeContext {
 
 	public static final String SCOPE = "test"; //$NON-NLS-1$
+	private String qualifier;
+	private int segmentCount;
+	private EclipsePreferences loadLevel;
 
 	public TestScope() {
-		super(null, null);
+		this(null, null);
 	}
 
 	private TestScope(IEclipsePreferences parent, String key) {
 		super(parent, key);
+		// cache the segment count
+		IPath path = new Path(absolutePath());
+		segmentCount = path.segmentCount();
+		if (segmentCount < 2)
+			return;
+
+		// cache the qualifier
+		String scope = path.segment(0);
+		if (TestScope.SCOPE.equals(scope))
+			qualifier = path.segment(1);
+
+		// cache the location
+		if (qualifier == null)
+			return;
 	}
 
-	public void flush() {
-		// don't store the values but a side effect is that the nodes
-		// are marked as not dirty.
-		makeClean();
+	protected IEclipsePreferences getLoadLevel() {
+		if (loadLevel == null) {
+			if (qualifier == null)
+				return null;
+			// Make it relative to this node rather than navigating to it from the root.
+			// Walk backwards up the tree starting at this node.
+			// This is important to avoid a chicken/egg thing on startup.
+			EclipsePreferences node = this;
+			for (int i = 2; i < segmentCount; i++)
+				node = (EclipsePreferences) node.parent();
+			loadLevel = node;
+		}
+		return loadLevel;
 	}
 
 	public IPath getLocation() {
@@ -56,31 +82,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return dirty;
 	}
 
-	/**
-	 * Recursively mark all nodes in this hierarchy as clean
-	 *
-	 */
-	protected void makeClean() {
-		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
-			public boolean visit(IEclipsePreferences node) {
-				((TestScope) node).setDirty(false);
-				return true;
-			}
-		};
-		try {
-			accept(visitor);
-		} catch (BackingStoreException e) {
-			// shouldn't happen
-		}
-	}
-
 	void setDirty(boolean value) {
 		dirty = value;
-	}
-
-	public void sync() {
-		// don't store the values but a side effect is that the nodes
-		// are marked as not dirty.
-		makeClean();
 	}
 }

@@ -634,7 +634,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected void makeDirty() {
 		EclipsePreferences node = this;
-		while (node != null && !node.dirty && !node.removed) {
+		while (node != null && !node.removed) {
 			node.dirty = true;
 			node = (EclipsePreferences) node.parent();
 		}

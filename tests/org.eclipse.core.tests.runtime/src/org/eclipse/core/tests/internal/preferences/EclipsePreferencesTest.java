@@ -1022,9 +1022,18 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
 		String one = getUniqueString();
 		String two = getUniqueString();
+		String threeA = getUniqueString();
+		String threeB = getUniqueString();
 		String key = "key";
 		String value = "value";
-		Preferences node = root.node(TestScope.SCOPE).node(one).node(two);
+		Preferences node = root.node(TestScope.SCOPE).node(one).node(two).node(threeA);
+		node.put(key, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+		node = root.node(TestScope.SCOPE).node(one).node(two).node(threeB);
 		node.put(key, value);
 		Preferences current = node;
 		int count = 0;
@@ -1033,6 +1042,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			count++;
 			current = current.parent();
 		}
-		assertTrue("2.0." + count, count == 3);
+		assertTrue("2.0." + count, count == 4);
 	}
 }
