@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
@@ -197,7 +198,10 @@ public class ChangesSection extends Composite {
 						filteredContainer.dispose();
 						filteredContainer = null;
 					}
-					changesSectionContainer.showPage(changesViewer.getControl());
+					Control control = changesViewer.getControl();
+					if (!changesSectionContainer.isDisposed() && !control.isDisposed()) {
+						changesSectionContainer.showPage(control);
+					}
 				}
 			});
 		}
