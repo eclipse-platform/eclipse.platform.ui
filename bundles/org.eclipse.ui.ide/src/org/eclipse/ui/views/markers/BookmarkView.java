@@ -16,6 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -26,8 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -46,12 +49,6 @@ import org.eclipse.ui.views.markers.internal.IField;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 import org.eclipse.ui.views.markers.internal.Messages;
-
-/**
- * This is the old class for BookmarkView
- * @deprecated Do not refer to this class directly as it has
- * been moved to org.eclipse.ui.views.markers.internal.
- */
 
 public class BookmarkView extends MarkerView {
 

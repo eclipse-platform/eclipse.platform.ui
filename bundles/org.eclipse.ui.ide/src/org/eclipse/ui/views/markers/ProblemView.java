@@ -49,12 +49,6 @@ import org.eclipse.ui.views.markers.internal.Messages;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.TableSorter;
 
-/**
- * This is the old class for ProblemView
- * @deprecated Do not refer to this class directly as it has
- * been moved to org.eclipse.ui.views.markers.internal.
- */
-
 public class ProblemView extends MarkerView {
 	
 	private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = { 
