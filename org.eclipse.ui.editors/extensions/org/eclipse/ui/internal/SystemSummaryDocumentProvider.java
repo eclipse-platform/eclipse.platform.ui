@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -25,6 +26,9 @@ import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.IPlatformConfiguration.IFeatureEntry;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.PreferenceExporter;
@@ -35,14 +39,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
-
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -151,21 +151,20 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		writer.println();
 		writer.println(SystemSummaryMessages.getString("SystemSummary.features")); //$NON-NLS-1$
 
-		AboutInfo[] featuresArray = ((Workbench)PlatformUI.getWorkbench()).getConfigurationInfo().getFeaturesInfo();
-		SortedSet set= new TreeSet(new Comparator() {
+		IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] featuresArray = platformConfiguration.getConfiguredFeatureEntries();
+
+		Arrays.sort(featuresArray, (new Comparator() {
 			public int compare(Object o1, Object o2) {
-				String s1= ((AboutInfo)o1).getFeatureId();
-				String s2= ((AboutInfo)o2).getFeatureId();
+				String s1= ((IFeatureEntry)o1).getFeatureIdentifier();
+				String s2= ((IFeatureEntry)o2).getFeatureIdentifier();
 				return s1.compareTo(s2);
 			}
-		});
-		for(int i= 0, length= featuresArray.length; i < length; i++) {
-			set.add(featuresArray[i]);
-		}
-		Iterator i= set.iterator();
-		while(i.hasNext()) {
-			AboutInfo info = (AboutInfo)i.next();
-			String[] args= new String[] {info.getFeatureId(), info.getVersion()};
+			}));
+
+		for (int i = 0; i < featuresArray.length; i++) {
+			IFeatureEntry info = featuresArray[i];
+			String[] args= new String[] {info.getFeatureIdentifier(), info.getFeatureVersion()};
 			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.featureVersion", args)); //$NON-NLS-1$
 		}
 	}	
