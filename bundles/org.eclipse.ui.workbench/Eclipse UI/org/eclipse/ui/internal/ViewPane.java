@@ -338,8 +338,8 @@ protected void createTitleBar() {
 	Point loc = control.toDisplay(0,0);
 	loc.x += control.getSize().x;
 	isvToolBarShell.setLocation(loc);
-	//isvToolBarShell.setSize(100,100);
-	// isvToolBarShell.setVisible(true);
+	isvToolBarShell.setSize(100,100);
+	isvToolBarShell.setVisible(true);
 	GridLayout layout = new GridLayout();
 	isvToolBarShell.setLayout(layout);
 	Composite composite = new Composite(isvToolBarShell, SWT.NONE);

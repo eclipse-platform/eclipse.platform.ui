@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabFolderCloseAdapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -55,6 +57,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 				// PR#1GDEZ25 - If selection will change in mouse up ignore
 		// mouse down.
 		// Else, set focus.
+		
+			
 			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
 			if (newItem != null) {
 				CTabItem2 oldItem = tabFolder.getSelection();
@@ -225,6 +229,32 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
 		// listen for mouse down on tab to set focus.
 		tabFolder.addMouseListener(this.mouseListener);
+		
+		tabFolder.addListener(SWT.MenuDetect, new Listener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				LayoutPart part = PartTabFolder.this.current;
+				if(part instanceof ViewPane){
+					((ViewPane) part).showViewMenu();
+				}
+
+			}
+		});
+
+		
+		tabFolder.addCTabFolderCloseListener(new CTabFolderCloseAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.custom.CTabFolderCloseAdapter#itemClosed(org.eclipse.swt.custom.CTabFolderEvent)
+			 */
+			public void itemClosed(CTabFolderEvent event) {
+				LayoutPart item = (LayoutPart) mapTabToPart.get(event.item);
+				remove(item);
+			}
+		});
+
+		
 
 		// enable for drag & drop target
 		tabFolder.setData((IPartDropTarget) this);
@@ -271,7 +301,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 		}
 	}
 	private CTabItem2 createPartTab(
-		LayoutPart part,
+		final LayoutPart part,
 		String tabName,
 		int tabIndex) {
 		CTabItem2 tabItem;
@@ -295,6 +325,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 			((LayoutPart) parts.next()).setContainer(this);
 			((LayoutPart) parts.next()).setContainer(this);
 		}
+		
 
 		return tabItem;
 	}
