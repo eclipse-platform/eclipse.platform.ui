@@ -198,7 +198,8 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			return false; 
 		}
 		XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
-		return defaultTarget != null && defaultTarget.getValue().equals(node.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
+		XmlAttribute nameAttribute= node.getAttributeNamed(IAntEditorConstants.ATTR_NAME);
+		return defaultTarget != null && nameAttribute != null && defaultTarget.getValue().equals(nameAttribute.getValue());
 	}
    
 	/**
