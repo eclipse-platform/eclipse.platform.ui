@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.base;
 import org.eclipse.core.runtime.*;
 /**
- * Simple plugin for help system.
+ * Help Base plug-in.
  */
 public class HelpBasePlugin extends Plugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.base";
@@ -53,7 +53,7 @@ public class HelpBasePlugin extends Plugin {
 	}
 
 	/**
-	 * HelpViewerPlugin constructor. It is called as part of plugin
+	 * Plugin constructor. It is called as part of plugin
 	 * activation.
 	 */
 	public HelpBasePlugin(IPluginDescriptor descriptor) {
@@ -61,7 +61,7 @@ public class HelpBasePlugin extends Plugin {
 		plugin = this;
 	}
 	/**
-	 * @return the singleton instance of the help plugin
+	 * @return the singleton instance of the Help Base plugin
 	 */
 	public static HelpBasePlugin getDefault() {
 		return plugin;

@@ -18,14 +18,13 @@ import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.context.*;
 
 /**
- * This class is the default implementation of the pluggable help support.
- * In is registered into the support extension point, and all 
- * requests to display help are delegated to this class.
+ * This class provides methods to display help.
+ * It is independent of platform UI.
  */
 public class HelpDisplay {
 
 	/**
-	 * BaseHelpViewer constructor.
+	 * Constructor.
 	 */
 	public HelpDisplay() {
 		super();

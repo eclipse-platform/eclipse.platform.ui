@@ -13,8 +13,8 @@ package org.eclipse.help.internal.base.util;
 
 /**
  * Utility interface for displaying an error message.
- * Basic help (no UI) will just output to the System.out, 
- * but when a UI is present, it will display a message
+ * Implementation may output messages in different ways
+ * (log, console, pop up window).
  */
 public interface IErrorUtil {
 	public void displayError(String msg);

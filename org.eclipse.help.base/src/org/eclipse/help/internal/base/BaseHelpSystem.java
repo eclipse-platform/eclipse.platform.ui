@@ -14,7 +14,6 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.browser.*;
@@ -22,17 +21,14 @@ import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
- * The actual implementation of the help system plugin.
+ * Base Help System.
  */
 public final class BaseHelpSystem {
 	protected static final BaseHelpSystem instance = new BaseHelpSystem();
 
-	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID+".webapp";
+	private final static String WEBAPP_EXTENSION_ID =
+		HelpBasePlugin.PLUGIN_ID + ".webapp";
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
-
-	private static final String HELP_SUPPORT_EXTENSION_ID =
-		HelpPlugin.PLUGIN_ID+".support";
-	private static final String HELP_SUPPORT_CLASS_ATTRIBUTE = "class";
 
 	public final static String BOOKMARKS = "bookmarks";
 	public final static String WORKING_SETS = "workingSets";
@@ -51,7 +47,7 @@ public final class BaseHelpSystem {
 	private boolean webappRunning = false;
 
 	/**
-	 * HelpSystem constructor comment.
+	 * Constructor.
 	 */
 	private BaseHelpSystem() {
 		super();
@@ -113,13 +109,13 @@ public final class BaseHelpSystem {
 	}
 
 	/**
-	 * Shuts down the Help System.
+	 * Shuts down the BaseHelpSystem.
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
 		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Help System is shutting down.");
+			System.out.println("Base Help System is shutting down.");
 		}
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
@@ -165,7 +161,7 @@ public final class BaseHelpSystem {
 					e));
 		}
 		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Help System started.");
+			System.out.println("Base Help System started.");
 		}
 	}
 	public static boolean ensureWebappRunning() {
@@ -182,7 +178,9 @@ public final class BaseHelpSystem {
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
-					HelpBasePlugin.logError(HelpBaseResources.getString("E042"), e);
+					HelpBasePlugin.logError(
+						HelpBaseResources.getString("E042"),
+						e);
 					return false;
 				}
 			}
@@ -271,7 +269,7 @@ public final class BaseHelpSystem {
 	}
 
 	/**
-	 * Obtains Name of the Eclipse product
+	 * Obtains name of the Eclipse product
 	 * @return String
 	 */
 	public static String getProductName() {
