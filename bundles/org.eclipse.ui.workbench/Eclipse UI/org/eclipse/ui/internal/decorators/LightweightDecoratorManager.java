@@ -65,6 +65,14 @@ class LightweightDecoratorManager {
         public void run() throws Exception {
             decorator.decorate(element, decoration);
         }
+
+		/**
+		 * Clear decorator references.
+		 * @since 3.1
+		 */
+		void clearReferences() {
+			decorator = null;
+		}
     }
 
     private LightweightRunnable runnable = new LightweightRunnable();
@@ -196,6 +204,7 @@ class LightweightDecoratorManager {
      */
     void reset() {
         cachedLightweightDecorators.clear();
+        runnable.clearReferences();
     }
 
     /**
@@ -261,11 +270,10 @@ class LightweightDecoratorManager {
      * decorators.
      * 
      * @param element The source element
-     * @param decoration. The DecorationResult we are working on.
-     * @param adaptableDecoration. If it is true only apply the decorators
+     * @param decoration The DecorationResult we are working on.
+     * @param adaptableDecoration If it is true only apply the decorators
      *  where adaptable is true.
      */
-
     void getDecorations(Object element, DecorationBuilder decoration,
             boolean adaptableDecoration) {
 
@@ -285,16 +293,15 @@ class LightweightDecoratorManager {
 
     /**
      * Decorate the element receiver in a SafeRunnable.
-     * @param element. The Object to be decorated
-     * @param decoration. The object building decorations.
-     * @param decorator. The decorator being applied.
+     * @param element The Object to be decorated
+     * @param decoration The object building decorations.
+     * @param decorator The decorator being applied.
      */
     private void decorate(Object element, DecorationBuilder decoration,
             LightweightDecoratorDefinition decorator) {
 
         runnable.setValues(element, decoration, decorator);
         Platform.run(runnable);
-
     }
 
     /**

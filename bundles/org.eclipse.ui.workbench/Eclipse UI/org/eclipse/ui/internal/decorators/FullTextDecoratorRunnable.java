@@ -29,7 +29,7 @@ public class FullTextDecoratorRunnable extends FullDecoratorRunnable {
     /**
      * Get the result of the decoration or <code>null</code>
      * if there was a failure.
-     * @return
+     * @return the result
      */
     String getResult() {
         return result;
@@ -49,4 +49,12 @@ public class FullTextDecoratorRunnable extends FullDecoratorRunnable {
         start = initialString;
         result = null;
     }
+
+	/**
+	 * Clear decorator references.
+	 * @since 3.1
+	 */
+	void clearReferences() {
+		decorator = null;		
+	}
 }

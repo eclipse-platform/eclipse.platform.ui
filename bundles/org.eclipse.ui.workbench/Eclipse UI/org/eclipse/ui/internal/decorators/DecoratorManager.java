@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -182,10 +181,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * element. If not calculate it from the enabledDefinitions and
      * update the cache.
      * @return Collection of DecoratorDefinition.
-     * @param element. The element being tested.
-     * @param enabledDefinitions. The definitions currently defined for this decorator.
+     * @param element The element being tested.
+     * @param enabledDefinitions The definitions currently defined for this decorator.
      */
-
     static Collection getDecoratorsFor(Object element,
             DecoratorDefinition[] enabledDefinitions) {
 
@@ -510,6 +508,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     public void clearCaches() {
         cachedFullDecorators.clear();
         getLightweightManager().reset();
+        fullTextRunnable.clearReferences();
+        fullImageRunnable.clearReferences();
     }
 
     /**
@@ -677,8 +677,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     /**
      * @see IDecoratorManager#setEnabled(String, boolean)
      */
-    public void setEnabled(String decoratorId, boolean enabled)
-            throws CoreException {
+    public void setEnabled(String decoratorId, boolean enabled) {
         DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
         if (definition != null) {
             definition.setEnabled(enabled);
