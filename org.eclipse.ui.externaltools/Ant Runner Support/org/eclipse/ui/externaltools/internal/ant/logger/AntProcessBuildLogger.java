@@ -81,13 +81,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
 					FileLink link = new FileLink(file, null,  -1, -1, -1);
-					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName);
+					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName); //$NON-NLS-1$
 					fBuildFileParent= file.getLocation().toFile().getParentFile();
 				}
 			}
 		}
 		
-		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator"));
+		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 		
 		if (event.getTask() != null && !fEmacsMode) {
 			getAdornedMessage(event, fullMessage);
@@ -304,7 +304,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;
 		}
-		StringBuffer msg= new StringBuffer(System.getProperty("line.separator"));
+		StringBuffer msg= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 		msg.append(event.getTarget().getName());
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
