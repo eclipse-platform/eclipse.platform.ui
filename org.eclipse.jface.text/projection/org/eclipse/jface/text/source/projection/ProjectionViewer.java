@@ -161,8 +161,16 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 				}
 			}
 			
-			if (projection != null)
+			if (projection != null) {
 				projection.removeMasterDocumentRange(offset, length);
+				// repaint line above
+				IDocument document= getDocument();
+				int line= document.getLineOfOffset(offset);
+				if (line > 0) {
+					IRegion info= document.getLineInformation(line - 1);
+					invalidateTextPresentation(info.getOffset(), info.getLength());
+				}
+			}
 			
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException();
