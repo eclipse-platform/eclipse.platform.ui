@@ -14,21 +14,14 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
 
 /**
@@ -44,7 +37,7 @@ public class NavigationHistory implements INavigationHistory {
 	
 	private ArrayList history= new ArrayList(CAPACITY);
 	private WorkbenchPage page;
-	private int activeEntry;
+	private int activeEntry = 0;
 /**
  * Creates a new NavigationHistory to keep the NavigationLocation
  * entries of the specified page. */
@@ -62,9 +55,9 @@ public NavigationHistory(WorkbenchPage page) {
 				IEditorInput input = editor.getEditorInput();
 				String id = editor.getSite().getId();
 				Iterator e= history.iterator();
-				HistoryEntry firstEntry = null;
+				NavigationHistoryEntry firstEntry = null;
 				while (e.hasNext()) {
-					HistoryEntry entry= (HistoryEntry) e.next();
+					NavigationHistoryEntry entry= (NavigationHistoryEntry) e.next();
 					if(id.equals(entry.editorID)) {
 						if(input.equals(entry.editorInput)) {
 							entry.mementoEntry = firstEntry;
@@ -83,6 +76,18 @@ public NavigationHistory(WorkbenchPage page) {
 	});
 }
 /*
+ *Clear the current history.
+ */
+public void clear() {
+	activeEntry = 0;
+	for (int i= 0; i < history.size(); i++) {
+		NavigationHistoryEntry e= (NavigationHistoryEntry) history.get(i);
+		e.dispose();
+	}
+	history = new ArrayList();
+	updateActions();
+}
+/*
  * Adds an editor to the editor history without getting its location.
  */	
 public void markEditor(IEditorPart part) {
@@ -96,14 +101,41 @@ public void markLocation(IEditorPart part) {
 	addEntry(part,true);
 }
 /*
+ * Return the backward history entries.  Return in restore order (i.e., the
+ * first entry is the entry that would become active if the "Backward" action 
+ * was executed).
+ */
+/* package */ NavigationHistoryEntry[] getBackwardEntries() {
+	int length = activeEntry;
+	NavigationHistoryEntry[] entries = new NavigationHistoryEntry[length];
+	for (int i=0; i<activeEntry; i++) {
+		entries[activeEntry - 1 - i] = getEntry(i);
+	}
+	return entries;
+}
+/*
+ * Return the forward history entries.  Return in restore order (i.e., the first
+ * entry is the entry that would become active if the "Forward" action was
+ * executed).
+ */
+/* package */ NavigationHistoryEntry[] getForwardEntries() {
+ 	int length = history.size() - activeEntry - 1;
+ 	length = Math.max(0, length);
+ 	NavigationHistoryEntry[] entries = new NavigationHistoryEntry[length];
+ 	for (int i=activeEntry + 1; i<history.size(); i++) {
+ 		entries[i - activeEntry - 1] = getEntry(i);
+ 	}
+ 	return entries;
+}
+/*
  * (non-Javadoc)
  * Method declared on INavigationHistory.
  */		
 public INavigationLocation[] getLocations() {
 	INavigationLocation result[] = new INavigationLocation[history.size()];
 	for (int i= 0; i < result.length; i++) {
-		HistoryEntry e= (HistoryEntry) history.get(i);
-		result[i]= e.location;
+		NavigationHistoryEntry e= (NavigationHistoryEntry) history.get(i);
+		result[i]=e.location;
 	}
 	return result;
 }
@@ -112,7 +144,7 @@ public INavigationLocation[] getLocations() {
  * Method declared on INavigationHistory.
  */	
 public INavigationLocation getCurrentLocation() {
-	HistoryEntry entry = getEntry(activeEntry);
+	NavigationHistoryEntry entry = getEntry(activeEntry);
 	return entry == null ? null : entry.location;
 }
 /**
@@ -120,7 +152,7 @@ public INavigationLocation getCurrentLocation() {
 public void dispose() {
 	Iterator e= history.iterator();
 	while (e.hasNext()) {
-		HistoryEntry entry= (HistoryEntry) e.next();
+		NavigationHistoryEntry entry= (NavigationHistoryEntry) e.next();
 		entry.dispose();
 	}
 }
@@ -142,17 +174,17 @@ public void setBackwardAction(NavigationHistoryAction action) {
 /*
  * Returns the history entry indexed by <code>index</code>
  */
-private HistoryEntry getEntry(int index) {
+private NavigationHistoryEntry getEntry(int index) {
 	if (0 <= index && index < history.size())
-		return (HistoryEntry) history.get(index);
+		return (NavigationHistoryEntry) history.get(index);
 	return null;
 }
 /*
  * Adds the specified entry to the history. */
-private void add(HistoryEntry entry) {
+private void add(NavigationHistoryEntry entry) {
 	removeForwardEntries();
 	if(history.size() == CAPACITY) {
-		HistoryEntry e= (HistoryEntry) history.remove(0);
+		NavigationHistoryEntry e= (NavigationHistoryEntry) history.remove(0);
 		e.dispose();		
 	}
 	history.add(entry);
@@ -163,7 +195,7 @@ private void add(HistoryEntry entry) {
 private void removeForwardEntries() {
 	int length= history.size();
 	for (int i= activeEntry + 1; i < length; i++) {
-		HistoryEntry e= (HistoryEntry) history.remove(activeEntry + 1);
+		NavigationHistoryEntry e= (NavigationHistoryEntry) history.remove(activeEntry + 1);
 		e.dispose();
 	}
 }
@@ -180,9 +212,8 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 	if(markLocation && part instanceof INavigationLocationProvider)
 		location = ((INavigationLocationProvider)part).createNavigationLocation();
 		
-	HistoryEntry e= new HistoryEntry(page,part);
-	e.location= location;
-	HistoryEntry current= getEntry(activeEntry);
+	NavigationHistoryEntry e= new NavigationHistoryEntry(page, part, location);
+	NavigationHistoryEntry current= getEntry(activeEntry);
 	if (current == null || !e.mergeInto(current)) {
 		add(e);
 	} else {
@@ -204,26 +235,24 @@ private void printEntries() {
 }
 /*
  * Returns true if the forward action can be performed otherwise returns false. */
-private boolean canForward() {
+/* package */ boolean canForward() {
 	return (0 <= activeEntry + 1) && (activeEntry + 1 < history.size());
 }
 /*
  * Returns true if the backward action can be performed otherwise returns false.
  */
-private boolean canBackward() {
+/* package */ boolean canBackward() {
 	return (0 <= activeEntry - 1) && (activeEntry - 1 < history.size());
 }
 /*
- * Update the actions enable/disable state. */
+ * Update the actions enable/disable and tooltip state. */
 private void updateActions() {
-	if (backwardAction != null)
-		backwardAction.setEnabled(canBackward());
-	if (forwardAction != null)
-		forwardAction.setEnabled(canForward());
+	if (backwardAction != null) backwardAction.update();
+	if (forwardAction != null) forwardAction.update();
 }
 /*
  * Restore the specified entry */
-private void gotoEntry(HistoryEntry entry) {
+private void gotoEntry(NavigationHistoryEntry entry) {
 	if(entry == null)
 		return;
 	try {
@@ -237,7 +266,7 @@ private void gotoEntry(HistoryEntry entry) {
 }
 /*
  * update the active entry */
-private void updateEntry(HistoryEntry activeEntry) {
+private void updateEntry(NavigationHistoryEntry activeEntry) {
 	if(activeEntry == null || activeEntry.location == null)
 		return;
 	activeEntry.location.update();
@@ -266,27 +295,35 @@ private void shiftEntry(boolean forward) {
 		activeEntry++;
 	else
 		activeEntry--;
-	HistoryEntry entry = getEntry(activeEntry);
+	NavigationHistoryEntry entry = getEntry(activeEntry);
 	if (entry != null)
 		gotoEntry(entry);
 }
+/*
+ * Shift the history to the given entry.
+ */
+protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
+	updateEntry(entry);
+	activeEntry = history.indexOf(entry);
+	gotoEntry(entry);
+}
 /**
  * Save the state of this history into the memento. */
-public void saveState(IMemento memento) {
-	HistoryEntry cEntry = (HistoryEntry)getEntry(activeEntry);
+/* package */ void saveState(IMemento memento) {
+	NavigationHistoryEntry cEntry = (NavigationHistoryEntry)getEntry(activeEntry);
 	if(cEntry == null || !cEntry.isPersistable())
 		return;
 		
 	ArrayList list = new ArrayList(history.size());
 	int size = history.size();
 	for (int i = 0; i < size; i++) {
-		HistoryEntry entry = (HistoryEntry)history.get(i);
+		NavigationHistoryEntry entry = (NavigationHistoryEntry)history.get(i);
 		if(entry.isPersistable())
 			list.add(entry);
 	}
 	size = list.size();
 	for (int i = 0; i < size; i++) {
-		HistoryEntry entry = (HistoryEntry)list.get(i);
+		NavigationHistoryEntry entry = (NavigationHistoryEntry)list.get(i);
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_ITEM);
 		if(entry == cEntry)
 			childMem.putString(IWorkbenchConstants.TAG_ACTIVE,"true");
@@ -295,231 +332,40 @@ public void saveState(IMemento memento) {
 }
 /**
  * Restore the state of this history from the memento. */
-public void restoreState(IMemento memento) {
+/* package */ void restoreState(IMemento memento) {
 	IMemento items[] = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
-	if(items.length == 0)
+	if(items.length == 0) {
 		if(page.getActiveEditor() != null)
 			markLocation(page.getActiveEditor());
-			
+	} 
+	boolean oldHistory = false;
 	for (int i = 0; i < items.length; i++) {
 		IMemento item = items[i];
-		HistoryEntry entry = new HistoryEntry(page);
+		NavigationHistoryEntry entry = new NavigationHistoryEntry(page);
 		history.add(entry);
 		entry.restoreState(item,history);
+		// Track whether or not we are dealing with a navigation history that has the 
+		// drop down list support.
+		if (item.getString(IWorkbenchConstants.TAG_HISTORY_LABEL) == null) {
+			oldHistory = true;
+			break;
+		}
 		if(item.getString(IWorkbenchConstants.TAG_ACTIVE) != null)
 			activeEntry = i;
 	}
-	HistoryEntry entry = getEntry(activeEntry);
+	if (oldHistory) {
+		// If we have an old history - one that doesn't support the drop down list feature -
+		// clear the old history since it is not compatible with the drop down feature.
+		history.clear();
+		if(page.getActiveEditor() != null)
+			markLocation(page.getActiveEditor());
+		return;
+	}	
+		 
+	NavigationHistoryEntry entry = getEntry(activeEntry);
 	if(entry != null && entry.editorInput != null) {
 		if(page.getActiveEditor() == page.findEditor(entry.editorInput))
 			gotoEntry(entry);
 	}
 }
-/*
- * Wraps the INavigationLocation and keeps the info
- * about the editor.
- */
-private static class HistoryEntry {
-
-	private IWorkbenchPage page;
-
-	/* The entry will have the pair input and id or a memento that
-	 * saves it or the entry that has one of the above.
-	 * Only one of them (input, memento, mementoEntry) will be set at a time;
-	 * the other two are null.
-	 */		
-	private String editorID;
-	private IEditorInput editorInput;
-	private IMemento memento;
-	private HistoryEntry mementoEntry;
-	
-	/* Both may be set at the same time. */
-	private INavigationLocation location;
-	private IMemento locationMemento;
-	
-	/**
-	 * Constructs a new HistoryEntry and intializes its editor input and editor id.	 */
-	public HistoryEntry(IWorkbenchPage page,IEditorPart part) {
-		this.page = page;
-		editorID= part.getSite().getId();
-		editorInput= part.getEditorInput();
-	}
-	/**
-	 * Constructs a new HistoryEntry. <code>restoreState</code> should be called
-	 * to intialize the state of this entry.
-	 */
-	public HistoryEntry(IWorkbenchPage page) {
-		this.page = page;
-	}
-	/**
-	 * Restores the state of the entry and the location if needed and then
-	 * restores the location.	 */
-	public void restoreLocation() {
-		if(editorInput == null) {
-			if(memento != null) {
-				restoreEditor(memento);
-				memento = null;
-			} else if(mementoEntry != null) {
-				if(mementoEntry.memento != null) {
-					mementoEntry.restoreEditor(mementoEntry.memento);
-					mementoEntry.memento = null;
-				}
-				editorID = mementoEntry.editorID;
-				editorInput = mementoEntry.editorInput;
-				mementoEntry = null;
-			}
-		}
-			
-		if (editorInput != null && editorID != null) {
-			try {
-				IEditorPart editor = page.openEditor(editorInput, editorID, true);
-				if (location == null) {
-					if(editor instanceof INavigationLocationProvider)
-						location = ((INavigationLocationProvider)editor).createEmptyNavigationLocation();
-				}
-					
-				if (location != null) {
-					if (locationMemento != null) {
-						location.setInput(editorInput);
-						location.restoreState(locationMemento);
-						locationMemento = null;
-					}
-					location.restoreLocation();
-				}
-			} catch (PartInitException e) {
-				// ignore for now
-			}
-		}
-	}
-	/**
-	 * Returns true if this entry can be persisted otherwise returns false;	 */
-	public boolean isPersistable() {
-		if(editorInput != null) {
-			IPersistableElement persistable = editorInput.getPersistable();
-			return persistable != null;
-		}
-		return memento != null || mementoEntry != null;
-	}
-	/** 
-	 * Saves the state of this entry and its location.
-	 * Returns true if possible otherwise returns false.	 */
-	public boolean handlePartClosed() {
-		if(!isPersistable())
-			return false;
-				
-		if(mementoEntry == null && memento == null) {	
-			IPersistableElement persistable = editorInput.getPersistable();	
-			memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
-			memento.putString(IWorkbenchConstants.TAG_ID, editorID);
-			memento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-			persistable.saveState(memento);
-		}
-		
-		if (location != null) {
-			locationMemento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_POSITION);
-			location.saveState(locationMemento);
-			location.releaseState();
-		}
-		editorID= null;
-		editorInput= null;
-		return true;
-	}
-	/**
-	 * Saves the state of this entry and its location.	 */
-	public void saveState(IMemento mem, ArrayList entries) {
-		if(editorInput != null) {
-			int mementoEntryIndex = -1;
-			int size = entries.size();
-			for (int i = 0; i < size; i++) {
-				HistoryEntry entry = (HistoryEntry)entries.get(i);
-				if(entry == this)
-					break;
-				if(editorInput.equals(entry.editorInput) && editorID.equals(entry.editorID)) {
-					mementoEntryIndex = i;
-					break;
-				}
-			}
-			if(mementoEntryIndex >= 0) { 
-				IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_INDEX);			
-				childMem.putInteger(IWorkbenchConstants.TAG_INDEX,mementoEntryIndex);
-			} else {			
-				IPersistableElement persistable = editorInput.getPersistable();
-				IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_EDITOR);
-				childMem.putString(IWorkbenchConstants.TAG_ID, editorID);
-				childMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(childMem);
-			}
-		} else if(memento != null) {
-			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_EDITOR);
-			childMem.putMemento(memento);
-		} else {
-			int mementoEntryIndex = entries.indexOf(mementoEntry);
-			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_INDEX);			
-			childMem.putInteger(IWorkbenchConstants.TAG_INDEX,mementoEntryIndex);
-		}
-		
-		if(locationMemento != null) {
-			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_POSITION);
-			childMem.putMemento(locationMemento);			
-		} else if (location != null) {
-			IMemento childMem = mem.createChild(IWorkbenchConstants.TAG_POSITION);
-			location.saveState(childMem);
-		}
-	}
-	/**
-	 * Restore the state of this entry.	 */
-	public void restoreState(IMemento mem,ArrayList entries) {
-		memento = mem.getChild(IWorkbenchConstants.TAG_EDITOR);
-		locationMemento = mem.getChild(IWorkbenchConstants.TAG_POSITION);;
-		IMemento childMem = mem.getChild(IWorkbenchConstants.TAG_INDEX);
-		if(childMem != null) {
-			Integer index = childMem.getInteger(IWorkbenchConstants.TAG_INDEX);
-			if(index.intValue() >= 0)
-				mementoEntry = (HistoryEntry)entries.get(index.intValue());
-			memento = null;
-		}
-	}
-	/*
-	 * Restores the editor input and editor id.	 */
-	private void restoreEditor(IMemento memento) {
-		String factoryID= memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-		IElementFactory factory= WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-		if (factory != null) {
-			IAdaptable element= factory.createElement(memento);
-			if (element instanceof IEditorInput) {
-				editorInput= (IEditorInput) element;
-				editorID= memento.getString(IWorkbenchConstants.TAG_ID);
-			}
-		}
-	}
-	/*
- 	 * (non-Javadoc)
-     * Method declared on Object.
-     */	
-	public String toString() {
-		return "Input<" + editorInput + "> Input<" + editorInput + "> Details<" + location + ">";
-	}
-	/**
-	 * Disposes this entry and its location.	 */
-	public void dispose() { 
-		if (location != null)
-			location.dispose();
-	}
-	/**
-	 * Merges this entry into the current entry. Returns true
-	 * if the merge was possible otherwise returns false.	 */
-	public boolean mergeInto(HistoryEntry currentEntry) {
-		if (editorInput != null && editorInput.equals(currentEntry.editorInput)) {
-			if (location != null) {
-				if (currentEntry.location == null) {
-					currentEntry.location= location;
-					return true;
-				} else {
-					return location.mergeInto(currentEntry.location);
-				}
-			}
-		}
-		return false; 
-	}
-};	
 }

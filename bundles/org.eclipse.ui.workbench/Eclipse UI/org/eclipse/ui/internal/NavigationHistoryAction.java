@@ -11,15 +11,25 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.viewers.ISelection;
+
+import org.eclipse.ui.*;
 
 /**
  * The <code>NavigationHistoryAction</code> moves navigation history 
  * back and forward.
  */
-public class NavigationHistoryAction extends PageEventAction {
+public class NavigationHistoryAction extends PageEventAction implements IWorkbenchWindowPulldownDelegate2, IMenuCreator {
 	private boolean forward;
+	private Menu historyMenu;
+	private int MAX_HISTORY_LENGTH = 9;
 	
 	/**
 	 * Create a new instance of <code>NavigationHistoryAction</code>
@@ -39,6 +49,7 @@ public class NavigationHistoryAction extends PageEventAction {
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
 		setEnabled(false);
 		this.forward = forward;
+		setMenuCreator(this);
 	}
 	/* (non-Javadoc)
 	 * Method declared on PageEventAction.
@@ -46,6 +57,44 @@ public class NavigationHistoryAction extends PageEventAction {
 	public void pageClosed(IWorkbenchPage page) {
 		super.pageClosed(page);
 		setEnabled(false);
+	}
+	public void dispose() {
+		if (historyMenu != null) {
+			for (int i=0; i<historyMenu.getItemCount(); i++) {
+				MenuItem menuItem = historyMenu.getItem(i);
+				menuItem.setData(null);
+			}
+			historyMenu.dispose();
+			historyMenu = null;
+		}
+	}
+	public Menu getMenu(Menu parent) {
+		return null;
+	}
+	public Menu getMenu(Control parent) {
+		dispose();
+		historyMenu = new Menu(parent);
+		final NavigationHistory history = (NavigationHistory)getWorkbenchWindow().getActivePage().getNavigationHistory();
+		NavigationHistoryEntry[] entries;
+		if (forward) entries = history.getForwardEntries();
+		else entries = history.getBackwardEntries();
+		for (int i=0; i<entries.length; i++) {
+			if (i > MAX_HISTORY_LENGTH) break;
+			String text = entries[i].getHistoryText();
+			if (text != null) {
+				MenuItem item = new MenuItem(historyMenu, SWT.NONE);
+				item.setData(entries[i]);
+				item.setText(text);
+				item.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						history.shiftCurrentEntry((NavigationHistoryEntry)e.widget.getData());
+					}
+				});
+			}
+		}
+		return historyMenu;
+	}
+	public void init(IWorkbenchWindow window){
 	}
 	/* (non-Javadoc)
 	 * Method declared on PageEventAction.
@@ -71,4 +120,37 @@ public class NavigationHistoryAction extends PageEventAction {
 				nh.backward();
 		}
 	}
+	public void run(IAction action) {
+	}
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+	public void update() {
+		// Set the enabled state of the action and set the tool tip text.  The tool tip
+		// text is set to reflect the item that one will move back/forward to.
+		WorkbenchPage page = (WorkbenchPage)getActivePage();
+		NavigationHistory history = (NavigationHistory)page.getNavigationHistory();
+		NavigationHistoryEntry[] entries;
+		if (forward) {
+			setEnabled(history.canForward());
+			entries = history.getForwardEntries();
+			if (entries.length > 0) {
+				NavigationHistoryEntry entry = entries[0];
+				String text = WorkbenchMessages.format("NavigationHistoryAction.forward.toolTipName", new String[] {entry.getHistoryText()});
+				setToolTipText(text);
+			} else {
+				setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
+			}
+		}
+		else {
+			setEnabled(history.canBackward());
+			entries = history.getBackwardEntries();
+			if (entries.length > 0) {
+				NavigationHistoryEntry entry = entries[0];
+				String text = WorkbenchMessages.format("NavigationHistoryAction.backward.toolTipName", new String[] {entry.getHistoryText()});
+				setToolTipText(text);
+			} else {
+				setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
+			}
+		}
+	}	
 }
