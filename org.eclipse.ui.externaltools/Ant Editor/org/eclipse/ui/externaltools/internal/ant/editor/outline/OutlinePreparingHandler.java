@@ -88,19 +88,13 @@ public class OutlinePreparingHandler extends DefaultHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
-    public void startElement(
-        String aUri,
-        String aLocalName,
-        String aQualifiedName,
-        Attributes anAttributes)
+    public void startElement(String aUri, String aLocalName, String aQualifiedName, Attributes anAttributes)
         throws SAXException {
         /*
          * While the crimson parser passes the tag name as local name, apache's
          * xerces parser, passes the tag name as qualilfied name and an empty 
          * string as local name.
          */
-
-        
          
         // Create a Dom Element
         XmlElement tempElement = createXmlElement(aLocalName, aQualifiedName, anAttributes);
@@ -112,10 +106,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         // Is it our root
         if(rootElement == null) {
             rootElement = tempElement;
-        } 
-        
-        // Add it as child to parent
-        else {
+        } else {  // Add it as child to parent
             XmlElement tempLastOpenedElement = (XmlElement)stillOpenElements.peek();
             tempLastOpenedElement.addChildNode(tempElement);
         }
@@ -129,10 +120,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
     /**
      * Creates an <code>XmlElement</code> instance from the specified parameters.
      */
-    protected XmlElement createXmlElement(
-    		String aLocalName, 
-    		String aQualifiedName, 
-    		Attributes anAttributes) {
+    protected XmlElement createXmlElement(String aLocalName, String aQualifiedName, Attributes anAttributes) {
 		String tempElementName = null;
 
         XmlElement tempElement = null;
@@ -367,21 +355,30 @@ public class OutlinePreparingHandler extends DefaultHandler {
     }
 
     /**
-     * We have to handle fatal errors.
-     * <P>
-     * They come up whenever we parse a not valid file, what we do all the time.
-     * Therefore a fatal error is nothing special for us.
-     * <P>
-     * Actually, we ignore all fatal errors for now.
+     * Fatal errors occur when we parse a non valid file. Populate the error
+     * element hierarchy.
      * 
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
     public void fatalError(SAXParseException anException) throws SAXException {
-        if(locator != null) {
-          //  int tempLineNr = locator.getLineNumber() -1;
-          //  int tempColumnNr = locator.getColumnNumber() -1;
-          //  super.fatalError(anException);
-        }
+    	if (rootElement == null) {
+    		rootElement= new XmlElement(anException.getSystemId());
+    	}
+		rootElement.setIsErrorNode(true);
+		
+		int lineNumber= anException.getLineNumber();
+		StringBuffer message= new StringBuffer(anException.getMessage());
+		if (lineNumber != -1){
+			message.append(" line: " + lineNumber);
+		}
+		
+		XmlElement errorNode= new XmlElement(message.toString());
+		errorNode.setIsErrorNode(true);
+		if(locator != null) {
+			errorNode.setStartingColumn(locator.getColumnNumber());
+			errorNode.setStartingRow(locator.getLineNumber());
+		}
+		rootElement.addChildNode(errorNode);
     }
 
 	/**

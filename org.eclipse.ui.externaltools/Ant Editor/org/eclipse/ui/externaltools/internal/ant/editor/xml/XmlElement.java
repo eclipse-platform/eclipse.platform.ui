@@ -104,6 +104,11 @@ public class XmlElement {
      */
     protected int endingColumn;
 
+	/**
+	 * Whether this element has been generated as part of an element hierarchy
+	 * this is not complete as a result of an error.
+	 */
+	private boolean isErrorNode;
 
     /**
      * Creates an instance with the specified name.
@@ -334,4 +339,19 @@ public class XmlElement {
 		return "XmlElement[name="+name+"; starting="+startingRow+","+startingColumn+"; ending="+endingRow+","+endingColumn+"]";		
 	}
 	
+	/**
+	 * Returns whether this element has been generated as part of an element
+	 * hierarchy this is not complete as a result of an error.
+	 */
+	public boolean isErrorNode() {
+		return isErrorNode;
+	}
+	
+	/**
+	 * Sets whether this element has been generated as part of an element
+	 * hierarchy this is not complete as a result of an error.
+	 */
+	public void setIsErrorNode(boolean isErrorNode) {
+		this.isErrorNode= isErrorNode;
+	}
 }
