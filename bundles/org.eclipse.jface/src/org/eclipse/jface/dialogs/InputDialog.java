@@ -152,6 +152,7 @@ protected Control createDialogArea(Composite parent) {
 			}
 		}
 	);
+	text.setFont(parent.getFont());
 
 	errorMessageLabel = new Label(composite, SWT.NONE);
 	errorMessageLabel.setLayoutData(new GridData(
