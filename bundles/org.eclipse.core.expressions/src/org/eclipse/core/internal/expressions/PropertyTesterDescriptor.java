@@ -12,9 +12,11 @@ package org.eclipse.core.internal.expressions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.IPropertyTester;
+
+import org.osgi.framework.Bundle;
 
 /* package */ class PropertyTesterDescriptor implements IPropertyTester {
 	
@@ -57,8 +59,8 @@ import org.eclipse.core.expressions.IPropertyTester;
 	}
 	
 	public boolean canLoad() {
-		IPluginDescriptor plugin= fConfigElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-		return plugin.isPluginActivated();
+		Bundle fBundle= Platform.getBundle(fConfigElement.getDeclaringExtension().getNamespace());
+		return fBundle.getState() == Bundle.ACTIVE;		
 	}
 	
 	public IPropertyTester load() throws CoreException {
