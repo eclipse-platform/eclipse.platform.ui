@@ -865,10 +865,10 @@ public class Main {
 				found = true;
 			}
 
-			// look for and consume the nosplash directive.  we ignore it
-			// since you only get a spalsh if you say show splash but some PDE
-			// scenarios have it passed in.
+			// look for and consume the nosplash directive.  This supercedes any
+			// -showsplash command that might be present.
 			if (arguments[i - 1].equalsIgnoreCase(NOSPLASH)) {
+				splashDown = true;
 				found = true;
 			}
 
@@ -1185,8 +1185,9 @@ public class Main {
 	 * @param bootPath search path for the boot plugin
 	 */
 	private void handleSplash(URL[] defaultPath) {
-		// run without splash if we are initializing
-		if (initialize) {
+		// run without splash if we are initializing or nosplash 
+		// was specified (splashdown = true)
+		if (initialize || splashDown) {
 			showSplash = null;
 			endSplash = null;
 			return;
