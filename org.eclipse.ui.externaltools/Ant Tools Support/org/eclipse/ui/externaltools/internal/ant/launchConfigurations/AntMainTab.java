@@ -23,8 +23,8 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 */
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
-		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
-		dialog.setFileFilter("*.xml", true);
+		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), AntLaunchConfigurationMessages.getString("AntMainTab.&Select_a_build_file__1")); //$NON-NLS-1$
+		dialog.setFileFilter("*.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IFile file = dialog.getResult();
 		if (file == null) {
@@ -38,4 +38,10 @@ public class AntMainTab extends ExternalToolsMainTab {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
+	 */
+	protected String getWorkingDirectoryLabel() {
+		return AntLaunchConfigurationMessages.getString("AntMainTab.Base_&Directory__3"); //$NON-NLS-1$
+	}
 }

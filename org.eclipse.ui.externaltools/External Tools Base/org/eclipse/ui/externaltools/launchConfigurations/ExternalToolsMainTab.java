@@ -163,7 +163,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		composite.setLayoutData(gridData);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5")); //$NON-NLS-1$
+		label.setText(getWorkingDirectoryLabel());
 		label.setFont(font);
 		
 		workDirectoryField = new Text(composite, SWT.BORDER);
@@ -195,6 +195,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 				handleFileWorkingDirectoryButtonSelected();
 			}
 		});
+	}
+	/**
+	 * Return the String to use as the label for the working directory field.
+	 * @return String
+	 */
+	protected String getWorkingDirectoryLabel() {
+		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5"); //$NON-NLS-1$
 	}
 	
 	/**
