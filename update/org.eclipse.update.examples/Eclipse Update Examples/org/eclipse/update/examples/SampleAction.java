@@ -11,7 +11,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.swt.widgets.MessageBox;
 
 /**
- * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate
  */
 public class SampleAction implements IWorkbenchWindowActionDelegate {
@@ -22,7 +21,6 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
    }
 
   /**
-   * Insert the method's description here.
    * @see IWorkbenchWindowActionDelegate#run
    */
    public void run(IAction arg0)  {
@@ -33,21 +31,18 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
    }
 
   /**
-   * Insert the method's description here.
    * @see IWorkbenchWindowActionDelegate#selectionChanged
    */
    public void selectionChanged(IAction arg0, ISelection arg1)  {
    }
 
   /**
-   * Insert the method's description here.
    * @see IWorkbenchWindowActionDelegate#dispose
    */
    public void dispose()  {
    }
 
   /**
-   * Insert the method's description here.
    * @see IWorkbenchWindowActionDelegate#init
    */
    public void init(IWorkbenchWindow arg0)  {
