@@ -31,8 +31,8 @@
 <extension
       id="ftp"
       point="org.eclipse.update.core.siteTypes">
-   <feature-factory
+   <site-factory
          class="org.eclipse.update.tests.implementation.SiteFTPFactory">
-   </feature-factory>
+   </site-factory>
 </extension>
 </plugin>
