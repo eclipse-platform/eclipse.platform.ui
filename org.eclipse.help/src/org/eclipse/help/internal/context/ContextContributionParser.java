@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
@@ -40,7 +40,7 @@ public class ContextContributionParser extends DefaultHandler {
 		// make sure that no error has already occurred before adding to stack.
 		if (qName.equals(ContextContributor.DESC_ELEM)) {
 			seenDescription = false;
-			((ContextContribution) elementStack.peek()).setDescription(buffer.toString());
+			((ContextContribution) elementStack.peek()).setText(buffer.toString());
 			buffer.setLength(0);
 		} else if (qName.equals(ContextContributor.DESC_TXT_BOLD)) {
 			// pop the starting bold tag
@@ -108,7 +108,7 @@ public class ContextContributionParser extends DefaultHandler {
 			else if (qName.equals(ContextContributor.CONTEXT_ELEM))
 				e = new ContextContribution(atts);
 			else if (qName.equals(ContextContributor.RELATED_ELEM)) {
-				HelpContextTopic hct = new HelpContextTopic(atts);
+				RelatedTopic hct = new RelatedTopic(atts);
 				if (!elementStack.isEmpty())
 					 ((IContextContributionNode) elementStack.peek()).addChild(hct);
 				elementStack.push(e);

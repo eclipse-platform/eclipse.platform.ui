@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
@@ -68,6 +68,10 @@ public class ContextManager {
 		}
 		return description;
 	}
+	/**
+	 * Loads context.xml with context for a specified plugin,
+	 * creates context nodes and adds to pluginContext map.
+	 */
 	private synchronized Map loadContext(String plugin) {
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
@@ -81,10 +85,8 @@ public class ContextManager {
 				Logger.logInfo(msg);
 				return contexts;
 			}
-			// iterator over all contexts contributors and add all the contexts
-			// defined for this plugin
-			// NOTE: if performance is a problem, this can be improved by a better
-			//       use of the SAX parser
+			// iterate over all contexts contributors
+			// and add all the contexts defined for this plugin
 			for (Iterator contextContributors = contributors.iterator();
 				contextContributors.hasNext();
 				) {
@@ -92,25 +94,36 @@ public class ContextManager {
 					(ContextContributor) contextContributors.next();
 				IContextContributionNode contrib = contextContributor.getContribution();
 				// contrib could be null if there was an error parsing the manifest file!
-				if (contrib == null);
-				// do nothing here because we need to load other Context files.
-				else {
-					for (Iterator contextIterator = contrib.getChildren();
-						contextIterator.hasNext();
-						) {
-						ContextContribution contextNode = (ContextContribution) contextIterator.next();
-						String description = contextNode.getDescription();
-						// NOTE: a context can be defined in another plugin, so we'd better
-						//       make sure we use the contributor plugin for properties files
-						//description = getNLdescription(plugin, description);
-						description =
-							getNLdescription(
-								contextNode.getContributor().getPlugin().getUniqueIdentifier(),
-								description);
-						contextNode.setDescription(description);
-						// Set the plugin ID, so the context knows its full ID
-						contextNode.setPluginID(plugin);
-						contexts.put(contextNode.getShortId(), contextNode);
+				if (contrib == null) {
+					// go to the next context file.
+					continue;
+				}
+				for (Iterator contextIterator = contrib.getChildren().iterator();
+					contextIterator.hasNext();
+					) {
+					ContextContribution context = (ContextContribution) contextIterator.next();
+					// nl description handling
+					String description = context.getText();
+					// NOTE: a context can be defined in another plugin, so we'd better
+					//       make sure we use the contributor plugin for properties files
+					//description = getNLdescription(plugin, description);
+					description =
+						getNLdescription(
+							context.getContributor().getPlugin().getUniqueIdentifier(),
+							description);
+					context.setText(description);
+					// end of nl description handling
+					// Set the plugin ID, so the context knows its full ID
+					context.setPluginID(plugin);
+					// Check if context already exists for this ID,
+					// merge them if id does, or add this context
+					// to the context map if not.
+					ContextContribution existingContext =
+						(ContextContribution) contexts.get(context.getShortId());
+					if (existingContext != null) {
+						existingContext.merge(context);
+					} else {
+						contexts.put(context.getShortId(), context);
 					}
 				}
 			}

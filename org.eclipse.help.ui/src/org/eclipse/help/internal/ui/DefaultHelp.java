@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.ui;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -69,10 +69,12 @@ public class DefaultHelp implements IHelp {
 	public void displayHelp(IContext context, int x, int y) {
 		if (f1Dialog != null)
 			f1Dialog.close();
-		if(context==null)
+		if (context == null)
 			return;
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
+		// if any errors or parsing errors have occurred, display them in a pop-up
+		ErrorUtil.displayStatus();
 	}
 	/**
 	 * Displays context-sensitive help for specified contexts

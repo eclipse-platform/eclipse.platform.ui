@@ -1,9 +1,9 @@
 package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.util.Iterator;
+import java.util.List;
 /**
  * Context object, as defined in the map.xml
  */
@@ -14,5 +14,5 @@ public interface IContextContributionNode {
 	 * @param parentNode com.ibm.itp.contributions.HelpContribution
 	 */
 	public IContextContributionNode addChild(IContextContributionNode child);
-	public Iterator getChildren();
+	public List getChildren();
 }

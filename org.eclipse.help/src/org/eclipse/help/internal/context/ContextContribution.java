@@ -1,19 +1,19 @@
 package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.util.DocResources;
 import org.xml.sax.Attributes;
 /**
  * Context object, as defined in the map.xml
  */
-public class ContextContribution implements IContext, IContextContributionNode {
-	private String description;
+public class ContextContribution
+	implements IContext, IContextContributionNode {
+	private String text;
 	private ContextContributor contributor;
-	protected List children = new ArrayList(/* of HelpContribution */
+	protected List children = new ArrayList(/* of IContextContributionNode */
 	);
 	protected String pluginID;
 	protected String shortID;
@@ -35,23 +35,23 @@ public class ContextContribution implements IContext, IContextContributionNode {
 		return child;
 	}
 	/**
+	 * Obtains children
 	 */
-	public Iterator getChildren() {
-		return children.iterator();
+	public List getChildren() {
+		return children;
 	}
 	/**
+	 * Obtains short id (without plugin)
 	 */
 	public String getShortId() {
 		return shortID;
 	}
-	public String getDescription() {
-		// description is already NL enabled when the XML files are parsed.
-		return description;
+	public String getText() {
+		return text;
 	}
 	public ContextContributor getContributor() {
 		return contributor;
 	}
-	/** List of topic ids */
 	public IHelpResource[] getRelatedTopics() {
 		if (children.size() > 0) {
 			IHelpResource[] related = new IHelpResource[children.size()];
@@ -62,17 +62,14 @@ public class ContextContribution implements IContext, IContextContributionNode {
 			return null;
 		}
 	}
-	public String getText() {
-		return getDescription();
-	}
-		public void setDescription(String s) {
-		description = s;
+	public void setText(String s) {
+		text = s;
 	}
 	public void setContributor(ContextContributor contributor) {
 		this.contributor = contributor;
 	}
-	public String getID(){
-		return pluginID+"."+shortID;
+	public String getID() {
+		return pluginID + "." + shortID;
 	}
 	/**
 	 * Sets the pluginID.
@@ -81,5 +78,17 @@ public class ContextContribution implements IContext, IContextContributionNode {
 	public void setPluginID(String pluginID) {
 		this.pluginID = pluginID;
 	}
-
+	/**
+	 * Merges another context contribution with this one
+	 */
+	public void merge(ContextContribution contribution) {
+		if (contribution.getText() != null) {
+			if (getText() != null) {
+				setText(getText() + "\n" + contribution.getText());
+			} else {
+				setText(contribution.getText());
+			}
+		}
+		children.addAll(contribution.getChildren());
+	}
 }

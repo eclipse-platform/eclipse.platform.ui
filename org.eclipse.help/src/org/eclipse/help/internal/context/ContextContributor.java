@@ -1,21 +1,23 @@
 package org.eclipse.help.internal.context;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
-import java.util.Iterator;
+import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.InputSource;
 /**
  * Context contributor
  */
 public class ContextContributor {
-	public static final String NAME_ATTR = "name";
+	public static final String FILE_ATTR = "file";
+	public static final String FILE_ATTR_V1 = "name";
 	public static final String PLUGIN_ATTR = "plugin";
-	public static final String CONTEXT_ELEM = "context";
 	public static final String CONTEXTS_ELEM = "contexts";
+	public static final String CONTEXT_ELEM = "context";
 	public static final String DESC_ELEM = "description";
 	public static final String RELATED_ELEM = "topic";
 	public static final String RELATED_HREF = "href";
@@ -25,11 +27,9 @@ public class ContextContributor {
 	public static final String BOLD_TAG =
 		"<" + Resources.getString("bold_tag_name") + ">";
 	public static final String DESC_TXT_BOLD = Resources.getString("bold_tag_name");
-	protected IPluginDescriptor plugin = null;
-	protected IConfigurationElement configuration = null;
-	protected IContextContributionNode contribution = null;
-	// always call the getContributionParser() to use this....
-	protected ContextContributionParser contributionParser = null;
+	protected IPluginDescriptor plugin;
+	protected IConfigurationElement configuration;
+	protected IContextContributionNode contribution;
 	/**
 	 * XMLViewContributor constructor comment.
 	 * @param plugin com.ibm.itp.core.api.plugins.IPluginDescriptor
@@ -41,17 +41,12 @@ public class ContextContributor {
 		this.plugin = plugin;
 		this.configuration = configuration;
 	}
-	public IContextContributionNode getContribution() {
-		return getContribution(NAME_ATTR);
-	}
 	/**
-	 * @return org.w3c.dom.Document
-	 * @param contributionType java.lang.String
-	 * @param idAttributeName java.lang.String
+	 * @return IContextContributionNode
 	 */
-	protected IContextContributionNode getContribution(String contributionNameAttribute) {
+	public IContextContributionNode getContribution() {
 		if (contribution == null) {
-			contribution = load(contributionNameAttribute);
+			contribution = load();
 			if (contribution != null) {
 				preprocess(contribution);
 			}
@@ -59,51 +54,38 @@ public class ContextContributor {
 		return contribution;
 	}
 	/**
-	 * Returns the contribution parser
-	 */
-	protected ContextContributionParser getContributionParser() {
-		if (contributionParser == null)
-			contributionParser = new ContextContributionParser();
-		return contributionParser;
-	}
-	/**
 	 * getPluginID method comment.
 	 */
 	public IPluginDescriptor getPlugin() {
 		return plugin;
 	}
-	/**
-	 * @return String
-	 */
-	public String getType() {
-		return ContextContributor.CONTEXTS_ELEM;
-	}
 	protected void preprocess(IContextContributionNode contrib) {
-		// update the plugin IDs and href only for child Toc (ie: related topics).
-		// we know that we a Context contributrion to start with.
-		// this is stored as a HelpContribution)
-		for (Iterator children = contrib.getChildren(); children.hasNext();) {
+		// update the plugin IDs and href only for related topics.
+		// we know that we have a Context contributrion to start with.
+		for (Iterator children = contrib.getChildren().iterator();
+			children.hasNext();
+			) {
 			// update the id and href only for Topic node.
 			// may need to revist! we may need to update the ids of Context also.
 			Object child = children.next();
-			if (child instanceof HelpContextTopic) {
-				((HelpContextTopic) child).setPlugin(plugin.getUniqueIdentifier());
-				updateHrefs((HelpContextTopic) child);
+			if (child instanceof RelatedTopic) {
+				((RelatedTopic) child).setPlugin(plugin.getUniqueIdentifier());
+				updateHrefs((RelatedTopic) child);
 			} else if (child instanceof ContextContribution) {
 				((ContextContribution) child).setContributor(this);
 				preprocess((ContextContribution) child);
 			}
 		}
 	}
-	protected IContextContributionNode load(String nameAttribute) {
+	protected IContextContributionNode load() {
 		IContextContributionNode contribution = null;
-		String file =
-			plugin.getUniqueIdentifier() + "/" + configuration.getAttribute(nameAttribute);
+		String fileName = configuration.getAttribute(FILE_ATTR);
+		if (fileName == null)
+			fileName = configuration.getAttribute(FILE_ATTR_V1);
+		String file = plugin.getUniqueIdentifier() + "/" + fileName;
 		try {
 			InputStream stream =
-				ResourceLocator.openFromPlugin(
-					plugin.getUniqueIdentifier(),
-					configuration.getAttribute(nameAttribute));
+				ResourceLocator.openFromPlugin(plugin.getUniqueIdentifier(), fileName);
 			if (stream == null)
 				return null;
 			InputSource source = new InputSource(stream);
@@ -111,7 +93,7 @@ public class ContextContributor {
 			// use toString method to capture protocol...etc
 			// source.setSystemId(xmlURL.toString());
 			source.setSystemId(file);
-			ContextContributionParser parser = getContributionParser();
+			ContextContributionParser parser = new ContextContributionParser();
 			parser.parse(stream, file);
 			stream.close();
 			contribution = parser.getContribution();
@@ -128,19 +110,63 @@ public class ContextContributor {
 	 * Utility method that scans the topics for all href attributes and update them
 	 * to include the plugin id (i.e. create a help url).
 	 */
-	protected void updateHrefs(HelpContextTopic topic) {
+	protected void updateHrefs(RelatedTopic topic) {
 		// set the href on the input contribution   
 		String href = topic.getHref();
 		if (href == null)
-			 ((HelpContextTopic) topic).setHref("");
+			 ((RelatedTopic) topic).setHref("");
 		else {
 			if (!href.equals("") // no empty link
 				&& !href.startsWith("/") // no help url
 				&& href.indexOf(':') == -1) // no other protocols
 				{
-				((HelpContextTopic) topic).setHref(
+				((RelatedTopic) topic).setHref(
 					"/" + plugin.getUniqueIdentifier() + "/" + href);
 			}
 		}
+	}
+	/**
+	 * Filters out the duplicate topics from an array
+	 */
+	private IHelpResource[] removeDuplicates(IHelpResource links[]) {
+		if (links == null || links.length <= 0)
+			return links;
+		ArrayList filtered = new ArrayList();
+		for (int i = 0; i < links.length; i++) {
+			IHelpResource topic1 = links[i];
+			if (!isValidTopic(topic1))
+				continue;
+			boolean dup = false;
+			for (int j = 0; j < filtered.size(); j++) {
+				IHelpResource topic2 = (IHelpResource) filtered.get(j);
+				if (!isValidTopic(topic2))
+					continue;
+				if (equal(topic1, topic2)) {
+					dup = true;
+					break;
+				}
+			}
+			if (!dup)
+				filtered.add(links[i]);
+		}
+		return (IHelpResource[]) filtered.toArray(new IHelpResource[filtered.size()]);
+	}
+	/**
+	 * Checks if topic labels and href are not null and not empty strings
+	 */
+	private boolean isValidTopic(IHelpResource topic) {
+		return topic != null
+			&& topic.getHref() != null
+			&& !"".equals(topic.getHref())
+			&& topic.getLabel() != null
+			&& !"".equals(topic.getLabel());
+	}
+	/**
+	 * Check if two context topic are the same.
+	 * They are considered the same if both labels and href are equal
+	 */
+	private boolean equal(IHelpResource topic1, IHelpResource topic2) {
+		return topic1.getHref().equals(topic2.getHref())
+			&& topic1.getLabel().equals(topic2.getLabel());
 	}
 }
