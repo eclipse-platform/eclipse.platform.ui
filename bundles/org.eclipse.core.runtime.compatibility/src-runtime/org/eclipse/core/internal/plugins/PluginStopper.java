@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ public class PluginStopper implements IShutdownHook {
 
 	public void run() {
 		boolean debug = InternalPlatform.getDefault().getBooleanOption(OPTION_DEBUG_PLUGIN_STOPPER,false);		
-		BundleContext context = InternalPlatform.getDefault().getBundleContext();
 		Map references = new HashMap();
 		IPluginDescriptor[] plugins = Platform.getPluginRegistry().getPluginDescriptors();		
 		Map activeLegacyBundles = new HashMap(plugins.length);
@@ -65,15 +64,14 @@ public class PluginStopper implements IShutdownHook {
 			if (requireBundleNames == null)
 				// no Require-Bundle entry - does not depend on other legacy bundles
 				continue;
-			StringTokenizer tokenizer = new StringTokenizer(requireBundleNames," ,\t\n\r\f");
+			StringTokenizer tokenizer = new StringTokenizer(requireBundleNames," ,\t\n\r\f"); //$NON-NLS-1$
 			while(tokenizer.hasMoreTokens()) {				
 				String importedBundleName = tokenizer.nextToken();
 				Bundle importedBundle = (Bundle) activeLegacyBundles.get(importedBundleName);
 				// ignore dependencies on non-active legacy bundles
 				if (importedBundle == null)
 					continue;
-				references.put(new ReferenceKey(pluginBundle.getBundleId(),importedBundle.getBundleId()), new Object[] { pluginBundle, importedBundle });
-				
+				references.put(new ReferenceKey(pluginBundle.getBundleId(),importedBundle.getBundleId()), new Object[] { pluginBundle, importedBundle });				
 			}
 		}
 		Bundle[] orderedBundles = (Bundle[]) activeLegacyBundles.values().toArray(new Bundle[activeLegacyBundles.size()]);
