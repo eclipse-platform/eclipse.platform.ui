@@ -45,7 +45,7 @@
 	<extension point="org.eclipse.ui.editors">
     	<editor id="org.eclipse.compare.CompareEditor"
       		name="Default Compare Editor"
- 			icon="icons/basic/ctool16/compare.gif"     	  
+ 			icon="icons/full/cview16/compare_view.gif"     	  
       		class="org.eclipse.compare.internal.CompareEditor"
 			contributorClass="org.eclipse.compare.internal.CompareEditorContributor">
     	</editor>

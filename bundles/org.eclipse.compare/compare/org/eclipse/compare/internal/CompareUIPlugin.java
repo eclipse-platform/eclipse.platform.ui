@@ -342,7 +342,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					
 		if (installURL != null) {
 			try {
-				URL url= new URL(installURL, "icons/basic/" + relativePath);
+				URL url= new URL(installURL, "icons/full/" + relativePath);
 				return ImageDescriptor.createFromURL(url);
 			} catch (MalformedURLException e) {
 				Assert.isTrue(false);

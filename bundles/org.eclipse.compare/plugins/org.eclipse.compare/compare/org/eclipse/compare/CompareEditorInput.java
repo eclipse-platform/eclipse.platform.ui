@@ -95,6 +95,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	private static boolean PR1GB0P4S= true;
 	
+	private static final String COMPARE_EDITOR_IMAGE_NAME= "cview16/compare_view.gif";
 	private static Image fgTitleImage;
 	
 	private Splitter fComposite;
@@ -230,7 +231,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Image getTitleImage() {
 		if (fgTitleImage == null) {
-			fgTitleImage= CompareUIPlugin.getImageDescriptor("ctool16/compare.gif").createImage();
+			fgTitleImage= CompareUIPlugin.getImageDescriptor(COMPARE_EDITOR_IMAGE_NAME).createImage();
 			CompareUI.disposeOnShutdown(fgTitleImage);
 		}
 		return fgTitleImage;

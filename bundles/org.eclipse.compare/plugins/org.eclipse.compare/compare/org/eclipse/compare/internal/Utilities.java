@@ -203,9 +203,31 @@ public class Utilities {
 		
 		String relPath= getString(bundle, imageKey, null);
 		if (relPath != null && relPath.trim().length() > 0) {
-			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(relPath);
+			
+			String cPath;
+			String dPath;
+			String ePath;
+			
+			if (relPath.indexOf("/") >= 0) {
+				String path= relPath.substring(1);
+				cPath= 'c' + path;
+				dPath= 'd' + path;
+				ePath= 'e' + path;
+			} else {
+				cPath= "clcl16/" + relPath;
+				dPath= "dlcl16/" + relPath;
+				ePath= "elcl16/" + relPath;
+			}
+			
+			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(cPath);
+			if (id != null)
+				a.setHoverImageDescriptor(id);
+			id= CompareUIPlugin.getImageDescriptor(ePath);
 			if (id != null)
 				a.setImageDescriptor(id);
+			id= CompareUIPlugin.getImageDescriptor(dPath);
+			if (id != null)
+				a.setDisabledImageDescriptor(id);
 		}
 	}
 		

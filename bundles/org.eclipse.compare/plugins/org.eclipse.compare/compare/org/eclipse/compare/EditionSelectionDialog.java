@@ -176,11 +176,11 @@ public class EditionSelectionDialog extends Dialog {
 		fCompareConfiguration.setLeftEditable(false);
 		fCompareConfiguration.setRightEditable(false);
 				
-		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/date.gif");
+		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif");
 		ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
 		if (id != null)
 			fDateImage= id.createImage();
-		iconName= Utilities.getString(fBundle, "timeIcon", "obj16/time.gif");
+		iconName= Utilities.getString(fBundle, "timeIcon", "obj16/resource_obj.gif");
 		id= CompareUIPlugin.getImageDescriptor(iconName);
 		if (id != null)
 			fTimeImage= id.createImage();
@@ -219,55 +219,8 @@ public class EditionSelectionDialog extends Dialog {
 				structureCreator= scd.createStructureCreator();
 		}
 
-		if (!fReplaceMode) {
-			final Object container= ppath;
-			Assert.isNotNull(container);
-								
-			if (structureCreator == null)
-				return null;	// error
-		
-			// extract all elements of container
-			final HashSet current= new HashSet();
-			IStructureComparator sco= structureCreator.locate(container, target);
-			if (sco != null) {
-				Object[] children= sco.getChildren();
-				if (children != null)
-					for (int i= 0; i < children.length; i++)
-						current.add(children[i]);
-			} else
-				return null; 	// error
+		if (fReplaceMode) {
 			
-			final IStructureCreator sc= structureCreator;
-			
-			// construct the comparer thread
-			// and perform the background extract
-			fThread= new Thread() {
-				public void run() {
-					
-					// from front (newest) to back (oldest)
-					for (int i= 0; i < count; i++) {
-							
-						if (fEditionTree == null || fEditionTree.isDisposed())
-							break;
-						ITypedElement edition= (ITypedElement) editions[i];
-						
-						IStructureComparator sco2= sc.locate(container, edition);
-						if (sco2 != null) {
-							Object[] children= sco2.getChildren();
-							if (children != null) {
-								for (int i2= 0; i2 < children.length; i2++) {
-									ITypedElement child= (ITypedElement) children[i2];
-									if (!current.contains(child))
-										sendPair(new Pair(edition, child, sc.getContents(child, false)));
-								}
-							}
-						}
-					}
-					sendPair(null);
-				}
-			};
-			
-		} else {
 			if (structureCreator != null) {
 				Object item= structureCreator.locate(ppath, target);
 				if (item instanceof ITypedElement)
@@ -318,6 +271,55 @@ public class EditionSelectionDialog extends Dialog {
 				for (int i= 0; i < count; i++)
 					addMemberEdition(new Pair((ITypedElement) editions[i], (ITypedElement) editions[i], null));
 			}
+			
+		} else {
+			
+			final Object container= ppath;
+			Assert.isNotNull(container);
+								
+			if (structureCreator == null)
+				return null;	// error
+		
+			// extract all elements of container
+			final HashSet current= new HashSet();
+			IStructureComparator sco= structureCreator.locate(container, target);
+			if (sco != null) {
+				Object[] children= sco.getChildren();
+				if (children != null)
+					for (int i= 0; i < children.length; i++)
+						current.add(children[i]);
+			} else
+				return null; 	// error
+			
+			final IStructureCreator sc= structureCreator;
+			
+			// construct the comparer thread
+			// and perform the background extract
+			fThread= new Thread() {
+				public void run() {
+					
+					// from front (newest) to back (oldest)
+					for (int i= 0; i < count; i++) {
+							
+						if (fEditionTree == null || fEditionTree.isDisposed())
+							break;
+						ITypedElement edition= (ITypedElement) editions[i];
+						
+						IStructureComparator sco2= sc.locate(container, edition);
+						if (sco2 != null) {
+							Object[] children= sco2.getChildren();
+							if (children != null) {
+								for (int i2= 0; i2 < children.length; i2++) {
+									ITypedElement child= (ITypedElement) children[i2];
+									if (!current.contains(child))
+										sendPair(new Pair(edition, child, sc.getContents(child, false)));
+								}
+							}
+						}
+					}
+					sendPair(null);
+				}
+			};
 		}
 		
 		open();

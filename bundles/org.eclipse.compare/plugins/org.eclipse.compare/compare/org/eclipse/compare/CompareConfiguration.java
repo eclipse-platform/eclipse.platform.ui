@@ -56,19 +56,20 @@ public class CompareConfiguration {
 		int INCOMING= Differencer.LEFT;
 		int OUTGOING= Differencer.RIGHT;
 		
-		fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/add.gif");
-		fgImages[INCOMING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/in_add.gif");
-		fgImages[OUTGOING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/out_add.gif");
-		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confl_add.gif");
+		fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");
+		fgImages[INCOMING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/inadd_ov.gif");
+		fgImages[OUTGOING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/outadd_ov.gif");
+		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confladd_ov.gif");
 
-		fgImages[Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/del.gif");
-		fgImages[INCOMING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/in_del.gif");
-		fgImages[OUTGOING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/out_del.gif");
-		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confl_del.gif");
+		fgImages[Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif");
+		fgImages[INCOMING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/indel_ov.gif");
+		fgImages[OUTGOING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/outdel_ov.gif");
+		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif");
 
-		fgImages[INCOMING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/in_change.gif");
-		fgImages[OUTGOING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/out_change.gif");
-		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confl_change.gif");
+		fgImages[Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/chg_ov.gif");
+		fgImages[INCOMING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/inchg_ov.gif");
+		fgImages[OUTGOING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/outchg_ov.gif");
+		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif");
 	}
 
 	private ListenerList fListeners= new ListenerList();
