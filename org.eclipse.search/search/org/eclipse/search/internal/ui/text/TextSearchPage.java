@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.ITextSelection;
@@ -67,22 +68,29 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
+	// Dialog store id constants
+	private final static String PAGE_NAME= "TextSearchPage"; //$NON-NLS-1$
+	private final static String STORE_CASE_SENSITIVE= PAGE_NAME + "CASE_SENSITIVE"; //$NON-NLS-1$
+
 	private static List fgPreviousSearchPatterns= new ArrayList(20);
 
+	private IDialogSettings fDialogSettings;
+	private boolean fFirstTime= true;
+	private boolean fIsCaseSensitive;
+	
 	private Combo fPattern;
 	private Button fIgnoreCase;
 	private Text fExtensions;
-	private boolean fFirstTime= true;
+
 	private ISearchPageContainer fContainer;
-	
 	private FileTypeEditor fFileTypeEditor;
 
-	private static class SearchPatternData {
 
-		boolean		ignoreCase;
+	private static class SearchPatternData {
+		boolean	ignoreCase;
 		String		pattern;
 		Set			extensions;
-		int			scope;
+		int		scope;
 		IWorkingSet	workingSet;
 		
 		public SearchPatternData(String pattern, boolean ignoreCase, Set extensions, int scope, IWorkingSet workingSet) {
@@ -231,6 +239,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 * Creates the page's content.
 	 */
 	public void createControl(Composite parent) {
+		readConfiguration();
+		
 		GridLayout layout;
 		GridData gd;
 		Label label;
@@ -275,7 +285,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		gd= new GridData(); gd.horizontalAlignment= gd.END;
 		fIgnoreCase.setLayoutData(gd);
 		layouter.perform( new Control[] {label, fIgnoreCase}, -1);
-		
+		fIgnoreCase.setSelection(!fIsCaseSensitive);
+		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fIsCaseSensitive= !fIgnoreCase.getSelection();
+				writeConfiguration();
+			}
+		});
+
 		Control control= makeExtensionEditor(group);
 		layouter.perform( new Control[] { control }, 0);
 		
@@ -463,5 +480,36 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			}
 		}
 		return scope;
+	}
+
+	//--------------- Configuration handling --------------
+	
+	/**
+	 * Returns the page settings for this Java search page.
+	 * 
+	 * @return the page settings to be used
+	 */
+	private IDialogSettings getDialogSettings() {
+		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings();
+		fDialogSettings= settings.getSection(PAGE_NAME);
+		if (fDialogSettings == null)
+			fDialogSettings= settings.addNewSection(PAGE_NAME);
+		return fDialogSettings;
+	}
+	
+	/**
+	 * Initializes itself from the stored page settings.
+	 */
+	private void readConfiguration() {
+		IDialogSettings s= getDialogSettings();
+		fIsCaseSensitive= s.getBoolean(STORE_CASE_SENSITIVE);
+	}
+	
+	/**
+	 * Stores it current configuration in the dialog store.
+	 */
+	private void writeConfiguration() {
+		IDialogSettings s= getDialogSettings();
+		s.put(STORE_CASE_SENSITIVE, fIsCaseSensitive);
 	}
 }	
