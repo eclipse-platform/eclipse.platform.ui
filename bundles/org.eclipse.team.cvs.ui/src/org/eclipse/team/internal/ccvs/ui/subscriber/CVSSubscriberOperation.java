@@ -43,6 +43,7 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		// Divide the sync info by project
 		final Map projectSyncInfos = getProjectSyncInfoSetMap();
+		monitor.beginTask(null, projectSyncInfos.size() * 100);
 		for (Iterator iter = projectSyncInfos.keySet().iterator(); iter.hasNext(); ) {
 			final IProject project = (IProject) iter.next();
 			try {
@@ -58,11 +59,12 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 								throw CVSException.wrapException(e);
 							}
 						}
-					}, monitor);
+					}, Policy.subMonitorFor(monitor, 100));
 			} catch (TeamException e) {
 				throw new InvocationTargetException(e);
 			}
 		}
+		monitor.done();
 	}
 
 	/**
