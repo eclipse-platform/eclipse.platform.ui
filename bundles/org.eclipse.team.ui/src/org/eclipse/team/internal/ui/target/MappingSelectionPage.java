@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MappingSelectionPage extends TargetWizardPage {
@@ -52,6 +53,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 				updateTextPath();
 			}
 		});
+		setViewerInput();
 				
 		textPath = createTextField(composite);
 		
@@ -87,11 +89,23 @@ public class MappingSelectionPage extends TargetWizardPage {
 	 * @see IWizardPage#setPreviousPage(IWizardPage)
 	 */
 	public void setPreviousPage(IWizardPage page) {
+		if(viewer!=null) {
+			setViewerInput();
+		}
+	}
+	
+	/*
+	 * Attempt to set the viewer input.
+	 * Do nothing if we don't have enough info yet to set it.
+	 */
+	 
+	private void setViewerInput() {
+		if(this.site == null)
+			return;
 		try {
-			if(viewer!=null) {
-				viewer.setInput(new RemoteResourceElement(site.getRemoteResource(), false));
-			}
+			viewer.setInput(new RemoteResourceElement(this.site.getRemoteResource(), false));
 		} catch (TeamException e) {
+			TeamUIPlugin.log(e.getStatus());
 		}
 	}
 }
