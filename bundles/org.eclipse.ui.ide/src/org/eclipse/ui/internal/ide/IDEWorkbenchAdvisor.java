@@ -20,14 +20,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -389,24 +386,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 	
-	/**
-	 * Finds the first problem marker to show.
-	 * Returns the first added error or warning.
-	 */
-	private IMarker findProblemToShow(IResourceChangeEvent event) {
-		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
-		for (int i = 0; i < markerDeltas.length; i++) {
-			IMarkerDelta markerDelta = markerDeltas[i];
-			if (markerDelta.getKind() == IResourceDelta.ADDED) {
-				int sev = markerDelta.getAttribute(IMarker.SEVERITY, -1);
-				if (sev == IMarker.SEVERITY_ERROR || sev == IMarker.SEVERITY_WARNING) {
-					return markerDelta.getMarker();
-				}
-			}
-		}
-		return null;
-	}
-	
 	private void refreshFromLocal() {
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
@@ -419,8 +398,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) //$NON-NLS-1$
 				return;
 				
-		IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-		Shell shell = windows[windows.length - 1].getShell();
+		IWorkbenchWindow window = getWorkbenchConfigurer().getWorkbench().getActiveWorkbenchWindow();
+		Shell shell = window == null ? null : window.getShell();
 		ProgressMonitorDialog dlg = new ProgressMonitorJobsDialog(shell);
 		final CoreException ex[] = new CoreException[1];
 		try {
