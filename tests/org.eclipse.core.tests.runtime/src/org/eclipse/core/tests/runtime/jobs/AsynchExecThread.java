@@ -14,7 +14,7 @@ package org.eclipse.core.tests.runtime.jobs;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.TestBarrier;
 
 /**
  * A runnable class that executes the given job and calls done when it is finished

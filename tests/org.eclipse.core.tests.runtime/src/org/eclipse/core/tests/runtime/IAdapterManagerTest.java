@@ -11,8 +11,6 @@ package org.eclipse.core.tests.runtime;
 
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests API on the IAdapterManager class.

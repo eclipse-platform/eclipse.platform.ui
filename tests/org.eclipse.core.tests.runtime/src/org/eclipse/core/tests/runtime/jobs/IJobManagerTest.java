@@ -10,13 +10,11 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
  * Tests the API of the class IJobManager

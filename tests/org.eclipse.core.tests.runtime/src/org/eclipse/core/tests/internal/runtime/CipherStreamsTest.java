@@ -11,9 +11,6 @@
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.runtime.CipherInputStream;

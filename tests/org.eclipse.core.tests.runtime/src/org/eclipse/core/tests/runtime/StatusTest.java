@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import org.eclipse.core.runtime.*;
 import java.util.Arrays;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.runtime.*;
 
 public class StatusTest extends RuntimeTest {
 

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtimetests;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
 
 public class SampleMPR extends Plugin {
 

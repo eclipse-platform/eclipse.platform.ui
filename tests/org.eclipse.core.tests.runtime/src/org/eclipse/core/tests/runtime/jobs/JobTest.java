@@ -10,7 +10,6 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
-
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;

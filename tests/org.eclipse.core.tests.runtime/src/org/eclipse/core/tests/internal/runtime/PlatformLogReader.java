@@ -13,7 +13,7 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 
 /**

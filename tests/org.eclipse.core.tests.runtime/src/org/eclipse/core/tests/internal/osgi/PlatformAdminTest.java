@@ -13,7 +13,8 @@ package org.eclipse.core.tests.internal.osgi;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.osgi.framework.BundleException;
 
 public class PlatformAdminTest extends AbstractStateTest {

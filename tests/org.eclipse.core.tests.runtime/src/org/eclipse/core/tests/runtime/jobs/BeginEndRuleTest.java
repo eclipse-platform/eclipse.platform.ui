@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.tests.harness.FussyProgressMonitor;
-import org.eclipse.core.tests.harness.TestProgressMonitor;
 
 /**
  * Tests API methods IJobManager.beginRule and IJobManager.endRule

@@ -9,7 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.TestJob;
 
 /**
  * 

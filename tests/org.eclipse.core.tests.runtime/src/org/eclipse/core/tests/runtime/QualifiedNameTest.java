@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import org.eclipse.core.runtime.*;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * Test cases for the QualifiedName class.

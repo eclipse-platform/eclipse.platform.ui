@@ -13,9 +13,7 @@ package org.eclipse.core.tests.runtime.model;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.model.ConfigurationElementModel;
-import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
-import org.eclipse.core.runtime.model.Factory;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 /**

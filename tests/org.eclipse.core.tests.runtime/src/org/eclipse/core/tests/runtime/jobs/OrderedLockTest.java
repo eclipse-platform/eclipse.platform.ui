@@ -11,13 +11,12 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.LockManager;
 import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.LockListener;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.TestBarrier;
 
 /**
  * Tests implementation of ILock objects

@@ -13,7 +13,6 @@ package org.eclipse.core.tests.runtime;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;

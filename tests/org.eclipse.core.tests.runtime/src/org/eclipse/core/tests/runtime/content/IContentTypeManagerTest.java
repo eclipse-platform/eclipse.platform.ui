@@ -14,8 +14,6 @@ import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
-import org.eclipse.core.internal.content.ContentType;
-import org.eclipse.core.internal.content.XMLContentDescriber;
 import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.plugin.a;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Plugin;
 
 public class ExtensionDirectCompilerReferenceToPluginClass extends ConfigurableExtension {
 

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
-import junit.framework.*;
 
 /**
  * Test cases for the Path class.

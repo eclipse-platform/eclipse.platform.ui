@@ -10,7 +10,6 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.io.*;
-
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;

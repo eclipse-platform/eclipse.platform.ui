@@ -10,25 +10,11 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-
-import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.internal.jobs.LockManager;
-import org.eclipse.core.internal.jobs.OrderedLock;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.tests.harness.FussyProgressMonitor;
-import org.eclipse.core.tests.harness.TestProgressMonitor;
-
 import junit.framework.TestCase;
+import org.eclipse.core.internal.jobs.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.tests.harness.*;
 
 /**
  * Tests implementation of ILock objects

@@ -11,7 +11,6 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.ProgressProvider;

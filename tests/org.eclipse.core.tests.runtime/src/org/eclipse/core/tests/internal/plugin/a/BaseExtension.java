@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.plugin.a;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.IPlatformRunnable;
 
 public class BaseExtension implements IPlatformRunnable {
 

@@ -10,7 +10,6 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.Random;
-
 import org.eclipse.core.runtime.jobs.ILock;
 
 public class TestRunnable implements Runnable {

@@ -12,7 +12,6 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Preferences;

@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.*;
-import junit.framework.Test;
-import junit.framework.TestCase;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
 

@@ -19,8 +19,6 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
