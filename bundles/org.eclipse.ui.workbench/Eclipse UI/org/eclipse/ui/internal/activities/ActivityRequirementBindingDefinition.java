@@ -68,11 +68,11 @@ public final class ActivityRequirementBindingDefinition {
 	private transient String string;
 
 	public ActivityRequirementBindingDefinition(
-		String childActivityId,
-		String parentActivityId,
+		String requiredActivityId,
+		String activityId,
 		String sourceId) {
-		this.requiredActivityId = childActivityId;
-		this.activityId = parentActivityId;
+		this.requiredActivityId = requiredActivityId;
+		this.activityId = activityId;
 		this.sourceId = sourceId;
 	}
 
