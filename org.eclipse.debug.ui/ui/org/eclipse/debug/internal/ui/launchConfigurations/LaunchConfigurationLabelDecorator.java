@@ -49,7 +49,7 @@ public class LaunchConfigurationLabelDecorator implements ILabelDecorator {
 		if (obj instanceof IFile) {
 			IFile file = (IFile) obj;
 			String extension = file.getFileExtension();
-			if (extension.equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+			if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(extension)) {
 				return true;
 			}
 		}
