@@ -23,7 +23,6 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/editorssrc.zip">
 		    <fileset dir="src" />
-		    <fileset dir="extensions" />
   		</zip>				
 	</target>
 </project>
