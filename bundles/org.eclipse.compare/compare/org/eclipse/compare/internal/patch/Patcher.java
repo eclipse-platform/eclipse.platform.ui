@@ -863,7 +863,6 @@ public class Patcher {
 	 */
 	private void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
 		
-		// and save it
 		InputStream is= new ByteArrayInputStream(contents.getBytes());
 		try {
 			if (file.exists()) {

@@ -429,15 +429,21 @@ import org.eclipse.compare.structuremergeviewer.*;
 				if (strip > 0 && strip < p.segmentCount())
 					p= p.removeFirstSegments(strip);
 				file= existsInSelection(p);
-				diff.fMatches= file != null;
+				diff.fMatches= false;
 				if (file != null) {
-					diff.fMatches= true;
+					if (file.isReadOnly()) {
+						// file is readonly
+						error= PatchMessages.getString("PreviewPatchPage.FileIsReadOnly.error"); //$NON-NLS-1$
+						file= null;
+					} else {
+						diff.fMatches= true;
+					}
 				} else {
 					// file doesn't exist
 					error= PatchMessages.getString("PreviewPatchPage.FileDoesNotExist.error"); //$NON-NLS-1$
 				}
-			}			
-							
+			}
+			
 			ArrayList failedHunks= new ArrayList();
 			fPatchWizard.getPatcher().apply(diff, file, create, failedHunks);
 
