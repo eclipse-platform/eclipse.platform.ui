@@ -345,9 +345,8 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				//Double check in case we did not finish the update job
-				if (awaitingDecoration.isEmpty())
-					resultCache.clear();
+				//Reschedule in case something got added when we dropped the lock
+				decorated();
 			}
 		});
 		return job;
