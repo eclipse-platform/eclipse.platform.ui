@@ -5,17 +5,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
@@ -26,6 +15,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,18 +26,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-
-import org.eclipse.jface.text.Position;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
-
+import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -56,11 +38,6 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
-
-import org.eclipse.search.internal.ui.CopyToClipboardAction;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
@@ -72,6 +49,23 @@ import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
 
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
 	private static final String KEY_LAYOUT= "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
@@ -96,26 +90,46 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private Action fRemoveAllResultsAction;
 	private Action fShowNextAction;
 	private Action fShowPreviousAction;
-	private Action fFlatAction;
-	private Action fHierarchicalAction;
+	private SetLayoutAction fFlatAction;
+	private SetLayoutAction fHierarchicalAction;
 	
-	private boolean fIsInitiallyFlat;
+	private int fCurrentLayout;
 
 	private int fCurrentMatchIndex= 0;
 	private String fId;
+	private int fSupportedLayouts;
+	
+	/**
+	 * Flag denoting tree layout.
+	 */
+	public static final int FLAG_LAYOUT_FLAT= 1;
+	/**
+	 * Flag denoting flat list layout.
+	 */
+	public static final int FLAG_LAYOUT_TREE= 2;
 
-	protected AbstractTextSearchViewPage() {
+	/**
+	 * This constructor must be passed a combination of layout flags
+	 * combined with bitwise or. At least one flag musst be passed in (i.e.
+	 * 0 is not a permitted value).
+	 * @param supportedLayouts Flags determining which layout options this
+	 * 						page supports. Must not be 0.
+	 * @see #FLAG_LAYOUT_FLAT
+	 * @see #FLAG_LAYOUT_TREE
+	 */
+	protected AbstractTextSearchViewPage(int supportedLayouts) {
+		fSupportedLayouts= supportedLayouts;
+		if (supportsFlatLayout())
+			fCurrentLayout= FLAG_LAYOUT_FLAT;
+		else 
+			fCurrentLayout= FLAG_LAYOUT_TREE;
+		
 		fRemoveAllResultsAction= new RemoveAllResultsAction(this);
 		fRemoveResultsAction= new RemoveMatchAction(this);
 		fShowNextAction= new ShowNextResultAction(this);
 		fShowPreviousAction= new ShowPreviousResultAction(this);
 		
-
-		fFlatAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.tooltip"), true); //$NON-NLS-1$ //$NON-NLS-2$
-		fHierarchicalAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"), false); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
-		SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
+		createLayoutActions();
 		
 		fBatchedUpdates= new HashSet();
 		fListener= new ISearchResultListener() {
@@ -125,6 +139,39 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		};
 	}
 	
+	
+	/**
+	 * Constructs this page with the default layout flags.
+	 * @see #AbstractTextSearchViewPage(int)
+	 */
+	protected AbstractTextSearchViewPage() {
+		this(FLAG_LAYOUT_FLAT | FLAG_LAYOUT_TREE);
+	}
+
+	private void createLayoutActions() {
+		if (countBits(fSupportedLayouts) > 1) {
+			fFlatAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.tooltip"), FLAG_LAYOUT_FLAT); //$NON-NLS-1$ //$NON-NLS-2$
+			fHierarchicalAction= new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"), FLAG_LAYOUT_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+		
+			SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
+			SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
+		}
+	}
+	
+	private int countBits(int layoutFlags) {
+		int bitCount= 0;
+		for (int i = 0; i < 32; i++) {
+			if (layoutFlags % 2 == 1)
+				bitCount++;
+			layoutFlags >>= 1;
+		}
+		return bitCount;
+	}
+
+	private boolean supportsFlatLayout() {
+		return isLayoutSupported(FLAG_LAYOUT_FLAT);
+	}
+
 	/**
 	 * Gets a dialog settings object for this search result page. There will be one dialog settings object
 	 * per search result page id.
@@ -185,13 +232,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Configures the given viewer. Implementers have to set at least
-	 * a content provider and a label provider.
+	 * a content provider and a label provider. This method may be called 
+	 * if the page was constructed with the flag <code>FLAG_LAYOUT_TREE</code>.
 	 * @param viewer The viewer to be configured
 	 */
 	protected abstract void configureTreeViewer(TreeViewer viewer);
 	/**
 	 * Configures the given viewer. Implementers have to set at least
-	 * a content provider and a label provider.
+	 * a content provider and a label provider. This method may be called 
+	 * if the page was constructed with the flag <code>FLAG_LAYOUT_FLAT</code>.
 	 * @param viewer The viewer to be configured
 	 */
 	protected abstract void configureTableViewer(TableViewer viewer);
@@ -253,7 +302,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayout(new FillLayout());
-		createViewer(fViewerContainer, fIsInitiallyFlat);
+		createViewer(fViewerContainer, fCurrentLayout);
 		
 		showBusyLabel(fIsBusyShown);
 		NewSearchUI.addQueryListener(fQueryListener);
@@ -309,45 +358,66 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * Toggles the page between tree mode and flat (table) layout.
+	 * Determines whether a certain layout is supported by this search result
+	 * page.
+	 * @see #AbstractTextSearchViewPage(int)
+	 * @param layout
+	 * @return whether the given layout is suppported.
 	 */
-	public void setFlatLayout(boolean on) {
-		if (on == isFlatLayout())
+	public boolean isLayoutSupported(int layout) {
+		return (layout & fSupportedLayouts) == layout;
+	}
+
+	/**
+	 * Sets the layout of this search result page. The layout must be on of
+	 * <code>FLAG_LAYOUT_FLAT</code> or <code>FLAG_LAYOUT_TREE</code>.
+	 * <code>layout</code> must be one of the values passed during construction
+	 * of this search result page.
+	 * @see #isLayoutSupported(int)
+	 */
+	public void setLayout(int layout) {
+		Assert.isTrue(countBits(layout) == 1);
+		Assert.isTrue(isLayoutSupported(layout));
+		if (countBits(fSupportedLayouts) < 2)
 			return;
+		if (fCurrentLayout == layout)
+			return;
+		fCurrentLayout= layout;
 		ISelection selection= fViewer.getSelection();
 		ISearchResult result= disconnectViewer();
 		fViewer.getControl().dispose();
 		fViewer= null;
-		createViewer(fViewerContainer, on);
+		createViewer(fViewerContainer, layout);
 		fViewerContainer.layout(true);
 		connectViewer(result);
 		fViewer.setSelection(selection, true);
-		getSettings().put(KEY_LAYOUT, on);
+		getSettings().put(KEY_LAYOUT, layout);
 	}
 
 	private void updateLayoutActions() {
-		fFlatAction.setChecked(isFlatLayout());
-		fHierarchicalAction.setChecked(!isFlatLayout());
+		if (fFlatAction != null)
+			fFlatAction.setChecked(fCurrentLayout == fFlatAction.getLayout());
+		if (fHierarchicalAction != null)
+			fHierarchicalAction.setChecked(fCurrentLayout == fHierarchicalAction.getLayout());
 	}
 
 	/**
-	 * Tells whether the page shows it's result as a tree or as a 
-	 * table.
-	 * @see AbstractTextSearchViewPage#configureTreeViewer(TreeViewer);
-	 * @see AbstractTextSearchViewPage#configureTableViewer(TableViewer);
-	 * @return Whether the page shows a tree or a table.
+	 * Return the layout this page is currently using.
+	 * @see #FLAG_LAYOUT_FLAT
+	 * @see #FLAG_LAYOUT_TREE
+	 * @return The layout this page is currently using.
 	 */
-	public boolean isFlatLayout() {
-		return fViewer instanceof TableViewer;
+	public int getLayout() {
+		return fCurrentLayout;
 	}
 
 
-	private void createViewer(Composite parent, boolean flatMode) {
-		if (flatMode) {
+	private void createViewer(Composite parent, int layout) {
+		if ((layout & FLAG_LAYOUT_FLAT) != 0) {
 			TableViewer viewer= new SearchResultsTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 			fViewer= viewer;
 			configureTableViewer(viewer);
-		} else { 
+		} else if ((layout & FLAG_LAYOUT_TREE) != 0){ 
 			TreeViewer viewer= new SearchResultsTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 			fViewer= viewer;
 			configureTreeViewer(viewer);
@@ -564,7 +634,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-		addLayoutMenu(pageSite.getActionBars().getMenuManager());
+		addLayoutActions(pageSite.getActionBars().getMenuManager());
 	}
 
 	/**
@@ -584,9 +654,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	private void addLayoutMenu(IMenuManager menuManager) {
-		menuManager.add(fFlatAction);
-		menuManager.add(fHierarchicalAction);
+	private void addLayoutActions(IMenuManager menuManager) {
+		if (fFlatAction != null)
+			menuManager.add(fFlatAction);
+		if (fHierarchicalAction != null)
+			menuManager.add(fHierarchicalAction);
 	}
 
 	/**
@@ -667,12 +739,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * { @inheritDoc }
 	 */
 	public void restoreState(IMemento memento) {
-		fIsInitiallyFlat= getSettings().getBoolean(KEY_LAYOUT);
-		if (memento != null) {
-			Integer isFlat= memento.getInteger(KEY_LAYOUT);
-			if (isFlat != null) {
-				fIsInitiallyFlat= isFlat.intValue() == 1;
-			} 
+		if (countBits(fSupportedLayouts) > 1) {
+			try {
+				fCurrentLayout= getSettings().getInt(KEY_LAYOUT);
+			} catch (NumberFormatException e) {
+				// ignore, signals no value stored.
+			}
+			if (memento != null) {
+				Integer layout= memento.getInteger(KEY_LAYOUT);
+				if (layout != null) {
+					fCurrentLayout= layout.intValue();
+				} 
+			}
 		}
 	}
 	
@@ -681,9 +759,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * { @inheritDoc }
 	 */
 	public void saveState(IMemento memento) {
-		if (isFlatLayout()) 
-			memento.putInteger(KEY_LAYOUT, 1);
-		else
-			memento.putInteger(KEY_LAYOUT, 0);
+		if (countBits(fSupportedLayouts) > 1) {
+			memento.putInteger(KEY_LAYOUT, fCurrentLayout);
+		}
 	}
 }

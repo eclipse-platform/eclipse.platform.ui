@@ -12,22 +12,25 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public class SetLayoutAction extends Action {
 
 	private AbstractTextSearchViewPage fPage;
-	private boolean fIsFlatMode;
+	private int fLayout;
 
-	public SetLayoutAction(AbstractTextSearchViewPage page, String label, String tooltip, boolean flatMode) {
+	public SetLayoutAction(AbstractTextSearchViewPage page, String label, String tooltip, int layout) {
 		super(label,  IAction.AS_CHECK_BOX);
 		fPage= page;
 		setToolTipText(tooltip); //$NON-NLS-1$
-		fIsFlatMode= flatMode;
+		fLayout= layout;
 	}
 	
 	public void run() {
-		fPage.setFlatLayout(fIsFlatMode);
+		fPage.setLayout(fLayout);
+	}
+	
+	public int getLayout() {
+		return fLayout;
 	}
 }

@@ -26,6 +26,7 @@ import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
@@ -52,9 +53,9 @@ public class SearchResultPageTest extends TestCase {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
-		page.setFlatLayout(false);
+		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_TREE);
 		checkViewerDisplay(page);
-		page.setFlatLayout(true);
+		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		checkViewerDisplay(page);
 	}
 	
@@ -75,7 +76,7 @@ public class SearchResultPageTest extends TestCase {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
-		page.setFlatLayout(false);
+		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_TREE);
 		AbstractTreeViewer viewer= (AbstractTreeViewer) page.getViewer();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		// make sure all elements have items.
