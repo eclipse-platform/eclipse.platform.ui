@@ -356,7 +356,7 @@ private void checkPaths(IResourceDelta delta){
 		}
 	}
 }
-private String convertChangeFlags(int changeFlags){
+String convertChangeFlags(int changeFlags){
 	if (changeFlags == 0) {
 		return "0";
 	}
@@ -404,7 +404,7 @@ private String convertChangeFlags(int changeFlags){
 
 	return result;
 }
-private String convertKind(int kind){
+String convertKind(int kind){
 	switch(kind){
 		case IResourceDelta.ADDED: return "ADDED";
 		case IResourceDelta.CHANGED: return "CHANGED";

@@ -837,7 +837,7 @@ public void testTwoFileChanges() {
 /**
  * Asserts that a manual traversal of the delta does not find the given resources.
  */
-private void assertNotDeltaIncludes(String message, IResourceDelta delta, IResource[] resources) {
+void assertNotDeltaIncludes(String message, IResourceDelta delta, IResource[] resources) {
 	try {
 		IResource deltaResource = delta.getResource();
 		for (int i = 0; i < resources.length; i++) {
@@ -854,7 +854,7 @@ private void assertNotDeltaIncludes(String message, IResourceDelta delta, IResou
 /**
  * Asserts that a visitor traversal of the delta does not find the given resources.
  */
-private void assertNotDeltaVisits(final String message, IResourceDelta delta, final IResource[] resources) {
+void assertNotDeltaVisits(final String message, IResourceDelta delta, final IResource[] resources) {
 	try {
 		delta.accept(new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) throws CoreException {

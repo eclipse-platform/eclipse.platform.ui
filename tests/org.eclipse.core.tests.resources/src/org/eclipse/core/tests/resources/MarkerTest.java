@@ -27,7 +27,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	public static final String TRANSIENT_MARKER = "org.eclipse.core.tests.resources.transientmarker";
 
 	/** The collection of resources used for testing. */
-	private IResource[] resources;
+	IResource[] resources;
 
 /**
  * Need a zero argument constructor to satisfy the test harness.

@@ -12,10 +12,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
 
 public class MarkerPerformanceTest extends CorePerformanceTest {
-	private IProject project;
-	private IFile file;
-	private IMarker[] markers;
-	private final int NUM_MARKERS = 5000;
+	IProject project;
+	IFile file;
+	IMarker[] markers;
+	final int NUM_MARKERS = 5000;
 	final int REPEAT = 100;
 	/**
 	 * No-arg constructor to satisfy test harness.

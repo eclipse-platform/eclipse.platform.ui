@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
 
 public class BenchWorkspace extends CorePerformanceTest {
-	private IProject project;
+	IProject project;
 	private static final int NUM_FOLDERS = 400;//must be multiple of 10
 	private static final int FILES_PER_FOLDER = 20;
 	/**
