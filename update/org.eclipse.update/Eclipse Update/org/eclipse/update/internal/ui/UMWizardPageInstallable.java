@@ -451,9 +451,9 @@ public void createControl(Composite compositeParent) {
 	_tableTreeItems.getTable().setLinesVisible(true);
 	_tableTreeItems.getTable().setHeaderVisible(true);
 	_tableTreeItems.getTable().setLayout(layoutTable);
-	_tableTreeItems.addSelectionListener(this);
 	_tableTreeItems.getTable().addMouseMoveListener(this);
 	_tableTreeItems.getTable().addMouseTrackListener(this);
+	
 	_tableTreeItems.addSelectionListener(this);
 
 	gridData = new GridData();
