@@ -51,7 +51,7 @@ public class SearchResults implements ISearchHitCollector {
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
-		for (int h = 0; h < hits.length() && h < maxHits; h++) {
+		for (int h = 0, j = 0; h < hits.length() && j < maxHits && h < 500 ; h++) {
 			org.apache.lucene.document.Document doc;
 			float score;
 			try {
@@ -107,6 +107,8 @@ public class SearchResults implements ISearchHitCollector {
 				label = href;
 			}
 
+			j++;
+			
 			// Set document href
 			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			searchHitList.add(new SearchHit(href, label, score, toc));
