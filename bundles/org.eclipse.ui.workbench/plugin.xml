@@ -32,7 +32,7 @@
 
    <extension
          point="org.eclipse.core.runtime.preferences">
-      <customization
+      <initializer
             class="org.eclipse.ui.internal.WorkbenchPreferenceInitializer"/>
    </extension>
 
