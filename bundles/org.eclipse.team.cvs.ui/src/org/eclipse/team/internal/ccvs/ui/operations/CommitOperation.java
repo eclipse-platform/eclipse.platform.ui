@@ -50,6 +50,7 @@ public class CommitOperation extends SingleCommandOperation {
 	public boolean performPrompting(IProgressMonitor monitor) throws CVSException, InvocationTargetException, InterruptedException {
 		monitor.beginTask(null, 20);
 		IResource[] resourcesToBeAdded = promptForResourcesToBeAdded(Policy.subMonitorFor(monitor, 10));
+		if (resourcesToBeAdded == null) return false;
 		String comment = promptForComment(getResources());
 		if (comment == null) return false;
 		addLocalOption(Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment));
