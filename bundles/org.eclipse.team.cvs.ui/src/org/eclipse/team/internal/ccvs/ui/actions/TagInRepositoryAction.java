@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
@@ -28,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 
 public class TagInRepositoryAction extends TagAction {
 
@@ -78,9 +80,16 @@ public class TagInRepositoryAction extends TagAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					monitor.beginTask(null, 1000 * resources.length);
+					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 					for (int i = 0; i < resources.length; i++) {
 						IStatus status = ((ICVSRemoteResource)resources[i]).tag(tag[0], getLocalOptions(), new SubProgressMonitor(monitor, 1000));
 						addStatus(status);
+						// Cache the new tag creation even if the tag may have had warnings.
+						try {
+							manager.addTags(getRootParent(resources[i]), new CVSTag[] {tag[0]});
+						} catch (CVSException e) {
+							addStatus(e.getStatus());
+						}
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -137,4 +146,12 @@ public class TagInRepositoryAction extends TagAction {
 		return false;
 	}
 
+	private ICVSResource getRootParent(ICVSResource resource) throws CVSException {
+		if (!resource.isManaged()) return resource;
+		ICVSFolder parent = resource.getParent();
+		if (parent == null) return resource;
+		// Special check for a parent which is the repository itself
+		if (parent.getName().length() == 0) return resource;
+		return getRootParent(parent);
+	}
 }
