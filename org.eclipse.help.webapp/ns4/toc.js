@@ -120,8 +120,9 @@ function mouseClickHandler(e) {
   else if (isIE)
    	clickedNode = window.event.srcElement;
   else 
-  	return;
-  	
+  	clickedNode = e.target;
+
+  /*
   var treeNode = getContentNode(clickedNode);
 
   if (treeNode != null && treeNode.parentNode.tagName != "BODY") {
@@ -135,8 +136,10 @@ function mouseClickHandler(e) {
   	  collapse(treeNode);
  	}
   }
-  
-  highlightTopic(clickedNode);
+  */
+    
+  if (clickedNode.href)
+  	highlightTopic(clickedNode);
 
   if (isMozilla)
   	e.cancelBubble = true;
@@ -171,10 +174,12 @@ function expandPathTo(node)
  */
 function highlightTopic(topic)
 {
-  var a = getAnchorNode(topic); 
+  var a = topic; //getAnchorNode(topic); 
+
   if (a != null)
   {
   	a.className = "active";
+  	a.color = "blue";
   	if (oldActive && oldActive != a) {
     	oldActive.className="";
   	}
@@ -187,13 +192,13 @@ function highlightTopic(topic)
  */
 function selectTopic(topic)
 {
-	var links = document.getElementsByTagName("a");
+	var links = document.links;
 	for (var i=0; i<links.length; i++)
 	{
 		if (topic == links[i].href)
 		{
-			expandPathTo(links[i]);
-			highlightTopic(links[i]);
+			//expandPathTo(links[i]);
+			//highlightTopic(links[i]);
 			return true;
 		}
 	}
@@ -228,6 +233,13 @@ function onloadHandler(title)
 		parent.setToolbarTitle(title);
 	}
 	*/
+	
+	// register event handlers to all links. skip the bookshelf
+	for (var i=1; i<document.links.length; i++)
+	{
+		document.links[i].onclick = mouseClickHandler;
+		//document.links[i].onmousemove = mouseMoveHandler;
+	}
 }
 
 // listen for clicks
@@ -238,4 +250,9 @@ if (isMozilla) {
 else if (isIE){
   document.onclick = mouseClickHandler;
   document.onmousemove = mouseMoveHandler;
+}
+else {
+	document.captureEvents(Event.CLICK | Event.MOUSEOVER| Event.MOUSEOUT);
+	document.onclick = mouseClickHandler;
+	document.onmousemove = mouseMoveHandler;
 }

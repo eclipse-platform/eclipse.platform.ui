@@ -78,6 +78,28 @@
 	var args = parseQueryString();
 	var queryString = <%=request.getQueryString()%>;
 	var loadedTOC = null;
+	var currentTab = null;
+	
+	/**
+ 	 * Shows the TOC frame, loads appropriate TOC, and selects the topic
+ 	 */
+	function displayTocFor(topic)
+	{
+		// first ensure the TOC frame is loaded
+		// TO DO....
+	
+		frames["TabsFrame"].switchTab("toc");
+
+		// remove the query, if any
+		var i = topic.indexOf('?');
+		if (i != -1)
+			topic = topic.substring(0, i);
+	
+		var selected = frames["NavFrame"].selectTopic(topic);
+
+		if (!selected)
+			frames["NavFrame"].location = "toc.jsp?topic="+topic;
+	}
 	</script>
 	
 </head>
