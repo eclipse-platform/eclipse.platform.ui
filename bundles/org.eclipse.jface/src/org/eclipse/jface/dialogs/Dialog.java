@@ -49,10 +49,6 @@ public abstract class Dialog extends Window {
 	/**
 	 * Image registry key for error image (value <code>"dialog_error_image"</code>).
 	 */
-	public static final String DLG_IMG_LOCKED = "dialog_error_locked"; //$NON-NLS-1$
-	/**
-	 * Image registry key for error image (value <code>"dialog_error_image"</code>).
-	 */
 	public static final String DLG_IMG_ERROR = "dialog_error_image"; //$NON-NLS-1$
 
 	/**
@@ -94,9 +90,6 @@ public abstract class Dialog extends Window {
 		reg.put(DLG_IMG_QUESTION, ImageDescriptor.createFromFile(Dialog.class, "images/question.gif")); //$NON-NLS-1$
 		reg.put(DLG_IMG_WARNING, ImageDescriptor.createFromFile(Dialog.class, "images/warning.gif")); //$NON-NLS-1$
 		reg.put(DLG_IMG_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/error.gif")); //$NON-NLS-1$
-
-		reg.put(DLG_IMG_LOCKED, ImageDescriptor.createFromFile(Dialog.class, "images/waiting_ind.gif")); //$NON-NLS-1$
-
 		
 		reg.put(DLG_IMG_MESSAGE_INFO, ImageDescriptor.createFromFile(Dialog.class, "images/message_info.gif")); //$NON-NLS-1$
 		reg.put(DLG_IMG_MESSAGE_WARNING, ImageDescriptor.createFromFile(Dialog.class, "images/message_warning.gif")); //$NON-NLS-1$

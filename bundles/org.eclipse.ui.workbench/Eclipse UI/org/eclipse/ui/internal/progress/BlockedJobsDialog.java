@@ -354,7 +354,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * This method returns the dialog's lock image.
 	 */
 	protected Image getImage() {
-		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_LOCKED);
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 	}
 	/*
 	 * (non-Javadoc)
