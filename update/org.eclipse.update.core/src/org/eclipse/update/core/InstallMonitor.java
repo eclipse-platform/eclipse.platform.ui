@@ -23,15 +23,16 @@ import org.eclipse.update.internal.core.*;
  */
 public class InstallMonitor implements IProgressMonitor {
 
-	private IProgressMonitor monitor;
-	private Stack tasks;
+	protected IProgressMonitor monitor;
+	protected Stack tasks;
 
-	private String taskString;
-	private String subTaskString;
-	private boolean showDetails;
-	private long totalCopyCount;
+	protected String taskString;
+	protected String subTaskString;
+	protected boolean showDetails;
+	protected long totalCopyCount;
+	protected	long currentCount = 0;
 
-	private class MonitorState {
+	protected class MonitorState {
 
 		private String taskString;
 		private String subTaskString;
@@ -66,7 +67,7 @@ public class InstallMonitor implements IProgressMonitor {
 		}
 	}
 	
-	private InstallMonitor() {
+	protected InstallMonitor() {
 	}
 
 	/**
@@ -238,6 +239,7 @@ public class InstallMonitor implements IProgressMonitor {
 	 */
 	public void setCopyCount(long count) {
 		if (showDetails && count > 0) {
+			currentCount = count;
 			long countK = count / 1024;
 			long totalK = totalCopyCount / 1024;
 			String msg =
@@ -250,5 +252,17 @@ public class InstallMonitor implements IProgressMonitor {
 			//$NON-NLS-1$ //$NON-NLS-2$
 			monitor.subTask(subTaskString + msg);
 		}
+	}
+	
+	/**
+	 * Increments the number of bytes copied.
+	 * 
+	 * @see #showCopyDetails(boolean)
+	 * @see #setTotalCount(long)
+	 * @param count number of new bytes  copied.
+	 * @since 2.0
+	 */
+	public void incrementCount(long increment) {
+		setCopyCount(currentCount + increment);
 	}
 }

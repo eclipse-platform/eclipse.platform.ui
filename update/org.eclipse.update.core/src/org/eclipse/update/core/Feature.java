@@ -48,6 +48,8 @@ public class Feature extends FeatureModel implements IFeature {
 	
 	//PERF: new instance variable
 	private VersionedIdentifier versionId;
+	
+	private InstallAbortedException abortedException = null;
 
 	/**
 	 * Feature default constructor
@@ -236,14 +238,14 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see IFeature#install(IFeature, IVerificationListener, IProgressMonitor)
 	 * @since 2.0
 	 */
-	public IFeatureReference install(IFeature targetFeature, IFeatureReference[] optionalfeatures, IVerificationListener verificationListener, IProgressMonitor progress) throws InstallAbortedException, CoreException {
+	public IFeatureReference install(IFeature targetFeature, IFeatureReference[] optionalfeatures, final IVerificationListener verificationListener, IProgressMonitor progress) throws InstallAbortedException, CoreException {
 
 		//DEBUG
 		debug("Installing...:" + getURL().toExternalForm());
 		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
 		// make sure we have an InstallMonitor		
-		InstallMonitor monitor;
+		final InstallMonitor monitor;
 		if (progress == null)
 			monitor = new InstallMonitor(new NullProgressMonitor());
 		else if (progress instanceof InstallMonitor)
@@ -255,12 +257,12 @@ public class Feature extends FeatureModel implements IFeature {
 		InstallHandlerProxy handler = new InstallHandlerProxy(IInstallHandler.HANDLER_ACTION_INSTALL, this, this.getInstallHandlerEntry(), monitor);
 		boolean success = false;
 		Throwable originalException = null;
-		InstallAbortedException abortedException = null;
+		abortedException = null;
 
 		// Get source feature provider and verifier.
 		// Initialize target variables.
-		IFeatureContentProvider provider = getFeatureContentProvider();
-		IVerifier verifier = provider.getVerifier();
+		final IFeatureContentProvider provider = getFeatureContentProvider();
+		final IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureReference alreadyInstalledFeature = null;
 		IFeatureContentConsumer consumer = null;
@@ -307,12 +309,34 @@ public class Feature extends FeatureModel implements IFeature {
 			verifyReferences(verifier, references, monitor, verificationListener, true);
 			monitorWork(monitor, 1);
 
+			final MultiDownloadMonitor distributedMonitor = new MultiDownloadMonitor(monitor, targetFeature);
+			
+			final ThreadGroup tgroup = new ThreadGroup("Feature " + getURL() + " download");
 			// Download and verify plugin archives
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				references = provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-				verifyReferences(verifier, references, monitor, verificationListener, false);
-				monitorWork(monitor, 1);
+				final IPluginEntry pluginToInstall = pluginsToInstall[i];
+				Runnable r = new Runnable() {
+					public void run() {
+						try {
+							final ContentReference[] plugin_references = provider.getPluginEntryArchiveReferences(pluginToInstall, distributedMonitor);
+							verifyReferences(verifier, plugin_references, distributedMonitor, verificationListener, false);
+							monitorWork(monitor, 1);
+						} catch (InstallAbortedException e) {
+							abortedException = e;
+							MultiDownloadManager.stopThreads(tgroup);
+						} catch (CoreException e) {
+							e.printStackTrace();
+						} finally {
+							MultiDownloadManager.releaseThread(Thread.currentThread());
+						}
+					}
+				};
+				Thread downloadThread = MultiDownloadManager.getThread(r, "download "+pluginToInstall.toString(), tgroup);
+				downloadThread.start();
 			}
+			
+			MultiDownloadManager.waitForThreads(tgroup);
+			
 			handler.pluginsDownloaded(pluginsToInstall);
 
 			// Download non-plugin archives. Verification handled by optional install handler

@@ -30,7 +30,7 @@ public class Utilities {
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 	private static long tmpseed = (new Date()).getTime();
 	private static String dirRoot = null;
-
+	private static final int INCREMENT_SIZE = 4096; // 4kbytes
 	/**
 	 * Returns a new working directory (in temporary space). Ensures
 	 * the directory exists. Any directory levels that had to be created
@@ -158,13 +158,17 @@ public class Utilities {
 	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException, InstallAbortedException {
 		byte[] buf = getBuffer();
 		try {
-			long currentLen = 0;
 			int len = is.read(buf);
+			int nextIncrement = 0;
 			while (len != -1) {
-				currentLen += len;
 				os.write(buf, 0, len);
 				if (monitor != null) {
-					monitor.setCopyCount(currentLen);
+					nextIncrement += len;
+					// only report in 2k increments
+					if (nextIncrement >= INCREMENT_SIZE){ 	
+						monitor.incrementCount(nextIncrement);
+						nextIncrement = 0;
+					}
 					if (monitor.isCanceled()) {
 						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
 						throw new InstallAbortedException(msg, null);
@@ -172,6 +176,8 @@ public class Utilities {
 				}
 				len = is.read(buf);
 			}
+			if (nextIncrement > 0 && monitor != null)
+				monitor.incrementCount(nextIncrement);
 		} finally {
 			freeBuffer(buf);
 		}

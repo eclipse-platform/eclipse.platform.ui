@@ -97,6 +97,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 	// lock
 	private final static Object lock = new Object();
+	
+	// hashtable of locks
+	private static Hashtable locks = new Hashtable();
 
 	/**
 	 * Feature content provider constructor
@@ -157,8 +160,14 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		// need to synch as another thread my have created the file but
 		// is still copying into it
 		File localFile = null;
+		Object keyLock = null;
 		synchronized (lock) {
-
+			if (locks.get(key) == null)
+				locks.put(key, key);
+			keyLock = locks.get(key);
+		}
+		
+		synchronized(keyLock) {
 			localFile = Utilities.lookupLocalFile(key);
 			if (localFile != null)
 				return ref.createContentReference(ref.getIdentifier(), localFile);
@@ -170,12 +179,17 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			);
 			boolean sucess = false;
 			if (monitor != null) {
-				monitor.saveState();
-				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
-				//$NON-NLS-1$
-				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
-				monitor.setTotalCount(ref.getInputSize());
-				monitor.showCopyDetails(true);
+				if (monitor instanceof MultiDownloadMonitor) {
+					monitor.setTotalCount(ref.getInputSize());
+					monitor.showCopyDetails(true);
+				} else {
+					monitor.saveState();
+					monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+					//$NON-NLS-1$
+					monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
+					monitor.setTotalCount(ref.getInputSize());
+					monitor.showCopyDetails(true);
+				}
 			}
 
 			try {
@@ -216,9 +230,10 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 						os.close(); // should flush buffer stream
 					} catch (IOException e) {
 					}
-				if (monitor != null)
+				if (monitor != null && !(monitor instanceof MultiDownloadMonitor))
 					monitor.restoreState();
 			}
+			locks.remove(key);
 		} // end lock
 		ContentReference reference = ref.createContentReference(ref.getIdentifier(), localFile);
 		return reference;
