@@ -616,10 +616,13 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	}
 	if (registry == null) {
 		URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
+		long start = System.currentTimeMillis();
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 		IStatus resolveStatus = registry.resolve(true, true);
 		problems.merge(resolveStatus);
 		registry.markReadOnly();
+		if (DEBUG)
+			System.out.println("Parse and resolve registry: " + (System.currentTimeMillis() - start) + "ms");
 	}
 	registry.startup(null);
 	return problems;
