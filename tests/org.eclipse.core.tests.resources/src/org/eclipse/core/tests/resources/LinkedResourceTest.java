@@ -399,31 +399,38 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		.performTest(inputs);
 	}
 	public void testCopyProjectWithLinks() {
-//		IPath fileLocation = getRandomLocation();
-//		try {
-//			try {
-//				createFileInFileSystem(fileLocation);
-//				nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
-//				nonExistingFileInExistingProject.createLink(fileLocation, IResource.NONE, getMonitor());
-//			} catch (CoreException e) {
-//				fail("1.0", e);
-//			}
-//
-//			//copy the project
-//			IProject destination = getWorkspace().getRoot().getProject("Copy");
-//			IFolder copiedLinkedFolder = destination.getExistingFolderInExistingProject.getName());
-//			IFile copiedLinkedFile = destination.getFile(nonExistingFileInExistingProject.getName());
-//			try {
-//				existingProject.copy(destination.getFullPath(), nextLocationCounter, monitor)
-//
-//			//ensure copied project has same links to same locations
-//
-//
-//
-//
-//		} finally {
-//			Workspace.clear(fileLocation.toFile());
-//		}
+		IPath fileLocation = getRandomLocation();
+		IFile file = nonExistingFileInExistingProject;
+		IFolder folder = nonExistingFolderInExistingProject;
+		try {
+			try {
+				createFileInFileSystem(resolvePath(fileLocation));
+				folder.createLink(existingLocation, IResource.NONE, getMonitor());
+				file.createLink(fileLocation, IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+
+			//copy the project
+			IProject destination = getWorkspace().getRoot().getProject("CopyTargetProject");
+
+			try {
+				existingProject.copy(destination.getFullPath(),IResource.NONE, getMonitor());
+			} catch(CoreException e) {
+				fail("2.0",e);
+			}
+
+			IFile newFile = destination.getFile(file.getProjectRelativePath());
+			assertTrue("3.0",newFile.isLinked());
+			assertEquals("3.1",file.getLocation(),newFile.getLocation());
+
+			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
+			assertTrue("4.0",newFolder.isLinked());
+			assertEquals("4.1",folder.getLocation(),newFolder.getLocation());
+
+		} finally {
+			Workspace.clear(resolvePath(fileLocation).toFile());
+		}
 	}
 	public void testMoveFolder() {
 		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};
@@ -482,6 +489,58 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			}
 		}
 		.performTest(inputs);
+	}
+	public void testMoveProjectWithLinks() {
+		IPath fileLocation = getRandomLocation();
+		IFile file = nonExistingFileInExistingProject;
+		IFolder folder = nonExistingFolderInExistingProject;
+		IResource[] oldResources = new IResource[] {file, folder, existingProject};
+		try {
+			try {
+				createFileInFileSystem(resolvePath(fileLocation));
+				folder.createLink(existingLocation, IResource.NONE, getMonitor());
+				file.createLink(fileLocation, IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+
+			//move the project
+			IProject destination = getWorkspace().getRoot().getProject("MoveTargetProject");
+			IFile newFile = destination.getFile(file.getProjectRelativePath());
+			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
+			IResource[] newResources = new IResource[] {destination, newFile, newFolder};
+
+			assertDoesNotExistInWorkspace("2.0", destination);
+
+			try {
+				existingProject.move(destination.getFullPath(), IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("2.1", e);
+			}
+			assertExistsInWorkspace("3.0", newResources);
+			assertDoesNotExistInWorkspace("3.1", oldResources);
+
+			assertTrue("3.2", newFile.isLinked());
+			assertEquals("3.3", resolvePath(fileLocation), newFile.getLocation());
+
+			assertTrue("3.4", newFolder.isLinked());
+			assertEquals("3.5", resolvePath(existingLocation), newFolder.getLocation());
+			
+			//now do a deep move back to the original project
+			try {
+				destination.move(existingProject.getFullPath(), IResource.DEEP, getMonitor());
+			} catch (CoreException e) {
+				fail("5.0", e);
+			}
+			assertExistsInWorkspace("5.1", oldResources);
+			assertDoesNotExistInWorkspace("5.2", newResources);
+			assertTrue("5.3", !file.isLinked());
+			assertTrue("5.4", !folder.isLinked());
+			assertEquals("5.5", existingProject.getLocation().append(file.getProjectRelativePath()), file.getLocation());
+			assertEquals("5.6", existingProject.getLocation().append(folder.getProjectRelativePath()), folder.getLocation());
+		} finally {
+			Workspace.clear(resolvePath(fileLocation).toFile());
+		}
 	}
 	/**
 	 * Automated test of IFile#createLink
