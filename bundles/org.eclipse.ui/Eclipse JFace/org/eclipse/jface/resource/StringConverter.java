@@ -717,4 +717,36 @@ public static String removeWhiteSpaces(String s) {
 	}
 	return result.toString();
 }
+/**
+ * Converts a font data object to a string representation for display. 
+ * 	The string representation is
+ * "font name-style-height" (for example "Times New Roman-bold-36").
+ * @param value The font data.
+ * @return The string representation of the font data object.
+ */
+public static String asDisplayableString(FontData value) {
+	Assert.isNotNull(value);
+	StringBuffer buffer = new StringBuffer();
+	buffer.append(value.getName());
+	buffer.append(SEPARATOR);
+	int style = value.getStyle();
+	boolean bold = (style & SWT.BOLD) == SWT.BOLD;
+	boolean italic = (style & SWT.ITALIC) == SWT.ITALIC;
+	if (bold && italic) {
+		buffer.append(JFaceResources.getString("BoldItalicFont"));
+	} else
+		if (bold) {
+			buffer.append(JFaceResources.getString("BoldFont"));
+		} else
+			if (italic) {
+				buffer.append(JFaceResources.getString("ItalicFont"));
+			} else {
+				buffer.append(JFaceResources.getString("RegularFont"));
+			}
+		buffer.append(SEPARATOR);
+	buffer.append(value.getHeight());
+	return buffer.toString();
+
+}
+
 }
