@@ -63,7 +63,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 					int workunit = TOTAL_WORK_UNITS / targetList.size();
 					if (0 == workunit)
 						workunit = 1;
-					while (targets.hasNext()) {
+					while (targets.hasNext() && !monitor.isCanceled()) {
 						TargetNode targetNode = (TargetNode) targets.next();
 
 						String filename = ((ProjectNode) targetNode.getParent()).getBuildFileName();
@@ -100,10 +100,14 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 			});
 		} catch (InvocationTargetException e) {
 			String message;
-			if (e.getTargetException() instanceof CoreException)
-				message = ((CoreException) e.getTargetException()).getLocalizedMessage();
-			else
-				message = e.getLocalizedMessage();
+			if (e.getTargetException() instanceof CoreException) {
+				message = ((CoreException) e.getTargetException()).getMessage();
+			} else {
+				message = e.getMessage();
+			}
+			if (message == null) {
+				message= "An exception occurred while running the selected targets";
+			}
 			reportError(message, e.getTargetException());
 		} catch (InterruptedException e) {
 		}
@@ -114,7 +118,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 		if (throwable instanceof CoreException) {
 			status = ((CoreException)throwable).getStatus();
 		} else {
-			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
+			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IStatus.ERROR, message, throwable);
 		}
 		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), "Error Running Targets", message, status);
 	}
