@@ -18,27 +18,25 @@ class PlatformUIPreferenceListener implements IPropertyChangeListener {
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event
-			.getProperty()
-			.equals(IPreferenceConstants.ENABLED_DECORATORS))
+		if (IPreferenceConstants
+			.ENABLED_DECORATORS
+			.equals(event.getProperty()))
 			WorkbenchPlugin
 				.getDefault()
 				.getDecoratorManager()
 				.restoreListeners();
 
-		if (event
-			.getProperty()
-			.equals(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID)) {
-			//Check that they do not match as setDefaultPerspective updates the store
-			//and we want to avoid infinite loops
-			if (! event.getNewValue().equals(event.getOldValue())) {
-				IPerspectiveRegistry perspectiveRegistry = getWorkbench().getPerspectiveRegistry();
-				perspectiveRegistry.setDefaultPerspective((String) event.getNewValue());
-			}
+		if (IWorkbenchPreferenceConstants
+			.DEFAULT_PERSPECTIVE_ID
+			.equals(event.getProperty())) {
+			IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+
+			String newValue =
+				workbench.getPreferenceStore().getString(
+					IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+
+			workbench.getPerspectiveRegistry().setDefaultPerspective(newValue);
 		}
 	}
 
-	private IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
-	}
 }
