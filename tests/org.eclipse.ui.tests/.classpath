@@ -6,6 +6,5 @@
 	<classpathentry kind="src" path="Benchmark Tests"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="Eclipse RCP Tests"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
