@@ -52,8 +52,11 @@ public java.util.ResourceBundle getResourceBundle(Locale locale) throws MissingR
 		notFound = true;
 		throw e;
 	}
-	catch( Exception ex ) {
+	
+	// Workaround for J9 bug: PR 1GGPBGJ
+	catch( NullPointerException ex ) {
 		notFound = true;
+		throw ex;
 	}
 
 	return bundle;
