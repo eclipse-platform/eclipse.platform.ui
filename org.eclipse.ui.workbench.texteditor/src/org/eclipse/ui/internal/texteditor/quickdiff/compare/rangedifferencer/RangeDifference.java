@@ -57,7 +57,7 @@ public class RangeDifference {
 	public final static int ERROR= 5;
 
 	/** the kind of change: NOCHANGE, CHANGE, LEFT, RIGHT, ANCESTOR, CONFLICT, ERROR */
-	int fKind;
+	final int fKind;
 
 	int fLeftStart;
 	int fLeftLength;
@@ -271,6 +271,15 @@ public class RangeDifference {
 			return fKind == d.fKind && fRightStart == d.fRightStart && fRightLength == d.fRightLength && fLeftStart == d.fLeftStart && fLeftLength == d.fLeftLength;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns {@link Object#hashCode()}.
+	 * 
+	 * @return the hash code which is {@link Object#hashCode()}
+	 */
+	public final int hashCode() {
+		return super.hashCode();
 	}
 	
 	/**
