@@ -1063,7 +1063,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @exception CoreException if an exception occurrs reading
 	 *  the extensions
 	 */
-	private void initializeSourceLocators() throws CoreException {
+	private void initializeSourceLocators() {
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
