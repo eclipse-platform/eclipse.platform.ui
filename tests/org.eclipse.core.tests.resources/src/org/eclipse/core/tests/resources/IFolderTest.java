@@ -221,7 +221,7 @@ public void testInvalidFolderNames() {
 	}
 }
 
-public void testLeafFolderMove() throws Throwable {
+public void testLeafFolderMove() throws Exception {
 	IProject project = getWorkspace().getRoot().getProject("Project");
 	IFolder source = project.getFolder("Folder1");
 	ensureExistsInWorkspace(source, true);
@@ -229,6 +229,18 @@ public void testLeafFolderMove() throws Throwable {
 	source.move(dest.getFullPath(), true, getMonitor());
 	assertExistsInWorkspace("1.0", dest);
 	assertDoesNotExistInWorkspace("1.1", source);
+}
+public void testReadOnlyFolderCopy() throws Exception {
+	IProject project = getWorkspace().getRoot().getProject("Project");
+	IFolder source = project.getFolder("Folder1");
+	ensureExistsInWorkspace(source, true);
+	source.setReadOnly(true);
+	IFolder dest = project.getFolder("Folder2");
+	source.copy(dest.getFullPath(), true, getMonitor());
+	assertExistsInWorkspace("1.0", dest);
+	assertExistsInWorkspace("1.1", source);
+	//XXX commented out pending fix for bug 6058.
+//	assertTrue("1.2", dest.isReadOnly());
 }
 public void testSetGetFolderPersistentProperty() throws Throwable {
 	IResource target = getWorkspace().getRoot().getFolder(new Path("/Project/Folder"));
