@@ -117,7 +117,8 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 
 	// Create action.
 	action = createAction(targetType, actionElement, target);
-	action.setText(label);
+	if (action.getText() == null) // may have been set by delegate
+		action.setText(label);
 	action.setId(id);
 	if (tooltip != null)
 		action.setToolTipText(tooltip);
