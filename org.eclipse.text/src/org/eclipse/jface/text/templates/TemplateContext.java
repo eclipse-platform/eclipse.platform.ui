@@ -13,8 +13,6 @@ package org.eclipse.jface.text.templates;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.text.BadLocationException;
 
 /**
@@ -98,10 +96,9 @@ public abstract class TemplateContext {
 	 * 
 	 * @param template the template to evaluate
 	 * @return returns the buffer with the evaluated template or <code>null</code> if the buffer could not be created
-	 * @throws CoreException if evaluation fails
 	 * @throws BadLocationException if evaluation fails
 	 */
-	public abstract TemplateBuffer evaluate(Template template) throws CoreException, BadLocationException;
+	public abstract TemplateBuffer evaluate(Template template) throws BadLocationException;
 	
 	/**
 	 * Tests if the specified template can be evaluated in this context.

@@ -172,12 +172,6 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 //			JavaPlugin.log(e);
 			openErrorDialog(viewer.getTextWidget().getShell(), e);		    	
 			fSelectedRegion= fRegion;
-
-
-		} catch (CoreException e) {
-			handleException(viewer.getTextWidget().getShell(), e);
-			fSelectedRegion= fRegion;
-
 		}
 
 	}	
@@ -214,9 +208,6 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 			return templateBuffer.getString();
 
-	    } catch (CoreException e) {
-//			handleException(JavaPlugin.getActiveWorkbenchShell(), e);		    
-			return null;
 	    } catch (BadLocationException e) {
 	    	// FIXME do something
 			return null;

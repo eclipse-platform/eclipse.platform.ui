@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -120,7 +118,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	/**
 	 * {@inheritdoc}
 	 */
-	public TemplateBuffer evaluate(Template template) throws CoreException, BadLocationException {
+	public TemplateBuffer evaluate(Template template) throws BadLocationException {
 		if (!canEvaluate(template))
 			return null;
 		

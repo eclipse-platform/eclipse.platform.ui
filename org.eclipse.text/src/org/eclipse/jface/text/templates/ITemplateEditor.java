@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.text.BadLocationException;
 
 /**
@@ -28,8 +26,7 @@ public interface ITemplateEditor {
 	 * @param buffer the template buffer
 	 * @param context the template context
 	 * @throws BadLocationException if the buffer cannot be successfully modified
-	 * @throws CoreException if the buffer cannot be successfully modified
 	 */
-	void edit(TemplateBuffer buffer, TemplateContext context) throws CoreException, BadLocationException;
+	void edit(TemplateBuffer buffer, TemplateContext context) throws BadLocationException;
 
 }
