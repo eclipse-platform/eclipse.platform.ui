@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +27,6 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutionGenerator {
-
 	protected Shell getShell() {
 		IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
@@ -69,8 +69,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 	 * @param message  the message for the error dialog
 	 * @param shell  the shell to open the error dialog in
 	 */
-	protected void handle(Throwable exception, String title, final String message) {
-		
+	protected void handle(Throwable exception, String title, final String message) {		
 		// Handle the target exception for InvocationTargetExceptions
 		if (exception instanceof InvocationTargetException) {
 			handle(((InvocationTargetException)exception).getTargetException(), title, message);
@@ -107,9 +106,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 					toShow = children[0];
 				}
 			}
-			if (title == null) {
-				title = status.getMessage();
-			}
+			if (title == null) title = status.getMessage();
 			if (dialog) {
 				final IStatus showStatus = toShow;
 				final String displayTitle = title;
@@ -119,11 +116,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 					}
 				});
 			}
-			if (log) {
-				CVSUIPlugin.log(toShow);
-			}
+			if (log) CVSUIPlugin.log(toShow);
 		}
 	}
-
-	
 }

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IFile;
@@ -49,13 +50,16 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 		Button dontShowAgain;
 		boolean dontShow;
 		boolean showOption;
+		
 		public MoveDeleteMessageDialog(Shell shell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
 			this(shell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex, true);
 		}
+		
 		public MoveDeleteMessageDialog(Shell shell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex, boolean showOption) {
 			super(shell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
 			this.showOption = showOption;
 		}
+		
 		protected Control createCustomArea(Composite composite) {
 			if ( ! showOption) return null;
 			dontShow = false;
@@ -76,6 +80,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			});
 			return dontShowAgain;
 		}
+		
 		public boolean isDontShowAgain() {
 			return dontShow;
 		}

@@ -193,15 +193,14 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		addAction = new Action(Policy.bind("HistoryView.addToWorkspace")) {
 			public void run() {
 				try {
-					// Do not fork the progress monitor to allow access to window widgets
-					new ProgressMonitorDialog(getViewSite().getShell()).run(false /*fork*/, true, new WorkspaceModifyOperation() {
+					if (file == null) return;
+					ISelection selection = tableViewer.getSelection();
+					if (!(selection instanceof IStructuredSelection)) return;
+					IStructuredSelection ss = (IStructuredSelection)selection;
+					Object o = ss.getFirstElement();
+					final ILogEntry entry = (ILogEntry)o;
+					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							if (file == null) return;
-							ISelection selection = tableViewer.getSelection();
-							if (!(selection instanceof IStructuredSelection)) return;
-							IStructuredSelection ss = (IStructuredSelection)selection;
-							Object o = ss.getFirstElement();
-							ILogEntry entry = (ILogEntry)o;
 							ICVSRemoteFile remoteFile = entry.getRemoteFile();
 							// Do the load. This just consists of setting the local contents. We don't
 							// actually want to change the base.

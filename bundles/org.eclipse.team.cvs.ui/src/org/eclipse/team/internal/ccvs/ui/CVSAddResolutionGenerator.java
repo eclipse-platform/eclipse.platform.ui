@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.team.internal.ccvs.ui;
  
 import java.lang.reflect.InvocationTargetException;
@@ -31,14 +32,13 @@ import org.eclipse.ui.IMarkerResolution;
  * Generate marker resoultions for a cvs remove marker
  */
 public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
-	
 	/*
 	 * @see IMarkerResolutionGenerator#getResolutions(IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		IMarkerResolution manage = new IMarkerResolution() {
 			public String getLabel() {
-				return "Add Resource to CVS";
+				return Policy.bind("CVSAddResolutionGenerator.Add_Resource_to_CVS_1"); //$NON-NLS-1$
 			}
 			public void run(IMarker marker) {
 				try {
@@ -70,11 +70,10 @@ public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
 					// do nothing
 				}
 			}
-
 		};
 		IMarkerResolution manageDeep = new IMarkerResolution() {
 			public String getLabel() {
-				return "Add Resource and Children to CVS";
+				return Policy.bind("CVSAddResolutionGenerator.Add_Resource_and_Children_to_CVS_2"); //$NON-NLS-1$
 			}
 			public void run(IMarker marker) {
 				try {
@@ -110,7 +109,7 @@ public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
 		};
 		IMarkerResolution ignore =  new IMarkerResolution() {
 			public String getLabel() {
-				return "Add to .cvsignore";
+				return Policy.bind("CVSAddResolutionGenerator.Add_to_.cvsignore_3"); //$NON-NLS-1$
 			}
 			public void run(IMarker marker) {
 				try {
@@ -134,5 +133,4 @@ public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
 			return new IMarkerResolution[] {manageDeep, manage, ignore};
 		}
 	}
-
 }
