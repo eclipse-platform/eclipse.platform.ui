@@ -344,7 +344,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			return fContentAssistant != null && isEditable();
 			
 		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
-			return fContentAssistant != null;
+			return fContentAssistant != null && isEditable();
 			
 		if (operation == INFORMATION)
 			return fInformationPresenter != null;
