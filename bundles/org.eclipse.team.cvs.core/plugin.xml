@@ -2,7 +2,7 @@
 <plugin
 	name="%pluginName"
 	id="org.eclipse.team.cvs.core"
-	version="2.0.0"
+	version="1.9.0"
 	class="org.eclipse.team.internal.ccvs.core.CVSProviderPlugin"
 	provider-name="Object Technology International, Inc.">
 
