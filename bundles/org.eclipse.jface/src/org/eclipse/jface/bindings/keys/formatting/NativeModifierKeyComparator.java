@@ -17,9 +17,16 @@ import org.eclipse.jface.bindings.keys.ModifierKey;
 import org.eclipse.swt.SWT;
 
 /**
+ * <p>
  * A comparator that sorts the modifier keys based on the native environment.
  * Currently, this is only the windowing toolkit, but in the future it might
  * expand to include the window manager.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */

@@ -23,9 +23,16 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 
 /**
+ * <p>
  * Formats the key sequences and key strokes into the native human-readable
  * format. This is typically what you would see on the menus for the given
  * platform and locale.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
@@ -132,12 +139,11 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
         // We must do the look up every time, as our locale might change.
         if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
             return Util.translateString(RESOURCE_BUNDLE,
-                    CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING, false,
-                    false);
+                    CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING);
         }
 
         return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
-                KeyStroke.KEY_DELIMITER, false, false);
+                KeyStroke.KEY_DELIMITER);
     }
 
     /*
@@ -150,11 +156,11 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
         if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
             return Util.translateString(RESOURCE_BUNDLE,
                     WIN32_KEY_STROKE_DELIMITER_KEY,
-                    KeySequence.KEY_STROKE_DELIMITER, false, false);
+                    KeySequence.KEY_STROKE_DELIMITER);
         }
 
         return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
-                KeySequence.KEY_STROKE_DELIMITER, false, false);
+                KeySequence.KEY_STROKE_DELIMITER);
     }
 
     /*

@@ -14,20 +14,50 @@ import java.util.Comparator;
 
 import org.eclipse.jface.bindings.keys.ModifierKey;
 
-
+/**
+ * <p>
+ * An abstract implementation of a comparator for modifier keys.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
+ * @since 3.1
+ */
 abstract class AbstractModifierKeyComparator implements Comparator {
 
-    public int compare(Object left, Object right) {
-        ModifierKey modifierKeyLeft = (ModifierKey) left;
-        ModifierKey modifierKeyRight = (ModifierKey) right;
-        int modifierKeyLeftRank = rank(modifierKeyLeft);
-        int modifierKeyRightRank = rank(modifierKeyRight);
+	/**
+	 * Compares two modifier keys based on their rank. The rank is determined by
+	 * concrete implementations of this class.
+	 * 
+	 * @param left
+	 *            The first modifier key; must not be <code>null</code>.
+	 * @param right
+	 *            The right modifier key; must not be <code>null</code>.
+	 * @return The result of the comparison.
+	 */
+	public final int compare(final Object left, final Object right) {
+		ModifierKey modifierKeyLeft = (ModifierKey) left;
+		ModifierKey modifierKeyRight = (ModifierKey) right;
+		int modifierKeyLeftRank = rank(modifierKeyLeft);
+		int modifierKeyRightRank = rank(modifierKeyRight);
 
-        if (modifierKeyLeftRank != modifierKeyRightRank)
-            return modifierKeyLeftRank - modifierKeyRightRank;
+		if (modifierKeyLeftRank != modifierKeyRightRank)
+			return modifierKeyLeftRank - modifierKeyRightRank;
 
-        return modifierKeyLeft.compareTo(modifierKeyRight);
-    }
+		return modifierKeyLeft.compareTo(modifierKeyRight);
+	}
 
-    protected abstract int rank(ModifierKey modifierKey);
+	/**
+	 * Returns an integer representation of the modifier key.
+	 * 
+	 * @param modifierKey
+	 *            The modifier key for which the rank should be retrieved; must
+	 *            not be <code>null</code>.
+	 * @return An integer representation -- intended for discrete ordering -- of
+	 *         the given modifier key.
+	 */
+	protected abstract int rank(final ModifierKey modifierKey);
 }

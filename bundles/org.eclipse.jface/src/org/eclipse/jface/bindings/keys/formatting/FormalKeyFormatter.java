@@ -19,12 +19,19 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 
 
 /**
+ * <p>
  * Formats the keys in the internal key sequence grammar. This is used for
  * persistence, and is not really intended for display to the user.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
-public class FormalKeyFormatter extends AbstractKeyFormatter {
+public final class FormalKeyFormatter extends AbstractKeyFormatter {
 
     /**
      * A comparator that guarantees that modifier keys will be sorted the same
