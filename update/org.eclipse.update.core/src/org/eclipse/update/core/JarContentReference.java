@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
@@ -131,13 +132,14 @@ public class JarContentReference extends ContentReference {
 	 * "symbolic" path identifiers for the entries.
 	 * @param monitor progress monitor 
 	 * @exception IOException
+	 * @exception InstallAbortedException
 	 * @since 2.0
 	 */
 	public ContentReference[] unpack(
 		File dir,
 		ContentSelector selector,
 		InstallMonitor monitor)
-		throws IOException {
+		throws IOException, InstallAbortedException {
 
 		// make sure we have a selector
 		if (selector == null)
@@ -208,6 +210,7 @@ public class JarContentReference extends ContentReference {
 	 * for the entry
 	 * @param monitor progress monitor 
 	 * @exception IOException
+	 * @exception InstallAbortedException
 	 * @since 2.0
 	 */
 	public ContentReference unpack(
@@ -215,7 +218,7 @@ public class JarContentReference extends ContentReference {
 		String entryName,
 		ContentSelector selector,
 		InstallMonitor monitor)
-		throws IOException {
+		throws IOException, InstallAbortedException {
 
 		// make sure we have a selector
 		if (selector == null)

@@ -21,6 +21,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureContentProvider;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -131,7 +132,7 @@ public class BuildZipConverter {
 		}		
 	}
 	
-	public static void writeSiteManifest(File site, IFeature feature) throws IOException {
+	public static void writeSiteManifest(File site, IFeature feature) throws IOException, InstallAbortedException {
 		File manifest = new File(site, "site.xml");
 		FileOutputStream os = new FileOutputStream(manifest);
 		String siteXML = "<site>\n   <feature url=\"features/"+feature.getVersionedIdentifier().toString()+".jar\"/>\n</site>";

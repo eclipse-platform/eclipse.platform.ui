@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -128,13 +130,14 @@ public class Utilities {
 	 * @param os output stream
 	 * @param monitor progress monitor
 	 * @exception IOException
+	 * @exception InstallAbortedException
 	 * @since 2.0
 	 */
 	public static void copy(
 		InputStream is,
 		OutputStream os,
 		InstallMonitor monitor)
-		throws IOException {
+		throws IOException, InstallAbortedException {
 		byte[] buf = getBuffer();
 		try {
 			long currentLen = 0;
@@ -142,8 +145,13 @@ public class Utilities {
 			while (len != -1) {
 				currentLen += len;
 				os.write(buf, 0, len);
-				if (monitor != null)
+				if (monitor != null){
 					monitor.setCopyCount(currentLen);
+					if (monitor.isCanceled()) {
+						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+						throw new InstallAbortedException(msg,null);
+					}
+				}
 				len = is.read(buf);
 			}
 		} finally {

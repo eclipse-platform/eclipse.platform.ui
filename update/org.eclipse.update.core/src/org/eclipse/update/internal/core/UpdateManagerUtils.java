@@ -12,6 +12,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 
 /**
  * 
@@ -157,7 +158,7 @@ public class UpdateManagerUtils {
 		InputStream sourceContentReferenceStream,
 		String localName,
 		InstallMonitor monitor)
-		throws MalformedURLException, IOException {
+		throws MalformedURLException, IOException, InstallAbortedException {
 		URL result = null;
 		// create the Dir if they do not exist
 		// get the path from the File to resolve File.separator..

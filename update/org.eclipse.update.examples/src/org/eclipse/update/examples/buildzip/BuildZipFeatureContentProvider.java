@@ -26,6 +26,7 @@ import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
 import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -132,7 +133,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		return baseReference.peek(manifestName, null/*ContentSelector*/, null/*ProgressMonitor*/);
 	}
 	
-	void unpackFeatureEntryContent(FeatureModel feature, InstallMonitor monitor) throws IOException {
+	void unpackFeatureEntryContent(FeatureModel feature, InstallMonitor monitor) throws IOException, InstallAbortedException {
 			
 		// define selector for feature entry files
 		ContentSelector selector = new ContentSelector() {

@@ -106,6 +106,7 @@ public abstract class FeatureContentProvider
 			InputStream is = null;
 			OutputStream os = null;
 			localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);			
+			boolean sucess = false;
 			try {
 				if (monitor != null) {
 					monitor.saveState();
@@ -118,11 +119,17 @@ public abstract class FeatureContentProvider
 				is = ref.getInputStream();
 				os = new FileOutputStream(localFile);
 				Utilities.copy(is, os, monitor);
-			} catch (IOException e) {
+				sucess = true;
+			} catch (CoreException e) {
 				Utilities.removeLocalFile(key);
-				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);
+				throw e;
+			} catch (Exception e){
+				Utilities.removeLocalFile(key);
+				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);				
 			} finally {
-				if (is != null)
+				//Do not close IS if user cancel,
+				//closing IS will read the entire Stream until the end
+				if (sucess && is != null)
 					try {
 						is.close();
 					} catch (IOException e) {
