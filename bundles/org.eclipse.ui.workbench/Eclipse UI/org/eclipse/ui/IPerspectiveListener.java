@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 /**
- * Interface for listening to a perspective lifecycle events.
+ * Interface for listening to perspective lifecycle events.
  * <p>
  * This interface may be implemented by clients.
  * </p>
