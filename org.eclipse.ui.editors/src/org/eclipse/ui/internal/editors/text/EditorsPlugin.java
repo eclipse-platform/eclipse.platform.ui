@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.getString("EditorPlugin.internal_error"), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getPluginId(), IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.getString("EditorsPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
 
 	public ISharedTextColors getSharedTextColors() {
