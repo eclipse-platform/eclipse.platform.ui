@@ -3,64 +3,23 @@ package org.eclipse.help.internal.ui.motif;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.io.IOException;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.jface.action.*;
-import org.eclipse.help.internal.ui.*;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.util.StreamConsumer;
-import org.eclipse.help.internal.contributions.Topic;
 
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.contributions.Topic;
+import org.eclipse.help.internal.ui.IBrowser;
+import org.eclipse.help.internal.ui.util.StreamConsumer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
 /**
- * Netscape based browser. It opens an external window.
+ * Netscape based browser.
  */
 class WebBrowser implements IBrowser {
-	Composite controlFrame;
-	private static boolean opened = false;
-	// time when browser will be fully opened
-	private static long browserFullyOpenedAt;
-
+	private static long browserFullyOpenedAt = 0;
 	private static String browserPath;
-
-	class BrowserThread extends Thread {
-		String url;
-
-		public BrowserThread(String urlName) {
-			this.url = urlName;
-		}
-
-		public synchronized void run() {
-			if (!opened) {
-				openBrowser(url);
-			} else {
-				reuseBrowser(url);
-			}
-		}
-
-		public void reuseBrowser(String url) {
-			try {
-				// If browser has been  recently opened,
-				// wait until anticipated time that it fully opens,
-				while (System.currentTimeMillis() < browserFullyOpenedAt)
-					try {
-						Thread.currentThread().sleep(500);
-					} catch (InterruptedException ie) {
-					}
-				Process pr =
-					Runtime.getRuntime().exec(browserPath + " -remote openURL(" + url + ")");
-				(new StreamConsumer(pr.getInputStream())).start();
-				(new StreamConsumer(pr.getErrorStream())).start();
-				pr.waitFor();
-			} catch (InterruptedException e) {
-			} catch (IOException e) {
-			}
-		}
-	}
-
+	private static BrowserThread lastBrowserThread = null;
+	Composite controlFrame;
 	/**
 	 */
 	public WebBrowser(Composite parent) {
@@ -71,6 +30,58 @@ class WebBrowser implements IBrowser {
 					| GridData.GRAB_VERTICAL
 					| GridData.HORIZONTAL_ALIGN_FILL
 					| GridData.VERTICAL_ALIGN_FILL));
+	}
+	private class BrowserThread extends Thread {
+		public boolean exitRequested = false;
+		private String url;
+		public BrowserThread(String urlName) {
+			this.url = urlName;
+		}
+		private void openNewBrowser(String url) {
+			try {
+				Process pr = Runtime.getRuntime().exec(browserPath + " " + url);
+				(new StreamConsumer(pr.getInputStream())).start();
+				(new StreamConsumer(pr.getErrorStream())).start();
+				pr.waitFor();
+			} catch (InterruptedException e) {
+			} catch (IOException e) {
+			}
+		}
+		private int reuseBrowser(String url) {
+			try {
+				Process pr =
+					Runtime.getRuntime().exec(browserPath + " -remote openURL(" + url + ")");
+				(new StreamConsumer(pr.getInputStream())).start();
+				(new StreamConsumer(pr.getErrorStream())).start();
+				pr.waitFor();
+				return pr.exitValue();
+			} catch (InterruptedException e) {
+			} catch (IOException e) {
+			}
+			return -1;
+		}
+		public void run() {
+			// If browser is opening, wait until it fully opens,
+			waitForBrowser();
+			if (exitRequested)
+				return;
+			if (reuseBrowser(url) == 0) {
+				return;
+			}
+			if (exitRequested)
+				return;
+			browserFullyOpenedAt = System.currentTimeMillis() + 5000;
+			openNewBrowser(url);
+		}
+		private void waitForBrowser() {
+			while (System.currentTimeMillis() < browserFullyOpenedAt)
+				try {
+					if (exitRequested)
+						return;
+					Thread.currentThread().sleep(100);
+				} catch (InterruptedException ie) {
+				}
+		}
 	}
 	public int back() {
 		return 0;
@@ -91,29 +102,17 @@ class WebBrowser implements IBrowser {
 		return 0;
 	}
 	/**
+	 * Causes browser to navigate to the given url
 	 */
-	public int navigate(String url) {
+	public synchronized int navigate(String url) {
 		browserPath = HelpSystem.getBrowserPath();
 		if (browserPath == null || "".equals(browserPath))
 			browserPath = "netscape";
-		new BrowserThread(url).start();
+		if(lastBrowserThread!=null)
+			lastBrowserThread.exitRequested = true;
+		lastBrowserThread = new BrowserThread(url);
+		lastBrowserThread.start();
 		return 0;
-	}
-	private static synchronized void openBrowser(String url) {
-		opened = true;
-		browserFullyOpenedAt = System.currentTimeMillis() + 4000;
-		try {
-			Process pr = Runtime.getRuntime()
-				//.exec("netscape -geometry =570x410+270+155 " + url);
-	.exec(browserPath + " " + url);
-			(new StreamConsumer(pr.getInputStream())).start();
-			(new StreamConsumer(pr.getErrorStream())).start();
-			pr.waitFor();
-		} catch (InterruptedException e) {
-		} catch (IOException e) {
-		} finally {
-			opened = false;
-		}
 	}
 	public int print() {
 		// This feature is temporarily not supported on Linux.
