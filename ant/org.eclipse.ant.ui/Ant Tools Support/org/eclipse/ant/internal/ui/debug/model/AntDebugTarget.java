@@ -307,7 +307,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	
 	/**
 	 * Install breakpoints that are already registered with the breakpoint
-	 * manager if the breakpoint manager is enabled.
+	 * manager if the breakpoint manager is enabled and the breakpoint is enabled.
 	 */
 	private void installDeferredBreakpoints() {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
@@ -316,7 +316,13 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		}
 		IBreakpoint[] breakpoints = manager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 		for (int i = 0; i < breakpoints.length; i++) {
-			breakpointAdded(breakpoints[i]);
+            IBreakpoint breakpoint= breakpoints[i];
+            try {
+                if (breakpoint.isEnabled()) {
+                    breakpointAdded(breakpoints[i]);
+                }
+            } catch (CoreException e) {
+            }
 		}
 	}
 	
