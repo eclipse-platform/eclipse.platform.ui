@@ -507,17 +507,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Logs the given message if in debug mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logDebugMessage(String message) {
-		if (getDefault().isDebugging()) {
-			logErrorMessage(message);
-		}
-	}
-	
-	/**
 	 * Logs an internal error with the specified message.
 	 * 
 	 * @param message the error message to log
