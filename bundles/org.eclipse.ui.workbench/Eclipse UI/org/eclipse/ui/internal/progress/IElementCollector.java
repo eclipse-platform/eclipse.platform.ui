@@ -8,35 +8,40 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.progress;
+package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 /**
  * IElementCollector is a type that allows for the incremental
- * update of a collection of objects. This interface is not
- * intended to be implemented by other plug-ins.
+ * update of a collection of objects. 
+ * @see DeferredTreeContentManager
+ * @since 3.0
  */
 public interface IElementCollector {
 
 	/**
-	 * Add element to the IElementCollector.
-	 * @param element
-	 * @param monitor
+	 * Add the supplied elements to the viewer and report the 
+	 * progress to the monitor.
+	 * @param element The element to add to the viewer
+	 * @param monitor The progress monitor that can be informed of
+	 * the update.
 	 */
 	public void add(Object element,IProgressMonitor monitor);
 
 	/**
-	 * Add elements to the IElementCollector.
-	 * @param element
-	 * @param monitor
+	 * Add the supplied elements to the viewer and report the 
+	 * progress to the monitor.
+	 * @param elements The elements to add to the viewer
+	 * @param monitor The progress monitor that can be informed of
+	 * the update.
 	 */
 	public void add(Object[] elements, IProgressMonitor monitor);
 	
 	/**
 	 * The element collection is done. Clean up any temporary
 	 * state.
-	 *
 	 */
 	public void done();
 

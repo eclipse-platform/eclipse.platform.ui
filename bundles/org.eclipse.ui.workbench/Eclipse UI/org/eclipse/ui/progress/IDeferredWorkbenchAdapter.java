@@ -12,7 +12,7 @@ package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.progress.IElementCollector;
+import org.eclipse.ui.internal.progress.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -21,8 +21,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * @see DeferredTreeContentManager
  * @since 3.0
- * 
- * <b>NOTE:</b> This API is experimental and subject to change.
  */
 public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 		
