@@ -15,18 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
-
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 
 /**
  * Tests Bug 40023

@@ -25,13 +25,11 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
-import org.eclipse.ui.tests.util.UITestCase;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests Bug 36420
