@@ -167,7 +167,6 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 								EclipseSynchronizer.getInstance().prepareForMoveDelete(destination, Policy.subMonitorFor(monitor, 20));
 							}
 							tree.standardMoveFile(source, destination, updateFlags, Policy.subMonitorFor(monitor, 30));
-							EclipseSynchronizer.getInstance().created(destination);
 						}
 					} finally {
 						monitor.done();
@@ -219,9 +218,6 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 						} catch (CoreException e) {
 							throw CVSException.wrapException(e);
 						}
-						// Signal that the destination has been created so any previous
-						// sync info will be restored
-						EclipseSynchronizer.getInstance().created(destination);
 					}
 				}, Policy.subMonitorFor(monitor, 60));
 				return true;

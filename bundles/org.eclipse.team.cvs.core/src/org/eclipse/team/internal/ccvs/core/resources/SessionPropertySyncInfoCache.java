@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSDecoratorEnablementListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
@@ -53,7 +54,12 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	private boolean isDecoratorEnabled = true;
 	private boolean hasBeenSaved = false;
 	
-	/*package*/ SessionPropertySyncInfoCache() {
+	// defer to the sychronizer if there is no sync info
+	// (i.e. for those cases where a deleted resource is recreated)
+	private SynchronizerSyncInfoCache synchronizerCache;
+	
+	/*package*/ SessionPropertySyncInfoCache(SynchronizerSyncInfoCache synchronizerCache) {
+		this.synchronizerCache = synchronizerCache;
 		try {
 			// this save participant is removed when the plugin is shutdown.			
 			ResourcesPlugin.getWorkspace().addSaveParticipant(CVSProviderPlugin.getPlugin(), this);
@@ -65,7 +71,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			CVSProviderPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * If not already cached, loads and caches the folder ignores sync for the container.
 	 * Folder must exist and must not be the workspace root.
@@ -90,7 +96,12 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	}
 
 	/*package*/ boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
-		return safeGetSessionProperty(container, FOLDER_SYNC_KEY) != null;
+		Object info = safeGetSessionProperty(container, FOLDER_SYNC_KEY);
+		if (info == null){
+			// Defer to the synchronizer in case the folder was recreated
+			info = synchronizerCache.getCachedFolderSync(container);
+		}
+		return info != null;
 	}
 
 	/*package*/ boolean isResourceSyncInfoCached(IContainer container) throws CVSException {
@@ -110,8 +121,15 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
-	/*package*/ FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+	FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
 		FolderSyncInfo info = (FolderSyncInfo)safeGetSessionProperty(container, FOLDER_SYNC_KEY);
+		if (info == null) {
+			// Defer to the synchronizer in case the folder was recreated
+			info = synchronizerCache.getCachedFolderSync(container);
+			if (info != null) {
+				safeSetSessionProperty(container, FOLDER_SYNC_KEY, info);
+			}
+		}
 		if (info == null) {
 			// There should be sync info but it was missing. Report the error
 			throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
@@ -169,12 +187,16 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @param container the container
 	 * @param info the new folder sync info
 	 */
-	/*package*/ void setCachedFolderSync(IContainer container, FolderSyncInfo info) throws CVSException {
+	void setCachedFolderSync(IContainer container, FolderSyncInfo info, boolean canModifyWorkspace) throws CVSException {
 		if (!container.exists()) return;
 		if (info == null) {
 			info = NULL_FOLDER_SYNC_INFO;
 		} 
 		safeSetSessionProperty(container, FOLDER_SYNC_KEY, info);
+		// Ensure the synchronizer is clear for exiting resources
+		if (canModifyWorkspace && synchronizerCache.getCachedFolderSync(container) != null) {
+			synchronizerCache.setCachedFolderSync(container, null, true);
+		}
 	}
 
 	/*package*/ void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
@@ -274,8 +296,31 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource)
 	 */
-	/*package*/ byte[] getCachedSyncBytes(IResource resource) throws CVSException {
-		return (byte[])safeGetSessionProperty(resource, RESOURCE_SYNC_KEY);
+	byte[] getCachedSyncBytes(IResource resource) throws CVSException {
+		byte[] bytes = (byte[])safeGetSessionProperty(resource, RESOURCE_SYNC_KEY);
+		if (bytes == null) {
+			// Defer to the synchronizer in case the file was recreated
+			bytes = synchronizerCache.getCachedSyncBytes(resource);
+			if (bytes != null) {
+				boolean genderChange = false;
+				if (resource.getType() == IResource.FILE) {
+					if (ResourceSyncInfo.isFolder(bytes)) {
+						genderChange = true;
+					} else {
+						bytes = ResourceSyncInfo.convertFromDeletion(bytes);
+					}
+				} else if (!ResourceSyncInfo.isFolder(bytes)) {
+					genderChange = true;
+				}
+				if (genderChange) {
+					// Return null if it is a gender change
+					bytes = null;
+				} else {
+					safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, bytes);
+				}
+			}
+		}
+		return bytes;
 	}
 
 	Object safeGetSessionProperty(IResource resource, QualifiedName key) throws CVSException {
@@ -318,8 +363,27 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
-	/*package*/ void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException {
+	void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException {
 		safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, syncBytes);
+		if (resource.exists()) {
+			// Ensure the synchronizer is clear for exiting resources
+			if (canModifyWorkspace) {
+				byte[] oldBytes = synchronizerCache.getCachedSyncBytes(resource);
+				if (oldBytes != null) {
+					synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
+					if (ResourceSyncInfo.isFolder(syncBytes)) {
+						// Handle gender changes
+						IContainer container;
+						if (resource.getType() == IResource.FILE) {
+							container = resource.getParent().getFolder(new Path(resource.getName()));
+						} else {
+							container = (IContainer)resource;
+						}
+						synchronizerCache.setCachedFolderSync(container, null, canModifyWorkspace);
+					}
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)

@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +53,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.util.BuildCleanupListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -111,9 +110,10 @@ public class CVSProviderPlugin extends Plugin {
 	private static volatile CVSProviderPlugin instance;
 	
 	// CVS specific resource delta listeners
-	private IResourceChangeListener preAutoBuildListener;
-	private AddDeleteMoveListener addDeleteMoveListener;
+	private BuildCleanupListener addDeleteMoveListener;
 	private FileModificationManager fileModificationManager;
+	private ProjectDescriptionManager projectDescriptionListener;
+	private SyncFileChangeListener metaFileSyncListener;
 
 	private static final String REPOSITORIES_STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
 	// version numbers for the state file (a positive number indicates version 1)
@@ -318,19 +318,13 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// Initialize CVS change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		addDeleteMoveListener = new AddDeleteMoveListener();
+		addDeleteMoveListener = new BuildCleanupListener();
 		fileModificationManager = new FileModificationManager();
-		// Group the two PRE_AUTO_BUILD listeners together for efficiency
-		final IResourceChangeListener projectDescriptionListener = new ProjectDescriptionManager();
-		final IResourceChangeListener metaFileSyncListener = new SyncFileChangeListener();
-		preAutoBuildListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				projectDescriptionListener.resourceChanged(event);
-				metaFileSyncListener.resourceChanged(event);
-			}
-		};
-		workspace.addResourceChangeListener(preAutoBuildListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+		projectDescriptionListener = new ProjectDescriptionManager();
+		metaFileSyncListener = new SyncFileChangeListener();
+		workspace.addResourceChangeListener(projectDescriptionListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
+		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.POST_CHANGE);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
 		
@@ -351,7 +345,8 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(preAutoBuildListener);
+		workspace.removeResourceChangeListener(metaFileSyncListener);
+		workspace.removeResourceChangeListener(projectDescriptionListener);
 		workspace.removeResourceChangeListener(fileModificationManager);
 		workspace.removeResourceChangeListener(addDeleteMoveListener);
 		

@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -42,8 +41,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
@@ -92,8 +89,8 @@ public class EclipseSynchronizer implements IFlushOperation {
 	private ILock lock = Platform.getJobManager().newLock();
 	private ReentrantLock resourceLock = new ReentrantLock();
 	
-	private SessionPropertySyncInfoCache sessionPropertyCache = new SessionPropertySyncInfoCache();
 	private SynchronizerSyncInfoCache synchronizerCache = new SynchronizerSyncInfoCache();
+	private SessionPropertySyncInfoCache sessionPropertyCache = new SessionPropertySyncInfoCache(synchronizerCache);
 	
 	/*
 	 * Package private contructor to allow specialized subclass for handling folder deletions
@@ -146,7 +143,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				// get the old info
 				FolderSyncInfo oldInfo = getFolderSync(folder);
 				// set folder sync and notify
-				getSyncInfoCacheFor(folder).setCachedFolderSync(folder, info);
+				getSyncInfoCacheFor(folder).setCachedFolderSync(folder, info, true);
 				// if the sync info changed from null, we may need to adjust the ancestors
 				if (oldInfo == null) {
 					adjustDirtyStateRecursively(folder, RECOMPUTE_INDICATOR);
@@ -199,10 +196,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 					IResource resource = children[i];
 					resourceChanged(resource);
 					// delete resource sync for all children
-					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, null);
+					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, null, true);
 				}
 				// delete folder sync
-				getSyncInfoCacheFor(folder).setCachedFolderSync(folder, null);
+				getSyncInfoCacheFor(folder).setCachedFolderSync(folder, null, true);
 				folderChanged(folder);
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
@@ -620,7 +617,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					if (syncBytes != null) {
 						if (!ResourceSyncInfo.isAddition(syncBytes)) {
 							syncBytes = convertToDeletion(syncBytes);
-							synchronizerCache.setCachedSyncBytes(resource, syncBytes);
+							synchronizerCache.setCachedSyncBytes(resource, syncBytes, true);
 						}
 						resourceChanged(resource);
 					}
@@ -632,11 +629,11 @@ public class EclipseSynchronizer implements IFlushOperation {
 						// Move the folder sync info into phantom space
 						FolderSyncInfo info = getFolderSync(container);
 						if (info == null) return;
-						synchronizerCache.setCachedFolderSync(container, info);
+						synchronizerCache.setCachedFolderSync(container, info, true);
 						folderChanged(container);
 						// move the resource sync as well
 						byte[] syncBytes = getSyncBytes(resource);
-						synchronizerCache.setCachedSyncBytes(resource, syncBytes);
+						synchronizerCache.setCachedSyncBytes(resource, syncBytes, true);
 					}
 				}
 			} finally {
@@ -705,105 +702,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * This method is used to ensure that the sync info for a resource is moved
-	 * from the Phantom cache to the Session property cache.
-	 * 
-	 * @param resource
-	 * @throws CVSException
-	 */
-	public void created(IResource resource) throws CVSException {
-		try {
-			beginBatching(resource);
-			if (resource.getType() == IResource.FILE) {
-				created((IFile)resource);
-			} else if (resource.getType() == IResource.FOLDER) {
-				created((IFolder)resource);
-			}
-		} finally {
-			endBatching(null);
-		}
-
-	}
-	
-	/**
-	 * Notify the receiver that a folder has been created.
-	 * Any existing phantom sync info will be moved
-	 *
-	 * @param folder the folder that has been created
-	 */
-	private void created(IFolder folder) throws CVSException {
-		try {
-			// set the dirty count using what was cached in the phantom it
-			beginOperation();
-			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder);
-			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(folder);
-			if (folderInfo != null && syncBytes != null) {
-				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
-					// There is already a CVS subdirectory which indicates that
-					// either the folder was recreated by an external tool or that
-					// a folder with CVS information was copied from another location.
-					// To know the difference, we need to compare the folder sync info.
-					// If they are mapped to the same root and repository then just
-					// purge the phantom info. Otherwise, keep the original sync info.
-
-					// Get the new folder sync info
-					FolderSyncInfo newFolderInfo = getFolderSync(folder);
-					if (newFolderInfo.getRoot().equals(folderInfo.getRoot())
-						&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
-							// The folder is the same so use what is on disk
-							return;
-					}
-
-					// The folder is mapped to a different location.
-					// Purge new resource sync before restoring from phantom
-					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-					ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
-					for (int i = 0; i < children.length; i++) {
-						ICVSResource resource = children[i];
-						deleteResourceSync(resource.getIResource());
-					}
-				}
-
-				// set the sync info using what was cached in the phantom
-				setFolderSync(folder, folderInfo);
-				setCachedSyncBytes(folder, syncBytes);
-			}
-		} finally {
-			try {
-				endOperation();
-			} finally {
-				synchronizerCache.flush(folder);
-			}
-		}
-	}
-
-	/**
-	 * Notify the receiver that a file has been created. Any existing phantom
-	 * sync info will be moved
-	 *
-	 * @param file the file that has been created
-	 */
-	private void created(IFile file) throws CVSException {
-		try {
-			// set the dirty count using what was cached in the phantom it
-			beginOperation();
-			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(file);
-			if (syncBytes == null) return;
-			byte[] newBytes = getSyncBytes(file);
-			if (newBytes == null) {
-				// only move the sync info if there is no new sync info
-				setSyncBytes(file, convertFromDeletion(syncBytes));
-			}
-		} finally {
-			try {
-				endOperation();
-			} finally {
-				synchronizerCache.setCachedSyncBytes(file, null);
-			}
-		}
-	}
-	
-	/**
 	 * If not already cached, loads and caches the resource sync for the children of the container.
 	 * Folder must exist and must not be the workspace root.
 	 *
@@ -830,7 +728,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					} else {
 						resource = container.getFile(name);
 					}
-					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes);
+					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, false);
 				}
 			}
 			getSyncInfoCacheFor(container).setResourceSyncInfoCached(container);
@@ -854,7 +752,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			} else {
 				info = SyncFileWriter.readFolderSync(container);
 			}
-			getSyncInfoCacheFor(container).setCachedFolderSync(container, info);
+			getSyncInfoCacheFor(container).setCachedFolderSync(container, info, false);
 		}
 	}
 	
@@ -1044,7 +942,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @see #cacheResourceSyncForChildren
 	 */
 	private void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException {
-		getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes);
+		getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, true);
 		resourceChanged(resource);
 	}
 		
@@ -1061,7 +959,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		//todo
 		byte[] syncBytes = null;
 		if (info != null) syncBytes = info.getBytes();
-		getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes);
+		getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, true);
 	}
 	
 	/**
@@ -1492,14 +1390,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	private byte[] convertToDeletion(byte[] syncBytes) throws CVSException {
 		return ResourceSyncInfo.convertToDeletion(syncBytes);
-	}
-	
-	/**
-	 * Method convertFromDeletion.
-	 * @param syncBytes
-	 */
-	private byte[] convertFromDeletion(byte[] syncBytes) throws CVSException {
-		return ResourceSyncInfo.convertFromDeletion(syncBytes);
 	}
 	
 	/**

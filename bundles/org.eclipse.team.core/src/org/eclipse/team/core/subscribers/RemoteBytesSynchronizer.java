@@ -108,7 +108,9 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 	public boolean removeSyncBytes(IResource resource, int depth) throws TeamException {
 		if (resource.exists() || resource.isPhantom()) {
 			try {
-				getSynchronizer().flushSyncInfo(getSyncName(), resource, depth);
+				if (depth != IResource.DEPTH_ZERO || internalGetSyncBytes(resource) != null) {
+					getSynchronizer().flushSyncInfo(getSyncName(), resource, depth);
+				}
 				return true;
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);

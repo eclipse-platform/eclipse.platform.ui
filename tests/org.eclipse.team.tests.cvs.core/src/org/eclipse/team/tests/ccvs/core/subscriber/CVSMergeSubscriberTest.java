@@ -19,7 +19,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -27,10 +26,7 @@ import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
@@ -388,9 +384,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		 // create a merge subscriber
 		 CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
 		
-		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
-		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
-		cvsProject.unmanage(new NullProgressMonitor());
+		RepositoryProvider.unmap(project);
 		assertProjectRemoved(subscriber, project);
 	}
 	

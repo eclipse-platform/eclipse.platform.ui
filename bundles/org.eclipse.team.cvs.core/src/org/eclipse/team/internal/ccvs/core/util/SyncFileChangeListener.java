@@ -111,13 +111,14 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					} else {
 						// Inform the synchronizer about folder creations
 						if(isProjectOpening()) return true;
-						if (kind == IResourceDelta.ADDED) {
-							try {
-								EclipseSynchronizer.getInstance().created(resource);
-							} catch (CVSException e) {
-								throw new CoreException(e.getStatus());
-							}
-						}
+						// TODO: Can't do this in a POST_CHANGE
+//						if (kind == IResourceDelta.ADDED) {
+//							try {
+//								EclipseSynchronizer.getInstance().created(resource);
+//							} catch (CVSException e) {
+//								throw new CoreException(e.getStatus());
+//							}
+//						}
 					}
 										
 					if(isMetaFile(resource)) {
@@ -218,6 +219,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				IFile repositoryFile = cvsDir.getFile(new Path(SyncFileWriter.REPOSITORY));
 				if(rootFile.exists() && repositoryFile.exists() && !cvsDir.isTeamPrivateMember()) {
 					try {
+						// TODO: Is this considered a tree modification?
 						cvsDir.setTeamPrivateMember(true);			
 						if(Policy.DEBUG_METAFILE_CHANGES) {
 							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$

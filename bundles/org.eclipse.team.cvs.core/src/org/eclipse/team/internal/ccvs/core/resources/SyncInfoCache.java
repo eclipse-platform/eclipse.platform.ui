@@ -44,8 +44,15 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	 * Returns the folder sync info for the container; null if none.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container MUST ALREADY BE CACHED.
+	 * <p>
+	 * The <code>canModifyWorkspace</code>
+	 * flag is used to indicate whether it is OK to modify ISycnrhonizer entries for
+	 * the given resource. A value of <code>true</code> indicates that the client
+	 * holds a scheduling rule that encompasses the resource and the workspace is
+	 * open for modification.
 	 *
 	 * @param container the container
+	 * @param canModifyWorkspace indicates if it is OK to modify the ISycnrhonizer
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
@@ -55,12 +62,17 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	 * Sets the folder sync info for the container; if null, deletes it.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container need not have previously been
-	 * cached.
+	 * cached. The <code>canModifyWorkspace</code>
+	 * flag is used to indicate whether it is OK to modify ISycnrhonizer entries for
+	 * the given resource. A value of <code>true</code> indicates that the client
+	 * holds a scheduling rule that encompasses the resource and the workspace is
+	 * open for modification.
 	 *
 	 * @param container the container
 	 * @param info the new folder sync info
+	 * @param canModifyWorkspace indicates if it is OK to modify the ISycnrhonizer
 	 */
-	/*package*/ abstract void setCachedFolderSync(IContainer container, FolderSyncInfo info) throws CVSException;
+	/*package*/ abstract void setCachedFolderSync(IContainer container, FolderSyncInfo info, boolean canModifyWorkspace) throws CVSException;
 
 	/**
 	 * Returns the resource sync info for the given resource. The resource sync
@@ -75,13 +87,18 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/**
 	 * Sets the resource sync info for the resource; if null, deletes it. Parent
 	 * must exist and must not be the workspace root. The resource sync info for
-	 * the resource MUST ALREADY BE CACHED.
+	 * the resource MUST ALREADY BE CACHED. The <code>canModifyWorkspace</code>
+	 * flag is used to indicate whether it is OK to modify ISycnrhonizer entries for
+	 * the given resource. A value of <code>true</code> indicates that the client
+	 * holds a scheduling rule that encompasses the resource and the workspace is
+	 * open for modification.
 	 *
 	 * @param resource the resource
 	 * @param syncBytes the bytes containing the new resource sync info
+	 * @param canModifyWorkspace indicates if it is OK to modify the ISycnrhonizer
 	 * @see #cacheResourceSyncForChildren
 	 */
-	/*package*/ abstract void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException;
+	/*package*/ abstract void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException;
 	
 	/*package*/ abstract String getDirtyIndicator(IResource resource) throws CVSException;
 	

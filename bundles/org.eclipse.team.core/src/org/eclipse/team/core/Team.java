@@ -579,7 +579,7 @@ public final class Team {
 					provider.setProject(resource.getProject());
 				}
 			}
-		}, IResourceChangeEvent.PRE_AUTO_BUILD);
+		}, IResourceChangeEvent.POST_CHANGE);
 	}
 	
 	/**

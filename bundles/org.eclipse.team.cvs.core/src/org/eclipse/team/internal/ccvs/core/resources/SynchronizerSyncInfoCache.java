@@ -119,7 +119,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
-	/*package*/ FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+	FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
 		try {
 			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(FOLDER_SYNC_KEY, container);
 			if (bytes == null) return null;
@@ -138,7 +138,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * @param container the container
 	 * @param info the new folder sync info
 	 */
-	/*package*/ void setCachedFolderSync(IContainer container, FolderSyncInfo info) throws CVSException {
+	void setCachedFolderSync(IContainer container, FolderSyncInfo info, boolean canModifyWorkspace) throws CVSException {
 		try {
 			if (info == null) {
 				if (container.exists() || container.isPhantom()) {
@@ -155,9 +155,20 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource)
 	 */
-	/*package*/ byte[] getCachedSyncBytes(IResource resource) throws CVSException {
+	byte[] getCachedSyncBytes(IResource resource) throws CVSException {
 		try {
-			return getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
+			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
+			if (bytes != null && resource.getType() == IResource.FILE) {
+				if (ResourceSyncInfo.isAddition(bytes)) {
+					// The local file has been deleted but was an addition
+					// Therefore, ignoe the sync bytes
+					bytes = null;
+				} else if (!ResourceSyncInfo.isDeletion(bytes)) {
+					// Ensure the bytes indicate an outgoing deletion
+					bytes = ResourceSyncInfo.convertToDeletion(bytes);
+				}
+			}
+			return bytes;
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -166,7 +177,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
-	/*package*/ void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException {
+	void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException {
 		byte[] oldBytes = getCachedSyncBytes(resource);
 		try {
 			if (syncBytes == null) {
