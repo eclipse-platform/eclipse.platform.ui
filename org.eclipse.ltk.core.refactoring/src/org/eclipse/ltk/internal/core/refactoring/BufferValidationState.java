@@ -111,18 +111,26 @@ class DirtyBufferValidationState extends BufferValidationState {
 	
 	class FileBufferListener implements IFileBufferListener {
 		public void bufferCreated(IFileBuffer buffer) {
-			if (buffer.equals(getBuffer(fFile))) {
+			// begin https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
+			if (buffer.getLocation().equals(fFile.getFullPath()) && buffer instanceof ITextFileBuffer) {
+				ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;				
 				if (fDocumentListener == null)
 					fDocumentListener= new DocumentChangedListener();
-				getDocument().addDocumentListener(fDocumentListener);
+				textBuffer.getDocument().addDocumentListener(fDocumentListener);
 			}
+			// end fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
 		}
 		public void bufferDisposed(IFileBuffer buffer) {
-			if (fDocumentListener != null && buffer.equals(getBuffer(fFile))) {
-				getDocument().removeDocumentListener(fDocumentListener);
-				fDocumentListener= null;
+			// begin fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
+			if (fDocumentListener != null && buffer.getLocation().equals(fFile.getFullPath())) {
+				if (buffer instanceof ITextFileBuffer) {
+					ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;
+					textBuffer.getDocument().removeDocumentListener(fDocumentListener);
+					fDocumentListener= null;
+				}
 				fContentStamp= ContentStamps.get(fFile, true);
 			}
+			// end fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
 		}
 		public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 		}
@@ -170,9 +178,13 @@ class DirtyBufferValidationState extends BufferValidationState {
 	public void dispose() {
 		if (fFileBufferListener != null) {
 			FileBuffers.getTextFileBufferManager().removeFileBufferListener(fFileBufferListener);
+			// fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
+			fFileBufferListener= null;
 		}
 		if (fDocumentListener != null) {
 			getDocument().removeDocumentListener(fDocumentListener);
+			// fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
+			fDocumentListener= null;
 		}
 	}
 	
