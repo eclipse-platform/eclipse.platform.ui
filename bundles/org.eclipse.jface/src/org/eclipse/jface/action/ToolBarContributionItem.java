@@ -473,33 +473,6 @@ public class ToolBarContributionItem extends ContributionItem {
                 updateSize(true);
             }
         }
-
-        // Sets its own visibility depending on whether there exist any items
-        // in
-        // tool bar manager that are visible
-        if (propertyName.equals(ICoolBarManager.VISIBILITY)) {
-            // if there is no visible items in our tool bar
-            if (toolBarManager != null) {
-                IContributionItem[] items = toolBarManager.getItems();
-                boolean visibleItem = false;
-                for (int i = 0; i < items.length; i++) {
-                    if ((!items[i].isGroupMarker()) && (!items[i].isSeparator())
-                            && (items[i].isVisible())) {
-                        visibleItem = true;
-                        break;
-                    }
-                }
-                if (!visibleItem) {
-                    setVisible(false);
-                } else {
-                    setVisible(true);
-                    if (getParent() != null) {
-                        getParent().markDirty();
-                    }
-                }
-            }
-
-        }
     }
 
     /**
