@@ -29,16 +29,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 
 import org.eclipse.ui.internal.misc.StringMatcher;
-import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A composite widget which holds a list of elements for user selection.
@@ -94,38 +88,35 @@ public class FilteredList extends Composite {
 	private String fFilter = ""; //$NON-NLS-1$
 	private TwoArrayQuickSorter fSorter;
 
-	private Object[] fElements = new Object[0];
+	Object[] fElements = new Object[0];
 	Label[] fLabels;
 	Vector fImages = new Vector();
 
 	int[] fFoldedIndices;
-	private int fFoldedCount;
+	int fFoldedCount;
 
 	int[] fFilteredIndices;
-	private int fFilteredCount;
+	int fFilteredCount;
 
 	private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
 	Comparator fComparator;
 
-	UpdateJob fUpdateJob;
+	UpdateThread fUpdateThread;
 
 	private static class Label {
 		public final String string;
 		public final Image image;
 
-		public Label(String newString, Image newImage) {
-			this.string = newString;
-			this.image = newImage;
+		public Label(String string, Image image) {
+			this.string = string;
+			this.image = image;
 		}
 
 		public boolean equals(Label label) {
 			if (label == null)
 				return false;
-			if (!string.equals(label.string))
-				return false;
-			if (image == null)
-				return label.image == null;
-			return image.equals(label.image);
+
+			return string.equals(label.string) && image.equals(label.image);
 		}
 	}
 
@@ -198,8 +189,8 @@ public class FilteredList extends Composite {
 		fList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fLabelProvider.dispose();
-				if (fUpdateJob != null)
-					fUpdateJob.requestStop();
+				if (fUpdateThread != null)
+					fUpdateThread.requestStop();
 			}
 		});
 
@@ -296,12 +287,11 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 		else {
 			//If there is a current working update defer the setting
-			if (fUpdateJob == null || fUpdateJob.getState() != Job.NONE ||
-			    fUpdateJob.fStop) {
+			if (fUpdateThread == null || fUpdateThread.fStop) {
 				fList.setSelection(selection);
 				fList.notifyListeners(SWT.Selection, new Event());
 			} else
-				fUpdateJob.selectIndices(selection);
+				fUpdateThread.selectIndices(selection);
 		}
 	}
 
@@ -398,27 +388,13 @@ public class FilteredList extends Composite {
 	}
 
 	private void updateList() {
-		// Count up the number of entries that match the
-		// current pattern
 		fFilteredCount = filter();
-		// Eliminate duplicate entries if fAllowDuplicates
-		// is set
 		fFoldedCount = fold();
 
-		// Stop the update job if there is one.  Note
-		// that if the update job's state is Job.NONE this
-		// should have no effect.  Don't bother checking for
-		// the state, just cancel it.
-		if (fUpdateJob != null)
-			fUpdateJob.requestStop();
-			
-		// A new instantiation of TableUpdaterJob is required
-		// as the value of fFoldedCount will be different.  It
-		// is likely not wise to change fFoldedCount to be
-		// a static (class) variable as changing it may 
-		// effect jobs that are running in unpredictable ways.
-		fUpdateJob = new UpdateJob(new TableUpdaterJob(fList, fFoldedCount));
-		fUpdateJob.schedule();
+		if (fUpdateThread != null)
+			fUpdateThread.requestStop();
+		fUpdateThread = new UpdateThread(new TableUpdater(fList, fFoldedCount));
+		fUpdateThread.start();
 	}
 
 	/**
@@ -500,65 +476,83 @@ public class FilteredList extends Composite {
 		return k;
 	}
 
-	private class TableUpdaterJob extends UIJob {
+	private interface IncrementalRunnable extends Runnable {
+		public int getCount();
+		public void cancel();
+		public void updateSelection(int[] indices);
+		public void defaultSelect();
+	}
+
+	private class TableUpdater implements IncrementalRunnable {
 		private final Display fDisplay;
 		final Table fTable;
-		private final int fCount;
+		final int fCount;
 		private int fIndex;
 
-		public TableUpdaterJob(Table table, int count) {
-			super(WorkbenchMessages.getString("FilteredList.TableUpdateJob"));  //$NON-NLS-1$
+		public TableUpdater(Table table, int count) {
 			fTable = table;
 			fDisplay = table.getDisplay();
-			// Note this count will be the number of items to display
-			// from the table.
 			fCount = count;
 		}
 
+		/*
+		 * @see IncrementalRunnable#getCount()
+		 */
 		public int getCount() {
 			return fCount + 1;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		/*
+		 * @see IncrementalRunnable#cancel()
 		 */
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			final int index = fIndex++;
-			if (fTable.isDisposed())
-				return Status.OK_STATUS;
-
-			final int itemCount = fTable.getItemCount();
-
-			if (index < fCount) {
-				final TableItem item =
-					(index < itemCount)
-						? fTable.getItem(index)
-						: new TableItem(fTable, SWT.NONE);
-
-				final Label label =
-					fLabels[fFilteredIndices[fFoldedIndices[index]]];
-
-				item.setText(label.string);
-				item.setImage(label.image);
-
-				// finish
-			} else {
-				if (fCount < itemCount) {
-					fTable.setRedraw(false);
-					fTable.remove(fCount, itemCount - 1);
-					fTable.setRedraw(true);
-				}
-
-				// table empty -> no selection
-				if (fCount == 0)
-					fTable.notifyListeners(SWT.Selection, new Event());
-			}
-			return Status.OK_STATUS;
+		public void cancel() {
+			fIndex = 0;
 		}
+
+		/*
+		 * @see Runnable#run()
+		 */
+		public void run() {
+			final int index = fIndex++;
+
+			fDisplay.syncExec(new Runnable() {
+				public void run() {
+					if (fTable.isDisposed())
+						return;
+
+					final int itemCount = fTable.getItemCount();
+
+					if (index < fCount) {
+						final TableItem item =
+							(index < itemCount)
+								? fTable.getItem(index)
+								: new TableItem(fTable, SWT.NONE);
+
+						final Label label =
+							fLabels[fFilteredIndices[fFoldedIndices[index]]];
+
+						item.setText(label.string);
+						item.setImage(label.image);
+
+						// finish
+					} else {
+						if (fCount < itemCount) {
+							fTable.setRedraw(false);
+							fTable.remove(fCount, itemCount - 1);
+							fTable.setRedraw(true);
+						}
+
+						// table empty -> no selection
+						if (fCount == 0)
+							fTable.notifyListeners(SWT.Selection, new Event());
+					}
+				}
+			});
+		}
+
 		/**
 		 * Update the selection for the supplied indices.
 		 */
-
 		public void updateSelection(final int[] indices) {
 
 			selectAndNotify(indices);
@@ -597,44 +591,37 @@ public class FilteredList extends Composite {
 			});
 
 		}
+
 	}
 
-	private static class UpdateJob extends Job {
-		/*
-		 * The UpdateJob 
-		 */
-		private final TableUpdaterJob fTableUpdater;
-		/** A flag indicating a job stop request */
-		boolean fStop = false;
+	private static class UpdateThread extends Thread {
+
+		/** The incremental runnable */
+		private final IncrementalRunnable fRunnable;
+		/** A flag indicating a thread stop request */
+		boolean fStop;
 		/** The indices to select*/
 		int[] indices;
 
 		/**
 		 * Creates an update thread.
 		 */
-		public UpdateJob (TableUpdaterJob tableUpdaterJob) {
-			super (WorkbenchMessages.getString("FilteredList.ListUpdateJob")); //$NON-NLS-1$
-			fTableUpdater = tableUpdaterJob;
+		public UpdateThread(IncrementalRunnable runnable) {
+			fRunnable = runnable;
 		}
+
 		/**
-		 * Requests the job to stop.  It is not enough to just as the job
-		 * to cancel.  If the job is already running, this may have no
-		 * effect.  We really want to stop processing.
+		 * Requests the thread to stop.
 		 */
 		public void requestStop() {
-			// Try to cancel this job, especially if it hasn't already started.
-			this.cancel();
-			// But if it has started, use fStop to notify the run method
-			// that we don't want to continue processing.
 			fStop = true;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+
+		/**
+		 * @see Runnable#run()
 		 */
-		public IStatus run(IProgressMonitor monitor) {
-			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
-			final int count = fTableUpdater.getCount();
-			monitor.beginTask(WorkbenchMessages.getString("FilteredList.UpdateTask"), count);  //$NON-NLS-1$
+		public void run() {
+			final int count = fRunnable.getCount();
 			for (int i = 0; i != count; i++) {
 				if (i % 50 == 0)
 					try {
@@ -643,21 +630,20 @@ public class FilteredList extends Composite {
 					}
 
 				if (fStop) {
-					fTableUpdater.cancel();
+					fRunnable.cancel();
 					break;
 				}
-				fTableUpdater.run(monitor);
-				monitor.worked(1);
+
+				fRunnable.run();
 			}
 
 			if (indices == null) {
 				if (count > 0)
-					fTableUpdater.defaultSelect();
+					fRunnable.defaultSelect();
 			} else
-				fTableUpdater.updateSelection(indices);
+				fRunnable.updateSelection(indices);
 			requestStop();
-			monitor.done();
-			return Status.OK_STATUS;
+
 		}
 
 		/**
@@ -666,7 +652,7 @@ public class FilteredList extends Composite {
 		 */
 		public void selectIndices(int[] indicesToSelect) {
 			indices = indicesToSelect;
-		}		
+		}
 	}
 
 	/**
