@@ -25,12 +25,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
 /**
  * Superclass of run & debug pulldown actions.
  */
-public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate,
+public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate2,
 														  IActionDelegateWithEvent,
 														  ILaunchHistoryChangedListener {
 	
