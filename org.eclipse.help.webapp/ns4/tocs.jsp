@@ -18,10 +18,10 @@
  */		
 function loadTOC(tocId)
 {
-	// navigate to this toc
-	window.location.replace("toc.jsp?toc="+tocId);
 	// keep track of it
 	parent.loadedTOC = tocId;
+	// navigate to this toc
+	window.location.replace("toc.jsp?toc="+tocId);
 }
 
 /**

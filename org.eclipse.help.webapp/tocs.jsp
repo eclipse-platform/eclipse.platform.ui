@@ -18,10 +18,10 @@
  */		
 function loadTOC(tocId)
 {
-	// navigate to this toc
-	window.location.replace("toc.jsp?toc="+tocId);
 	// clear the content page
 	parent.parent.MainFrame.location="home.jsp?toc="+tocId;
+	// navigate to this toc
+	window.location.replace("toc.jsp?toc="+tocId);
 }
 
 /**
