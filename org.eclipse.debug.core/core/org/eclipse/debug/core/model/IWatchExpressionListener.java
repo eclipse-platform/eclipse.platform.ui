@@ -11,10 +11,17 @@
 package org.eclipse.debug.core.model;
 
 /**
- * 
+ * A watch expression listener is notified when an
+ * <code>org.eclipse.debug.core.model.IWatchExpressionDelegate</code>
+ * completes an evaluation.
  */
 public interface IWatchExpressionListener {
 
+	/**
+	 * Notifies the listener that an evaluation has completed.
+	 * 
+	 * @param result the result of the evaluation
+	 */
 	public void watchEvaluationFinished(IWatchExpressionResult result);
 
 }
