@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.Viewer;
  * Tree content provider for objects that can be adapted to the interface
  * {@link org.eclipse.ui.model.IWorkbenchAdapter IWorkbenchAdapter}.
  * <p>
- * This class may be instantiated, or subclassed. If subclassed, the following
+ * This class may be instantiated, or subclassed.
  * </p>
  * 
  * @see IWorkbenchAdapter
