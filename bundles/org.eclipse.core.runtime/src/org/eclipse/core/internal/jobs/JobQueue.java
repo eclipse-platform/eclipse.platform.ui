@@ -9,6 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -72,9 +73,11 @@ public class JobQueue {
 	 * Adds an item to the queue 
 	 */
 	public void enqueue(InternalJob newEntry) {
+		//assert new entry is does not already belong to some other data structure
+		Assert.isTrue(newEntry.next() == null);
+		Assert.isTrue(newEntry.previous() == null);
 		InternalJob tail = dummy.next();
-		//overtake lower priority jobs. Only overtake conflicting jobs if
-		// allowed to
+		//overtake lower priority jobs. Only overtake conflicting jobs if allowed to
 		while (tail != dummy && tail.compareTo(newEntry) < 0 && (allowConflictOvertaking || !newEntry.isConflicting(tail)))
 			tail = tail.next();
 		//new entry is smaller than tail

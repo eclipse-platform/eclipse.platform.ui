@@ -441,6 +441,9 @@ public class JobManager implements IJobManager {
 					break;
 				//queue this job after the job that's blocking it
 				changeState(job, InternalJob.BLOCKED);
+				//assert job does not already belong to some other data structure
+				Assert.isTrue(job.next() == null);
+				Assert.isTrue(job.previous() == null);
 				blocker.addLast(job);
 			}
 			//the job to run must be in the running list before we exit
