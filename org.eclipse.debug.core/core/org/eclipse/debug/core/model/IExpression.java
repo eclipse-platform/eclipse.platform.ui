@@ -56,4 +56,12 @@ public interface IExpression extends IDebugElement {
 	 * @see IDebugElement#getDebugTarget()
 	 */
 	public abstract IDebugTarget getDebugTarget();
+	
+	/**
+	 * Notifies this expression that it has been removed
+	 * from the expression manager. Any required clean up
+	 * is be performed such that this expression can be
+	 * garbage collected.
+	 */
+	public abstract void dispose();
 }

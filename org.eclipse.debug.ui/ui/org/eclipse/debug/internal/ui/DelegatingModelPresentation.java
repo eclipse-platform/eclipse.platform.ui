@@ -212,8 +212,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		boolean displayVariableTypes= showVariableTypeNames();
 		if (item instanceof InspectItem) {
 			return getInspectItemText((InspectItem)item);
-		} else if (item instanceof IExpression) {
-			return getExpressionText((IExpression)item);
 		} else if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
 			IDebugModelPresentation lp= getConfiguredPresentation(item);
 			if (lp != null) {
@@ -222,6 +220,9 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					return label;
 				}
 			}
+			if (item instanceof IExpression) {
+				return getExpressionText((IExpression)item);
+			}		
 			if (item instanceof IVariable) {
 				IVariable var= (IVariable) item;
 				StringBuffer buf= new StringBuffer();

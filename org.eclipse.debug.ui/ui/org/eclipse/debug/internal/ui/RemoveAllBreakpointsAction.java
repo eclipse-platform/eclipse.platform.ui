@@ -14,26 +14,16 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
  * breakpoints from processes
  */
-public class RemoveAllBreakpointsAction extends Action implements IUpdate {
+public class RemoveAllBreakpointsAction extends AbstractRemoveAllAction implements IUpdate {
 	
 	public RemoveAllBreakpointsAction() {
-		super(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_&All_1")); //$NON-NLS-1$
-		setToolTipText(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_All_Breakpoints_2")); //$NON-NLS-1$
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.REMOVE_ALL_ACTION });
+		super(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_&All_1"), DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_All_Breakpoints_2"));
 	}
 
 	/**
@@ -68,11 +58,7 @@ public class RemoveAllBreakpointsAction extends Action implements IUpdate {
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		breakpointAltered();
+		setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 	}
 	
-	protected void breakpointAltered() {
-		boolean enable= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true;
-		setEnabled(enable);
-	}
 }

@@ -175,10 +175,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (current != null && current.equals(frame)) {
 			return;
 		}
-
 		if (frame != null) {
 			setDebugModel(frame.getModelIdentifier());
-		}
+		}		
 		getViewer().setInput(frame);
 		
 	}
@@ -388,8 +387,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action.setChecked(false);
 		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 		
-		setAction("AddToInspector", new AddToInspectorAction(getViewer())); //$NON-NLS-1$
-		
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
@@ -445,7 +442,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAction("AddToInspector")); //$NON-NLS-1$
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
@@ -505,6 +501,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				} else if (obj instanceof IExpression) {
 					val = ((IExpression)obj).getValue();
 				}
+				setDebugModel(val.getModelIdentifier());
 				getModelPresentation().computeDetail(val, this);
 			} else {
 				getDetailDocument().set(""); //$NON-NLS-1$

@@ -16,24 +16,13 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
-public class RemoveBreakpointAction extends SelectionProviderAction {
+public class RemoveBreakpointAction extends AbstractRemoveAction {
 
 	public RemoveBreakpointAction(ISelectionProvider provider) {
-		super(provider, DebugUIMessages.getString("RemoveBreakpointAction.&Remove_1")); //$NON-NLS-1$
-		setEnabled(!getStructuredSelection().isEmpty());
-		setToolTipText(DebugUIMessages.getString("RemoveBreakpointAction.Remove_Selected_Breakpoints_2")); //$NON-NLS-1$
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.REMOVE_ACTION });
+		super(provider, DebugUIMessages.getString("RemoveBreakpointAction.&Remove_1"), DebugUIMessages.getString("RemoveBreakpointAction.Remove_Selected_Breakpoints_2"));
 	}
 
 	/**
@@ -41,11 +30,7 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 	 */
 	public void run() {
 		IStructuredSelection selection= getStructuredSelection();
-		if (selection.isEmpty()) {
-			return;
-		}
-		IStructuredSelection es= (IStructuredSelection)selection;
-		final Iterator itr= es.iterator();
+		final Iterator itr= selection.iterator();
 		final MultiStatus ms = new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 			DebugException.REQUEST_FAILED, DebugUIMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
  
@@ -72,11 +57,5 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 		}
 	}
 
-	/**
-	 * @see SelectionProviderAction
-	 */
-	public void selectionChanged(IStructuredSelection sel) {
-		setEnabled(!sel.isEmpty());
-	}
 }
 

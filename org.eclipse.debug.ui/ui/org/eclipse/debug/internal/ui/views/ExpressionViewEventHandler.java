@@ -68,6 +68,8 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		Runnable r = new Runnable() {
 			public void run() {
 				insert(expression);
+				selectAndReveal(expression);
+				getTreeViewer().expandToLevel(expression, 1);
 			}
 		};
 		getView().asyncExec(r);

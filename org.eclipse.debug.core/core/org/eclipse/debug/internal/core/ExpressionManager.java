@@ -93,6 +93,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 		if (getExpressions0().indexOf(expression) >= 0) {
 			getExpressions0().remove(expression);
 			fExpressionFactoryMap.remove(expression);
+			expression.dispose();
 			fireExpressionRemoved(expression);
 		}
 	}

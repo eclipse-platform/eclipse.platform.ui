@@ -7,10 +7,17 @@ package org.eclipse.debug.internal.ui.views;
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.RemoveAllExpressionsAction;
+import org.eclipse.debug.internal.ui.RemoveExpressionAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchActionConstants;
  
 /**
  * Displays expressions and their values with a detail
@@ -60,5 +67,54 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void setInitialContent() {
 		getViewer().setInput(DebugPlugin.getDefault().getExpressionManager());
+	}	
+	
+	/**
+	 * @see AbstractDebugView#createActions()
+	 */
+	protected void createActions() {
+		super.createActions();
+		
+		IAction action = new RemoveExpressionAction(getViewer());
+		setAction(REMOVE_ACTION,action); 
+		setAction("RemoveAll",new RemoveAllExpressionsAction()); 		
+	}
+	
+	/**
+	 * Configures the toolBar.
+	 * 
+	 * @param tbm The toolbar that will be configured
+	 */
+	protected void configureToolBar(IToolBarManager tbm) {
+		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
+		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));		
+		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
+		tbm.add(getAction(REMOVE_ACTION));
+		tbm.add(getAction("RemoveAll"));
+		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
+		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
+	}	
+	
+   /**
+	* Adds items to the tree viewer's context menu including any extension defined
+	* actions.
+	* 
+	* @param menu The menu to add the item to.
+	*/
+	protected void fillContextMenu(IMenuManager menu) {
+
+		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
+		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
+		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
+		menu.add(getAction(REMOVE_ACTION));
+		menu.add(getAction("RemoveAll"));
+		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
+		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}	
 }

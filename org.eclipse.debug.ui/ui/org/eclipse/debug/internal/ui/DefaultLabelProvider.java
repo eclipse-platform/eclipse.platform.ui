@@ -12,6 +12,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -89,7 +90,10 @@ public class DefaultLabelProvider implements ILabelProvider {
 							} catch (CoreException e) {
 								DebugUIPlugin.logError(e);
 							}
-						}
+						} else
+							if (element instanceof IExpression) {
+								return IDebugUIConstants.IMG_OBJS_EXPRESSION;
+							}
 		return null;		
 	}
 
