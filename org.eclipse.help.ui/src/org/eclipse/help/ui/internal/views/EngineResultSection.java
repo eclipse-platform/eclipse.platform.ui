@@ -212,9 +212,16 @@ public class EngineResultSection {
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
 			if (showDescription) {
-				String desc = "A short description of the topic to be shown under the link";
-				buff.append("<br/>");
-				buff.append(desc);
+				String desc = hit.getDescription();
+				if (desc!=null) {
+					buff.append("<br/>");
+					String edesc = escapeSpecialChars(desc);
+					if (!edesc.equals(hit.getLabel())) {
+						if (edesc.startsWith(hit.getLabel()))
+							edesc = edesc.substring(hit.getLabel().length()+1);
+						buff.append(edesc);
+					}
+				}
 			}
 			/*
 			 * buff.append(" <a href=\""); //$NON-NLS-1$ buff.append("nw:");
