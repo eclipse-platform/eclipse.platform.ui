@@ -11,6 +11,12 @@
 package org.eclipse.debug.internal.ui.views;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -23,6 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Handles debug events, updating a view and viewer.
@@ -34,6 +41,58 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	private AbstractDebugView fView;
 	
+	/**
+	 * Queued debug event sets (arrays of events) to process, or <code>null</code> if none.
+	 */
+	private List fEventSetQueue = new ArrayList();
+	
+	/**
+	 * Update job 
+	 */
+	private EventProcessingJob fUpdateJob = new EventProcessingJob();
+	
+	/**
+	 * Job to dispatch debug event sets
+	 */
+	private class EventProcessingJob extends UIJob {
+
+	    public EventProcessingJob() {
+	        super(DebugUIViewsMessages.getString("AbstractDebugEventHandler.0")); //$NON-NLS-1$
+	        setSystem(true);
+	    }
+	    
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            boolean more = true;
+            int count = 0;
+            // to avoid blocking the UI thread, process a max of 50 event sets at once
+            while (more && (count < 50)) {
+                DebugEvent[] eventSet = null;
+			    synchronized (fEventSetQueue) {
+			        if (fEventSetQueue.isEmpty()) {
+			            return Status.OK_STATUS;
+			        }
+			        eventSet = (DebugEvent[]) fEventSetQueue.remove(0);
+			        more = !fEventSetQueue.isEmpty();
+			    }
+				if (isAvailable()) {
+					if (isViewVisible()) {
+						doHandleDebugEvents(eventSet);
+					}
+					updateForDebugEvents(eventSet);
+				}
+				count++;
+            }
+            if (more) {
+                // re-schedule with a delay if there are still events to process 
+                schedule(50);
+            }
+            return Status.OK_STATUS;
+        }
+	    
+	}
 	/**
 	 * Constructs an event handler for the given view.
 	 * 
@@ -59,21 +118,15 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvents(final DebugEvent[] events) {
+	public void handleDebugEvents(DebugEvent[] events) {
 		if (!isAvailable()) {
 			return;
 		}
-		Runnable r= new Runnable() {
-			public void run() {
-				if (isAvailable()) {
-					if (isViewVisible()) {
-						doHandleDebugEvents(events);
-					}
-					updateForDebugEvents(events);
-				}
-			}
-		};
-		getView().asyncExec(r);
+		// add the event set to the queue and schedule update
+		synchronized (fEventSetQueue) {
+		    fEventSetQueue.add(events);
+		}
+		fUpdateJob.schedule();
 	}
 	
 	/**
@@ -162,6 +215,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	public void dispose() {
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.removeDebugEventListener(this);
+		fEventSetQueue.clear();
 	}
 	
 	/**
