@@ -70,6 +70,10 @@ public class ContributionParser
 
 		String message = getMessage("E001", ex);
 		Logger.logError(message, null);
+		
+		// now pass it to the RuntimeHelpStatus object explicitly because we
+		// still need to display errors even if Logging is turned off.
+		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
 	/** Irrecoverable errors, such as a document that is not well formed */
 
@@ -104,7 +108,7 @@ public class ContributionParser
 		String systemId = ex.getSystemId();
 		return systemId;
 	}
-	private String getMessage(String messageID, SAXParseException ex) {
+	public String getMessage(String messageID, SAXParseException ex) {
 		String param1 = getLocationString(ex);
 		String param2 = Integer.toString(ex.getLineNumber());
 		String param3 = Integer.toString(ex.getColumnNumber());

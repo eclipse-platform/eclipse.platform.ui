@@ -119,19 +119,41 @@ public class NavigationModel {
 				.append(infosetID)
 				.append(XMLNavGenerator.NAV_XML_FILENAME)
 				.toOSString();
+				
+		ContributionParser parser = null;
+		
 		try {
-			ContributionParser parser = new ContributionParser();
+			 parser = new ContributionParser();
 			if (Logger.DEBUG)
 				Logger.logDebugMessage("NavigationModel", "Loading _nav= " + xmlFile);
 			InputStream input = new FileInputStream(xmlFile);
-			parser.parse(new InputSource(input));
+			
+			InputSource source = new InputSource(input);
+			// set id info for parser exceptions.
+			// use toString method to capture protocol...etc
+			source.setSystemId(xmlFile);
+			
+			parser.parse(source);
 			infoset = parser.getContribution();
 
 		} catch (SAXException se) {
+			// create message string from exception
+			//String message = parser.getMessage("E002", se);
+
+			// Log the error. No need to populate RuntimeHelpStatus
+			// because the parsing already did this.
 			Logger.logError(se.getMessage(), se);
-		} catch (IOException ioe) {
-			String msg = Resources.getString("E009", xmlFile.toString());
-			Logger.logError(msg, ioe);
+
+			
+
+			// now pass it to the RuntimeHelpStatus object explicitly because we
+			// still need to display errors even if Logging is turned off.
+			//RuntimeHelpStatus.getInstance().addParseError(message, se.getSystemId());
+		} catch (Exception e) {
+			// we need to populate the RuntimeHelpStatus object because this is not
+			// a parse exception.
+			String msg = Resources.getString("E009", xmlFile);
+			Logger.logError(msg, e);
 
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
@@ -169,13 +191,17 @@ public class NavigationModel {
 			in.close();
 
 		} catch (SAXException se) {
+			// Log the error.
 			Logger.logError(se.getMessage(), se);
-		} catch (Exception ioe) {
-			Logger.logError("Could not copy the model data from server", ioe);
+			
+		} catch (Exception e) {
+			// Could not copy the model data from server
+			String msg = Resources.getString("E012");
+			Logger.logError(msg, e);
 			try {
 				if (in != null)
 					in.close();
-			} catch (IOException e) {
+			} catch (IOException ioe) {
 			}
 		}
 

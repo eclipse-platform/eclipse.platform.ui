@@ -51,7 +51,8 @@ public class XMLNavGenerator extends XMLGenerator {
 			options.append("id=\"");
 			options.append(infoSet.getID());
 			options.append("\" label=\"");
-			options.append(((HelpContribution) infoSet).getRawLabel());
+			String infosetLabel = ((HelpContribution) infoSet).getRawLabel();
+			options.append(getValidXMLString(infosetLabel));
 			options.append("\" ");
 			if (!"".equals(href)) {
 				options.append("href=\"");
@@ -89,12 +90,14 @@ public class XMLNavGenerator extends XMLGenerator {
 		options.append("id=\"");
 		options.append(view.getID());
 		options.append("\" label=\"");
-		options.append(((HelpContribution) view).getRawLabel());
+		String viewLabel = ((HelpContribution) view).getRawLabel();
+		viewLabel = getValidXMLString(viewLabel);
+		options.append(viewLabel);
 		options.append("\" ");
 
 		out.println(
 			"<!-- "
-				+ ((HelpContribution) view).getRawLabel()
+				+ viewLabel
 				+ " infoview ["
 				+ view.getID()
 				+ "] -->");
@@ -107,7 +110,7 @@ public class XMLNavGenerator extends XMLGenerator {
 
 		out.println("</infoview>"); // close the view division 
 		out.println(
-			"<!-- End of " + ((HelpContribution) view).getRawLabel() + " infoview -->");
+			"<!-- End of " + viewLabel + " infoview -->");
 		out.println();
 
 		// Use a new character for the identifiers in next view
@@ -130,6 +133,10 @@ public class XMLNavGenerator extends XMLGenerator {
 			*/
 			StringBuffer anchor = new StringBuffer();
 			pad.append(indent);
+			
+			String topicLabel = ((HelpContribution) topic).getRawLabel();
+			topicLabel = getValidXMLString(topicLabel);
+			
 			anchor
 				.append(pad)
 				.append("<topic href=\"")
@@ -137,7 +144,7 @@ public class XMLNavGenerator extends XMLGenerator {
 				.append("\" id=\"")
 				.append(id)
 				.append("\" label=\"")
-				.append(((HelpContribution) topic).getRawLabel())
+				.append(topicLabel)
 				.append("\" >");
 
 			if (topic.getChildren().hasNext()) {
@@ -156,4 +163,35 @@ public class XMLNavGenerator extends XMLGenerator {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	// returns a String that is a valid XML string
+	public static String getValidXMLString (String aLabel) {
+		StringBuffer buffer = new StringBuffer(aLabel);
+		updateXMLBuffer(buffer, "&",  "&amp;");
+		updateXMLBuffer(buffer, ">",  "&gt;");
+		updateXMLBuffer(buffer, "<",  "&lt;");
+		updateXMLBuffer(buffer, "\'", "&apos;");
+		updateXMLBuffer(buffer, "\"", "&quot;");
+		
+		return buffer.toString();
+	} 
+	
+	
+	private static void updateXMLBuffer(StringBuffer buffer, String invalidXMLString, String validXMLString ) {
+		String label = buffer.toString();
+		int x = label.indexOf(invalidXMLString);
+		while (x != -1) {
+			buffer.deleteCharAt(x);
+			buffer.insert(x, validXMLString);
+			label = buffer.toString();
+			x = label.indexOf(invalidXMLString, x+1);
+		}
+		
+		return;		
+	
+	}
+
+	
+	
 }
