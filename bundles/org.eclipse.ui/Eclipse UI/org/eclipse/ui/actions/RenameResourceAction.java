@@ -136,6 +136,73 @@ private boolean checkReadOnlyAndNull(IResource currentResource) {
 	else
 		return true;
 }
+Composite createParent() {
+	Tree tree = getTree();
+	Composite result = new Composite (tree, SWT.NONE);
+	TreeItem[] selectedItems = tree.getSelection();
+	treeEditor.horizontalAlignment = SWT.LEFT;
+	treeEditor.grabHorizontal = true;
+	treeEditor.setEditor(result, selectedItems[0]);
+	return result;
+}
+/**
+ * Create the text editor widget.
+ * 
+ * @param resource the resource to rename
+ */
+private void createTextEditor(final IResource resource) {
+	// Create text editor parent.  This draws a nice bounding rect.
+	textEditorParent = createParent();
+	textEditorParent.setVisible(false);
+	textEditorParent.addListener(SWT.Paint, new Listener() {
+		public void handleEvent (Event e) {
+			Point textSize = textEditor.getSize();
+			Point parentSize = textEditorParent.getSize();
+			e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
+		}
+	});
+	
+	// Create inner text editor.
+	textEditor = new Text(textEditorParent, SWT.NONE);
+	textEditorParent.setBackground(textEditor.getBackground());
+	textEditor.addListener(SWT.Modify, new Listener() {
+		public void handleEvent (Event e) {
+			Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			textSize.x += textSize.y; // Add extra space for new characters.
+			Point parentSize = textEditorParent.getSize();
+			textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
+			textEditorParent.redraw();
+		}
+	});
+	textEditor.addListener(SWT.Traverse, new Listener() {
+		public void handleEvent(Event event) {
+			
+			//Workaround for Bug 20214 due to extra
+			//traverse events
+			switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					//Do nothing in this case
+					disposeTextWidget();
+					event.doit = true;
+					event.detail = SWT.TRAVERSE_NONE;
+					break;
+				case SWT.TRAVERSE_RETURN:
+					saveChangesAndDispose(resource);
+					event.doit = true;
+					event.detail = SWT.TRAVERSE_NONE;
+					break;
+			}
+		}
+	});
+	textEditor.addFocusListener(new FocusAdapter() {
+		public void focusLost(FocusEvent fe) {
+			saveChangesAndDispose(resource);
+		}
+	});
+	
+	if (textActionHandler != null)
+		textActionHandler.addText(textEditor);
+}
 /**
  * Close the text widget and reset the editorText field.
  */
@@ -218,10 +285,10 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 		resource.move(newPath, IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
 }
 /**
- *	Return the new name to be given to the target resource.
+ * Return the new name to be given to the target resource.
  *
- *	@return java.lang.String
- *	@param context IVisualPart
+ * @return java.lang.String
+ * @param context IVisualPart
  */
 protected String queryNewResourceName(final IResource resource) {
 	final IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
@@ -253,65 +320,19 @@ protected String queryNewResourceName(final IResource resource) {
 	return dialog.getValue();
 }
 /**
- *	Return the new name to be given to the target resource or <code>null<code>
- *  if the query was canceled. Rename the currently selected resource using the table editor. 
- *  Continue the action when the user is done.
+ * Return the new name to be given to the target resource or <code>null<code>
+ * if the query was canceled. Rename the currently selected resource using the table editor. 
+ * Continue the action when the user is done.
  *
- *	@return java.lang.String
- *	@param context IVisualPart
+ * @return java.lang.String
+ * @param resource the resource to rename
  */
 private void queryNewResourceNameInline(final IResource resource) {
-	// Create text editor parent.  This draws a nice bounding rect.
-	textEditorParent = createParent();
-	textEditorParent.setVisible(false);
-	textEditorParent.addListener(SWT.Paint, new Listener() {
-		public void handleEvent (Event e) {
-			Point textSize = textEditor.getSize();
-			Point parentSize = textEditorParent.getSize();
-			e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
-		}
-	});
-
-	// Create inner text editor.
-	textEditor = new Text(textEditorParent, SWT.NONE);
-	textEditorParent.setBackground(textEditor.getBackground());
-	textEditor.addListener(SWT.Modify, new Listener() {
-		public void handleEvent (Event e) {
-			Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			textSize.x += textSize.y; // Add extra space for new characters.
-			Point parentSize = textEditorParent.getSize();
-			textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
-			textEditorParent.redraw();
-		}
-	});
-	textEditor.addListener(SWT.Traverse, new Listener() {
-		public void handleEvent(Event event) {
-			
-			//Workaround for Bug 20214 due to extra
-			//traverse events
-			switch (event.detail) {
-				case SWT.TRAVERSE_ESCAPE:
-					//Do nothing in this case
-					disposeTextWidget();
-					event.doit = true;
-					event.detail = SWT.TRAVERSE_NONE;
-					break;
-				case SWT.TRAVERSE_RETURN:
-					saveChangesAndDispose(resource);
-					event.doit = true;
-					event.detail = SWT.TRAVERSE_NONE;
-					break;
-			}
-		}
-	});
-	textEditor.addFocusListener(new FocusAdapter() {
-		public void focusLost(FocusEvent fe) {
-			saveChangesAndDispose(resource);
-		}
-	});
-
-	if (textActionHandler != null)
-		textActionHandler.addText(textEditor);
+	// Make sure text editor is created only once. Simply reset text 
+	// editor when action is executed more than once. Fixes bug 22269.
+	if (textEditorParent == null) {
+		createTextEditor(resource);
+	}
 	textEditor.setText(resource.getName());
 
 	// Open text editor with initial size.
@@ -323,15 +344,6 @@ private void queryNewResourceNameInline(final IResource resource) {
 	textEditorParent.redraw();
 	textEditor.selectAll ();
 	textEditor.setFocus ();
-}
-Composite createParent() {
-	Tree tree = getTree();
-	Composite result = new Composite (tree, SWT.NONE);
-	TreeItem[] selectedItems = tree.getSelection();
-	treeEditor.horizontalAlignment = SWT.LEFT;
-	treeEditor.grabHorizontal = true;
-	treeEditor.setEditor(result, selectedItems[0]);
-	return result;
 }
 /* (non-Javadoc)
  * Method declared on IAction; overrides method on WorkspaceAction.
