@@ -13,14 +13,10 @@ package org.eclipse.ui.internal.cheatsheets;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -49,48 +45,6 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements ICheatSheetRes
 	 */
 	public CheatSheetPlugin() {
 		super();
-	}
-
-	/**
-	 * Adds the Cheat Sheet menu items to the help menu of the list of workbench windows.
-	 * 
-	 * @param windows the workbench windows that need to have there help menu updated
-	 */
-	private void addCheatSheetMenu(IWorkbenchWindow[] windows) {
-		if (windows == null) {
-			return;
-		}
-
-		CheatSheetCollectionElement collection = (CheatSheetCollectionElement) CheatSheetRegistryReader.getInstance().getCheatSheets();
-		if (collection.getCheatSheets().length <= 0 && collection.getChildren().length <= 0) {
-			return;
-		}
-
-		WindowLoop : for (int windowCount = 0; windowCount < windows.length; ++windowCount) {
-
-			MenuManager cheatmanager = new MenuManager(getResourceString(ICheatSheetResource.CHEAT_SHEETS), ICheatSheetResource.CHEAT_SHEET_MENU_ID);
-
-			WorkbenchWindow realwindow = (WorkbenchWindow) windows[windowCount];
-			IMenuManager menubar = realwindow.getMenuBarManager();
-			IContributionItem[] myitems = menubar.getItems();
-
-			for (int i = 0; i < myitems.length; i++) {
-				//System.out.println("The id of the item is: "+myitems[i].getId());	
-				if (myitems[i].getId() != null && myitems[i].getId().equals(IWorkbenchActionConstants.M_HELP)) {
-					IContributionItem helpitem = myitems[i];
-					IContributionItem cheatsheetMenu = ((IMenuManager) helpitem).find(ICheatSheetResource.CHEAT_SHEET_MENU_ID);
-					if (cheatsheetMenu == null) {
-						((IMenuManager) helpitem).insertBefore(IWorkbenchActionConstants.HELP_START, cheatmanager);
-					} else {
-						break WindowLoop;
-					}
-					break;
-				}
-			}
-
-			CheatSheetMenu cheatsheetMenuMenuItem = new CheatSheetMenu();
-			cheatmanager.add(cheatsheetMenuMenuItem);
-		}
 	}
 
 	/**
