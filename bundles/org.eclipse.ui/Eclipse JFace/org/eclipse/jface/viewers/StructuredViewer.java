@@ -900,8 +900,9 @@ public void setSelection(ISelection selection, boolean reveal) {
 	}
 	if (!inChange) {
 		setSelectionToWidget(selection, reveal);
-		updateSelection(getSelection());
-		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
+		ISelection sel = getSelection();
+		updateSelection(sel);
+		firePostSelectionChanged(new SelectionChangedEvent(this, sel));
 	} else {
 		restoreSelection = false;
 		setSelectionToWidget(selection, reveal);
