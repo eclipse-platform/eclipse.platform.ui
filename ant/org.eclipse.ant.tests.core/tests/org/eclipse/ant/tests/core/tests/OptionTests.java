@@ -593,7 +593,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusK() {
 		try {
-			run("failingTarget.xml", new String[]{"-keep-going"}, false);
+			run("failingTarget.xml", new String[]{"-k"}, false);
 		} catch (CoreException be) {
 			assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
 			assertTrue("Incorrect message:"  + AntTestChecker.getDefault().getLoggedMessage(1), "Still echo on failure".equals(AntTestChecker.getDefault().getLoggedMessage(1)));
@@ -602,5 +602,4 @@ public class OptionTests extends AbstractAntTest {
 		
 		assertTrue("The build should have failed", false);
 	}
-	
 }
