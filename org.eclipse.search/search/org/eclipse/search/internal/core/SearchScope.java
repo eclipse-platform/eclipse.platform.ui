@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.core;
@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.jface.util.Assert;
@@ -46,8 +47,8 @@ public class SearchScope implements ISearchScope {
 	/*
 	 * Implements method from ISearchScope
 	 */
-	public boolean encloses(IResource element) {
-		IPath elementPath= element.getFullPath();
+	public boolean encloses(IResourceProxy proxy) {
+		IPath elementPath= proxy.requestFullPath();
 		Iterator iter= elements();
 		while (iter.hasNext()) {
 			IResource resource= (IResource)iter.next();
@@ -69,5 +70,21 @@ public class SearchScope implements ISearchScope {
 	 */
 	protected Iterator elements() {
 		return fElements.iterator();
+	}
+
+	/**
+	 * Implements method from ISearchScope
+	 * 
+	 * @deprecated as of 2.1 use @link #encloses(IResourceProxy)
+	 */
+	public boolean encloses(IResource element) {
+		IPath elementPath= element.getFullPath();
+		Iterator iter= elements();
+		while (iter.hasNext()) {
+			IResource resource= (IResource)iter.next();
+			if (resource.getFullPath().isPrefixOf(elementPath))
+				return true;
+		}
+		return false;
 	}
 }

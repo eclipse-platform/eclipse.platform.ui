@@ -7,8 +7,9 @@ package org.eclipse.search.internal.core.text;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 
@@ -25,8 +26,8 @@ public class AmountOfWorkCalculator extends TypedResourceVisitor {
 		super(status);
 	}
 		
-	protected boolean visitFile(IFile file) throws CoreException {
-		if (fScope.encloses(file) && !file.isDerived())
+	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
+		if (fScope.encloses(proxy) && !proxy.isDerived())
 			fResult++;
 		return true;	
 	}
@@ -40,7 +41,7 @@ public class AmountOfWorkCalculator extends TypedResourceVisitor {
 			IProject project= (IProject)i.next();
 			int save= fResult;
 			try {
-				project.accept(this);
+				project.accept(this, IResource.NONE);
 			} catch (CoreException ex) {
 				addToStatus(ex);
 			}

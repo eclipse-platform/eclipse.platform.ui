@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.core.text;
@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -92,7 +93,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		while(i.hasNext()) {
 			IProject project= (IProject)i.next();
 			try {
-				project.accept(this);
+				project.accept(this, IResource.NONE);
 			} catch (CoreException ex) {
 				addToStatus(ex);
 			}
@@ -128,20 +129,20 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	}
 
 	
-	protected boolean visitFile(IFile file) throws CoreException {
-		if (! fScope.encloses(file))
+	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
+		if (! fScope.encloses(proxy))
 			return false;
 
 		// Exclude to derived resources
-		if (file.isDerived())
+		if (proxy.isDerived())
 			return false;
 
 		if (fPattern.length() == 0) {
-			fCollector.accept(file, "", -1, 0, -1); //$NON-NLS-1$
+			fCollector.accept(proxy, "", -1, 0, -1); //$NON-NLS-1$
 			updateProgressMonitor();
 			return true;
 		}
-
+		IFile file= (IFile)proxy.requestResource();
 		try {
 			BufferedReader reader= null;
 			ITextEditor editor= findDirtyEditorFor(file);
@@ -168,7 +169,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 						if ((match= fMatcher.find(line, start, lineLength)) != null) {
 							start= charCounter + match.getStart();
 							int length= match.getEnd() - match.getStart();
-							fCollector.accept(file, line.trim(), start, length, lineCounter);
+							fCollector.accept(proxy, line.trim(), start, length, lineCounter);
 							start= match.getEnd();
 						}
 						else	// no match in this line
@@ -248,11 +249,11 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	}
 	
 	/*
-	 * @see IResourceVisitor#visit(IResource)
+	 * @see IResourceProxyVisitor#visit(IResourceProxy)
 	 */
-	public boolean visit(IResource resource) {
+	public boolean visit(IResourceProxy proxy) {
 		fDirtyEditors= getDirtyEditors();
-		return super.visit(resource);
+		return super.visit(proxy);
 	}
 }
 

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui.text;
@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -77,7 +78,8 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	/**
 	 * Accepts the given search result.
 	 */
-	public void accept(final IResource resource, String line, int start, int length, final int lineNumber) throws CoreException {
+	public void accept(final IResourceProxy proxy, String line, int start, int length, final int lineNumber) throws CoreException {
+		IResource resource= proxy.requestResource();
 		IMarker marker= resource.createMarker(SearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);
 		attributes.put(SearchUI.LINE, line);

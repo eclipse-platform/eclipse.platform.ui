@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.core.text;
@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ui.IWorkingSet;
@@ -37,8 +38,8 @@ public class TextSearchScope extends SearchScope {
 		/**
 		 * @see ISearchScope#encloses(Object)
 		 */
-		public boolean encloses(IResource element) {
-			if (element instanceof IFile && skipFile((IFile)element))
+		public boolean encloses(IResourceProxy proxy) {
+			if (proxy.getType() == IResource.FILE && skipFile(proxy))
 				return false;
 			return true;	
 		}	
@@ -115,8 +116,30 @@ public class TextSearchScope extends SearchScope {
 	/*
 	 * Implements method from ISearchScope
 	 */
+	public boolean encloses(IResourceProxy proxy) {
+		if (proxy.getType() == IResource.FILE && skipFile(proxy))
+			return false;
+		return super.encloses(proxy);	
+	}
+
+	boolean skipFile(IResourceProxy proxy) {
+		if (proxy != null) {
+			Iterator iter= fExtensions.iterator();
+			while (iter.hasNext()) {
+				if (((StringMatcher)iter.next()).match(proxy.getName()))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Implements method from ISearchScope
+	 * 
+	 * @deprecated As of 2.1, replaced by {@link #encloses(IResourceProxy)}
+	 */
 	public boolean encloses(IResource element) {
-		if (element instanceof IFile && skipFile((IFile)element))
+		if (element.getType() == IResource.FILE && skipFile((IFile)element))
 			return false;
 		return super.encloses(element);	
 	}

@@ -4,7 +4,7 @@
  */
 package org.eclipse.search.internal.core.text;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -22,14 +22,14 @@ public interface ITextSearchResultCollector {
 	 
 	/**
 	 * Accepts the given search result.
-	 * @param resource the resource in which the match has been found.
+	 * @param resource proxy the resource proxy in which the match has been found.
 	 * @param line the line containing the match
 	 * @param int start position from the beginning of the file. Start position
 	 *  is zero based.
 	 * @param length the length of the match.
 	 * @param lineNumber the line number of the match.
 	 */
-	public void accept(IResource resource, String line, int start, int length, int lineNumber) throws CoreException;
+	public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) throws CoreException;
 	
 	/**
 	 * Called when the search has ended.
