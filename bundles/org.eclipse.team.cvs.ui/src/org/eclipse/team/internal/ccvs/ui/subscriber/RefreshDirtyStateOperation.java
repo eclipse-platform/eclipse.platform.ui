@@ -64,4 +64,15 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 		}, monitor);
 
 	}
+	
+	protected String getErrorTitle() {
+		return Policy.bind("RefreshDirtyStateOperation.0"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected String getJobName() {
+		return Policy.bind("RefreshDirtyStateOperation.1"); //$NON-NLS-1$
+	}
 }
