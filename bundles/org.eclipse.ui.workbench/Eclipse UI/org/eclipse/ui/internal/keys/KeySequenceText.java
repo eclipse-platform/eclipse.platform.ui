@@ -165,6 +165,7 @@ public final class KeySequenceText {
          * formatting
 		 */
         final KeySequence dummySequence;
+        
         if (keySequence == null) {
             if (temporaryStroke == null) {
                 dummySequence = KeySequence.getInstance();
@@ -178,6 +179,9 @@ public final class KeySequenceText {
             }
             dummySequence = KeySequence.getInstance(keyStrokes);
         }
+		
+		// TODO doug, why doesn't the following work? 
+		// text.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : dummySequence.format());
 		text.setText(dummySequence.format());
         
         // Update the caret position.

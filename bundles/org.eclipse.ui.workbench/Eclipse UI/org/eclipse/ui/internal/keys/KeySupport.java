@@ -12,12 +12,15 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.CharacterKey;
+import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.NaturalKey;
@@ -206,6 +209,42 @@ public final class KeySupport {
 
         return accelerator;
     }
+
+	public static String formatCarbon(KeySequence keySequence) {
+		StringBuffer stringBuffer = new StringBuffer();
+		List keyStrokes = keySequence.getKeyStrokes();
+
+		for (int i = 0; i < keyStrokes.size(); i++) {
+			if (i >= 1)
+				stringBuffer.append(' ');
+
+			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
+			stringBuffer.append(formatCarbon(keyStroke));
+		}
+
+		return stringBuffer.toString();
+	}
+
+	public static String formatCarbon(KeyStroke keyStroke) {
+		StringBuffer stringBuffer = new StringBuffer();
+		Set modifierKeys = keyStroke.getModifierKeys();
+
+		if (modifierKeys.contains(ModifierKey.SHIFT))
+			stringBuffer.append('\u21E7');
+
+		if (modifierKeys.contains(ModifierKey.CTRL))
+			stringBuffer.append('\u2303');
+
+		if (modifierKeys.contains(ModifierKey.ALT))
+			stringBuffer.append('\u2325');
+
+		if (modifierKeys.contains(ModifierKey.COMMAND))
+			stringBuffer.append('\u2318');
+
+		keyStroke = KeyStroke.getInstance(keyStroke.getNaturalKey());
+		stringBuffer.append(keyStroke.format());
+		return stringBuffer.toString();
+	}
 
     private KeySupport() {
     }
