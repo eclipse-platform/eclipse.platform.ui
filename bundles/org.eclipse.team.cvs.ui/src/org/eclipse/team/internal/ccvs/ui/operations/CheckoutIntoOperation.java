@@ -327,7 +327,14 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			session.open(Policy.subMonitorFor(monitor, 5), false /* read-only */);
 			
 			// Determine which local folders will be affected
-			ICVSFolder[] targetFolders = prepareLocalFolders(session, remoteFolder, parentFolder, localFolderName, Policy.subMonitorFor(monitor, 5));
+			String localName = localFolderName;
+			if (localName == null) {
+				IPath path = new Path(remoteFolder.getRepositoryRelativePath());
+				if (path.segmentCount() > 1) {
+					localName = path.lastSegment();
+				}
+			}
+			ICVSFolder[] targetFolders = prepareLocalFolders(session, remoteFolder, parentFolder, localName, Policy.subMonitorFor(monitor, 5));
 			if (targetFolders == null) {
 				// an error occured and has been added to the operation's error list
 				return getLastError();
@@ -337,8 +344,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			List localOptions = new ArrayList();
 			if (!recurse)
 				localOptions.add(Update.DO_NOT_RECURSE);
-			if (localFolderName != null) {
-				localOptions.add(Checkout.makeDirectoryNameOption(localFolderName));
+			if (localName != null) {
+				localOptions.add(Checkout.makeDirectoryNameOption(localName));
 			}
 			
 			// Prune empty directories if pruning enabled
@@ -400,12 +407,15 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				IProject project = root.getProject();
 				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
 				if (provider == null) {
-					// Register the project with Team
-					RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
-					
-					// TODO: This should be somewhere else
-					provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-					provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
+					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
+					if (folder.isCVSFolder()) {
+						// Register the project with Team
+						RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+						
+						// TODO: This should be somewhere else
+						provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+						provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
+					}
 				}
 			} catch (TeamException e) {
 				throw CVSException.wrapException(e);
