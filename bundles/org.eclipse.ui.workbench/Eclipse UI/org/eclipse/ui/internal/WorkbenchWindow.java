@@ -579,7 +579,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * Return whether or not the coolbar layout is locked.
      */
     protected boolean isCoolBarLocked() {
-        return getCoolBarManager().getLockLayout();
+        CoolBarManager cbm = getCoolBarManager(); 
+        return cbm != null && cbm.getLockLayout();
     }
 
     /**
