@@ -383,7 +383,7 @@ public abstract class WorkbenchAdviser {
 	}
 	
 	/**
-	 * Returns the initial perspective for the workbench window page
+	 * Returns the id of the initial perspective for the workbench window page
 	 * during startup of the workbench.
 	 * <p>
 	 * This method is called during startup when the workbench is restoring
@@ -392,10 +392,10 @@ public abstract class WorkbenchAdviser {
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the workbench window
-	 * @return the intial perspective for the workbench window page, or
-	 * <code>null</code> if none
+	 * @return the id of the initial perspective, or <code>null</code> if none
+	 * @issue if this returns null, we're in trouble?
 	 */
-	public IPerspectiveDescriptor getInitialWindowPerspective(IWorkbenchWindowConfigurer configurer) {
+	public String getInitialWindowPerspectiveId(IWorkbenchWindowConfigurer configurer) {
 		// default: no initial perspective
 		return null;
 	}

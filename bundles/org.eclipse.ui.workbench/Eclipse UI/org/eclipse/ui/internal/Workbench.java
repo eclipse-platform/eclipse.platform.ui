@@ -987,8 +987,13 @@ public final class Workbench implements IWorkbench {
 			newWindow.create();
 
 			// allow the application to specify an initial perspective to open
-			IPerspectiveDescriptor desc = getAdviser().getInitialWindowPerspective(newWindow.getWindowConfigurer());
-			result.merge(newWindow.restoreState(childMem, desc));
+			String initialPerspectiveId = getAdviser().getInitialWindowPerspectiveId(newWindow.getWindowConfigurer());
+			if (initialPerspectiveId != null) {
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
+				if (desc != null) {
+					result.merge(newWindow.restoreState(childMem, desc));
+				}    
+			}
 			windowManager.add(newWindow);
 			try {
 				getAdviser().postWindowRestore(newWindow.getWindowConfigurer());
@@ -1477,6 +1482,15 @@ public final class Workbench implements IWorkbench {
 		return adviser;
 	}
 	
+	/**
+	 * Returns the default perspective id.
+	 * 
+	 * @return the default perspective id, or <code>null</code> if none
+	 */
+	public String getDefaultPerspectiveId() {
+		return getAdviser().getInitialWindowPerspectiveId();
+	}
+
 	/**
 	 * Returns the default workbench window input.
 	 * 
