@@ -12,20 +12,18 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.osgi.framework.BundleContext;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -81,14 +79,6 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fgInstance == null);
 		fgInstance= this;
 	}
-
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeDefaultPreferences(org.eclipse.jface.preference.IPreferenceStore)
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		TextEditorPreferenceConstants.initializeDefaultValues(store);
-	}
-	
 	
 	/**
 	 * Returns the shared text colors of this plug-in.
