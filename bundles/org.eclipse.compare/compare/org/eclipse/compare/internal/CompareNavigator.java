@@ -26,6 +26,10 @@ public class CompareNavigator {
 		fPanes= panes;
 	}
 
+	public CompareViewerSwitchingPane[] getPanes() {
+		return fPanes;
+	}
+	
 	public void selectChange(boolean next) {
 		
 		fLastDirection= next;
