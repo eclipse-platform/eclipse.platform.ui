@@ -34,13 +34,6 @@ A project set file may be used to provide team memebers with a simple way of cre
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -95,7 +88,7 @@ A project set file may be used to provide team memebers with a simple way of cre
       </documentation>
    </annotation>
 
-<annotation>
+   <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>

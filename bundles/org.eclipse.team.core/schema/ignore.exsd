@@ -31,13 +31,6 @@ Providers may provide an extension for this extension point.  No code beyond the
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
