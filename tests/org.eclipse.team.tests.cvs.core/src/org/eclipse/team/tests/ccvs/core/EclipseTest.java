@@ -549,5 +549,13 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		// Pause to ensure that future operations happen later than timestamp of committed resources
 		JUnitTestCase.waitMsec(1500);
 	}
+	
+	/**
+	 * Return an input stream with some random text to use
+	 * as contents for a file resource.
+	 */
+	public InputStream getRandomContents() {
+		return getRandomContents(RANDOM_CONTENT_SIZE);
+	}
 }
 
