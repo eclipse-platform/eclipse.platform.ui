@@ -911,6 +911,7 @@ public IPath getFullPath();
  *  or <code>null</code> if no path can be determined
  * @see IProjectDescription#setLocation
  * @see Platform#getLocation
+ * TODO: Add reference to linked resources
  */
 public IPath getLocation();
 /**
