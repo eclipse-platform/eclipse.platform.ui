@@ -97,6 +97,13 @@
 			adaptable="true"
 			nameFilter="*.xml">
 			<action
+				id="org.eclipse.ui.externaltools.RunAntWithAction"
+				label="%RunAntWith.label"
+				menubarPath="additions"
+				enablesFor="1"
+				class="org.eclipse.ui.externaltools.internal.ui.AntRunWithActionDelegate">
+			</action>
+			<action
 				id="org.eclipse.ui.externaltools.RunAntAction"
 				label="%PopupMenu.runAnt"
 				tooltip="%PopupMenu.runAntTip"

@@ -47,6 +47,8 @@ import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
  */
 public class AntLaunchShortcut implements ILaunchShortcut {
 
+	private boolean fShowDialog= false;
+
 	/**
 	 * Constructor for AntLaunchShortcut.
 	 */
@@ -90,23 +92,28 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				List configurations = findExistingLaunchConfigurations(file);
 				if (configurations.isEmpty()) {
 					configuration = createDefaultLaunchConfiguration(file);
-					if (configuration != null) {
-						DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-					}
 				} else {
 					if (configurations.size() == 1) {
 						configuration= (ILaunchConfiguration)configurations.get(0);
 					} else {
 						configuration= chooseConfig(configurations);
 					}
-					if (configuration != null) {
+					
+				}
+				if (configuration != null) {
+					if (fShowDialog) {
+						DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+						
+					} else {
 						DebugUITools.launch(configuration, mode);
 					}
+					return;
 				}
 			}			
-		} else {
-			antFileNotFound();
 		}
+		
+		antFileNotFound();
+		
 	}
 	
 	/**
@@ -247,4 +254,13 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), message, status); //$NON-NLS-1$
 	}
 
+	/**
+	 * Sets whether to show the external tools launch configuration dialog
+	 * 
+	 * @param showDialog If true the launch configuration dialog will always be
+	 * 			shown
+	 */
+	public void setShowDialog(boolean showDialog) {
+		fShowDialog = showDialog;
+	}
 }
