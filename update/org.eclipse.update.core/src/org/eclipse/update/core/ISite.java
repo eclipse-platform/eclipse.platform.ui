@@ -4,6 +4,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
@@ -19,4 +20,11 @@ public interface ISite extends IPluginContainer {
 	URL getURL();
 	URL getInfoURL();
 	ICategory[] getCategories();
+	IInfo[] getArchives();
+	
+	//
+	/**
+	 * store Feature files/ Fetaures info into the Site
+	 */
+	void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream);
 }

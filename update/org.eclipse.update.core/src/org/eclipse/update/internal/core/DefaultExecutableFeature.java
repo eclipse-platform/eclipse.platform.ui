@@ -5,7 +5,7 @@ import org.eclipse.update.core.AbstractFeature;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.VersionedIdentifier; 
 
 public class DefaultExecutableFeature extends AbstractFeature {
 
@@ -52,6 +52,34 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	public InputStream getFeatureInputStream() {
 		// TODO:
 		// the feature url is pointing at the directory, teh feature.xml is inside
+		return null;
+	}
+
+	/**
+	 * @see AbstractFeature#getContentReferences()
+	 */
+	public String[] getContentReferences() {
+		return null;
+	}
+
+	/**
+	 * @see AbstractFeature#isExecutable()
+	 */
+	public boolean isExecutable() {
+		return true;
+	}
+
+	/**
+	 * @see AbstractFeature#getInputStreamFor(String)
+	 */
+	protected InputStream getInputStreamFor(String name) {
+		return null;
+	}
+
+	/**
+	 * @see AbstractFeature#getStorageUnitNames()
+	 */
+	protected String[] getStorageUnitNames() {
 		return null;
 	}
 

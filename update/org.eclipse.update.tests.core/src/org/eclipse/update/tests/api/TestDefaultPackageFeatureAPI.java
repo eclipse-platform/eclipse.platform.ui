@@ -113,21 +113,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
-	/**
-	 * @see IFeature#testInfoURL()
-	 */
-	public void testInfoURL() {
-		URL url = null;
-		try {
-			url = new URL("http://www.oti.com/");
-		} catch (java.net.MalformedURLException e){} // impossible eh !
-		AbstractFeature feature = getFeature();
-		feature.setInfoURL(url);
-		assertEquals(url,feature.getInfoURL());
-
-	}
-
-
+	
 	/**
 	 * @see IFeature#testDiscoveryURLs()
 	 */

@@ -16,18 +16,9 @@ import org.eclipse.update.core.AbstractSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISiteChangedListener;
+import org.eclipse.update.core.VersionedIdentifier;
 
 public class URLSite extends AbstractSite {
-
-	/**
-	 * default path under the site where plugins will be installed
-	 */
-	protected String PLUGIN_PATH = "plugins/";
-
-	/**
-	 * default path, under site, where features will be installed
-	 */
-	protected String FEATURE_PATH = "install/features/";
 
 	/**
 	 * plugin entries
@@ -42,14 +33,18 @@ public class URLSite extends AbstractSite {
 
 	/**
 	 * @see AbstractSite#getInputStream(IFeature, String)
+	 * In this default implementation we can deduct the URL of the 
+	 * archive based on teh name of teh ID
+	 * In other implementations, we may have to use the site.xml archive tag, that maps
+	 * an id and a URL
 	 */
-	public InputStream getInputStream(IFeature sourceFeature, String streamKey) {
+	public InputStream getInputStream(IFeature sourceFeature, String archiveId) {
 		URL contentURL = null;
 		InputStream result = null;
 		try {
 			//FIXME: delete ?
-			//String contentFile = sourceFeature.getSite().get.toString()+File.separator+streamKey;
-			contentURL = new URL(getURL(),"plugins/"+streamKey);
+			contentURL = getArchiveURLfor(archiveId);
+			if (contentURL==null) contentURL = new URL(getURL(),"plugins/"+archiveId);
 			result = contentURL.openStream();
 		} catch (MalformedURLException e){
 			//FIXME:
@@ -116,6 +111,13 @@ public class URLSite extends AbstractSite {
 	 */
 	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) {
 		//FIXME: should not be called should it ? Can I store in any URL Site ?
+	}
+	
+	/**
+	 * store Feature files
+	 */
+	public void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream){
+		//FIXME: should not be called should it ?
 	}
 
 }

@@ -26,11 +26,11 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 		try {		
 			ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
 			VersionedIdentifier id = new VersionedIdentifier("feature","1.0.0");
-			DefaultPackagedFeature feature = new DefaultPackagedFeature(id,remoteSite);
+			DefaultExecutableFeature feature = new DefaultExecutableFeature(id,remoteSite);
 			feature.setURL(new URL(remoteSite.getURL(),xmlFile));
 			
 			String prov = feature.getProvider();
-			assertEquals(prov,"Object Technology International");
+			assertEquals("Object Technology International",null);
 			
 		} catch (Exception e){
 			fail(e.toString());

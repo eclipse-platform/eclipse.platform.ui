@@ -58,9 +58,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		this.featureStream = featureStream;
 		Assert.isTrue(feature instanceof AbstractFeature);
 		this.feature = (AbstractFeature)feature;
-
+
 		try {
-			ClassLoader l = new URLClassLoader(new URL[]{feature.getSite().getURL()},null);
+			ClassLoader l = new URLClassLoader(new URL[]{feature.getURL()},null);
 			bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
 		} catch (MissingResourceException e){
 			//ok, there is no bundle, keep it as null
@@ -126,15 +126,19 @@ public class DefaultFeatureParser extends DefaultHandler {
 		// if the type doesn';t exist ask the site for default type
 		String id = attributes.getValue("id");
 		String ver= attributes.getValue("version");
-		// TODO: Re-implement
-		//Assert.isTrue(id.equals(feature.getIdentifier().getIdentifier()));
-		//Assert.isTrue(ver.equals(feature.getIdentifier().getVersion()));
+		// TODO:
+		//Assert.isTrue(id.equals(feature.getIdentifier().getIdentifier()),"The feature identifier declared in the Site is different from the one found in the feature");
+		//Assert.isTrue(ver.equals(feature.getIdentifier().getVersion()),"The feature version declared in the Site is different from the one found in the feature");
 		
 		// Feature Label
 		String label = UpdateManagerUtils.getResourceString(attributes.getValue("label"),bundle);
 		feature.setLabel(label);
+		
 		feature.setProvider(attributes.getValue("provider-name"));
-		//feature.setImage
+		
+		//image
+		URL imageURL = UpdateManagerUtils.getURL(feature.getURL(),attributes.getValue("image"),null);
+		feature.setImage(imageURL); 
 		//feature.setOS
 		//feature.setWS
 		//feature.setNL
@@ -213,6 +217,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			}
 		}				
 	
+		feature.addPluginEntry(pluginEntry);
 	}
 
 	/**

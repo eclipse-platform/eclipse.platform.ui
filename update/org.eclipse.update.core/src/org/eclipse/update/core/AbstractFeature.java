@@ -1,5 +1,5 @@
 package org.eclipse.update.core;
-
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,153 +10,225 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.update.internal.core.DefaultFeatureParser;
-/**
+/**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
  */
-
-
 public abstract class AbstractFeature implements IFeature {
-
-private VersionedIdentifier versionIdentifier;
+
+	/**
+	 * 
+	 */
+	public static final String FEATURE_XML = "feature.xml";
+
+	/**
+	 * Identifier of the Feature
+	 */
+	private VersionedIdentifier versionIdentifier;
+
+	/**
+	 * Site in which teh feature resides
+	 */
 	private ISite site;
+
+	/**
+	 * User label fo the Feature
+	 */
 	private String label;
+
+	/**
+	 * reference to the feature inside the site.
+	 * This URL can be a Jar file, a directory or any URL that is understood by the 
+	 * Subclass of AbstractFeature.
+	 */
 	private URL url;
+
+	/**
+	 * Url and label of site where update of this feature can ve found
+	 */
 	private IInfo updateInfo;
-	private URL infoURL;
-	private List discoveryInfos;	
+
+	/**
+	 * Url and label of site where other informations related to this feature can be found
+	 */
+	private List discoveryInfos;
+
+	/**
+	 * provider of the Feature
+	 */
 	private String provider;
+
+	/**
+	 * Short description and url for long description of this feature
+	 */
 	private IInfo description;
+
+	/**	
+	 * Short copyright and url for long copyright of this feature
+	 */
 	private IInfo copyright;
+
+	/**
+	 * Short license and url for long license of this feature
+	 */
 	private IInfo license;
+
+	/**
+	 * Image (shoudl be either GIF or JPG)
+	 */
+	private URL image;
+
+	/**
+	 * List of ID representing the *bundles/archives*
+	 *  coming with the feature
+	 */
 	private String[] contentReferences;
+
+	/**
+	 * List of plugin entries teh feature contains
+	 * read from teh xml file
+	 */
 	private List pluginEntries;
+
+	/**
+	 * private internal
+	 * used for lazy instantiation and 
+	 * hydration with the XML file
+	 */
 	private boolean isInitialized = false;
-	
-	
+
 	/**
 	 * Copy constructor
 	 */
-	public AbstractFeature(IFeature sourceFeature, ISite targetSite){
-		this(sourceFeature.getIdentifier(),targetSite);
-		this.label 			= sourceFeature.getLabel();
-		this.url			= sourceFeature.getURL();
-		this.updateInfo 	= sourceFeature.getUpdateInfo();
+	public AbstractFeature(IFeature sourceFeature, ISite targetSite) {
+		this(sourceFeature.getIdentifier(), targetSite);
+		this.label = sourceFeature.getLabel();
+		this.url = sourceFeature.getURL();
+		this.updateInfo = sourceFeature.getUpdateInfo();
 		this.setDiscoveryInfos(sourceFeature.getDiscoveryInfos());
-		this.provider 		= sourceFeature.getProvider();
-		this.description 	= sourceFeature.getDescription();
-		this.copyright      = sourceFeature.getCopyright();
-		this.license		= sourceFeature.getLicense();
-		this.pluginEntries  = Arrays.asList(sourceFeature.getPluginEntries());
-		this.isInitialized 	= true;
+		this.provider = sourceFeature.getProvider();
+		this.description = sourceFeature.getDescription();
+		this.copyright = sourceFeature.getCopyright();
+		this.license = sourceFeature.getLicense();
+		this.setPluginEntries(sourceFeature.getPluginEntries());
+		this.isInitialized = true;
 	}
-	
+
 	/**
 	 * Constructor
 	 */
-	public AbstractFeature(VersionedIdentifier identifier,ISite targetSite){
+	public AbstractFeature(VersionedIdentifier identifier, ISite targetSite) {
 		this.site = targetSite;
 		this.versionIdentifier = identifier;
 	}
-	
+
 	/**
 	 * @see IFeature#getIdentifier()
+	 * Do not hydrate, varibale set in constructor
 	 */
 	public VersionedIdentifier getIdentifier() {
 		return versionIdentifier;
 	}
-
+
 	/**
 	 * @see IFeature#getSite()
+	 * Do not hydrate, value set ins constructor
 	 */
 	public ISite getSite() {
-		//if (!isInitialized)init();
-		// site is donein constructor.. avoid recursive pattern.
 		return site;
 	}
-
+
 	/**
 	 * @see IFeature#getLabel()
 	 */
 	public String getLabel() {
-		if (label==null && !isInitialized)init();
+		if (label == null && !isInitialized)
+			init();
 		return label;
 	}
-	
+
 	/**
 	 * @see IFeature#getURL()
-	 * Do not initialize. Initialization will not populate the url.
+	 * Do not hydrate. Initialization will not populate the url.
+	 * If the URL is null, then the creation hasn't set the URL, so return null.
 	 * It has to be set at creation time or using the set method 
 	 * Usually done from the site when creating the Feature. 
+	 * 
+	 * The DefaultSiteParser is setting it at creation time
 	 */
 	public URL getURL() {
 		return url;
 	}
-	
-	
-
+
 	/**
 	 * @see IFeature#getUpdateInfo()
 	 */
 	public IInfo getUpdateInfo() {
-		if (updateInfo==null && !isInitialized)init();		
+		if (updateInfo == null && !isInitialized)
+			init();
 		return updateInfo;
 	}
-
-	/**
-	 * @see IFeature#getInfoURL()
-	 * @deprecated use getDescription().getURL()
-	 */
-	public URL getInfoURL() {
-		return getDescription().getURL();
-	}
-
+
 	/**
 	 * @see IFeature#getDiscoveryInfos()
 	 */
 	public IInfo[] getDiscoveryInfos() {
-		if (discoveryInfos==null && !isInitialized)init();		
-		
+		if (discoveryInfos == null && !isInitialized)
+			init();
+
 		IInfo[] result = null;
 		// FIXME:
-		if (discoveryInfos!=null && !discoveryInfos.isEmpty()){
-			result = (IInfo[])discoveryInfos.toArray(new IInfo[discoveryInfos.size()]);
+		if (discoveryInfos != null && !discoveryInfos.isEmpty()) {
+			result = (IInfo[]) discoveryInfos.toArray(new IInfo[discoveryInfos.size()]);
 		}
 		return result;
 	}
-
+
 	/**
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
-		if (provider == null && !isInitialized)init();		
+		if (provider == null && !isInitialized)
+			init();
 		return provider;
 	}
-
+
 	/**
 	 * @see IFeature#getDescription()
 	 */
 	public IInfo getDescription() {
-		if (description==null && !isInitialized)init();		
+		if (description == null && !isInitialized)
+			init();
 		return description;
 	}
-	
+
 	/**
 	 * @see IFeature#getCopyright()
 	 */
 	public IInfo getCopyright() {
-		if (copyright==null && !isInitialized)init();		
+		if (copyright == null && !isInitialized)
+			init();
 		return copyright;
 	}
-	
+
 	/**
 	 * @see IFeature#getLicense()
 	 */
 	public IInfo getLicense() {
-		if (license==null && !isInitialized)init();		
+		if (license == null && !isInitialized)
+			init();
 		return license;
-	}		
-
+	}
+
+	/**
+	 * @see IFeature#getImage()
+	 */
+	public URL getImage() {
+		if (image == null && !isInitialized)
+			init();
+		return image;
+	}
+
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -164,7 +236,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setSite(ISite site) {
 		this.site = site;
 	}
-
+
 	/**
 	 * Sets the label
 	 * @param label The label to set
@@ -172,16 +244,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
-	/**
-	 * Sets the infoURL
-	 * @param infoURL The infoURL to set
-	 * @deprecated use setDescription
-	 */
-	public void setInfoURL(URL infoURL) {
-		setDescription(new org.eclipse.update.internal.core.Info(infoURL));
-	}	
-	
+
 	/**
 	 * Sets the url
 	 * @param url The url to set
@@ -189,7 +252,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setURL(URL url) {
 		this.url = url;
 	}
-
+
 	/**
 	 * Sets the updateInfo
 	 * @param updateInfo The updateInfo to set
@@ -197,9 +260,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setUpdateInfo(IInfo updateInfo) {
 		this.updateInfo = updateInfo;
 	}
-
-	
-
+
 	/**
 	 * Sets the discoveryInfos
 	 * @param discoveryInfos The discoveryInfos to set
@@ -212,19 +273,17 @@ private VersionedIdentifier versionIdentifier;
 			}
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Adds a discoveryInfo
 	 * @param discoveryInfo The discoveryInfo to add
 	 */
 	public void addDiscoveryInfo(IInfo discoveryInfo) {
-		if (discoveryInfos == null) discoveryInfos = new ArrayList(0);
+		if (discoveryInfos == null)
+			discoveryInfos = new ArrayList(0);
 		discoveryInfos.add(discoveryInfo);
 	}
-	
-
+
 	/**
 	 * Sets the provider
 	 * @param provider The provider to set
@@ -232,7 +291,6 @@ private VersionedIdentifier versionIdentifier;
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
-
 	/**
 	 * Sets the description
 	 * @param description The description to set
@@ -240,7 +298,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setDescription(IInfo description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * Sets the copyright
 	 * @param copyright The copyright to set
@@ -248,7 +306,7 @@ private VersionedIdentifier versionIdentifier;
 	public void setCopyright(IInfo copyright) {
 		this.copyright = copyright;
 	}
-	
+
 	/**
 	 * Sets the license
 	 * @param license The license to set
@@ -256,7 +314,15 @@ private VersionedIdentifier versionIdentifier;
 	public void setLicense(IInfo license) {
 		this.license = license;
 	}
-	
+
+	/**
+	 * Sets the image
+	 * @param image The image to set
+	 */
+	public void setImage(URL image) {
+		this.image = image;
+	}
+
 	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
@@ -264,7 +330,7 @@ private VersionedIdentifier versionIdentifier;
 		//TODO:
 		return 0;
 	}
-
+
 	/**
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
@@ -272,15 +338,13 @@ private VersionedIdentifier versionIdentifier;
 		//TODO:
 		return 0;
 	}
-	/**
+	/**
 	 * @see IFeature#getDownloadSize(ISite)
 	 */
 	public long getDownloadSize(ISite site) {
 		//TODO:
 		return 0;
 	}
-
-
 	/**
 	 * @see IFeature#getInstallSize(ISite)
 	 */
@@ -288,257 +352,287 @@ private VersionedIdentifier versionIdentifier;
 		//TODO:
 		return 0;
 	}
-
-
 	/**
 	 * @see IFeature#isExecutable()
 	 */
 	public boolean isExecutable() {
 		return false;
 	}
-
-
 	/**
 	 * @see IFeature#isInstallable()
 	 */
 	public boolean isInstallable() {
 		return false;
 	}
-
-
-	/**
-	 * @see IFeature#getContentReferences()
-	 */
-	public String[] getContentReferences() {
-		return contentReferences;
-	}
-
-
+
 	/**
 	 * @see IFeature#install(IFeature)
+	 * 
 	 */
 	public void install(IFeature targetFeature) {
 		try {
-		IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
-		IPluginEntry[] targetSitePluginEntries = targetFeature.getSite().getPluginEntries();
-		
-		// determine list of plugins to install
-		// find the intersection between the two arrays of IPluginEntry...
-		IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries,targetSitePluginEntries);
-		
-		// private abstract - Determine list of content references that 
-		// map the list of plugins to install
-		String[] contentReferenceToInstall = getContentReferenceToInstall(pluginsToInstall);
-		
-		// optmization, may be private to implementation
-		// copy *blobs* in TEMP space
-		for (int i=0;i<contentReferenceToInstall.length;i++){
-			InputStream sourceContentReferenceStream = ((AbstractSite)getSite()).getInputStream(this,contentReferenceToInstall[i]);
-			if (sourceContentReferenceStream!=null){
-				String newFile = SiteManager.getTempSite().getURL().getPath()+contentReferenceToInstall[i];
-				FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
-				transferStreams(sourceContentReferenceStream,localContentReferenceStream);
-			} else {
-				throw new IOException("Couldn\'t find the file: "+contentReferenceToInstall[i]+" on the site:"+getSite().getURL().toExternalForm());
+			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
+			IPluginEntry[] targetSitePluginEntries =
+				targetFeature.getSite().getPluginEntries();
+			AbstractSite tempSite = (AbstractSite) SiteManager.getTempSite();
+
+			// determine list of plugins to install
+			// find the intersection between the two arrays of IPluginEntry...
+			// The one teh site contains and teh one the feature contains
+			IPluginEntry[] pluginsToInstall =
+				intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
+
+			// private abstract - Determine list of content references id /archives id /bundles id that 
+			// map the list of plugins to install
+			String[] archiveIDToInstall = getContentReferenceToInstall(pluginsToInstall);
+
+			// optmization, may be private to implementation
+			// copy *blobs/content references/archives/bundles* in TEMP space
+			if (archiveIDToInstall != null) {
+				for (int i = 0; i < archiveIDToInstall.length; i++) {
+					InputStream sourceArchiveStream =
+						((AbstractSite) getSite()).getInputStream(this, archiveIDToInstall[i]);
+					if (sourceArchiveStream != null) {
+						// FIXME: what name should the local file have ? the id of the site.xml ?
+						// should it be a random file name ?
+						// it should be the regular plugins/id_ver as the Temp site is OUR site
+						String newFile =
+							tempSite.getURL().getPath()
+								+ tempSite.DEFAULT_PLUGIN_PATH
+								+ archiveIDToInstall[i];
+						//FIXME: better idea ?
+						File dir = new File(tempSite.getURL().getPath() + tempSite.DEFAULT_PLUGIN_PATH);
+						if (!dir.exists())
+							dir.mkdirs();
+
+						FileOutputStream localArchiveStream = new FileOutputStream(newFile);
+						transferStreams(sourceArchiveStream, localArchiveStream);
+					} else {
+						throw new IOException(
+							"Cannot find the file: "
+								+ ((AbstractSite) getSite()).getArchiveURLfor(archiveIDToInstall[i]));
+					}
+				}
 			}
-		}
-		this.setSite(SiteManager.getTempSite());
-		
-		// obtain the list of *Streamable Storage Unit*
-		InputStream inStream = null;
-		for (int i=0;i<pluginsToInstall.length;i++){
-			String[] names = getStorageUnitNames(pluginsToInstall[i]);
-			for (int j= 0; j<names.length;j++){
-				if ((inStream=getInputStreamFor(pluginsToInstall[i],names[j]))!=null)
-					targetFeature.store(pluginsToInstall[i],names[j],inStream);
+			// the site of this feature now becomes the TEMP directory
+			// FIXME: make sure there is no osther issue
+			// like asking for stuff that hasn't been copied
+			// or reusing this feature
+			// of having an un-manageable temp site
+
+			// transfer the possible mapping to the temp site
+			tempSite.setArchives(getSite().getArchives());
+			this.setSite(tempSite);
+
+			// obtain the list of *Streamable Storage Unit*
+			// from the archive
+			if (pluginsToInstall != null) {
+				InputStream inStream = null;
+				for (int i = 0; i < pluginsToInstall.length; i++) {
+					String[] names = getStorageUnitNames(pluginsToInstall[i]);
+					for (int j = 0; j < names.length; j++) {
+						if ((inStream = getInputStreamFor(pluginsToInstall[i], names[j])) != null)
+							targetFeature.store(pluginsToInstall[i], names[j], inStream);
+					}
+				}
 			}
-			
-		}
-		} catch (IOException e){
+
+			// install the Feature info
+			InputStream inStream = null;			
+			String[] names = getStorageUnitNames();
+			for (int j = 0; j < names.length; j++) {
+				if ((inStream = getInputStreamFor(names[j])) != null)
+					targetFeature.getSite().storeFeatureInfo(getIdentifier(), names[j], inStream);
+			}
+
+		} catch (IOException e) {
 			//FIXME: implement serviceability
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/** 
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
-	private void init(){
-		//TODO:
-		if (url!=null){ 
+	private void init() {
+		if (url != null) {
 			try {
-			DefaultFeatureParser parser = new DefaultFeatureParser(getFeatureInputStream(),this);
-			} catch (IOException e){
+				DefaultFeatureParser parser =
+					new DefaultFeatureParser(getFeatureInputStream(), this);
+			} catch (IOException e) {
 				//FIXME:
 				e.printStackTrace();
-			} catch (org.xml.sax.SAXException e){
+			} catch (org.xml.sax.SAXException e) {
 				//FIXME:
 				e.printStackTrace();
 			}
 		}
-	} 
-/**
- * This method also closes both streams.
- * Taken from FileSystemStore
- */
-private void transferStreams(InputStream source, OutputStream destination) throws IOException {
-	
-	Assert.isNotNull(source);
-	Assert.isNotNull(destination);
-	
-	try {
-		byte[] buffer = new byte[8192];
-		while (true) {
-			int bytesRead = source.read(buffer);
-			if (bytesRead == -1)
-				break;
-			destination.write(buffer, 0, bytesRead);
-		}
-	} finally {
+	}
+	/**
+	 * This method also closes both streams.
+	 * Taken from FileSystemStore
+	 */
+	private void transferStreams(InputStream source, OutputStream destination)
+		throws IOException {
+
+		Assert.isNotNull(source);
+		Assert.isNotNull(destination);
+
 		try {
-			source.close();
-		} catch (IOException e) {
-		}
-		try {
-			destination.close();
-		} catch (IOException e) {
+			byte[] buffer = new byte[8192];
+			while (true) {
+				int bytesRead = source.read(buffer);
+				if (bytesRead == -1)
+					break;
+				destination.write(buffer, 0, bytesRead);
+			}
+		} finally {
+			try {
+				source.close();
+			} catch (IOException e) {
+			}
+			try {
+				destination.close();
+			} catch (IOException e) {
+			}
 		}
 	}
-}
-
-
+
 	/**
 	 * Returns the intersection between two array of PluginEntries.
 	 */
-	private IPluginEntry[] intersection(IPluginEntry[] array1, IPluginEntry[] array2) {
-		if (array1==null){return array2;}
-		if (array2==null){return array1;}
-		
+	private IPluginEntry[] intersection(
+		IPluginEntry[] array1,
+		IPluginEntry[] array2) {
+		if (array1 == null) {
+			return array2;
+		}
+		if (array2 == null) {
+			return array1;
+		}
+
 		List list1 = Arrays.asList(array1);
 		List result = new ArrayList(0);
-		for (int i=0;i<array2.length;i++){
+		for (int i = 0; i < array2.length; i++) {
 			if (!list1.contains(array2[i]))
 				result.add(array2[i]);
 		}
-		return (IPluginEntry[])result.toArray();
+		return (IPluginEntry[]) result.toArray();
 	}
-
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 * Does not return null
 	 */
-	public IPluginEntry[] getPluginEntries() {	
+	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = null;
 		//FIXME: 
 		// especially teh ' does nto return null'
-		if (!pluginEntries.isEmpty()) {
-			result = (IPluginEntry[])(pluginEntries.toArray(new IPluginEntry[pluginEntries.size()]));
-		} else {
-			result = new IPluginEntry[0];
+		if (pluginEntries == null && !isInitialized)
+			init();
+		if (pluginEntries != null && !pluginEntries.isEmpty()) {
+			result =
+				(IPluginEntry[]) (pluginEntries
+					.toArray(new IPluginEntry[pluginEntries.size()]));
 		}
+		//else {
+		//result = new IPluginEntry[0];
+		//}
 		return result;
 	}
-
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
 	}
-
-
+
+	/**
+	 * Sets the pluginEntries
+	 * @param pluginEntries The pluginEntries to set
+	 */
+	public void setPluginEntries(IPluginEntry[] pluginEntries) {
+		if (pluginEntries != null) {
+			this.pluginEntries = new ArrayList();
+			for (int i = 0; i < pluginEntries.length; i++) {
+				this.pluginEntries.add(pluginEntries[i]);
+			}
+		}
+	}
+
 	/**
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
-		if (pluginEntries==null)
+		if (pluginEntries == null)
 			pluginEntries = new ArrayList(0);
 		pluginEntries.add(pluginEntry);
 	}
-
-
+
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) {
+	public void store(
+		IPluginEntry pluginEntry,
+		String contentKey,
+		InputStream inStream) {
 		// check if pluginEntry already exists before passing to the site
 		// anything else ?
 		boolean found = false;
 		int i = 0;
-		while (i<getPluginEntries().length && !found){
-			if (getPluginEntries()[i].equals(pluginEntry)) found=true;
+		IPluginEntry[] entries = getPluginEntries();
+		if (entries!=null){
+		while (i < entries.length && !found) {
+			if (entries[i].equals(pluginEntry)){
+				found = true;
+			}
+			i++;
 		}
-		if (!found){
+		}
+		if (!found) {
 			//FIXME: throw execption
 		}
-		getSite().store(pluginEntry,contentKey,inStream);
+		getSite().store(pluginEntry, contentKey, inStream);
 	}
-
+
+	/**
+	 * @see IFeature#getContentReferences()
+	 * Private implementation of the feature. return the list of ID.
+	 * Call the site with the ID to get the URL of the contentReference of the Site
+	 */
+	public abstract String[] getContentReferences();
+
 	/**
 	 * 
 	 */
 	protected abstract String[] getStorageUnitNames(IPluginEntry pluginEntry);
-	
+
 	/**
 	 * 
 	 */
-	protected abstract InputStream getInputStreamFor(IPluginEntry pluginEntry,String name);
-	
+	protected abstract String[] getStorageUnitNames();
+
 	/**
 	 * 
 	 */
-	protected abstract InputStream getFeatureInputStream() throws IOException ; 
-	
+	protected abstract InputStream getInputStreamFor(
+		IPluginEntry pluginEntry,
+		String name);
+
+	/**
+	 * 
+	 */
+	protected abstract InputStream getInputStreamFor(String name);
+
+	/**
+	 * 
+	 */
+	protected abstract InputStream getFeatureInputStream() throws IOException;
+
 	/**
 	 * 
 	 */
 	protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
-
-	
-
-	
-	/**
-	 * Sets the updateURL
-	 * @param updateURL The updateURL to set
-	 * @deprecated use setUpdateInfo
-	 */
-	public void setUpdateURL(URL updateURL) {
-		setUpdateInfo(new org.eclipse.update.internal.core.Info(updateURL));
-	}
-	
-	/**
-	 * @deprecated use getUpdateInfo().getURL()
-	 */
-	public URL getUpdateURL() {
-		return getUpdateInfo().getURL();
-	}
-	
-	/**
-	 * @deprecated use getDiscoveryInfos and obtain the URL for each
-	 */
-	public URL[] getDiscoveryURLs() {
-		return new URL[0];
-	}
-	
-	/**
-	 * Sets the discoveryURLs
-	 * @param discoveryURLs The discoveryURLs to set
-	 * @deprecated use setDiscoveryInfos
-	 */
-	public void setDiscoveryURLs(URL[] discoveryURLs) {
-		//
-	}
-	
-	
-	
-	
-
-	
-
-	
-
+
 }
-

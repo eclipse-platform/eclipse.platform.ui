@@ -14,6 +14,10 @@ public interface IFeature extends IPluginContainer {
 	ISite getSite();
 	
 	String getLabel();
+	
+	/**
+	 * The URL that points at the Feature 
+	 */
 	URL getURL();
 	IInfo getUpdateInfo();
 	IInfo [] getDiscoveryInfos();
@@ -21,6 +25,7 @@ public interface IFeature extends IPluginContainer {
 	IInfo getDescription();
 	IInfo getCopyright();
 	IInfo getLicense();
+	URL getImage();
 	
 	boolean isExecutable();
 	boolean isInstallable();

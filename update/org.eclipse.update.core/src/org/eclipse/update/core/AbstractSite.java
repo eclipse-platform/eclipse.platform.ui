@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,7 +16,16 @@ import org.eclipse.update.internal.core.DefaultSiteParser;
 
 
 public abstract class AbstractSite implements ISite {
-
+
+	/**
+	 * default path under the site where plugins will be installed
+	 */
+	public static final String DEFAULT_PLUGIN_PATH = "plugins/";
+
+	/**
+	 * default path, under site, where features will be installed
+	 */
+	public static final String DEFAULT_FEATURE_PATH = "features/";
 	private static final String SITE_XML= "site.xml";
 	private boolean isManageable = true;
 	private DefaultSiteParser parser;
@@ -124,7 +134,7 @@ public abstract class AbstractSite implements ISite {
 			siteListeners[i].featureUninstalled(feature);
 		}
 	}	
-
+
 	/**
 	 * 
 	 */
@@ -179,7 +189,7 @@ public abstract class AbstractSite implements ISite {
 		if (isManageable){
 			if (features==null) initializeSite();
 			//FIXME: I do not like this pattern.. List or Array ???
-			if (!features.isEmpty()){
+			if (!(features==null || features.isEmpty())){
 				result = (IFeature[])features.toArray(new IFeature[features.size()]);
 			}
 		}
@@ -197,7 +207,71 @@ public abstract class AbstractSite implements ISite {
 		}
 		this.features.add(feature);
 	}
-
+
+	/**
+	 * @see ISite#getArchives()
+	 */
+	public IInfo[] getArchives(){
+		IInfo[] result = null;
+		if (isManageable){
+			if (archives==null) initializeSite();
+			//FIXME: I do not like this pattern.. List or Array ???
+			if (!(archives==null || archives.isEmpty())){
+				result = (IInfo[])archives.toArray(new IInfo[archives.size()]);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * return the URL associated with the id of teh archive for this site
+	 * return null if the archiveId is null, empty or 
+	 * if teh list of archives on the site is null or empty
+	 * of if there is no URL associated with the archiveID for this site
+	 */
+	public URL getArchiveURLfor(String archiveId){
+		URL result = null;
+		if (!(archiveId==null || archiveId.equals("") || archives==null || archives.isEmpty())){
+			Iterator iter = archives.iterator();
+			IInfo info;
+			boolean found = false;
+			while (iter.hasNext() && !found){
+				info = (IInfo)iter.next();
+				if (archiveId.trim().equalsIgnoreCase(info.getText())){
+					result = info.getURL();
+					found = true;
+				}
+			}
+		}
+		return result;
+	}
+	/**
+	 * adds an archive
+	 * @param archive The archive to add
+	 */
+	public void addArchive(IInfo archive) {
+		if (archives==null){
+			archives = new ArrayList(0);
+		}
+		if (getArchiveURLfor(archive.getText())!=null)
+			Assert.isTrue(false,"The Archive with ID:"+archive.getText()+"already exist on the site.");
+		else
+			this.archives.add(archive);
+	}
+
+	/**
+	 * Sets the archives
+	 * @param archives The archives to set
+	 */
+	public void setArchives(IInfo[] _archives) {
+		if (_archives!=null){
+			for (int i=0;i<_archives.length;i++){
+				this.addArchive(_archives[i]);
+			}		
+		}
+	}
+
+
 	/**
 	 * @see ISite#getInfoURL()
 	 */

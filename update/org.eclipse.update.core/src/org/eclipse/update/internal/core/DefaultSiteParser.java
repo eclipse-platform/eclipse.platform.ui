@@ -98,10 +98,16 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * process the Site info
 	 */
 	private void processSite(Attributes attributes){
+		//
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(site.getURL(),infoURL,DEFAULT_INFO_URL);
 		site.setInfoURL(url);
+		
+		// process the Site....if the site has a different type
+		// throw an exception so the new parer can be used...
+		// TODO:
+		
 	}
 	
 	/** 
@@ -113,11 +119,13 @@ public class DefaultSiteParser extends DefaultHandler {
 		String ver = attributes.getValue("version");
 		VersionedIdentifier versionedId = new VersionedIdentifier(id, ver);
 
+		// the type of the feature
 		String type = attributes.getValue("type");
 		IFeature feature = null;
 		if (type == null || type.equals("")) {
 			feature = new DefaultPackagedFeature(versionedId, site);
 		} else {
+			Assert.isTrue(false,"Not implemented Yet... do not use 'type' in the feature tag of site.xml");
 			//FIXME: manages creation of feature...
 		}
 
@@ -135,6 +143,10 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * process the Archive info
 	 */
 	private void processArchive(Attributes attributes){
+		String id = attributes.getValue("id");
+		String urlString = attributes.getValue("version");
+		URL url = UpdateManagerUtils.getURL(site.getURL(),urlString,null);
+		site.addArchive(new Info(id,url));
 	}	
 	
 	/** 
