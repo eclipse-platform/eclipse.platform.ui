@@ -132,7 +132,6 @@ public class RemoteFolderTreeBuilder {
 	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor progress) throws CVSException {
 		try {
 			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
-			progress.setTaskName(Policy.bind("RemoteFolderTreeBuilder.buildingBaseTree", root.getName()));
 			progress.beginTask(null, 100);
 			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 100);
 			subProgress.beginTask(null, 512);  //$NON-NLS-1$
@@ -154,7 +153,6 @@ public class RemoteFolderTreeBuilder {
 	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
 		
 		try {
-			monitor.setTaskName(Policy.bind("RemoteFolderTreeBuilder.buildingRemoteTree", root.getName()));
 			monitor.beginTask(null, 100);
 	
 			Session session = new Session(repository, root, false);

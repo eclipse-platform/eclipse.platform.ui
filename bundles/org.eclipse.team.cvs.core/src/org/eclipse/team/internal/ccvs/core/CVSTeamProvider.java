@@ -621,7 +621,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
 		} else {
 			try {
-				progress.setTaskName(Policy.bind("CVSTeamProvider.fetchingRemote", resource.getFullPath().toString()));
 				progress.beginTask(null, 100);
 				ICVSRepositoryLocation location = remote.getRepository();
 				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, Policy.subMonitorFor(progress, 20));
