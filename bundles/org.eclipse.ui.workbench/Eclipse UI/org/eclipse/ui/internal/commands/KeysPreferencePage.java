@@ -253,9 +253,11 @@ public class KeysPreferencePage extends
 
     private void buildCommandAssignmentsTable() {
         tableAssignmentsForCommand.removeAll();
+        boolean matchFoundInFirstKeyConfiguration = false;
 
         for (Iterator iterator = commandAssignments.iterator(); iterator
                 .hasNext();) {
+            boolean createTableItem = true;
             CommandAssignment commandAssignment = (CommandAssignment) iterator
                     .next();
             KeySequenceBindingNode.Assignment assignment = commandAssignment.assignment;
@@ -310,11 +312,18 @@ public class KeysPreferencePage extends
                     }
                 }
             } else {
-                String pluginCommandId;
-                if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+                String pluginCommandId = null;
+                if (assignment.hasPluginCommandIdInFirstKeyConfiguration) {
                     pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-                else
+                    if (pluginCommandId != null) {
+                        matchFoundInFirstKeyConfiguration = true;
+                    }
+                } else if (!matchFoundInFirstKeyConfiguration) { 
                     pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+                } else {
+                    createTableItem = false;
+                    iterator.remove();
+                }
 
                 if (pluginCommandId != null) {
                     difference = DIFFERENCE_NONE;
@@ -328,49 +337,53 @@ public class KeysPreferencePage extends
                 }
             }
 
-            TableItem tableItem = new TableItem(tableAssignmentsForCommand,
-                    SWT.NULL);
+            if (createTableItem) {
+                TableItem tableItem = new TableItem(tableAssignmentsForCommand,
+                        SWT.NULL);
 
-            switch (difference) {
-            case DIFFERENCE_ADD:
-                tableItem.setImage(0, IMAGE_PLUS);
-                break;
+                switch (difference) {
+                case DIFFERENCE_ADD:
+                    tableItem.setImage(0, IMAGE_PLUS);
+                    break;
 
-            case DIFFERENCE_CHANGE:
-                tableItem.setImage(0, IMAGE_CHANGE);
-                break;
+                case DIFFERENCE_CHANGE:
+                    tableItem.setImage(0, IMAGE_CHANGE);
+                    break;
 
-            case DIFFERENCE_MINUS:
-                tableItem.setImage(0, IMAGE_MINUS);
-                break;
+                case DIFFERENCE_MINUS:
+                    tableItem.setImage(0, IMAGE_MINUS);
+                    break;
 
-            case DIFFERENCE_NONE:
-                tableItem.setImage(0, IMAGE_BLANK);
-                break;
-            }
+                case DIFFERENCE_NONE:
+                    tableItem.setImage(0, IMAGE_BLANK);
+                    break;
+                }
 
-            String contextId = commandAssignment.contextId;
+                String contextId = commandAssignment.contextId;
 
-            if (contextId == null) {
-                // This should never happen.
-                tableItem.setText(1, Util.ZERO_LENGTH_STRING);
-            } else
-                tableItem.setText(1, (String) contextUniqueNamesById
-                        .get(contextId)); //$NON-NLS-1$
+                if (contextId == null) {
+                    // This should never happen.
+                    tableItem.setText(1, Util.ZERO_LENGTH_STRING);
+                } else
+                    tableItem.setText(1, (String) contextUniqueNamesById
+                            .get(contextId)); //$NON-NLS-1$
 
-            tableItem.setText(2, commandString);
+                tableItem.setText(2, commandString);
 
-            if (difference == DIFFERENCE_MINUS) {
-                tableItem.setForeground(minusColour);
+                if (difference == DIFFERENCE_MINUS) {
+                    tableItem.setForeground(minusColour);
+                }
             }
         }
     }
 
     private void buildKeySequenceAssignmentsTable() {
         tableAssignmentsForKeySequence.removeAll();
-
+        boolean matchFoundInFirstKeyConfiguration = false;
+        
         for (Iterator iterator = keySequenceAssignments.iterator(); iterator
                 .hasNext();) {
+            boolean createTableItem = true;
             KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) iterator
                     .next();
             KeySequenceBindingNode.Assignment assignment = keySequenceAssignment.assignment;
@@ -423,12 +436,19 @@ public class KeysPreferencePage extends
                     }
                 }
             } else {
-                String pluginCommandId;
+                String pluginCommandId = null;
 
-                if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+                if (assignment.hasPluginCommandIdInFirstKeyConfiguration) {
                     pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
-                else
+                    if (pluginCommandId != null) {
+                        matchFoundInFirstKeyConfiguration = true;
+                    }
+                } else if (!matchFoundInFirstKeyConfiguration) {
                     pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+                } else {
+                    createTableItem = false;
+                    iterator.remove();
+                }
 
                 if (pluginCommandId != null) {
                     difference = DIFFERENCE_NONE;
@@ -440,41 +460,43 @@ public class KeysPreferencePage extends
                 }
             }
 
-            TableItem tableItem = new TableItem(tableAssignmentsForKeySequence,
-                    SWT.NULL);
+            if (createTableItem) {
+                TableItem tableItem = new TableItem(
+                        tableAssignmentsForKeySequence, SWT.NULL);
 
-            switch (difference) {
-            case DIFFERENCE_ADD:
-                tableItem.setImage(0, IMAGE_PLUS);
-                break;
+                switch (difference) {
+                case DIFFERENCE_ADD:
+                    tableItem.setImage(0, IMAGE_PLUS);
+                    break;
 
-            case DIFFERENCE_CHANGE:
-                tableItem.setImage(0, IMAGE_CHANGE);
-                break;
+                case DIFFERENCE_CHANGE:
+                    tableItem.setImage(0, IMAGE_CHANGE);
+                    break;
 
-            case DIFFERENCE_MINUS:
-                tableItem.setImage(0, IMAGE_MINUS);
-                break;
+                case DIFFERENCE_MINUS:
+                    tableItem.setImage(0, IMAGE_MINUS);
+                    break;
 
-            case DIFFERENCE_NONE:
-                tableItem.setImage(0, IMAGE_BLANK);
-                break;
-            }
+                case DIFFERENCE_NONE:
+                    tableItem.setImage(0, IMAGE_BLANK);
+                    break;
+                }
 
-            String contextId = keySequenceAssignment.contextId;
+                String contextId = keySequenceAssignment.contextId;
 
-            if (contextId == null) {
-                // This should never happen.
-                tableItem.setText(1, Util.ZERO_LENGTH_STRING);
-            } else {
-                tableItem.setText(1, (String) contextUniqueNamesById
-                        .get(contextId)); //$NON-NLS-1$
-            }
+                if (contextId == null) {
+                    // This should never happen.
+                    tableItem.setText(1, Util.ZERO_LENGTH_STRING);
+                } else {
+                    tableItem.setText(1, (String) contextUniqueNamesById
+                            .get(contextId)); //$NON-NLS-1$
+                }
 
-            tableItem.setText(2, commandString);
+                tableItem.setText(2, commandString);
 
-            if (difference == DIFFERENCE_MINUS) {
-                tableItem.setForeground(minusColour);
+                if (difference == DIFFERENCE_MINUS) {
+                    tableItem.setForeground(minusColour);
+                }
             }
         }
     }
