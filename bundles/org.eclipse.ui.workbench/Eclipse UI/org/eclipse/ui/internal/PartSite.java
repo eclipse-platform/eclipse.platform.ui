@@ -9,7 +9,14 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.SubActionBars;
+
 /**
  * <code>PartSite</code> is the general implementation for an
  * <code>IWorkbenchPartSite</code>.  A site maintains the context for a part,
