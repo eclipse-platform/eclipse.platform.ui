@@ -739,9 +739,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					} catch (CoreException e) {
 					}
 					if (builderName != null) {
-						//do not allow "wrapped" builders to be removed or edited
+						//do not allow "wrapped" builders to be removed or edited if they are valid
+						IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
 						enableEdit= false;
-						enableRemove= false;
+						enableRemove= ext == null;
 					}
 				} else {
 					enableEdit= false;
