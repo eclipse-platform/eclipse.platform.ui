@@ -828,6 +828,9 @@ public class ProgressManager extends ProgressProvider
 				return Status.OK_STATUS;
 			}
 		};
+		
+		//Keep track of the initial shells as we are delaying opening
+		ProgressManagerUtil.trackInitialShells(updateJob);
 		updateJob.schedule(getLongOperationTime());
 	}
 	/**
