@@ -6,14 +6,14 @@ package org.eclipse.ui.internal.registry;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
+import java.util.Set;
 
-import java.util.TreeSet;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,6 +33,12 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 */
 	private Map helpQueries = new HashMap();
 	/**
+	 * Sorted list of help queries.
+	 * Used to ensure that the "most specific"
+	 * query is tried first
+	 */
+	private List sortedHelpQueries;
+	/**
 	 * Table of queries for marker resolutions
 	 */
 	private Map resolutionQueries = new HashMap();
@@ -45,12 +51,47 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 */
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	
+	private class QueryComparator implements Comparator {
+		/* (non-Javadoc)
+		 * Method declared on Object.
+		 */
+		public boolean equals(Object o) {
+			if (!(o instanceof QueryComparator))
+				return false;
+			return true;
+		} 			
+		/* (non-Javadoc)
+		 * Method declared on Comparator.
+		 */
+		public int compare(Object o1,Object o2) {
+			// more attribues come first
+			MarkerQuery q1 = (MarkerQuery)o1;
+			MarkerQuery q2 = (MarkerQuery)o2;
+			
+			int size1 = q1.getAttributes().length;			
+			int size2 = q2.getAttributes().length;
+			
+			if (size1 > size2)
+				return -1;
+			if (size1 == size2)				
+				return 0;
+			return 1;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IMarkerHelpRegistry.
 	 */
 	public String getHelp(IMarker marker) {
+		if (sortedHelpQueries == null) {
+			Set set = helpQueries.keySet();
+			sortedHelpQueries = new ArrayList(set.size());
+			sortedHelpQueries.addAll(set);
+			Collections.sort(sortedHelpQueries, new QueryComparator());
+		}
+		
 		// Return the first match (we assume there is only one)
-		for (Iterator iter = helpQueries.keySet().iterator(); iter.hasNext();) {
+		for (Iterator iter = sortedHelpQueries.iterator(); iter.hasNext();) {
 			MarkerQuery query = (MarkerQuery)iter.next();
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
