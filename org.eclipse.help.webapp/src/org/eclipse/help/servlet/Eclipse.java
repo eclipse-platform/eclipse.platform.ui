@@ -19,7 +19,6 @@ public class Eclipse {
 	private Class bootLoader;
 	private Object platformRunnable;
 	private Method runMethod;
-	private ResourceBundle resBundle;
 	private ServletContext context;
 
 	/**
@@ -27,8 +26,6 @@ public class Eclipse {
 	 */
 	public Eclipse(ServletContext context) throws ServletException {
 		this.context = context;
-		// initializes string resources
-		resBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 		init();
 	}
@@ -43,7 +40,7 @@ public class Eclipse {
 			}).invoke(bootLoader, new Object[] {
 			});
 		} catch (Exception e) {
-			context.log(resBundle.getString("problemShutdown"));
+			context.log("problem shutting down");
 		}
 
 	}
@@ -123,7 +120,7 @@ public class Eclipse {
 			}
 
 		} catch (Throwable e) {
-			context.log(resBundle.getString("problemInit"), e);
+			context.log("Problem occured initializing Eclipse", e);
 			throw new ServletException(e);
 		}
 	}
