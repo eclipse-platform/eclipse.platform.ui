@@ -317,11 +317,11 @@ public void openEditorList() {
 	editorListControl.setVisible(true);
 	editorListControl.setFocus();
 
-	editorListControl.addFocusListener(new FocusAdapter() {
-		public void focusLost(FocusEvent e) {
+	editorListControl.addListener(SWT.Deactivate, new Listener() {
+		public void handleEvent(Event event) {
 			if (listComposite != null) {
 				closeEditorList();
-			}
+			}			
 		}
 	});
 }
