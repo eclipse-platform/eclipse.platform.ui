@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 
 public class Product implements IProduct {
-	private static final String ATTR_DESCRIPTION = "description";
-	private static final String ATTR_ID = "id";
-	private static final String ATTR_NAME = "name";
-	private static final String ATTR_APPLICATION = "application";
+	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_APPLICATION = "application"; //$NON-NLS-1$
 	String application = null;
 	String name = null;
 	String id = null;

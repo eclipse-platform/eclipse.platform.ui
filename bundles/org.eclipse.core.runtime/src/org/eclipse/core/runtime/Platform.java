@@ -58,7 +58,6 @@ public final class Platform {
 	 * number of applications; however, the platform is only capable
 	 * of running one application at a time.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader#run
 	 */
 	public static final String PT_APPLICATIONS = "applications"; //$NON-NLS-1$
 
@@ -73,6 +72,17 @@ public final class Platform {
 	 */
 	public static final String PT_ADAPTERS = "adapters"; //$NON-NLS-1$
 
+	/** 
+	 * The simple identifier constant (value "<code>products</code>") of
+	 * the extension point of the Core Runtime plug-in where plug-ins declare
+	 * the existence of a product. A plug-in may define any
+	 * number of products; however, the platform is only capable
+	 * of running one product at a time.
+	 * 
+	 * @see org.eclipse.core.runtime.Platform#getProduct()
+	 * @since 3.0
+	 */
+	public static final String PT_PRODUCT = "products"; //$NON-NLS-1$
 	/** 
 	 * Debug option value denoting the time at which the platform runtime
 	 * was started.  This constant can be used in conjunction with

@@ -88,6 +88,17 @@ public interface IPlatform {
 	public static final String PT_SHUTDOWN_HOOK = "applicationShutdownHook"; //$NON-NLS-1$	
 
 	/** 
+	 * The simple identifier constant (value "<code>products</code>") of
+	 * the extension point of the Core Runtime plug-in where plug-ins declare
+	 * the existence of a product. A plug-in may define any
+	 * number of products; however, the platform is only capable
+	 * of running one product at a time.
+	 * 
+	 * @see org.eclipse.core.runtime.Platform#getProduct()
+	 * @since 3.0
+	 */
+	public static final String PT_PRODUCT = "products"; //$NON-NLS-1$
+	/** 
 	 * Status code constant (value 1) indicating a problem in a plug-in
 	 * manifest (<code>plugin.xml</code>) file.
 	 */

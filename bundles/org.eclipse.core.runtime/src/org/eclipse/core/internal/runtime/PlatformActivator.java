@@ -27,6 +27,9 @@ import org.osgi.service.url.URLStreamHandlerService;
  * Activator for the Eclipse runtime.
  */
 public class PlatformActivator extends Plugin implements BundleActivator {
+	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
+	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
+	
 	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
@@ -217,8 +220,17 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			public void run() {
 				IPlatformRunnable application = null;
 				String applicationId = null;
-				try {					
-					applicationId = System.getProperty("eclipse.application");
+				try {
+					applicationId = System.getProperty(PROP_ECLIPSE_APPLICATION);
+					if (applicationId == null) {
+						//Derive the application from the product information
+						IProduct product = InternalPlatform.getDefault().getProduct();
+						if (product != null) {
+							applicationId = product.getApplication();
+							System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
+						}
+					}
+					
 					IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
 					if (applicationExtension == null)
 						throw new RuntimeException("Unable to locate application extension: " + applicationId); 
@@ -244,7 +256,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				try {
 					Object result = application.run(InternalPlatform.getDefault().getAppArgs());
 					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-					System.setProperty("eclipse.exitcode", Integer.toString(exitCode)); //$NON-NLS-1$
+					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode)); //$NON-NLS-1$
 					if (InternalPlatform.DEBUG)
 						System.out.println(Policy.bind("application.returned", new String[] { applicationId, Integer.toString(exitCode)})); //$NON-NLS-1$
 				} catch (Exception e) {
@@ -258,7 +270,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			}
 		};
 		Hashtable properties = new Hashtable(1);
-		properties.put("eclipse.application", "default"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ //$NON-NLS-2$
 		context.registerService("java.lang.Runnable", work, properties);
 	}
 
