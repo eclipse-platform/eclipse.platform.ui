@@ -39,6 +39,9 @@ public interface IExtension {
 	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
 	 * This API will be deprecated once the APIs for the new Eclipse Platform
 	 * Runtime achieve their final and stable form (post-3.0). </p>
+	 * <p>
+	 * <b>Note</b>: This is method only available if runtime compatibility
+	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 * 
 	 * @return the plug-in that declares this extension
 	 *  

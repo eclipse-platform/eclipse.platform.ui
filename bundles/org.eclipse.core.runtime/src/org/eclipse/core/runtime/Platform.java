@@ -398,6 +398,9 @@ public final class Platform {
 	 * traditional Eclipse conventions.  Eclipse 3.0 permits plug-ins to be
 	 * described in manifest.mf files and to define their own bundle 
 	 * activators.  Such plug-ins cannot be discovered by this method.</p>
+	 * <p>
+	 * <b>Note</b>: This is method only available if runtime compatibility
+	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 *
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
@@ -421,8 +424,8 @@ public final class Platform {
 	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
 	 * This API will be deprecated once the APIs for the new Eclipse Platform
 	 * Runtime achieve their final and stable form (post-3.0). </p>
-	 * 
-	 * <b>Note</b>: This is method only works if the runtime compatibility
+	 * <p>
+	 * <b>Note</b>: This is method only available if runtime compatibility
 	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 *
 	 * @return the plug-in registry
