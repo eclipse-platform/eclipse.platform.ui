@@ -27,7 +27,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -55,7 +54,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected TeamSubscriber getWorkspaceSubscriber() throws TeamException {
-		TeamSubscriber subscriber = TeamProvider.getSubscriber(CVSProviderPlugin.CVS_WORKSPACE_SUBSCRIBER_ID);
+		TeamSubscriber subscriber = TeamSubscriber.getSubscriberManager().getSubscriber(CVSProviderPlugin.CVS_WORKSPACE_SUBSCRIBER_ID);
 		if (subscriber == null) fail("The CVS sync subsciber is not registered");
 		return subscriber;
 	}

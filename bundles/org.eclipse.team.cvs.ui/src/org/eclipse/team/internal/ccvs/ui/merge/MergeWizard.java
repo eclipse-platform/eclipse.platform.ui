@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -63,7 +63,7 @@ public class MergeWizard extends Wizard {
 		CVSTag endTag = endPage.getTag();				
 		
 		CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-		TeamProvider.registerSubscriber(s);
+		TeamSubscriber.getSubscriberManager().registerSubscriber(s);
 		
 		ISynchronizeView view = TeamUI.showSyncViewInActivePage(null);
 		if(view != null) {

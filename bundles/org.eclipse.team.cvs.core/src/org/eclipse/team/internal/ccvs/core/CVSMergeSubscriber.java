@@ -33,7 +33,7 @@ import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MergedSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
@@ -144,7 +144,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	public void cancel() {
 		super.cancel();		
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);		
-		TeamProvider.deregisterSubscriber(this);		
+		TeamSubscriber.getSubscriberManager().deregisterSubscriber(this);		
 		remoteSynchronizer.dispose();
 		baseSynchronizer.dispose();
 		mergedSynchronizer.dispose();		

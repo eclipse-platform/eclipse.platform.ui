@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A TeamSubscriber is connected to a remote location that has incoming changes
@@ -31,6 +32,17 @@ import org.eclipse.team.core.sync.IRemoteResource;
 abstract public class TeamSubscriber {
 	
 	private List listeners = new ArrayList(1);
+	
+	static private ISubscriberManager instance;
+	
+	/**
+	 * Return the subscriber manager which provides access and control of the
+	 * team subscribers.
+	 * @return the subscriber manager
+	 */
+	public static synchronized ISubscriberManager getSubscriberManager() {
+		return SubscriberManager.getInstance();
+	}
 	
 	/**
 	 * Return the unique id that identified this subscriber.

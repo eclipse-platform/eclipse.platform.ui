@@ -20,7 +20,6 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.sync.ISynchronizeView;
@@ -94,7 +93,7 @@ public class SyncAllAction implements IWorkbenchWindowPulldownDelegate2 {
 	}
 
 	private void fillMenu() {
-		TeamSubscriber[] subscribers = TeamProvider.getSubscribers();
+		TeamSubscriber[] subscribers = TeamSubscriber.getSubscriberManager().getSubscribers();
 		for (int i = 0; i < subscribers.length; i++) {
 			TeamSubscriber subscriber = subscribers[i];
 			createAction(getCreatedMenu(), new SubscriberAction(subscriber), i + 1);

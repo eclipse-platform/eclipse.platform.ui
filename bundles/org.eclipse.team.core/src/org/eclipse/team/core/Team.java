@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.StringMatcher;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -58,8 +57,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @since 2.0
  */
 public final class Team {
-	
-	private static TeamProvider subscriberProvider;
 	
 	public static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
 	public static final String PREF_TEAM_TYPES = "file_types"; //$NON-NLS-1$
@@ -599,7 +596,6 @@ public final class Team {
 				}
 			}
 		}, IResourceChangeEvent.PRE_AUTO_BUILD);
-		subscriberProvider = new TeamProvider();
 	}
 	
 	/**

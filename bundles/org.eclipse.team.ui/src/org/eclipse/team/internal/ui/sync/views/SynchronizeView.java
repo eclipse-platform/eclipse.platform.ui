@@ -61,7 +61,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.IPreferenceIds;
@@ -168,8 +167,8 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		contributeToActionBars();
 		
 		// Register for addition/removal of subscribers
-		TeamProvider.addListener(this);
-		TeamSubscriber[] subscribers = TeamProvider.getSubscribers();
+		TeamSubscriber.getSubscriberManager().addTeamResourceChangeListener(this);
+		TeamSubscriber[] subscribers = TeamSubscriber.getSubscriberManager().getSubscribers();
 		for (int i = 0; i < subscribers.length; i++) {
 			TeamSubscriber subscriber = subscribers[i];
 			addSubscriber(subscriber);
@@ -533,7 +532,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		job.setSubscriberInput(null);
 		
 		// Cleanup the subscriber inputs
-		TeamProvider.removeListener(this);
+		TeamSubscriber.getSubscriberManager().removeTeamResourceChangeListener(this);
 		for (Iterator it = subscriberInputs.values().iterator(); it.hasNext();) {
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();

@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.RemoteContentsCache;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -58,7 +58,6 @@ import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSProviderPlugin extends Plugin {
 	
@@ -334,7 +333,7 @@ public class CVSProviderPlugin extends Plugin {
 				CVS_WORKSPACE_SUBSCRIBER_ID, 
 				Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
 				Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
-		TeamProvider.registerSubscriber(cvsWorkspaceSubscriber);
+		TeamSubscriber.getSubscriberManager().registerSubscriber(cvsWorkspaceSubscriber);
 	}
 	
 	/**

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.subscribers;
+package org.eclipse.team.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,75 +26,113 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.SaveContext;
-import org.eclipse.team.internal.core.SaveContextXMLWriter;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.core.subscribers.ISubscriberManager;
+import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
+import org.eclipse.team.core.subscribers.TeamDelta;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
+import org.eclipse.team.core.subscribers.TeamSubscriberFactory;
 
 /**
- * This is a temporary class that contains methods for TeamSubscriber support. At
- * some time it should be merged into the existing Team plugin class.
+ * This class provides the private implementation of <code>ISubscriberManager</code>.
  */
-public class TeamProvider implements ISaveParticipant {
-	
+public class SubscriberManager implements ISubscriberManager, ISaveParticipant {
+
 	private static String SUBSCRIBER_EXTENSION = "subscriber"; //$NON-NLS-1$
 	final static private String SAVECTX_SUBSCRIBERS = "subscribers";  //$NON-NLS-1$
 	final static private String SAVECTX_SUBSCRIBER = "subscriber"; //$NON-NLS-1$
 	final static private String SAVECTX_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	final static private String SAVECTX_LOCALNAME = "localName"; //$NON-NLS-1$
 	
-	static private Map subscribers = new HashMap();
-	static private List listeners = new ArrayList(1);
-	static private Map factories = new HashMap();
+	private Map subscribers = new HashMap();
+	private List listeners = new ArrayList(1);
+	private Map factories = new HashMap();
 	
-	public TeamProvider() {
-		startup();
-	}
-
-	static public TeamSubscriber getSubscriber(QualifiedName id) throws TeamException {
-		TeamSubscriber s = (TeamSubscriber)subscribers.get(id);
-		return s;
-	}
-			
-	static public TeamSubscriber[] getSubscribers() {
-		return (TeamSubscriber[])subscribers.values().toArray(
-						new TeamSubscriber[subscribers.size()]);
-	}
+	static private ISubscriberManager instance;
 	
-	static public void registerSubscriber(TeamSubscriber subscriber) {
-		if(! subscribers.containsKey(subscriber.getId())) {
-			subscribers.put(subscriber.getId(), subscriber);
-			fireTeamResourceChange(new TeamDelta[] {
-					new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_CREATED, null)});
+	public static synchronized ISubscriberManager getInstance() {
+		if (instance == null) {
+			// Initialize the variable before trigering startup.
+			// This is done because the startup code can invoke
+			// subscriber factories which, in turn will ask for the 
+			// subscriber manager.
+			instance = new SubscriberManager();
+			((SubscriberManager)instance).startup();
 		}
-	}
-	
-	static public void deregisterSubscriber(TeamSubscriber subscriber) {
-		if (subscribers.remove(subscriber.getId()) != null) {
-			// Only notify if the subscriber was registered in the first place
-			fireTeamResourceChange(new TeamDelta[] {
-					new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_DELETED, null)});
-		}
+		return instance;
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on IBaseLabelProvider.
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#registerSubscriber(org.eclipse.team.core.subscribers.TeamSubscriber)
 	 */
-	static public void addListener(ITeamResourceChangeListener listener) {
+	public void registerSubscriber(TeamSubscriber subscriber) {
+		boolean fireEvent = false;
+		synchronized(subscribers) {
+			if(! subscribers.containsKey(subscriber.getId())) {
+				subscribers.put(subscriber.getId(), subscriber);
+				fireEvent = true;
+			}
+		}
+		if (fireEvent) {
+			fireTeamResourceChange(new TeamDelta[] {
+				new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_CREATED, null)});
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#deregisterSubscriber(org.eclipse.team.core.subscribers.TeamSubscriber)
+	 */
+	public void deregisterSubscriber(TeamSubscriber subscriber) {
+		boolean fireEvent = false;
+		synchronized(subscribers) {
+			if (subscribers.remove(subscriber.getId()) != null) {
+				// Only notify if the subscriber was registered in the first place
+				fireEvent = true;
+			}
+		}
+		if (fireEvent) {
+			fireTeamResourceChange(new TeamDelta[] {
+				new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_DELETED, null)});
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#getSubscriber(org.eclipse.core.runtime.QualifiedName)
+	 */
+	public TeamSubscriber getSubscriber(QualifiedName id) {
+		synchronized(subscribers) {
+			TeamSubscriber s = (TeamSubscriber)subscribers.get(id);
+			return s;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#getSubscribers()
+	 */
+	public TeamSubscriber[] getSubscribers() {
+		synchronized(subscribers) {
+			return (TeamSubscriber[])subscribers.values().toArray(
+				new TeamSubscriber[subscribers.size()]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#addTeamResourceChangeListener(org.eclipse.team.core.subscribers.ITeamResourceChangeListener)
+	 */
+	public void addTeamResourceChangeListener(ITeamResourceChangeListener listener) {
 		synchronized(listener) {
 			listeners.add(listener);
 		}
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on IBaseLabelProvider.
+	 * @see org.eclipse.team.core.subscribers.ISubscriberManager#removeTeamResourceChangeListener(org.eclipse.team.core.subscribers.ITeamResourceChangeListener)
 	 */
-	static public void removeListener(ITeamResourceChangeListener listener) {
+	public void removeTeamResourceChangeListener(ITeamResourceChangeListener listener) {
 		synchronized(listener) {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	public void doneSaving(ISaveContext context) {
 	}
 
@@ -122,16 +160,20 @@ public class TeamProvider implements ISaveParticipant {
 	 * Fires a team resource change event to all registered listeners
 	 * Only listeners registered at the time this method is called are notified.
 	 */
-	static protected void fireTeamResourceChange(final TeamDelta[] deltas) {
+	void fireTeamResourceChange(final TeamDelta[] deltas) {
+		ITeamResourceChangeListener[] allListeners;
+		// Copy the listener list so we're not calling client code while synchronized
 		synchronized(listeners) {
-			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				final ITeamResourceChangeListener l = (ITeamResourceChangeListener) it.next();
-				l.teamResourceChanged(deltas);	
-			}
+			allListeners = (ITeamResourceChangeListener[]) listeners.toArray(new ITeamResourceChangeListener[listeners.size()]);
+		}
+		// Fire the events
+		for (int i = 0; i < allListeners.length; i++) {
+			ITeamResourceChangeListener listener = allListeners[i];
+			listener.teamResourceChanged(deltas);	
 		}
 	}	
 	
-	private synchronized static void restoreSubscribers() {
+	synchronized void restoreSubscribers() {
 		try {
 			SaveContext root = SaveContextXMLWriter.readXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers"); //$NON-NLS-1$
 			if(root != null && root.getName().equals(SAVECTX_SUBSCRIBERS)) {
@@ -161,7 +203,7 @@ public class TeamProvider implements ISaveParticipant {
 		}
 	}
 
-	private synchronized static void saveSubscribers() {
+	synchronized void saveSubscribers() {
 		SaveContext root = new SaveContext();
 		root.setName(SAVECTX_SUBSCRIBERS);
 		List children = new ArrayList();
@@ -192,7 +234,7 @@ public class TeamProvider implements ISaveParticipant {
 		}
 	}
 	
-	private static TeamSubscriberFactory create(String id) {
+	private TeamSubscriberFactory create(String id) {
 		TeamSubscriberFactory sFactory = (TeamSubscriberFactory)factories.get(id);
 		if(sFactory != null) {
 			return sFactory;
