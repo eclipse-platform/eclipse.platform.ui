@@ -1378,6 +1378,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// Allow an existing configuration to be re-initialized.
 			url = new URL(BootLoader.getInstallURL(),CONFIG_FILE); // if we fail here, return exception
 			concurrentUse = getConfigurationLock(url);
+			resetInitializationConfiguration(url); // [20111]
 			if (createRootSite) 
 				configureSite(getRootSite());
 			if (DEBUG)
@@ -1494,6 +1495,29 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		ISiteEntry defaultSite = createSiteEntry(siteURL, defaultPolicy);
 		return defaultSite;
+	}
+	
+	private void resetInitializationConfiguration(URL url) throws IOException {
+		// [20111]
+		if (!supportsDetection(url))
+			return; // can't do ...
+			
+		URL resolved = resolvePlatformURL(url);
+		File initCfg = new File(resolved.getFile().replace('/',File.separatorChar));
+		File  initDir = initCfg.getParentFile();
+		resetInitializationLocation(initDir);
+	}
+	
+	private void resetInitializationLocation(File dir) {
+		// [20111]
+		if (dir == null || !dir.exists() || !dir.isDirectory())
+			return;
+		File[] list = dir.listFiles();
+		for (int i=0; i<list.length; i++) {
+			if (list[i].isDirectory()) 
+				resetInitializationLocation(list[i]);
+			list[i].delete();
+		}
 	}
 	
 	private boolean getConfigurationLock(URL url) {
