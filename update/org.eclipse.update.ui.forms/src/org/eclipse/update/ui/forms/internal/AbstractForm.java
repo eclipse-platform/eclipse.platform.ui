@@ -109,6 +109,7 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	 * @see IForm#getHeading()
 	 */
 	public String getHeadingText() {
+		if (headingText==null) return "";
 		return headingText;
 	}
 
