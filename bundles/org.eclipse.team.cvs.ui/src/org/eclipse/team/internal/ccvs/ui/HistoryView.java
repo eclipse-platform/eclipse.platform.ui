@@ -24,6 +24,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -394,16 +395,29 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
-				ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
+				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
+				final Object[][] result = new Object[1][];
 				try {
-					return remoteFile.getLogEntries(new NullProgressMonitor());
-				} catch (TeamException e) {
-					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
-					// Set a default title
-					setTitle(Policy.bind("HistoryView.title"));
+					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								result[0] = remoteFile.getLogEntries(monitor);
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
+					}
+					return new Object[0];
+				} catch (InterruptedException e) {
+					// Do nothing
+					return new Object[0];
 				}
-				return new Object[0];
-				
+				return result[0];				
 			}
 			public void dispose() {
 			}
