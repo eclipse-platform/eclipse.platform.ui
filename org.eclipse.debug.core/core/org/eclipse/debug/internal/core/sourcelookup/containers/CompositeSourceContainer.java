@@ -34,13 +34,13 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String, boolean)
 	 */
 	public Object[] findSourceElements(String name, boolean duplicates) throws CoreException {
-		ISourceContainer[] projects = getSourceContainers();
+		ISourceContainer[] containers = getSourceContainers();
 		List results = null;
 		if (duplicates) {
 			results = new ArrayList();
 		}
-		for (int i = 0; i < projects.length; i++) {
-			ISourceContainer container = projects[i];
+		for (int i = 0; i < containers.length; i++) {
+			ISourceContainer container = containers[i];
 			Object[] objects = container.findSourceElements(name, duplicates);
 			if (objects.length > 0) {
 				if (duplicates) {
@@ -51,6 +51,9 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 					return new Object[]{objects[0]};
 				}
 			}
+		}
+		if (results == null) {
+			return new Object[0];
 		}
 		return results.toArray();
 	}
