@@ -60,7 +60,7 @@ public class JFaceColors {
 
 		IPreferenceStore store = JFacePreferences.getPreferenceStore();
 		if (store == null)
-			//Blue is the default
+			//Blue is the default if there is no store
 			return display.getSystemColor(SWT.COLOR_BLUE);
 		else
 			return new Color(
