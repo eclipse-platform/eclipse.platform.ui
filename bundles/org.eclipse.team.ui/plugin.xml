@@ -92,7 +92,7 @@
 		<menu
 			id="team.target"
 			path="additions"
-			label="Deploy">
+			label="%Deployment.group">
 			<separator name="group1"/>
 			<separator name="projectGroup"/>
 		</menu>
@@ -100,19 +100,19 @@
             menubarPath="team.target/group1"
             class="org.eclipse.team.internal.ui.target.GetAction"
             id="org.eclipse.team.target.getAction"
-            label="Get">
+            label="%Deployment.getAction">
       </action>
       <action      
             menubarPath="team.target/group1"
             class="org.eclipse.team.internal.ui.target.PutAction"
             id="org.eclipse.team.target.putAction"
-            label="Put">
+            label="%Deployment.putAction">
       </action>
       <action      
             menubarPath="team.target/group1"
             class="org.eclipse.team.internal.ui.target.SyncAction"
             id="org.eclipse.team.target.SyncAction"
-            label="Synchronize with Target...">
+            label="%Deployment.synchronize">
       </action>
 	</objectContribution>	
 	
@@ -121,7 +121,7 @@
 	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 		<action 
 			id="org.eclipse.team.ui.TargetProject"
-			label="Target Site..."
+			label="%Deployment.configSite"
 			tooltip="%ConfigureTargetProject.tooltip"
 			menubarPath="team.target/projectGroup"
 			enablesFor="1"
@@ -149,6 +149,12 @@
    <objectContribution
             objectClass="org.eclipse.team.internal.ui.target.SiteElement"
             id="org.eclipse.team.internal.ui.target.SiteElement">
+         <action
+               label="Discard Site"
+               tooltip="Discard this Site"
+               class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
+               id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
+         </action>        
          <action
                label="Get As..."
                tooltip="Get As..."

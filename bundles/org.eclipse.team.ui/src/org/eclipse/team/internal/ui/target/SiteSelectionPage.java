@@ -44,8 +44,11 @@ public class SiteSelectionPage extends TargetWizardPage {
 	private TableViewer table;
 	private Button useExistingRepo;
 	private Button useNewRepo;
+	private Button disconnectTarget;
 	private Site site;
 	private TargetProvider currentProvider;
+
+	private boolean disconnect = false;
 	
 	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage, TargetProvider currentProvider) {
 		super(pageName, title, titleImage);
@@ -98,14 +101,13 @@ public class SiteSelectionPage extends TargetWizardPage {
 				if(siteElement != null) {
 					site = siteElement.getSite();
 				}
-				setPageComplete(true);
 			}
 		});
 		useNewRepo = createRadioButton(composite, Policy.bind("SiteSelectionPage.createNew"), 2); //$NON-NLS-1$
 
 		useExistingRepo.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (useNewRepo.getSelection()) {
+				if (!useExistingRepo.getSelection()) {
 					table.getTable().setEnabled(false);
 					site = null;
 				} else {
@@ -115,9 +117,18 @@ public class SiteSelectionPage extends TargetWizardPage {
 						site = siteElement.getSite();
 					}
 				}
-				setPageComplete(true);
 			}
 		});
+		
+		
+		if(currentProvider != null ) {
+			disconnectTarget = createRadioButton(composite, Policy.bind("SiteSelectionPage.disconnectTarget"), 2); //$NON-NLS-1$
+			disconnectTarget.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					disconnect = disconnectTarget.getSelection();
+				}
+			});
+		}
 
 		setControl(composite);
 		initializeValues();
@@ -143,5 +154,9 @@ public class SiteSelectionPage extends TargetWizardPage {
 	
 	public Site getSite() {
 		return site;
+	}
+	
+	public boolean isDisconnect() {
+		return disconnect;
 	}
 }

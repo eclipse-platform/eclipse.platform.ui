@@ -229,10 +229,24 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		if(currentPage == siteSelectionPage || currentPage == getMappingPage()) {
 			Site site;
 			if(currentPage == siteSelectionPage) {
+				// if the user selected the disconnect option then disconnect
+				// this project from the target
+				if(siteSelectionPage.isDisconnect()) {
+					try {
+						TargetManager.unmap(project);
+					} catch (TeamException e) {
+						ErrorDialog.openError(getShell(), Policy.bind("Error"), Policy.bind("ConfigureTargetWizard.errorUnmappingProject"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+						return false;
+					}
+					return true;
+				}
 				site = siteSelectionPage.getSite(); 
 			} else {
 				site = getMappingPage().getSite(); 
 			}
+			// a site has been selected on either the site selection page or the
+			// mapping page. Use this site information to map the project to the
+			// target.
 			IPath path = Path.EMPTY;
 			if(getMappingPage() != null) {
 				path = getMappingPage().getMapping();

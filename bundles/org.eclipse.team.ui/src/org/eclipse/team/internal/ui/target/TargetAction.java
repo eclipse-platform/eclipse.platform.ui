@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.core.target.Site;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
@@ -50,5 +51,23 @@ public abstract class TargetAction extends TeamAction {
 			return (IRemoteTargetResource[])resources.toArray(new IRemoteTargetResource[resources.size()]);
 		}
 		return new IRemoteTargetResource[0];
+	}
+	
+	/**
+	 * Get selected remote target folders
+	 */
+	protected Site[] getSelectedSites() {
+		ArrayList sites = new ArrayList();;
+		if (!selection.isEmpty()) {
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				IRemoteTargetResource remote = null;
+				if (next instanceof SiteElement) {
+					sites.add(((SiteElement)next).getSite());
+				}
+			}
+		}
+		return (Site[])sites.toArray(new Site[sites.size()]);
 	}
 }
