@@ -493,16 +493,25 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		GridLayout pmlayout = new GridLayout();
 		pmlayout.numColumns = 1;
 		progressMonitorPart =
-			new ProgressMonitorPart(composite, pmlayout, SWT.DEFAULT);
+			createProgressMonitorPart(composite, pmlayout);
 		progressMonitorPart.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL));
-		progressMonitorPart.setVisible(false);
+				new GridData(GridData.FILL_HORIZONTAL));
+			progressMonitorPart.setVisible(false);
 
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		return composite;
+	}
+	/**
+	 * Create the progress monitor part in the receiver.
+	 * @param composite
+	 * @param pmlayout
+	 */
+	protected ProgressMonitorPart createProgressMonitorPart(Composite composite, GridLayout pmlayout) {
+		return new ProgressMonitorPart(composite, pmlayout, SWT.DEFAULT);
+		
 	}
 	/**
 	 * Creates the container that holds all pages.
@@ -1132,9 +1141,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 *
 	 * @param wizard the wizard
 	 */
-	private void updateSizeForWizard(IWizard wizard) {
+	private void updateSizeForWizard(IWizard sizingWizard) {
 		Point delta = new Point(0, 0);
-		IWizardPage[] pages = wizard.getPages();
+		IWizardPage[] pages = sizingWizard.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			// ensure the page container is large enough
 			Point pageDelta = calculatePageSizeDelta(pages[i]);
