@@ -33,7 +33,7 @@ public class SyncFileUtil {
 	public static ResourceSyncInfo[] readEntriesFile(File parent) throws CVSException {
 		
 		if(!getCVSSubdirectory(parent).exists()) {
-			return new ResourceSyncInfo[0];
+			return null;
 		}
 		
 		// The Eclipse CVS client does not write to the Entries.log file. Thus
@@ -45,7 +45,7 @@ public class SyncFileUtil {
 		String[] permissions = getContents(parent, PERMISSIONS);
 		
 		if (entries == null) {
-			return new ResourceSyncInfo[0];
+			return null;
 		}
 		
 		for (int i = 0; i < entries.length; i++) {

@@ -83,6 +83,25 @@ public class Synchronizer {
 		Map config = new HashMap(10);
 	}
 	
+	public void dump() {
+		System.out.println("Synchronizer:");
+		System.out.println("\tEntries");
+		for (Iterator it = entriesCache.keySet().iterator(); it.hasNext();) {
+			File entriesFile = (File)it.next();
+			SyncFile contents = (SyncFile)entriesCache.get(entriesFile);
+			System.out.println(entriesFile.getAbsolutePath() + " (" + contents.config.size() +")");
+			for (Iterator it2	= contents.config.keySet().iterator(); it2.hasNext();) {
+				System.out.println(((String)it2.next()));				
+			}
+		}
+		
+		System.out.println("\tFolders");
+		for (Iterator it = folderConfigCache.keySet().iterator(); it.hasNext();) {
+			File folder = (File)it.next();
+			System.out.println(folder.getAbsolutePath());
+		}
+	}
+	
 	/**
 	 * When a container resource in the workbench is deleted the Synchronizer
 	 * must clear the cache so that stale sync info are removed.
@@ -366,7 +385,7 @@ public class Synchronizer {
 	 * @param folder the root folder at which to start reloading.
 	 * @param monitor the progress monitor, cannot be <code>null</code>.
 	 */
-	public void reload(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {
+	public void reload(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {		
 		if (folder instanceof LocalFolder) {
 			LocalFolder fsFolder = (LocalFolder) folder;
 			File file = fsFolder.getLocalFile();
@@ -400,6 +419,13 @@ public class Synchronizer {
 		Assert.isTrue(invalidatedEntryFiles.isEmpty() && invalidatedFolderConfigs.isEmpty());
 		entriesCache.clear();
 		folderConfigCache.clear();
+	}
+	
+	/**
+	 * Answers if the cache is empty and there are no pending saves.
+	 */
+	public boolean isEmpty() {
+		return  entriesCache.isEmpty() && folderConfigCache.isEmpty();
 	}
 	
 	/**
@@ -447,6 +473,11 @@ public class Synchronizer {
 		if(entriesSync==null || reload) {
 			entriesSync = new SyncFile();
 			ResourceSyncInfo infos[] = SyncFileUtil.readEntriesFile(file.getParentFile());
+			// entries file does not exist
+			if(infos==null) {
+				entriesCache.remove(entriesFile);
+				return null;
+			}
 			for (int i = 0; i < infos.length; i++) {
 				entriesSync.config.put(infos[i].getName(), infos[i]);
 			}
