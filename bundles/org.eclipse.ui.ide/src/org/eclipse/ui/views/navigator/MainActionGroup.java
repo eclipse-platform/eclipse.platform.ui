@@ -309,15 +309,23 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	}
 	
 	/**
-	 * Extends the superclass implementation to dispose the subgroups.
+	 * Extends the superclass implementation to dispose the 
+	 * actions in this group and its subgroups.
 	 */
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
+
+		collapseAllAction.dispose();
+		exportAction.dispose();
+		importAction.dispose();
+		propertyDialogAction.dispose();
+		toggleLinkingAction.dispose();
+		
 		gotoGroup.dispose();
 		openGroup.dispose();
 		refactorGroup.dispose();
-		workingSetGroup.dispose();
 		sortAndFilterGroup.dispose();
+		workingSetGroup.dispose();
 		workspaceGroup.dispose();
 		super.dispose();
 	}
