@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.core.target;
+package org.eclipse.team.internal.core.target;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.target.LocationMapping;
 
 public class TargetManager {
 	private static final String TARGET_SITES_FILE = ".targetSites"; //$NON-NLS-1$

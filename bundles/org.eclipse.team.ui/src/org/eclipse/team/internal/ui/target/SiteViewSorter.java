@@ -14,7 +14,7 @@ import java.net.URL;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.target.Site;
+import org.eclipse.team.internal.core.target.Site;
 
 public class SiteViewSorter extends ViewerSorter {
 	

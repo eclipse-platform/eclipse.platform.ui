@@ -19,10 +19,10 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.IRemoteTargetResource;
-import org.eclipse.team.core.target.Site;
-import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.IRemoteTargetResource;
+import org.eclipse.team.internal.core.target.Site;
+import org.eclipse.team.internal.core.target.TargetManager;
+import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 

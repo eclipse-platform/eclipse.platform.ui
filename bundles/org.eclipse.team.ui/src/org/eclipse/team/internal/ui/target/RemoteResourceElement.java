@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.ISharedImages;

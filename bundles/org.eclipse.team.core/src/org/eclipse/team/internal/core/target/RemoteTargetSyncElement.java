@@ -17,9 +17,6 @@ import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
-import org.eclipse.team.core.target.IRemoteTargetResource;
-import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 

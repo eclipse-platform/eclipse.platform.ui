@@ -19,7 +19,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.target.Site;
 
 public class LocationMapping {
 	

@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.core.target;
+package org.eclipse.team.internal.core.target;
 
 import java.net.URL;
 

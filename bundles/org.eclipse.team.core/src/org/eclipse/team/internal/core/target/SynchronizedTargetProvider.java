@@ -25,10 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.core.target.IRemoteTargetResource;
-import org.eclipse.team.core.target.ITargetRunnable;
-import org.eclipse.team.core.target.Site;
-import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 

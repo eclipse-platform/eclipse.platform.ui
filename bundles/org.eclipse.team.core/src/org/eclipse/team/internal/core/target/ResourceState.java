@@ -35,8 +35,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.NullSubProgressMonitor;
 import org.eclipse.team.internal.core.Policy;
