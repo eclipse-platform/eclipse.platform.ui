@@ -38,8 +38,8 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	 */
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
-		IPath path= folder.getFullPath().append("NonExistingWorkspaceFile");
-		return new Path(path.toFile().getAbsolutePath());
+		IPath filePath= folder.getLocation().append("NonExistingWorkspaceFile");
+		return filePath.makeAbsolute();
 	}
 	
 	/*
