@@ -125,17 +125,17 @@
       <factory
             class="org.eclipse.help.ui.internal.views.MarkerViewAdapterFactory"
             adaptableType="org.eclipse.ui.views.markers.internal.MarkerView">
-         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+         <adapter type="org.eclipse.help.IContextProvider"/>
       </factory>
       <factory
             class="org.eclipse.help.ui.internal.views.JavaEditorAdapterFactory"
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.JavaEditor">
-         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+         <adapter type="org.eclipse.help.IContextProvider"/>
       </factory>
       <factory
             class="org.eclipse.help.ui.internal.views.JavaViewAdapterFactory:package_view_context"
             adaptableType="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
-         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+         <adapter type="org.eclipse.help.IContextProvider"/>
       </factory>
    </extension>
 </plugin>
