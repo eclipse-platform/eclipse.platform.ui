@@ -24,7 +24,7 @@ import org.eclipse.help.internal.model.*;
 /**
  * Helper class for tocView.jsp initialization
  */
-public class TocData extends RequestData {
+public class TocData extends ActivitiesData {
 	// maximum number of topics in a book for generating all topics at once
 	private static int loadBookAtOnceLimit;
 	// suggested number of topic levels for large books

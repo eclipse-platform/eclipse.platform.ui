@@ -34,31 +34,37 @@
 	<jsp:param name="tooltip"  value='back_tip'/>
 	<jsp:param name="image"    value='<%=backImage%>'/>
 	<jsp:param name="action"   value="goBack"/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="forward"/>
 	<jsp:param name="tooltip"  value='forward_tip'/>
 	<jsp:param name="image"    value='<%=forwardImage%>'/>
 	<jsp:param name="action"   value="goForward"/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value=""/>
 	<jsp:param name="tooltip"  value=""/>
 	<jsp:param name="image"    value=""/>
 	<jsp:param name="action"   value=""/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="synch"/>
 	<jsp:param name="tooltip"  value='Synch'/>
 	<jsp:param name="image"    value="synch_toc_nav.gif"/>
 	<jsp:param name="action"   value="resynch"/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="add_bkmrk"/>
 	<jsp:param name="tooltip"  value='BookmarkPage'/>
 	<jsp:param name="image"    value="add_bkmrk.gif"/>
 	<jsp:param name="action"   value="bookmarkPage"/>
+	<jsp:param name="state"    value='off'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
 	<jsp:param name="image"    value="print_edit.gif"/>
 	<jsp:param name="action"   value="printContent"/>
+	<jsp:param name="state"    value='off'/>
 
 </jsp:include>
 <%
@@ -72,26 +78,31 @@
 	<jsp:param name="tooltip"  value='back_tip'/>
 	<jsp:param name="image"    value='<%=backImage%>'/>
 	<jsp:param name="action"   value="goBack"/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="forward"/>
 	<jsp:param name="tooltip"  value='forward_tip'/>
 	<jsp:param name="image"    value='<%=forwardImage%>'/>
 	<jsp:param name="action"   value="goForward"/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value=""/>
 	<jsp:param name="tooltip"  value=""/>
 	<jsp:param name="image"    value=""/>
 	<jsp:param name="action"   value=""/>
+	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="synch"/>
 	<jsp:param name="tooltip"  value='Synch'/>
 	<jsp:param name="image"    value="synch_toc_nav.gif"/>
 	<jsp:param name="action"   value="resynch"/>
+	<jsp:param name="state"    value='off'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
 	<jsp:param name="image"    value="print_edit.gif"/>
 	<jsp:param name="action"   value="printContent"/>
+	<jsp:param name="state"    value='off'/>
 
 </jsp:include>
 

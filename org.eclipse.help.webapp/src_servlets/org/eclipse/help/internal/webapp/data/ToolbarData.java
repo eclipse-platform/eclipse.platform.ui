@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -33,30 +34,38 @@ public class ToolbarData extends RequestData {
 		String[] tooltips = request.getParameterValues("tooltip");
 		String[] images = request.getParameterValues("image");
 		String[] actions = request.getParameterValues("action");
+		String[] states = request.getParameterValues("state");
 
 		if (names == null
 			|| tooltips == null
 			|| images == null
 			|| actions == null
+			|| states == null
 			|| names.length != tooltips.length
 			|| names.length != images.length
-			|| names.length != actions.length) {
+			|| names.length != actions.length
+			|| names.length != states.length) {
 			buttons = new ToolbarButton[0];
 			return;
 		}
 
-		buttons = new ToolbarButton[names.length];
-		for (int i = 0; i < buttons.length; i++) {
+		List buttonList = new ArrayList();
+		for (int i = 0; i < names.length; i++) {
+					if(states[i].startsWith("hid")){
+				continue;
+			}
 			if ("".equals(names[i]))
-				buttons[i] = new ToolbarButton();
+				buttonList.add(new ToolbarButton());
 			else
-				buttons[i] =
+				buttonList.add(
 					new ToolbarButton(
 						names[i],
 						ServletResources.getString(tooltips[i], request),
 						preferences.getImagesDirectory() + "/" + images[i],
-						actions[i]);
+						actions[i],
+						"on".equalsIgnoreCase(states[i])));
 		}
+		buttons = (ToolbarButton[])buttonList.toArray(new ToolbarButton[buttonList.size()]);
 	}
 
 	public ToolbarButton[] getButtons() {

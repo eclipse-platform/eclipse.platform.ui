@@ -41,4 +41,7 @@ public interface IHelpActivitySupport {
 	 * @param href
 	 */
 	public void enableActivities(String href);
+	public boolean isFilteringEnabled();
+	public void setFilteringEnabled(boolean enabled);
+	public boolean isUserCanToggleFiltering();
 }

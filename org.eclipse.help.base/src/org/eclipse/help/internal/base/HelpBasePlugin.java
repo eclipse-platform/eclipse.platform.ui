@@ -42,6 +42,14 @@ public class HelpBasePlugin extends Plugin {
 		}
 		public void enableActivities(String href) {
 		}
+		public boolean isFilteringEnabled(){
+			return false;
+		}
+		public void setFilteringEnabled(boolean enabled){
+		}
+		public boolean isUserCanToggleFiltering(){
+			return false;
+		}
 	};
 	/**
 	 * Logs an Error message with an exception. Note that the message should

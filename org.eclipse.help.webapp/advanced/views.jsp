@@ -87,6 +87,52 @@ function showView(view)
  	}
 }
 
+var activityFiltering = <%=(new ActivitiesData(application, request, response)).isActivityFiltering()?"true":"false"%>;
+<%
+	for (int i=0; i<views.length; i++) {
+		if ( "toc".equals(views[i].getName()) ) {
+%>
+var tocViewHref="<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>"
+<%
+		} else if ( "search".equals(views[i].getName()) ) {
+%>
+var searchViewHref="<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>"
+<%
+		}
+	}
+%>
+function toggleShowAll(){
+	var re=/(\?|&)showAll=(on|off)/;
+	if(activityFiltering){
+		activityFiltering=false;
+		try{
+			window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
+		}catch(ex) {}
+		try{
+			window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
+		}catch(ex) {}
+		try{
+			window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on";
+		}catch(ex) {}
+		try{
+			window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on";
+		}catch(ex) {}
+	} else {
+		activityFiltering=true;
+		try{
+			window.frames.toc.tocToolbarFrame.setButtonState("show_all", false);
+		}catch(ex) {}
+		try{
+			window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
+		}catch(ex) {}
+		try{
+			window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=off";
+		}catch(ex) {}
+		try{
+			window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=off";
+		}catch(ex) {}
+	}
+}
 
 </script>
 
@@ -105,7 +151,7 @@ function showView(view)
  		    name="<%=views[i].getName()%>"
  		    title="<%=ServletResources.getString("ignore", views[i].getName(), request)%>"
  		    id="<%=views[i].getName()%>" 
- 		    src='<%="view.jsp?view="+views[i].getName()+"&"+request.getQueryString()%>'>
+ 		    src='<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>'>
  	</iframe> 
 <%
 	}

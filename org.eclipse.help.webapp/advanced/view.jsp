@@ -11,6 +11,7 @@
 <%@ include file="fheader.jsp"%>
 
 <% 
+	new ActivitiesData(application, request, response); // here it can turn filtering on or off
 	LayoutData data = new LayoutData(application,request, response);
 	View view = data.getCurrentView();
 	if (view == null) return;

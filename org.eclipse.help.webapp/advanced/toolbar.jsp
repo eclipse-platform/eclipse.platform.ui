@@ -38,6 +38,18 @@ BODY {
 	font-weight:bold;
 }
  
+.buttonOn a { 
+	display:block;
+	margin-left:2px;
+	margin-right:2px;
+	width:<%=data.isMozilla()?18:20%>px;
+	height:<%=data.isMozilla()?18:20%>px;
+	border:1px solid Highlight;
+	writing-mode:tb-rl;
+	vertical-align:middle;
+	background: <%=prefs.getViewBackground()%>;
+}
+
 .button a { 
 	display:block;
 	margin-left:2px;
@@ -152,6 +164,18 @@ function mouseDblClickHandler(e) {
 	"document.addEventListener('dblclick', mouseDblClickHandler, true);"%>
 <%}%>
 
+
+function setButtonState(buttonName, pressed) {
+	if(!document.getElementById("tdb_"+buttonName))
+		return;
+	if(pressed){
+		document.getElementById("tdb_"+buttonName).className="buttonOn";
+	}else{
+		document.getElementById("tdb_"+buttonName).className="button";
+	}
+}
+
+
 </script>
 
 <%
@@ -199,7 +223,7 @@ if(buttons.length > 0){
 <%
 		} else {
 %>
-						<td align="middle" class="button" height=18>
+						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].isOn()?"buttonOn":"button"%>" height=18>
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
 							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
 							   onmouseout="window.status='';"

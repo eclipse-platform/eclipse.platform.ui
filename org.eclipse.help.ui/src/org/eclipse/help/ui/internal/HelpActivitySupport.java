@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.model.*;
@@ -23,10 +24,47 @@ import org.eclipse.ui.activities.*;
  * Wrapper for eclipse ui activity support
  */
 public class HelpActivitySupport implements IHelpActivitySupport {
+	private static final String PREF_KEY_SHOW_DISABLED_ACTIVITIES = "showDisabledActivityTopics";
+	private static final String SHOW_DISABLED_ACTIVITIES_NEVER = "never";
+	private static final String SHOW_DISABLED_ACTIVITIES_OFF = "off";
+	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on";
+	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always";
+	
+	private Preferences pref;
 	private IWorkbenchActivitySupport activitySupport;
+	private boolean userCanToggleFiltering;
+	private boolean filteringEnabled;
 	
 	public HelpActivitySupport(IWorkbench workbench) {
-		activitySupport = (IWorkbenchActivitySupport) workbench.getActivitySupport();
+		activitySupport = workbench.getActivitySupport();
+		pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		
+		String showDisabledActivities = pref.getString(PREF_KEY_SHOW_DISABLED_ACTIVITIES);
+		userCanToggleFiltering = SHOW_DISABLED_ACTIVITIES_OFF.equalsIgnoreCase(showDisabledActivities)
+		|| SHOW_DISABLED_ACTIVITIES_ON.equalsIgnoreCase(showDisabledActivities);
+		userCanToggleFiltering = userCanToggleFiltering && isWorkbenchFiltering();
+		
+		filteringEnabled = SHOW_DISABLED_ACTIVITIES_ON.equalsIgnoreCase(showDisabledActivities)
+		|| SHOW_DISABLED_ACTIVITIES_NEVER.equalsIgnoreCase(showDisabledActivities);
+		filteringEnabled = filteringEnabled && isWorkbenchFiltering();
+	}
+	public boolean isFilteringEnabled(){
+		return filteringEnabled;
+	}
+	public void setFilteringEnabled(boolean enabled) {
+		if (userCanToggleFiltering) {
+			filteringEnabled = enabled;
+			if (enabled) {
+				pref.setValue(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
+						SHOW_DISABLED_ACTIVITIES_OFF);
+			} else {
+				pref.setValue(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
+						SHOW_DISABLED_ACTIVITIES_ON);
+			}
+		}
+	}
+	public boolean isUserCanToggleFiltering(){
+		return userCanToggleFiltering;
 	}
 	/*
 	 * (non-Javadoc)
@@ -34,6 +72,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
+		if(!isFilteringEnabled()){
+			return true;
+		}
 		if (href.startsWith("/")){
 			href = href.substring(1);
 		}
@@ -53,6 +94,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	public boolean isEnabledTopic(String href, String locale){
 		if (href == null) {
 			return false;
+		}
+		if(!isFilteringEnabled()){
+			return true;
 		}
 		int ix = href.indexOf("?resultof=");
 		if (ix >= 0) {
@@ -126,4 +170,11 @@ public class HelpActivitySupport implements IHelpActivitySupport {
         activitySupport.setEnabledActivityIds(enabledIds);
 	}
 
+	/**
+	 * @return whether the UI is set up to filter contributions (has defined
+	 *         activity categories).
+	 */
+	private static boolean isWorkbenchFiltering() {
+		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();
+	}
 }

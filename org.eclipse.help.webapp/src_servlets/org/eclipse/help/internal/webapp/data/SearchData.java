@@ -25,7 +25,7 @@ import org.eclipse.help.internal.workingset.*;
 /**
  * Helper class for searchView.jsp initialization
  */
-public class SearchData extends RequestData {
+public class SearchData extends ActivitiesData {
 	private WebappWorkingSetManager wsmgr;
 
 	// Request parameters

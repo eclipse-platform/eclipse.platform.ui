@@ -21,17 +21,19 @@ public class ToolbarButton{
 	private String tooltip;
 	private String image;
 	private String action;
+	private boolean state;
 	private boolean isSeparator;
 	
 	public ToolbarButton() {
 		isSeparator = true;
 	}
 	 
-	public ToolbarButton(String name, String tooltip, String image, String action) {
+	public ToolbarButton(String name, String tooltip, String image, String action, boolean state) {
 		this.name = name;
 		this.tooltip = tooltip;
 		this.image = image;
 		this.action = action;
+		this.state = state;
 	}
 	
 	public boolean isSeparator() {
@@ -65,5 +67,9 @@ public class ToolbarButton{
 	
 	public String getAction() {
 		return action;
+	}	
+
+	public boolean isOn() {
+		return state;
 	}	
 }

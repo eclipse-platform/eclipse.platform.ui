@@ -21,3 +21,6 @@ function resynchNav(button)
 		document.getElementById(button).blur();
 	}
 }
+function toggleShowAll(button){
+	window.parent.parent.toggleShowAll();
+}
