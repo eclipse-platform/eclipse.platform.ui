@@ -259,11 +259,15 @@ public class AntRunner implements IPlatformRunnable {
 				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$
 				addBuildListeners.invoke(runner, new Object[] { buildListeners });
 			}
-			// add build logger
-			if (buildLoggerClassName != null) {
-				Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
-				addBuildLogger.invoke(runner, new Object[] { buildLoggerClassName });
+			
+			if (buildLoggerClassName == null) {
+				//indicate that the default logger is not to be used
+				buildLoggerClassName= "";
 			}
+			// add build logger
+			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
+			addBuildLogger.invoke(runner, new Object[] { buildLoggerClassName });
+			
 			// add progress monitor
 			if (monitor != null) {
 				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
