@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -32,6 +36,12 @@ public abstract class DynamicTestCase extends UITestCase implements
 	private Bundle newBundle;
 
 	private volatile boolean removedRecieved;
+	
+	private WeakReference addedDelta;
+	
+	private WeakReference removedDelta;
+	
+	private ReferenceQueue queue;
 
 	/**
 	 * @param testName
@@ -73,6 +83,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	protected final Bundle getBundle() {
 		if (newBundle == null) {
 			reset();
+			queue = new ReferenceQueue();
 			// Just try to find the new perspective. Don't actually try to
 			// do anything with it as the class it refers to does not exist.
 			try {
@@ -93,6 +104,14 @@ public abstract class DynamicTestCase extends UITestCase implements
 				}
 			}
 			assertFalse("Test failed due to timeout on addition", timeToFail);
+			try {
+				LeakTests.checkRef(queue, addedDelta);
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			processEvents();
 		}
 		return newBundle;
 	}
@@ -163,10 +182,14 @@ public abstract class DynamicTestCase extends UITestCase implements
 		IExtensionDelta delta = event.getExtensionDelta(
 				getDeclaringNamespace(), getExtensionPoint(), getExtensionId());
 		if (delta != null) {
-			if (delta.getKind() == IExtensionDelta.ADDED)
+			if (delta.getKind() == IExtensionDelta.ADDED) {
+				addedDelta = new WeakReference(delta, queue);
 				setAddedEventPropagated(true);
-			else if (delta.getKind() == IExtensionDelta.REMOVED)
+			}
+			else if (delta.getKind() == IExtensionDelta.REMOVED) {
+				removedDelta = new WeakReference(delta, queue);
 				setRemovedEventPropagated(true);
+			}
 		}
 	}
 
@@ -175,6 +198,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 */
 	protected final void removeBundle() {
 		if (newBundle != null) {
+			queue = new ReferenceQueue();
 			try {
 				DynamicUtils.uninstallPlugin(newBundle);
 				long startTime = System.currentTimeMillis();
@@ -189,12 +213,19 @@ public abstract class DynamicTestCase extends UITestCase implements
 					}
 				}
 				assertFalse("Test failed due to timeout on removal", timeToFail);
-
+				try {
+					LeakTests.checkRef(queue, removedDelta);
+				} catch (IllegalArgumentException e1) {
+					e1.printStackTrace();
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			} catch (BundleException e) {
 				fail(e.getMessage());
 			} finally {
 				newBundle = null;
 			}
+			processEvents();
 		}
 	}
 
@@ -202,6 +233,8 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 * Reset the added/removed flags.
 	 */
 	private void reset() {
+		addedDelta = null;
+		removedDelta = null;
 		setAddedEventPropagated(false);
 		setRemovedEventPropagated(false);
 	}

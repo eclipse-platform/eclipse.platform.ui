@@ -33,7 +33,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * action registry.
  */
 public class ObjectActionContributor extends PluginActionBuilder implements
-        IObjectActionContributor {
+        IObjectActionContributor, IAdaptable {
     private static final String ATT_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
 
     private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
@@ -296,4 +296,14 @@ public class ObjectActionContributor extends PluginActionBuilder implements
             return result;
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IConfigurationElement.class)) {
+			return config;
+		}
+		return null;
+	}
 }

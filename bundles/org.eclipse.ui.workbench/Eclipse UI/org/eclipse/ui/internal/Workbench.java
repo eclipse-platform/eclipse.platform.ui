@@ -89,6 +89,7 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
+import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.misc.Assert;
@@ -1868,6 +1869,8 @@ public final class Workbench implements IWorkbench {
             WorkbenchPlugin.getDefault().reset();
         }
         WorkbenchThemeManager.getInstance().dispose();
+        PropertyPageContributorManager.getManager().dispose();
+        ObjectActionContributorManager.getManager().dispose();
     }
 
     /*

@@ -17,10 +17,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * Extends generic object contributor manager by loading property page
@@ -112,14 +114,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
     }
 
     /**
-     * Returns true if contributors exist in the manager for
-     * this object. 
-     */
-    public boolean hasContributorsFor(Object object) {
-        return super.hasContributorsFor(object);
-    }
-
-    /**
      * Loads property page contributors from the registry.
      */
     private void loadContributors() {
@@ -127,4 +121,13 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
                 this);
         reader.registerPropertyPages(Platform.getExtensionRegistry());
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
+	 */
+	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
+		   PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(
+                this);
+		   reader.readElement(element);
+	}
 }

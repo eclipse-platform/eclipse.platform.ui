@@ -209,16 +209,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             loadWorkingSets(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_POPUP_MENU)) {
-            loadPopupMenu(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
             loadPreferencePages(ext);
-            return;
-        }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PROPERTY_PAGES)) {
-            loadPropertyPages(ext);
             return;
         }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_FONT_DEFINITIONS)) {
@@ -298,17 +290,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         }
     }
 
-    private void loadPropertyPages(IExtension ext) {
-        PropertyPageContributorManager manager = PropertyPageContributorManager
-                .getManager();
-        PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(
-                manager);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            reader.readElement(elements[i]);
-        }
-    }
-
     private void loadPreferencePages(IExtension ext) {
         PreferenceManager manager = workbench.getPreferenceManager();
         List nodes = manager.getElements(PreferenceManager.POST_ORDER);
@@ -343,40 +324,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         }
     }
 
-    /**
-     * TODO: object contributions are easy to update, but viewer contributions are not because they're 
-     * statically cached in anonymous PopupMenuExtenders.  Currently you will be prompted to restart in 
-     * the case of a viewer contribtion. 
-     * 
-     * We can implement this refresh by keeping a weak set of references to PopupMenuExtenders and 
-     * iterating over them on a delta.  We add a method to PopupMenuExtender that will supply an extension
-     * to the underlying staticActionBuilder for processing. 
-     */
-    private void loadPopupMenu(IExtension ext) {
-        ObjectActionContributorManager oMan = ObjectActionContributorManager
-                .getManager();
-        ObjectActionContributorReader oReader = new ObjectActionContributorReader();
-        oReader.setManager(oMan);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        boolean clearPopups = false;
-        // takes care of object contributions
-        for (int i = 0; i < elements.length; i++) {
-            oReader.readElement(elements[i]);
-            if (elements[i].getName().equals(
-                    ViewerActionBuilder.TAG_CONTRIBUTION_TYPE))
-                clearPopups = true;
-        }
-
-        if (clearPopups)
-            PopupMenuExtender.getManager().clearCaches();
-    }
-
     private void revoke(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_NEW)) {
-            //NewWizardsRegistryReader.removeExtension(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_VIEWS)) {
             unloadView(ext);
             return;
