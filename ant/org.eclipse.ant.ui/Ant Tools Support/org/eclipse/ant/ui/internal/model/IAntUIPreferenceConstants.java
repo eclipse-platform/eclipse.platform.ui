@@ -27,4 +27,7 @@ public interface IAntUIPreferenceConstants {
 	public static final String CONSOLE_INFO_RGB = "console.infoColor"; //$NON-NLS-1$
 	public static final String CONSOLE_VERBOSE_RGB = "console.verboseColor"; //$NON-NLS-1$
 	public static final String CONSOLE_DEBUG_RGB = "console.debugColor"; //$NON-NLS-1$	
+	
+	public static final String ANT_XERCES_JARS_WARNING= "xercesJARs"; //$NON-NLS-1$
+	public static final String ANT_TOOLS_JAR_WARNING= "toolsJAR"; //$NON-NLS-1$
 }

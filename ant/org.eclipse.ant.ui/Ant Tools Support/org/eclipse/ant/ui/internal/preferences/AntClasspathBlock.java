@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
+import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -46,11 +49,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ant.ui.internal.model.AntUIPlugin;
-import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
+import org.eclipse.ui.externaltools.internal.ui.MessageDialogWithToggle;
 
 public class AntClasspathBlock {
+
+	private static final String[] XERCES= new String[] {"xercesImpl.jar", "xml-apis.jar"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] TOOLS= new String[] {"tools.jar"}; //$NON-NLS-1$
 
 	private TableViewer antTableViewer;
 	private ExternalToolsContentProvider antContentProvider;
@@ -82,6 +87,8 @@ public class AntClasspathBlock {
 	private IAntBlockContainer container;
 	
 	private boolean tablesEnabled= true;
+	
+	private int validated= 3;
 	
 	public void setContainer(IAntBlockContainer container) {
 		this.container= container; 
@@ -182,7 +189,7 @@ public class AntClasspathBlock {
 		}
 		viewer.setInput(contents);
 		viewer.setSelection(viewer.getSelection());
-		container.update();
+		updateContainer();
 	}
 
 	private void remove(TableViewer viewer) {
@@ -192,7 +199,7 @@ public class AntClasspathBlock {
 		while (enum.hasNext()) {
 			viewerContentProvider.remove(enum.next());
 		}
-		container.update();
+		updateContainer();
 	}
 
 	/**
@@ -216,7 +223,7 @@ public class AntClasspathBlock {
 		}
 		viewer.setSelection(viewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTFOLDER, result);
-		container.update();
+		updateContainer();
 	}
 
 	private void addJars(TableViewer viewer) {
@@ -246,9 +253,14 @@ public class AntClasspathBlock {
 
 		viewer.setSelection(viewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
-		container.update();
+		updateContainer();
 	}
 		
+	private void updateContainer() {
+		validated= 0;
+		container.update();
+	}
+
 	/**
 	 * Creates the group which will contain the buttons.
 	 */
@@ -386,9 +398,12 @@ public class AntClasspathBlock {
 					File rootDir = new File(path, "lib"); //$NON-NLS-1$
 					if (rootDir.exists()) {
 						setAntHome(rootDir);
+					} else {
+						updateContainer();
 					}
+				} else {
+					updateContainer();
 				}
-				container.update();
 			}
 		});
 
@@ -413,7 +428,7 @@ public class AntClasspathBlock {
 		boolean last = false;
 		int lastUrl = urls.size() - 1;
 		while (selected.hasNext()) {
-			Object element = (Object) selected.next();
+			Object element = selected.next();
 			if (!first && urls.indexOf(element) == 0) {
 				first = true;
 			}
@@ -445,7 +460,7 @@ public class AntClasspathBlock {
 			container.setMessage(null);
 			container.setErrorMessage(null);
 		}
-		container.update();
+		updateContainer();
 	}
 	
 	private File validateAntHome(String path) {
@@ -454,9 +469,11 @@ public class AntClasspathBlock {
 			rootDir = new File(path, "lib"); //$NON-NLS-1$
 			if (!rootDir.exists()) {
 				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
+				validated= 3;
 				return null;
 			}
 		} else {
+			validated= 3;
 			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
 			return null;
 		}
@@ -491,7 +508,8 @@ public class AntClasspathBlock {
 			File file = new File(rootDir, names[i]);
 			if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
 				try {
-					IPath jarPath = new Path(file.getAbsolutePath());
+					String name= file.getAbsolutePath();
+					IPath jarPath = new Path(name);
 					URL url = new URL("file:" + jarPath.toOSString()); //$NON-NLS-1$
 					contentProvider.add(url);
 				} catch (MalformedURLException e) {
@@ -503,7 +521,7 @@ public class AntClasspathBlock {
 		if (url != null) {
 			contentProvider.add(url);
 		}
-		container.update();
+		updateContainer();
 	}
 	
 	public List getAntURLs() { 
@@ -525,6 +543,7 @@ public class AntClasspathBlock {
 	}
 	
 	public void setEnabled(boolean enable) {
+		validated= 0;
 		setTablesEnabled(enable);
 		antHomeButton.setEnabled(enable);
 		addFolderButtton.setEnabled(enable);
@@ -575,6 +594,7 @@ public class AntClasspathBlock {
 	}
 	
 	public boolean validateAntHome() {
+		validated++;
 		return validateAntHome(antHome.getText()) != null;
 	}
 	
@@ -584,5 +604,64 @@ public class AntClasspathBlock {
 	
 	public void setTablesEnabled(boolean tablesEnabled) {
 		this.tablesEnabled= tablesEnabled;
+	}
+	
+	public boolean validateToolsJAR() {
+		validated++;
+		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
+		if (check) {
+			List antURLs= getAntURLs();
+			boolean valid= JARPresent(antURLs, TOOLS);
+			if (!valid) {
+				List userURLs= getUserURLs();
+				if (!JARPresent(userURLs, TOOLS)) {
+					valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+			}
+			if (!valid) {
+				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.34")); //$NON-NLS-1$
+				validated= 3;
+			}
+			return valid;
+			}
+		return true;
+	}
+
+	public boolean validateXerces() {
+		boolean valid= true;
+		validated++;
+		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
+		if (check) {
+			List antURLs= getAntURLs();
+			boolean present= JARPresent(antURLs, XERCES);
+			if (present) {
+				List userURLs= getUserURLs();
+				if (!JARPresent(userURLs, XERCES)) {
+					valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), AntPreferencesMessages.getString("AntClasspathBlock.36"), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.37"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+			}
+			if (!valid) {
+				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.38")); //$NON-NLS-1$
+			}
+		}
+		return valid;
+	}
+	
+	private boolean JARPresent(List URLs, String[] suffixes) {
+		
+		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
+			URL url = (URL) iter.next();
+			for (int i = 0; i < suffixes.length; i++) {
+				String suffix = suffixes[i];
+				if (url.getFile().endsWith(suffix)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isValidated() {
+		return validated >= 3;
 	}
 }

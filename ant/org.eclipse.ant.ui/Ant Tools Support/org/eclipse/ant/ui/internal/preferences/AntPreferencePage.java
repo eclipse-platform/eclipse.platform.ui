@@ -14,6 +14,7 @@ package org.eclipse.ant.ui.internal.preferences;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -85,8 +86,12 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			}
 		});
 		
-		label= new Label(getFieldEditorParent(), SWT.NONE);
-		label.setFont(font);
+		new Label(getFieldEditorParent(), SWT.NONE);
+		
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent())); //$NON-NLS-1$
+		new Label(getFieldEditorParent(), SWT.NONE);
+				
 		createColorComposite();
 	}
 	

@@ -37,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 public final class AntUtil {
 	public static final String RUN_TARGETS_ATTRIBUTE = IAntUIConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
+	public static final char ANT_CLASSPATH_DELIMITER= '*';
 	
 	/**
 	 * No instances allowed
@@ -196,6 +197,15 @@ public final class AntUtil {
 		return (URL[])antURLs.toArray(custom);
 	}
 	
+	/**
+	 * Adds the ant URLs and user URLS to the provided lists.
+	 * If no custom classpath is set, no URLs are added to the lists.
+	 *
+	 * @param configuration launch configuration
+	 * @param list to add the Ant URLs to
+     * @param list to add the user URLs to
+	 *
+	 */
 	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) {
 		String classpathString= null;
 		try {
@@ -207,7 +217,7 @@ public final class AntUtil {
 		}
 		String antString= null;
 		String userString= null;
-		int delim= classpathString.indexOf('*');
+		int delim= classpathString.indexOf(ANT_CLASSPATH_DELIMITER);
 
 		if (delim == -1) {
 			antString= classpathString;

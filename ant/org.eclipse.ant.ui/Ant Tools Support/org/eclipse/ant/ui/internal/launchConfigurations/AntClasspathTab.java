@@ -145,10 +145,10 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		while (antUrlsItr.hasNext()) {
 			URL url = (URL) antUrlsItr.next();
 			urlString.append(url.getFile());
-			urlString.append(',');
+			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
 		if (userUrls.size() > 0) {
-			urlString.append('*');
+			urlString.append(AntUtil.ANT_CLASSPATH_DELIMITER);
 		}
 		Iterator userUrlsItr= userUrls.iterator();
 		while (userUrlsItr.hasNext()) {
@@ -184,12 +184,26 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (antClasspathBlock.isValidated()) {
+			return getErrorMessage() == null;
+		}
 		setErrorMessage(null);
 		setMessage(null);
+		boolean valid= true;
 		if (antClasspathBlock.isAntHomeEnabled()) {
-			return antClasspathBlock.validateAntHome();
-		} else {
+			valid= antClasspathBlock.validateAntHome(); 
+		}
+		if (valid){
+			valid= antClasspathBlock.validateToolsJAR();
+		}
+		if (valid) {
+			valid= antClasspathBlock.validateXerces();
+		}
+
+		if (valid) {
 			return super.isValid(launchConfig);
+		} else {
+			return valid;
 		}
 	}
 	
