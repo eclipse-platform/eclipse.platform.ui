@@ -172,16 +172,16 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			// We have an incoming change, addition, or deletion that we want to ignore
 			if (local.exists()) {
 				// We could have an incoming change or deletion
-				info = remote.getSyncInfo();
-				if (info.isDeleted()) {
-					// For a deletion, change the revision to an add
-					revision = ResourceSyncInfo.ADDED_REVISION;
+				if (remote == null) {
+					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, "dummy timestamp", CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
+					revision = info.getRevision();
 				} else {
+					info = remote.getSyncInfo();
 					// Otherwise change the revision to the remote revision
 					revision = info.getRevision();
+					// Use the local sync info for the other info
+					info = local.getSyncInfo();
 				}
-				// Use the local sync info for the other info
-				info = local.getSyncInfo();
 			} else {
 				// We have an incoming add, turn it around as an outgoing delete
 				info = remote.getSyncInfo();
