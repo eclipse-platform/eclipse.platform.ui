@@ -42,33 +42,7 @@ public class PlatformLogReader {
 	private static final int STACK = 16;
 	private static final int UNKNOWN = 32;
 
-/**
- * Given a stack trace without carriage returns, returns a pretty-printed stack.
- */
-protected String formatStack(String stack) {
-	StringWriter sWriter = new StringWriter();
-	PrintWriter writer = new PrintWriter(sWriter);
-	StringTokenizer tokenizer = new StringTokenizer(stack);
-	//first entry has no indentation
-	if (tokenizer.hasMoreTokens())
-		writer.print(tokenizer.nextToken());
-	while (tokenizer.hasMoreTokens()) {
-		String next = tokenizer.nextToken();
-		if (next != null && next.length() > 0) {
-			if (next.equals("at")) {
-				writer.println();
-				writer.print('\t');
-				writer.print(next);
-			} else {
-				writer.print(' ');
-				writer.print(next);
-			}
-		}
-	}
-	writer.flush();
-	writer.close();
-	return sWriter.toString();
-}
+
 protected void log(Exception ex) {
 	String msg = Policy.bind("meta.exceptionParsingLog", ex.getMessage());
 	list.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
@@ -82,7 +56,7 @@ protected Throwable readException(String message) throws IOException {
 	// nested inside of CoreExceptions in the log.
 	int hasStatus = Integer.parseInt(tokenizer.nextToken());
 	currentLine = reader.readLine();
-	return new FakeException(null, formatStack(readText()));
+	return new FakeException(null, readText());
 }
 /**
  * Reads the given log file and returns the contained status objects. 
@@ -258,9 +232,11 @@ protected String readText() throws IOException {
 			done = true;
 			continue;
 		}
-		if (getLineType() == UNKNOWN)
+		if (getLineType() == UNKNOWN) {
+			// preserves line terminators between lines
+			buffer.append('\n');			
 			buffer.append(currentLine);
-		else
+		} else
 			done = true;
 	}
 	return buffer.toString();

@@ -73,7 +73,47 @@ protected String encodeStackTrace(Throwable t) {
 	pWriter.println();
 	t.printStackTrace(pWriter);
 	pWriter.flush();
-	return sWriter.toString();
+	return canonicalizeStackTrace(sWriter.toString());
+}
+/**
+ * Returns the given stack trace in a canonical format in order to make stack
+ * trace comparisons easier. The canonical format is: each line is ended by a
+ * <code>'\n'</code> character, each line (except the first one) starts with a
+ * <code>'\t'</code> character, there are no other occurrences of space
+ * characters other than ' ', and there are no consecutive occurrences of new-
+ * line or space characters.
+ */
+protected String canonicalizeStackTrace(String stackTrace) {
+	final char NEW_LINE = '\n';
+	final char TAB = '\t';
+	final char SPACE = ' ';
+	final String LINE_SEPARATORS = "\r\n\f";
+	final String SPACES = "\t ";
+	StringBuffer sb = new StringBuffer(stackTrace.trim());
+	sb.append(NEW_LINE);
+	char lastChar = 0;
+	for (int i = 0; i < sb.length();) {
+		// only \n is used as line separator, with no consecutive occurrences
+		if (LINE_SEPARATORS.indexOf(sb.charAt(i)) != -1)
+			if (LINE_SEPARATORS.indexOf(lastChar) != -1) {
+				sb.deleteCharAt(i);
+				continue;
+			} else
+				sb.setCharAt(i, NEW_LINE);
+		// each line (except the first one) starts with a tab
+		else if (lastChar == NEW_LINE)
+			sb.insert(i, TAB);
+		// only ' ' is used as space, with no consecutive occurrences				
+		else if (SPACES.indexOf(sb.charAt(i)) != -1)
+			if (SPACES.indexOf(lastChar) != -1) {
+				sb.deleteCharAt(i);
+				continue;
+			} else
+				sb.setCharAt(i, SPACE);
+		lastChar = sb.charAt(i);
+		i++;
+	}
+	return sb.toString();
 }
 protected IStatus[] getInterestingMultiStatuses() {
 	IStatus[] interesting = getInterestingStatuses();
