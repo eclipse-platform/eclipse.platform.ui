@@ -15,51 +15,19 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -521,15 +489,15 @@ public class PreferenceDialog
 					selection[0].setExpanded(!selection[0].getExpanded());
 			}
 		});
-		
+
 		//Register help listener on the tree to use context sensitive help
 		tree.addHelpListener(new HelpListener() {
-			 public void helpRequested(HelpEvent event) {
-				 // call perform help on the current page
-				 if (currentPage != null) {
-					 currentPage.performHelp();
-				 }
-			 }
+			public void helpRequested(HelpEvent event) {
+				// call perform help on the current page
+				if (currentPage != null) {
+					currentPage.performHelp();
+				}
+			}
 		});
 
 		IPreferenceNode node = preferenceManager.getRoot();
@@ -1013,7 +981,18 @@ public class PreferenceDialog
 		// Ensure that the page control has been created
 		// (this allows lazy page control creation)
 		if (currentPage.getControl() == null) {
-			currentPage.createControl(pageContainer);
+			final boolean[] failed = { false };
+			Platform.run(new ISafeRunnable() {
+				public void run() {
+					currentPage.createControl(pageContainer);
+				}
+				public void handleException(Throwable e) {
+					failed[0] = true;
+				}
+			});
+			if (failed[0])
+				return false;
+
 			// the page is responsible for ensuring the created control is accessable
 			// via getControl.
 			Assert.isNotNull(currentPage.getControl());
@@ -1021,7 +1000,21 @@ public class PreferenceDialog
 
 		// Force calculation of the page's description label because
 		// label can be wrapped.
-		Point contentSize = currentPage.computeSize();
+		final Point[] size = new Point[1];
+		final Point failed = new Point(-1, -1);
+
+		Platform.run(new ISafeRunnable() {
+			public void run() {
+				size[0] = currentPage.computeSize();
+			}
+			public void handleException(Throwable e) {
+				size[0] = failed;
+			}
+		});
+		if (size[0].equals(failed))
+			return false;
+
+		Point contentSize = size[0];
 		// Do we need resizing. Computation not needed if the
 		// first page is inserted since computing the dialog's
 		// size is done by calling dialog.open().
@@ -1073,10 +1066,8 @@ public class PreferenceDialog
 	 * Shows the "Page Flipping abort" dialog.
 	 */
 	private void showPageFlippingAbortDialog() {
-		MessageDialog.openError(
-			getShell(), 
-			JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
-			JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
+		MessageDialog.openError(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
+		JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
 	/**
 	 * Updates this dialog's controls to reflect the current page.
