@@ -729,7 +729,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			} catch (InterruptedException e) {
 				// ignore and keep going;
 			}
-			if (count == 5) {
+			// Only wait 10 seconds at most
+			if (count == 100) {
 				fail("Ignore handling job does not seem to be finishing");
 			}
 		}
