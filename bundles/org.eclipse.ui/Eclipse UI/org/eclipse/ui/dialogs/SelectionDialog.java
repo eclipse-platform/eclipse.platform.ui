@@ -141,17 +141,25 @@ public void setMessage(String message) {
  *   pressed
  */
 protected void setResult(List newResult) {
-	result = new Object[newResult.size()];
-	newResult.toArray(result);
+	if (newResult == null) {
+		result = null;
+	} else {
+		result = new Object[newResult.size()];
+		newResult.toArray(result);
+	}
 }
 
 /**
  * Set the selections made by the user, or <code>null</code> if
  * the selection was canceled.
+ * <p>
+ * The selections may accessed using <code>getResult</code>.
+ * </p>
  *
  * @param Object[] newResult - the new values
+ * @since 2.0
  */
-protected void setResult(Object[] newResult) {
+protected void setSelectionResult(Object[] newResult) {
 	result = newResult;
 }
 
