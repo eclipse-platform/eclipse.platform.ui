@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2000, 2002 IBM Corp. and others..
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ */
+package org.eclipse.jface.text.information;
+
+ 
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+
+
+/**
+ * Extension interface for <code>IInformationProvider</code> to provide
+ * the element for a given subject.
+ *
+ * @see org.eclipse.jface.text.information.IInformationProvider
+ * @since 2.1
+ */
+public interface IInformationProviderExtension {
+	
+	/**
+	 * Returns the element for the given subject or <code>null</code> if
+	 * no element is available.
+	 * <p>
+	 * Implementers should ignore the text returned by <code>IInformationProvider.getInformation()</code>.
+	 * </p>
+	 * 
+	 * @param textViewer the viewer in whose document the subject is contained
+	 * @param subject the text region constituting the information subject
+	 * @return the element for the subject
+	 * 
+	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
+	 * @see org.eclipse.jface.text.ITextViewer
+	 */
+	Object getElement(ITextViewer textViewer, IRegion subject);
+}
