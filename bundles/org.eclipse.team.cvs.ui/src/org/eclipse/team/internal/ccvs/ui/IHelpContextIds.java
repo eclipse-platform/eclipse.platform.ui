@@ -68,7 +68,6 @@ public interface IHelpContextIds {
 	public static final String MERGE_START_PAGE = PREFIX + "merge_start_page_context"; //$NON-NLS-1$
 	public static final String MERGE_END_PAGE = PREFIX + "merge_end_page_context"; //$NON-NLS-1$
 	public static final String CHECKOUT_INTO_RESOURCE_SELECTION_PAGE = PREFIX + "checkout_into_resource_selection_page_context"; //$NON-NLS-1$
-	public static final String CHECKOUT_INTO_CONFIGURATION_PAGE = PREFIX + "checkout_into_configuration_page_context"; //$NON-NLS-1$
 	public static final String RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE = PREFIX + "restore_from_repository_file_selection_page_context"; //$NON-NLS-1$
 	public static final String WORKING_SET_FOLDER_SELECTION_PAGE = PREFIX + "working_set_folder_selection_page_context"; //$NON-NLS-1$
 	public static final String REFRESH_REMOTE_PROJECT_SELECTION_PAGE = PREFIX + "refresh_remote_project_selection_page_context"; //$NON-NLS-1$
@@ -117,6 +116,7 @@ public interface IHelpContextIds {
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action_context"; //$NON-NLS-1$
 	public static final String DESELECT_WORKING_SET_ACTION = PREFIX + "deselect_working_set_action_context"; //$NON-NLS-1$
 	public static final String EDIT_WORKING_SET_ACTION = PREFIX + "edit_working_set_action_context"; //$NON-NLS-1$
+	public static final String REMOVE_REPOSITORY_LOCATION_ACTION = PREFIX + "remove_root_action_context"; //$NON-NLS-1$
 
 	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$

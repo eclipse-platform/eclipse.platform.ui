@@ -157,6 +157,7 @@ public class RepositoriesView extends RemoteViewPart {
 		});
 		removeRootAction = new RemoveRootAction(viewer.getControl().getShell());
 		removeRootAction.selectionChanged((IStructuredSelection)null);
+		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
 		super.contributeActions();
