@@ -275,14 +275,6 @@
                id="org.eclipse.team.ccvs.ui.commit">
          </action>
          <action
-               label="%SynchronizeOutgoing.label"
-               tooltip="%SynchronizeOutgoing.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.SyncOutgoingAction"
-               menubarPath="team.main/group1"
-               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_outgoing_action_context"
-               id="org.eclipse.team.ccvs.ui.syncOutgoing">
-         </action>
-         <action
                label="%Synchronize.label"
                tooltip="%Synchronize.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
