@@ -294,6 +294,7 @@ public abstract class WorkbenchAdviser {
 	 * 
 	 * @param configurer an object for configuring the particular workbench
 	 * window just restored
+     * @issue document checked exception
 	 */
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
 		// do nothing
