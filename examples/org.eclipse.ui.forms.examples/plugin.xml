@@ -24,6 +24,7 @@
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.help.appserver"/>
    </requires>
 
 
@@ -108,7 +109,7 @@
             id="org.eclipse.ui.forms.examples.helpView"/>
       <view
             allowMultiple="false"
-            class="org.eclipse.ui.forms.examples.views.HelpView"
+            class="org.eclipse.help.ui.internal.views.HelpView"
             category="org.eclipse.ui.forms.examples"
             name="Help"
             id="org.eclipse.ui.forms.examples.helpView"/>

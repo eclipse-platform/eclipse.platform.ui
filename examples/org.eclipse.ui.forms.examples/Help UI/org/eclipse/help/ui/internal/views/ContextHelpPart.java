@@ -1,20 +1,18 @@
 /*
- * Created on Dec 11, 2004
+ * Created on Dec 13, 2004
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.ui.forms.examples.wizards;
+package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
-
 
 /**
  * @author dejan
@@ -22,64 +20,73 @@ import org.eclipse.ui.forms.widgets.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class ContextHelpPage implements IHelpContentPage {
-	public static final String ID = "context-help";
+public class ContextHelpPart extends SectionPart implements IHelpPart {
+	private ReusableHelpPart parent;
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$	
-	private ContentSectionPart sectionPart;
 	private FormText text;
-	private String defaultText;
-	
-	public ContextHelpPage() {
-		defaultText="Click anywhere in the workbench to see a description of the selected part.";				
-	}
-
-	public void init(ContentSectionPart sectionPart, IMemento memento) {
-        this.sectionPart = sectionPart;
-	}
-	
-	public void saveState(IMemento memento) {
-	}
-
-	public void addToActionBars(IActionBars bars) {
-	}
-	public String getId() {
-		return ID;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.examples.views.IHelpViewPage#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	private String defaultText="";
+	private String id;
+	/**
+	 * @param parent
+	 * @param toolkit
+	 * @param style
 	 */
-	public void createControl(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createFormText(parent, true);
+	public ContextHelpPart(Composite parent, FormToolkit toolkit) {
+		super(parent, toolkit, Section.EXPANDED|Section.TWISTIE|Section.TITLE_BAR);
+		Section section = getSection();
+		section.setText("About");
+		text = toolkit.createFormText(section, true);
+		section.setClient(text);
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
 		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
 				.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				sectionPart.openLink(e.getHref());
+				doOpenLink(e.getHref());
 			}
 		});
 		text.setText(defaultText, false, false);
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.examples.views.IHelpViewPage#dispose()
-	 */
-	public void dispose() {
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.examples.views.IHelpViewPage#getControl()
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
 	 */
 	public Control getControl() {
-		return text;
+		return getSection();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.examples.views.IHelpViewPage#setFocus()
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void setFocus() {
-		if (text!=null)
-			text.setFocus();
+	public void init(ReusableHelpPart parent, String id) {
+		this.parent = parent;
+		this.id = id;
 	}
-	
+	public String getId() {
+		return id;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		getSection().setVisible(visible);
+	}
+	/**
+	 * @return Returns the defaultText.
+	 */
+	public String getDefaultText() {
+		return defaultText;
+	}
+	/**
+	 * @param defaultText The defaultText to set.
+	 */
+	public void setDefaultText(String defaultText) {
+		this.defaultText = defaultText;
+		if (text!=null)
+			text.setText(defaultText, false, false);
+	}
+	private void doOpenLink(Object href) {
+		parent.showURL((String)href);
+	}
 	public void handleActivation(Control page) {
 		if (text.isDisposed())
 			return;
@@ -88,8 +95,8 @@ public class ContextHelpPage implements IHelpContentPage {
 		String helpText = createContextHelp(page);
 		text.setText(helpText != null ? helpText : defaultText, helpText != null, //$NON-NLS-1$
 						false);
-		// form.getBody().layout();
-		sectionPart.reflow();
+		getSection().layout();
+		parent.reflow();
 	}
 
 	private String createContextHelp(Control page) {
@@ -166,5 +173,12 @@ public class ContextHelpPage implements IHelpContentPage {
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		return decodedString;
-	}	
+	}		
+	public boolean setFormInput(Object input) {
+		if (input instanceof Control) {
+			handleActivation((Control)input);
+			return true;
+		}
+		return false;
+	}
 }

@@ -6,6 +6,7 @@
  */
 package org.eclipse.ui.forms.examples.wizards;
 
+import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.*;
