@@ -294,6 +294,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				manager.add(sub);
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+				sub.add(addSiteAction);
 				sub.add(newFolderAction);
 			}
 		};
