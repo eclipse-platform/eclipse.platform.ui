@@ -71,8 +71,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchListener2;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
@@ -144,6 +146,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public static final int ADDED = 0;
 	public static final int REMOVED= 1;
 	public static final int CHANGED= 2;
+	public static final int TERMINATE= 3;
 	
 	/**
 	 * The collection of native environment variables on the user's system. Cached
@@ -1315,6 +1318,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						fListener.launchChanged(fLaunch);
 					}
 					break;
+				case TERMINATE:
+					if (fListener instanceof ILaunchListener2 && isRegistered(fLaunch)) {
+						((ILaunchListener2)fListener).launchTerminated(fLaunch);
+					}
+					break;
 			}			
 		}
 
@@ -1373,6 +1381,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					fListener.launchesRemoved(fNotifierLaunches);
 					break;
 				case CHANGED:
+				case TERMINATE:
 					if (fRegistered == null) {
 						List registered = null;
 						for (int j = 0; j < fNotifierLaunches.length; j++) {
@@ -1396,7 +1405,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						}
 					}
 					if (fRegistered.length > 0) {
-						fListener.launchesChanged(fRegistered);
+						if (fType == CHANGED) {
+							fListener.launchesChanged(fRegistered);
+						}
+						if (fType == TERMINATE && fListener instanceof ILaunchesListener2) {
+							((ILaunchesListener2)fListener).launchesTerminated(fRegistered);
+						}
 					}
 					break;
 			}

@@ -44,7 +44,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * @see ILaunchManager
  */
 
-public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILaunchListener, ILaunchConfigurationListener {
+public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILaunchListener, ILaunchConfigurationListener, IDebugEventSetListener {
 	
 	/**
 	 * The debug targets associated with this
@@ -104,6 +104,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		fSuppressChange = false;
 		getLaunchManager().addLaunchListener(this);
 		getLaunchManager().addLaunchConfigurationListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}	
 	
 	/**
@@ -402,6 +403,18 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	}
 
 	/**
+	 * Notifies listeners that this launch has terminated.
+	 * Has no effect of this launch has not yet been
+	 * properly created/initialized.
+	 */
+	protected void fireTerminate() {
+		if (!fSuppressChange) {
+			((LaunchManager)getLaunchManager()).fireUpdate(this, LaunchManager.TERMINATE);
+			((LaunchManager)getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.TERMINATE);
+		}
+	}
+	
+	/**
 	 * @see ILaunch#hasChildren()
 	 */
 	public boolean hasChildren() {
@@ -444,6 +457,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		if (this.equals(launch)) {
 			getLaunchManager().removeLaunchListener(this);
 			getLaunchManager().removeLaunchConfigurationListener(this);
+			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 	}
 
@@ -501,6 +515,29 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			if (getLaunchManager().getMovedTo(configuration) == null) {
 				setLaunchConfiguration(null);
 				fireChanged();
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				Object object = event.getSource();
+				ILaunch launch = null;
+				if (object instanceof IProcess) {
+					launch = ((IProcess)object).getLaunch();
+				} else if (object instanceof IDebugTarget) {
+					launch = ((IDebugTarget)object).getLaunch();
+				}
+				if (this.equals(launch)) {
+					if (isTerminated()) {
+						fireTerminate();
+					}
+				}
 			}
 		}
 	}
