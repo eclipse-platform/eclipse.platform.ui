@@ -389,8 +389,8 @@
 			id="ObjectContributionTest.testObjectStateContentType"
 			name="Tests top-level element recognition" 	
 			base-type="org.eclipse.core.runtime.xml"
-			priority="high">
-			<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:project"/>
+			priority="high"
+			describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:project">
 		</content-type>
    </extension>
    		
