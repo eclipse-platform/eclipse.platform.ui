@@ -49,8 +49,8 @@ public class FileState extends PlatformObject implements IFileState {
 		InputStream contents = new BufferedInputStream(getContents());
 		boolean failed = false;
 		try {
-			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.CHARSET);
-			return (description == null) ? null : description.getCharset();
+			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
+			return (description == null) ? null : (String) description.getProperty(IContentDescription.CHARSET);
 		} catch (IOException e) {
 			failed = true;
 			String message = Policy.bind("history.errorCharset", getFullPath().toString()); //$NON-NLS-1$		

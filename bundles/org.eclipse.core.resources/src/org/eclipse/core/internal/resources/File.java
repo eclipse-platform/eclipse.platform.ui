@@ -220,8 +220,8 @@ public class File extends Resource implements IFile {
 		InputStream contents = new BufferedInputStream(getContents());
 		boolean failed = false;
 		try {
-			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.CHARSET);
-			return (description == null || description.getCharset() == null) ? getParent().getDefaultCharset() : description.getCharset();
+			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
+			return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
 		} catch (IOException e) {
 			failed = true;
 			String message = Policy.bind("resources.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
