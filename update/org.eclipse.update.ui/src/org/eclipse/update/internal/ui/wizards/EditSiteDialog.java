@@ -25,6 +25,11 @@ public class EditSiteDialog extends NewUpdateSiteDialog {
 		this.bookmark = bookmark;
 	}
 
+	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, boolean enableOK) {
+		super(parentShell,enableOK);
+		this.bookmark = bookmark;
+	}
+
 	protected void initializeFields() {
 		name.setText(bookmark.getName());
 		url.setText(bookmark.getURL().toString());

@@ -148,7 +148,12 @@ public class LocalSiteSelector {
 	static SiteBookmark createDirSite(File file) {
 		try {
 			URL url = file.toURL();
-			String siteName = file.getAbsolutePath();
+			String parent = file.getParent();
+			if(parent == null)
+				parent = "";
+			else
+				parent = new File(parent).getName();
+			String siteName = parent + "/" + file.getName();
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setLocal(true);
 			return site;

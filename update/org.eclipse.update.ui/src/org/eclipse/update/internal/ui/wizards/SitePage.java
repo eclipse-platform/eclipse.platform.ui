@@ -357,24 +357,28 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleAddLocal() {
 		SiteBookmark siteBookmark = LocalSiteSelector.getLocaLSite(getShell());
 		if (siteBookmark != null) {
-			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-            siteBookmark.setSelected(true);
-			model.addBookmark(siteBookmark);
-			model.saveBookmarks();
-			updateSearchRequest();
+			if (handleNameEdit(siteBookmark) == EditSiteDialog.OK) {
+				siteBookmark.setSelected(true);
+				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+				model.addBookmark(siteBookmark);
+				model.saveBookmarks();
+				updateSearchRequest();
+			}
 		}
 		return;
 	}
 
 	private void handleAddLocalZipped() {
-		SiteBookmark siteBookmark =
-			LocalSiteSelector.getLocaLZippedSite(getShell());
+		SiteBookmark siteBookmark = LocalSiteSelector
+				.getLocaLZippedSite(getShell());
 		if (siteBookmark != null) {
-			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-            siteBookmark.setSelected(true);
-			model.addBookmark(siteBookmark);
-			model.saveBookmarks();
-			updateSearchRequest();
+			if (handleNameEdit(siteBookmark) == EditSiteDialog.OK) {
+				siteBookmark.setSelected(true);
+				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+				model.addBookmark(siteBookmark);
+				model.saveBookmarks();
+				updateSearchRequest();
+			}
 		}
 		return;
 	}
@@ -449,6 +453,17 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		SitesImportExport.exportBookmarks(getShell(), getAllSiteBookmarks());
 	}
 	
+	private int handleNameEdit(SiteBookmark bookmark) {
+		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, true);
+		dialog.create();
+		String title = bookmark.isLocal() ? UpdateUI
+				.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
+		// //$NON-NLS-2$
+		dialog.getShell().setText(title);
+		int rc = dialog.open();
+		return rc;
+	}
+
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		if (bookmark.isUnavailable()) {
 			bookmark.setSelected(false);

@@ -27,11 +27,18 @@ public class NewUpdateSiteDialog extends Dialog {
 	protected Text name;
 	protected Text url;
 	private Button okButton;
+	private boolean enableOK = false;
 	/**
 	 * @param parentShell
 	 */
 	public NewUpdateSiteDialog(Shell parentShell) {
 		super(parentShell);
+		enableOK = false;
+	}
+	
+	public NewUpdateSiteDialog(Shell parentShell, boolean enableOkButtons) {
+		super(parentShell);
+		enableOK = enableOkButtons;
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -46,7 +53,7 @@ public class NewUpdateSiteDialog extends Dialog {
 			IDialogConstants.CANCEL_LABEL,
 			false);
 		
-		okButton.setEnabled(false);
+		okButton.setEnabled(enableOK);
 		
 	}
 	
