@@ -133,5 +133,11 @@
             id="org.eclipse.help.base.custombrowser">
       </browser>
    </extension>
+   <extension
+         id="org.eclipse.help.base.preferences"
+         name="%preferences"
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.help.internal.base.HelpBasePreferenceInitializer"/>
+   </extension>
 
 </plugin>

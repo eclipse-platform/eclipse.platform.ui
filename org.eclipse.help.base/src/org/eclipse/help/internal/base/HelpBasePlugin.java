@@ -128,23 +128,6 @@ public class HelpBasePlugin extends Plugin {
 	}
 
 	/**
-	 * Initializes the default preferences settings for this plug-in.
-	 */
-	protected void initializeDefaultPluginPreferences() {
-		Preferences prefs = getPluginPreferences();
-
-		String os = System.getProperty("os.name").toLowerCase();
-		boolean isWindows = os.indexOf("windows") != -1;
-
-		if (isWindows)
-			prefs.setDefault(
-				"custom_browser_path",
-				"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1");
-		else
-			prefs.setDefault("custom_browser_path", "mozilla %1");
-	}
-
-	/**
 	 * Used to obtain directory where configuration
 	 * (like help index) can be stored
 	 */
