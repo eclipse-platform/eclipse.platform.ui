@@ -54,7 +54,7 @@
          <attribute name="factoryclass" type="string">
             <annotation>
                <documentation>
-                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;factoryclass&lt;/samp&gt; element may be provided instead.
+                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.IBrowserFactory&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;factoryclass&lt;/samp&gt; element may be provided instead.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.ui.IBrowserFactory"/>

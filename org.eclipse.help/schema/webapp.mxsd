@@ -82,7 +82,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         There is no API to implement. The plugin must be structured like a standard web application.
+         There is no API to implement. The plugin must be structured as a standard web application.
       </documentation>
    </annotation>
 
