@@ -46,17 +46,18 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
  */
-public class ProgressManager extends JobChangeAdapter implements IProgressProvider, IProgressManager {
+public class ProgressManager extends JobChangeAdapter implements IProgressProvider, IProgressService {
 
 	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
@@ -799,6 +800,32 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 		if (interrupt[0] != null)
 			throw interrupt[0];
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#runInPart(org.eclipse.core.runtime.jobs.Job, org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void runInPart(Job job, IWorkbenchPart part) {
+		
+		final Job finalJob = job;
+		final IWorkbenchPart finalPart = part;
+		
+		job.addJobChangeListener(new JobChangeAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				finalPart.getSite().progressEnd(finalJob);
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void aboutToRun(IJobChangeEvent event) {
+				finalPart.getSite().progressStart(finalJob);
+			}
+		});
 
 	}
 

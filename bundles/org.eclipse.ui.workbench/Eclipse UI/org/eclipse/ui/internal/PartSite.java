@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -28,10 +29,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -297,4 +299,26 @@ public class PartSite implements IWorkbenchPartSite {
 	protected String getInitialScopeId() {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void progressEnd(Job job) {
+		getPane().progressEnd(job);
+		
+		IWorkbenchPart part = getPart();
+		if(part instanceof WorkbenchPart)
+			((WorkbenchPart) part).progressEnd(job);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void progressStart(Job job) {
+		getPane().progressStart(job);
+		
+		IWorkbenchPart part = getPart();
+		if(part instanceof WorkbenchPart)
+			((WorkbenchPart) part).progressStart(job);
+	}
+
 }

@@ -19,7 +19,7 @@ import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.roles.IRoleManager;
 
 /**
@@ -353,7 +353,7 @@ public IObjectActivityManager getObjectActivityManager(String id, boolean create
  * <b>NOTE: This is experimental API and subject to change at any
  * time</b>.
  */
-public IProgressManager getProgressManager();
+public IProgressService getProgressManager();
 
 /**
  * Returns the activity manager for the workbench. 

@@ -110,7 +110,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.RoleManagerFactory;
 
@@ -1774,7 +1774,7 @@ public final class Workbench implements IWorkbench {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#getProgressManager()
 	 */
-	public IProgressManager getProgressManager() {
+	public IProgressService getProgressManager() {
 		return ProgressManager.getInstance();
 	}
 

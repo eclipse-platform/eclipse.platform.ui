@@ -13,11 +13,21 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PopupMenuExtender;
 
 /**
@@ -265,4 +275,17 @@ public class MultiPageEditorSite implements IEditorSite {
 			selectionProvider.addSelectionChangedListener(getSelectionChangedListener());
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd()
+	 */
+	public void progressEnd(Job job) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart()
+	 */
+	public void progressStart(Job job) {
+
+	}
+
 }
