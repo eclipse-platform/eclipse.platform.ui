@@ -106,7 +106,9 @@ public class Main {
 	private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
 	private static final String ECLIPSE_PROPERTIES = "eclipse.properties"; //$NON-NLS-1$
 	private static final String FILE_SCHEME = "file:"; //$NON-NLS-1$	
-
+    protected static final String REFERENCE_SCHEME = "reference:";
+    protected static final String JAR_SCHEME = "jar:";
+    
 	private static final String DEFAULT_JRE_REQUIRED = "1.4.1"; //$NON-NLS-1$
 	
 	// constants: configuration file location
@@ -128,11 +130,13 @@ public class Main {
 	private static final String PROP_BASE_CONFIG_AREA = "osgi.baseConfiguration.area"; //$NON-NLS-1$
 	private static final String PROP_SHARED_CONFIG_AREA = "osgi.sharedConfiguration.area"; //$NON-NLS-1$
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded"; //$NON-NLS-1$
-	private static final String PROP_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
+	protected static final String PROP_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String PROP_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
 	private static final String PROP_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_EXTENSIONS = "osgi.framework.extensions"; //$NON-NLS-1$
+	private static final String PROP_FRAMEWORK_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
+    private static final String PROP_FRAMEWORK_SHAPE = "osgi.framework.shape"; //$NON-NLS-1$
 	private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
 	private static final String PROP_REQUIRED_JAVA_VERSION = "osgi.requiredJavaVersion"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
@@ -253,11 +257,14 @@ public class Main {
 		// the location of the boot plugin we are going to use
 		handleSplash(bootPath);
 
-		// load the BootLoader and startup the platform
+		invokeFramework(passThruArgs, bootPath);
+	}
+
+    private void invokeFramework(String[] passThruArgs, URL[] bootPath) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, Error, Exception, InvocationTargetException {
 		URLClassLoader loader = new StartupClassLoader(bootPath, null);
-		Class clazz = loader.loadClass(STARTER);
-		Method method = clazz.getDeclaredMethod("run", new Class[] {String[].class, Runnable.class}); //$NON-NLS-1$
-		try {
+        Class clazz = loader.loadClass(STARTER);
+        Method method = clazz.getDeclaredMethod("run", new Class[] {String[].class, Runnable.class}); //$NON-NLS-1$
+        try {
 			method.invoke(clazz, new Object[] {passThruArgs, endSplashHandler});
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof Error)
@@ -268,7 +275,7 @@ public class Main {
 				//could be a subclass of Throwable!
 				throw e;
 		}
-	}
+    }
 
 	/**
 	 * Checks whether the given available version is greater or equal to the 
@@ -307,7 +314,7 @@ public class Main {
 	 * NOTE: due to class visibility there is a copy of this method
 	 *       in InternalBootLoader
 	 */
-	private String decode(String urlString) {
+	protected String decode(String urlString) {
 		//try to use Java 1.4 method if available
 		try {
 			Class clazz = URLDecoder.class;
@@ -364,7 +371,7 @@ public class Main {
 	 * @return the array of string tokens
 	 * @param prop the initial comma-separated string
 	 */
-	private String[] getArrayFromList(String prop) {
+	protected String[] getArrayFromList(String prop) {
 		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
 			return new String[0];
 		Vector list = new Vector();
@@ -394,6 +401,27 @@ public class Main {
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
+    URL constructURL(URL url, String name) {
+        //Recognize the following URLs
+        //url: file:foo/dir/
+        //url: file:foo/file.jar
+        
+        String externalForm = url.toExternalForm();
+        if (externalForm.endsWith(".jar")) {
+            try {
+                return new URL(JAR_SCHEME + url + "!/" + name);
+            } catch (MalformedURLException e) {
+                //Ignore
+            }
+        }
+        
+        try {
+            return new URL(url, name);
+        } catch (MalformedURLException e) {
+            //Ignore
+            return null;
+        }
+    }
 	private void readFrameworkExtensions(URL base, ArrayList result) throws IOException {
 		String[] extensions = getArrayFromList(System.getProperties().getProperty(PROP_EXTENSIONS));
 		String parent = new File(base.getFile()).getParent().toString();
@@ -415,8 +443,8 @@ public class Main {
 			} else
 				extensionURL = new URL(installLocation.getProtocol(), installLocation.getHost(), installLocation.getPort(), path);
 
-			//Load the eclipse.properties of the extension, merge its content, and in case of dev mode add the bin entries
-			Properties extensionProperties = loadProperties(new URL(extensionURL, ECLIPSE_PROPERTIES));
+			//Load a property file of the extension, merge its content, and in case of dev mode add the bin entries
+			Properties extensionProperties = loadProperties(constructURL(extensionURL, ECLIPSE_PROPERTIES));
 			String extensionPath = extensionProperties.getProperty(PROP_CLASSPATH);
 			if (extensionPath != null) {
 				if (inDevelopmentMode) 
@@ -424,7 +452,7 @@ public class Main {
 				String[] entries = getArrayFromList(extensionPath);
 				String qualifiedPath = ""; //$NON-NLS-1$
 				for (int j = 0; j < entries.length; j++) 
-					qualifiedPath += ", file:" + path + entries[j]; //$NON-NLS-1$
+					qualifiedPath += ", " + FILE_SCHEME + path + entries[j]; //$NON-NLS-1$
 				extensionProperties.put(PROP_CLASSPATH, qualifiedPath);
 			}
 			mergeProperties(System.getProperties(), extensionProperties);
@@ -435,32 +463,52 @@ public class Main {
 	private void addBaseJars(URL base, ArrayList result) throws IOException {
 		String baseJarList = System.getProperty(PROP_CLASSPATH);
 		if (baseJarList == null) {
-			URL url = new URL(base, ECLIPSE_PROPERTIES);
-			if (debug)
-				System.out.println("Loading framework classpath from:\n    " + url.toExternalForm()); //$NON-NLS-1$
-			mergeProperties(System.getProperties(), loadProperties(url));
+			URL url = constructURL(base, ECLIPSE_PROPERTIES);
+            try {
+                mergeProperties(System.getProperties(), loadProperties(url));
+            } catch(IOException e) {
+                //Ignore the exception since the property file is not required 
+                if (debug)
+                    System.out.println("File " + url.toExternalForm() + " not found."); //$NON-NLS-1$  //$NON-NLS-2$
+            }
 			readFrameworkExtensions(base, result);
 			baseJarList = System.getProperties().getProperty(PROP_CLASSPATH);
-			if (baseJarList == null)
-				throw new IOException("Unable to initialize " + PROP_CLASSPATH); //$NON-NLS-1$
 		}
+        
+        File fwkFile = new File(base.getFile());
+        boolean fwkIsDirectory = fwkFile.isDirectory();
+        //We found where the fwk is, remember it and its shape
+        if (fwkIsDirectory) {
+            System.getProperties().setProperty(PROP_FRAMEWORK_SHAPE, "folder");//$NON-NLS-1$
+        } else {
+            System.getProperties().setProperty(PROP_FRAMEWORK_SHAPE, "jar");//$NON-NLS-1$
+        }
+        System.getProperties().setProperty(PROP_FRAMEWORK_SYSPATH, new File(base.getFile()).getParentFile().getAbsolutePath());
+        //TODO Here we don't lower case the first letter like it is done in EclipseStarter
+        
 		String[] baseJars = getArrayFromList(baseJarList);
+        if (baseJars.length == 0) {
+            if (!inDevelopmentMode && new File(base.getFile()).isDirectory())
+                throw new IOException("Unable to initialize " + PROP_CLASSPATH); //$NON-NLS-1$
+            addEntry(base, result);
+            return;
+        }
 		for (int i = 0; i < baseJars.length; i++) {
-			String string = baseJars[i];
-			try {
-				// if the string is a file: URL then *carefully* construct the URL.  Otherwise
-				// just try to build a URL. In either case, if we fail, use string as something to tack
-				// on the end of the base.
-				URL url = null;
-				if (string.startsWith("file:")) //$NON-NLS-1$
-					url = new File(string.substring(5)).toURL();
-				else
-					url = new URL(string);
-				addEntry(url, result);
-			} catch (MalformedURLException e) {
-				addEntry(new URL(base, string), result);
-			}
-		}
+            String string = baseJars[i];
+            try {
+                // if the string is a file: URL then *carefully* construct the
+                // URL. Otherwisejust try to build a URL. In either case, if we fail, use
+                // string as something to tack on the end of the base.
+                URL url = null;
+                if (string.startsWith(FILE_SCHEME)) //$NON-NLS-1$
+                    url = new File(string.substring(5)).toURL();
+                else
+                    url = new URL(string);
+                addEntry(url, result);
+            } catch (MalformedURLException e) {
+                addEntry(new URL(base, string), result);
+            }
+        }
 	}
 
 	private void addEntry(URL url, List result) {
@@ -495,7 +543,7 @@ public class Main {
 	 * @param base the base location
 	 * @exception MalformedURLException if a problem occurs computing the class path
 	 */
-	private URL[] getBootPath(String base) throws IOException {
+	protected URL[] getBootPath(String base) throws IOException {
 		URL url = null;
 		if (base != null) {
 			url = buildURL(base, true);
@@ -533,39 +581,47 @@ public class Main {
 	 * @return the location where target directory was found
 	 * @param start the location to begin searching
 	 */
-	private String searchFor(final String target, String start) {
+	protected String searchFor(final String target, String start) {
 		FileFilter filter = new FileFilter() {
 			public boolean accept(File candidate) {
-				return candidate.isDirectory() && (candidate.getName().equals(target) || candidate.getName().startsWith(target + "_")); //$NON-NLS-1$
+				return candidate.getName().equals(target) || candidate.getName().startsWith(target + "_"); //$NON-NLS-1$
 			}
 		};
 		File[] candidates = new File(start).listFiles(filter); //$NON-NLS-1$
 		if (candidates == null)
 			return null;
-		String result = null;
-		Object maxVersion = null;
-		for (int i = 0; i < candidates.length; i++) {
-			String name = candidates[i].getName();
-			String version = ""; //$NON-NLS-1$ // Note: directory with version suffix is always > than directory without version suffix
-			int index = name.indexOf('_');
-			if (index != -1)
-				version = name.substring(index + 1);
-			Object currentVersion = getVersionElements(version);
-			if (maxVersion == null) {
-				result = candidates[i].getAbsolutePath();
-				maxVersion = currentVersion;
-			} else {
-				if (compareVersion((Object[]) maxVersion, (Object[]) currentVersion) < 0) {
-					result = candidates[i].getAbsolutePath();
-					maxVersion = currentVersion;
-				}
-			}
-		}
-		if (result == null)
+		String[] arrays = new String[candidates.length];
+        for (int i = 0; i < arrays.length; i++) {
+            arrays[i] = candidates[i].getName();
+        }
+       int result = findMax(arrays);
+		if (result == -1)
 			return null;
-		return result.replace(File.separatorChar, '/') + "/"; //$NON-NLS-1$
+		return candidates[result].getAbsolutePath().replace(File.separatorChar, '/') + (candidates[result].isDirectory() ? "/" : "");
 	}
 
+    protected int findMax(String[] candidates) {
+        int result = -1;
+        Object maxVersion = null;
+        for (int i = 0; i < candidates.length; i++) {
+            String name = candidates[i];
+            String version = ""; //$NON-NLS-1$ // Note: directory with version suffix is always > than directory without version suffix
+            int index = name.indexOf('_');
+            if (index != -1)
+                version = name.substring(index + 1);
+            Object currentVersion = getVersionElements(version);
+            if (maxVersion == null) {
+                result = i;
+                maxVersion = currentVersion;
+            } else {
+                if (compareVersion((Object[]) maxVersion, (Object[]) currentVersion) < 0) {
+                    result = i;
+                    maxVersion = currentVersion;
+                }
+            }
+        }
+        return result;
+    }
 	/**
 	 * Compares version strings. 
 	 * @return result of comparison, as integer;
@@ -599,6 +655,8 @@ public class Main {
 	 * qualifier). Note, that returning anything else will cause exceptions in the caller.
 	 */
 	private Object[] getVersionElements(String version) {
+        if (version.endsWith(".jar"))
+            version = version.substring(0, version.length() - 4);
 		Object[] result = {new Integer(0), new Integer(0), new Integer(0), ""}; //$NON-NLS-1$
 		StringTokenizer t = new StringTokenizer(version, "."); //$NON-NLS-1$
 		String token;
@@ -624,11 +682,15 @@ public class Main {
 	private static URL buildURL(String spec, boolean trailingSlash) {
 		if (spec == null)
 			return null;
-		boolean isFile = spec.startsWith("file:"); //$NON-NLS-1$
+		boolean isFile = spec.startsWith(FILE_SCHEME); //$NON-NLS-1$
 		try {
-			if (isFile)
-				return adjustTrailingSlash(new File(spec.substring(5)).toURL(), trailingSlash);
-			else
+			if (isFile) {
+                File toAdjust = new File(spec.substring(5));
+                if (toAdjust.isDirectory())
+                    return adjustTrailingSlash(toAdjust.toURL(), trailingSlash);
+                else
+                    return toAdjust.toURL();
+            } else
 				return new URL(spec);
 		} catch (MalformedURLException e) {
 			// if we failed and it is a file spec, there is nothing more we can do
@@ -636,7 +698,11 @@ public class Main {
 			if (isFile)
 				return null;
 			try {
-				return adjustTrailingSlash(new File(spec).toURL(), trailingSlash);
+                File toAdjust = new File(spec);
+                if (toAdjust.isDirectory())
+                    return adjustTrailingSlash(toAdjust.toURL(), trailingSlash);
+                else
+                    return toAdjust.toURL();
 			} catch (MalformedURLException e1) {
 				return null;
 			}
@@ -1469,7 +1535,7 @@ public class Main {
 	 */
 	private String resolve(String urlString) {
 		// handle the case where people mistakenly spec a refererence: url.
-		if (urlString.startsWith("reference:")) { //$NON-NLS-1$
+		if (urlString.startsWith(REFERENCE_SCHEME)) { //$NON-NLS-1$
 			urlString = urlString.substring(10);
 			System.getProperties().put(PROP_FRAMEWORK, urlString);
 		}
