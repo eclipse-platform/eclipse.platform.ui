@@ -1,0 +1,67 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Eclipse Workbench Extension Point: Marker Resolution</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Marker Resolution</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.markerResolution
+<p><b><i>Description: </i></b>This extension point is used to associate
+a marker resolution generator with a specific "kind" of marker (a marker
+of a certain type or having certain attribute values).
+<p><b><i>Since:</i></b> Release 2.0
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT markerResolutionGenerator(attribute)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST markerResolutionGenerator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType&nbsp;&nbsp;&nbsp; CDATA
+#OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>class</b> - the name of
+the class implementing IMarkerResolutionGenerator
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>markerType</b> - the
+type of the marker for which the help context applies.
+<br>&nbsp;
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT attribute EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST attribute</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul type=disc>
+<li>
+<b>name</b> - the name of the attribute whose value is being specified.</li>
+
+<li>
+<b>value</b> - the specified value of the attribute.</li>
+</ul>
+<b><i>Examples:</i></b>
+<p>The following is an example of a marker resolution generator extension
+(note the subelement and the way attributes are used):
+<p><tt>&lt;extension point="org.eclipse.ui.markerResolution"></tt>
+<br><tt>&nbsp;&nbsp; &lt;markerResolutionGenerator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType="org.eclipse.ui.examples.readmetool.readmemarker"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+name="org.eclipse.ui.examples.readmetool.id"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+value= "1234"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/attribute></tt>
+<br><tt>&nbsp;&nbsp; &lt;/markerResolutionGenerator></tt>
+<br><tt>&lt;/extension></tt>
+<p>In the example above, a marker resolution generator is associated with
+makers of type org.eclipse.ui.examples.readmetool.readmemarker whose org.eclipse.ui.examples.readmetool.id
+attribute has a value of 1234.
+<p><b><i>API Information: </i></b>More than one marker help generator may
+be supplied for a given marker.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
