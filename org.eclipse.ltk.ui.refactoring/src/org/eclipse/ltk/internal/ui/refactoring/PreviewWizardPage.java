@@ -166,7 +166,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	protected boolean performFinish() {
 		UIPerformChangeOperation operation= new UIPerformChangeOperation(fChange);
-		boolean result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
+		FinishResult result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
+		if (result.isException())
+			return true;
+		if (result.isInterrupted())
+			return false;
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			RefactoringWizard wizard= getRefactoringWizard();
@@ -174,9 +178,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				RefactoringUIMessages.getFormattedString(
 					"RefactoringUI.cannot_execute", //$NON-NLS-1$
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
-			return false;
+			return true;
 		}
-		return result;
+		return true;
 	} 
 	
 	/* (non-JavaDoc)

@@ -23,6 +23,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
 
 /**
@@ -137,7 +138,6 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		RefactoringStatus inputStatus= null;
 		RefactoringStatus status= new RefactoringStatus();
 		Refactoring refactoring= getRefactoring();
-		boolean result= false;
 		
 		if (activationStatus != null && activationStatus.getSeverity() >= threshold) {
 			if (!activationStatus.hasFatalError())
@@ -148,13 +148,19 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 				threshold);
 			PerformChangeOperation perform= new PerformChangeOperation(create);
 			
-			result= wizard.internalPerformFinish(InternalAPI.INSTANCE, perform);
+			FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, perform);
 			wizard.internalSetChange(InternalAPI.INSTANCE, create.getChange());
-			if (!result)
+			if (result.isException())
+				return true;
+			if (result.isInterrupted())
 				return false;
 			inputStatus= new RefactoringStatus();
 			inputStatus.merge(create.getConditionCheckingStatus());
-			inputStatus.merge(perform.getValidationStatus());
+			RefactoringStatus validationStatus= perform.getValidationStatus();
+			// only merge this in if we have a fatal error. In all other cases
+			// the change got executed
+			if (validationStatus != null && validationStatus.hasFatalError())
+				inputStatus.merge(perform.getValidationStatus());
 		}
 		
 		status.merge(activationStatus);
@@ -167,7 +173,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 			return false;
 		}
 		
-		return result;	
+		return true;	
 	}
 	
 	/* package */ void markAsLastUserInputPage() {

@@ -37,6 +37,7 @@ import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
+import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
@@ -498,7 +499,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * @param operation the create change operation
 	 * @param updateStatus flag indicating if status updating is requested
 	 * 
@@ -512,12 +513,12 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * @param op the perform change operation
 	 * 
 	 * @return whether the finish ended ok or not
 	 */
-	public final boolean internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
+	public final FinishResult internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
 		op.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
 		Shell parent= getContainer().getShell();
 		try{
@@ -528,20 +529,20 @@ public abstract class RefactoringWizard extends Wizard {
 				ChangeExceptionHandler handler= new ChangeExceptionHandler(parent, fRefactoring);
 				if (inner instanceof RuntimeException) {
 					handler.handle(op.getChange(), (RuntimeException)inner);
-					return false;
+					return FinishResult.createException();
 				} else if (inner instanceof CoreException) {
 					handler.handle(op.getChange(), (CoreException)inner);
-					return false;
+					return FinishResult.createException();
 				}
 			}
 			ExceptionHandler.handle(e, parent, 
 				RefactoringUIMessages.getString("RefactoringWizard.refactoring"), //$NON-NLS-1$
 				RefactoringUIMessages.getString("RefactoringWizard.unexpected_exception_1")); //$NON-NLS-1$
-			return false;
+			return FinishResult.createException();
 		} catch (InterruptedException e) {
-			return false;
+			return FinishResult.createInterrupted();
 		}
-		return true;
+		return FinishResult.createOK();
 	}
 	
 	private Change createChange(CreateChangeOperation operation, boolean updateStatus, IRunnableContext context){
@@ -595,7 +596,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether the wizard has a preview page or not.
 	 */
@@ -607,7 +608,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether yes no button style is requested
 	 */
@@ -619,7 +620,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether the first node of the preview is supposed to be expanded
 	 */
@@ -631,7 +632,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * @param change the change to set
 	 */
 	public final void internalSetChange(InternalAPI api, Change change){
@@ -645,7 +646,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Note: This method is for internal use only. Clients are not allowed to call this method.
 	 * 
-	 * @param api internal instance to avoid access from external clients.
+	 * @param api internal instance to avoid access from external clients
 	 * @param shown a boolean indicating if the preview page has been shown or not
 	 */
 	public final void internalSetPreviewShown(InternalAPI api, boolean shown) {

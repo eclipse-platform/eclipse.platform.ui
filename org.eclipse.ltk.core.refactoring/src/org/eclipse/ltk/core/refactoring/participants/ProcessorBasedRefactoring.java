@@ -11,7 +11,9 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,6 +42,24 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	private RefactoringParticipant[] fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
 
+	private static class ProcessorChange extends CompositeChange {
+		private Map fParticipantMap;
+		public ProcessorChange(String name) {
+			super(name);
+		}
+		public void setParticipantMap(Map map) {
+			fParticipantMap= map;
+		}
+		protected void internalHandleException(Change change, Throwable e) {
+			RefactoringParticipant participant= (RefactoringParticipant)fParticipantMap.get(change);
+			if (participant != null) {
+				ParticipantDescriptor descriptor= participant.getDescriptor();
+				descriptor.disable();
+				RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+			}
+		}
+	}
+	
 	/**
 	 * Creates a new processor based refactoring.
 	 */
@@ -141,12 +161,15 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		
 		List changes= new ArrayList();
+		Map participantMap= new HashMap();
 		for (int i= 0; i < fParticipants.length; i++) {
 			RefactoringParticipant participant= fParticipants[i];
 			try {
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
-				if (change != null)
+				if (change != null) {
 					changes.add(change);
+					participantMap.put(change, participant);
+				}
 			} catch (CoreException e) {
 				ParticipantDescriptor descriptor= participant.getDescriptor();
 				descriptor.disable();
@@ -159,9 +182,10 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			(Change[])changes.toArray(new Change[changes.size()]), 
 			new SubProgressMonitor(pm, 1));
 		
-		CompositeChange result= new CompositeChange(getName());
+		ProcessorChange result= new ProcessorChange(getName());
 		result.add(processorChange);
 		result.addAll((Change[]) changes.toArray(new Change[changes.size()]));
+		result.setParticipantMap(participantMap);
 		if (postChange != null)
 			result.add(postChange);
 		return result;

@@ -130,16 +130,20 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 			CreateChangeOperation ccop= new CreateChangeOperation(getRefactoring());
 			operation= new UIPerformChangeOperation(ccop);
 		}
-		boolean result= wizard.internalPerformFinish(InternalAPI.INSTANCE, operation);
+		FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, operation);
+		if (result.isException())
+			return true;
+		if (result.isInterrupted())
+			return false;
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
 				RefactoringUIMessages.getFormattedString(
 					"RefactoringUI.cannot_execute", //$NON-NLS-1$
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
-			return false;
+			return true;
 		}
-		return result;
+		return true;
 	} 
 	
 	//---- Helpers ----------------------------------------------------------------------------------------

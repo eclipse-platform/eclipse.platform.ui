@@ -196,7 +196,9 @@ public abstract class Change implements IAdaptable {
 	
 	/**
 	 * Performs this change. If this method is call on an invalid or disabled change 
-	 * object the result is unspecified.  
+	 * object the result is unspecified. Change should in general not respond to
+	 * {@link IProgressMonitor#isCanceled()} since canceling a change tree in the
+	 * middle of its execution leaves the workspace in a half changed state.   
 	 * 
 	 * @param pm a progress monitor
 	 * 

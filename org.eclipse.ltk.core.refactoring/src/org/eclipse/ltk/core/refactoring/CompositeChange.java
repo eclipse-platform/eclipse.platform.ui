@@ -257,9 +257,11 @@ public class CompositeChange extends Change {
 			}
 		} catch (CoreException e) {
 			handleUndos(change, undos);
+			internalHandleException(change, e);
 			throw e;
 		} catch (RuntimeException e) {
 			handleUndos(change, undos);
+			internalHandleException(change, e);
 			throw e;
 		}
 	}
@@ -281,6 +283,20 @@ public class CompositeChange extends Change {
 		}
 		Collections.reverse(undos);
 		fUndoUntilException= createUndoChange((Change[]) undos.toArray(new Change[undos.size()]));
+	}
+	
+	/**
+	 * Note: this is an internal method and should not be overridden.
+	 * <p>
+	 * The method gets called if one of the changes managed by this
+	 * composite change generates and exception when performed.
+	 * </p>
+	 * 
+	 * @param change the change that caused the exception
+	 * @param t the exception itself
+	 */
+	protected void internalHandleException(Change change, Throwable t) {
+		// do nothing
 	}
 
 	/**

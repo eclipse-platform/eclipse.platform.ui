@@ -112,7 +112,8 @@ public class ChangeExceptionHandler {
 	private void performUndo(final Change undo) {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("", 10); //$NON-NLS-1$
+				monitor.beginTask("", 11); //$NON-NLS-1$
+				undo.initializeValidationData(new SubProgressMonitor(monitor, 1));
 				if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
 					monitor.done();
 					return;

@@ -59,14 +59,14 @@ public class RefactoringCorePlugin extends Plugin {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	
-	public static void logRemovedParticipant(ParticipantDescriptor descriptor, CoreException e) {
+	public static void logRemovedParticipant(ParticipantDescriptor descriptor, Throwable t) {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
 			RefactoringCoreMessages.getFormattedString(
 				"RefactoringCorePlugin.participant_removed",  //$NON-NLS-1$
 				descriptor.getId()),
-			e);
+			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	
