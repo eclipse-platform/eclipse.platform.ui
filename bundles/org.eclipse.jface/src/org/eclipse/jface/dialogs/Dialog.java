@@ -568,7 +568,6 @@ public abstract class Dialog extends Window {
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 
 		// initialize the dialog units
 		initializeDialogUnits(composite);
@@ -577,6 +576,11 @@ public abstract class Dialog extends Window {
 		dialogArea = createDialogArea(composite);
 		buttonBar = createButtonBar(composite);
 
+		if(applyDialogFont()){
+			applyDialogFont(dialogArea);
+			applyDialogFont(buttonBar);
+		}
+			
 		return composite;
 	}
 	/**
@@ -716,6 +720,7 @@ public abstract class Dialog extends Window {
 	 * @param control a control from which to obtain the current font
 	 */
 	protected void initializeDialogUnits(Control control) {
+			
 		// Compute and store a font metric
 		GC gc = new GC(control);
 		gc.setFont(JFaceResources.getDialogFont());
@@ -792,8 +797,9 @@ public abstract class Dialog extends Window {
 	 * its children. If the control is <code>null</code> nothing happens.
 	 */
 	public static void applyDialogFont(Control control) {
-		if (control == null)
+		if (control == null || dialogFontIsDefault())
 			return;
+		
 		Font dialogFont = JFaceResources.getDialogFont();
 		applyDialogFont(control, dialogFont);
 	}
@@ -838,4 +844,21 @@ public abstract class Dialog extends Window {
 		return defaultFont;
 	}
 
+	/**
+	 * Return whether or not the dialog font is currently
+	 * the same as the default font.
+	 * @return boolean if the two are the same
+	 */
+	protected static boolean dialogFontIsDefault(){
+		return JFaceResources.getDialogFont().equals(JFaceResources.getDefaultFont());
+	}
+	
+	/**
+	 * Return whether or not the dialog font should be applied
+	 * to the dialog area by default.
+	 * @return boolean
+	 */
+	protected boolean applyDialogFont(){
+		return true;
+	}
 }
