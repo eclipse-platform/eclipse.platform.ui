@@ -22,7 +22,6 @@ import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
 
 /**
  * 2.1 - WORK_IN_PROGRESS do not use.
@@ -202,9 +201,6 @@ private void removeForwardEntries() {
 /*
  * Adds a location to the history. */
 private void addEntry(IEditorPart part, boolean markLocation) {
-	if(!WorkInProgressPreferencePage.useNavigationHistory())
-		return;
-
 	if (ignoreEntries > 0 || part == null)
 		return;
 	

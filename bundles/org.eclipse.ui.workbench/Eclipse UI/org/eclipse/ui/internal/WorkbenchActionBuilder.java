@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
 
 /**
  * This is used to add actions to the workbench.
@@ -414,11 +413,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_END));
 		
 		//TBD: Location of this actions
-		if(WorkInProgressPreferencePage.useNavigationHistory()) {
-			menu.add(new Separator());
-			menu.add(backwardHistoryAction);
-			menu.add(forwardHistoryAction);
-		}
+		menu.add(new Separator());
+		menu.add(backwardHistoryAction);
+		menu.add(forwardHistoryAction);
 		return menu;
 	}
 
@@ -636,8 +633,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
 		}
-		if(WorkInProgressPreferencePage.useNavigationHistory())
-			addHistoryActions();
+		addHistoryActions();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			addPinEditorAction();

@@ -1624,12 +1624,6 @@
             id="org.eclipse.ui.preferencePages.Editors">
       </page>
       <page
-            name="Work in Progress"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage"
-            id="org.eclipse.ui.preferencePages.WorkInProgressPreferencePage">
-      </page>
-      <page
             name="%PreferencePages.KeyBindings"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.actions.keybindings.PreferencePage"
