@@ -11,11 +11,12 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,19 +31,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -51,7 +44,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The Workbench / Perspectives preference page.
@@ -359,18 +351,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 	}
-	
-	/**
-	 * Returns the preference store for the API constants (those in
-	 * IWorkbenchPreferenceConstants).
-	 * @return the UI preference store
-	 */
-	protected IPreferenceStore getUIPublicPreferenceStore() {
-		AbstractUIPlugin uiPlugin =
-			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		return uiPlugin.getPreferenceStore();
-	}
-	
+
 	/**
 	 * The default button has been pressed. 
 	 */
@@ -441,12 +422,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
 		
 		WorkbenchPlugin.getDefault().savePluginPreferences();
-		try {
-			((IPersistentPreferenceStore) getUIPublicPreferenceStore()).save();
-		}
-		catch (IOException e) {
-			WorkbenchPlugin.log("Error saving UI preference store in PerspectivesPreferencePage.performOK(): " + e); //$NON-NLS-1$
-		}
+
 		return true;
 	}
 	

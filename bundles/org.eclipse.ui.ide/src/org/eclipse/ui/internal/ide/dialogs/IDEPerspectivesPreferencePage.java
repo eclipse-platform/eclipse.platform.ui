@@ -113,6 +113,7 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
 	 */
 	public boolean performOk() {
 		projectSwitchField.store();
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 
