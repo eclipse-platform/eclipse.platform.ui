@@ -113,7 +113,7 @@ public class InternalAntRunner {
 	 * The Ant logger class. There may be only one logger. It will have the
 	 * right to use the 'out' PrintStream. The class must implement the BuildLogger
 	 * interface.  An empty String indicates that no logger is to be used.  A <code>null</code>
-	 * name indicates that the org.apache.tools.ant.DefaultLogger will be used.
+	 * name indicates that the <code>org.apache.tools.ant.DefaultLogger</code> will be used.
 	 */
 	private String loggerClassname = null;
 
@@ -135,7 +135,7 @@ public class InternalAntRunner {
     
     /** 
      * Indicates whether to execute all targets that 
-     * do not depend on failed targes(s)
+     * do not depend on failed targets(s)
      * @since Ant 1.6.0
      */
     private boolean keepGoing= false;
