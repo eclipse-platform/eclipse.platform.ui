@@ -10,6 +10,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 public class UrlUtil {
+	// XML escaped characters mapping
+	private static final String invalidXML[] = { "&", ">", "<", "\"" };
+	private static final String escapedXML[] =
+		{ "&amp;", "&gt;", "&lt;", "&quot;" };
+
+
 	public static String encode(String s) {
 		try {
 			return urlEncode(s.getBytes("UTF8"));
@@ -216,6 +222,16 @@ public class UrlUtil {
 	}
 
 	/**
+	 * Encodes string for embedding in html source
+	 */
+	public static String htmlEncode(String str) {
+	
+		for (int i = 0; i < invalidXML.length; i++)
+			str = change(str, invalidXML[i], escapedXML[i]);
+		return str;
+	}
+	
+	/**
 	 * Validates a file:// URL by ensuring the file is only accessed 
 	 * from a local installation.
 	 */
@@ -242,5 +258,31 @@ public class UrlUtil {
 			return false;
 		}
 		return false;
+	}
+	
+	/**
+	 *  change all occurrences of oldPat to newPat
+	 */
+	public static String change(String in, String oldPat, String newPat) {
+		if (oldPat.length() == 0)
+			return in;
+		if (oldPat.length() == 1 && newPat.length() == 1)
+			return in.replace(oldPat.charAt(0), newPat.charAt(0));
+		if (in.indexOf(oldPat) < 0)
+			return in;
+		int lastIndex = 0;
+		int newIndex = 0;
+		StringBuffer newString = new StringBuffer();
+		for (;;) {
+			newIndex = in.indexOf(oldPat, lastIndex);
+			if (newIndex != -1) {
+				newString.append(in.substring(lastIndex, newIndex) + newPat);
+				lastIndex = newIndex + oldPat.length();
+			} else {
+				newString.append(in.substring(lastIndex));
+				break;
+			}
+		}
+		return newString.toString();
 	}
 }

@@ -238,7 +238,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-				<div class="book"><input class="checkbox" type="checkbox" name="<%=id%>" alt="<%=label%>"><%=label%></div>
+				<div class="book"><input class="checkbox" type="checkbox" name="<%=id%>" alt="<%=UrlUtil.htmlEncode(label)%>"><%=UrlUtil.htmlEncode(label)%></div>
 <%
 }		
 %>

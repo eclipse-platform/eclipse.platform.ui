@@ -204,7 +204,7 @@ parent.parent.showBookshelfIcon(false);
 %>
 		<li>
 			<nobr>
-			<img src="images/plus.gif" class="collapsed"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/container_obj.gif"><%=topic.getAttribute("label")%></a>
+			<img src="images/plus.gif" class="collapsed"><a href="<%=href%>" title="<%=UrlUtil.htmlEncode(topic.getAttribute("label"))%>"><img src="images/container_obj.gif"><%=UrlUtil.htmlEncode(topic.getAttribute("label"))%></a>
 			</nobr>
 			<ul class='collapsed'>
 <%
@@ -214,7 +214,7 @@ parent.parent.showBookshelfIcon(false);
 %>
 		<li>
 			<nobr>
-			<img src="images/plus.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic.gif"><%=topic.getAttribute("label")%></a>
+			<img src="images/plus.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=UrlUtil.htmlEncode(topic.getAttribute("label"))%>"><img src="images/topic.gif"><%=UrlUtil.htmlEncode(topic.getAttribute("label"))%></a>
 			</nobr>
 		</li>
 <%
