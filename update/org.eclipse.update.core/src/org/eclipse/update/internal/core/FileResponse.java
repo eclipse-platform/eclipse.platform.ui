@@ -12,27 +12,38 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.*;
 
-//import org.eclipse.update.internal.core.net.http.IContext;
-//import org.eclipse.update.internal.core.net.http.client.IStatusCodes;
-//import org.eclipse.update.internal.core.net.http.client.Response;
+import org.eclipse.core.runtime.*;
 
-/**
- * A File repsonse message
- */
-public class FileResponse extends Response {
+public class FileResponse implements Response {
 
-	/**
-	 * 
-	 */
+	protected URL url;
+	protected long lastModified;
+
 	public FileResponse(URL url) {
-		//super(IStatusCodes.HTTP_OK,"", context, in);
-		super(url);
+		this.url = url;
 	}
 
 	public InputStream getInputStream() throws IOException {
 		return url.openStream();
 	}
-	
+
+	public InputStream getInputStream(IProgressMonitor monitor)
+		throws IOException, CoreException {
+		return getInputStream();
+	}
+
+	public long getContentLength() {
+		return 0;
+	}
+
+	public int getStatusCode() {
+		return IStatusCodes.HTTP_OK;
+	}
+
+	public String getStatusMessage() {
+		return "";
+	}
+
 	public long getLastModified() {
 		if (lastModified == 0) {
 			File f = new File(url.getFile());

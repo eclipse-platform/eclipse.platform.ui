@@ -15,29 +15,27 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 
-public class HttpResponse extends Response {
+public class HttpResponse implements Response {
 	private static final long POLLING_INTERVAL = 200;
+	protected URL url;
+	protected InputStream in;
+	protected URLConnection connection;
+	protected long lastModified;
 
-	/**
-	 * 
-	 */
 	public HttpResponse(URL url) {
-		//super(IStatusCodes.HTTP_OK,"", context, in);
-		super(url);
+		this.url = url;
 	}
 
+	public InputStream getInputStream() throws IOException {
+		if (in == null && url != null) {
+			connection = url.openConnection();
+			in = connection.getInputStream();
+		}
+		return in;
+	}
 	/**
-	 * A special version of 'getInputStream' that can
-	 * be canceled if connection is HttpURLConnection.
-	 * A monitor thread checks the state of the monitor
-	 * and disconnects the connection if 'isCanceled()'
-	 * is detected.  
-	 * @param monitor the progress monitor
-	 * @return InputStream an opened stream or null if failed.
-	 * @throws IOException if there are problems
-	 * @throws CoreException if no more connection threads are available
+	 * @see Response#getInputStream(IProgressMonitor)
 	 */
-
 	public InputStream getInputStream(IProgressMonitor monitor)
 		throws IOException, CoreException {
 		if (in == null && url != null) {
@@ -51,12 +49,58 @@ public class HttpResponse extends Response {
 			} else {
 				this.in = connection.getInputStream();
 			}
-			// this can also be run inside a monitoring thread, but it is safe to
+			// this can also be run inside a monitoring thread, but it is safe
+			// to
 			// just call it now, if the input stream has already been obtained
-			if (in != null)
+			if (in != null) {
 				this.lastModified = connection.getLastModified();
+			}
 		}
 		return in;
+	}
+	
+	public long getContentLength() {
+		if (connection != null)
+			return connection.getContentLength();
+		return 0;
+	}
+
+	public int getStatusCode() {
+		if (connection != null) {
+			if (connection instanceof HttpURLConnection)
+				try {
+					return ((HttpURLConnection) connection).getResponseCode();
+				} catch (IOException e) {
+					UpdateCore.warn("", e);
+				}
+		}
+		return IStatusCodes.HTTP_OK;
+	}
+
+	public String getStatusMessage() {
+		if (connection != null) {
+			if (connection instanceof HttpURLConnection)
+				try {
+					return ((HttpURLConnection) connection)
+						.getResponseMessage();
+				} catch (IOException e) {
+					UpdateCore.warn("", e);
+				}
+		}
+		return "";
+	}
+
+	public long getLastModified() {
+		if (lastModified == 0) {
+			if (connection == null)
+				try {
+					connection = url.openConnection();
+				} catch (IOException e) {
+				}
+			if (connection != null)
+				lastModified = connection.getLastModified();
+		}
+		return lastModified;
 	}
 
 	private InputStream openStreamWithCancel(

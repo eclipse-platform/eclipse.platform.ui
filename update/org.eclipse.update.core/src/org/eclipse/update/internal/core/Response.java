@@ -11,106 +11,59 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
-import java.net.*;
 
 import org.eclipse.core.runtime.*;
 
-public class Response {
-	
-	protected URL url;
-	protected InputStream in;
-	protected URLConnection connection;
-	protected long lastModified;
-	
-	/**
-	 * 
-	 */
-	public Response(InputStream in) {
-		super();
-		this.in = in;
-	}
+public interface Response {
 
 	/**
-	 * 
-	 */
-	public Response(URL url) {
-		super();
-		this.url = url;
-	}
-	
-	/**
 	 * Method getInputStream.
+	 * 
 	 * @return InputStream
 	 */
-	public InputStream getInputStream() throws IOException {
-		if (in == null && url != null) {
-			connection = url.openConnection();
-			this.in = connection.getInputStream();
-		}
-		return in;
-	}	
-	
-	public InputStream getInputStream(IProgressMonitor monitor) throws IOException, CoreException {
-		return getInputStream();
-	}
-	
+	public InputStream getInputStream() throws IOException;
+
+	/**
+	 * A special version of 'getInputStream' that can be canceled.
+	 * A monitor thread checks the state of the monitor
+	 * and disconnects the connection if 'isCanceled()' is detected.
+	 * 
+	 * @param monitor
+	 *            the progress monitor
+	 * @return InputStream an opened stream or null if failed.
+	 * @throws IOException
+	 *             if there are problems
+	 * @throws CoreException
+	 *             if no more connection threads are available
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor)
+		throws IOException, CoreException;
+
 	/**
 	 * Method getContentLength.
+	 * 
 	 * @return long
 	 */
-	public long getContentLength() {
-		if (connection != null)
-			return connection.getContentLength();
-		return 0;
-	}
+	public long getContentLength();
 
 	/**
 	 * Method getStatusCode.
+	 * 
 	 * @return int
 	 */
-	public int getStatusCode() {
-		if (connection != null) {
-			if (connection instanceof HttpURLConnection)
-				try {
-					return ((HttpURLConnection) connection).getResponseCode();
-				} catch (IOException e) {
-					UpdateCore.warn("", e);
-				}
-		}
-		return IStatusCodes.HTTP_OK;
-	}
+	public int getStatusCode();
 
 	/**
 	 * Method getStatusMessage.
+	 * 
 	 * @return String
 	 */
-	public String getStatusMessage() {
-		if (connection != null) {
-			if (connection instanceof HttpURLConnection)
-				try {
-					return ((HttpURLConnection) connection)
-						.getResponseMessage();
-				} catch (IOException e) {
-					UpdateCore.warn("", e);
-				}
-		}
-		return "";
-	}
-	
+	public String getStatusMessage();
+
 	/**
 	 * Returns the timestamp of last modification to the resource
+	 * 
 	 * @return
 	 */
-	public long getLastModified() {
-		if (lastModified == 0) {
-			if (connection == null) 
-				try {
-					connection = url.openConnection();
-				} catch (IOException e) {
-				}
-			if (connection != null)
-				lastModified = connection.getLastModified();
-		}
-		return lastModified;
-	}
+	public long getLastModified();
 }
