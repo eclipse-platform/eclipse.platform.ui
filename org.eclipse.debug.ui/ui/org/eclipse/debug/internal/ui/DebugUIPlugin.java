@@ -952,7 +952,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		IProgressService progressService = workbench.getProgressService();
 		
 		job.setPriority(Job.INTERACTIVE);
-		job.setName(DebugUIMessages.getString("DebugUITools.8") + configuration.getName()); //$NON-NLS-1$
+		job.setName(DebugUIMessages.getString("DebugUITools.8")); //$NON-NLS-1$
 		job.schedule();
 		progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job, true); //returns immediately
 	}
