@@ -96,6 +96,7 @@ public void dispose() {
  * Fires a property changed event.
  *
  * @param propertyId the id of the property that changed
+ * @issue as in 2.1, this method should be final
  */
 public void firePropertyChange(final int propertyId) {
 	Object [] array = propChangeListeners.getListeners();
