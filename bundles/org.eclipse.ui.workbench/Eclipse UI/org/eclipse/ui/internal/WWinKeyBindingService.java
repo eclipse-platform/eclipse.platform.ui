@@ -200,8 +200,6 @@ public class WWinKeyBindingService {
 	public void registerActionSets(IActionSet sets[]) {
 		updateNumber++;
 		actionSetDefIdToAction.clear();
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		registry.clearFakeAccelerators();
 		
 		for (int i=0; i<sets.length; i++) {
 			if (sets[i] instanceof PluginActionSet) {

@@ -1,17 +1,25 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import org.eclipse.ui.IMemento;
 
 public final class Action implements Comparable {
 	
-	public final static String TAG = "action";
+	final static String TAG = "action";
 	private final static String ATTRIBUTE_VALUE = "value";	
 	
-	public static Action create(String value) {
+	static Action create(String value) {
 		return new Action(value);
 	}
 
-	public static Action read(IMemento memento)
+	static Action read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -19,7 +27,7 @@ public final class Action implements Comparable {
 		return Action.create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
-	public static void write(IMemento memento, Action action)
+	static void write(IMemento memento, Action action)
 		throws IllegalArgumentException {
 		if (memento == null || action == null)
 			throw new IllegalArgumentException();

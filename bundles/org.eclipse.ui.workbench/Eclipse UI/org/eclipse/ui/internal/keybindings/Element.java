@@ -1,18 +1,26 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import org.eclipse.ui.IMemento;
 
-public final class Element implements Comparable {
+final class Element implements Comparable {
 	
-	public final static String TAG = "element";		
+	final static String TAG = "element";		
 	private final static String ATTRIBUTE_VALUE = "value";
 	
-	public static Element create(String value)
+	static Element create(String value)
 		throws IllegalArgumentException {
 		return new Element(value);
 	}
 
-	public static Element[] create(String[] values)
+	static Element[] create(String[] values)
 		throws IllegalArgumentException {
 		if (values == null)
 			throw new IllegalArgumentException();
@@ -25,7 +33,7 @@ public final class Element implements Comparable {
 		return elements;			
 	}
 
-	public static Element read(IMemento memento)
+	static Element read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -33,7 +41,7 @@ public final class Element implements Comparable {
 		return Element.create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
-	public static void write(IMemento memento, Element element)
+	static void write(IMemento memento, Element element)
 		throws IllegalArgumentException {
 		if (memento == null || element == null)
 			throw new IllegalArgumentException();
@@ -53,7 +61,7 @@ public final class Element implements Comparable {
 		this.value = value;	
 	}
 	
-	public String getValue() {
+	String getValue() {
 		return value;	
 	}
 	

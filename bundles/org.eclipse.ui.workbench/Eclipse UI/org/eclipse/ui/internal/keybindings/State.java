@@ -1,18 +1,26 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import org.eclipse.ui.IMemento;
 
-public final class State implements Comparable {
+final class State implements Comparable {
 
-	public final static String TAG = "state";
+	final static String TAG = "state";
 
-	public static State create(Configuration configuration, Locale locale, 
+	static State create(Configuration configuration, Locale locale, 
 		Platform platform, Scope scope)
 		throws IllegalArgumentException {
 		return new State(configuration, locale, platform, scope);
 	}
 
-	public static State read(IMemento memento)
+	static State read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -25,7 +33,7 @@ public final class State implements Comparable {
 		return State.create(configuration, locale, platform, scope);
 	}
 
-	public static void write(IMemento memento, State state)
+	static void write(IMemento memento, State state)
 		throws IllegalArgumentException {
 		if (memento == null || state == null)
 			throw new IllegalArgumentException();	
@@ -36,6 +44,8 @@ public final class State implements Comparable {
 		Platform.write(memento.createChild(Platform.TAG), state.getPlatform());
 		Scope.write(memento.createChild(Scope.TAG), state.getScope());
 	}
+
+	//private List paths;
 
 	private Configuration configuration;
 	private Locale locale;
@@ -51,29 +61,31 @@ public final class State implements Comparable {
 			scope == null)
 			throw new IllegalArgumentException();
 		
+		
+		
 		this.configuration = configuration;
 		this.locale = locale;
 		this.platform = platform;
 		this.scope = scope;
 	}
 	
-	public Configuration getConfiguration() {
+	Configuration getConfiguration() {
 		return configuration;	
 	}
 	
-	public Locale getLocale() {
+	Locale getLocale() {
 		return locale;	
 	}
 	
-	public Platform getPlatform() {
+	Platform getPlatform() {
 		return platform;
 	}
 	
-	public Scope getScope() {
+	Scope getScope() {
 		return scope;
 	}
 	
-	public int match(State state) {
+	int match(State state) {
 		int configurationMatch = configuration.match(state.configuration);
 		
 		if (configurationMatch == -1)

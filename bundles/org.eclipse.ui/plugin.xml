@@ -1406,6 +1406,12 @@
             class="org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage"
             id="org.eclipse.ui.preferencePages.WorkInProgressPreferencePage">
       </page>
+      <page
+            name="%PreferencePages.KeyBinding"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.keybindings.KeyBindingPreferencePage"
+            id="org.eclipse.ui.preferencePages.KeyBinding">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

@@ -1,17 +1,25 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import org.eclipse.ui.IMemento;
 
-public final class Contributor implements Comparable {
+final class Contributor implements Comparable {
 
-	public final static String TAG = "contributor";
+	final static String TAG = "contributor";
 	private final static String ATTRIBUTE_VALUE = "value";
 	
-	public static Contributor create(String value) {
+	static Contributor create(String value) {
 		return new Contributor(value);
 	}
 
-	public static Contributor read(IMemento memento)
+	static Contributor read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -19,7 +27,7 @@ public final class Contributor implements Comparable {
 		return Contributor.create(memento.getString(ATTRIBUTE_VALUE));
 	}
 
-	public static void write(IMemento memento, Contributor contributor)
+	static void write(IMemento memento, Contributor contributor)
 		throws IllegalArgumentException {
 		if (memento == null || contributor == null)
 			throw new IllegalArgumentException();
@@ -34,7 +42,7 @@ public final class Contributor implements Comparable {
 		this.value = value;	
 	}
 	
-	public String getValue() {
+	String getValue() {
 		return value;	
 	}
 	

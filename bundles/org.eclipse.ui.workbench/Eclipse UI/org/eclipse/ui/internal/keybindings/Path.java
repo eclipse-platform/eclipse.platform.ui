@@ -1,5 +1,13 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +18,7 @@ import org.eclipse.ui.IMemento;
 
 public final class Path implements Comparable {
 
+	public final static int MAXIMUM_DEPTH = 16;
 	public final static String TAG = "path";
 
 	public static Path create() {
@@ -67,7 +76,7 @@ public final class Path implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (elements == null)
+		if (elements == null || elements.size() >= MAXIMUM_DEPTH)
 			throw new IllegalArgumentException();
 		
 		this.elements = Collections.unmodifiableList(new ArrayList(elements));
@@ -87,14 +96,10 @@ public final class Path implements Comparable {
 		if (path == null)
 			throw new IllegalArgumentException();
 			
-		if (path.equalsOrIsChildOf(this)) { 
-			int match = path.elements.size() - elements.size();
-			
-			if (match < 256)
-				return match;
-		}
-		
-		return -1;
+		if (path.equalsOrIsChildOf(this)) 
+			return path.elements.size() - elements.size();
+		else 
+			return -1;
 	}
 
 	public int compareTo(Object object) {

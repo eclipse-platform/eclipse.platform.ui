@@ -55,7 +55,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
 
-	private Combo accelConfigCombo;
 
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
@@ -90,9 +89,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createEditorReuseGroup(composite);
 				
 		WorkbenchPreferencePage.createSpace(composite);
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
-
-		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
 		validCheck();
 		
@@ -103,13 +99,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
-		acceleratorInit(workbench);
 	}
 	
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		updateEncodingState(true);
-		acceleratorPerformDefaults(store);
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
@@ -135,8 +129,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 
-		acceleratorPerformOk(store);		
-		
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
 		store.setValue(IPreferenceConstants.REUSE_DIRTY_EDITORS,promptToReuseEditor.getSelection());
@@ -265,78 +257,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		encodingCombo.setEnabled(!useDefault);
 		setErrorMessage(null);
 		setValid(true);
-	}
-	
-		/**
-	 * Creates a composite that contains a label and combo box specifying the active
-	 * accelerator configuration.
-	 */
-	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
-		
-		Font font = composite.getFont();
-		
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);
-		groupComposite.setFont(font);
-		
-		WorkbenchPreferencePage.createLabel(groupComposite, label);
-		accelConfigCombo = WorkbenchPreferencePage.createCombo(groupComposite);
-
-		if(namesToConfiguration.size() > 0) { 
-			String[] comboItems = new String[namesToConfiguration.size()];
-			namesToConfiguration.keySet().toArray(comboItems);
-			Arrays.sort(comboItems,Collator.getInstance());
-			accelConfigCombo.setItems(comboItems);
-		
-			if(activeAcceleratorConfigurationName != null)
-				accelConfigCombo.select(accelConfigCombo.indexOf(activeAcceleratorConfigurationName));
-		} else {
-			accelConfigCombo.setEnabled(false);
-		}	
-	}
-	protected void acceleratorInit(IWorkbench aWorkbench) {
-		namesToConfiguration = new Hashtable();
-		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
-		AcceleratorRegistry registry = plugin.getAcceleratorRegistry();
-		AcceleratorConfiguration configs[] = registry.getConfigsWithSets();
-		for (int i = 0; i < configs.length; i++)
-			namesToConfiguration.put(configs[i].getName(), configs[i]);	
-		
-		AcceleratorConfiguration config = ((Workbench)aWorkbench).getActiveAcceleratorConfiguration();
-		if(config != null)
-			activeAcceleratorConfigurationName = config.getName();
-	}	
-	protected void acceleratorPerformDefaults(IPreferenceStore store) {
-		// Sets the accelerator configuration selection to the default configuration
-		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorConfiguration config = registry.getConfiguration(id);
-		String name = null;
-		if(config != null) 
-			name = config.getName();
-		if((name != null) && (accelConfigCombo != null))
-			accelConfigCombo.select(accelConfigCombo.indexOf(name));
-	}	
-	protected void acceleratorPerformOk(IPreferenceStore store) {
-		// store the active accelerator configuration id
-		if(accelConfigCombo != null) {
-			String configName = accelConfigCombo.getText();
-			AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
-			if(config != null) {
-				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-				workbench.setActiveAcceleratorConfiguration(config);
-				store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
-			}
-		}
-	}	
+	}		
 	/**
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */

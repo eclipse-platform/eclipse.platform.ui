@@ -1,5 +1,13 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,9 +17,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Node {
+class Node {
 	
-	public static boolean add(SortedMap contributions, 
+	static boolean add(SortedMap contributions, 
 		Contributor contributor, Action action)
 		throws IllegalArgumentException {
 		if (contributions == null || contributor == null || action == null)
@@ -27,7 +35,7 @@ public class Node {
 		return actions.add(action);
 	}
 
-	public static boolean remove(SortedMap contributions, 
+	static boolean remove(SortedMap contributions, 
 		Contributor contributor, Action action)
 		throws IllegalArgumentException {
 		if (contributions == null || contributor == null || action == null)
@@ -46,7 +54,7 @@ public class Node {
 		return removed;			
 	}
 
-	public static Action solve(SortedMap contributions)
+	static Action solve(SortedMap contributions)
 		throws IllegalArgumentException {
 		if (contributions == null)
 			throw new IllegalArgumentException();	
@@ -66,7 +74,7 @@ public class Node {
 			(Action) actions.first() : Action.create(null);
 	}
 
-	public static boolean add(SortedMap states, State state, 
+	static boolean add(SortedMap states, State state, 
 		Contributor contributor, Action action)
 		throws IllegalArgumentException {
 		if (states == null || state == null || contributor == null || 
@@ -83,7 +91,7 @@ public class Node {
 		return add(contributions, contributor, action);
 	}
 
-	public static boolean remove(SortedMap states, State state, 
+	static boolean remove(SortedMap states, State state, 
 		Contributor contributor, Action action)
 		throws IllegalArgumentException {
 		if (states == null || state == null || contributor == null || 
@@ -103,7 +111,7 @@ public class Node {
 		return removed;			 
 	}
 
-	public static ActionMatch solve(SortedMap states, State state)
+	static ActionMatch solve(SortedMap states, State state)
 		throws IllegalArgumentException {
 		if (states == null || state == null)
 			throw new IllegalArgumentException();			
@@ -136,7 +144,7 @@ public class Node {
 		return actionMatch;	
 	}
 
-	public static ActionMatch solve(SortedMap states, State[] stack)
+	static ActionMatch solve(SortedMap states, State[] stack)
 		throws IllegalArgumentException {
 		if (states == null || stack == null)
 			throw new IllegalArgumentException();
@@ -156,7 +164,7 @@ public class Node {
 		return null;
 	}
 	
-	public static void addToTree(SortedMap tree, KeyBinding keyBinding) {
+	static void addToTree(SortedMap tree, KeyBinding keyBinding) {
 		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
 		Node node = null;
@@ -188,13 +196,13 @@ public class Node {
 		}
 	}
 
-	public static boolean removeFromTree(SortedMap tree, 
+	static boolean removeFromTree(SortedMap tree, 
 		KeyBinding keyBinding) {
 		// TBD
 		return false;
 	}
 
-	public static void solveTree(SortedMap tree, State[] stack) {
+	static void solveTree(SortedMap tree, State[] stack) {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
@@ -216,7 +224,7 @@ public class Node {
 		}		
 	}
 
-	public static SortedMap find(SortedMap tree, KeySequence prefix) {	
+	static SortedMap find(SortedMap tree, KeySequence prefix) {	
 		Iterator iterator = prefix.getKeyStrokes().iterator();
 	
 		while (iterator.hasNext()) {
@@ -231,7 +239,7 @@ public class Node {
 		return tree;			
 	}
 
-	public static List toBindings(SortedMap tree) {
+	static List toBindings(SortedMap tree) {
 		List bindings = new ArrayList();
 		toBindings(tree, KeySequence.create(), bindings);
 		return bindings;
@@ -274,7 +282,7 @@ public class Node {
 		}	
 	}
 
-	public static SortedMap toKeySequenceActionMap(SortedMap tree) {
+	static SortedMap toKeySequenceActionMap(SortedMap tree) {
 		SortedMap keySequenceActionMap = new TreeMap();
 		toKeySequenceActionMap(tree, KeySequence.create(),
 			keySequenceActionMap);
@@ -308,9 +316,9 @@ public class Node {
 		}	
 	}
 
-	public SortedMap children = new TreeMap();	
-	public SortedMap states = new TreeMap();
+	SortedMap children = new TreeMap();	
+	SortedMap states = new TreeMap();
 		
-	public ActionMatch bestActionMatch = null;
-	public ActionMatch bestChildActionMatch = null;
+	ActionMatch bestActionMatch = null;
+	ActionMatch bestChildActionMatch = null;
 }

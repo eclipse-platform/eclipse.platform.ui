@@ -1,5 +1,13 @@
 package org.eclipse.ui.internal.keybindings;
 
+/**
+Copyright (c) 2002 IBM Corp.
+All rights reserved.  This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*/
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +59,80 @@ public final class KeyBindingManager {
 	private SortedMap keySequenceActionMapForMode;
 	private SortedSet keyStrokeSetForMode;
 
+	static int[][] getAccelerators(String key) {
+		List accelerators = new ArrayList(1);
+		StringTokenizer orTokenizer = new StringTokenizer(key,"||"); //$NON-NLS-1$
+		
+		while (orTokenizer.hasMoreTokens()) {
+			List acc = new ArrayList(2);
+			StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());
+			
+			while (spaceTokenizer.hasMoreTokens()) {
+				int accelerator = org.eclipse.jface.action.Action.convertAccelerator(spaceTokenizer.nextToken());
+				acc.add(new Integer(accelerator));
+			}
+			
+			int result[] = new int[acc.size()];
+			
+			for (int i = 0; i < result.length; i++) {
+				result[i] = ((Integer)acc.get(i)).intValue();
+			}
+			
+			accelerators.add(result);		
+		}
+		
+		int result[][] = new int[accelerators.size()][];
+		accelerators.toArray(result);
+		return result;
+	}
+	
+	static String[] parseLocale(String locale) {
+		final String EMPTY = ""; //$NON-NLS-1$
+		
+		//Parse language
+		String localeArray[] = {EMPTY, EMPTY, EMPTY};
+		
+		int index = locale.indexOf("_"); //$NON-NLS-1$
+		
+		if (index < 0) {
+			localeArray[0] = locale;
+			return localeArray;
+		} else if(index >= 0) {
+			localeArray[0] = locale.substring(0,index);
+		}
+		
+		if (index + 1 >= locale.length())
+			return localeArray;
+		
+		//Parse country
+		int newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
+		
+		if (newIndex < 0) {
+			localeArray[1] = locale.substring(index + 1);
+			return localeArray;
+		} else if(newIndex > 0) {
+			localeArray[1] = locale.substring(index + 1,newIndex);
+		}
+		
+		index = newIndex;
+		
+		if(index + 1 >= locale.length())
+			return localeArray;
+		
+		//Parse variant
+		newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
+		
+		if(newIndex < 0) {
+			localeArray[2] = locale.substring(index + 1);
+			return localeArray;
+		} else if(newIndex > 0) {
+			localeArray[2] = locale.substring(index + 1,newIndex);
+		}
+		
+		return localeArray;
+	}
+
+
 	private KeyBindingManager() {
 		super();				
 		AcceleratorRegistry acceleratorRegistry = 
@@ -65,13 +147,13 @@ public final class KeyBindingManager {
 			String initialId = id;
 			List elements = new ArrayList();				
 			acceleratorConfiguration = 
-				acceleratorConfiguration.getParentConfiguration();
+				acceleratorConfiguration.getParent();
 				
 			while (acceleratorConfiguration != null) {
 				elements.add(0, Element.create(id));
 				id = acceleratorConfiguration.getId();
 				acceleratorConfiguration = 
-					acceleratorConfiguration.getParentConfiguration();
+					acceleratorConfiguration.getParent();
 			}
 					
 			configurationMap.put(initialId, 
@@ -85,12 +167,12 @@ public final class KeyBindingManager {
 			String id = acceleratorScope.getId();
 			String initialId = id;
 			List elements = new ArrayList();				
-			acceleratorScope = acceleratorScope.getParentScope();
+			acceleratorScope = acceleratorScope.getParent();
 			
 			while (acceleratorScope != null) {
 				elements.add(0, Element.create(id));
 				id = acceleratorScope.getId();
-				acceleratorScope = acceleratorScope.getParentScope();
+				acceleratorScope = acceleratorScope.getParent();
 			}
 						
 			scopeMap.put(initialId, 
@@ -114,12 +196,12 @@ public final class KeyBindingManager {
 			if (configuration != null && scope != null) {					
 				for (int i = 0; i < accelerators.length; i++) {
 					Accelerator accelerator = accelerators[i];
-					int[][] a = accelerator.getAccelerators();
+					int[][] a = getAccelerators(accelerator.getKey());
 					String id = accelerator.getId();					
 					String localeString = accelerator.getLocale();		
 					List localeElements = new ArrayList();	
 					
-					if (!localeString.equals(Accelerator.DEFAULT_LOCALE)) {
+					if (localeString != null) {
 						StringTokenizer st = 
 							new StringTokenizer(localeString, "_");
 						
@@ -129,14 +211,14 @@ public final class KeyBindingManager {
 							if (element.length() > 0) {							
 								localeElements.add(Element.create(element));
 							}							
-						}					
+						}
 					}
 
 					Locale locale = Locale.create(Path.create(localeElements));
 					String platformString = accelerator.getPlatform();
 					List platformElements = new ArrayList();	
 					
-					if (!platformString.equals(Accelerator.DEFAULT_PLATFORM))
+					if (platformString != null)	
 						platformElements.add(platformString);
 										
 					Platform platform = 
