@@ -12,13 +12,13 @@ package org.eclipse.ant.internal.ui.console;
  
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jface.text.IRegion;
 
 /**
  * Processes task hyperlinks as lines are appended to the console
  */
-public class TaskLineTracker implements IConsoleLineTracker {
+public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	
 	private IConsole fConsole;
 
@@ -47,7 +47,13 @@ public class TaskLineTracker implements IConsoleLineTracker {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	public void dispose() {
-		TaskLinkManager.dispose(fConsole.getProcess());
 		fConsole = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
+	 */
+	public void consoleClosed() {
+		TaskLinkManager.dispose(fConsole.getProcess());
 	}
 }
