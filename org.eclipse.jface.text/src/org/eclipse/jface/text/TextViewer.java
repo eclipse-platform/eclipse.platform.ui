@@ -2601,7 +2601,9 @@ public class TextViewer extends Viewer implements
 			if (startLine + lines < endLine) {
 				int widgetTopIndex= fTextWidget.getTopIndex();
 				int widgetBottomIndex= widgetTopIndex + lines -1;
-				return widgetLine2ModelLine(widgetBottomIndex);
+				int modelLine= widgetLine2ModelLine(widgetBottomIndex);
+				if (modelLine == -1)
+					return d.getLineOfOffset(coverage.getOffset() + coverage.getLength());
 			}
 				
 			return endLine;
