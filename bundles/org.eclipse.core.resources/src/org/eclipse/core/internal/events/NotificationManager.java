@@ -117,9 +117,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	public void addListener(IResourceChangeListener listener, int eventMask) {
-		synchronized (listeners) {
-			listeners.add(listener, eventMask);
-		}
+		listeners.add(listener, eventMask);
 		EventStats.listenerAdded(listener);
 	}
 
@@ -269,11 +267,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
-		ResourceChangeListenerList.ListenerEntry[] result;
-		synchronized (listeners) {
-			result = listeners.getListeners();
-		}
-		return result;
+		return listeners.getListeners();
 	}
 
 	public void handleEvent(LifecycleEvent event) {
@@ -330,9 +324,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	public void removeListener(IResourceChangeListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+		listeners.remove(listener);
 		EventStats.listenerRemoved(listener);
 	}
 

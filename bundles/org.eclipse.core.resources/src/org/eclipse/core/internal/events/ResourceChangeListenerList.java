@@ -14,61 +14,24 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.IResourceChangeListener;
 
 /**
- * This class is used to maintain a list of listeners.
- * It is a fairly lightweight object, occupying minimal space when
- * no listeners are registered.
+ * This class is used to maintain a list of listeners. It is a fairly lightweight object, 
+ * occupying minimal space when no listeners are registered.
  * <p>
  * Note that the <code>add</code> method checks for and eliminates 
  * duplicates based on identity (not equality).  Likewise, the
  * <code>remove</code> method compares based on identity.
  * </p>
  * <p>
- * Use the <code>getListeners</code> method when notifying listeners.
- * Note that no garbage is created if no listeners are registered.
- * The recommended code sequence for notifying all registered listeners
- * of say, <code>FooListener.eventHappened</code>, is:
- * <pre>
- * Object[] listeners = myListenerList.getListeners();
- * for (int i = 0; i < listeners.length; ++i) {
- *    ((FooListener) listeners[i]).eventHappened(event);
- * }
- * </pre>
- * </p>
+ * This implementation is thread safe.  The listener list is copied every time
+ * it is modified, so readers do not need to copy or synchronize. This optimizes
+ * for frequent reads and infrequent writes, and assumes that readers can
+ * be trusted not to modify the returned array.
  */
 public class ResourceChangeListenerList {
-	/**
-	 * The initial capacity of the list. Always >= 1.
-	 */
-	private int capacity;
-
-	/**
-	 * The current number of listeners.
-	 * Maintains invariant: 0 <= size <= listeners.length.
-	 */
-	private int size;
-
-	/**
-	 * The list of listeners.  Initially <code>null</code> but initialized
-	 * to an array of size capacity the first time a listener is added.
-	 * Maintains invariant: listeners != null IFF size != 0
-	 */
-	private ListenerEntry[] listeners = null;
-
-	private int count1 = 0;
-	private int count2 = 0;
-	private int count4 = 0;
-	private int count8 = 0;
-	private int count16 = 0;
-
-	/**
-	 * The empty array singleton instance, returned by getListeners()
-	 * when size == 0.
-	 */
-	private static final ListenerEntry[] EMPTY_ARRAY = new ListenerEntry[0];
 
 	static class ListenerEntry {
-		IResourceChangeListener listener;
 		int eventMask;
+		IResourceChangeListener listener;
 
 		ListenerEntry(IResourceChangeListener listener, int eventMask) {
 			this.listener = listener;
@@ -77,22 +40,20 @@ public class ResourceChangeListenerList {
 	}
 
 	/**
-	 * Creates a listener list with an initial capacity of 3.
+	 * The empty array singleton instance.
 	 */
-	public ResourceChangeListenerList() {
-		this(3);
-	}
+	private static final ListenerEntry[] EMPTY_ARRAY = new ListenerEntry[0];
+
+	private int count1 = 0;
+	private int count2 = 0;
+	private int count4 = 0;
+	private int count8 = 0;
+	private int count16 = 0;
 
 	/**
-	 * Creates a listener list with the given initial capacity.
-	 *
-	 * @param capacity the number of listeners which this list can initially accept 
-	 *    without growing its internal representation; must be at least 1
+	 * The list of listeners.  Maintains invariant: listeners != null.
 	 */
-	public ResourceChangeListenerList(int capacity) {
-		Assert.isTrue(capacity >= 1);
-		this.capacity = capacity;
-	}
+	private ListenerEntry[] listeners = EMPTY_ARRAY;
 
 	/**
 	 * Adds the given listener to this list. Has no effect if an identical listener
@@ -101,32 +62,30 @@ public class ResourceChangeListenerList {
 	 * @param listener the listener
 	 * @param mask event types
 	 */
-	public void add(IResourceChangeListener listener, int mask) {
+	public synchronized void add(IResourceChangeListener listener, int mask) {
 		Assert.isNotNull(listener);
 		if (mask == 0) {
 			remove(listener);
 			return;
 		}
 		ResourceChangeListenerList.ListenerEntry entry = new ResourceChangeListenerList.ListenerEntry(listener, mask);
-		if (size == 0) {
-			listeners = new ListenerEntry[capacity];
-		} else {
-			// check for duplicates using identity
-			for (int i = 0; i < size; ++i) {
-				if (listeners[i].listener == listener) {
-					removing(listeners[i].eventMask);
-					adding(mask);
-					listeners[i] = entry;
-					return;
-				}
-			}
-			// grow array if necessary
-			if (size == listeners.length) {
-				System.arraycopy(listeners, 0, listeners = new ListenerEntry[size * 2 + 1], 0, size);
+		final int oldSize = listeners.length;
+		// check for duplicates using identity
+		for (int i = 0; i < oldSize; ++i) {
+			if (listeners[i].listener == listener) {
+				removing(listeners[i].eventMask);
+				adding(mask);
+				listeners[i] = entry;
+				return;
 			}
 		}
 		adding(mask);
-		listeners[size++] = entry;
+		// Thread safety: copy on write to protect concurrent readers.
+		ListenerEntry[] newListeners = new ListenerEntry[oldSize + 1];
+		System.arraycopy(listeners, 0, newListeners, 0, oldSize);
+		newListeners[oldSize] = entry;
+		//atomic assignment
+		this.listeners = newListeners;
 	}
 
 	private void adding(int mask) {
@@ -150,15 +109,12 @@ public class ResourceChangeListenerList {
 	 * Use this method when notifying listeners, so that any modifications
 	 * to the listener list during the notification will have no effect on the
 	 * notification itself.
-	 *
-	 * @return the list of registered listeners
+	 * <p>
+	 * Note: Clients must not modify the returned list
+	 * @return the list of registered listeners that must not be modified
 	 */
 	public ListenerEntry[] getListeners() {
-		if (size == 0)
-			return EMPTY_ARRAY;
-		ListenerEntry[] result = new ListenerEntry[size];
-		System.arraycopy(listeners, 0, result, 0, size);
-		return result;
+		return listeners;
 	}
 
 	public boolean hasListenerFor(int event) {
@@ -176,42 +132,26 @@ public class ResourceChangeListenerList {
 	}
 
 	/**
-	 * Returns whether this listener list is empty.
-	 *
-	 * @return <code>true</code> if there are no registered listeners, and
-	 *   <code>false</code> otherwise
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	public void recomputeCounts() {
-		count1 = 0;
-		count2 = 0;
-		count4 = 0;
-		count8 = 0;
-		count16 = 0;
-		for (int i = 0; i < listeners.length; i++)
-			adding(listeners[i].eventMask);
-	}
-
-	/**
 	 * Removes the given listener from this list. Has no effect if an identical
 	 * listener was not already registered.
 	 *
 	 * @param listener the listener to remove
 	 */
-	public void remove(IResourceChangeListener listener) {
+	public synchronized void remove(IResourceChangeListener listener) {
 		Assert.isNotNull(listener);
-		for (int i = 0; i < size; ++i) {
+		final int oldSize = listeners.length;
+		for (int i = 0; i < oldSize; ++i) {
 			if (listeners[i].listener == listener) {
 				removing(listeners[i].eventMask);
-				if (size == 1) {
-					listeners = null;
-					size = 0;
+				if (oldSize == 1) {
+					listeners = EMPTY_ARRAY;
 				} else {
-					System.arraycopy(listeners, i + 1, listeners, i, --size - i);
-					listeners[size] = null;
+					// Thread safety: create new array to avoid affecting concurrent readers
+					ListenerEntry[] newListeners = new ListenerEntry[oldSize - 1];
+					System.arraycopy(listeners, 0, newListeners, 0, i);
+					System.arraycopy(listeners, i + 1, newListeners, i, oldSize - i - 1);
+					//atomic assignment to field
+					this.listeners = newListeners;
 				}
 				return;
 			}
@@ -229,14 +169,5 @@ public class ResourceChangeListenerList {
 			count8--;
 		if ((mask & 16) != 0)
 			count16--;
-	}
-
-	/**
-	 * Returns the number of registered listeners.
-	 *
-	 * @return the number of registered listeners
-	 */
-	public int size() {
-		return size;
 	}
 }
