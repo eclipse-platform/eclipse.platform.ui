@@ -14,10 +14,6 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui.ide" optional="true"/>
-      <import plugin="org.eclipse.ui.views" optional="true"/>
-      <import plugin="org.eclipse.jface.text" optional="true"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
-      <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui"/>
