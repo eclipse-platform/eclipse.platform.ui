@@ -154,6 +154,12 @@
 				tooltip="%CompareWithRevisionAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.replaceWithRevision"
+				label="%ReplaceWithRevisionAction.label"
+				tooltip="%ReplaceWithRevisionAction.tooltip"
+				menubarPath="replaceWithMenu/replaceWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"/>
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
