@@ -394,18 +394,92 @@
    </element>
 
    <element name="colorOverride">
+      <annotation>
+         <documentation>
+            Allows overriding of colors defined in the org.eclipse.ui.colorDefinitions extension point.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a unique id that can be used to identify this color definition override.  This should match an existing color identifier.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="value" type="string">
+         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+
+Unlike a colorDefinition, you may not supply a defaultsTo for an override.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="gradientOverride">
+      <annotation>
+         <documentation>
+            Allows overriding of gradients defined in the org.eclipse.ui.colorDefinitions extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="gradientPart" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique id that can be used to identify this gradient definition override.  This should match an existing gradient identifier.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="direction">
+            <annotation>
+               <documentation>
+                  The direction of this gradient.  Must be vertical or horizontal. In the absence of this attribute, horizontal is assumed.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="vertical">
+                  </enumeration>
+                  <enumeration value="horizontal">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="initialValue" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="gradientPart">
+      <annotation>
+         <documentation>
+            A gradient part describes an additional color segment that exists in the gradient override.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="percentage" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The percentage point at which this color appears.  This must be &gt;= 0 and &lt;= 100.  Additionally, the sequence of gradientParts must be ordered by this attribute.  Ie:  a gradientPart with percentage 10 cannot be added after a gradientPart with percentage 50.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
                </documentation>
             </annotation>
          </attribute>

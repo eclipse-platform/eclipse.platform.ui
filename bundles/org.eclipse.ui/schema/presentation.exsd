@@ -42,7 +42,7 @@
    <element name="presentationCategory">
       <annotation>
          <documentation>
-            a logical grouping of presentation definitions.
+            a logical grouping of presentation definitions.  This category may include colors, fonts and gradients.
          </documentation>
       </annotation>
       <complexType>
