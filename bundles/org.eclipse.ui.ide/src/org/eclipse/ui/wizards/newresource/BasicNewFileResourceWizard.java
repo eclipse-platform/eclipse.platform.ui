@@ -62,9 +62,8 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
     public void addPages() {
         super.addPages();
         mainPage = new WizardNewFileCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
-        mainPage.setTitle(ResourceMessages.getString("FileResource.pageTitle")); //$NON-NLS-1$
-        mainPage.setDescription(ResourceMessages
-                .getString("FileResource.description")); //$NON-NLS-1$
+        mainPage.setTitle(ResourceMessages.FileResource_pageTitle);
+        mainPage.setDescription(ResourceMessages.FileResource_description); 
         addPage(mainPage);
     }
 
@@ -73,7 +72,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
-        setWindowTitle(ResourceMessages.getString("FileResource.shellTitle")); //$NON-NLS-1$
+        setWindowTitle(ResourceMessages.FileResource_shellTitle);
         setNeedsProgressMonitor(true);
     }
 
@@ -113,8 +112,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
                 }
             }
         } catch (PartInitException e) {
-            DialogUtil.openError(dw.getShell(), ResourceMessages
-                    .getString("FileResource.errorMessage"), //$NON-NLS-1$
+            DialogUtil.openError(dw.getShell(), ResourceMessages.FileResource_errorMessage, 
                     e.getMessage(), e);
         }
 

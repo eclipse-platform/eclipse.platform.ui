@@ -43,6 +43,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IPluginContribution;
@@ -104,8 +105,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
      */
     private IConfigurationElement configElement;
 
-    private static String WINDOW_PROBLEMS_TITLE = ResourceMessages
-            .getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
+    private static String WINDOW_PROBLEMS_TITLE = ResourceMessages.NewProject_errorOpeningWindow; 
 
     /**
      * Extension attribute name for final perspective.
@@ -138,19 +138,16 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         super.addPages();
 
         mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");//$NON-NLS-1$
-        mainPage.setTitle(ResourceMessages.getString("NewProject.title")); //$NON-NLS-1$
-        mainPage.setDescription(ResourceMessages
-                .getString("NewProject.description")); //$NON-NLS-1$
+        mainPage.setTitle(ResourceMessages.NewProject_title);
+        mainPage.setDescription(ResourceMessages.NewProject_description);
         this.addPage(mainPage);
 
         // only add page if there are already projects in the workspace
         if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
             referencePage = new WizardNewProjectReferencePage(
                     "basicReferenceProjectPage");//$NON-NLS-1$
-            referencePage.setTitle(ResourceMessages
-                    .getString("NewProject.referenceTitle")); //$NON-NLS-1$
-            referencePage.setDescription(ResourceMessages
-                    .getString("NewProject.referenceDescription")); //$NON-NLS-1$
+            referencePage.setTitle(ResourceMessages.NewProject_referenceTitle);
+            referencePage.setDescription(ResourceMessages.NewProject_referenceDescription);
             this.addPage(referencePage);
         }
     }
@@ -216,15 +213,11 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
                     MessageDialog
                             .openError(
                                     getShell(),
-                                    ResourceMessages
-                                            .getString("NewProject.errorMessage"), //$NON-NLS-1$
-                                    ResourceMessages
-                                            .format(
-                                                    "NewProject.caseVariantExistsError", new String[] { newProjectHandle.getName() }) //$NON-NLS-1$,
+                                    ResourceMessages.NewProject_errorMessage, 
+                                    NLS.bind(ResourceMessages.NewProject_caseVariantExistsError, newProjectHandle.getName()) 
                             );
                 } else {
-                    ErrorDialog.openError(getShell(), ResourceMessages
-                            .getString("NewProject.errorMessage"), //$NON-NLS-1$
+                    ErrorDialog.openError(getShell(), ResourceMessages.NewProject_errorMessage,
                             null, // no special message
                             ((CoreException) t).getStatus());
                 }
@@ -238,11 +231,8 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
                 MessageDialog
                         .openError(
                                 getShell(),
-                                ResourceMessages
-                                        .getString("NewProject.errorMessage"), //$NON-NLS-1$
-                                ResourceMessages
-                                        .format(
-                                                "NewProject.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
+                                ResourceMessages.NewProject_errorMessage,
+                                NLS.bind(ResourceMessages.NewProject_internalError, t.getMessage()));
             }
             return null;
         }
@@ -302,7 +292,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
         setNeedsProgressMonitor(true);
-        setWindowTitle(ResourceMessages.getString("NewProject.windowTitle")); //$NON-NLS-1$
+        setWindowTitle(ResourceMessages.NewProject_windowTitle);
     }
 
     /*
@@ -565,11 +555,8 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         }
 
         MessageDialogWithToggle dialog = MessageDialogWithToggle
-                .openYesNoQuestion(window.getShell(), ResourceMessages
-                        .getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$
-                        ResourceMessages.format(
-                                "NewProject.perspSwitchMessage", //$NON-NLS-1$
-                                new Object[] { finalPersp.getLabel() }),
+                .openYesNoQuestion(window.getShell(), ResourceMessages.NewProject_perspSwitchTitle,
+                        NLS.bind(ResourceMessages.NewProject_perspSwitchMessage, finalPersp.getLabel()),
                         null /* use the default message for the toggle */,
                         false /* toggle is initially unchecked */, store,
                         IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);

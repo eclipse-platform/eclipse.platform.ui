@@ -56,8 +56,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
      */
     public void addPages() {
         super.addPages();
-        mainPage = new WizardNewFolderMainPage(ResourceMessages
-                .getString("NewFolder.text"), getSelection()); //$NON-NLS-1$
+        mainPage = new WizardNewFolderMainPage(ResourceMessages.NewFolder_text, getSelection()); 
         addPage(mainPage);
     }
 
@@ -66,7 +65,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
-        setWindowTitle(ResourceMessages.getString("NewFolder.title")); //$NON-NLS-1$
+        setWindowTitle(ResourceMessages.NewFolder_title);
         setNeedsProgressMonitor(true);
     }
 
