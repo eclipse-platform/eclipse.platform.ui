@@ -115,8 +115,10 @@ public class TaskView extends MarkerView {
 				Item item = (Item) element;
 				Object data = item.getData();
 				
-				if (data instanceof ConcreteMarker) {				
-					IMarker marker = ((ConcreteMarker)data).getMarker();
+				if (data instanceof ConcreteMarker) {
+					ConcreteMarker concreteMarker = (ConcreteMarker)data;
+					
+					IMarker marker = concreteMarker.getMarker();
 					
 					try {
 						Object oldValue = getValue(data, property); 
@@ -128,6 +130,8 @@ public class TaskView extends MarkerView {
 							else if (IMarker.MESSAGE.equals(property))
 								marker.setAttribute(IMarker.MESSAGE, value);
 						}
+						
+						concreteMarker.refresh();
 					} catch (CoreException e) {
 						ErrorDialog.openError(getSite().getShell(), Messages.getString("errorModifyingTask") , null, e.getStatus()); //$NON-NLS-1$
 					}

@@ -33,23 +33,30 @@ public class ConcreteMarker {
 	private IMarker marker;
 
 	public ConcreteMarker(IMarker toCopy) {
-		description = Util.getProperty(IMarker.MESSAGE, toCopy);
-		resourceName = toCopy.getResource().getName();
-		inFolder = Util.getContainerName(toCopy);
-		line = toCopy.getAttribute(IMarker.LINE_NUMBER, -1);
+		marker = toCopy;
+		refresh();
+	}
+	
+	
+	/**
+	 * Refresh the properties of this marker from the underlying IMarker instance
+	 */
+	public void refresh() {
+		description = Util.getProperty(IMarker.MESSAGE, marker);
+		resourceName = marker.getResource().getName();
+		inFolder = Util.getContainerName(marker);
+		line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 		try {
-			creationTime = toCopy.getCreationTime();
+			creationTime = marker.getCreationTime();
 		} catch (CoreException e) {
 			creationTime = 0;
 		}
 		
 		try {
-			type = toCopy.getType();
+			type = marker.getType();
 		} catch (CoreException e1) {
 			type = ""; //$NON-NLS-1$
-		}
-		
-		marker = toCopy;
+		}		
 	}
 	
 	public IResource getResource() {

@@ -13,8 +13,10 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -30,6 +32,12 @@ public class MarkerList {
 	//private Collection markers;
 	private int[] markerCounts = null;
 	private ConcreteMarker[] markers;
+	
+	/**
+	 * Lazily created marker table - maps IMarkers onto ConcreteMarkers.
+	 * Null if not created
+	 */
+	private Map markerTable;
 	
 	/**
 	 * Creates an initially empty marker list
@@ -51,6 +59,35 @@ public class MarkerList {
 		this.markers = markers;
 	}
 	
+	/**
+	 * Returns the marker table or lazily creates it if it doesn't exist yet
+	 * 
+	 * @return a map of IMarker onto ConcreteMarker, containing all the ConcreteMarkers in the list
+	 */
+	private Map getMarkerMap() {
+		if (markerTable == null) {
+			markerTable = new HashMap();
+			
+			for (int idx = 0; idx < markers.length; idx++) {
+				ConcreteMarker marker = markers[idx];
+				markerTable.put(marker.getMarker(), marker);
+			}
+		}
+		
+		return markerTable;
+	}
+	
+	/**
+	 * Returns an existing marker from the list that is associated with
+	 * the given IMarker
+	 *  
+	 * @param toFind the IMarker to lookup in the list
+	 * @return the ConcreteMarker that corresponds to the given IMarker
+	 */
+	public ConcreteMarker getMarker(IMarker toFind) {
+		return (ConcreteMarker) getMarkerMap().get(toFind);
+	}
+	
 	public static ConcreteMarker createMarker(IMarker marker) throws CoreException {
 		if (marker.isSubtypeOf(IMarker.TASK)) {
 			return new TaskMarker(marker);
@@ -61,27 +98,33 @@ public class MarkerList {
 		} else return new ConcreteMarker(marker);
 	}
 	
-	public static ConcreteMarker[] createMarkers(Collection ofIMarker) throws CoreException {
-		return createMarkers((IMarker[])ofIMarker.toArray(new IMarker[ofIMarker.size()]));
+	public void refresh() {
+		for (int markerIdx = 0; markerIdx < markers.length; markerIdx++) {
+			ConcreteMarker next = markers[markerIdx];
+			next.refresh();
+		}
 	}
 	
-	public static Collection createMarkersIgnoringErrors(Collection ofIMarker) {
+	public List asList() {
+		return Arrays.asList(markers);
+	}
+	
+	public MarkerList findMarkers(Collection ofIMarker) {
 		List result = new ArrayList(ofIMarker.size());
 		
 		Iterator iter = ofIMarker.iterator();
 		while (iter.hasNext()) {
 			IMarker next = (IMarker)iter.next();
 			
-			try {
-				result.add(createMarker(next));
-			} catch (CoreException e) {
-				// Ignore errors
+			ConcreteMarker marker = getMarker(next);
+			if (marker != null) {
+				result.add(marker);
 			}
 		}
 				
-		return result;
+		return new MarkerList(result);		
 	}
-	
+		
 	public static ConcreteMarker[] createMarkers(IMarker[] source) throws CoreException {
 		ConcreteMarker[] result = new ConcreteMarker[source.length];
 		

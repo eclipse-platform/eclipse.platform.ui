@@ -21,7 +21,15 @@ public class ProblemMarker extends ConcreteMarker {
 
 	public ProblemMarker(IMarker toCopy) {
 		super(toCopy);
-		severity = toCopy.getAttribute(IMarker.SEVERITY, -1);
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.ConcreteMarker#refresh()
+	 */
+	public void refresh() {
+		super.refresh();
+		severity = getMarker().getAttribute(IMarker.SEVERITY, -1);
 	}
 	
 	public int getSeverity() {

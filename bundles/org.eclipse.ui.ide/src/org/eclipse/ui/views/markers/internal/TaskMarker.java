@@ -29,17 +29,20 @@ public class TaskMarker extends ConcreteMarker {
 	 */
 	public TaskMarker(IMarker toCopy) {
 		super(toCopy);
-		
-		priority = toCopy.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+	}
+
+	public void refresh() {
+		super.refresh();
+		priority = getMarker().getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 		done = -1;
-		if (toCopy.getAttribute(IMarker.USER_EDITABLE, true)) {
+		if (getMarker().getAttribute(IMarker.USER_EDITABLE, true)) {
 			done = 0;
-			if (toCopy.getAttribute(IMarker.DONE, false)) {
+			if (getMarker().getAttribute(IMarker.DONE, false)) {
 				done = 1;
 			}
 		}
 	}
-
+	
 	public int getPriority() {
 		return priority;
 	}

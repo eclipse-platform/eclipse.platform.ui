@@ -109,9 +109,12 @@ public abstract class MarkerView extends TableView {
 					refreshNeeded = true;
 				}
 				
-				change(MarkerList.createMarkersIgnoringErrors(changes));
+				MarkerList changed = currentMarkers.findMarkers(changes);
+				changed.refresh();
+				
+				change(changed.asList());
 			}
-						
+			
 			// Refresh everything if markers were added or removed
 			if (refreshNeeded) {
 				markerCountDirty = true;
@@ -464,7 +467,7 @@ public abstract class MarkerView extends TableView {
 				if (resource != null) {
 					IMarker marker = resource.findMarker(id);
 					if (marker != null)
-						selectionList.add(MarkerList.createMarker(marker));
+						selectionList.add(currentMarkers.getMarker(marker));
 				}
 			} catch (CoreException e) {
 			}
@@ -689,10 +692,9 @@ public abstract class MarkerView extends TableView {
 		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
 			Object next = i.next();
 			if (next instanceof IMarker) {
-				try {
-					newSelection.add(MarkerList.createMarker((IMarker)next));
-				} catch (CoreException e) {
-					// Ignore errors -- only select items we can successfully query
+				ConcreteMarker marker = currentMarkers.getMarker((IMarker)next);
+				if (marker != null) {
+					newSelection.add(marker);
 				}
 			}
 		}
