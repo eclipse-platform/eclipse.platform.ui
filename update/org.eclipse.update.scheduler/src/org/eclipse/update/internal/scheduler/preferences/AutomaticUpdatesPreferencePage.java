@@ -74,7 +74,7 @@ public class AutomaticUpdatesPreferencePage
 			}
 		});
 
-		dayCombo = new Combo(group, SWT.NULL);
+		dayCombo = new Combo(group, SWT.READ_ONLY);
 		dayCombo.setItems(UpdateScheduler.DAYS);
 		gd = new GridData();
 		gd.widthHint = 100;
@@ -84,7 +84,7 @@ public class AutomaticUpdatesPreferencePage
 		Label label = new Label(group, SWT.NULL);
 		label.setText("at");
 		
-		hourCombo = new Combo(group, SWT.NULL);
+		hourCombo = new Combo(group, SWT.READ_ONLY);
 		hourCombo.setItems(UpdateScheduler.HOURS);
 		gd = new GridData();
 		gd.widthHint = 60;
