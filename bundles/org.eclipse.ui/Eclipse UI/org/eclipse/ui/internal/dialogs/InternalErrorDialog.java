@@ -24,6 +24,10 @@ public class InternalErrorDialog extends MessageDialog {
 	private int detailButtonID = -1;
 	private Text text;
 	
+	//Workaround. SWT does not seem to set rigth the default button if 
+	//there is not control with focus. Bug: 14668
+	private int defaultButtonIndex = 0;
+	
 	/**
 	 * Size of the text in lines.
 	 */
@@ -46,9 +50,21 @@ public InternalErrorDialog(
 		dialogImageType,
 		dialogButtonLabels,
 		defaultIndex);
+	defaultButtonIndex = defaultIndex;
 	this.detail = detail;
 	setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
 }
+
+//Workaround. SWT does not seem to set rigth the default button if 
+//there is not control with focus. Bug: 14668
+public int open() {
+	create();
+	Button b = getButton(defaultButtonIndex);
+	b.setFocus();
+	b.getShell().setDefaultButton(b);
+	return super.open();
+}
+	
 /**
  * Set the detail button;
  */
@@ -119,34 +135,6 @@ protected void createDropDownText(Composite parent) {
 		GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL);
 	data.heightHint = text.getLineHeight() * TEXT_LINE_COUNT;
 	text.setLayoutData(data);
-}
-/** 
- * Convenience method to open a standard error dialog.
- *
- * @param parent the parent shell of the dialog, or <code>null</code> if none
- * @param title the dialog's title, or <code>null</code> if none
- * @param message the message
- */
-public static void openError(Shell parent, String title, String message, Throwable detail) {
-	String[] labels;
-	if(detail == null)
-		labels = new String[] {IDialogConstants.OK_LABEL};
-    else
-		labels = new String[] {IDialogConstants.OK_LABEL,IDialogConstants.SHOW_DETAILS_LABEL};
-		
-	InternalErrorDialog dialog = new InternalErrorDialog(
-		parent,
-		title, 
-		null,	// accept the default window icon
-		message,
-		detail, 
-		ERROR, 
-		labels, 
-		0); 	// ok is the default
-	if(detail != null)
-		dialog.setDetailButton(1);
-	dialog.open();
-	return;
 }
 /** 
  * Convenience method to open a simple Yes/No question dialog.
