@@ -40,14 +40,14 @@ public class AntElementNode {
 	 * The offset of the corresponding source.
 	 * @see #getOffset()
 	 */
-	protected int offset;
+	protected int offset= -1;
 	
 	
 	/**
 	 * The length of the corresponding source.
 	 * @see #getLength()
 	 */
-	protected int length;
+	protected int length= -1;
 	
 	/**
 	 * The length of the source to select for this node
