@@ -498,6 +498,8 @@ public class SearchIndex {
 		if (zipIn == null) {
 			return;
 		}
+		setInconsistent(true);
+		cleanOldIndex();
 		byte[] buf = new byte[8192];
 		File destDir = indexDir;
 		ZipInputStream zis = new ZipInputStream(zipIn);
@@ -532,6 +534,7 @@ public class SearchIndex {
 				System.out.println("SearchIndex: Prebuilt index restored to " //$NON-NLS-1$
 						+ destDir + "."); //$NON-NLS-1$
 			}
+			setInconsistent(false);
 		} catch (IOException ioe) {
 			if (fos != null) {
 				try {
@@ -544,6 +547,24 @@ public class SearchIndex {
 				zipIn.close();
 				if (zis != null)
 					zis.close();
+			} catch (IOException ioe) {
+			}
+		}
+	}
+
+	/**
+	 * Cleans any old index and Lucene lock files by initializing a new index.
+	 */
+	private void cleanOldIndex() {
+		IndexWriter cleaner = null;
+		try {
+			cleaner = new IndexWriter(indexDir, analyzerDescriptor
+					.getAnalyzer(), true);
+		} catch (IOException ioe) {
+		} finally {
+			try {
+				if (cleaner != null)
+					cleaner.close();
 			} catch (IOException ioe) {
 			}
 		}
