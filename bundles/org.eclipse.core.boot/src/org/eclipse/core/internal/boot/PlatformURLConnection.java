@@ -276,8 +276,11 @@ private String resolvePath(String spec) {
 		return "ws/" + InternalBootLoader.getWS() + rest;
 	if (first.equalsIgnoreCase("$os$"))
 		return "os/" + InternalBootLoader.getOS() + rest;
-	if (first.equalsIgnoreCase("$nl$"))
-		return "nl/" + InternalBootLoader.getNL() + rest;
+	if (first.equalsIgnoreCase("$nl$")) {
+		String nl = InternalBootLoader.getNL();
+		nl = nl.replace('_', '/');
+		return "nl/" + nl + rest;
+	}
 	return spec;
 }
 
