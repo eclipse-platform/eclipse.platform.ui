@@ -354,6 +354,9 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
 
     public void dispose() {
         textChangeListeners = null;
+        if (document != null) {
+            document.removeDocumentListener(this);
+        }
         document = null;
         lines = null;
     }

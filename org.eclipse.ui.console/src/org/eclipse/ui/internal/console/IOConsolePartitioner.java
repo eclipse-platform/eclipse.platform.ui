@@ -30,7 +30,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsoleHyperlink;
+import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
@@ -40,7 +41,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  *
  */
 public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension {
-	
+	private PendingPartition consoleClosedPartition;
 	private IDocument document;
 	private ArrayList partitions;
 	/**
@@ -83,9 +84,12 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
     private boolean connected = false;
+
+    private IOConsole console;
 	
-	public IOConsolePartitioner(IOConsoleInputStream inputStream) {
+	public IOConsolePartitioner(IOConsoleInputStream inputStream, IOConsole console) {
 		this.inputStream = inputStream;
+		this.console = console;
 	}
 	
 	public IDocument getDocument() {
@@ -126,13 +130,21 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		});
 	}
 	
+    public void consoleFinished() {
+        consoleClosedPartition = new PendingPartition(null, null);
+        synchronized (pendingPartitions) {
+            pendingPartitions.add(consoleClosedPartition);
+        }
+        updateJob.schedule(); //ensure that all pending partitions are processed.
+    }
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
 	 */
 	public void disconnect() {
 		document = null;
-		partitions = null;
+		partitions.clear();
 		connected = false;
 		inputStream.disconnect();
 	}
@@ -221,7 +233,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	/**
 	 * Returns the region occupied by the hyperlink
 	 */
-	public IRegion getRegion(IConsoleHyperlink link) {
+	public IRegion getRegion(IHyperlink link) {
 		try {
 			Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
 			for (int i = 0; i < positions.length; i++) {
@@ -282,6 +294,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension#documentChanged2(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public IRegion documentChanged2(DocumentEvent event) {
+	    if (document == null) {
+	        return null; //another thread disconnected the partitioner
+	    }
 		if (document.getLength() == 0) { //document cleared
 			partitions.clear();
 			inputPartitions.clear();
@@ -295,6 +310,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			synchronized(partitions) {
 			    for (Iterator i = updatePartitions.iterator(); i.hasNext(); ) {
 			        PendingPartition pp = (PendingPartition) i.next();
+			        if (pp == consoleClosedPartition) {
+			            continue;
+			        }
 			        IOConsolePartition partition = new IOConsolePartition(pp.stream, pp.text);
 			        partition.setOffset(firstOffset);
 			        firstOffset += partition.getLength();
@@ -438,6 +456,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			
 			ArrayList pendingCopy = new ArrayList();
 			StringBuffer buffer = null;
+			boolean consoleClosed = false;
 			while (display != null && pendingPartitions.size() > 0) {
 				synchronized(pendingPartitions) {
 					pendingCopy.addAll(pendingPartitions);
@@ -447,12 +466,17 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				buffer = new StringBuffer();
 				for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
 				    PendingPartition pp = (PendingPartition) i.next();
-				    buffer.append(pp.text);
+				    if (pp != consoleClosedPartition) { 
+				        buffer.append(pp.text);
+				    } else {
+				        consoleClosed = true;
+				    }
 				}
 			}
 			
 			final ArrayList finalCopy = pendingCopy;
-			final String toAppend = buffer.toString();		
+			final String toAppend = buffer.toString();
+			final boolean notifyClosed = consoleClosed;
 			
 			display.asyncExec(new Runnable() {
 			    public void run() {
@@ -467,6 +491,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			            updatePartitions = null;
 			            setUpdateInProgress(false);
 			        }
+			        if (notifyClosed) {
+		                console.partitionerFinished();
+		            }
 			    }
 			});
 			
@@ -481,8 +508,11 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
          * once even if it's called many times.
          */
         public boolean shouldRun() {
-            return connected && pendingPartitions != null && pendingPartitions.size() > 0;
+            boolean shouldRun = connected && pendingPartitions != null && pendingPartitions.size() > 0;
+            return shouldRun;
         }
 	}
+
+    
 	
 }

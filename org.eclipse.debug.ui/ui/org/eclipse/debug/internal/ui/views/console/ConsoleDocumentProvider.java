@@ -86,7 +86,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		IConsoleColorProvider colorProvider = null;
 		if (type != null) {
-			colorProvider = getConsoleDocumentManager().getColorProvider(type);
+			colorProvider = getProcessConsoleManager().getColorProvider(type);
 		}
 		if (colorProvider == null) {
 			colorProvider = new ConsoleColorProvider();
@@ -103,7 +103,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	protected ConsoleLineNotifier getLineNotifier(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		if (type != null) {
-			return getConsoleDocumentManager().newLineNotifier(type);
+			return getProcessConsoleManager().newLineNotifier(type);
 		}
 		return null;
 	}
@@ -113,8 +113,8 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	 * 
 	 * @return ConsoleDocumentManager
 	 */
-	private ConsoleDocumentManager getConsoleDocumentManager() {
-		return DebugUIPlugin.getDefault().getConsoleDocumentManager();
+	private ProcessConsoleManager getProcessConsoleManager() {
+		return DebugUIPlugin.getDefault().getProcessConsoleManager();
 	}
 	
 	/*

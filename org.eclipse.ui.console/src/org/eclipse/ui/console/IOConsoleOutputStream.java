@@ -104,7 +104,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	 */
 	public void setColor(Color newColor) {
 		Color old = color;
-		if (old == null || old.equals(newColor)) {
+		if (old == null || !old.equals(newColor)) {
 		    color = newColor;
 		    console.firePropertyChange(this, IOConsole.P_STREAM_COLOR, old, newColor);
 		}
@@ -178,7 +178,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @param str The string to write to the attached console.
      * @throws IOException if the stream is closed.
      */
-    protected void write(String str) throws IOException {
+    public void write(String str) throws IOException {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }

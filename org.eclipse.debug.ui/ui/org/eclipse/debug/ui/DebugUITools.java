@@ -603,7 +603,7 @@ public class DebugUITools {
 	 * @since 3.0
 	 */
 	public static IConsole getConsole(IProcess process) {
-		return DebugUIPlugin.getDefault().getConsoleDocumentManager().getConsole(process);
+		return DebugUIPlugin.getDefault().getProcessConsoleManager().getConsole(process);
 	}
 	
 	/**

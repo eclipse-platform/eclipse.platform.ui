@@ -25,6 +25,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
@@ -68,6 +69,11 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	 */
 	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
 	
+	/**
+	 * Property constant indicating that output queued on a finished console has been processed.
+	 */
+	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_OUTPUT_COMPLETE"; //$NON-NLS-1$
+	
 	/** 
 	 * The font used by this console
 	 */
@@ -104,7 +110,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);
         inputStream = new IOConsoleInputStream(this);
-        partitioner = new IOConsolePartitioner(inputStream);
+        partitioner = new IOConsolePartitioner(inputStream, this);
         Document document = new Document();
         document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         partitioner.connect(document);
@@ -185,9 +191,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	 * water mark is exceeded.
 	 * 
 	 * @param low the number of characters remaining in the buffer when the high
-	 *  water mark is exceeded
+	 *  water mark is exceeded (if -1 the console does not limit output)
 	 * @param high the maximum number of characters this console will cache in
-	 *  its text buffer
+	 *  its text buffer (if -1 the console does not limit output)
 	 * @exception IllegalArgumentException if low >= high
 	 */
 	public void setWaterMarks(int low, int high) {
@@ -243,6 +249,14 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         }
     }
     
+    public void setFinished() {
+        partitioner.consoleFinished();
+    }
+    
+    public void partitionerFinished() {
+        firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+    }
+    
     /**
      * Returns the current width of this console. A value of zero of less 
      * implies the console has no fixed width.
@@ -275,13 +289,21 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * @param length The length of the text which should be hyperlinked.
      * @throws BadLocationException Thrown if the specified location is not valid.
      */
-    public void addHyperlink(IConsoleHyperlink hyperlink, int offset, int length) throws BadLocationException {
+    public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
 		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
 			getDocument().addPosition(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
 		} catch (BadPositionCategoryException e) {
 			ConsolePlugin.log(e);
 		} 
+    }
+    
+    /**
+     * @param link
+     * @return
+     */
+    public IRegion getRegion(IHyperlink link) {
+        return partitioner.getRegion(link);
     }
     
     /**
@@ -299,16 +321,16 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
     /**
      * Adds a matchHandler to match a pattern to the document's content.
-     * @param matchHandler The IPatternMatchHandler to add.
+     * @param matchListener The IPatternMatchHandler to add.
      */
-    public void addPatternMatchHandler(IPatternMatchListener matchHandler) {
+    public void addPatternMatchListener(IPatternMatchListener matchListener) {
         synchronized(patterns) {
-            if (matchHandler == null || matchHandler.getPattern() == null) {
+            if (matchListener == null || matchListener.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }
             
-            Pattern pattern = Pattern.compile(matchHandler.getPattern());
-            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchHandler);
+            Pattern pattern = Pattern.compile(matchListener.getPattern());
+            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchListener);
             patterns.add(notifier);
             
             try {
@@ -322,11 +344,11 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * Removes an IPatternMatchHandler so that its pattern will no longer get matched to the document.
      * @param matchHandler The IPatternMatchHandler to remove.
      */
-    public void removePatternMatchHandler(IPatternMatchListener matchHandler) {
+    public void removePatternMatchListener(IPatternMatchListener matchListener) {
         synchronized(patterns){
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
-                if (element.listener == matchHandler) {
+                if (element.listener == matchListener) {
                     iter.remove();
                 }
             }
@@ -347,8 +369,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         synchronized(patterns) {
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
+                int start = Math.min(pattern.end, event.fOffset);
                 try {
-                    testForMatch(pattern, event.fOffset);
+                    testForMatch(pattern, start);
                 } catch (BadLocationException e) {
                 }
             }
@@ -365,6 +388,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             if (group.length() > 0) {
                 int matchOffset = documentOffset + matcher.start();
                 notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
+                compiled.end = matcher.end() + documentOffset;
             }
         }
     }
@@ -372,6 +396,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     private class CompiledPatternMatchListener {
         Pattern pattern;
         IPatternMatchListener listener;
+        int end = 0;
         
         CompiledPatternMatchListener(Pattern pattern, IPatternMatchListener matchListener) {
             this.pattern = pattern;

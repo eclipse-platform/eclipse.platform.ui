@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.console;
 
+import org.eclipse.ui.console.IHyperlink;
+
 
 /**
  * A hyperlink in the console. Link behavior is implementation dependent.
@@ -17,23 +19,7 @@ package org.eclipse.debug.ui.console;
  * Clients may implement this interface.
  * </p>
  * @since 2.1
+ * @deprecated replaced by org.eclipse.ui.console.IConsoleHyperlink
  */
-public interface IConsoleHyperlink {
-	
-	/**
-	 * Notification that the mouse has entered this link's region.
-	 */
-	public void linkEntered();
-	
-	/**
-	 * Notification that the mouse has exited this link's region
-	 */
-	public void linkExited();
-	
-	/**
-	 * Notification that this link has been activated. Performs
-	 * context specific linking.
-	 */
-	public void linkActivated();
-
+public interface IConsoleHyperlink extends IHyperlink {
 }

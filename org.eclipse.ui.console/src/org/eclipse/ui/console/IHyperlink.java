@@ -17,7 +17,7 @@ package org.eclipse.ui.console;
  * </p>
  * @since 3.1
  */
-public interface IConsoleHyperlink {
+public interface IHyperlink {
 	
 	/**
 	 * Notification that the mouse has entered this link's region.

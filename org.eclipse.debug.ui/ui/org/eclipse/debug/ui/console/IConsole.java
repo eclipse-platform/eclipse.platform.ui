@@ -16,6 +16,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IPatternMatchListener;
 
 /**
  * A console that displays output and writes input to a process. Implementors of
@@ -86,4 +87,8 @@ public interface IConsole {
 	 * @return the process associated with this console
 	 */
 	public IProcess getProcess();
+	
+	
+	public void addPatternMatchListener(IPatternMatchListener matchHandler);
+	public void removePatternMatchListener(IPatternMatchListener matchHandler);
 }

@@ -50,6 +50,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IPatternMatchListener;
 
 /**
  * Default console document partitioner. Partitions a document into
@@ -135,9 +136,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		
 		public void streamAppended(String newText, IStreamMonitor monitor) {
 			if (fIsSystemOut) {
-				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemOut(getProcess());
+				DebugUIPlugin.getDefault().getProcessConsoleManager().aboutToWriteSystemOut(getProcess());
 			} else if (fIsSystemErr) {
-				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemErr(getProcess());
+				DebugUIPlugin.getDefault().getProcessConsoleManager().aboutToWriteSystemErr(getProcess());
 			}
 			ConsoleDocumentPartitioner.this.streamAppended(newText, fStreamIdentifier);
 		}
@@ -363,9 +364,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		if (isAppendInProgress()) {
 			// stream input
 			addPartition(new OutputPartition(fLastStreamIdentifier, event.getOffset(), text.length()));
-			if (fLineNotifier != null) {
-				fLineNotifier.consoleChanged(event);
-			}
+//			if (fLineNotifier != null) {
+//				fLineNotifier.consoleChanged(event);
+//			}
 		} else {
 			// console keyboard input
 			int amountDeleted = event.getLength() - text.length();
@@ -380,9 +381,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				fInputBuffer.setLength(0);
 				fPartitions.clear();
 				// reset lines processed to 0
-				if (fLineNotifier != null) {
-					fLineNotifier.setLinesProcessed(0);
-				}
+//				if (fLineNotifier != null) {
+//					fLineNotifier.setLinesProcessed(0);
+//				}
 				// remove existing positions
 				try {
 					Position[] positions = fDocument.getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
@@ -718,9 +719,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			if (fDocument.getLength() > fHighWaterMark) {
 				int lineDifference = 0;
 				if (fLineNotifier != null) {
-					int processed = fLineNotifier.getLinesProcessed();
+//					int processed = fLineNotifier.getLinesProcessed();
 					int numLines = fDocument.getNumberOfLines();
-					lineDifference = numLines - processed;
+//					lineDifference = numLines - processed;
 				}
 				int overflow = fDocument.getLength() - fLowWaterMark; 
 				fUpdatingBuffer = true;
@@ -792,7 +793,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				} finally {
 					// update number of lines processed
 					if (fLineNotifier != null) {
-						fLineNotifier.setLinesProcessed(fDocument.getNumberOfLines() - lineDifference);
+//						fLineNotifier.setLinesProcessed(fDocument.getNumberOfLines() - lineDifference);
 					}
 					fUpdatingBuffer = false;
 				}
@@ -991,4 +992,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.console.IConsole#addPatternMatchHandler(org.eclipse.ui.console.IPatternMatchListener)
+     */
+	public void addPatternMatchListener(IPatternMatchListener matchHandler) {
+        //
+    }
+	public void removePatternMatchListener(IPatternMatchListener matchHandler) {
+	}
 }

@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsoleHyperlink;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Describes the postition of a hyperlink within the Console's document.
@@ -23,14 +23,14 @@ public class IOConsoleHyperlinkPosition extends Position {
     
 	public static final String HYPER_LINK_CATEGORY = ConsolePlugin.getUniqueIdentifier() + ".IO_CONSOLE_HYPERLINK_POSITION"; //$NON-NLS-1$
 	
-	private IConsoleHyperlink fLink = null;
+	private IHyperlink fLink = null;
 
-	public IOConsoleHyperlinkPosition(IConsoleHyperlink link, int offset, int length) {
+	public IOConsoleHyperlinkPosition(IHyperlink link, int offset, int length) {
 		super(offset, length);
 		fLink = link;
 	}
 	
-	public IConsoleHyperlink getHyperLink() {
+	public IHyperlink getHyperLink() {
 		return fLink;
 	}
 

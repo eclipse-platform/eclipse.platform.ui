@@ -143,7 +143,7 @@ public class IOConsoleInputStream extends InputStream {
      * blocks until data is available to be read.
      */
     private void waitForData() {
-        while (size == 0 && !disconnected) {
+        while (size == 0 && !disconnected && !closed) {
             try {
                 input.wait();
             } catch (InterruptedException e) {
@@ -246,7 +246,7 @@ public class IOConsoleInputStream extends InputStream {
      * @see java.io.InputStream#available()
      */
     public int available() throws IOException {
-        if (closed) {
+        if (closed && eofSent) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         } else if (size == 0 && disconnected) {
             if (!eofSent) {
@@ -267,6 +267,9 @@ public class IOConsoleInputStream extends InputStream {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
         closed = true;
+        synchronized(input) {
+            input.notifyAll();
+        }
     }
 
     /**
@@ -274,5 +277,8 @@ public class IOConsoleInputStream extends InputStream {
      */
     public void disconnect() {
         disconnected = true;
+        synchronized(input) {
+            input.notifyAll();
+        }
     }
 }

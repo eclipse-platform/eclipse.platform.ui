@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
@@ -43,6 +44,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
@@ -120,6 +123,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		viewer = new IOConsoleViewer(parent, console.getDocument());
 		viewer.setConsoleWidth(console.getConsoleWidth());
 		console.addPropertyChangeListener(this);
+		JFaceResources.getFontRegistry().addListener(this);
 		
 		MenuManager manager= new MenuManager("#IOConsole", "#IOConsole");  //$NON-NLS-1$//$NON-NLS-2$
 		manager.setRemoveAllWhenShown(true);
@@ -134,6 +138,10 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
+		IPageSite site= getSite();
+		site.registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".IOConsole", manager, viewer); //$NON-NLS-1$
+		site.setSelectionProvider(viewer);
+		
 		viewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
 		viewer.addTextListener(textListener);
 		if (readOnly) {
@@ -146,6 +154,9 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPage#dispose()
      */
     public void dispose() {
+        console.removePropertyChangeListener(this);
+        JFaceResources.getFontRegistry().removeListener(this);
+        
         if (menu != null && !menu.isDisposed()) {
             menu.dispose();
         }
@@ -184,6 +195,16 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	protected void setFont(Font font) {
 		viewer.getTextWidget().setFont(font);
 	}
+	
+	public void setAutoScroll(boolean scroll) {
+	    autoScroll = scroll;
+	    if (viewer != null) {
+	        viewer.setAutoScroll(scroll);
+	    }
+	    if (scrollLockAction != null) {
+	        scrollLockAction.setChecked(!scroll);
+	    }
+	}
 
 	/*
 	 *  (non-Javadoc)
@@ -204,6 +225,10 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		    viewer.setTabWidth(tabSize.intValue());
 		} else if (source.equals(console) && property.equals(IOConsole.P_CONSOLE_WIDTH)) {
 		    viewer.setConsoleWidth(console.getConsoleWidth()); 
+		} else if (property.equals(IConsoleConstants.CONSOLE_FONT)) {
+		    viewer.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+		} else if (property.equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
+		    viewer.setReadOnly();
 		}
 	}
 
@@ -275,15 +300,19 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		if (doc == null) {
 			return;
 		}
-	
-		menu.add((IAction)globalActions.get(ActionFactory.SELECT_ALL.getId()));						
-		menu.add((IAction)globalActions.get(ActionFactory.CUT.getId()));
+	 
+		if (!viewer.isReadOnly()) {
+		    menu.add((IAction)globalActions.get(ActionFactory.CUT.getId()));
+		}
 		menu.add((IAction)globalActions.get(ActionFactory.COPY.getId()));
-		menu.add((IAction)globalActions.get(ActionFactory.PASTE.getId()));
+		if (!viewer.isReadOnly()) {
+		    menu.add((IAction)globalActions.get(ActionFactory.PASTE.getId()));
+		}
 		menu.add((IAction)globalActions.get(ActionFactory.SELECT_ALL.getId()));
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)globalActions.get(ActionFactory.FIND.getId()));
+		menu.add(new FollowHyperlinkAction(viewer));
 		menu.add(clearOutputAction);
 		menu.add(scrollLockAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -316,5 +345,23 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
             viewer.setReadOnly();
         }
     }
+    
+    /**
+	 * Returns the view this page is contained in
+	 * 
+	 * @return the view this page is contained in
+	 */
+	protected IConsoleView getConsoleView() {
+		return consoleView;
+	}
+	
+	/**
+	 * Returns the console this page is displaying
+	 * 
+	 * @return the console this page is displaying
+	 */
+	protected IConsole getConsole() {
+		return console;
+	}
 
 }

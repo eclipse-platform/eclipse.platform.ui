@@ -37,6 +37,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -44,7 +45,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsoleHyperlink;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Viewer used to display an IOConsole
@@ -60,10 +61,11 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      * Adapts document to the text widget.
      */
     private IOConsoleDocumentAdapter documentAdapter;
-    private IConsoleHyperlink hyperlink;
+    private IHyperlink hyperlink;
     private Cursor handCursor;
     private Cursor textCursor;
     private int consoleWidth = -1;
+    private IDocumentListener documentListener; 
     
     public IOConsoleViewer(Composite parent, IDocument document) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -78,13 +80,14 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         styledText.addMouseTrackListener(this);
         styledText.addPaintListener(this);
 		
-        document.addDocumentListener(new IDocumentListener() {
+        documentListener = new IDocumentListener() {
             public void documentAboutToBeChanged(DocumentEvent event) {
             }
             public void documentChanged(DocumentEvent event) {
                 revealEndOfDocument();
             }
-        });
+        };
+        document.addDocumentListener(documentListener);
     }
     
     public boolean isAutoScroll() {
@@ -98,6 +101,12 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     public void setTabWidth(int tabWidth) {
         StyledText styledText = getTextWidget();
         styledText.setTabs(tabWidth);
+        styledText.redraw();
+    }
+    
+    public void setFont(Font font) {
+        StyledText styledText = getTextWidget();
+        styledText.setFont(font);
         styledText.redraw();
     }
     
@@ -231,7 +240,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 		return textCursor;
 	}	
 	
-	protected void linkEntered(IConsoleHyperlink link) {
+	protected void linkEntered(IHyperlink link) {
 		Control control = getTextWidget();
 		control.setRedraw(false);
 		if (hyperlink != null) {
@@ -245,7 +254,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 		control.addMouseListener(this);
 	}
 	
-	protected void linkExited(IConsoleHyperlink link) {
+	protected void linkExited(IHyperlink link) {
 		link.linkExited();
 		hyperlink = null;
 		Control control = getTextWidget();
@@ -300,7 +309,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 	 */
 	protected void updateLinks(int offset) {
 		if (offset >= 0) {
-			IConsoleHyperlink link = getHyperlink(offset);
+			IHyperlink link = getHyperlink(offset);
 			if (link != null) {
 				if (link.equals(hyperlink)) {
 					return;
@@ -318,11 +327,11 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 	 * Returns the current value of <code>hyperlink</code> field
 	 * @return The current value of <code>hyperlink</code> field
 	 */
-	public IConsoleHyperlink getHyperlink() {
+	public IHyperlink getHyperlink() {
 	    return hyperlink;
 	}
 	
-	public IConsoleHyperlink getHyperlink(int offset) {
+	public IHyperlink getHyperlink(int offset) {
 		if (offset >= 0 && getDocument() != null) {
 			Position[] positions = null;
 			try {
@@ -393,7 +402,18 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      */
     protected void handleDispose() {
         super.handleDispose();
+        
+        StyledText styledText = getTextWidget();
+        styledText.removeLineStyleListener(this);
+        styledText.removeLineBackgroundListener(this);
+        styledText.removeMouseTrackListener(this);
+        styledText.removePaintListener(this);
+        
         documentAdapter.dispose();
+        IDocument document = getDocument();
+        if (document != null) {
+            document.removeDocumentListener(documentListener);
+        }
         handCursor=null;
         textCursor=null;
         hyperlink = null;
@@ -403,7 +423,14 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      * makes the associated text widget uneditable.
      */
     public void setReadOnly() {
-        getTextWidget().setEditable(false);
+        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+           public void run() {   
+               StyledText text = getTextWidget();
+               if (text != null) {
+                   text.setEditable(false);
+               }
+           }
+        });
     }
 
     /**

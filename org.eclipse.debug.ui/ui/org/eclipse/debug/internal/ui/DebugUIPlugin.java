@@ -52,7 +52,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
 import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
 import org.eclipse.debug.ui.DebugUITools;
@@ -131,7 +131,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Singleton console document manager
 	 */
-	private ConsoleDocumentManager fConsoleDocumentManager = null;
+	private ProcessConsoleManager fProcessConsoleManager = null;
 	
 	/**
 	 * Perspective manager
@@ -305,8 +305,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fLaunchConfigurationManager != null) {
 				fLaunchConfigurationManager.shutdown();
 			}
-			if (fConsoleDocumentManager != null) {
-				fConsoleDocumentManager.shutdown();
+			if (fProcessConsoleManager != null) {
+				fProcessConsoleManager.shutdown();
 			}
 			if (fStepFilterManager != null) {
 				fStepFilterManager.shutdown();
@@ -612,16 +612,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 	/**
-	 * Returns the console document manager. The manager will be created lazily on 
+	 * Returns the process console manager. The manager will be created lazily on 
 	 * the first access.
 	 * 
-	 * @return ConsoleDocumentManager
+	 * @return ProcessConsoleManager
 	 */
-	public ConsoleDocumentManager getConsoleDocumentManager() {
-		if (fConsoleDocumentManager == null) {
-			fConsoleDocumentManager = new ConsoleDocumentManager();
+	public ProcessConsoleManager getProcessConsoleManager() {
+		if (fProcessConsoleManager == null) {
+			fProcessConsoleManager = new ProcessConsoleManager();
 		}
-		return fConsoleDocumentManager;
+		return fProcessConsoleManager;
 	}
 	
 	/**
@@ -709,7 +709,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public void launchAdded(ILaunch launch) {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		getConsoleDocumentManager().startup();
+		getProcessConsoleManager().startup();
 		
 		if (fPerspectiveManager == null) {
 			PerspectiveManager manager = getPerspectiveManager();

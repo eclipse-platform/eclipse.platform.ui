@@ -126,7 +126,7 @@ public class IOConsolePartition implements ITypedRegion {
         return outputStream.getFontStyle();
     }
 
-    private Color getColor() {
+    public Color getColor() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getColor();
         } 
