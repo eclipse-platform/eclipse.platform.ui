@@ -156,14 +156,13 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException, InstallAbortedException {
-		try{
-			UpdateManagerUtils.copy(is, os, monitor);
-		}catch (UpdateManagerUtils.CopyException e){
-			Exception root = e.getRootException();
-			if (root instanceof IOException){
-				throw (IOException)root;
-			}else{
-				throw (InstallAbortedException)root;
+		long offset = UpdateManagerUtils.copy(is, os, monitor);
+		if (offset != -1) {
+			if (monitor.isCanceled()) {
+				String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+				throw new InstallAbortedException(msg, null);
+			} else {
+				throw new IOException();
 			}
 		}
 	}

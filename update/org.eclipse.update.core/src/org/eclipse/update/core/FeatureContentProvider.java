@@ -267,25 +267,27 @@ public abstract class FeatureContentProvider
 						monitor.incrementCount(bytesCopied);
 					}
 				}
-				try {
-					UpdateManagerUtils.copy(is, os, monitor);
-					UpdateManagerUtils.unMapLocalFileFragment(key);
-				} catch (UpdateManagerUtils.CopyException ce) {
-					bytesCopied += ce.getBytesCopied();
+
+				// Transfer as many bytes as possible from input to output stream
+				long offset = UpdateManagerUtils.copy(is, os, monitor);
+				if (offset != -1) {
+					bytesCopied += offset;
 					if (bytesCopied > 0) {
 						// preserve partially downloaded file
 						UpdateManagerUtils.mapLocalFileFragment(
-							key,
-							new FileFragment(localFile, bytesCopied));
+								key,
+								new FileFragment(localFile, bytesCopied));
 					}
-					Exception root = ce.getRootException();
-					if (root instanceof IOException) {
-						throw (IOException) root;
+					if (monitor.isCanceled()) {
+						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+						throw new InstallAbortedException(msg, null);
 					} else {
-						throw (InstallAbortedException) root;
-
+						throw new IOException();
 					}
+				} else {
+					UpdateManagerUtils.unMapLocalFileFragment(key);
 				}
+
 				Date stop = new Date();
 				long timeInseconds = (stop.getTime() - start.getTime()) / 1000;
 				// time in milliseconds /1000 = time in seconds

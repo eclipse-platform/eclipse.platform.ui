@@ -808,18 +808,18 @@ public static class Writer {
 	 * @param is input stream
 	 * @param os output stream
 	 * @param monitor progress monitor
-	 * @exception CopyException encapsulating IOException or InstallAbortedException
+	 * @@return the offset in the input stream where copying stopped. Returns -1 if end of input stream is reached.
 	 * @since 2.0
 	 */
-	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws CopyException {
+	public static long copy(InputStream is, OutputStream os, InstallMonitor monitor) {
 		byte[] buf = getBuffer();
-		int bytesCopied=0;
+		long offset=0;
 		try {
 			int len = is.read(buf);
 			int nextIncrement = 0;
 			while (len != -1) {
 				os.write(buf, 0, len);
-					bytesCopied += len;
+					offset += len;
 				if (monitor != null) {
 					nextIncrement += len;
 					// update monitor periodically
@@ -828,18 +828,19 @@ public static class Writer {
 						nextIncrement = 0;
 					}
 					if (monitor.isCanceled()) {
-						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
-						throw new InstallAbortedException(msg, null);
+						return offset;
 					}
 				}
 				len = is.read(buf);
 			}
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
+			return -1;
 		} catch(IOException e){
-			throw new CopyException(e, bytesCopied);
-		} catch(InstallAbortedException e){
-			throw new CopyException(e, bytesCopied);
+			// Log the actual error, as this is no longer
+			// passed up the calling stack
+			UpdateCore.log("UpdateManagerUtils.copy(): " + offset, e);
+			return offset;
 		} finally {
 			freeBuffer(buf);
 		}
