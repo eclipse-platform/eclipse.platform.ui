@@ -137,6 +137,8 @@ public synchronized void logging(IStatus status, String plugin) {
 		} finally {
 			if (logFile != null)
 				closeLogFile();
+			else 
+				log.flush();
 		}			
 	} catch (Exception e) {
 		System.err.println("An exception occurred while writing to the platform log:");
