@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
 /**
- * JAVADOC
- * 
  * <p>
- * This class is not intended to be extended by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -23,31 +21,26 @@ package org.eclipse.ui.internal.commands;
  * 
  * @since 3.0
  */
-public class XPropertyEvent {
-
-	private String name;
+public interface XIPropertyListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param name
+	 * @param propertyEvent
 	 */	
-	public XPropertyEvent(String name)
-		throws IllegalArgumentException {		
-		super();
-		
-		if (name == null)
-			throw new NullPointerException();
-		
-		this.name = name;
-	}
-
+	void propertyAdded(XPropertyEvent propertyEvent);
+	
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 */		
-	public String getName() {
-		return name;
-	}
+	 * @param propertyEvent
+	 */	
+	void propertyChanged(XPropertyEvent propertyEvent);
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyRemoved(XPropertyEvent propertyEvent);
 }

@@ -43,7 +43,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.older.CommandManager;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.keys.KeySequence;
 

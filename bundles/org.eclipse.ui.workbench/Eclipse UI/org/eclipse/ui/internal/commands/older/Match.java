@@ -9,68 +9,65 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.internal.util.Util;
 
-final class KeyBinding implements IKeyBinding {
+// TODO package-private
+public final class Match {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeyBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = Match.class.getName().hashCode();
 
-	private KeySequence keySequence;
-	private int match;
+	private String commandId;
+	private int value;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	KeyBinding(KeySequence keySequence, int match) {	
-		if (keySequence == null)
-			throw new NullPointerException();
-			
-		if (match < 0)
+	Match(String commandId, int value) {	
+		if (value < 0)
 			throw new IllegalArgumentException();
 
-		this.keySequence = keySequence;
-		this.match = match;
+		this.commandId = commandId;
+		this.value = value;
 	}
 
 	public int compareTo(Object object) {
-		KeyBinding castedObject = (KeyBinding) object;
-		int compareTo = match - castedObject.match;
+		Match castedObject = (Match) object;
+		int compareTo = value - castedObject.value;
 		
 		if (compareTo == 0)
-			compareTo = keySequence.compareTo(castedObject.keySequence);
+			compareTo = Util.compare(commandId, castedObject.commandId);
 					
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof KeyBinding))
+		if (!(object instanceof Match))
 			return false;
 
-		KeyBinding castedObject = (KeyBinding) object;	
+		Match castedObject = (Match) object;	
 		boolean equals = true;
-		equals &= keySequence.equals(castedObject.keySequence);
-		equals &= match == castedObject.match;
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= value == castedObject.value;
 		return equals;
 	}
 
-	public KeySequence getKeySequence() {
-		return keySequence;
+	public String getCommandId() {
+		return commandId;
 	}
 		
-	public int getMatch() {
-		return match;	
+	public int getValue() {
+		return value;	
 	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + keySequence.hashCode();
-			hashCode = hashCode * HASH_FACTOR + match;			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+			hashCode = hashCode * HASH_FACTOR + value;			
 			hashCodeComputed = true;
 		}
 			
@@ -81,9 +78,9 @@ final class KeyBinding implements IKeyBinding {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(keySequence);
+			stringBuffer.append(commandId);
 			stringBuffer.append(',');
-			stringBuffer.append(match);
+			stringBuffer.append(value);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -9,23 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
+import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IKeyConfigurationEvent;
 
-final class ActionServiceEvent implements IActionServiceEvent {
+final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 
-	private IActionService actionService;
+	private IKeyConfiguration keyConfiguration;
 
-	ActionServiceEvent(IActionService actionService) {
-		if (actionService == null)
+	KeyConfigurationEvent(IKeyConfiguration keyConfiguration) {
+		if (keyConfiguration == null)
 			throw new NullPointerException();
 		
-		this.actionService = actionService;
+		this.keyConfiguration = keyConfiguration;
 	}
 
-	public IActionService getActionService() {
-		return actionService;
+	public IKeyConfiguration getKeyConfiguration() {
+		return keyConfiguration;
 	}
 }

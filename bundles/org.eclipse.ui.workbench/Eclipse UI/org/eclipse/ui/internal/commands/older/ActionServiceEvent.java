@@ -9,38 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
-/**
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface XIPropertyListener {
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IActionServiceEvent;
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyAdded(XPropertyEvent propertyEvent);
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyChanged(XPropertyEvent propertyEvent);
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyRemoved(XPropertyEvent propertyEvent);
+final class ActionServiceEvent implements IActionServiceEvent {
+
+	private IActionService actionService;
+
+	ActionServiceEvent(IActionService actionService) {
+		if (actionService == null)
+			throw new NullPointerException();
+		
+		this.actionService = actionService;
+	}
+
+	public IActionService getActionService() {
+		return actionService;
+	}
 }

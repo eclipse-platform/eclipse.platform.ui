@@ -18,7 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.older.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	

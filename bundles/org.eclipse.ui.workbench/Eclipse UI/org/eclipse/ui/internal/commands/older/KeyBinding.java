@@ -9,79 +9,68 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IImageBinding;
+import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.keys.KeySequence;
 
-final class ImageBinding implements IImageBinding {
+final class KeyBinding implements IKeyBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ImageBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeyBinding.class.getName().hashCode();
 
-	private String imageStyle;
-	private String imageUri;
-	private int match;	
+	private KeySequence keySequence;
+	private int match;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	ImageBinding(String imageStyle, String imageUri, int match) {	
-		if (imageStyle == null || imageUri == null)
+	KeyBinding(KeySequence keySequence, int match) {	
+		if (keySequence == null)
 			throw new NullPointerException();
-
+			
 		if (match < 0)
 			throw new IllegalArgumentException();
-			
-		this.imageStyle = imageStyle;
-		this.imageUri = imageUri;
+
+		this.keySequence = keySequence;
 		this.match = match;
 	}
 
 	public int compareTo(Object object) {
-		ImageBinding castedObject = (ImageBinding) object;
-		int compareTo = match - castedObject.match;		
-
-		if (compareTo == 0) {
-			compareTo = imageStyle.compareTo(castedObject.imageStyle);	
+		KeyBinding castedObject = (KeyBinding) object;
+		int compareTo = match - castedObject.match;
 		
-			if (compareTo == 0)
-				compareTo = imageStyle.compareTo(castedObject.imageUri);
-		}
-		
+		if (compareTo == 0)
+			compareTo = keySequence.compareTo(castedObject.keySequence);
+					
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ImageBinding))
+		if (!(object instanceof KeyBinding))
 			return false;
 
-		ImageBinding castedObject = (ImageBinding) object;	
+		KeyBinding castedObject = (KeyBinding) object;	
 		boolean equals = true;
-		equals &= imageStyle.equals(castedObject.imageStyle);
-		equals &= imageUri.equals(castedObject.imageUri);
+		equals &= keySequence.equals(castedObject.keySequence);
 		equals &= match == castedObject.match;
 		return equals;
 	}
 
-	public String getImageStyle() {
-		return imageStyle;
+	public KeySequence getKeySequence() {
+		return keySequence;
 	}
-
-	public String getImageUri() {
-		return imageUri;
-	}
-	
+		
 	public int getMatch() {
 		return match;	
-	}	
+	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + imageStyle.hashCode();
-			hashCode = hashCode * HASH_FACTOR + imageUri.hashCode();
-			hashCode = hashCode * HASH_FACTOR + match;				
+			hashCode = hashCode * HASH_FACTOR + keySequence.hashCode();
+			hashCode = hashCode * HASH_FACTOR + match;			
 			hashCodeComputed = true;
 		}
 			
@@ -92,15 +81,13 @@ final class ImageBinding implements IImageBinding {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(imageStyle);
-			stringBuffer.append(',');
-			stringBuffer.append(imageUri);
+			stringBuffer.append(keySequence);
 			stringBuffer.append(',');
 			stringBuffer.append(match);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
 	
-		return string;		
+		return string;			
 	}
 }

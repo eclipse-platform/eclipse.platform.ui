@@ -110,7 +110,7 @@ import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
-import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.older.CommandManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;

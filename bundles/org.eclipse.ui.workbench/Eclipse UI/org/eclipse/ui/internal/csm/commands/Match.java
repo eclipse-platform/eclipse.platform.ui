@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-// TODO package-private
 public final class Match {
 
 	private final static int HASH_FACTOR = 89;
@@ -36,7 +35,7 @@ public final class Match {
 
 	public int compareTo(Object object) {
 		Match castedObject = (Match) object;
-		int compareTo = value - castedObject.value;
+		int compareTo = Util.compare(value, castedObject.value);
 		
 		if (compareTo == 0)
 			compareTo = Util.compare(commandId, castedObject.commandId);
@@ -51,7 +50,7 @@ public final class Match {
 		Match castedObject = (Match) object;	
 		boolean equals = true;
 		equals &= Util.equals(commandId, castedObject.commandId);
-		equals &= value == castedObject.value;
+		equals &= Util.equals(value, castedObject.value);
 		return equals;
 	}
 
@@ -67,7 +66,7 @@ public final class Match {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + value;			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);			
 			hashCodeComputed = true;
 		}
 			

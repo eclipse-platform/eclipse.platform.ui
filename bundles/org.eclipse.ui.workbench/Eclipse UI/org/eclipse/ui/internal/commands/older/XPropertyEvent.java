@@ -9,23 +9,45 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IKeyConfigurationEvent;
+/**
+ * JAVADOC
+ * 
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public class XPropertyEvent {
 
-final class KeyConfigurationEvent implements IKeyConfigurationEvent {
+	private String name;
 
-	private IKeyConfiguration keyConfiguration;
-
-	KeyConfigurationEvent(IKeyConfiguration keyConfiguration) {
-		if (keyConfiguration == null)
+	/**
+	 * JAVADOC
+	 * 
+	 * @param name
+	 */	
+	public XPropertyEvent(String name)
+		throws IllegalArgumentException {		
+		super();
+		
+		if (name == null)
 			throw new NullPointerException();
 		
-		this.keyConfiguration = keyConfiguration;
+		this.name = name;
 	}
 
-	public IKeyConfiguration getKeyConfiguration() {
-		return keyConfiguration;
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */		
+	public String getName() {
+		return name;
 	}
 }
