@@ -186,7 +186,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		getCheckboxViewer().removeCheckStateListener(fCheckListener);
+	    if (getCheckboxViewer() != null) {
+	        getCheckboxViewer().removeCheckStateListener(fCheckListener);
+	    }
 		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
 		if (action != null) {
 			((ShowSupportedBreakpointsAction)action).dispose(); 
