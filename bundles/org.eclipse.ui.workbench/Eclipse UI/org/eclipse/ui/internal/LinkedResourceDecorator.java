@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 International Business Machines Corp. and others.
+ * Copyright (c) 2002, 2003 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at
@@ -11,11 +11,9 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -25,16 +23,23 @@ import org.eclipse.ui.PlatformUI;
  * @since 2.1
  */
 public class LinkedResourceDecorator implements ILightweightLabelDecorator {
+	private static final String FOLDER_NAME = "ovr16/"; //$NON-NLS-1$
 	private static final String ICON_NAME = "link_ovr.gif"; //$NON-NLS-1$
-	private static final ImageDescriptor LINKED;
+	private static final String ICON_NAME_WARNING = "linkwarn_ovr.gif"; //$NON-NLS-1$
+	private static final ImageDescriptor LINK;
+	private static final ImageDescriptor LINK_WARNING;	
 
 	static {
-		String fileName = WorkbenchImages.ICONS_PATH + "ovr16/" + ICON_NAME; //$NON-NLS-1$
+		String fileName;
+		IPluginDescriptor descriptor = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(); 
 
-		LINKED =
-			WorkbenchImages.getImageDescriptorFromPlugin(
-				Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(),
-				fileName);
+		fileName = WorkbenchImages.ICONS_PATH + FOLDER_NAME + ICON_NAME;
+		LINK =
+			WorkbenchImages.getImageDescriptorFromPlugin(descriptor, fileName);
+		
+		fileName = WorkbenchImages.ICONS_PATH + FOLDER_NAME + ICON_NAME_WARNING;				
+		LINK_WARNING =
+			WorkbenchImages.getImageDescriptorFromPlugin(descriptor, fileName);
 	}
 
 	/**
@@ -82,7 +87,12 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 			return;
 		IResource resource = (IResource) element;
 		if (resource.isLinked()) {
-			decoration.addOverlay(LINKED);
+			IPath location = resource.getLocation();
+
+			if (location != null && location.toFile().exists())
+				decoration.addOverlay(LINK);
+			else
+				decoration.addOverlay(LINK_WARNING);
 		}
 
 	}
