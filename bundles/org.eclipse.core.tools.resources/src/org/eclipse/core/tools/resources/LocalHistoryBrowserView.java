@@ -11,7 +11,7 @@
 package org.eclipse.core.tools.resources;
 
 import java.util.*;
-import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.FileState;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -132,7 +132,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-		private HistoryStore store = ((Workspace) ResourcesPlugin.getWorkspace()).getFileSystemManager().getHistoryStore();
+		private IHistoryStore store = ((Workspace) ResourcesPlugin.getWorkspace()).getFileSystemManager().getHistoryStore();
 
 		private Node invisibleRoot;
 
@@ -167,7 +167,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 
 		public void initialize() {
 			invisibleRoot = new Node(null, "/"); //$NON-NLS-1$
-			Set allFiles = store.allFiles(Path.ROOT, IResource.DEPTH_INFINITE);
+			Set allFiles = store.allFiles(Path.ROOT, IResource.DEPTH_INFINITE, null);
 			for (Iterator iterator = allFiles.iterator(); iterator.hasNext();) {
 				IPath path = (IPath) iterator.next();
 				Node current = invisibleRoot;
@@ -180,7 +180,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 					}
 					current = (Node) child;
 				}
-				IFileState[] states = store.getStates(path);
+				IFileState[] states = store.getStates(path, null);
 				for (int i = 0; i < states.length; i++)
 					current.addChild(states[i]);
 			}
