@@ -834,6 +834,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		getPresentation().showPaneMenu();
 	}
 
+	public void showPartList() {
+		getPresentation().showPartList();
+	}
+	
 	/**
 	 * @param pane
 	 * @return

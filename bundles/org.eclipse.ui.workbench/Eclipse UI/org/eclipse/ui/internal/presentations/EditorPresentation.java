@@ -10,25 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import java.util.Map;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -48,16 +39,6 @@ public class EditorPresentation extends BasicStackPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
-
-    private HandlerSubmission openEditorDropDownHandlerSubmission;
-
-    private PaneFolderButtonListener showListListener = new PaneFolderButtonListener () {
-
-        public void showList(CTabFolderEvent event) {
-            event.doit = false;
-            showListDefaultLocation();
-        }
-    };
 
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
@@ -106,7 +87,7 @@ public class EditorPresentation extends BasicStackPresentation {
     public EditorPresentation(Composite parent, IStackPresentationSite newSite) {
         super(new PaneFolder(parent, SWT.BORDER), newSite);
         final PaneFolder tabFolder = getTabFolder();
-        tabFolder.addButtonListener(showListListener);
+
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
         int tabLocation = preferenceStore
                 .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
@@ -122,26 +103,12 @@ public class EditorPresentation extends BasicStackPresentation {
         //tabFolder.setBorderVisible(true);
         // set basic colors       
         updateGradient();
-        final Shell shell = tabFolder.getControl().getShell();
-        IHandler openEditorDropDownHandler = new AbstractHandler() {
 
-            public Object execute(Map parameterValuesByName) throws ExecutionException {
-            	showListDefaultLocation();
-                return null;
-            }
-        };
-        openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
-                shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-                openEditorDropDownHandler, Priority.MEDIUM);
     }
 
     public void dispose() {
-        PlatformUI.getWorkbench().getCommandSupport()
-                .removeHandlerSubmission(
-                        openEditorDropDownHandlerSubmission);
 
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
-        getTabFolder().removeButtonListener(showListListener);
         super.dispose();
     }
 
@@ -161,20 +128,6 @@ public class EditorPresentation extends BasicStackPresentation {
         super.setActive(newState);
        
         updateGradient();
-
-		/*
-         * this following is to fix bug 57715
-         * when activating the EditorPresentation, add support for drop down list
-         * when disactivating the EditorPresentation, remove support for drop down list
-         * when focus is lost, do nothing so that the action remains enabled even in views
-         */
-        if (openEditorDropDownHandlerSubmission != null)
-	        if (newState == StackPresentation.AS_ACTIVE_FOCUS)
-	        	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-	                openEditorDropDownHandlerSubmission);
-	        else if (newState == StackPresentation.AS_INACTIVE)
-	        	PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
-	                    openEditorDropDownHandlerSubmission);
 
     }
     /**

@@ -12,12 +12,20 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.part.MultiEditor;
 
 /**
@@ -27,6 +35,7 @@ public class EditorPresentation {
 	private WorkbenchPage page;
 	private ArrayList editorTable = new ArrayList(4);
 	private EditorArea editorArea;
+	private HandlerSubmission openEditorDropDownHandlerSubmission;
 	/**
 	 * Creates a new EditorPresentation.
 	 */
@@ -34,6 +43,24 @@ public class EditorPresentation {
 
 		this.page = page;
 		this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, page);
+		
+        final Shell shell = page.getWorkbenchWindow().getShell();
+        IHandler openEditorDropDownHandler = new AbstractHandler() {
+
+            public Object execute(Map parameterValuesByName) throws ExecutionException {
+            	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+            	if (activeWorkbook != null) {
+            		activeWorkbook.showPartList();
+            	}
+                return null;
+            }
+        };
+        openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
+                shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
+                openEditorDropDownHandler, Priority.MEDIUM);
+        
+    	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+                openEditorDropDownHandlerSubmission);
 	}
 	/**
 	 * Closes all of the editors.
@@ -109,6 +136,11 @@ public class EditorPresentation {
 	 * Dispose of the editor presentation. 
 	 */
 	public void dispose() {
+        PlatformUI.getWorkbench().getCommandSupport()
+        .removeHandlerSubmission(
+                openEditorDropDownHandlerSubmission);
+
+		
 		if (editorArea != null) {
 			editorArea.dispose();
 		}

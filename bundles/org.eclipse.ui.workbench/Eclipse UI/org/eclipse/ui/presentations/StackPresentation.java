@@ -215,6 +215,14 @@ public abstract class StackPresentation {
 	public abstract void showPaneMenu();
 
 	/**
+	 * Instructs the presentation to display a list of all parts in the stack, and
+	 * allow the user to change the selection using the keyboard.
+	 */
+	public void showPartList() {
+		
+	}
+	
+	/**
 	 * Returns the tab-key traversal order for the given <code>IPresentablePart</code>.
 	 * 
 	 * @param part the part

@@ -22,6 +22,7 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -97,6 +98,11 @@ public class BasicStackPresentation extends StackPresentation {
 			
 			getSite().close(part);		
 		}
+		
+        public void showList(CTabFolderEvent event) {
+            event.doit = false;
+            showPartList();
+        }
 	};
 	
 	private MouseListener mouseListener = new MouseAdapter() {
@@ -147,12 +153,6 @@ public class BasicStackPresentation extends StackPresentation {
 			if (item != null) {
 				getSite().selectPart(item);
 			}
-		}
-	};
-	
-	private Listener resizeListener = new Listener() {
-		public void handleEvent(Event e) {
-			//setControlSize();
 		}
 	};
 	
@@ -271,9 +271,6 @@ public class BasicStackPresentation extends StackPresentation {
 		// listener to switch between visible tabItems
 		tabFolder.getControl().addListener(SWT.Selection, selectionListener);
 
-		// listener to resize visible components
-		tabFolder.getControl().addListener(SWT.Resize, resizeListener);
-
 		// listen for mouse down on tab to set focus.
 		tabFolder.getControl().addMouseListener(mouseListener);
 		
@@ -315,16 +312,6 @@ public class BasicStackPresentation extends StackPresentation {
 		};
 		
 		PresentationUtil.addDragListener(tabFolder.getControl(), dragListener);
-		
-		// Uncomment to allow dragging from the title label
-//		PresentationUtil.addDragListener(titleLabel, new Listener() {
-//			public void handleEvent(Event event) {
-//				if (layout.isTrimOnTop()) {
-//					Point localPos = new Point(event.x, event.y);
-//					getSite().dragStart(titleLabel.toDisplay(localPos), false);
-//				}
-//			}
-//		});
 
 		titleLabel.addMouseListener(mouseListener);
 				
@@ -1013,7 +1000,7 @@ public class BasicStackPresentation extends StackPresentation {
     /*
      * Shows the list of tabs at the top left corner of the editor
      */
-    protected void showListDefaultLocation() {
+    public void showPartList() {
     	PaneFolder tabFolder = getTabFolder();
     	Shell shell = tabFolder.getControl().getShell();
     	
