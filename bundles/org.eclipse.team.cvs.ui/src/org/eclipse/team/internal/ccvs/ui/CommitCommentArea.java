@@ -31,9 +31,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.dialogs.*;
-import org.eclipse.team.ui.*;
+import org.eclipse.team.internal.ui.dialogs.DialogArea;
 
 /**
  * This area provides the widgets for providing the CVS commit comment

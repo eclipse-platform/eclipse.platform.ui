@@ -11,9 +11,9 @@
 package org.eclipse.team.internal.ui.target;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,16 +24,15 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.dialogs.*;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
 /**
  * Action to transfer a remote folder and it's contents into the workspace. The

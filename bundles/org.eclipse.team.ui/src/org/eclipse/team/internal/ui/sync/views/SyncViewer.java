@@ -74,7 +74,6 @@ import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;

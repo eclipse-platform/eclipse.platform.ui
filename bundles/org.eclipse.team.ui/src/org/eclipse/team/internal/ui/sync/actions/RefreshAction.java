@@ -11,15 +11,9 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;

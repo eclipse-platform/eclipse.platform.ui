@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;

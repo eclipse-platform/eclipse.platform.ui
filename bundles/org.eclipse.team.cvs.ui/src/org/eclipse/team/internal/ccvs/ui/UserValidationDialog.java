@@ -124,12 +124,11 @@ public class UserValidationDialog extends Dialog {
 	protected void createPasswordFields(Composite parent) {
 		new Label(parent, SWT.NONE).setText(Policy.bind("UserValidationDialog.password")); //$NON-NLS-1$
 		
-		passwordField = new Text(parent, SWT.BORDER);
+		passwordField = new Text(parent, SWT.BORDER | SWT.PASSWORD);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		passwordField.setLayoutData(data);
-		passwordField.setEchoChar('*');
 	}
 	/**
 	 * Creates the three widgets that represent the user name entry area.
