@@ -21,9 +21,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  
- <style type="text/css">
+<style type="text/css">
  
- BODY {
+BODY {
 	margin:0;
 	padding:0;
 	border-bottom:1px solid black;
@@ -33,7 +33,7 @@
 
 </head>
 
-<body>
+<body BGCOLOR="#D4D0C8">
 
 <div id="bannerTitle" style="background:#D4D0C8; width:100%; position:absolute; left:10px; top:20; font: 14pt icon;">
 	<%=title != null ?title : WebappResources.getString("Bookshelf", request)%>

@@ -82,7 +82,7 @@ IMG {
 </head>
 
 
-<body>
+<body BGCOLOR="#FFFFFF">
  
 <%
 if(request.getParameter("contextId")!=null)
