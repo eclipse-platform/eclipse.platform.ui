@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -84,6 +85,8 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -91,7 +94,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * A view which displays a hierarchical view of ant build files and allows the
  * user to run selected targets from those files.
  */
-public class AntView extends ViewPart implements IResourceChangeListener {
+public class AntView extends ViewPart implements IResourceChangeListener, IShowInSource {
 
 	/**
 	 * The root node of the project viewer as restored during initialization
@@ -322,19 +325,13 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 
 	private void addOpenWithMenu(IMenuManager menu) {
-		IStructuredSelection selection= (IStructuredSelection)getProjectViewer().getSelection();
-		if (selection.size() == 1) {
-			Object element= selection.getFirstElement(); 
-			if (element instanceof ProjectNode) {
-				IFile buildFile= AntUtil.getFile(((ProjectNode)element).getBuildFileName());
-				if (buildFile != null && buildFile.exists()) {
-					menu.add(new Separator("group.open")); //$NON-NLS-1$
-					IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.Open_With_3"));  //$NON-NLS-1$
-					openWithMenu.setFile(buildFile);
-					submenu.add(openWithMenu);
-					menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
-				}
-			}
+		IFile buildFile= getSelectionBuildFile();
+		if (buildFile != null && buildFile.exists()) {
+			menu.add(new Separator("group.open")); //$NON-NLS-1$
+			IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.Open_With_3"));  //$NON-NLS-1$
+			openWithMenu.setFile(buildFile);
+			submenu.add(openWithMenu);
+			menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
 		}
 	}
 
@@ -1118,5 +1115,29 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private void clearMainToolBar(IToolBarManager tbmanager) {
 		tbmanager.removeAll();
 		tbmanager.update(false);		
+	}
+	
+	private IFile getSelectionBuildFile() {
+		IStructuredSelection selection= (IStructuredSelection)getProjectViewer().getSelection();
+		if (selection.size() == 1) {
+			Object element= selection.getFirstElement(); 
+			if (element instanceof ProjectNode) {
+				return AntUtil.getFile(((ProjectNode)element).getBuildFileName());
+				
+			} 
+		}
+		return null;		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
+	 */
+	public ShowInContext getShowInContext() {
+		IFile buildFile= getSelectionBuildFile();
+		if (buildFile != null && buildFile.exists()) {
+			ISelection selection= new StructuredSelection(buildFile);
+			return new ShowInContext(null, selection);
+		}
+		return null;
 	}
 }
