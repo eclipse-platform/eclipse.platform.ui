@@ -40,6 +40,7 @@ import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -61,10 +62,25 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+			
+			if(current instanceof PartPane){
+				WorkbenchPage page = ((PartPane) current).getPage();
+				if(current instanceof ViewPane){
+					page.toggleZoom(((ViewPane) PartTabFolder.this.current).partReference);
+				}
+			}
+			
+		}
+		
 		public void mouseDown(MouseEvent e) {
 				// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
-		// Else, set focus.
-	CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
+			// Else, set focus.
+			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
 			if (newItem != null) {
 				CTabItem2 oldItem = tabFolder.getSelection();
 				if (newItem != oldItem)
@@ -75,6 +91,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				//tabFolder.setBorderVisible(true);
 			}
 		}
+		
+		
 	};
 
 	private class TabInfo {
