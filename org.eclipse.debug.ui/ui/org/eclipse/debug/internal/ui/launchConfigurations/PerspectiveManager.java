@@ -324,9 +324,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			}
 		} else {
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 			} else {
-				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 			}
 		}
 		return perspectiveId;

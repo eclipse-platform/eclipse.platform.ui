@@ -5,6 +5,9 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -71,6 +74,28 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
 	public void setAttribute(String attributeName, String value);
+	
+	/**
+	 * Sets the <code>java.util.List</code>-valued attribute with the given name.
+	 * The specified List <em>must</em> contain only String-valued entries.
+	 * If the value is <code>null</code>, the attribute is removed from
+	 * this launch configuration.
+	 *
+	 * @param attributeName the name of the attribute
+	 * @param value the value, or <code>null</code> if the attribute is to be undefined
+	 */
+	public void setAttribute(String attributeName, List value);
+	
+	/**
+	 * Sets the <code>java.util.Map</code>-valued attribute with the given name.
+	 * The specified Map <em>must</em> contain only String keys and String values.
+	 * If the value is <code>null</code>, the attribute is removed from
+	 * this launch configuration.
+	 *
+	 * @param attributeName the name of the attribute
+	 * @param value the value, or <code>null</code> if the attribute is to be undefined
+	 */
+	public void setAttribute(String attributeName, Map value);
 	
 	/**
 	 * Sets the boolean-valued attribute with the given name.  

@@ -5,6 +5,9 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -185,6 +188,38 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 */
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException;
+	/**
+	 * Returns the <code>java.util.List</code>-valued attribute with the given name.  
+	 * Returns the given default value if the attribute is undefined.
+	 *
+	 * @param attributeName the name of the attribute
+	 * @param defaultValue the value to use if no value is found
+	 * @return the value or the default value if no value was found.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurrs while retrieving the attribute from
+	 *  underlying storage.</li>
+	 * <li>An attribute with the given name exists, but does not
+	 *  have a List value</li>
+	 * </ul>
+	 */
+	public List getAttribute(String attributeName, List defaultValue) throws CoreException;
+	/**
+	 * Returns the <code>java.util.Map</code>-valued attribute with the given name.  
+	 * Returns the given default value if the attribute is undefined.
+	 *
+	 * @param attributeName the name of the attribute
+	 * @param defaultValue the value to use if no value is found
+	 * @return the value or the default value if no value was found.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurrs while retrieving the attribute from
+	 *  underlying storage.</li>
+	 * <li>An attribute with the given name exists, but does not
+	 *  have a Map value</li>
+	 * </ul>
+	 */
+	public Map getAttribute(String attributeName, Map defaultValue) throws CoreException;
 		
 	/**
 	 * Returns the file this launch configuration is stored

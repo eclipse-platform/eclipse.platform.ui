@@ -507,7 +507,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 	protected void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
 		String runPerspID = null;
 		try {
-			runPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+			runPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		} catch (CoreException ce) {
 		}
 		updateButtonAndCombo(getRunPerspectiveButton(), getRunPerspectiveCombo(), runPerspID);
@@ -516,7 +516,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 	protected void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
 		String debugPerspID = null;
 		try {
-			debugPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+			debugPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 		} catch (CoreException ce) {
 		}
 		updateButtonAndCombo(getDebugPerspectiveButton(), getDebugPerspectiveCombo(), debugPerspID);
@@ -571,7 +571,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE,
 				getPerspectiveWithLabel(getRunPerspectiveCombo().getText()).getId());
 		} else {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		}	
 		refreshStatus();	
 	}
@@ -585,7 +585,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE,
 				getPerspectiveWithLabel(getDebugPerspectiveCombo().getText()).getId());
 		} else {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 		}		
 		refreshStatus();	
 	}	

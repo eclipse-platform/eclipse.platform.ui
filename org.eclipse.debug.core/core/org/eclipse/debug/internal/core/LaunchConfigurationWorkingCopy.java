@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -238,6 +240,22 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public void setAttribute(String attributeName, boolean value) {
 		getInfo().setAttribute(attributeName, new Boolean(value));
 		setDirty();	
+	}
+
+	/**
+	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, List)
+	 */
+	public void setAttribute(String attributeName, List value) {
+		getInfo().setAttribute(attributeName, value);
+		setDirty();
+	}
+
+	/**
+	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, Map)
+	 */
+	public void setAttribute(String attributeName, Map value) {
+		getInfo().setAttribute(attributeName, value);
+		setDirty();
 	}
 
 	/**

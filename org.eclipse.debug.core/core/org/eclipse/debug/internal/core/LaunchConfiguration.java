@@ -5,11 +5,12 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
  
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -132,6 +133,20 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException {
 		return getInfo().getBooleanAttribute(attributeName, defaultValue);
+	}
+
+	/**
+	 * @see ILaunchConfiguration#getAttribute(String, List)
+	 */
+	public List getAttribute(String attributeName, List defaultValue) throws CoreException {
+		return getInfo().getListAttribute(attributeName, defaultValue);
+	}
+
+	/**
+	 * @see ILaunchConfiguration#getAttribute(String, Map)
+	 */
+	public Map getAttribute(String attributeName, Map defaultValue) throws CoreException {
+		return getInfo().getMapAttribute(attributeName, defaultValue);
 	}
 
 	/**
