@@ -14,6 +14,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -351,21 +352,28 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		public void processCurrentStep() {
 			WizardStep[] steps = stepGroup.getSteps();
 			while (stepIndex < steps.length) {
-				WizardStep step = steps[stepIndex];
+				final WizardStep step = steps[stepIndex];
 				stepGroup.setCurrentStep(step);
-				IWizard stepWizard = step.getWizard();
-				int tries = 0;
-				while (stepWizard == null && tries++ < 3) {
-					boolean tryAgain = wizardDialog.getMultiStepWizard().handleMissingStepWizard(step);
-					if (!tryAgain)
-						break;
-					else
-						stepWizard = step.getWizard();
-				}
-				if (stepWizard == null)
+
+				final IWizard[] stepWizard = new IWizard[1];
+				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+					public void run() {
+						stepWizard[0] = step.getWizard();
+						int tries = 0;
+						while (stepWizard[0] == null && tries++ < 3) {
+							boolean tryAgain = wizardDialog.getMultiStepWizard().handleMissingStepWizard(step);
+							if (!tryAgain)
+								break;
+							else
+								stepWizard[0] = step.getWizard();
+						}
+					}
+				});
+					
+				if (stepWizard[0] == null)
 					break;
-				setWizard(stepWizard);
-				if (stepWizard.getPageCount() > 0)
+				setWizard(stepWizard[0]);
+				if (stepWizard[0].getPageCount() > 0)
 					return;
 				else
 					performFinish();
