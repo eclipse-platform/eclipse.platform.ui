@@ -758,6 +758,8 @@ public final class Workbench implements IWorkbench {
         // managers
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
+		activityHelper = ActivityPersistanceHelper.getInstance();
+		
         workbenchCommandSupport = new WorkbenchCommandSupport(this);
         workbenchContextSupport = new WorkbenchContextSupport(this);
 
@@ -807,10 +809,6 @@ public final class Workbench implements IWorkbench {
 			Platform.getJobManager().setLockListener(uiLockListener);
 			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
-
-		// initialize activity helper. TODO why does this belong here and not
-		// up further in the main initialization section for activities?
-		activityHelper = ActivityPersistanceHelper.getInstance();
 
 		// attempt to restore a previous workbench state
 		try {
