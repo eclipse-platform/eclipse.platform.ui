@@ -47,7 +47,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static boolean cmdInitialize = false;
 	private static boolean cmdFirstUse = false;
 	private static boolean cmdUpdate = false;
-	private static boolean cmdNoUpdate = true; // FIXME: (for 2.0) default to false when reconciler is moved to new layout
+	private static boolean cmdNoUpdate = false; 
 	private static boolean cmdDev = false;
 
 	static boolean DEBUG = false;
