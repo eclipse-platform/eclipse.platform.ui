@@ -42,7 +42,6 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eclipse.jface.text.formatter.IFormattingStrategyExtension;
 
-
 /**
  * This class is derived from ContentFormatter2
  * @see org.eclipse.jface.text.formatter.ContentFormatter2
