@@ -8,7 +8,15 @@ import org.eclipse.swt.SWT;
  * Test all areas of the UI.
  */
 public class UiTestSuite extends TestSuite {
-
+
+	/**
+	 * Returns the suite.  This is required to
+	 * use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new UiTestSuite();
+	}
+	
 	/**
 	 * Construct the test suite.
 	 */

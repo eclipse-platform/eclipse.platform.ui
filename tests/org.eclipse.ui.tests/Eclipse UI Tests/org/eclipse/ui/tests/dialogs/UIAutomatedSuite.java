@@ -9,7 +9,14 @@ import junit.textui.TestRunner;
  */
 public class UIAutomatedSuite extends TestSuite {
 
-
+	/**
+	 * Returns the suite.  This is required to
+	 * use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new UIAutomatedSuite();
+	}
+	
 	/**
 	 * Construct the test suite.
 	 */
