@@ -416,14 +416,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/*
 	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
 	 */
-	public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
-		
+	public void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength) {
 		if (fVerticalRuler == null && fOverviewRuler == null) {
 			
-			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
+			if (modelRangeOffset == -1 && modelRangeLength == -1)
 				super.setDocument(document);
 			else
-				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
+				setDocument(document, modelRangeOffset, modelRangeLength);
 		
 		} else {
 			
@@ -437,17 +436,17 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fVisualAnnotationModel= null;
 			}
 			
-			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
+			if (modelRangeOffset == -1 && modelRangeLength == -1)
 				super.setDocument(document);
 			else
-				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
+				setDocument(document, modelRangeOffset, modelRangeLength);
 				
 			if (fVerticalRuler != null)
 				fVerticalRuler.setModel(fVisualAnnotationModel);
 			
 			if (fOverviewRuler != null)
 				fOverviewRuler.setModel(fVisualAnnotationModel);
-		}		
+		}
 	}
 
 	/*

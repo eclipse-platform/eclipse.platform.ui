@@ -126,7 +126,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 		final List lines= new LinkedList();
 		for (int l= contentRange.x; l <= contentRange.y; l++) {
-			lines.add(differ.getLineInfo(l));
+			ILineDiffInfo info= differ.getLineInfo(l);
+			if (info != null)
+				lines.add(info);
 		}
 		final int max= viewer.getBottomIndex();
 		return decorateText(lines, max - contentRange.x + 1);
@@ -153,9 +155,6 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		int added= 0;
 		for (Iterator it= diffInfos.iterator(); it.hasNext();) {
 			ILineDiffInfo info= (ILineDiffInfo)it.next();
-			if (info == null)
-				continue;
-				
 			String[] original= info.getOriginalText();
 			int type= info.getChangeType();
 			int i= 0;
