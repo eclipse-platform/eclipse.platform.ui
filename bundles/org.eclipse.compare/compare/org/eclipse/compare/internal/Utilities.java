@@ -547,13 +547,12 @@ public class Utilities {
 	}
 	
 	public static String getCharset(IResource resource) {
-		if (resource != null) {
-			/*
+		if (resource instanceof IEncodedStreamContentAccessor) {
 			try {
-				return resource.getCharset();
+				return ((IEncodedStreamContentAccessor)resource).getCharset();
 			} catch (CoreException ex) {
+				// fall  through
 			}
-			*/
 		}
 		return ResourcesPlugin.getEncoding();
 	}
@@ -570,17 +569,6 @@ public class Utilities {
 		return bytes;
 	}
 
-	public static String guessCharset(String path) {
-		//System.err.println("Utilities.guessCharset: " + path);
-		int dot= path.lastIndexOf('.');
-		if (dot >= 0) {
-			String extension= path.substring(dot);
-			if (extension.equalsIgnoreCase(".xml")) //$NON-NLS-1$
-				return "UTF-8"; //$NON-NLS-1$
-		}
-		return ResourcesPlugin.getEncoding();
-	}
-	
 	public static String readString(IStreamContentAccessor sa) throws CoreException {
 		InputStream is= sa.getContents();
 		String encoding= null;

@@ -124,7 +124,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 		}
 	}
 
-	static class ZipFile extends ZipResource implements IEncodedStreamContentAccessor {
+	static class ZipFile extends ZipResource implements IStreamContentAccessor {
 
 		private byte[] fContents;
 
@@ -169,13 +169,6 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	    		System.arraycopy(buffer, 0, newBuf, oldLen, length);
 	    		fContents= newBuf;
 	    	}
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.compare.IStreamContentAccessor#getCharset()
-		 */
-		public String getCharset() {
-			return Utilities.guessCharset(getName());	
 		}
 	}
 	

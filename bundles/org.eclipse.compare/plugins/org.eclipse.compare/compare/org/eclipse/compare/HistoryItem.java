@@ -15,7 +15,6 @@ import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
 
@@ -84,8 +83,8 @@ public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
-	public String getCharset() {
-		return Utilities.guessCharset(getName());
+	public String getCharset() throws CoreException {
+		return fFileState.getCharset();
 	}
 }
 

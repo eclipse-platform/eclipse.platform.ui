@@ -44,8 +44,15 @@ public class AddFromHistoryDialog extends ResizableDialog {
 			return new BufferedInputStream(fFileState.getContents());
 		}
 		public String getCharset() {
-			Utilities.guessCharset(fFile.getName());
-			return Utilities.getCharset(fFile);
+			String charset= null;
+			try {
+				charset= fFileState.getCharset();
+			} catch (CoreException e) {
+				// fall through
+			}
+			if (charset == null)
+				charset= Utilities.getCharset(fFile);
+			return charset;
 		}
 		public String getName() {
 			return fFile.getName();

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * @since 3.0
  */
-public interface IEncodedStreamContentAccessor extends IStreamContentAccessorExtension2 {
+public interface IEncodedStreamContentAccessor extends IStreamContentAccessor {
 	
 	/**
 	 * @return The character encoding of the stream returned by <code>getContents()</code>.
