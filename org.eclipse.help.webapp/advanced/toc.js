@@ -307,6 +307,7 @@ function highlightTopic(topic)
 
 /**
  * Selects a topic in the tree: expand tree and highlight it
+ * returns true if success
  */
 function selectTopic(topic)
 {
@@ -335,6 +336,7 @@ function selectTopic(topic)
 
 /**
  * Selects a topic in the tree: expand tree and highlight it
+ * returns true if success
  */
 function selectTopicById(id)
 {
