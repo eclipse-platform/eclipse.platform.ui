@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup.containers;
+package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
+import org.eclipse.debug.ui.sourcelookup.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.w3c.dom.Document;

@@ -40,7 +40,7 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The parent panel
 	 */
-	private SourceContainerLookupPanel fPanel;	
+	private SourceLookupPanel fPanel;	
 	/**
 	 * The source container entries displayed in this viewer
 	 */
@@ -101,7 +101,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 * @param parent the parent control
 	 * @param panel the panel hosting this viewer
 	 */
-	public SourceContainerViewer(Composite parent, SourceContainerLookupPanel panel) {
+	public SourceContainerViewer(Composite parent, SourceLookupPanel panel) {
 		super(parent);
 		setContentProvider(new ContentProvider());
 		SourceContainerLabelProvider lp = new SourceContainerLabelProvider();

@@ -22,8 +22,8 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.sourcelookup.WorkingSetSourceContainer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -47,7 +47,7 @@ import org.eclipse.ui.IWorkingSetManager;
  * 
  * @since 3.0
  */
-public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab implements IPropertyChangeListener {
+public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements IPropertyChangeListener {
 	//the configuration being edited
 	protected ILaunchConfiguration fConfig;
 	//the viewer displaying the containers
@@ -55,11 +55,12 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	//the duplicates checkbox
 	protected Button fDuplicatesButton;
 	//the source actions - up, down, add, remove, restore
-	protected List fActions = new ArrayList(5);
+	protected List fActions = new ArrayList(6);
 	//the director that will be used by the tab to manage/store the containers
 	protected ISourceLookupDirector fLocator;
 	
 	protected AddContainerAction fAddAction; 
+	protected EditContainerAction fEditAction;
 	
 	protected static final String DIALOG_SETTINGS_PREFIX = "sourceTab"; //$NON-NLS-1$
 	
@@ -142,7 +143,13 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		fAddAction.setButton(button);
 		addAction(fAddAction);
 		
-		SourceContainerAction  action = new RemoveAction();
+		fEditAction = new EditContainerAction();
+		button =
+			createPushButton(pathButtonComp, fEditAction.getText(), fontMetrics);
+		fEditAction.setButton(button);
+		addAction(fEditAction);
+		
+		SourceContainerAction action = new RemoveAction();
 		button =
 			createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
@@ -311,6 +318,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		fDuplicatesButton.setSelection(locator.isFindDuplicates());
 		fLocator = locator;
 		fAddAction.setSourceLookupDirector(locator);
+		fEditAction.setSourceLookupDirector(locator);
 		setDirty(false);
 	}
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup.containers;
+package org.eclipse.debug.ui.sourcelookup;
 
 import java.util.ArrayList;
 import org.eclipse.core.resources.IFolder;
@@ -26,9 +26,10 @@ import org.eclipse.ui.IWorkingSet;
 
 /**
  * A working set in the workspace.  Source is searched for in the projects (referenced
- * projects) and folders (sub-folders) that are part of the working set.  Files in the set
- * are currently ignored since we don't support file containers in general.
- * 
+ * projects) and folders (sub-folders) that are part of the working set.
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
  * @since 3.0
  */
 public class WorkingSetSourceContainer extends CompositeSourceContainer{
@@ -48,16 +49,12 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 		fWorkingSet = workingSet;		
 	}
 	
-	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
 		return fWorkingSet.getName();
 	}
-		
-	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -71,14 +68,14 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 			
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IAdaptable[] elements = fWorkingSet.getElements();
@@ -99,11 +96,9 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 					locationList.add(new ProjectSourceContainer((IProject)resource, true));			
 					break;
 					//if the element corresponds to an IFile, do nothing
-					//TODO make file source location??
 				}
 			}
 		}
-		
 		return (ISourceContainer[])locationList.toArray(new ISourceContainer[locationList.size()]);
 	}
 

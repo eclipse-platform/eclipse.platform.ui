@@ -21,8 +21,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -37,7 +37,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 /**
  * Adds an internal jar to the runtime class path.
  */
-public class ArchiveSourceContainerBrowser implements ISourceContainerBrowser {
+public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
 	private ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 		public IStatus validate(Object[] selection) {
@@ -74,7 +74,7 @@ public class ArchiveSourceContainerBrowser implements ISourceContainerBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ViewerFilter filter= new ArchiveFilter(getSelectedJars(director));
 		
 		ILabelProvider lp= new WorkbenchLabelProvider();

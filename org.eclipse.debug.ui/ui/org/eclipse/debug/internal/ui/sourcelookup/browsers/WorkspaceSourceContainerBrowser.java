@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 3.0
  */
-public class WorkspaceSourceContainerBrowser implements ISourceContainerBrowser {
+public class WorkspaceSourceContainerBrowser extends AbstractSourceContainerBrowser {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ISourceContainer[] containers = new ISourceContainer[1];
 		
 		containers[0] = new WorkspaceSourceContainer();

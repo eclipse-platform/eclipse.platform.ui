@@ -11,12 +11,11 @@
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -29,12 +28,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * 
  * @since 3.0
  */
-public class FolderSourceContainerBrowser implements ISourceContainerBrowser {
+public class FolderSourceContainerBrowser extends AbstractSourceContainerBrowser {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		Dialog dialog =new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		
 		if (dialog.open() == Window.OK) {

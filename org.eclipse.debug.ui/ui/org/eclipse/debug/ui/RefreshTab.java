@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -46,7 +45,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -569,15 +567,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			set = NO_WORKING_SET;
 		} else {
 			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
-			IPersistableElement persistable = null;
-			if (workingSet instanceof IPersistableElement) {
-				persistable = (IPersistableElement) workingSet;
-			} else if (workingSet instanceof IAdaptable) {
-				persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
-			}
-			if (persistable != null) {
-				workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(workingSetMemento);
+			if (workingSet != null) {
+				workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, workingSet.getFactoryId());
+				workingSet.saveState(workingSetMemento);
 				StringWriter writer= new StringWriter();
 				try {
 					workingSetMemento.save(writer);

@@ -14,7 +14,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupPanel;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupPanel;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -39,7 +39,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	//the panel displaying the containers
-	private SourceContainerLookupPanel fSourceLookupPanel;
+	private SourceLookupPanel fSourceLookupPanel;
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -54,7 +54,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		
 		createVerticalSpacer(comp, 1);
 		
-		fSourceLookupPanel = new SourceContainerLookupPanel();
+		fSourceLookupPanel = new SourceLookupPanel();
 		fSourceLookupPanel.setLaunchConfigurationDialog(
 				getLaunchConfigurationDialog());
 		fSourceLookupPanel.createControl(comp);

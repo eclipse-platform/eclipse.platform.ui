@@ -14,19 +14,19 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * The browser for adding an external folder source container.
  * @since 3.0
  */
-public class DirectorySourceContainerBrowser implements ISourceContainerBrowser {
+public class DirectorySourceContainerBrowser extends AbstractSourceContainerBrowser {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ISourceContainer[] containers = new ISourceContainer[1];
 		DirectorySourceContainerDialog dialog = new DirectorySourceContainerDialog(shell);
 		String result = dialog.getResult();

@@ -18,6 +18,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.sourcelookup.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -128,7 +129,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		for (int i=0; i< types.length; i++) {
 			ISourceContainerType type = types[i];
 			if (fDirector.supportsSourceContainerType(type)) {
-				if(SourceLookupUIUtils.getSourceContainerBrowser(type.getId()) != null) {
+				ISourceContainerBrowser sourceContainerBrowser = SourceLookupUIUtils.getSourceContainerBrowser(type.getId());
+				if(sourceContainerBrowser != null && sourceContainerBrowser.canAddSourceContainers(fDirector)) {
 					validTypes.add(type);
 				}
 			}
@@ -145,11 +147,13 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		//there will always be a selected item since we set it with viewer.setSelection
 		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection()).getFirstElement();
 		ISourceContainerBrowser browser = SourceLookupUIUtils.getSourceContainerBrowser(type.getId());
-		if(browser == null)
+		if(browser == null) {
 			super.okPressed();
-		ISourceContainer[] results = browser.createSourceContainers(getShell(), fDirector);
-		if(results != null)
+		}
+		ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
+		if(results != null) {
 			fSourceContainerViewer.addEntries(results);
+		}
 		super.okPressed();
 	}		
 	

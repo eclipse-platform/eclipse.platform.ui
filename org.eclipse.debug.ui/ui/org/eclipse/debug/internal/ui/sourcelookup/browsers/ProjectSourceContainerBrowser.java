@@ -11,15 +11,14 @@
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.BasicContainerContentProvider;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -33,12 +32,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * 
  * @since 3.0
  */
-public class ProjectSourceContainerBrowser implements ISourceContainerBrowser {
+public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowser {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell,org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		Object input = ResourcesPlugin.getWorkspace().getRoot();
 		IStructuredContentProvider contentProvider=new BasicContainerContentProvider();
 		ILabelProvider labelProvider = new WorkbenchLabelProvider();

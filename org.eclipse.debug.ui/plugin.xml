@@ -1671,7 +1671,7 @@
          point="org.eclipse.debug.core.sourceContainerTypes">     
       <sourceContainerType
             name="%containerName.workingSet"
-            class="org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainerType"
+            class="org.eclipse.debug.internal.ui.sourcelookup.WorkingSetSourceContainerType"
             id="org.eclipse.debug.ui.containerType.workingSet">
       </sourceContainerType>    
    </extension>

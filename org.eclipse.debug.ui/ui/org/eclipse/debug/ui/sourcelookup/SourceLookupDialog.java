@@ -13,7 +13,7 @@ package org.eclipse.debug.ui.sourcelookup;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupPanel;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupPanel;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -38,7 +38,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SourceLookupDialog extends TitleAreaDialog {
 	
-	private SourceContainerLookupPanel fPanel;
+	private SourceLookupPanel fPanel;
 	private ISourceLookupDirector fDirector;
 	
 	/**
@@ -78,7 +78,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		GridData data = new GridData(GridData.FILL_BOTH);			
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
-		fPanel = new SourceContainerLookupPanel();
+		fPanel = new SourceLookupPanel();
 		fPanel.createControl(composite);
 		fPanel.initializeFrom(fDirector);
 		
