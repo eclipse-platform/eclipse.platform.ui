@@ -31,9 +31,9 @@ public final class CheatSheetViewerFactory {
 	}
 	
 	/**
-	 * Creates a new cheat sheet view.
+	 * Creates a new cheat sheet viewer.
 	 * 
-	 * @return a new cheat sheet view part
+	 * @return a new cheat sheet viewer
 	 */
 	public static ICheatSheetViewer createCheatSheetView() {
 		return new CheatSheetViewer();
