@@ -92,7 +92,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 						return true;
 					}
 				}
-				handleChangedResource(resource);
 				break;
 		}
 		return true;
@@ -185,20 +184,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		}
 	}
 	
-	private void handleChangedResource(IResource resource) {
-		if (resource.getType() == IResource.PROJECT) return;
-		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		// Make sure that unmanaged resources whose parent is a cvs folder have an addition task on them
-		try {
-			if ( ! cvsResource.isManaged() && ! cvsResource.isIgnored() && cvsResource.getParent().isCVSFolder()) {
-				createAdditonMarker(resource);
-			}
-		} catch (CVSException e) {
-			// If the above fails, just log the exception
-			CVSProviderPlugin.log(e.getStatus());
-		}
-	}
-	
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			IResourceDelta root = event.getDelta();
@@ -258,6 +243,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	 */
 	public void projectConfigured(final IProject project) {
 		try {
+			// Create deletion tasks for any deleted resources
 			final ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
 			root.accept(new ICVSResourceVisitor() {
 				public void visitFile(ICVSFile file) throws CVSException {
@@ -265,16 +251,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 						byte[] syncBytes = file.getSyncBytes();
 						if (syncBytes != null && ResourceSyncInfo.isDeletion(syncBytes)) {
 							createDeleteMarker(project.getFile(file.getRelativePath(root)));
-						} else if ( ! file.isManaged() && ! file.isIgnored()) {
-							createAdditonMarker(project.getFile(file.getRelativePath(root)));
 						}
 					}
 				}
 				public void visitFolder(ICVSFolder folder) throws CVSException {
 					if (folder.isCVSFolder()) {
 						folder.acceptChildren(this);
-					} else if ( ! folder.isIgnored() && folder.getParent().isCVSFolder()) {
-						createAdditonMarker(project.getFolder(folder.getRelativePath(root)));
 					}
 				}
 			});
@@ -326,25 +308,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		return null;
 	}
 	
-	private static IMarker createAdditonMarker(IResource resource) {
-		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
-			return null;
-		}
-		try {
-			IMarker marker = getAdditionMarker(resource);
-			if (marker != null) {
-				return marker;
-			}
-			marker = resource.createMarker(ADDITION_MARKER);
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			marker.setAttribute(IMarker.MESSAGE, Policy.bind("AddDeleteMoveListener.Local_addition_not_under_CVS_control_2")); //$NON-NLS-1$
-			return marker;
-		} catch (CoreException e) {
-			Util.logError(Policy.bind("AddDeleteMoveListener.Error_creating_addition_marker_3"), e); //$NON-NLS-1$
-		}
-		return null;
-	}
-	
 	private static IMarker getAdditionMarker(IResource resource) throws CoreException {
    		IMarker[] markers = resource.findMarkers(ADDITION_MARKER, false, IResource.DEPTH_ZERO);
    		if (markers.length == 1) {
@@ -375,30 +338,13 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 				if (provider == null) break;
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				// Handle addition markers
+				// Continue to attempt to remove addition markers even though we no longer create them
 				if (cvsResource.isManaged() || cvsResource.isIgnored()) {
 					if (cvsResource.exists()) {
 						// Remove the addition marker for managed or ignored resources
 						IMarker marker = getAdditionMarker(resource);
 						if (marker != null)
 							marker.delete();
-						// For managed folders, add addition markers to unmanaged/unignored children
-						if (cvsResource.isManaged() && cvsResource.isFolder()) {
-							IResource[] children = ((IFolder)resource).members();
-							for (int j = 0; j < children.length; j++) {
-								IResource iResource = children[j];
-								ICVSResource child = CVSWorkspaceRoot.getCVSResourceFor(iResource);
-								if ( ! child.isManaged() && ! child.isIgnored()) {
-									createAdditonMarker(iResource);
-								}
-							}
-						}
-					}
-				} else if (cvsResource.exists() && cvsResource.getParent().isCVSFolder()) {
-					// If the parent is a CVS folder, place an addition marker on the resource
-					IMarker marker = getAdditionMarker(resource);
-					if (marker == null) {
-						createAdditonMarker(resource);
 					}
 				}
 				
