@@ -166,9 +166,9 @@ public abstract class AbstractAntUITest extends TestCase {
 	*/
 	protected void launchInDebug(String buildFileName) throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug");
-		assertNotNull("Could not locate launch configuration for " + buildFileName, copy);
 		launchAndTerminate(copy, 10000);
 	}
 	
