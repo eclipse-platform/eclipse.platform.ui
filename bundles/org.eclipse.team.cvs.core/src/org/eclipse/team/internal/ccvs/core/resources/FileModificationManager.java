@@ -31,6 +31,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 
 /**
  * This class performs several functions related to determining the modified
@@ -98,7 +99,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 				}
 			});
 			if (!modifiedResources.isEmpty()) {
-				CVSProviderPlugin.broadcastModificationStateChanges(
+				ResourceStateChangeListeners.getListener().resourceModified(
 					(IResource[])modifiedResources.toArray(new IResource[modifiedResources.size()]));
 				modifiedResources.clear();
 			}

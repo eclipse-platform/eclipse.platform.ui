@@ -53,6 +53,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock.IFlushOperatio
 import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock.ThreadInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
 /**
@@ -426,7 +427,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				// broadcast changes to unmanaged children - they are the only candidates for being ignored
 				List possibleIgnores = new ArrayList();
 				accumulateNonManagedChildren(folder, possibleIgnores);
-				CVSProviderPlugin.broadcastSyncInfoChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
+				ResourceStateChangeListeners.getListener().resourceSyncInfoChanged((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 			} finally {
 				endOperation();
 			}
@@ -618,7 +619,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					endOperation();
 				}
 				if (!changed.isEmpty()) {
-					CVSProviderPlugin.broadcastSyncInfoChanges(
+					ResourceStateChangeListeners.getListener().resourceSyncInfoChanged(
 						(IResource[]) changed.toArray(new IResource[changed.size()]));
 				}
 			} finally {
@@ -643,7 +644,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				changed.add(file);
 			}
 		}
-		CVSProviderPlugin.broadcastExternalSyncInfoChanges(
+		ResourceStateChangeListeners.getListener().externalSyncInfoChange(
 			(IResource[]) changed.toArray(new IResource[changed.size()]));
 	}
 	
@@ -981,7 +982,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	void broadcastResourceStateChanges(IResource[] resources) {
 		if (resources.length > 0) {
-			CVSProviderPlugin.broadcastSyncInfoChanges(resources);
+			ResourceStateChangeListeners.getListener().resourceSyncInfoChanged(resources);
 		}
 	}
 

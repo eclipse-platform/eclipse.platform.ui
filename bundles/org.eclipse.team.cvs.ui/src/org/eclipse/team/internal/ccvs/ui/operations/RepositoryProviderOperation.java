@@ -62,7 +62,6 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			execute(provider, providerResources, subMonitor);
 		}
-
 	}
 	
 	/*

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -40,6 +39,7 @@ import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -144,7 +144,7 @@ public class IsModifiedTests extends EclipseTest {
 		super.setUp();
 		previouslyModified.clear();
 		changedResources.clear();
-		CVSProviderPlugin.addResourceStateChangeListener(listener);
+		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(listener);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class IsModifiedTests extends EclipseTest {
 	protected void tearDown() throws Exception {
 		previouslyModified.clear();
 		changedResources.clear();
-		CVSProviderPlugin.removeResourceStateChangeListener(listener);
+		ResourceStateChangeListeners.getListener().removeResourceStateChangeListener(listener);
 		super.tearDown();
 	}
 	

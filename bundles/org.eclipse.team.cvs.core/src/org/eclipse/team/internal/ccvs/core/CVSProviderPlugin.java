@@ -17,16 +17,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -54,6 +49,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.BuildCleanupListener;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -116,8 +112,6 @@ public class CVSProviderPlugin extends Plugin {
 	private static final String REPOSITORIES_STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
 	// version numbers for the state file (a positive number indicates version 1)
 	private static final int REPOSITORIES_STATE_FILE_VERSION_2 = -1;
-	private Map repositories = new HashMap();
-	private List repositoryListeners = new ArrayList();
 	private static List decoratorEnablementListeners = new ArrayList();
 	
 	private CVSWorkspaceSubscriber cvsWorkspaceSubscriber;
@@ -448,101 +442,16 @@ public class CVSProviderPlugin extends Plugin {
 		promptOnFolderDelete = prompt;
 	}
 	
-	private static List listeners = new ArrayList();
-	
-	/*
-	 * @see ITeamManager#addResourceStateChangeListener(IResourceStateChangeListener)
-	 */
-	public static void addResourceStateChangeListener(IResourceStateChangeListener listener) {
-		listeners.add(listener);
-	}
-
-	/*
-	 * @see ITeamManager#removeResourceStateChangeListener(IResourceStateChangeListener)
-	 */
-	public static void removeResourceStateChangeListener(IResourceStateChangeListener listener) {
-		listeners.remove(listener);
-	}
-	
-	public static void broadcastSyncInfoChanges(final IResource[] resources) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.resourceSyncInfoChanged(resources);
-				}
-				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
-				}
-			};
-			Platform.run(code);
-		}
-	}
-	
-	public static void broadcastExternalSyncInfoChanges(final IResource[] resources) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.externalSyncInfoChange(resources);
-				}
-				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
-				}
-			};
-			Platform.run(code);
-		}
-	}
-	
 	public static void broadcastDecoratorEnablementChanged(final boolean enabled) {
-		for(Iterator it=decoratorEnablementListeners.iterator(); it.hasNext();) {
-			final ICVSDecoratorEnablementListener listener = (ICVSDecoratorEnablementListener)it.next();
+		ICVSDecoratorEnablementListener[] listeners;
+		synchronized(decoratorEnablementListeners) {
+			listeners = (ICVSDecoratorEnablementListener[]) decoratorEnablementListeners.toArray(new ICVSDecoratorEnablementListener[decoratorEnablementListeners.size()]);
+		}
+		for (int i = 0; i < listeners.length; i++) {
+			final ICVSDecoratorEnablementListener listener = listeners[i];
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.decoratorEnablementChanged(enabled);
-				}
-				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
-				}
-			};
-			Platform.run(code);
-		}
-	}
-	
-	public static void broadcastModificationStateChanges(final IResource[] resources) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.resourceModified(resources);
-				}
-				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
-				}
-			};
-			Platform.run(code);
-		}
-	}
-	protected static void broadcastProjectConfigured(final IProject project) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.projectConfigured(project);
-				}
-				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
-				}
-			};
-			Platform.run(code);
-		}
-	}
-	protected static void broadcastProjectDeconfigured(final IProject project) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.projectDeconfigured(project);
 				}
 				public void handleException(Throwable e) {
 					// don't log the exception....it is already being logged in Platform#run
@@ -567,34 +476,13 @@ public class CVSProviderPlugin extends Plugin {
 	public void setReplaceUnmanaged(boolean replaceUnmanaged) {
 		this.replaceUnmanaged = replaceUnmanaged;
 	}
-	
-	/*
-	 * Add the repository location to the cahced locations
-	 */
-	private void addToRepositoriesCache(ICVSRepositoryLocation repository) {
-		repositories.put(repository.getLocation(), repository);
-		Iterator it = repositoryListeners.iterator();
-		while (it.hasNext()) {
-			ICVSListener listener = (ICVSListener)it.next();
-			listener.repositoryAdded(repository);
-		}
-	}
-	
-	private void removeFromRepositoriesCache(ICVSRepositoryLocation repository) {
-		if (repositories.remove(repository.getLocation()) != null) {
-			Iterator it = repositoryListeners.iterator();
-			while (it.hasNext()) {
-				ICVSListener listener = (ICVSListener)it.next();
-				listener.repositoryRemoved(repository);
-			}
-		}
-	}
+
 		
 	/**
 	 * Register to receive notification of repository creation and disposal
 	 */
 	public void addRepositoryListener(ICVSListener listener) {
-		repositoryListeners.add(listener);
+		KnownRepositories.getInstance().addRepositoryListener(listener);
 	}
 	
 	/**
@@ -603,21 +491,25 @@ public class CVSProviderPlugin extends Plugin {
 	 * resource with CVS information.
 	 */
 	public void addDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
-		decoratorEnablementListeners.add(listener);
+		synchronized(decoratorEnablementListeners) {
+			decoratorEnablementListeners.add(listener);
+		}
 	}
 	
 	/**
 	 * De-register a listener
 	 */
 	public void removeRepositoryListener(ICVSListener listener) {
-		repositoryListeners.remove(listener);
+		KnownRepositories.getInstance().removeRepositoryListener(listener);
 	}
 	
 	/**
 	 * De-register the decorator enablement listener. 
 	 */
 	public void removeDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
-		decoratorEnablementListeners.remove(listener);
+		synchronized(decoratorEnablementListeners) {
+			decoratorEnablementListeners.remove(listener);
+		}
 	}
 	
 	/**
@@ -639,16 +531,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * exists.
 	 */
 	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException {
-		// Create a new repository location
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(configuration);
-		
-		// Check the cache for an equivalent instance and if there is one, throw an exception
-		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(location.getLocation());
-		if (existingLocation != null) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.alreadyExists"))); //$NON-NLS-1$
-		}
-
-		return location;
+		return KnownRepositories.getInstance().createRepository(configuration);
 	}
 
 	/**
@@ -656,15 +539,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * password caching accross platform invokations.
 	 */
 	public void addRepository(ICVSRepositoryLocation repository) throws CVSException {
-		// Check the cache for an equivalent instance and if there is one, just update the cache
-		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(repository.getLocation());
-		if (existingLocation != null) {
-			((CVSRepositoryLocation)repository).updateCache();
-		} else {
-			// Cache the password and register the repository location
-			addToRepositoriesCache(repository);
-			((CVSRepositoryLocation)repository).updateCache();
-		}
+		KnownRepositories.getInstance().addRepository(repository);
 		saveState();
 	}
 	
@@ -674,8 +549,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * Removes any cached information about the repository such as a remembered password.
 	 */
 	public void disposeRepository(ICVSRepositoryLocation repository) throws CVSException {
-		((CVSRepositoryLocation)repository).dispose();
-		removeFromRepositoriesCache(repository);
+		KnownRepositories.getInstance().disposeRepository(repository);
 	}
 
 	/**
@@ -683,14 +557,14 @@ public class CVSProviderPlugin extends Plugin {
 	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
 	 */
 	public boolean isKnownRepository(String location) {
-		return repositories.get(location) != null;
+		return KnownRepositories.getInstance().isKnownRepository(location);
 	}
 	
 	/** 
 	 * Return a list of the know repository locations
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositories() {
-		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[repositories.size()]);
+		return KnownRepositories.getInstance().getKnownRepositories();
 	}
 		
 	/**
@@ -717,12 +591,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * of the location permanently. This means that it cannot be modified by the authenticator. 
 	 */
 	public ICVSRepositoryLocation getRepository(String location) throws CVSException {
-		ICVSRepositoryLocation repository = (ICVSRepositoryLocation)repositories.get(location);
-		if (repository == null) {
-			repository = CVSRepositoryLocation.fromString(location);
-			addToRepositoriesCache(repository);
-		}
-		return repository;
+		return KnownRepositories.getInstance().getRepository(location);
 	}
 
 	private void loadState() {
@@ -805,11 +674,10 @@ public class CVSProviderPlugin extends Plugin {
 		// Write the repositories
 		dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_2);
 		// Write out the repos
-		Collection repos = repositories.values();
-		dos.writeInt(repos.size());
-		Iterator it = repos.iterator();
-		while (it.hasNext()) {
-			CVSRepositoryLocation root = (CVSRepositoryLocation)it.next();
+		ICVSRepositoryLocation[] repos = KnownRepositories.getInstance().getKnownRepositories();
+		dos.writeInt(repos.length);
+		for (int i = 0; i < repos.length; i++) {
+			CVSRepositoryLocation root = (CVSRepositoryLocation)repos[i];
 			dos.writeUTF(root.getLocation());
 			dos.writeUTF("unused"); // place holder for an additional configuration parameter //$NON-NLS-1$
 		}

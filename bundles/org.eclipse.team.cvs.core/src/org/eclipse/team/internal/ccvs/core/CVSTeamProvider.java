@@ -76,6 +76,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
@@ -174,7 +175,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	public void deconfigured() {
-		CVSProviderPlugin.broadcastProjectDeconfigured(getProject());
+		ResourceStateChangeListeners.getListener().projectDeconfigured(getProject());
 	}
 	/**
 	 * @see IProjectNature#getProject()
@@ -1030,7 +1031,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	public void configureProject() throws CoreException {
-		CVSProviderPlugin.broadcastProjectConfigured(getProject());
+		ResourceStateChangeListeners.getListener().projectConfigured(getProject());
 	}
 	/**
 	 * Sets the keyword substitution mode for the specified resources.

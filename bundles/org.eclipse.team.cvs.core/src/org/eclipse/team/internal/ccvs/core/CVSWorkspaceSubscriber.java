@@ -29,6 +29,7 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.OptimizedRemoteSynchronizer;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 
 /**
  * CVSWorkspaceSubscriber
@@ -47,7 +48,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		remoteSynchronizer = new OptimizedRemoteSynchronizer(REMOTE_RESOURCE_KEY);
 		
 		// TODO: temporary proxy for CVS events
-		CVSProviderPlugin.addResourceStateChangeListener(this); 
+		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
 
 	/* 
