@@ -22,7 +22,7 @@ package org.eclipse.jface.text;
 public interface IWidgetTokenKeeper {
 	
 	/**
-	 * The given widget token owner requests the widget token back from 
+	 * The given widget token owner requests the widget token  from 
 	 * this token keeper. Returns  <code>true</code> if the token is released
 	 * by this token keeper. Note, the keeper must not call 
 	 * <code>releaseWidgetToken(IWidgetTokenKeeper)</code> explicitly.

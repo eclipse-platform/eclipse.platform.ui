@@ -19,7 +19,7 @@ package org.eclipse.jface.text;
  * operating in a non-UI thread.<p>
  * Clients may implement this interface.
  *
- * @see ITextViewer
+ * @see org.eclipse.jface.text.ITextViewer
  */
 public interface ITextHover {
 	

@@ -17,8 +17,8 @@ package org.eclipse.jface.text;
  * if the document serving as the text viewer's model is replaced.
  * Clients may implement this interface.
  *
- * @see ITextViewer
- * @see IDocument
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.IDocument
  */
 public interface ITextInputListener {
 	

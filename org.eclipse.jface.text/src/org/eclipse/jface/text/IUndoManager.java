@@ -20,6 +20,8 @@ package org.eclipse.jface.text;
  * rolled back in one atomic change. <p>
  * Clients may implement this interface or use the standard
  * implementation <code>DefaultUndoManager</code>.
+ * 
+ * @see org.eclipse.jface.text.DefaultUndoManager
  */
 public interface IUndoManager {
 

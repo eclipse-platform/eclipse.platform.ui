@@ -18,7 +18,7 @@ package org.eclipse.jface.text;
  * portion of the viewer's document which is visible in the viewer. <p>
  * Clients may implement this interface.
  *
- * @see ITextViewer 
+ * @see org.eclipse.jface.text.ITextViewer 
  */
 public interface IViewportListener {
 	

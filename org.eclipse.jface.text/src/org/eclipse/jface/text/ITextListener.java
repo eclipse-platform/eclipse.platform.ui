@@ -23,9 +23,9 @@ package org.eclipse.jface.text;
  * both the document and the viewer's visual representation are in sync.<p>
  * Clients may implement this interface.
  *
- * @see ITextViewer
- * @see TextEvent
- * @see DocumentEvent
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.TextEvent
+ * @see org.eclipse.jface.text.DocumentEvent
  */
 public interface ITextListener {
 	

@@ -32,6 +32,8 @@ import org.eclipse.jface.viewers.ISelection;
  * interface is that weak in order to allow for efficient implementations.<p>
  * Clients may implement this interface or use the default implementation provided
  * by <code>TextSelection</code>.
+ * 
+ * @see org.eclipse.jface.text.TextSelection
  */
 public interface ITextSelection extends ISelection {
 	
