@@ -5,14 +5,15 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IContainer;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
  * Goes recursivly through the folders checks if they are empyty
@@ -22,8 +23,6 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 class PruneFolderVisitor implements ICVSResourceVisitor {
 	
 	private Session session;
-	
-	private ICVSResource currentVisitRoot;
 	
 	public PruneFolderVisitor() {
 	}
@@ -35,9 +34,18 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 		session = s;
 		
 		// Visit the resources
+		Set prunableParents = new HashSet();
 		for (int i = 0; i < resources.length; i++) {
-			currentVisitRoot = resources[i];
-			resources[i].accept(this);
+			ICVSResource cvsResource = resources[i];
+			// prune the resource and it's children when appropriate
+			cvsResource.accept(this);
+			// if the resource doesn't exists, attempt to prune it's parent
+			if (!cvsResource.exists())
+				prunableParents.add(cvsResource.getParent());
+		}
+		for (Iterator iter = prunableParents.iterator(); iter.hasNext();) {
+			ICVSFolder cvsFolder = (ICVSFolder)iter.next();
+			pruneFolderAndParentsIfAppropriate(cvsFolder);
 		}
 	}
 	
@@ -45,7 +53,7 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
 	public void visitFile(ICVSFile file) throws CVSException {
-		pruneParentIfAppropriate(file);
+		// nothing to do here
 	}
 
 	/**
@@ -54,26 +62,28 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	public void visitFolder(ICVSFolder folder) throws CVSException {
 		// First prune any empty children
 		folder.acceptChildren(this);
+		// Then prune the folder if it is empty
 		pruneFolderIfAppropriate(folder);
 	}
 	
 	private void pruneFolderIfAppropriate(ICVSFolder folder) throws CVSException {
 		// Only prune managed folders that are not the root of the operation
-		if (folder.isManaged() 
+		if (folder.exists() && folder.isManaged() 
 			&& ! folder.equals(session.getLocalRoot())
 			&& folder.members(ICVSFolder.ALL_EXISTING_MEMBERS).length == 0) {
 			
 			// Delete the folder but keep a phantom for local folders
 			folder.delete();
-			pruneParentIfAppropriate(folder);
 		}
 	}
 	
-	private void pruneParentIfAppropriate(ICVSResource resource) throws CVSException {
-		// If we are visiting the current visit root, prune the parent if appropriate
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && resource.equals(currentVisitRoot)) {
-			currentVisitRoot = resource.getParent();
-			pruneFolderIfAppropriate((ICVSFolder)currentVisitRoot);
+	/**
+	 * Attemp to prunt the given folder. If the folder is pruned, attempt to prune it's parent.	 */
+	private void pruneFolderAndParentsIfAppropriate(ICVSFolder folder) throws CVSException {
+		pruneFolderIfAppropriate(folder);
+		if (!folder.exists()) {
+			ICVSFolder parent = folder.getParent();
+			pruneFolderAndParentsIfAppropriate(parent);
 		}
 	}
 }
