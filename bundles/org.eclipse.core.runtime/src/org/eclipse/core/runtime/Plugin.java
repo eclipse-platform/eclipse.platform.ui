@@ -233,7 +233,7 @@ private URL findNL(URL install, IPath path) {
 	URL result = null;
 	while (result == null && nl.length() > 0) {
 		try {
-			URL location = new URL(install, "nl/" + nl + path.toString());
+			URL location = new URL(install, "nl/" + nl + "/" + path.toString());
 			String file = ((PluginDescriptor)getDescriptor()).getFileFromURL(location);
 			if (file != null && new File(file).exists())
 				result = location;
