@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.activities;
+package org.eclipse.ui.internal.activities;
 
 /**
  * The IObjectContributionRecord is the object that holds onto the plug-in and

@@ -17,10 +17,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.activities.service.ICompoundActivityService;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.progress.IProgressService;
 
 /**

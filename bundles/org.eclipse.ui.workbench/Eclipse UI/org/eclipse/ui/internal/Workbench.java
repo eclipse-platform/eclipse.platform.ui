@@ -86,7 +86,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.service.ActivityServiceFactory;
 import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.activities.service.ICompoundActivityService;
@@ -100,6 +99,7 @@ import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.progress.IProgressService;
 
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;

@@ -19,8 +19,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 public class PerspContentProvider implements IStructuredContentProvider {

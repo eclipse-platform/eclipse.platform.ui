@@ -195,9 +195,6 @@ final class Persistence {
 		// TODO deprecated start
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("value"); //$NON-NLS-1$ 
-
-		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(keyConfigurationId)) //$NON-NLS-1$
-			keyConfigurationId = null;
 		// TODO deprecated end
 
 		String pluginId =
@@ -456,21 +453,12 @@ final class Persistence {
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
-
-		// TODO deprecated start
-		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(id)) //$NON-NLS-1$
-			id = null;
-		// TODO deprecated end
-
 		String name = memento.getString(TAG_NAME);
 		String parentId = memento.getString(TAG_PARENT_ID);
 
 		// TODO deprecated start
 		if (parentId == null)
 			parentId = memento.getString("parent"); //$NON-NLS-1$ 
-
-		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(parentId)) //$NON-NLS-1$
-			parentId = null;
 		// TODO deprecated end
 
 		String pluginId =
@@ -543,9 +531,6 @@ final class Persistence {
 		// TODO deprecated start
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("configuration"); //$NON-NLS-1$
-
-		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(keyConfigurationId)) //$NON-NLS-1$
-			keyConfigurationId = null;
 		// TODO deprecated end
 
 		KeySequence keySequence = null;

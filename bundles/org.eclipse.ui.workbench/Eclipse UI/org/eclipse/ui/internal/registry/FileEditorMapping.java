@@ -20,10 +20,10 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IObjectActivityManager;
-import org.eclipse.ui.activities.IObjectContributionRecord;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.activities.IObjectContributionRecord;
 
 /* (non-Javadoc)
  * Implementation of IFileEditorMapping.

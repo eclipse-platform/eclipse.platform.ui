@@ -27,8 +27,6 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.activities.IObjectActivityManager;
-import org.eclipse.ui.activities.IObjectContributionRecord;
 
 /**
  * Provides a registry of id-&gt;object mappings (likely derived from extension

@@ -149,10 +149,11 @@ public final class CommandManager implements ICommandManager {
 		while (iterator.hasNext()) {
 			IKeySequenceBindingDefinition keySequenceBindingDefinition =
 				(IKeySequenceBindingDefinition) iterator.next();
+			String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
 			KeySequence keySequence =
 				keySequenceBindingDefinition.getKeySequence();
 
-			if (keySequence == null || !validateKeySequence(keySequence))
+			if (keyConfigurationId == null || keySequence == null || !validateKeySequence(keySequence))
 				iterator.remove();
 		}
 	}
@@ -602,6 +603,12 @@ public final class CommandManager implements ICommandManager {
 				activeKeyConfigurationId = null;
 		}
 
+		// TODO - if null, pick the first key configuration in sorted order by id?
+		if (activeKeyConfigurationId == null && !keyConfigurationDefinitionsById.isEmpty()) {
+			SortedSet sortedSet = new TreeSet(keyConfigurationDefinitionsById.keySet());
+			activeKeyConfigurationId = (String) sortedSet.first(); 
+		}		
+		
 		this.categoryDefinitionsById = categoryDefinitionsById;
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;

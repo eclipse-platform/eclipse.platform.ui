@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities;
 
-import org.eclipse.ui.activities.IObjectContributionRecord;
 
 /**
  * Class that represents an extension contribution from a given plugin with a
