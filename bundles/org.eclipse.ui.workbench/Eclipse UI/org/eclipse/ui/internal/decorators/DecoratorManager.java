@@ -788,10 +788,15 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             return true;
         }
 
+        // Force an update if there is a text already
+        boolean force = true;
+        //If not then do not force as the undecorated value is fine
+        if(originalText == null || originalText.length() == 0)
+        	force = false;
+        
         // Queue the decoration.
-        // Always force an update since old decoration may still be present
         scheduler.queueForDecoration(element, getResourceAdapter(element),
-                true, originalText); // force update
+                force, originalText); 
 
         //If all that is there is deferred ones then defer decoration.
         //For the sake of effeciency we do not test for enablement at this
