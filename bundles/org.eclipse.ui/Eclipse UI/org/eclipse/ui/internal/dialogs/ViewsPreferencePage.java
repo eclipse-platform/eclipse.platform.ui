@@ -287,11 +287,13 @@ protected void performDefaults() {
 		store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	editorTopButton.setSelection(editorTopValue == SWT.TOP);
 	editorBottomButton.setSelection(editorTopValue == SWT.BOTTOM);
+	editorAlignment = editorTopValue;
 
 	int viewTopValue =
 		store.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
 	viewTopButton.setSelection(viewTopValue == SWT.TOP);
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
+	viewAlignment = viewTopValue;
 	
 	errorColorEditor.loadDefault();
 	hyperlinkColorEditor.loadDefault();
