@@ -249,7 +249,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 				return;
 				
 			ISelection s= textEditor.getSelectionProvider().getSelection();
-			if(s == null)
+			if(s == null || s.isEmpty())
 				return;
 			
 			ITextSelection selection= (ITextSelection) s;
