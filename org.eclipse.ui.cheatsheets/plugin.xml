@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.ui.cheatsheets"
+   name="%PLUGIN_NAME"
+   version="3.0"
+   provider-name="IBM"
+   class="org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin">
+
+   <runtime>
+      <library name="cheatsheets.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
+
+
+   <extension-point id="cheatSheetContent" name="CheatSheetContent"/>
+   <extension-point id="cheatSheetItemExtension" name="CheatSheetItemExtension"/>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Cheat Sheets"
+            id="org.eclipse.ui.cheatsheets.cheatsheetCategory">
+      </category>
+      <view
+            name="%CHEAT_SHEETS"
+            icon="icons/full/cview16/cheatsheet_view.gif"
+            category="org.eclipse.ui.cheatsheets.cheatsheetCategory"
+            fastViewWidthRatio="0.5"
+            class="org.eclipse.ui.internal.cheatsheets.views.CheatSheetView"
+            id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+   </extension>
+
+</plugin>
