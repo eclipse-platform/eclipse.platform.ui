@@ -56,6 +56,7 @@ public final class ContentType implements IContentType {
 	private IContentType[] children;
 	private IConfigurationElement contentTypeElement;
 	private String defaultCharset;
+	private String userCharset;
 	private IContentDescription defaultDescription;
 	private IContentDescriber describer;
 	private List fileSpecs;
@@ -89,6 +90,8 @@ public final class ContentType implements IContentType {
 
 	private void processPreferences() {
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		// user set default charset
+		this.userCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, null);
 		// user set file names 
 		String userSetFileNames = contentTypeNode.get(PREF_FILE_NAMES, null);
 		String[] fileNames = parseItems(userSetFileNames);
@@ -255,8 +258,7 @@ public final class ContentType implements IContentType {
 	public String getDefaultCharset() {
 		if (aliasTarget != null)
 			return getTarget().getDefaultCharset();
-		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		String currentCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, internalGetDefaultCharset());
+		String currentCharset = userCharset != null ? userCharset : internalGetDefaultCharset();
 		// an empty string as charset means: no default charset
 		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
 	}
@@ -569,6 +571,7 @@ public final class ContentType implements IContentType {
 	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
 	 */
 	public void setDefaultCharset(String userCharset) throws CoreException {
+		this.userCharset = userCharset;
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		if (userCharset == null)
 			contentTypeNode.remove(PREF_DEFAULT_CHARSET);
