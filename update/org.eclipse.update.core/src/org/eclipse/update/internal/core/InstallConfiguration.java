@@ -369,7 +369,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				key = nowConfigSites[i].getSite().getURL().toExternalForm();
 				IConfiguredSite oldSite = (IConfiguredSite) oldSitesMap.get(key);
 				if (oldSite != null) {
-					// the Site existed before, calculate teh delta between its current state and the
+					// the Site existed before, calculate the delta between its current state and the
 					// state we are reverting to
 					 ((ConfiguredSite) oldSite).processDeltaWith(nowConfigSites[i], monitor, handler);
 					nowConfigSites[i] = oldSite;

@@ -385,7 +385,7 @@ public class ConfiguredSite
 				IFeatureReference element= (IFeatureReference) iter.next();
 				try {
 					element.getFeature(); // throws CoreException if Feature does not exist
-					cPolicy.addUnconfiguredFeatureReference((FeatureReferenceModel) element);
+					getConfigurationPolicy().addUnconfiguredFeatureReference((FeatureReferenceModel) element);
 				} catch (CoreException e) {
 					// feature does not exist ?
 					featureToUnconfigure.remove(element);
