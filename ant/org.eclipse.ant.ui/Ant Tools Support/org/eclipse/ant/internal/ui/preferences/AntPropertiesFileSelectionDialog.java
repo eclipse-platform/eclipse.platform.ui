@@ -17,6 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -35,6 +36,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class AntPropertiesFileSelectionDialog extends ElementTreeSelectionDialog {
 	
 	private ViewerFilter fFilter;
+	private boolean fShowAll= false;
+	private final static String DIALOG_SETTING= "AntPropertiesFileSelectionDialog.showAll";  //$NON-NLS-1$
 	
 	public AntPropertiesFileSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider, List propertyFiles) {
 		super(parent, labelProvider, contentProvider);
@@ -42,7 +45,7 @@ public class AntPropertiesFileSelectionDialog extends ElementTreeSelectionDialog
 		setTitle(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.12"));  //$NON-NLS-1$
 		setMessage(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.13")); //$NON-NLS-1$
 		fFilter= new PropertyFileFilter(propertyFiles);
-		addFilter(fFilter);
+		
 		setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		setSorter(new ResourceSorter(ResourceSorter.NAME));
 		
@@ -70,21 +73,39 @@ public class AntPropertiesFileSelectionDialog extends ElementTreeSelectionDialog
 		Composite result= (Composite)super.createDialogArea(parent);
 		final Button button = new Button(result, SWT.CHECK);
 		button.setText(AntPreferencesMessages.getString("AntPropertiesFileSelectionDialog.14")); //$NON-NLS-1$
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				if (button.getSelection()) {
-					getTreeViewer().removeFilter(fFilter);
-				} else {
-					getTreeViewer().addFilter(fFilter);
-				}
-			}
-		});
+		
 		button.setFont(parent.getFont());
 		GridData data= new GridData();
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		button.setLayoutData(data);
+		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
+		fShowAll= settings.getBoolean(DIALOG_SETTING);
+		if (!fShowAll) {
+			getTreeViewer().addFilter(fFilter);
+			button.setSelection(true);
+		}
 		
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (button.getSelection()) {
+					fShowAll= false;
+					getTreeViewer().addFilter(fFilter);
+				} else {
+					fShowAll= true;
+					getTreeViewer().removeFilter(fFilter);
+				}
+			}
+		});
 		applyDialogFont(result);		
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
+		settings.put(DIALOG_SETTING, fShowAll);
+		return super.close();
 	}
 }
