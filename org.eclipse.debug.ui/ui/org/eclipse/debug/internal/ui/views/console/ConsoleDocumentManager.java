@@ -29,7 +29,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
+import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -87,6 +88,11 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			provider.disconnect(iProcess);
 			if (iProcess.equals(currentProcess)) {
 				setCurrentProcess(null);
+				ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+				if (launches.length > 0) {
+					ILaunch prev = launches[launches.length - 1];
+					setCurrentProcess(getOutputProcess(prev));
+				}
 			}
 		}		
 	}
@@ -102,35 +108,46 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(final ILaunch launch) {
-		IProcess newProcess= null;
+		if (launch.getProcesses().length > 0) {
+			setCurrentProcess(getOutputProcess(launch));	
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
+				public void run() {
+					IProcess[] processes= launch.getProcesses();
+					for (int i= 0; i < processes.length; i++) {
+						if (getConsoleDocument(processes[i]) == null) {
+							IProcess process = processes[i];
+							IDocumentProvider provider = getDocumentProvider(process);
+							try {
+								provider.connect(process);
+							} catch (CoreException e) {
+							}
+						}
+					}
+					
+					notifyConsoleViews();
+				}
+			});
+		}
+	}
+	
+	/**
+	 * Returns the process in the given launch that output should be displayed for.
+	 *  
+	 * @param launch
+	 * @return IProcess
+	 */
+	private IProcess getOutputProcess(ILaunch launch) {
+		IProcess process= null;
 		IDebugTarget target= launch.getDebugTarget();
 		if (target != null) {
-			newProcess= target.getProcess();
+			process= target.getProcess();
 		} else {
 			IProcess[] processes= launch.getProcesses();
 			if (processes.length > 0) {
-				newProcess= processes[processes.length - 1];
+				process= processes[processes.length - 1];
 			}
-		}
-		setCurrentProcess(newProcess);
-				
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					if (getConsoleDocument(processes[i]) == null) {
-						IProcess process = processes[i];
-						IDocumentProvider provider = getDocumentProvider(process);
-						try {
-							provider.connect(process);
-						} catch (CoreException e) {
-						}
-					}
-				}
-				
-				notifyConsoleViews();
-			}
-		});
+		}		
+		return process;
 	}
 
 	/**
