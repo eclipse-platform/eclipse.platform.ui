@@ -414,7 +414,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private void handleProjectResourceOpenStateChange(IResource project) {
 		if (!project.isAccessible()) {
 			//closed
-			Enumeration breakpoints= getBreakpoints0().elements();
+			Enumeration breakpoints= ((Vector)getBreakpoints0().clone()).elements();
 			while (breakpoints.hasMoreElements()) {
 				IBreakpoint breakpoint= (IBreakpoint) breakpoints.nextElement();
 				IResource markerResource= breakpoint.getMarker().getResource();
