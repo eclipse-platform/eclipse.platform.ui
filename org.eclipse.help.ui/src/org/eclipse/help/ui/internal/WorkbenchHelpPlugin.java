@@ -15,13 +15,12 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.help.ui.internal.workingset.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.roles.*;
 import org.eclipse.ui.plugin.*;
 
 /**
-  * This class is a UI plugin. This may need to change to regular 
-  * plugin if the plugin class is moved into the base help.
-  */
+ * This class is a UI plugin. This may need to change to regular plugin if the
+ * plugin class is moved into the base help.
+ */
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.ui";
 	// debug options
@@ -33,10 +32,10 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	private static WorkbenchHelpPlugin plugin;
 	private HelpWorkingSetSynchronizer workingSetListener;
 
-	/** 
-	 * Logs an Error message with an exception. Note that the message should already 
-	 * be localized to proper locale.
-	 * ie: WorkbenchResources.getString() should already have been called
+	/**
+	 * Logs an Error message with an exception. Note that the message should
+	 * already be localized to proper locale. ie:
+	 * WorkbenchResources.getString() should already have been called
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
@@ -45,10 +44,10 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
-	/** 
-	 * Logs a Warning message with an exception. Note that the message should already 
-	 * be localized to proper local.
-	 * ie: WorkbenchResources.getString() should already have been called
+	/**
+	 * Logs a Warning message with an exception. Note that the message should
+	 * already be localized to proper local. ie: WorkbenchResources.getString()
+	 * should already have been called
 	 */
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
@@ -81,8 +80,9 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	}
 	/**
 	 * Shuts down this plug-in and discards all plug-in state.
-	 * @exception CoreException if this method fails to shut down
-	 *   this plug-in 
+	 * 
+	 * @exception CoreException
+	 *                if this method fails to shut down this plug-in
 	 */
 	public void shutdown() throws CoreException {
 
@@ -111,7 +111,8 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 
 		HelpSystem.setDefaultErrorUtil(new ErrorUtil());
 		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
-			// register the working set listener to keep the ui and the help working sets in sych
+			// register the working set listener to keep the ui and the help
+			// working sets in sych
 			workingSetListener = new HelpWorkingSetSynchronizer();
 			PlatformUI
 				.getWorkbench()
@@ -120,8 +121,10 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 				workingSetListener);
 			HelpSystem.getWorkingSetManager().addPropertyChangeListener(
 				workingSetListener);
-			
-			HelpSystem.setRoleManager(new HelpRoleManager(RoleManager.getInstance()));
+
+			// TODO enable
+			//HelpSystem.setRoleManager(new
+			// HelpRoleManager(((Workbench)PlatformUI.getWorkbench()).getActivityManager()));
 		}
 	}
 
