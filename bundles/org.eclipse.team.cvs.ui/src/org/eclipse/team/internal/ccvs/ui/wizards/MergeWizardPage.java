@@ -67,7 +67,7 @@ public class MergeWizardPage extends CVSWizardPage {
         
         createEndTagArea(mainArea);
         createStartTagArea(mainArea);
-        SWTUtils.equalizeButtons(converter, new Button [] { endTagBrowseButton, startTagBrowseButton } );
+        SWTUtils.equalizeControls(converter, new Button [] { endTagBrowseButton, startTagBrowseButton } );
         
         createPreviewOptionArea(composite, converter);
         createTagRefreshArea(composite);

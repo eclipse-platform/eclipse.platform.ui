@@ -199,7 +199,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		 * Calculate and set the button size 
 		 */
 		applyDialogFont(composite);
-		final int buttonWidth= SWTUtils.calculateButtonSize(converter, new Button [] { addExtensionButton, addNameButton, fChangeButton, fRemoveButton });
+		final int buttonWidth= SWTUtils.calculateControlSize(converter, new Button [] { addExtensionButton, addNameButton, fChangeButton, fRemoveButton });
 		addExtensionButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
 		addNameButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
 		fChangeButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));

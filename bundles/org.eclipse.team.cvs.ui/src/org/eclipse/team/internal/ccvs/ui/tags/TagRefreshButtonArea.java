@@ -80,7 +80,7 @@ public class TagRefreshButtonArea extends DialogArea {
 		
 		
 		Dialog.applyDialogFont(buttonComp);
-		final int buttonWidth= SWTUtils.calculateButtonSize(converter, new Button [] { addButton, refreshButton });
+		final int buttonWidth= SWTUtils.calculateControlSize(converter, new Button [] { addButton, refreshButton });
 		refreshButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
 		addButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
 		

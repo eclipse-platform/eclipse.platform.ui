@@ -122,7 +122,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			final Button button = new Button(composite, SWT.NONE);
 			button.setText(buttonText);
 			button.setLayoutData(new GridData());
-			((GridData)button.getLayoutData()).widthHint= SWTUtils.calculateButtonSize(converter, new Button[] {button});
+			((GridData)button.getLayoutData()).widthHint= SWTUtils.calculateControlSize(converter, new Button[] {button});
 
 			button.addSelectionListener(this);
 		}

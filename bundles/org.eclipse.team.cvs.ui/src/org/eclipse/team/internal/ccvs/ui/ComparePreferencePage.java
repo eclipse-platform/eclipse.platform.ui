@@ -51,7 +51,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		});
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, 
-		        Policy.bind("CVSPreferencePage.showCompareMergeInSync"),  //$NON-NLS-1$
+		        Policy.bind("ComparePreferencePage.3"),  //$NON-NLS-1$
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(

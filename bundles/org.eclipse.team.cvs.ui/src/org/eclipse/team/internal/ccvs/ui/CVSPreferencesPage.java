@@ -11,27 +11,41 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.*;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
+import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -46,184 +60,373 @@ import org.eclipse.ui.help.WorkbenchHelp;
  *  2. There is no help associated with the page
  */
 public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
-
-	private Button pruneEmptyDirectoriesField;
-	private Text timeoutValue;
-	private Combo quietnessCombo;
-	private Combo compressionLevelCombo;
-	private Combo ksubstCombo;
-	private Button usePlatformLineend;
-	private List ksubstOptions;
-	private Button replaceUnmanaged;
-	private Button repositoriesAreBinary;
-	private Button determineVersionEnabled;
-	private Button confirmMoveTag;
-	private Button debugProtocol;
-	private Button autoRefreshTags;
 	
-	private Button never;
-	private Button prompt;
-	private Button auto;
+	private static class PerspectiveDescriptorComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			if (o1 instanceof IPerspectiveDescriptor && o2 instanceof IPerspectiveDescriptor) {
+				String id1= ((IPerspectiveDescriptor)o1).getLabel();
+				String id2= ((IPerspectiveDescriptor)o2).getLabel();
+				return Collator.getInstance().compare(id1, id2);
+			}
+			return 0;
+		}
+	}
+    
+	
+	private abstract class Field {
+		protected final String fKey;
+		public Field(String key) { fFields.add(this); fKey= key; }
+		public abstract void initializeValue(IPreferenceStore store);
+		public abstract void performOk(IPreferenceStore store);
+		public void performDefaults(IPreferenceStore store) {
+			store.setToDefault(fKey);
+			initializeValue(store);
+		}
+	}
+	
+	private class Checkbox extends Field {
+		
+		private final Button fCheckbox;
+		
+		public Checkbox(Composite composite, String key, String label, String helpID) {
+			super(key);
+			fCheckbox= new Button(composite, SWT.CHECK);
+			fCheckbox.setText(label);
+			WorkbenchHelp.setHelp(fCheckbox, helpID);
+		}
+		
+		public void initializeValue(IPreferenceStore store) {
+			fCheckbox.setSelection(store.getBoolean(fKey));
+		}
+		
+		public void performOk(IPreferenceStore store) {
+			store.setValue(fKey, fCheckbox.getSelection());
+		}
+	}
 
-	public CVSPreferencesPage() {
-		// sort the options by display text
-		setDescription(Policy.bind("CVSPreferencePage.description")); //$NON-NLS-1$
-		KSubstOption[] options = KSubstOption.getAllKSubstOptions();
-		this.ksubstOptions = new ArrayList();
-		for (int i = 0; i < options.length; i++) {
-			KSubstOption option = options[i];
-			if (! option.isBinary()) {
-				ksubstOptions.add(option);
+	private abstract class ComboBox extends Field {
+		protected final Combo fCombo;
+		private final String [] fLabels;
+		private final List fValues;
+		
+		public ComboBox(Composite composite, String key, String text, String helpID, String [] labels, Object [] values) {
+			super(key);
+			fLabels= labels;
+			fValues= Arrays.asList(values);
+			
+			final Label label= SWTUtils.createLabel(composite, text);
+			fCombo= new Combo(composite, SWT.READ_ONLY);
+			fCombo.setLayoutData(SWTUtils.createHFillGridData());
+			fCombo.setItems(labels);
+			
+			if (((GridLayout)composite.getLayout()).numColumns > 1) {
+				label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
+			}
+			
+			WorkbenchHelp.setHelp(fCombo, helpID);
+		}
+		
+		public Combo getCombo() {
+			return fCombo;
+		}
+		
+		public void initializeValue(IPreferenceStore store) {
+			final Object value= getValue(store, fKey);
+			final int index= fValues.indexOf(value); 
+			if (index >= 0 && index < fLabels.length)
+				fCombo.select(index);
+			else 
+				fCombo.select(0);
+		}
+		
+		public void performOk(IPreferenceStore store) {
+			saveValue(store, fKey, fValues.get(fCombo.getSelectionIndex()));
+		}
+		
+		protected abstract void saveValue(IPreferenceStore store, String key, Object object);
+		protected abstract Object getValue(IPreferenceStore store, String key);
+	}
+	
+	private class IntegerComboBox extends ComboBox {
+		public IntegerComboBox(Composite composite, String key, String label, String helpID, String[] labels, Integer [] values) {
+			super(composite, key, label, helpID, labels, values);
+		}
+
+		protected void saveValue(IPreferenceStore store, String key, Object object) {
+			store.setValue(key, ((Integer)object).intValue());			
+		}
+		
+		protected Object getValue(IPreferenceStore store, String key) {
+			return new Integer(store.getInt(key));			
+		}
+	}
+	
+	private class StringComboBox extends ComboBox {
+		
+		public StringComboBox(Composite composite, String key, String label, String helpID, String [] labels, String [] values) {
+			super(composite, key, label, helpID, labels, values);
+		}
+
+		protected Object getValue(IPreferenceStore store, String key) {
+			return store.getString(key);
+		}
+		
+		protected void saveValue(IPreferenceStore store, String key, Object object) {
+			store.setValue(key, (String)object);
+		}
+	}
+
+	private abstract class RadioButtons extends Field {
+		protected final Button [] fButtons;
+		private final String [] fLabels;
+		private final List fValues;
+		private final Group fGroup;
+		
+		public RadioButtons(Composite composite, String key, String label, String helpID, String [] labels, Object [] values) {
+			super(key);
+			fLabels= labels;
+			fValues= Arrays.asList(values);
+			
+			fGroup= SWTUtils.createHFillGroup(composite, label, SWTUtils.MARGINS_DEFAULT, labels.length);
+			
+			
+			fButtons= new Button [labels.length];
+			for (int i = 0; i < fLabels.length; i++) {
+				fButtons[i]= new Button(fGroup, SWT.RADIO);
+				fButtons[i].setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
+				fButtons[i].setText(labels[i]);
+			}
+			SWTUtils.equalizeControls(SWTUtils.createDialogPixelConverter(composite), fButtons, 0, fButtons.length - 2);
+			WorkbenchHelp.setHelp(fGroup, helpID);
+		}
+		
+		public void initializeValue(IPreferenceStore store) {
+			final Object value= loadValue(store, fKey);
+			final int index= fValues.indexOf(value);
+			if (index >= 0 && index < fLabels.length)
+				fButtons[index].setSelection(true);
+		}
+
+		public void performOk(IPreferenceStore store) {
+			for (int i = 0; i < fButtons.length; ++i) {
+				if (fButtons[i].getSelection()) {
+					saveValue(store, fKey, fValues.get(i));
+					return;
+				} 
 			}
 		}
-		Collections.sort(ksubstOptions, new Comparator() {
+		
+		public Control getControl() {
+			return fGroup;
+		}
+		
+		protected abstract Object loadValue(IPreferenceStore store, String key);
+
+		protected abstract void saveValue(IPreferenceStore store, String key, Object value);
+	}
+
+	private class IntegerRadioButtons extends RadioButtons {
+
+		public IntegerRadioButtons(Composite composite, String key, String label, String helpID, String[] labels, Integer [] values) {
+			super(composite, key, label, helpID, labels, values);
+		}
+
+		protected Object loadValue(IPreferenceStore store, String key) {
+			return new Integer(store.getInt(key));
+		}
+
+		protected void saveValue(IPreferenceStore store, String key, Object value) {
+			store.setValue(key, ((Integer)value).intValue());
+		}
+	}
+	
+	private class StringRadioButtons extends RadioButtons {
+
+		public StringRadioButtons(Composite composite, String key, String label, String helpID, String[] labels, String [] values) {
+			super(composite, key, label, helpID, labels, values);
+		}
+
+		protected Object loadValue(IPreferenceStore store, String key) {
+			return store.getString(key);
+		}
+
+		protected void saveValue(IPreferenceStore store, String key, Object value) {
+			store.setValue(key, (String)value);
+		}
+	}
+	
+	private abstract class TextField extends Field {
+		protected final Text fText;
+		
+		public TextField(Composite composite, String key, String text, String helpID) {
+			super(key);
+			
+			final Label label= new Label(composite, SWT.WRAP);
+			label.setText(text);
+			label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
+			
+			fText= SWTUtils.createText(composite);
+			
+			WorkbenchHelp.setHelp(fText, helpID);
+		}
+		
+		public Text getControl() {
+			return fText;
+		}
+		
+		public void initializeValue(IPreferenceStore store) {
+			final String value= store.getString(fKey);
+			fText.setText(value);
+		}
+		
+		public void performOk(IPreferenceStore store) {
+			store.setValue(fKey, fText.getText());
+		}
+		
+		protected abstract void modifyText(Text text);
+	}
+	
+	private final String [] KSUBST_VALUES;
+	private final String [] KSUBST_LABELS;
+	
+	private final String [] COMPRESSION_LABELS;
+	private final Integer [] COMPRESSION_VALUES;
+	
+	protected final ArrayList fFields;
+	private final String [] PERSPECTIVE_VALUES;
+	private final String [] PERSPECTIVE_LABELS;
+	private final String [] YES_NO_PROMPT;
+	
+	public CVSPreferencesPage() {
+		fFields= new ArrayList();
+		
+		final KSubstOption[] options = KSubstOption.getAllKSubstOptions();
+		final ArrayList KSUBST_MODES= new ArrayList();
+		for (int i = 0; i < options.length; i++) {
+			final KSubstOption option = options[i];
+			if (!option.isBinary()) {
+				KSUBST_MODES.add(option);
+			}
+		}
+		Collections.sort(KSUBST_MODES, new Comparator() {
 			public int compare(Object a, Object b) {
-				String aKey = ((KSubstOption) a).getLongDisplayText();
-				String bKey = ((KSubstOption) b).getLongDisplayText();
+				final String aKey = ((KSubstOption) a).getLongDisplayText();
+				final String bKey = ((KSubstOption) b).getLongDisplayText();
 				return aKey.compareTo(bKey);
 			}
 		});
+		
+		KSUBST_LABELS= new String[KSUBST_MODES.size()];
+		KSUBST_VALUES= new String[KSUBST_MODES.size()];
+		int index= 0;
+		for (Iterator iter = KSUBST_MODES.iterator(); iter.hasNext();) {
+			KSubstOption mod = (KSubstOption) iter.next();
+			KSUBST_LABELS[index]= mod.getLongDisplayText();
+			final String mode= mod.toMode().trim();
+			KSUBST_VALUES[index]= mode.length() != 0 ? mode : "-kkv";    //$NON-NLS-1$
+			++index;
+		}	
+	
+		COMPRESSION_LABELS= new String [] { Policy.bind("CVSPreferencesPage.0"), Policy.bind("CVSPreferencesPage.1"), Policy.bind("CVSPreferencesPage.2"), Policy.bind("CVSPreferencesPage.3"), Policy.bind("CVSPreferencesPage.4"), Policy.bind("CVSPreferencesPage.5"), Policy.bind("CVSPreferencesPage.6"), Policy.bind("CVSPreferencesPage.7"), Policy.bind("CVSPreferencesPage.8"), Policy.bind("CVSPreferencesPage.9") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+		COMPRESSION_VALUES= new Integer [COMPRESSION_LABELS.length];
+		for (int i = 0; i < COMPRESSION_VALUES.length; i++) {
+			COMPRESSION_VALUES[i]= new Integer(i);
+		}
+		
+	    final IPerspectiveDescriptor [] perspectives= PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
+	    PERSPECTIVE_VALUES= new String[perspectives.length + 1];
+	    PERSPECTIVE_LABELS= new String [perspectives.length + 1];
+		Arrays.sort(perspectives, new PerspectiveDescriptorComparator());
+		PERSPECTIVE_VALUES[0]= ICVSUIConstants.OPTION_NO_PERSPECTIVE;
+		PERSPECTIVE_LABELS[0]= Policy.bind("CVSPreferencesPage.10"); //$NON-NLS-1$
+		for (int i = 0; i < perspectives.length; i++) {
+			PERSPECTIVE_VALUES[i + 1]= perspectives[i].getId();
+			PERSPECTIVE_LABELS[i + 1]= perspectives[i].getLabel();
+		}
+		
+		YES_NO_PROMPT= new String [] { Policy.bind("CVSPreferencesPage.11"), Policy.bind("CVSPreferencesPage.12"), Policy.bind("CVSPreferencesPage.13") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		/**
+		 * Handle deleted perspectives
+		 */
+		final IPreferenceStore store= CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String id= store.getString(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS);
+		if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
+			store.putValue(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS, ICVSUIConstants.OPTION_NO_PERSPECTIVE);
+		}
 	}
 
-	/**
-	 * Utility method that creates a combo box
-	 *
-	 * @param parent  the parent for the new label
-	 * @return the new widget
-	 */
-	protected Combo createCombo(Composite parent, int widthChars) {
-		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		GC gc = new GC(combo);
-	 	gc.setFont(combo.getFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();		
-		data.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, widthChars);
-		gc.dispose();
-		combo.setLayoutData(data);
-		return combo;
+	protected Control createContents(Composite parent) {
+		
+		// create a tab folder for the page
+		final TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		tabFolder.setLayoutData(SWTUtils.createHFillGridData());
+
+		createGeneralTab(tabFolder);
+		createFilesFoldersTab(tabFolder);
+		createConnectionTab(tabFolder);
+		createPromptingTab(tabFolder);
+		
+		return tabFolder;
 	}
 
-	/**
-	 * Utility method that creates a combo box
-	 *
-	 * @param parent  the parent for the new label
-	 * @return the new widget
-	 */
-	protected Combo createCombo(Composite parent) {
-		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		combo.setLayoutData(data);
-		return combo;
-	}
-
-	/**
-	 * Creates composite control and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @return the newly-created coposite
-	 */
-	private Composite createComposite(Composite parent, int numColumns) {
-		Composite composite = new Composite(parent, SWT.NULL);
-
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-
-		//GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
+	private Composite createGeneralTab(final TabFolder tabFolder) {
+		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
+		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
+		tab.setText(Policy.bind("CVSPreferencesPage.14")); //$NON-NLS-1$
+		tab.setControl(composite);
+		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  Policy.bind("CVSPreferencesPage.15"), IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, Policy.bind("CVSPreferencesPage.16"), IHelpContextIds.PREF_CONFIRM_MOVE_TAG); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, Policy.bind("CVSPreferencesPage.17"), IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, Policy.bind("CVSPreferencesPage.18"), IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
 		return composite;
 	}
+	
+	private Composite createConnectionTab(final TabFolder tabFolder) {
+		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
+		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
+		tab.setText(Policy.bind("CVSPreferencesPage.19")); //$NON-NLS-1$
+		tab.setControl(composite);
+		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  Policy.bind("CVSPreferencesPage.20"), IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, Policy.bind("CVSPreferencesPage.21"), IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, Policy.bind("CVSPreferencesPage.22"), IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
 
-	/**
-	 * Creates an new checkbox instance and sets the default
-	 * layout data.
-	 *
-	 * @param group  the composite in which to create the checkbox
-	 * @param label  the string to set into the checkbox
-	 * @return the new checkbox
-	 */
-	private Button createCheckBox(Composite group, String label) {
-		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
-		button.setText(label);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		button.setLayoutData(data);
-		return button;
-	}
-
-	/**
-	 * @see PreferencePage#createContents(Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		Composite composite = createComposite(parent, 2);
-
-		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$	
-		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
-		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
-		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
-		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
-		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
-		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
-		autoRefreshTags = createCheckBox(composite, Policy.bind("CVSPreferencePage.autoRefreshTags")); //$NON-NLS-1$
-			
-		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
-		timeoutValue = createTextField(composite);
-		timeoutValue.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		SWTUtils.createPlaceholder(composite, 1);
+		final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
+		new TextField(
+				textComposite, 
+				ICVSUIConstants.PREF_TIMEOUT, 
+				Policy.bind("CVSPreferencesPage.23"),  //$NON-NLS-1$
+				IHelpContextIds.PREF_COMMS_TIMEOUT) {
+			protected void modifyText(Text text) {
 				// Parse the timeout value
 				try {
-					int x = Integer.parseInt(timeoutValue.getText());
+					final int x = Integer.parseInt(text.getText());
 					if (x >= 0) {
 						setErrorMessage(null);
 						setValid(true);
 					} else {
-						setErrorMessage(Policy.bind("CVSPreferencesPage.Timeout_must_not_be_negative_1")); //$NON-NLS-1$
+						setErrorMessage(Policy.bind("CVSPreferencesPage.24")); //$NON-NLS-1$
 						setValid(false);
 					}
 				} catch (NumberFormatException ex) {
-					setErrorMessage(Policy.bind("CVSPreferencesPage.Timeout_must_be_a_number_2")); //$NON-NLS-1$
+					setErrorMessage(Policy.bind("CVSPreferencesPage.25")); //$NON-NLS-1$
 					setValid(false);
 				}
 			}
-		});
+		};
 		
-		createLabel(composite, Policy.bind("CVSPreferencePage.quietness")); //$NON-NLS-1$
-		quietnessCombo = createCombo(composite);
-
-		createLabel(composite, Policy.bind("CVSPreferencePage.compressionLevel")); //$NON-NLS-1$
-		compressionLevelCombo = createCombo(composite);
+		final ComboBox quietnessCombo = new IntegerComboBox(
+				textComposite, 
+				ICVSUIConstants.PREF_QUIETNESS, 
+				Policy.bind("CVSPreferencesPage.26"),  //$NON-NLS-1$
+				IHelpContextIds.PREF_QUIET,
+				new String [] { Policy.bind("CVSPreferencesPage.27"), Policy.bind("CVSPreferencesPage.28"), Policy.bind("CVSPreferencesPage.29") }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new Integer [] { new Integer(0), new Integer(1), new Integer(2)});
 		
-		createLabel(composite, Policy.bind("CVSPreferencePage.defaultTextKSubst")); //$NON-NLS-1$
-		int chars = 0;
-		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
-			KSubstOption option = (KSubstOption) it.next();
-			int c = option.getLongDisplayText().length();
-			if(c > chars) {
-				chars = c;
-			}
-		}
-		ksubstCombo = createCombo(composite, chars);
-		
-		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
-				
-		createSaveCombo(composite);
-				
-		initializeValues();
-		
-		quietnessCombo.addSelectionListener(new SelectionListener() {
+		quietnessCombo.getCombo().addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				if (getQuietnessOptionFor(quietnessCombo.getSelectionIndex()).equals(Command.SILENT)) {
-					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencePage.silentWarningTitle"), Policy.bind("CVSPreferencePage.silentWarningMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+				if (getQuietnessOptionFor(quietnessCombo.getCombo().getSelectionIndex()).equals(Command.SILENT)) {
+					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencesPage.30"), Policy.bind("CVSPreferencesPage.31"));  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -231,139 +434,114 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 
-		WorkbenchHelp.setHelp(pruneEmptyDirectoriesField, IHelpContextIds.PREF_PRUNE);
-		WorkbenchHelp.setHelp(compressionLevelCombo, IHelpContextIds.PREF_COMPRESSION);
-		WorkbenchHelp.setHelp(quietnessCombo, IHelpContextIds.PREF_QUIET);
-		WorkbenchHelp.setHelp(ksubstCombo, IHelpContextIds.PREF_KEYWORDMODE);
-		WorkbenchHelp.setHelp(usePlatformLineend, IHelpContextIds.PREF_LINEEND);
-		WorkbenchHelp.setHelp(timeoutValue, IHelpContextIds.PREF_COMMS_TIMEOUT);
-		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
-		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
-		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
-		WorkbenchHelp.setHelp(confirmMoveTag, IHelpContextIds.PREF_CONFIRM_MOVE_TAG);
-		WorkbenchHelp.setHelp(autoRefreshTags, IHelpContextIds.PREF_AUTOREFRESH_TAG);
-		Dialog.applyDialogFont(parent);
+		new IntegerComboBox(
+				textComposite, 
+				ICVSUIConstants.PREF_COMPRESSION_LEVEL, 
+				Policy.bind("CVSPreferencesPage.32"),  //$NON-NLS-1$
+				IHelpContextIds.PREF_COMPRESSION, 
+				COMPRESSION_LABELS, COMPRESSION_VALUES);
+
 		return composite;
 	}
-	/**
-	 * Utility method that creates a label instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new label
-	 * @return the new label
-	 */
-	private Label createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(text);
-		GridData data = new GridData();
-		data.horizontalSpan = 1;
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData(data);
-		return label;
+
+	
+	private Composite createFilesFoldersTab(final TabFolder tabFolder) {
+		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT);
+		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
+		tab.setText(Policy.bind("CVSPreferencesPage.33")); //$NON-NLS-1$
+		tab.setControl(composite);
+		new Checkbox(composite, ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, Policy.bind("CVSPreferencesPage.34"), IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, Policy.bind("CVSPreferencesPage.35"), IHelpContextIds.PREF_LINEEND); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, Policy.bind("CVSPreferencesPage.36"), IHelpContextIds.PREF_PRUNE); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_REPLACE_UNMANAGED, Policy.bind("CVSPreferencesPage.37"), IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED); //$NON-NLS-1$
+		SWTUtils.createPlaceholder(composite, 1);
+		final Composite bottom= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
+		new StringComboBox(
+				bottom, 
+				ICVSUIConstants.PREF_TEXT_KSUBST, 
+				Policy.bind("CVSPreferencesPage.38"),  //$NON-NLS-1$
+				IHelpContextIds.PREF_KEYWORDMODE, 
+				KSUBST_LABELS, KSUBST_VALUES);
+		
+		return composite;
 	}
-	/**
-	 * Creates an new text widget and sets the default
-	 * layout data.
-	 *
-	 * @param group  the composite in which to create the checkbox
-	 * @return the new text widget
-	 */ 
-	private Text createTextField(Composite group) {
-		Text text = new Text(group, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		return text;
+	
+	private Composite createPromptingTab(final TabFolder tabFolder) {
+
+		final Composite composite = SWTUtils.createHFillComposite(tabFolder, SWTUtils.MARGINS_DEFAULT, 1);
+		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
+		tab.setText(Policy.bind("CVSPreferencesPage.39")); //$NON-NLS-1$
+		tab.setControl(composite);
+		
+		new StringRadioButtons(
+				composite,
+				ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS,
+				Policy.bind("CVSPreferencesPage.40"), //$NON-NLS-1$
+				IHelpContextIds.PREF_ALLOW_EMPTY_COMMIT_COMMENTS,
+				YES_NO_PROMPT,
+				new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER, MessageDialogWithToggle.PROMPT });
+		
+		new IntegerRadioButtons(composite, 
+				ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, 
+				Policy.bind("CVSPreferencesPage.41"),  //$NON-NLS-1$
+				IHelpContextIds.PREF_SAVE_DIRTY_EDITORS, 
+	    		YES_NO_PROMPT,
+	    		new Integer [] { new Integer(ICVSUIConstants.OPTION_AUTOMATIC),	new Integer(ICVSUIConstants.OPTION_NEVER), 	new Integer(ICVSUIConstants.OPTION_PROMPT)});
+				
+	    new StringRadioButtons(
+	    		composite, 
+	    		ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, 
+	    		Policy.bind("CVSPreferencesPage.42"), //$NON-NLS-1$
+	    		IHelpContextIds.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS,
+	    		YES_NO_PROMPT,
+	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
+	    		);
+	    
+	    SWTUtils.createPlaceholder(composite, 1);
+	    new StringComboBox(
+	    		composite, 
+	    		ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
+	    		Policy.bind("CVSPreferencesPage.43"), //$NON-NLS-1$
+	    		IHelpContextIds.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
+	    		PERSPECTIVE_LABELS,
+	    		PERSPECTIVE_VALUES);
+
+		initializeValues();
+
+		return composite;
 	}
+	
 	/**
 	 * Initializes states of the controls from the preference store.
 	 */
 	private void initializeValues() {
-		IPreferenceStore store = getPreferenceStore();
-		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
-		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
-		repositoriesAreBinary.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet")); //$NON-NLS-1$
-		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet")); //$NON-NLS-1$
-		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
-		for (int i = 0; i < 10; ++i) {
-			compressionLevelCombo.add(Policy.bind("CVSPreferencePage.level" + i)); //$NON-NLS-1$
+		final IPreferenceStore store = getPreferenceStore();
+		for (Iterator iter = fFields.iterator(); iter.hasNext();) {
+			((Field)iter.next()).initializeValue(store);
 		}
-		compressionLevelCombo.select(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
-		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
-			KSubstOption option = (KSubstOption) it.next();
-			ksubstCombo.add(option.getLongDisplayText());
-		}
-		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		usePlatformLineend.setSelection(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
-		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
-		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
-		confirmMoveTag.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
-		debugProtocol.setSelection(store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
-		autoRefreshTags.setSelection(store.getBoolean(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG));
-		
-		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
 
-   /**
-	* @see IWorkbenchPreferencePage#init(IWorkbench)
-	*/
 	public void init(IWorkbench workbench) {
 	}
 
-	/**
-	 * OK was clicked. Store the CVS preferences.
-	 *
-	 * @return whether it is okay to close the preference page
-	 */
 	public boolean performOk() {
-		
-		// Parse the timeout value
-		int timeout = Integer.parseInt(timeoutValue.getText());
 
-		IPreferenceStore store = getPreferenceStore();
-		
-		// set the provider preferences first because the preference change
-		// listeners invoked from the preference store change may need these
-		// values
-		
-		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
-		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
-		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
-		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
-		// Text mode processed separately to avoid empty string in properties file.
-		String mode =((KSubstOption)ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode();
-		if (mode.length() == 0) {
-			mode = "-kkv"; //$NON-NLS-1$
+		final IPreferenceStore store = getPreferenceStore();
+		for (Iterator iter = fFields.iterator(); iter.hasNext();) {
+			((Field) iter.next()).performOk(store);
 		}
-		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
-		store.setValue(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, usePlatformLineend.getSelection());
-		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
-		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
-		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
-		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
-		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
-		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
-		store.setValue(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, autoRefreshTags.getSelection());
-		
-		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
-			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
-		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
-			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
-		CVSProviderPlugin.getPlugin().setTimeout(
-			store.getInt(ICVSUIConstants.PREF_TIMEOUT));
-		CVSProviderPlugin.getPlugin().setQuietness(
-			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
-		CVSProviderPlugin.getPlugin().setCompressionLevel(
-			store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
-		CVSProviderPlugin.getPlugin().setDebugProtocol(
-					store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
+
+		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
+		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
+		CVSProviderPlugin.getPlugin().setTimeout(store.getInt(ICVSUIConstants.PREF_TIMEOUT));
+		CVSProviderPlugin.getPlugin().setQuietness(getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
+		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		CVSProviderPlugin.getPlugin().setDebugProtocol(store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
-		CVSProviderPlugin.getPlugin().setUsePlatformLineend(
-				store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
+		CVSProviderPlugin.getPlugin().setUsePlatformLineend(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		
@@ -377,52 +555,14 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		return true;
 	}
 
-	/**
-	 * Defaults was clicked. Restore the CVS preferences to
-	 * their default values
-	 */
 	protected void performDefaults() {
 		super.performDefaults();
-		IPreferenceStore store = getPreferenceStore();
-		pruneEmptyDirectoriesField.setSelection(
-			store.getDefaultBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
-		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
-		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
-		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
-		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		usePlatformLineend.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
-		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
-		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
-		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
-		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
-		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
-		autoRefreshTags.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG));
+		final IPreferenceStore store = getPreferenceStore();
+		for (Iterator iter = fFields.iterator(); iter.hasNext();) {
+			((Field) iter.next()).performDefaults(store);
+		}
 	}
 
-   private void createSaveCombo(Composite composite) {
-		Group group = new Group(composite, SWT.NULL);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 2;
-		group.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		group.setLayout(layout);
-		group.setText(Policy.bind("CVSPreferencePage.Save_dirty_editors_before_CVS_operations_1")); //$NON-NLS-1$
-		
-		never = new Button(group, SWT.RADIO | SWT.LEFT);
-		never.setLayoutData(new GridData());
-		never.setText(Policy.bind("CVSPreferencePage.&Never_2")); //$NON-NLS-1$
-		
-		prompt = new Button(group, SWT.RADIO | SWT.LEFT);
-		prompt.setLayoutData(new GridData());
-		prompt.setText(Policy.bind("CVSPreferencePage.&Prompt_3")); //$NON-NLS-1$
-		
-		auto = new Button(group, SWT.RADIO | SWT.LEFT);
-		auto.setLayoutData(new GridData());
-		auto.setText(Policy.bind("CVSPreferencePage.Auto-&save_4")); //$NON-NLS-1$
-		
-		WorkbenchHelp.setHelp(group, IHelpContextIds.PREF_SAVE_DIRTY_EDITORS);
-   }
-   
    /**
 	* Returns preference store that belongs to the our plugin.
 	* This is important because we want to store
@@ -441,43 +581,5 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			case 2: return Command.SILENT;
 		}
 		return null;
-	}
-	
-	protected int getKSubstComboIndexFor(String mode) {
-		KSubstOption ksubst = KSubstOption.fromMode(mode);
-		int i = 0;
-		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
-			KSubstOption option = (KSubstOption) it.next();
-			if (ksubst.equals(option)) return i;
-			i++;
-		}
-		// unknown option, add it to the list
-		ksubstOptions.add(ksubst);
-		ksubstCombo.add(ksubst.getLongDisplayText());
-		return i;
-	}
-	
-	protected void initializeSaveRadios(int option) {
-		auto.setSelection(false);
-		never.setSelection(false);
-		prompt.setSelection(false);
-		switch(option) {
-			case ICVSUIConstants.OPTION_AUTOMATIC:
-				auto.setSelection(true); break;
-			case ICVSUIConstants.OPTION_NEVER:
-				never.setSelection(true); break;
-			case ICVSUIConstants.OPTION_PROMPT:
-				prompt.setSelection(true); break;
-		}
-	}
-	
-	protected int getSaveRadio() {
-		if(auto.getSelection()) {
-			return ICVSUIConstants.OPTION_AUTOMATIC;
-		} else if(never.getSelection()) {
-			return ICVSUIConstants.OPTION_NEVER;
-		} else {
-			return ICVSUIConstants.OPTION_PROMPT;
-		}
 	}
 }

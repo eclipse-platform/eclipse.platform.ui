@@ -73,6 +73,7 @@ public interface IHelpContextIds {
 	public static final String REFRESH_REMOTE_PROJECT_SELECTION_PAGE = PREFIX + "refresh_remote_project_selection_page_context"; //$NON-NLS-1$
 
 	// Preference Pages
+	public static final String PREF_DEBUG_PROTOCOL = PREFIX + "debug_protocol_pref"; //$NON-NLS-1$
 	public static final String PREF_PRUNE = PREFIX + "prune_empty_directories_pref"; //$NON-NLS-1$
 	public static final String PREF_QUIET = PREFIX + "quietness_level_pref"; //$NON-NLS-1$
 	public static final String PREF_COMPRESSION = PREFIX + "compression_level_pref"; //$NON-NLS-1$
@@ -82,6 +83,9 @@ public interface IHelpContextIds {
 	public static final String PREF_CONSIDER_CONTENT = PREFIX + "consider_content_pref"; //$NON-NLS-1$
 	public static final String PREF_REPLACE_DELETE_UNMANAGED = PREFIX + "replace_deletion_of_unmanaged_pref"; //$NON-NLS-1$
 	public static final String PREF_SAVE_DIRTY_EDITORS = PREFIX + "save_dirty_editors_pref"; //$NON-NLS-1$
+	public static final String PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS = PREFIX + "change_perspective_on_show_annotations"; //$NON-NLS-1$
+	public static final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS = PREFIX + "allow_empty_commit_comment"; //$NON-NLS-1$
+	public static final String PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS = PREFIX + "show_annotations_perspective"; //$NON-NLS-1$
 
 	public static final String PREF_TREAT_NEW_FILE_AS_BINARY = PREFIX + "treat_new_files_as_binary_pref"; //$NON-NLS-1$
 	public static final String PREF_DETERMINE_SERVER_VERSION = PREFIX + "determine_server_version"; //$NON-NLS-1$
@@ -148,4 +152,7 @@ public interface IHelpContextIds {
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "project_property_page_context"; //$NON-NLS-1$
 	public static final String FOLDER_PROPERTY_PAGE = PREFIX + "folder_property_page_context"; //$NON-NLS-1$
 	public static final String FILE_PROPERTY_PAGE = PREFIX + "file_property_page_context"; //$NON-NLS-1$
+
+
+
 }

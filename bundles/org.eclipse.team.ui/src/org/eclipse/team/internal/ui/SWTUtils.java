@@ -48,7 +48,7 @@ public class SWTUtils {
 	}
 	
     public static GridData createGridData(int width, int height, boolean hFill, boolean vFill) {
-        return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.TOP, hFill, vFill);
+        return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.CENTER, hFill, vFill);
     }
     
     public static GridData createGridData(int width, int height, int hAlign, int vAlign, boolean hGrab, boolean vGrab) {
@@ -72,11 +72,11 @@ public class SWTUtils {
         return createHFillComposite(parent, margins, 1);
     }
     
-    public static Composite createHFillComposite(Composite parent, int margins, int rows) {
+    public static Composite createHFillComposite(Composite parent, int margins, int columns) {
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         composite.setLayoutData(createHFillGridData());
-        composite.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        composite.setLayout(createGridLayout(columns, new PixelConverter(parent), margins));
         return composite;
     }
     
@@ -84,11 +84,11 @@ public class SWTUtils {
         return createHVFillComposite(parent, margins, 1);
     }
     
-    public static Composite createHVFillComposite(Composite parent, int margins, int rows) {
+    public static Composite createHVFillComposite(Composite parent, int margins, int columns) {
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         composite.setLayoutData(createHVFillGridData());
-        composite.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        composite.setLayout(createGridLayout(columns, new PixelConverter(parent), margins));
         return composite;
     }
 
@@ -245,23 +245,41 @@ public class SWTUtils {
     	return new PixelConverter(control);
     }
     
-	public static int calculateButtonSize(PixelConverter converter, Button [] buttons) {
+	public static int calculateControlSize(PixelConverter converter, Control [] controls) {
+		return calculateControlSize(converter, controls, 0, controls.length - 1);
+	}
+
+	public static int calculateControlSize(PixelConverter converter, Control [] controls, int start, int end) {
 		int minimum= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		for (int i = 0; i < buttons.length; i++) {
-			final int length= buttons[i].computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		for (int i = start; i <= end; i++) {
+			final int length= controls[i].computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			if (minimum < length)
 				minimum= length;
 		}
 		return minimum;
 	}
 	
-	public static void equalizeButtons(PixelConverter converter, Button [] buttons) {
-		final int size= calculateButtonSize(converter, buttons);
-		for (int i = 0; i < buttons.length; i++) {
-			final Button button= buttons[i];
+	public static void equalizeControls(PixelConverter converter, Control [] controls) {
+		equalizeControls(converter, controls, 0, controls.length - 1);
+	}
+
+	public static void equalizeControls(PixelConverter converter, Control [] controls, int start, int end) {
+		final int size= calculateControlSize(converter, controls, start, end);
+		for (int i = start; i <= end; i++) {
+			final Control button= controls[i];
 			if (button.getLayoutData() instanceof GridData) {
 				((GridData)button.getLayoutData()).widthHint= size;
 			}
 		}
+	}
+
+	public static int getWidthInCharsForLongest(PixelConverter converter, String [] strings) {
+		int minimum= 0;
+		for (int i = 0; i < strings.length; i++) {
+			final int length= converter.convertWidthInCharsToPixels(strings[i].length());
+			if (minimum < length)
+				minimum= length;
+		}
+		return minimum;
 	}
 }
