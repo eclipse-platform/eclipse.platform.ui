@@ -298,7 +298,7 @@
          </action>
          <action
                label="%GenerateDiff.label"
-               helpContextId="org.eclipse.team.cvs.ui.team_create__action_context"
+               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
                tooltip="%GenerateDiff.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
                menubarPath="team.main/group1"
