@@ -159,16 +159,16 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	String getEditorId(IEditorInput input, Object element);
 	
 	/**
-	 * Returns a detailed description of the given value. This allows
-	 * a presentation to provide extra details about a selected value
-	 * in the variable detail portion of the variable view. If <code>null</code>
-	 * is returned, the value's value string is displayed
+	 * Computes a detailed description of the given value, reporting
+	 * the result to the specified listener. This allows a presentation
+	 * to provide extra details about a selected value in the variable detail
+	 * portion of the variable view. Since this can be a long-running operation,
+	 * the details are reported back to the specified listener asynchronously.
+	 * If <code>null</code> is reported, the value's value string is displayed
 	 * (<code>IValue.getValueString()</code>).
 	 * 
 	 * @param value the value for which a detailed description
 	 * 	is required
-	 * @return detailed description, or <code>null</code> if none
-	 *  is available
 	 */
 	void computeDetail(IValue value, IValueDetailListener listener);	
 
