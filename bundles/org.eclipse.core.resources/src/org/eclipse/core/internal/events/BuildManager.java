@@ -45,12 +45,16 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, IPr
 	}
 	// get the builder name to be used as a progress message
 	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
+	String message = null;
 	if (extension != null) {
 		String name = extension.getLabel();
 		if (name != null) {
-			monitor.subTask(Policy.bind("invoking", new String[] { name }));
+			message = Policy.bind("invoking", new String[] { name + " on " + project.getFullPath() });
 		}
 	}
+	if (message == null)
+		message = Policy.bind("invoking", new String[] {"builder on " + project.getFullPath()});
+	monitor.subTask(message);
 	basicBuild(project, trigger, builder, args, monitor);
 }
 void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final IProgressMonitor monitor) throws CoreException {
