@@ -34,6 +34,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
@@ -122,7 +124,7 @@ public class MarkerAnnotationPreferences {
 		fPreferences= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {

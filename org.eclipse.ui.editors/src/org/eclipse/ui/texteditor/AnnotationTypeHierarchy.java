@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
@@ -86,7 +88,7 @@ public class AnnotationTypeHierarchy {
 	private Map readTypes() {
 		HashMap allTypes= new HashMap();
 		
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, "annotationTypes");
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "annotationTypes");
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {

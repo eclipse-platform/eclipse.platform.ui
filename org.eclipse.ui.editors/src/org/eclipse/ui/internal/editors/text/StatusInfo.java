@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 /**
  * A settable IStatus. 
  * Can be an error, warning, info or ok. For error, info and warning states,
@@ -150,7 +152,7 @@ class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return EditorsPlugin.PLUGIN_ID;
+		return EditorsUI.PLUGIN_ID;
 	}
 
 	/**

@@ -34,6 +34,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
@@ -285,7 +286,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++)

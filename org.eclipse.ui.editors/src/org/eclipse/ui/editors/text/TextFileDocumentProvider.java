@@ -106,7 +106,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
 		
-		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsPlugin.PLUGIN_ID, IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
+		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
 		
 		public void connect(Object element) throws CoreException {}
 		public void disconnect(Object element) {}
@@ -392,10 +392,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			if (e instanceof CoreException)
 				throw (CoreException) e;
 			String message= (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, EditorsPlugin.PLUGIN_ID, IStatus.ERROR, message, e));
+			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (InterruptedException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.CANCEL, EditorsPlugin.PLUGIN_ID, IStatus.OK, message, x));
+			throw new CoreException(new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
 		}
 	}
 
@@ -605,7 +605,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (info != null) {
 			
 			if (info.fTextFileBuffer.getDocument() != document) {
-				Status status= new Status(IStatus.WARNING, EditorsPlugin.PLUGIN_ID, IStatus.ERROR, "not the same document", null); //$NON-NLS-1$
+				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, "not the same document", null); //$NON-NLS-1$
 				throw new CoreException(status);				
 			}
 			
@@ -664,7 +664,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
-			IStatus s= new Status(IStatus.ERROR, EditorsPlugin.PLUGIN_ID, IStatus.OK, message, x);
+			IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
 			monitor.done();

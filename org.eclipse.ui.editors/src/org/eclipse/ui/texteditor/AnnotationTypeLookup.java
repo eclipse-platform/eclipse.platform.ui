@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.StringConverter;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
@@ -167,7 +169,7 @@ public class AnnotationTypeLookup {
 	 *            type
 	 */
 	private void readExtensionPoint(List annotationTypeMappings, String extensionPointName, String typeAttributeName) {
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, extensionPointName);
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, extensionPointName);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {

@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
 
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
@@ -37,11 +38,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
  * @since 2.1
  */
 public class EditorsPlugin extends AbstractUIPlugin {
-	/**
-	 * TextEditor Plug-in ID (value <code>"org.eclipse.ui.editors"</code>).
-	 */
-	public static final String PLUGIN_ID= "org.eclipse.ui.editors"; //$NON-NLS-1$
-
 	private static EditorsPlugin fgInstance;
 	
 	public static EditorsPlugin getDefault() {
@@ -55,7 +51,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public static void logErrorMessage(String message) {
 		if (message == null)
 			message= ""; //$NON-NLS-1$
-		log(new Status(IStatus.ERROR, EditorsPlugin.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null));
+		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null));
 	}
 	
 	public static void logErrorStatus(String message, IStatus status) {
@@ -63,13 +59,13 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			logErrorMessage(message);
 			return;
 		}
-		MultiStatus multi= new MultiStatus(EditorsPlugin.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null);
+		MultiStatus multi= new MultiStatus(EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null);
 		multi.add(status);
 		log(multi);
 	}
 	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, EditorsPlugin.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.getString("EditorsPlugin.internal_error"), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.getString("EditorsPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
 	
 	
