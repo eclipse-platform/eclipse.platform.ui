@@ -71,13 +71,4 @@ public ImageDescriptor getImageDescriptor();
  * @return the label
  */
 public String getLabel();
-/**
- * Returns this perspective's theme id. For perspectives declared via an extension,
- * this is the value of its <code>"theme"</code> attribute.
- *
- * @return the theme id
- *
- * @since 3.0
- */
-public String getTheme();
 }

@@ -85,13 +85,6 @@ with this perspective.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="theme" type="string">
-            <annotation>
-               <documentation>
-                  the id of the theme to use to customize the UI of tabs and view titlebars.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="fixed" type="boolean">
             <annotation>
                <documentation>
