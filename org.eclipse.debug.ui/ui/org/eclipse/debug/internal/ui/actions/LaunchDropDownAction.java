@@ -120,7 +120,11 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			}
 		
 			// Cascading menu for config type 'shortcuts'
-			createMenuForAction(menu, new LaunchWithConfigurationAction(getMode()), -1);
+			if (getMode() == ILaunchManager.DEBUG_MODE) {
+				createMenuForAction(menu, new DebugWithConfigurationAction(), -1);
+			} else {
+				createMenuForAction(menu, new RunWithConfigurationAction(), -1);				
+			}
 			
 			// Add non-shortcutted access to the launch configuration dialog
 			OpenLaunchConfigurationsAction action = null;
@@ -146,7 +150,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		getLaunchAction().runWithEvent(action, event);
+		//getLaunchAction().runWithEvent(action, event);
 	}
 
 	/**

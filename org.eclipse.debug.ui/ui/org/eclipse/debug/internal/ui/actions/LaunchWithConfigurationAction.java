@@ -31,11 +31,12 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * A cascading sub-menu that shows all launch configuration types pertinent to this action's mode
  * (e.g., 'run' or 'debug').
  */
-public class LaunchWithConfigurationAction extends Action implements IMenuCreator, IWorkbenchWindowActionDelegate {
+public abstract class LaunchWithConfigurationAction extends Action implements IMenuCreator, 
+																				   IWorkbenchWindowActionDelegate {
 	
 	private IWorkbenchWindow fWorkbenchWindow;
-	private String fMode;
 	private List fActionItems;
+	private IAction fAction;
 	
 	/**
 	 * @see IAction#run()
@@ -45,9 +46,8 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 		//this action just creates a cascading menu.
 	}
 	
-	public LaunchWithConfigurationAction(String mode) {
+	public LaunchWithConfigurationAction() {
 		super();
-		setMode(mode);
 		setText("New Configuration");
 		setMenuCreator(this);
 	}
@@ -143,13 +143,6 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 		return ((IStructuredSelection)selection).getFirstElement();
 	}
 	
-	protected String getMode() {
-		return fMode;
-	}
-	protected void setMode(String mode) {
-		fMode = mode;
-	}
-	
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
@@ -170,19 +163,10 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (action instanceof Action) {
-//			((Action)action).setMenuCreator(this);
-//			List items= getActionItems();
-//			if (items != null) {
-//				Object element= null;
-//				if (!items.isEmpty()) {
-//					element= resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
-//				}
-//				Iterator actionItems= items.iterator();
-//				while (actionItems.hasNext()) {
-//					ActionContributionItem item = (ActionContributionItem) actionItems.next();
-//					((LaunchSelectionAction)item.getAction()).setElement(element);
-//				}
-//			}                
+			if (fAction == null) {
+				((Action)action).setMenuCreator(this);
+				fAction = action;				
+			}
 		} else {
 			action.setEnabled(false);
 		}
@@ -203,4 +187,10 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
+	
+	/**
+	 * Implemented to return one of the constants defined in <code>ILaunchManager</code>
+	 * that specifies the launch mode. 
+	 */
+	public abstract String getMode();
 }
