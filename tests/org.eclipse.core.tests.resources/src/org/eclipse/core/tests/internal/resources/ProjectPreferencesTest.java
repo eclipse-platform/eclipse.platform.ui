@@ -192,12 +192,13 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 				}
 		}
 
+		IFile workspaceFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
+
 		// ensure that the file is out-of-sync with the workspace
 		// by changing the lastModified time
-		touchInFilesystem(file);
+		touchInFilesystem(workspaceFile);
 
 		// resource change is fired
-		IFile workspaceFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
 		try {
 			workspaceFile.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
 		} catch (CoreException e) {
@@ -449,17 +450,18 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertEquals("2.2", value2, node.get(emptyKey, null));
 	}
 
-	private void touchInFilesystem(File file) {
-		long original = file.lastModified();
-		long current = original;
-		for (int count = 0; count < 10 && original == current; count++) {
+	private void touchInFilesystem(IFile file) {
+		for (int count = 0; count < 30 && file.isSynchronized(IResource.DEPTH_ZERO); count++) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// ignore
 			}
-			file.setLastModified(System.currentTimeMillis());
-			current = file.lastModified();
+			try {
+				file.setLocalTimeStamp(System.currentTimeMillis());
+			} catch (CoreException e) {
+				fail("#touchInFilesystem: " + file, e);
+			}
 		}
 	}
 }
