@@ -16,4 +16,5 @@ public interface ITextSegment extends IParagraphSegment {
 	Color getColor();
 	Font getFont();
 	boolean isWordWrapAllowed();
+	boolean isSelectable();
 }

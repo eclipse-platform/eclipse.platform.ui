@@ -35,6 +35,12 @@ public class HyperlinkSegment
 		if (obj instanceof HyperlinkAction) return (HyperlinkAction)obj;
 		return null;
 	}
+	
+	/*
+		public boolean isSelectable() {
+		return true;
+	}
+	*/
 
 	/*
 	 * @see IObjectReference#getObjectId()

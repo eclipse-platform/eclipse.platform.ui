@@ -23,6 +23,9 @@ public class TextModel implements ITextModel {
 	IHyperlinkSegment[] hyperlinks;
 	int selectedLinkIndex = -1;
 	HyperlinkSettings hyperlinkSettings;
+	
+	class LocalHyperlinkSettings extends HyperlinkSettings {
+	}
 
 	/*
 	 * @see ITextModel#getParagraphs()
@@ -72,7 +75,7 @@ public class TextModel implements ITextModel {
 				// Make an implicit paragraph
 				String text = child.getNodeValue();
 				if (text != null && !isIgnorableWhiteSpace(text)) {
-					Paragraph p = new Paragraph();
+					Paragraph p = new Paragraph(true);
 					p.parseRegularText(text, expandURLs, getHyperlinkSettings(), null);
 					paragraphs.add(p);
 				}
@@ -87,7 +90,15 @@ public class TextModel implements ITextModel {
 	}
 	private IParagraph processParagraph(Node paragraph, boolean expandURLs) {
 		NodeList children = paragraph.getChildNodes();
-		Paragraph p = new Paragraph();
+		NamedNodeMap atts = paragraph.getAttributes();
+		Node addSpaceAtt = atts.getNamedItem("addVerticalSpace");
+		boolean addSpace = true;
+		
+		if (addSpaceAtt != null) {
+			String value = addSpaceAtt.getNodeValue();
+			addSpace = value.equalsIgnoreCase("true");
+		}
+		Paragraph p = new Paragraph(addSpace);
 		
 		processSegments(p, children, expandURLs);
 		return p;
@@ -202,14 +213,14 @@ public class TextModel implements ITextModel {
 		reset();
 		StringBuffer buf = new StringBuffer();
 
-		Paragraph p = new Paragraph();
+		Paragraph p = new Paragraph(true);
 		paragraphs.add(p);
 		int pstart = 0;
 
 		for (int i = 0; i < regularText.length(); i++) {
 			char c = regularText.charAt(i);
 			if (p == null) {
-				p = new Paragraph();
+				p = new Paragraph(true);
 				paragraphs.add(p);
 			}
 			if (c == '\n') {
@@ -228,7 +239,7 @@ public class TextModel implements ITextModel {
 
 	public HyperlinkSettings getHyperlinkSettings() {
 		if (hyperlinkSettings == null) {
-			hyperlinkSettings = new HyperlinkSettings();
+			hyperlinkSettings = new LocalHyperlinkSettings();
 		}
 		return hyperlinkSettings;
 	}
@@ -319,6 +330,7 @@ public class TextModel implements ITextModel {
 	}
 
 	public void dispose() {
-		hyperlinkSettings.dispose();
+		if (hyperlinkSettings instanceof LocalHyperlinkSettings)
+		   hyperlinkSettings.dispose();
 	}
 }

@@ -15,6 +15,15 @@ import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
 public class Paragraph implements IParagraph {
 	public static final String HTTP = "http://";
 	private Vector segments;
+	private boolean addVerticalSpace = true;
+	
+	public Paragraph(boolean addVerticalSpace) {
+		this.addVerticalSpace = addVerticalSpace;
+	}
+	
+	public boolean getAddVerticalSpace() {
+		return addVerticalSpace;
+	}
 
 	/*
 	 * @see IParagraph#getSegments()

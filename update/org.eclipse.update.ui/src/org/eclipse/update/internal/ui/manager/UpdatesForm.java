@@ -100,6 +100,7 @@ public class UpdatesForm extends UpdateWebForm {
 		updates.detachProgressMonitor(monitor);
 		if (statusMonitor != null)
 			updates.detachProgressMonitor(statusMonitor);
+		searchResultSection.dispose();
 		super.dispose();
 	}
 
@@ -240,14 +241,14 @@ public class UpdatesForm extends UpdateWebForm {
 		td.colspan = 2;
 		td.grabHorizontal = true;
 		control.setLayoutData(td);
-
-		registerSection(searchResultSection);
+		searchResultSection.setFullMode(settings.getBoolean(S_FULL_MODE));
 	}
 
 	private void reflow() {
 		searchResultSection.reflow();
 		descLabel.getParent().layout(true);
 		((Composite) getControl()).layout(true);
+		updateSize();
 	}
 
 	private void toggleMode(final boolean fullMode) {
@@ -256,6 +257,7 @@ public class UpdatesForm extends UpdateWebForm {
 				searchResultSection.setFullMode(fullMode);
 				descLabel.getParent().layout(true);
 				((Composite) getControl()).layout(true);
+				updateSize();
 			}
 		});
 		settings.put(S_FULL_MODE, fullMode);

@@ -48,6 +48,10 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 	public boolean isWordWrapAllowed() {
 		return wrapAllowed;
 	}
+	
+	public boolean isSelectable() {
+		return false;
+	}
 
 	public Color getColor() {
 		return color;
@@ -103,12 +107,14 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 			if (locator.x + extent.x > wHint) {
 				// new line
-				locator.x = 0;
+				locator.x = isSelectable()?1:0;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 			}
-			locator.x += extent.x;
-			locator.width = extent.x;
+			int width = extent.x;
+			if (isSelectable()) width+=2;
+			locator.x += width;
+			locator.width = width;
 			locator.height = extent.y;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 			return;
@@ -134,10 +140,11 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				if (lastExtent==null)
 				   lastExtent = gc.textExtent(savedWord);
 				int lineWidth = locator.x + lastExtent.x;
+				if (isSelectable()) lineWidth+=2;
 
 				saved = last;
 				locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
-				locator.x = 0;
+				locator.x = isSelectable()?1:0;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				width = Math.max(width, lineWidth);
@@ -147,7 +154,9 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 		}
 		String lastString = text.substring(saved, last);
 		Point extent = gc.textExtent(lastString);
-		locator.x += extent.x;
+		int lineWidth = extent.x;
+		if (isSelectable()) lineWidth += 2;
+		locator.x += lineWidth;
 		locator.width = width;
 		locator.height = lineHeight;
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
@@ -181,10 +190,13 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 		if (!wrapAllowed) {
 			Point extent = gc.textExtent(text);
+			int ewidth = extent.x;
+			if (isSelectable()) ewidth += 2;
 
-			if (locator.x + extent.x > width) {
+			if (locator.x + ewidth > width) {
 				// new line
 				locator.x = locator.marginWidth;
+				if (isSelectable()) locator.x += 1;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 			}
@@ -202,8 +214,8 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				gc.drawFocus(br.x, br.y, br.width, br.height);
 			}
 
-			locator.x += extent.x;
-			locator.width = extent.x;
+			locator.x += ewidth;
+			locator.width = ewidth;
 			locator.height = lineHeight;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 			if (oldFont != null) {
@@ -226,16 +238,20 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				continue;
 			String word = text.substring(saved, loc);
 			Point extent = gc.textExtent(word);
+			int ewidth = extent.x;
+			if (isSelectable()) ewidth += 2;
 
-			if (locator.x + extent.x > width) {
+			if (locator.x + ewidth > width) {
 				// overflow
 				String prevLine = text.substring(saved, last);
 				gc.drawString(prevLine, locator.x, locator.y, true);
 				Point prevExtent = gc.textExtent(prevLine);
+				int prevWidth = prevExtent.x;
+				if (isSelectable()) prevWidth += 2;
 
 				if (underline) {
 					int lineY = locator.y + lineHeight - descent + 1;
-					gc.drawLine(locator.x, lineY, locator.x + prevExtent.x, lineY);
+					gc.drawLine(locator.x, lineY, locator.x + prevWidth, lineY);
 				}
 				Rectangle br =
 					new Rectangle(
@@ -253,6 +269,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				areaRectangles.add(br);
 				locator.rowHeight = Math.max(locator.rowHeight, prevExtent.y);
 				locator.x = locator.marginWidth;
+				if (isSelectable()) locator.x +=1;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				saved = last;
@@ -263,6 +280,8 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 		String lastLine = text.substring(saved, last);
 		gc.drawString(lastLine, locator.x, locator.y, true);
 		Point lastExtent = gc.textExtent(lastLine);
+		int lastWidth = lastExtent.x;
+		if (isSelectable()) lastWidth += 2;
 		Rectangle br =
 			new Rectangle(
 				locator.x - 1,
@@ -279,7 +298,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				gc.setForeground(oldColor);
 			gc.drawFocus(br.x, br.y, br.width, br.height);
 		}
-		locator.x += lastExtent.x;
+		locator.x += lastWidth;
 		locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
 		if (oldFont != null) {
 			gc.setFont(oldFont);

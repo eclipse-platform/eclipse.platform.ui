@@ -14,139 +14,246 @@ import org.eclipse.swt.events.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.swt.graphics.Image;
+import java.net.URL;
+import org.eclipse.ui.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.update.ui.forms.internal.engine.*;
 
-public class SearchResultSection extends UpdateSection 
-		implements IHyperlinkListener {
+public class SearchResultSection {
 	private static final String KEY_TITLE = "UpdatesPage.SearchResultSection.title";
 	private static final String KEY_DESC = "UpdatesPage.SearchResultSection.desc";
-	private static final String KEY_NODESC = "UpdatesPage.SearchResultSection.nodesc";
+	private static final String KEY_NODESC =
+		"UpdatesPage.SearchResultSection.nodesc";
+	private static final String KEY_RESULT_ENTRY =
+		"UpdatesPage.SearchResultSection.resultEntry";
+	private static final String KEY_SITE_LINK = "openSite";
+	private static final String KEY_FEATURE_LINK = "openFeature";
+
 	private Composite container;
 	private FormWidgetFactory factory;
 	private int counter = 0;
-	private boolean fullMode=false;
+	private boolean fullMode = false;
+	private Label header;
+	private Label descLabel;
 	private Image featureImage;
-	
+	private UpdateFormPage page;
+
 	public SearchResultSection(UpdateFormPage page) {
-		super(page);
-		setAddSeparator(false);
-		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
-		setDescription(UpdateUIPlugin.getResourceString(KEY_NODESC));
+		this.page = page;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createControl(Composite parent, FormWidgetFactory factory) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		this.factory = factory;
-		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
-		layout.horizontalSpacing = 0;
-		container = factory.createComposite(parent);
-		container.setLayout(layout);	
+		layout.horizontalSpacing = 5;
 		layout.numColumns = 2;
+
+		header =
+			factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_TITLE));
+		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		TableData td = new TableData();
+		td.align = TableData.FILL;
+		td.colspan = 2;
+		header.setLayoutData(td);
+
+		descLabel =
+			factory.createLabel(
+				parent,
+				UpdateUIPlugin.getResourceString(KEY_NODESC),
+				SWT.WRAP);
+		td = new TableData();
+		td.align = TableData.FILL;
+		td.colspan = 2;
+		descLabel.setLayoutData(td);
+
+		container = factory.createComposite(parent);
+		container.setLayout(layout);
+
 		initialize();
 		return container;
 	}
-	
+
 	public void dispose() {
 		featureImage.dispose();
-		super.dispose();
 	}
-	
+
 	public void setFullMode(boolean value) {
-		if (fullMode!=value) {
+		if (fullMode != value) {
 			this.fullMode = value;
-			if (container!=null) reflow();
+			if (container != null)
+				reflow();
 		}
 	}
-	
+
 	public void reflow() {
 		counter = 0;
-		Control [] children = container.getChildren();
-		for (int i=0; i<children.length; i++) {
-			children[i].dispose();
+		Control[] children = container.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			Control child = children[i];
+			child.dispose();
 		}
 		initialize();
 		container.layout(true);
-		container.getParent().layout(true);
 	}
-	
+
 	private void initialize() {
 		// add children
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		AvailableUpdates updates = model.getUpdates();
-		Object [] sites = updates.getChildren(null);
-		for (int i=0; i<sites.length; i++) {
-			UpdateSearchSite site = (UpdateSearchSite)sites[i];
-			Object [] features = site.getChildren(null);
-			for (int j=0; j<features.length; j++) {
-				IFeature feature = (IFeature)features[j];
+		Object[] sites = updates.getChildren(null);
+		for (int i = 0; i < sites.length; i++) {
+			UpdateSearchSite site = (UpdateSearchSite) sites[i];
+			Object[] features = site.getChildren(null);
+			for (int j = 0; j < features.length; j++) {
+				IFeature feature = (IFeature) features[j];
 				addFeature(feature);
 			}
 		}
-		if (counter>0) {
-			String pattern = UpdateUIPlugin.getResourceString(KEY_DESC);
-			String desc = UpdateUIPlugin.getFormattedMessage(pattern, (""+counter));
-			setDescription(desc);
-		}
-		else {
-			setDescription(UpdateUIPlugin.getResourceString(KEY_NODESC));
+		if (counter > 0) {
+			String desc = UpdateUIPlugin.getFormattedMessage(KEY_DESC, ("" + counter));
+			descLabel.setText(desc);
+		} else {
+			descLabel.setText(UpdateUIPlugin.getResourceString(KEY_NODESC));
 		}
 	}
-	
-	private void addFeature(IFeature feature) {
+
+	private void addFeature(final IFeature feature) {
 		counter++;
 		Label imageLabel = factory.createLabel(container, null);
 		imageLabel.setImage(featureImage);
-		SelectableFormLabel featureLabel = new SelectableFormLabel(container, SWT.WRAP);
-		featureLabel.setText(getFeatureLabel(feature));
-		featureLabel.setData(feature);
-		factory.turnIntoHyperlink(featureLabel, this);
+		TableData td = new TableData();
+		imageLabel.setLayoutData(td);
+
 		if (fullMode) {
-			factory.createLabel(container, null);
-			Label label = factory.createLabel(container, null);
-			label.setText("by "+feature.getProvider());
-			factory.createLabel(container, null);
+			URL siteURL = feature.getSite().getURL();
 			IURLEntry desc = feature.getDescription();
+			String description = "";
 			if (desc != null) {
 				String text = desc.getAnnotation();
-				if (text!=null)
-					factory.createLabel(container, text, SWT.WRAP);
+				if (text != null) {
+					description = getDescriptionMarkup(text);
+				}
 			}
+
+			FormEngine engine = factory.createFormEngine(container);
+			String[] variables =
+				new String[] {
+					getFeatureLabel(feature),
+					feature.getProvider(),
+					siteURL.toString(),
+					description };
+			String markup = UpdateUIPlugin.getFormattedMessage(KEY_RESULT_ENTRY, variables);
+			engine.setHyperlinkSettings(factory.getHyperlinkHandler());
+			engine.marginWidth = 1;
+			engine.load(markup, true, false);
+			HyperlinkAction siteAction = new HyperlinkAction() {
+				public void linkActivated(IHyperlinkSegment link) {
+					openSite(feature.getSite());
+				}
+			};
+			siteAction.setDescription(feature.getSite().getURL().toString());
+			siteAction.setStatusLineManager(getStatusLineManager());
+
+			HyperlinkAction featureAction = new HyperlinkAction() {
+				public void linkActivated(IHyperlinkSegment link) {
+					openFeature(feature);
+				}
+			};
+			featureAction.setDescription(feature.getURL().toString());
+			featureAction.setStatusLineManager(getStatusLineManager());
+			engine.registerTextObject(KEY_SITE_LINK, siteAction);
+			engine.registerTextObject(KEY_FEATURE_LINK, featureAction);
+			td = new TableData();
+			td.grabHorizontal = true;
+			td.align = TableData.FILL;
+			engine.setLayoutData(td);
+		} else {
+			SelectableFormLabel featureLabel = new SelectableFormLabel(container, SWT.WRAP);
+			featureLabel.setText(getFeatureLabel(feature));
+			featureLabel.setData(feature);
+			factory.turnIntoHyperlink(featureLabel, new HyperlinkAdapter() {
+				public void linkEntered(Control link) {
+					showStatus(feature.getURL().toString());
+				}
+				public void linkActivated(Control link) {
+					openFeature(feature);
+				}
+				public void linkExited(Control link) {
+					showStatus(null);
+				}
+			});
 		}
 	}
-	
+
+	private String getDescriptionMarkup(String text) {
+		StringBuffer buf = new StringBuffer();
+
+		for (int i = 0; i < text.length(); i++) {
+			char c = text.charAt(i);
+			if (c == '\n') {
+				buf.append("</p><p addVerticalSpace=\"false\">");
+			} else
+				buf.append(c);
+		}
+		return "<p>" + buf.toString() + "</p>";
+	}
+
 	private String getFeatureLabel(IFeature feature) {
 		String fullLabel = feature.getLabel();
-		return feature.getLabel()+" "+
-			feature.getVersionIdentifier().getVersion().toString();
+		return feature.getLabel()
+			+ " "
+			+ feature.getVersionIdentifier().getVersion().toString();
 	}
-	/*
-	 * @see IHyperlinkListener#linkActivated(Control)
-	 */
-	public void linkActivated(Control linkLabel) {
-		Object data = linkLabel.getData();
-		if (data instanceof IFeature) {
-			DetailsView view = (DetailsView)getPage().getView();
-			view.showPageWithInput(DetailsView.DETAILS_PAGE, data);
+
+	private void openFeature(IFeature feature) {
+		DetailsView view = (DetailsView) page.getView();
+		view.showPageWithInput(DetailsView.DETAILS_PAGE, feature);
+	}
+
+	private void openSite(ISite site) {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		SiteBookmark[] siteBookmarks = model.getBookmarks();
+		URL siteURL = site.getURL();
+		String siteURLName = siteURL.toString();
+		SiteBookmark targetBookmark = null;
+		for (int i = 0; i < siteBookmarks.length; i++) {
+			SiteBookmark bookmark = siteBookmarks[i];
+			URL bookmarkURL = bookmark.getURL();
+			String bookmarkURLName = bookmarkURL.toString();
+			if (siteURLName.startsWith(bookmarkURLName)) {
+				// we have it - just select it in the sites
+				targetBookmark = bookmark;
+				break;
+			}
+		}
+		if (targetBookmark == null) {
+			targetBookmark = new SiteBookmark(siteURL.toString(), siteURL);
+			model.addBookmark(targetBookmark);
+		}
+		try {
+			SiteView view =
+				(SiteView) UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_SITES);
+			view.selectSiteBookmark(targetBookmark);
+		} catch (Exception e) {
+			UpdateUIPlugin.logException(e);
 		}
 	}
 
-	/*
-	 * @see IHyperlinkListener#linkEntered(Control)
-	 */
-	public void linkEntered(Control linkLabel) {
+	private IStatusLineManager getStatusLineManager() {
+		IActionBars bars = page.getView().getViewSite().getActionBars();
+		IStatusLineManager manager = bars.getStatusLineManager();
+		return manager;
 	}
 
-	/*
-	 * @see IHyperlinkListener#linkExited(Control)
-	 */
-	public void linkExited(Control linkLabel) {
+	private void showStatus(String message) {
+		getStatusLineManager().setMessage(message);
 	}
-
 }

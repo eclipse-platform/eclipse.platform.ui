@@ -74,9 +74,10 @@ protected void createContents(Composite parent) {
 	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);
 	engine.setParagraphsSeparated(false);
 	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
+	engine.marginWidth = 1;
 	TableData data = new TableData();
 	data.align = TableData.FILL;
-	engine.load(productText(), false, true);
+		engine.load(productText(), false, true);
 	engine.setLayoutData(data);
 	
 	Composite sep = factory.createCompositeSeparator(parent);
@@ -93,6 +94,7 @@ protected void createContents(Composite parent) {
 	engine.setParagraphsSeparated(false);
 	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
 	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);
+	engine.marginWidth = 1;
 	data = new TableData();
 	data.align = TableData.FILL;
 	engine.load(platformText(), false, true);

@@ -16,18 +16,23 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+import org.eclipse.jface.action.IStatusLineManager;
 public class SiteForm extends UpdateWebForm {
 	private static final String KEY_DESC = "SitePage.desc";
 	private static final String KEY_LINK = "SitePage.link";
 	private Label url;
 	private ISiteWrapper currentSite;
+	private Image updateSitesImage;
+	private static final String KEY_UPDATE_SITES_IMAGE = "updateSites";
 	
 public SiteForm(UpdateFormPage page) {
 	super(page);
+	updateSitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
 }
 
 public void dispose() {
+	updateSitesImage.dispose();
 	super.dispose();
 }
 
@@ -51,12 +56,31 @@ protected void createContents(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	url = factory.createHeadingLabel(parent, null);
 	
-	Label text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
+	FormEngine desc = factory.createFormEngine(parent);
+	desc.registerTextObject(KEY_UPDATE_SITES_IMAGE, updateSitesImage);
+	desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
+	TableData td = new TableData();
+	td.align = TableData.FILL;
+	td.grabHorizontal= true;
+	desc.setLayoutData(td);
 
 	IHyperlinkListener listener;
+	IActionBars bars = getPage().getView().getViewSite().getActionBars();
+	final IStatusLineManager manager = bars.getStatusLineManager();
 
 	listener = new HyperlinkAdapter() {
+		public void linkEntered(Control link) {
+			ISite site = currentSite.getSite();
+			if (site!=null) {
+				URL infoURL = site.getInfoURL();
+				if (infoURL!=null) {
+					manager.setMessage(infoURL.toString());
+				}
+			}
+		}
+		public void linkExited(Control link) {
+			manager.setMessage(null);
+		}
 		public void linkActivated(Control link) {
 			if (currentSite==null) return;
 			BusyIndicator.showWhile(getControl().getDisplay(),

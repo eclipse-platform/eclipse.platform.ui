@@ -240,7 +240,7 @@ public class FormEngine extends Canvas {
 		for (int i = 0; i < paragraphs.length; i++) {
 			IParagraph p = paragraphs[i];
 
-			if (i > 0 && paragraphsSeparated)
+			if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
 				loc.y += lineHeight;
 
 			loc.x = marginWidth;
@@ -248,6 +248,9 @@ public class FormEngine extends Canvas {
 
 			IParagraphSegment[] segments = p.getSegments();
 			if (segments.length > 0) {
+				if (segments[0] instanceof ITextSegment &&
+					((ITextSegment)segments[0]).isSelectable())
+					loc.x +=1;
 				for (int j = 0; j < segments.length; j++) {
 					IParagraphSegment segment = segments[j];
 					boolean doSelect = false;

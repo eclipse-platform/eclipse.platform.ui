@@ -22,6 +22,7 @@ public class AvailableUpdates
 	implements IWorkbenchAdapter {
 	private static final String KEY_NAME = "AvailableUpdates.name";
 	private static final String KEY_BEGIN = "AvailableUpdates.search.begin";
+	private static final String KEY_MY_COMPUTER = "AvailableUpdates.search.myComputer";
 	private static final String KEY_CONTACTING =
 		"AvailableUpdates.search.contacting";
 	private static final String KEY_CHECKING = "AvailableUpdates.search.checking";
@@ -180,7 +181,9 @@ public class AvailableUpdates
 			candidates.length);
 		
 		if (getSearchMyComputer()) {
+			backgroundProgress.setTaskName(UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER));
 			initializeMyComputerSites(monitor);
+			backgroundProgress.setTaskName(UpdateUIPlugin.getResourceString(KEY_BEGIN));
 		}
 
 		for (int i = 0; i < candidates.length; i++) {
@@ -317,7 +320,6 @@ public class AvailableUpdates
 		Vector sites = new Vector();
 		MyComputer myComputer = new MyComputer();
 		MyComputerSearchSettings settings = new MyComputerSearchSettings();
-		monitor.subTask("Scanning My Computer for sites...");
 		myComputer.collectSites(sites, settings, monitor);
 		if (sites.size()>0) {
 			myComputerSites = (ISite[])sites.toArray(new ISite[sites.size()]);
@@ -327,7 +329,7 @@ public class AvailableUpdates
 	}
 
 	private void addMyComputerSites(Vector result) {
-		if (myComputerSites!=null) {
+		if (myComputerSites!=null && getSearchMyComputer()) {
 			for (int i=0; i<myComputerSites.length; i++) {
 				result.add(myComputerSites[i]);
 			}

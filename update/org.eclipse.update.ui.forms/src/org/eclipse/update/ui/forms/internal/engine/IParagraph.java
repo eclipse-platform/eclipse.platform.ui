@@ -11,4 +11,5 @@ package org.eclipse.update.ui.forms.internal.engine;
 public interface IParagraph {
 	public IParagraphSegment [] getSegments();
 	public void addSegment(IParagraphSegment segment);
+	public boolean getAddVerticalSpace();
 }

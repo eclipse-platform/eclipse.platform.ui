@@ -159,7 +159,7 @@ public FormEngine createFormEngine(Composite parent) {
 	FormEngine engine = new FormEngine(parent, SWT.WRAP);
 	engine.setBackground(backgroundColor);
 	engine.setForeground(foregroundColor);
-	engine.marginWidth = 0;
+	engine.marginWidth = 1;
 	engine.marginHeight = 0;
 	engine.setHyperlinkSettings(getHyperlinkHandler());
 	return engine;

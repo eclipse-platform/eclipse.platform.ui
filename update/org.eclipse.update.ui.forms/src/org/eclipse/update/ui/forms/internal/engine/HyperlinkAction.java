@@ -25,13 +25,13 @@ public class HyperlinkAction {
 	}
 	
 	public void linkEntered(IHyperlinkSegment link) {
-		if (manager!=null) {
+		if (manager!=null && description!=null) {
 			manager.setMessage(description);
 		}
 	}
 
 	public void linkExited(IHyperlinkSegment link) {
-		if (manager!=null) {
+		if (manager!=null && description!=null) {
 			manager.setMessage(null);
 		}
 	}

@@ -421,5 +421,9 @@ public class SiteView
 		if (object instanceof SiteBookmark && property.equals(SiteBookmark.P_NAME))
 			viewer.update(object, null);
 	}
+	
+	public void selectSiteBookmark(SiteBookmark bookmark) {
+		viewer.setSelection(new StructuredSelection(bookmark), true);
+	}
 
 }

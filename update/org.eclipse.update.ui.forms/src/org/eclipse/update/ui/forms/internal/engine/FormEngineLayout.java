@@ -20,51 +20,54 @@ public class FormEngineLayout extends Layout {
 	 * @see Layout#computeSize(Composite, int, int, boolean)
 	 */
 
-	public Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
-		FormEngine engine = (FormEngine)composite;
+	public Point computeSize(
+		Composite composite,
+		int wHint,
+		int hHint,
+		boolean changed) {
+		FormEngine engine = (FormEngine) composite;
 		int innerWidth = wHint;
-		if (innerWidth!=SWT.DEFAULT)
-		   innerWidth -= engine.marginWidth*2;
+		if (innerWidth != SWT.DEFAULT)
+			innerWidth -= engine.marginWidth * 2;
 		Point textSize = computeTextSize(engine, innerWidth);
-		int textWidth = textSize.x + 2*engine.marginWidth;
-		int textHeight = textSize.y + 2*engine.marginHeight;
+		int textWidth = textSize.x + 2 * engine.marginWidth;
+		int textHeight = textSize.y + 2 * engine.marginHeight;
 		Point result = new Point(textWidth, textHeight);
 		return result;
 	}
-	
-	
+
 	private Point computeTextSize(FormEngine engine, int wHint) {
-		IParagraph [] paragraphs = engine.model.getParagraphs();
-		
+		IParagraph[] paragraphs = engine.model.getParagraphs();
+
 		GC gc = new GC(engine);
 		gc.setFont(engine.getFont());
-		
+
 		Locator loc = new Locator();
-	
-		int width = wHint!=SWT.DEFAULT?wHint:0;
+
+		int width = wHint != SWT.DEFAULT ? wHint : 0;
 		int height = 0;
-		
+
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
-		
-		for (int i=0; i<paragraphs.length; i++) {
+
+		for (int i = 0; i < paragraphs.length; i++) {
 			IParagraph p = paragraphs[i];
-			
-			if (i>0 && engine.paragraphsSeparated) loc.y += lineHeight;
-			
+
+			if (i > 0 && engine.paragraphsSeparated && p.getAddVerticalSpace())
+				loc.y += lineHeight;
+
 			loc.rowHeight = 0;
 			loc.x = 0;
-			
-			IParagraphSegment [] segments = p.getSegments();
-			if (segments.length>0) {
-				for (int j=0; j<segments.length; j++) {
+
+			IParagraphSegment[] segments = p.getSegments();
+			if (segments.length > 0) {
+				for (int j = 0; j < segments.length; j++) {
 					IParagraphSegment segment = segments[j];
 					segment.advanceLocator(gc, wHint, loc, engine.objectTable);
 					width = Math.max(width, loc.width);
 				}
 				loc.y += loc.rowHeight;
-			}
-			else {
+			} else {
 				// empty new line
 				loc.y += lineHeight;
 			}
