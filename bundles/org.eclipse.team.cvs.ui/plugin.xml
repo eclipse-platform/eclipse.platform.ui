@@ -1029,7 +1029,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
          <category name="%newWizardCategoryName" id="org.eclipse.team.cvs.ui">
-      </category>
+         </category>
       <wizard
       		category="org.eclipse.team.cvs.ui"
             icon="icons/full/etool16/newconnect_wiz.gif"
@@ -1038,8 +1038,8 @@
             project="true"
             id="org.eclipse.team.cvs.ui.newProjectCheckout">
             <description> 
-              %newProjectCheckoutWizardDescription
-          </description>
+              %newProjectCheckoutWizardDescription2
+            </description>
       </wizard>
    </extension>
    
