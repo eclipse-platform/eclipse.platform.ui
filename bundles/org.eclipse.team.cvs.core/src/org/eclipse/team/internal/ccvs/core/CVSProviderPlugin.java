@@ -78,6 +78,7 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean promptOnFolderDelete = true;
 	private boolean showTasksOnAddAndDelete = false;
 	private boolean replaceUnmanaged = true;
+	private boolean repositoriesAreBinary = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
@@ -359,6 +360,10 @@ public class CVSProviderPlugin extends Plugin {
 		return fetchAbsentDirectories;
 	}
 
+	public boolean getRepositoriesAreBinary() {
+		return repositoriesAreBinary;
+	}
+	
 	/**
 	 * Sets the fetchAbsentDirectories.
 	 * @param etchAbsentDirectories The etchAbsentDirectories to set
@@ -373,6 +378,10 @@ public class CVSProviderPlugin extends Plugin {
 	
 	public void setPromptOnFileDelete(boolean prompt) {
 		promptOnFileDelete = prompt;
+	}
+	
+	public void setRepositoriesAreBinary(boolean binary) {
+		repositoriesAreBinary = binary;
 	}
 	
 	public boolean getPromptOnFolderDelete() {

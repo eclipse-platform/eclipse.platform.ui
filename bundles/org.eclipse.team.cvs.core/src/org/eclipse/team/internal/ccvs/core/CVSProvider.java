@@ -507,6 +507,7 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	public static boolean isText(IFile file) {
+		if (CVSProviderPlugin.getPlugin().getRepositoriesAreBinary()) return false;
 		return Team.getType(file) == Team.TEXT;
 	}
 	

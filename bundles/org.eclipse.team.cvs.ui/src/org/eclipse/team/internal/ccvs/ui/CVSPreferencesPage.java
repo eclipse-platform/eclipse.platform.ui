@@ -68,6 +68,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button considerContentsInCompare;
 	private Button showMarkers;
 	private Button replaceUnmanaged;
+	private Button repositoriesAreBinary;
 	
 	private Button never;
 	private Button prompt;
@@ -177,7 +178,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$		
 		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$		
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
-				
+		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
+			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
@@ -235,6 +237,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 
+		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_REPOSITORIES_ARE_BINARY);
 		WorkbenchHelp.setHelp(pruneEmptyDirectoriesField, IHelpContextIds.PREF_PRUNE);
 		WorkbenchHelp.setHelp(compressionLevelCombo, IHelpContextIds.PREF_COMPRESSION);
 		WorkbenchHelp.setHelp(quietnessCombo, IHelpContextIds.PREF_QUIET);
@@ -282,6 +285,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
+		repositoriesAreBinary.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet")); //$NON-NLS-1$
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet")); //$NON-NLS-1$
@@ -335,6 +339,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
+		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -346,6 +351,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 		CVSProviderPlugin.getPlugin().setCompressionLevel(
 			store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
@@ -374,6 +380,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
+		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 	}
 
    private void createSaveCombo(Composite composite) {
