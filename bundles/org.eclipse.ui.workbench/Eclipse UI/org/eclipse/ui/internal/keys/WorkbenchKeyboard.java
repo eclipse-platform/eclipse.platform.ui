@@ -207,8 +207,9 @@ public final class WorkbenchKeyboard {
     private static boolean isOutOfOrderKey(List keyStrokes) {
         // Compare to see if one of the possible key strokes is out of order.
         Iterator keyStrokeItr = keyStrokes.iterator();
+        List outOfOrderKeyStrokes = outOfOrderKeys.getKeyStrokes();
         while (keyStrokeItr.hasNext()) {
-            if (outOfOrderKeys.getKeyStrokes().contains(keyStrokeItr.next())) { return true; }
+            if (outOfOrderKeyStrokes.contains(keyStrokeItr.next())) { return true; }
         }
         return false;
     }
