@@ -751,6 +751,10 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				busy[0] = false;
+				if(dialog.isDone()){
+					dialog.close();
+					return Status.OK_STATUS;
+				}
 				dialog.open();
 				if(monitor.isCanceled())
 					return Status.CANCEL_STATUS;
@@ -773,6 +777,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			 */
 			public void run() {
 				try {
+					dialog.setOpenOnRun(false);
 					dialog.run(true /* fork */ ,true /* cancelable */,runnable);
 					
 					//Run the event loop until the progress job wakes up
