@@ -31,7 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -428,20 +431,24 @@ public class RepositoryManager {
 	}
 	
 	private void readState(InputStream stream) throws IOException, TeamException {
-		SAXParser parser = new SAXParser();
-		parser.setContentHandler(new RepositoriesViewContentHandler(this));
 		try {
-			parser.parse(new InputSource(stream));
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(new InputSource(stream), new RepositoriesViewContentHandler(this));
 		} catch (SAXException ex) {
+			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", REPOSITORIES_VIEW_FILE), ex); //$NON-NLS-1$
+		} catch (ParserConfigurationException ex) {
 			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", REPOSITORIES_VIEW_FILE), ex); //$NON-NLS-1$
 		}
 	}
 	private void readCommentHistory(InputStream stream) throws IOException, TeamException {
-		SAXParser parser = new SAXParser();
-		parser.setContentHandler(new CommentHistoryContentHandler());
 		try {
-			parser.parse(new InputSource(stream));
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(new InputSource(stream), new CommentHistoryContentHandler());
 		} catch (SAXException ex) {
+			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), ex); //$NON-NLS-1$
+		} catch (ParserConfigurationException ex) {
 			throw new CVSException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), ex); //$NON-NLS-1$
 		}
 	}

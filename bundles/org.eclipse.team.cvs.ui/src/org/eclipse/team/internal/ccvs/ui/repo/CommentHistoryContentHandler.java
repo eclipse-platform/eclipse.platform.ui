@@ -41,11 +41,13 @@ class CommentHistoryContentHandler extends DefaultHandler {
 			String qName,
 			Attributes atts)
 			throws SAXException {
-		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
+		
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (elementName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
 			buffer = new StringBuffer();
 			return;
 		} 
-		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
+		if (elementName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
 			comments = new Vector(RepositoryManager.MAX_COMMENTS);
 			return;
 		}
@@ -55,15 +57,29 @@ class CommentHistoryContentHandler extends DefaultHandler {
 	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void endElement(String namespaceURI, String localName, String qName) {
-		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (elementName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
 			comments.add(buffer.toString());
 			buffer = null;
 			return;
 		} 
-		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
+		if (elementName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
 			RepositoryManager.previousComments = new String[comments.size()];
 			comments.copyInto(RepositoryManager.previousComments);
 			return;
 		} 
+	}
+	
+	/*
+	 * Couldn't figure out from the SAX API exactly when localName vs. qName is used.
+	 * However, the XML for project sets doesn't use namespaces so either of the two names
+	 * is fine. Therefore, use whichever one is provided.
+	 */
+	private String getElementName(String namespaceURI, String localName, String qName) {
+		if (localName != null && localName.length() > 0) {
+			return localName;
+		} else {
+			return qName;
+		}
 	}
 }

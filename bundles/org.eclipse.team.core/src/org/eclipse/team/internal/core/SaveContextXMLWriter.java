@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -191,16 +194,18 @@ public class SaveContextXMLWriter extends PrintWriter {
 			File file = pluginStateLocation.append(filename).toFile(); //$NON-NLS-1$
 			if (file.exists()) {				
 				is = new BufferedInputStream(new FileInputStream(file));
-				SAXParser parser = new SAXParser();
+				SAXParserFactory factory = SAXParserFactory.newInstance();
+				SAXParser parser = factory.newSAXParser();
 				SaveContextXMLContentHandler handler = new SaveContextXMLContentHandler();
-				parser.setContentHandler(handler);
-				parser.parse(new InputSource(is));
+				parser.parse(new InputSource(is), handler);
 				return handler.getSaveContext();
 			}
 			return null;
 		} catch (SAXException ex) {
 			throw new TeamException(Policy.bind("RepositoryManager.ioException"), ex);			 //$NON-NLS-1$
 		} catch (IOException e) {
+			throw new TeamException(Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
 			throw new TeamException(Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
 		} finally {
 			if(is != null) {

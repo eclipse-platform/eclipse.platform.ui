@@ -38,9 +38,10 @@ public class SaveContextXMLContentHandler extends DefaultHandler {
 	/**
 	 * @see ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {		
+	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 		SaveContext ctx = (SaveContext)contextStack.peek();
-		if (!localName.equals(ctx.getName())) {
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (!elementName.equals(ctx.getName())) {
 			// keep going
 		} else {
 			last = (SaveContext)contextStack.pop();
@@ -56,9 +57,10 @@ public class SaveContextXMLContentHandler extends DefaultHandler {
 	 */
 	public void startElement(String namespaceURI, String localName, String qName,	Attributes atts) throws SAXException {
 		SaveContext context = new SaveContext();
-		context.setName(localName);
+		String elementName = getElementName(namespaceURI, localName, qName);
+		context.setName(elementName);
 		for (int i = 0; i < atts.getLength(); i++) {
-			String attrName = atts.getLocalName(i);
+			String attrName = getAttributeName(atts, i);
 			String attrValue = atts.getValue(i);
 			context.putString(attrName, attrValue);
 		} 
@@ -66,8 +68,33 @@ public class SaveContextXMLContentHandler extends DefaultHandler {
 		buffer = new StringBuffer();
 		contextStack.push(context);
 	}
-	
+
 	public SaveContext getSaveContext() {
 		return last;
+	}
+	
+	/*
+	 * Couldn't figure out from the SAX API exactly when localName vs. qName is used.
+	 * However, the XML for subscribers doesn't use namespaces so either of the two names
+	 * is fine. Therefore, use whichever one is provided.
+	 */
+	private String getElementName(String namespaceURI, String localName, String qName) {
+		if (localName != null && localName.length() > 0) {
+			return localName;
+		} else {
+			return qName;
+		}
+	}
+	
+	/*
+	 * See getElementName() reasoning for why this method is needed.
+	 */
+	private String getAttributeName(Attributes atts, int i) {
+		String localName = atts.getLocalName(i);
+		if (localName != null && localName.length() > 0) {
+			return localName;
+		} else {
+			return atts.getQName(i);
+		}
 	}
 }

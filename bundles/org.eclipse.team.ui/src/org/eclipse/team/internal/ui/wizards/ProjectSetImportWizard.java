@@ -20,7 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -77,11 +80,11 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 						lastFile = filename;
 						reader = new InputStreamReader(new FileInputStream(filename), "UTF-8"); //$NON-NLS-1$
 						
-						SAXParser parser = new SAXParser();
+						SAXParserFactory factory = SAXParserFactory.newInstance();
+						SAXParser parser = factory.newSAXParser();
 						ProjectSetContentHandler handler = new ProjectSetContentHandler();
-						parser.setContentHandler(handler);
 						InputSource source = new InputSource(reader);
-						parser.parse(source);
+						parser.parse(source, handler);
 						
 						Map map = handler.getReferences();
 						List newProjects = new ArrayList();
@@ -114,6 +117,8 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 						throw new InvocationTargetException(e);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
+					} catch (ParserConfigurationException e) {
+						throw new InvocationTargetException(e);
 					} finally {
 						if (reader != null) {
 							try {
@@ -143,7 +148,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		return result[0];
 	}
 	
-	private void createWorkingSet(String workingSetName, IProject[] projects) {
+	/* private */ void createWorkingSet(String workingSetName, IProject[] projects) {
 		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
 		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
 		if (oldSet == null) {

@@ -72,25 +72,26 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	 * @see ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-			
-		if (!localName.equals(tagStack.peek())) {
-			throw new SAXException(Policy.bind("RepositoriesViewContentHandler.unmatchedTag", localName)); //$NON-NLS-1$
+		
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (!elementName.equals(tagStack.peek())) {
+			throw new SAXException(Policy.bind("RepositoriesViewContentHandler.unmatchedTag", elementName)); //$NON-NLS-1$
 		}
 		
-		if (localName.equals(REPOSITORIES_VIEW_TAG)) {
+		if (elementName.equals(REPOSITORIES_VIEW_TAG)) {
 			// all done
-		} else if (localName.equals(REPOSITORY_TAG)) {
+		} else if (elementName.equals(REPOSITORY_TAG)) {
 			if (!ignoreElements) {
 				manager.add(currentRepositoryRoot);
 			}
 			currentRepositoryRoot = null;
-		} else if (localName.equals(WORKING_SET_TAG)) {
+		} else if (elementName.equals(WORKING_SET_TAG)) {
 			// This tag is no longer used
 			ignoreElements = false;
-		} else if (localName.equals(CURRENT_WORKING_SET_TAG)) {
+		} else if (elementName.equals(CURRENT_WORKING_SET_TAG)) {
 			// This tag is no longer used
 			ignoreElements = false;
-		} else if (localName.equals(MODULE_TAG)) {
+		} else if (elementName.equals(MODULE_TAG)) {
 			if (! ignoreElements && currentRepositoryRoot != null) {
 				currentRepositoryRoot.addTags(currentRemotePath, 
 					(CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
@@ -110,10 +111,11 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			String qName,
 			Attributes atts)
 			throws SAXException {
-			
-		if (localName.equals(REPOSITORIES_VIEW_TAG)) {
+		
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (elementName.equals(REPOSITORIES_VIEW_TAG)) {
 			// just started
-		} else if (localName.equals(REPOSITORY_TAG)) {
+		} else if (elementName.equals(REPOSITORY_TAG)) {
 			String id = atts.getValue(ID_ATTRIBUTE);
 			if (id == null) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", REPOSITORY_TAG, ID_ATTRIBUTE)); //$NON-NLS-1$
@@ -133,14 +135,14 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			((CVSRepositoryLocation)root).setReadLocation(readLocation);
 			String writeLocation = atts.getValue(WRITE_ID_ATTRIBUTE);
 			((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
-		} else if (localName.equals(WORKING_SET_TAG)) {
+		} else if (elementName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			// Ignore any elements until the corresponding end tag is reached
 			ignoreElements = true;
-		}  else if (localName.equals(MODULE_TAG)) {
+		}  else if (elementName.equals(MODULE_TAG)) {
 			String path = atts.getValue(PATH_ATTRIBUTE);
 			if (path == null) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", MODULE_TAG, PATH_ATTRIBUTE)); //$NON-NLS-1$
@@ -150,7 +152,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				path = RepositoryRoot.asDefinedModulePath(path);
 			}
 			startModule(path);
-		} else if (localName.equals(TAG_TAG)) {
+		} else if (elementName.equals(TAG_TAG)) {
 			String type = atts.getValue(TYPE_ATTRIBUTE);
 			if (type == null) {
 				type = DEFAULT_TAG_TYPE;
@@ -160,7 +162,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", TAG_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			tags.add(new CVSTag(name, getCVSTagType(type)));
-		} else if (localName.equals(AUTO_REFRESH_FILE_TAG)) {
+		} else if (elementName.equals(AUTO_REFRESH_FILE_TAG)) {
 			String path = atts.getValue(FULL_PATH_ATTRIBUTE);
 			if (path == null) {
 				// get the old path attribute format which was relative to the module
@@ -175,13 +177,13 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				}
 			}
 			if (path != null) autoRefreshFiles.add(path);
-		} else if (localName.equals(CURRENT_WORKING_SET_TAG)) {
+		} else if (elementName.equals(CURRENT_WORKING_SET_TAG)) {
 			// Ignore any elements until the corresponding end tag is reached
 			ignoreElements = true;
 		}
 		// empty buffer
 		buffer = new StringBuffer();
-		tagStack.push(localName);
+		tagStack.push(elementName);
 	}
 
 	private void startModule(String path) {
@@ -202,4 +204,16 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		return CVSTag.VERSION;
 	}
 	
+	/*
+	 * Couldn't figure out from the SAX API exactly when localName vs. qName is used.
+	 * However, the XML for project sets doesn't use namespaces so either of the two names
+	 * is fine. Therefore, use whichever one is provided.
+	 */
+	private String getElementName(String namespaceURI, String localName, String qName) {
+		if (localName != null && localName.length() > 0) {
+			return localName;
+		} else {
+			return qName;
+		}
+	}
 }

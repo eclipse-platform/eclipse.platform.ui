@@ -32,7 +32,8 @@ public class ProjectSetContentHandler extends DefaultHandler {
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		if (localName.equals("psf")) { //$NON-NLS-1$
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (elementName.equals("psf")) { //$NON-NLS-1$ //$NON-NLS-2$
 			map = new HashMap();
 			inPsf = true;
 			String version = atts.getValue("version"); //$NON-NLS-1$
@@ -40,14 +41,14 @@ public class ProjectSetContentHandler extends DefaultHandler {
 			return;
 		}
 		if (isVersionOne) return;
-		if (localName.equals("provider")) { //$NON-NLS-1$
+		if (elementName.equals("provider")) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (!inPsf) throw new SAXException(Policy.bind("ProjectSetContentHandler.Element_provider_must_be_contained_in_element_psf_4")); //$NON-NLS-1$
 			inProvider = true;
 			id = atts.getValue("id"); //$NON-NLS-1$
 			references = new ArrayList();
 			return;
 		}
-		if (localName.equals("project")) { //$NON-NLS-1$
+		if (elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (!inProvider) throw new SAXException(Policy.bind("ProjectSetContentHandler.Element_project_must_be_contained_in_element_provider_7")); //$NON-NLS-1$
 			inProject = true;
 			String reference = atts.getValue("reference"); //$NON-NLS-1$
@@ -60,18 +61,19 @@ public class ProjectSetContentHandler extends DefaultHandler {
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		if (localName.equals("psf")) { //$NON-NLS-1$
+		String elementName = getElementName(namespaceURI, localName, qName);
+		if (elementName.equals("psf")) { //$NON-NLS-1$ //$NON-NLS-2$
 			inPsf = false;
 			return;
 		}
 		if (isVersionOne) return;
-		if (localName.equals("provider")) { //$NON-NLS-1$
+		if (elementName.equals("provider")) { //$NON-NLS-1$ //$NON-NLS-2$
 			map.put(id, references);
 			references = null;
 			inProvider = false;
 			return;
 		}
-		if (localName.equals("project")) { //$NON-NLS-1$
+		if (elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
 			inProject = false;
 			return;
 		}
@@ -83,5 +85,18 @@ public class ProjectSetContentHandler extends DefaultHandler {
 	
 	public boolean isVersionOne() {
 		return isVersionOne;
+	}
+	
+	/*
+	 * Couldn't figure out from the SAX API exactly when localName vs. qName is used.
+	 * However, the XML for project sets doesn't use namespaces so either of the two names
+	 * is fine. Therefore, use whichever one is provided.
+	 */
+	private String getElementName(String namespaceURI, String localName, String qName) {
+		if (localName != null && localName.length() > 0) {
+			return localName;
+		} else {
+			return qName;
+		}
 	}
 }
