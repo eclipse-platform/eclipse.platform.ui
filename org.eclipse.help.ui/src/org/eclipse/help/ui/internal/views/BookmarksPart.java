@@ -218,4 +218,8 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 			return deleteAction;
 		return super.getGlobalAction(id);
 	}
+
+	protected boolean canAddBookmarks() {
+		return false;
+	}
 }

@@ -299,9 +299,11 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public boolean fillContextMenu(IMenuManager manager) {
-		return parent.fillSelectionProviderMenu(treeViewer, manager);
+		return parent.fillSelectionProviderMenu(treeViewer, manager, canAddBookmarks());
 	}
-
+	
+	protected abstract boolean canAddBookmarks();
+	
 	/*
 	 * (non-Javadoc)
 	 * 

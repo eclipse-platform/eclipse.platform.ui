@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
@@ -1007,9 +1009,9 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	boolean fillSelectionProviderMenu(ISelectionProvider provider,
-			IMenuManager manager) {
+			IMenuManager manager, boolean addBookmarks) {
 		boolean value = fillOpenActions(provider, manager);
-		if (value) {
+		if (value && addBookmarks) {
 			manager.add(new Separator());
 			bookmarkAction.setTarget(provider);
 			manager.add(bookmarkAction);
@@ -1053,9 +1055,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			IStructuredSelection ssel = (IStructuredSelection) provider
 					.getSelection();
 			Object obj = ssel.getFirstElement();
-			if (obj instanceof ITopic) {
-				ITopic topic = (ITopic) obj;
-				return topic.getHref();
+			if (obj instanceof IToc)
+				return null;
+			if (obj instanceof IHelpResource) {
+				IHelpResource res = (IHelpResource) obj;
+				return res.getHref();
 			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
@@ -1165,8 +1169,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			String href = (String) e.getHref();
 			if (href != null && href.startsWith("__")) //$NON-NLS-1$
 				href = null;
-			if (href != null)
+			if (href != null) {
+				try {
+					href = URLDecoder.decode(href, "UTF-8"); //$NON-NLS-1$
+				}
+				catch (UnsupportedEncodingException ex) {
+				}
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			if (label != null && href != null) {
 				String message = HelpUIResources.getString(
 						"ReusableHelpPart.status", label, href); //$NON-NLS-1$

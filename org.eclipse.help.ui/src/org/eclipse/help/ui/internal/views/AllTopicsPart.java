@@ -169,4 +169,8 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 	protected String getHref(IHelpResource res) {
 		return (res instanceof ITopic) ? res.getHref() : null;
 	}
+
+	protected boolean canAddBookmarks() {
+		return true;
+	}
 }
