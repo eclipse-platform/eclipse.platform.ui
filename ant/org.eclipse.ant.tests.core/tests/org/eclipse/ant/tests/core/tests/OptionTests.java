@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
@@ -245,7 +246,6 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-buildfile", buildFileName}, false, "scripts");
 		
 		assertTrue("Should have been 1 tasks, was: " + AntTestChecker.getDefault().getTaskStartedCount(), AntTestChecker.getDefault().getTaskStartedCount() == 1);
-		
 	}
 	
 	/**
@@ -298,7 +298,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArgAndQuiet() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3", "-quiet"}, false);
-		assertTrue("1 message should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
+		assertTrue("1 message should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 2);
 	}
 	
 	/**
@@ -431,7 +431,7 @@ public class OptionTests extends AbstractAntTest {
 	 * Tests the "-diagnostics" option with ANT_HOME set
 	 * bug 25693
 	 */
-	/*public void testDiagnostics() throws CoreException {
+	public void testDiagnostics() throws CoreException {
 		AntCorePlugin.getPlugin().getPreferences().setAntHome(getAntHome());
 		try {
 			run("input.xml", new String[]{"-diagnostics"});
@@ -439,7 +439,16 @@ public class OptionTests extends AbstractAntTest {
 			restorePreferenceDefaults();
 		}
 		
-		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));
-	}*/
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(12);
+		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant"));
+	}
+	
+	/**
+	 * Tests the "-quiet" still reports build successful
+	 * bug 34488
+	 */
+	public void testMinusQuiet() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-quiet"});
+		assertSuccessful();	
+	}
 }

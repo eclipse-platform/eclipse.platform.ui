@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Blake Meike - patch for bug 31691 
+ *     Blake Meike - patch for bug 31691 and bug 34488
  *******************************************************************************/
 
 package org.eclipse.ant.internal.core.ant;
@@ -704,7 +704,7 @@ public class InternalAntRunner {
 			project.setProperty("XmlLogger.file", path.toOSString()); //$NON-NLS-1$
 		}
 		if (error == null && scriptExecuted) {
-			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), Project.MSG_INFO); //$NON-NLS-1$
+			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
 		} else {
 			event.setException(error);
 		}
