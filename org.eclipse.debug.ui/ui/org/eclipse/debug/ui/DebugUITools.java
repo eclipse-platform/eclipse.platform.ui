@@ -38,16 +38,17 @@ public class DebugUITools {
 		if (p == null) {
 			return;
 		}
+		IWorkbenchPart activePart= p.getActivePart();
 		InspectorView view= (InspectorView) p.findView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 		if (view == null) {
 			// open a new view
 			try {
-				IWorkbenchPart activePart= p.getActivePart();
 				view= (InspectorView) p.showView(IDebugUIConstants.ID_INSPECTOR_VIEW);
-				p.activate(activePart);
 			} catch (PartInitException e) {
 				DebugUIPlugin.logError(e);
 				return;
+			} finally {
+				p.activate(activePart);
 			}
 		}
 		InspectItem item = new InspectItem(label, value);
