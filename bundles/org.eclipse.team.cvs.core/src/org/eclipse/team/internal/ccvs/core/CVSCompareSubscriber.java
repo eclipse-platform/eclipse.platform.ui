@@ -10,18 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
-import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
-import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.variants.IResourceVariantTree;
 import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
@@ -49,6 +43,13 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		initialize();
 	}
 	
+	/**
+	 * @deprecated this needs to remain until Releng plugin is rebuilt
+	 */
+	public CVSCompareSubscriber(IProject[] resources, CVSTag[] tags, String name) {
+		this((IResource[])resources, tags, name);
+	}
+
 	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
 		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.resources = resources;
