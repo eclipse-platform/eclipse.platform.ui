@@ -127,30 +127,6 @@ public class WelcomeEditor extends EditorPart {
 		}
 		
 		
-		/**
-		 * Find the next text that has a style range
-		 */
-		
-		private StyledText nextTextWithRange(StyledText text){
-			int index = 0;
-			if(text != null)
-				index = texts.indexOf(text);
-			//Find the next field then
-			for(int i = index + 1; i < texts.size(); i ++){
-				StyledText nextText = (StyledText) texts.get(i);
-				if(nextText.getStyleRanges().length > 0)
-					return nextText;
-			}	
-			
-			//Try to loop back
-			for(int i = 0; i <= index; i ++){
-				StyledText nextText = (StyledText) texts.get(i);
-				if(nextText.getStyleRanges().length > 0)
-					return nextText;
-			}	
-			return null;
-						
-		}
 	
 		/**
 		 * Find the next range after the current 
@@ -176,8 +152,6 @@ public class WelcomeEditor extends EditorPart {
 				return null;
 		}
 	};
-
-	
 	
 /**
  * Create a new instance of the welcome editor

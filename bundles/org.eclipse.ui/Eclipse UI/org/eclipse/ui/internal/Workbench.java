@@ -691,17 +691,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyStateMask) throws WorkbenchException {
 		return showPerspective(perspId, getActiveWorkbenchWindow(), input);
 	}
-	/**
-	 * Return the alternate mask for this platform. It is control on win32 and
-	 * shift alt on other platforms. 
-	 * @return int
-	 */
-	private int alternateMask() {
-		if (SWT.getPlatform().equals("win32")) //$NON-NLS-1$
-			return SWT.CONTROL;
-		else
-			return SWT.ALT | SWT.SHIFT;
-	}
+	
 	/**
 	 * Opens a new window and page with the default perspective.
 	 */
