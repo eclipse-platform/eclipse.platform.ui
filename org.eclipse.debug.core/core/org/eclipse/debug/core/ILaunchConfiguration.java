@@ -181,7 +181,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
-	 *  have an integer value</li>
+	 *  have a String value</li>
 	 * </ul>
 	 */
 	public String getAttribute(String attributeName, String defaultValue) throws CoreException;
@@ -197,7 +197,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>An exception occurs while retrieving the attribute from
 	 *  underlying storage.</li>
 	 * <li>An attribute with the given name exists, but does not
-	 *  have an integer value</li>
+	 *  have a boolean value</li>
 	 * </ul>
 	 */
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException;
