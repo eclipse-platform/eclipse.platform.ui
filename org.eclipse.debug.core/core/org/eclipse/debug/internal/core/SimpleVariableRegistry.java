@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +41,7 @@ import org.w3c.dom.NodeList;
  * A registry of simple variables, used for retrieving launch configuration
  * variable objects based on their names.
  */
-public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
+public class SimpleVariableRegistry {
 	
 	private static final String PREF_SIMPLE_VARIABLES="simpleVariables"; //$NON-NLS-1$
 	// Variable extension point constants
@@ -65,7 +64,9 @@ public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#addVariables(ISimpleLaunchVariable[])
+	 * Adds the given variables to this variable registry
+	 * 
+	 * @param variables the variables to add
 	 */
 	public void addVariables(ISimpleLaunchVariable[] variables) {
 		for (int i = 0; i < variables.length; i++) {
@@ -75,7 +76,10 @@ public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#removeVariable(ISimpleLaunchVariable[])
+	 * Removes the given variables from this registry. Has no effect
+	 * if any of the given variables are not in this registry.
+	 * 
+	 * @param variables the variables to remove
 	 */
 	public void removeVariables(ISimpleLaunchVariable[] variables) {
 		for (int i = 0; i < variables.length; i++) {
@@ -85,14 +89,23 @@ public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#getVariable(String)
+	 * Returns the variable with the given name or <code>null</code>
+	 * if no such variable exists. If multiple variables with the given name have
+	 * been added to this registry, returns the most recently added variable
+	 * with that name.
+	 * 
+	 * @param name the name of the variable
+	 * @return the launch configuration variable with the given name or
+	 * <code>null</code> if no such variable exists.
 	 */
 	public ISimpleLaunchVariable getVariable(String name) {
 		return (ISimpleLaunchVariable) fVariables.get(name);
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#getVariables()
+	 * Returns all the variables contained in this registry
+	 * 
+	 * @return the variables in this registry.
 	 */
 	public ISimpleLaunchVariable[] getVariables() {
 		return (ISimpleLaunchVariable[]) fVariables.values().toArray(new ISimpleLaunchVariable[0]);

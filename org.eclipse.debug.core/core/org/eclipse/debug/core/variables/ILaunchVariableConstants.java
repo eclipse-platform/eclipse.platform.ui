@@ -11,10 +11,10 @@
 package org.eclipse.debug.core.variables;
 
 /**
- * @author jburns
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Variable constants defining the name of variables contributed
+ * by debug core.
+ * 
+ * @since 3.0
  */
 public interface ILaunchVariableConstants {
 

@@ -12,7 +12,7 @@ package org.eclipse.debug.ui.launchVariables;
 
 
 import org.eclipse.debug.core.variables.ILaunchVariable;
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -177,7 +177,7 @@ public class LaunchConfigurationVariableForm {
 	public String getSelectedVariable() {
 		if (activeComponentIndex != -1) {
 			String varValue = components[activeComponentIndex].getVariableValue();
-			return VariableUtil.buildVariableTag(variables[activeComponentIndex].getName(), varValue);
+			return LaunchVariableUtil.buildVariableTag(variables[activeComponentIndex].getName(), varValue);
 		}
 
 		return null;
@@ -206,7 +206,7 @@ public class LaunchConfigurationVariableForm {
 		String[] items = new String[variables.length];
 		StringBuffer buffer = new StringBuffer(80);
 		for (int i = 0; i < variables.length; i++) {
-			VariableUtil.buildVariableTag(variables[i].getName(), null, buffer);
+			LaunchVariableUtil.buildVariableTag(variables[i].getName(), null, buffer);
 			buffer.append(" - "); //$NON-NLS-1$
 			buffer.append(variables[i].getDescription());
 			items[i] = buffer.toString();

@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.preferences;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.Dialog;
@@ -90,7 +90,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 
 	protected Control createContents(Composite parent) {
-		originalVariableState= getVariableRegistry().getVariables();
+		originalVariableState= getVariableManager().getSimpleVariables();
 		Font font= parent.getFont();
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -162,7 +162,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			tc.setResizable(variableTableColumnLayouts[i].resizable);
 			tc.setText(variableTableColumnHeaders[i]);
 		}
-		variableTable.setInput(getVariableRegistry());
+		variableTable.setInput(getVariableManager());
 		variableTable.setLabelProvider(new SimpleVariableLabelProvider());
 	}
 	
@@ -225,7 +225,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (name.length() > 0) {
 			ISimpleLaunchVariable variable= new SimpleLaunchVariable(dialog.getValue());
 			if (editVariable(variable)) {
-				getVariableRegistry().addVariables(new ISimpleLaunchVariable[] {variable});
+				getVariableManager().addSimpleVariables(new ISimpleLaunchVariable[] {variable});
 				variableTable.refresh();
 			}
 		}
@@ -262,7 +262,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
 		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) selection.toList().toArray(new ISimpleLaunchVariable[0]);
-		getVariableRegistry().removeVariables(variables); 
+		getVariableManager().removeSimpleVariables(variables); 
 		variableTable.refresh();
 	}
 	
@@ -283,9 +283,9 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Revert to the previously saved state.
 	 */
 	public boolean performCancel() {
-		ISimpleLaunchVariableRegistry registry= getVariableRegistry();
-		registry.removeVariables(registry.getVariables());
-		registry.addVariables(originalVariableState);
+		ILaunchVariableManager manager= getVariableManager();
+		manager.removeSimpleVariables(manager.getSimpleVariables());
+		manager.addSimpleVariables(originalVariableState);
 		return super.performCancel();
 	}
 
@@ -293,8 +293,8 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Clear the variables.
 	 */
 	protected void performDefaults() {
-		ISimpleLaunchVariableRegistry registry= getVariableRegistry();
-		registry.removeVariables(registry.getVariables());
+		ILaunchVariableManager manager= getVariableManager();
+		manager.removeSimpleVariables(manager.getSimpleVariables());
 		variableTable.refresh();
 		super.performDefaults();
 	}
@@ -303,23 +303,23 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Sets the saved state for reversion.
 	 */
 	public boolean performOk() {
-		originalVariableState= getVariableRegistry().getVariables();
+		originalVariableState= getVariableManager().getSimpleVariables();
 		return super.performOk();
 	}
 
 	/**
 	 * Returns the DebugPlugin's singleton instance of the
-	 * variable registry
+	 * launch variable manager
 	 * @return the singleton instance of the simple variable registry.
 	 */
-	private ISimpleLaunchVariableRegistry getVariableRegistry() {
-		return DebugPlugin.getDefault().getSimpleVariableRegistry();
+	private ILaunchVariableManager getVariableManager() {
+		return DebugPlugin.getDefault().getLaunchVariableManager();
 	}
 	
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ISimpleLaunchVariableRegistry) {
-				return ((ISimpleLaunchVariableRegistry) inputElement).getVariables();
+			if (inputElement instanceof ILaunchVariableManager) {
+				return ((ILaunchVariableManager) inputElement).getSimpleVariables();
 			}
 			return null;
 		}

@@ -57,7 +57,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		contextVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (contextVariables.getSelection()) {
-					replaceVariableComposite(DebugPlugin.getDefault().getContextVariableRegistry().getVariables());
+					replaceVariableComposite(DebugPlugin.getDefault().getLaunchVariableManager().getContextVariables());
 				}
 			}
 		});
@@ -65,11 +65,11 @@ public class VariableSelectionDialog extends SelectionDialog {
 		simpleVariables.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (simpleVariables.getSelection()) {
-				replaceVariableComposite(DebugPlugin.getDefault().getSimpleVariableRegistry().getVariables());
+				replaceVariableComposite(DebugPlugin.getDefault().getLaunchVariableManager().getSimpleVariables());
 			}
 		}
 	});
-		createVariableFormComposite(composite, DebugPlugin.getDefault().getContextVariableRegistry().getVariables());
+		createVariableFormComposite(composite, DebugPlugin.getDefault().getLaunchVariableManager().getContextVariables());
 		return composite;
 	}
 	

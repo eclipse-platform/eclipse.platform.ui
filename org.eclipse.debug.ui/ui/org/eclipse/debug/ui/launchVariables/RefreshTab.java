@@ -21,13 +21,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.IContextLaunchVariable;
-import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.launchVariables.*;
+import org.eclipse.debug.internal.ui.launchVariables.LaunchVariableMessages;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
@@ -119,7 +118,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 */
 	private void createScopeComponent(Composite parent) {
 		String label = LaunchVariableMessages.getString("RefreshTab.2"); //$NON-NLS-1$
-		IContextLaunchVariable[] vars = DebugPlugin.getDefault().getRefreshVariableRegistry().getVariables();
+		IContextLaunchVariable[] vars = DebugPlugin.getDefault().getLaunchVariableManager().getRefreshVariables();
 		variableForm = new LaunchConfigurationVariableForm(label, vars);
 		variableForm.createContents(parent, this);
 	}
@@ -146,14 +145,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateScope(ILaunchConfiguration configuration) {
 		String scope = null;
 		try {
-			scope= configuration.getAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			scope= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
 		String varName = null;
 		String varValue = null;
 		if (scope != null) {
-			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(scope, 0);
+			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(scope, 0);
 			varName = varDef.name;
 			varValue = varDef.argument;
 		}
@@ -166,7 +165,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateRecursive(ILaunchConfiguration configuration) {
 		boolean recursive= true;
 		try {
-			recursive= configuration.getAttribute(VariableUtil.ATTR_REFRESH_RECURSIVE, true);
+			recursive= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, true);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
@@ -179,7 +178,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateRefresh(ILaunchConfiguration configuration) {
 		String scope= null;
 		try {
-			scope= configuration.getAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			scope= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
@@ -193,12 +192,12 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 
 		if (refreshField.getSelection()) {
-			configuration.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
+			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
 		} else {
-			configuration.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
 		}
 		
-		setAttribute(VariableUtil.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
+		setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
 	}
 
 	/**
@@ -283,7 +282,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 			return;
 		}
 		int depth = IResource.DEPTH_ONE;
-		if (VariableUtil.isRefreshRecursive(configuration))
+		if (LaunchVariableUtil.isRefreshRecursive(configuration))
 			depth = IResource.DEPTH_INFINITE;
 	
 		if (monitor.isCanceled()) {
@@ -322,7 +321,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
 	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String scope = VariableUtil.getRefreshScope(configuration);
+		String scope = LaunchVariableUtil.getRefreshScope(configuration);
 		if (scope == null) {
 			return null;
 		}
@@ -341,14 +340,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * @throws CoreException
 	 */
 	public static IResource[] expandResources(String variableString, IProgressMonitor monitor) throws CoreException {
-		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(variableString, 0);
+		LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(variableString, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
 			String msg = MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.9"), new Object[] { variableString }); //$NON-NLS-1$
 			throw new CoreException(DebugUIPlugin.newErrorStatus(msg, null));
 		}
 	
-		IContextLaunchVariableRegistry registry = DebugPlugin.getDefault().getRefreshVariableRegistry();
-		IContextLaunchVariable variable = registry.getVariable(varDef.name);
+		IContextLaunchVariable variable = DebugPlugin.getDefault().getLaunchVariableManager().getRefreshVariable(varDef.name);
 		if (variable == null) {
 			String msg = MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.10"), new Object[] { varDef.name }); //$NON-NLS-1$
 			throw new CoreException(DebugUIPlugin.newErrorStatus(msg, null));

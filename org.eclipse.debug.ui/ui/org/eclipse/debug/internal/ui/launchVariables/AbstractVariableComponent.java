@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchVariables;
 
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.swt.SWT;
@@ -59,7 +59,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 		mainGroup.setLayout(layout);
 		mainGroup.setLayoutData(gridData);
 		mainGroup.setFont(parent.getFont());
-		mainGroup.setText(VariableUtil.buildVariableTag(varTag, null));
+		mainGroup.setText(LaunchVariableUtil.buildVariableTag(varTag, null));
 	}
 
 	/**

@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.IContextLaunchVariable;
-import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 
 /**
  * Registry for context launch variables.
+ * 
  * @since 3.0
  */
-public class ContextLaunchVariableRegistry implements IContextLaunchVariableRegistry {
+public class ContextLaunchVariableRegistry {
 	// Format of the variable extension points
 	// <extension point="org.eclipse.debug.ui.launchConfigurationVariables>
 	//		<variable
@@ -88,14 +88,23 @@ public class ContextLaunchVariableRegistry implements IContextLaunchVariableRegi
 	}
 	
 	/**
-	 * @see IContextLaunchVariableRegistry#getVariable(String)
+	 * Returns the variable with the given name or <code>null</code>
+	 * if no such variable exists. If multiple variables with the given name have
+	 * been added to this registry, returns the most recently added variable
+	 * with that name.
+	 * 
+	 * @param name the name of the variable
+	 * @return the launch configuration variable with the given name or
+	 * <code>null</code> if no such variable exists.
 	 */
 	public IContextLaunchVariable getVariable(String tag) {
 		return findVariable(tag);
 	}
 	
 	/**
-	 * @see IContextLaunchVariableRegistry#getVariables()
+	 * Returns all the context variables in the registry.
+	 * 
+	 * @return the variables in this registry
 	 */
 	public IContextLaunchVariable[] getVariables() {
 		IContextLaunchVariable[] results = new ContextLaunchVariable[getVariableCount()];

@@ -30,17 +30,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.RuntimeProcess;
-import org.eclipse.debug.internal.core.SimpleVariableRegistry;
-import org.eclipse.debug.internal.core.variables.ContextLaunchVariableRegistry;
-import org.eclipse.debug.internal.core.variables.RefreshScopeVariableRegistry;
+import org.eclipse.debug.internal.core.variables.LaunchVariableManager;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -175,19 +172,9 @@ public class DebugPlugin extends Plugin {
 	private LaunchManager fLaunchManager;
 	
 	/**
-	 * The singleton simple variable registry.
+	 * The singleton launch variable manager.
 	 */
-	private SimpleVariableRegistry fSimpleVariableRegistry;
-	
-	/**
-	 * The singleton context variable registry.
-	 */
-	private IContextLaunchVariableRegistry fContextVariableRegistry;
-	
-	/**
-	 * The singleton refresh variable registry.
-	 */
-	private RefreshScopeVariableRegistry fRefreshVariableRegistry;
+	private ILaunchVariableManager fLaunchVariableManager;
 
 	/**
 	 * The collection of debug event listeners.
@@ -376,32 +363,15 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Returns the registry of simple launch variables.
+	 * Returns the launch variable manager
 	 * 
-	 * @return the registry of simple launch variables
+	 * @return the launch variable manager
 	 */
-	public ISimpleLaunchVariableRegistry getSimpleVariableRegistry() {
-		if (fSimpleVariableRegistry == null) {
-			fSimpleVariableRegistry = new SimpleVariableRegistry();
+	public ILaunchVariableManager getLaunchVariableManager() {
+		if (fLaunchVariableManager == null) {
+			fLaunchVariableManager= new LaunchVariableManager();
 		}
-		return fSimpleVariableRegistry;
-	}
-	
-	/**
-	 * Returns the registry of context launch variables.
-	 */
-	public IContextLaunchVariableRegistry getContextVariableRegistry() {
-		if (fContextVariableRegistry == null) {
-			fContextVariableRegistry = new ContextLaunchVariableRegistry();
-		}
-		return fContextVariableRegistry;
-	}
-	
-	public IContextLaunchVariableRegistry getRefreshVariableRegistry() {
-		if (fRefreshVariableRegistry == null) {
-			fRefreshVariableRegistry = new RefreshScopeVariableRegistry();
-		}
-		return fRefreshVariableRegistry;
+		return fLaunchVariableManager;
 	}
 	
 	/**

@@ -27,10 +27,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
- * Utility for dealing with variables
+ * Utility for dealing with launch variables.
+ * 
  * @since 3.0
  */
-public class VariableUtil {
+public class LaunchVariableUtil {
 	/**
 	 * Variable tag indentifiers
 	 */
@@ -210,8 +211,8 @@ public class VariableUtil {
 			}
 			start = varDef.end;
 			// Look up the context variable if it exists
-			IContextLaunchVariableRegistry registry = DebugPlugin.getDefault().getContextVariableRegistry();
-			IContextLaunchVariable contextVariable = registry.getVariable(varDef.name);
+			ILaunchVariableManager manager = DebugPlugin.getDefault().getLaunchVariableManager();
+			IContextLaunchVariable contextVariable = manager.getContextVariable(varDef.name);
 			if (contextVariable != null) {
 				String text = null;
 				if (context == null) {
@@ -228,7 +229,7 @@ public class VariableUtil {
 				buffer.append(text);
 			} else {
 				// If no context variable found, look up a simple variable
-				ISimpleLaunchVariable simpleVariable= DebugPlugin.getDefault().getSimpleVariableRegistry().getVariable(varDef.name);
+				ISimpleLaunchVariable simpleVariable= manager.getSimpleVariable(varDef.name);
 				if (simpleVariable == null) {
 					if (status != null) {
 						status.merge(newErrorStatus(MessageFormat.format(DebugCoreMessages.getString("VariableUtil.5"), new Object[] {varDef.name}), null)); //$NON-NLS-1$
@@ -408,7 +409,7 @@ public class VariableUtil {
 		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		if (envMap != null) {
 			MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.getString("VariableUtil.6"), null); //$NON-NLS-1$
-			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, status, context);
+			String[] expandedEnvironment = LaunchVariableUtil.expandEnvironment(envMap, status, context);
 			if (status.isOK()) {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
@@ -436,7 +437,7 @@ public class VariableUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getRefreshScope(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String) null);
+		return configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) null);
 	}
 
 	/**
@@ -448,7 +449,7 @@ public class VariableUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(VariableUtil.ATTR_REFRESH_RECURSIVE, true);
+		return configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, true);
 	}
 
 }

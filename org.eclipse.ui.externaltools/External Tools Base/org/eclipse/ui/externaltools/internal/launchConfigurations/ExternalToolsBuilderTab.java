@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;
@@ -133,7 +133,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		workingSetButton.setSelection(buildScope != null);
 		
 		if (buildScope != null) {
-			VariableUtil.VariableDefinition variable= VariableUtil.extractVariableDefinition(buildScope, 0);
+			LaunchVariableUtil.VariableDefinition variable= LaunchVariableUtil.extractVariableDefinition(buildScope, 0);
 			workingSetComponent.setVariableValue(variable.argument);
 		}
 		
@@ -174,7 +174,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
 		if (workingSetButton.getSelection()) {
-			String variableTag= VariableUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
+			String variableTag= LaunchVariableUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, variableTag);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
