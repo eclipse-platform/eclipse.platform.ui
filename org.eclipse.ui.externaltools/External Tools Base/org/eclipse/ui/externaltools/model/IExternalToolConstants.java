@@ -79,21 +79,12 @@ public interface IExternalToolConstants {
 
 
 	// ------- Variables -------
-	/**
-	 * Variable that expands to the workspace root object (value <code>workspace</code>).
-	 */
-	public static final String VAR_WORKSPACE = "workspace"; //$NON-NLS-1$
 	
 	/**
 	 * Variable that expands to the absolute path on the system's hard drive
 	 * to the workspace directory (value <code>workspace_loc</code>).
 	 */
 	public static final String VAR_WORKSPACE_LOC = "workspace_loc"; //$NON-NLS-1$
-
-	/**
-	 * Variable that expands to the project resource (value <code>project</code>).
-	 */
-	public static final String VAR_PROJECT = "project"; //$NON-NLS-1$
 
 	/**
 	 * Variable that expands to the absolute path on the system's hard drive
@@ -113,11 +104,6 @@ public interface IExternalToolConstants {
 	public static final String VAR_PROJECT_NAME = "project_name"; //$NON-NLS-1$
 
 	/**
-	 * Variable that expands to a resource (value <code>resource</code>).
-	 */
-	public static final String VAR_RESOURCE = "resource"; //$NON-NLS-1$
-
-	/**
 	 * Variable that expands to the absolute path on the system's hard drive
 	 * to a resource's location (value <code>resource_loc</code>).
 	 */
@@ -133,11 +119,6 @@ public interface IExternalToolConstants {
 	 * Variable that expands to the name of a resource (value <code>resource_name</code>).
 	 */
 	public static final String VAR_RESOURCE_NAME = "resource_name"; //$NON-NLS-1$
-
-	/**
-	 * Variable that expands to the container resource (value <code>container</code>).
-	 */
-	public static final String VAR_CONTAINER = "container"; //$NON-NLS-1$
 
 	/**
 	 * Variable that expands to the absolute path on the system's hard drive
@@ -163,11 +144,6 @@ public interface IExternalToolConstants {
 	public static final String VAR_BUILD_TYPE = "build_type"; //$NON-NLS-1$
 
 	/**
-	 * Variable that expands to the working set object (value <code>working_set</code>).
-	 */
-	public static final String VAR_WORKING_SET = "working_set"; //$NON-NLS-1$
-
-	/**
 	 * Variable that expands to the current editor cursor column (value <code>editor_cur_col</code>).
 	 */
 	public static final String VAR_EDITOR_CUR_COL = "editor_cur_col"; //$NON-NLS-1$
@@ -181,7 +157,32 @@ public interface IExternalToolConstants {
 	 * Variable that expands to the current editor selected text (value <code>editor_sel_text</code>).
 	 */
 	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
+	
+	// ------- Refresh Variables -------
+	/**
+	 * Variable that expands to the workspace root object (value <code>workspace</code>).
+	 */
+	public static final String VAR_WORKSPACE = "workspace"; //$NON-NLS-1$
+	
+	/**
+	 * Variable that expands to the project resource (value <code>project</code>).
+	 */
+	public static final String VAR_PROJECT = "project"; //$NON-NLS-1$
 
+	/**
+	 * Variable that expands to the container resource (value <code>container</code>).
+	 */
+	public static final String VAR_CONTAINER = "container"; //$NON-NLS-1$
+
+	/**
+	 * Variable that expands to a resource (value <code>resource</code>).
+	 */
+	public static final String VAR_RESOURCE = "resource"; //$NON-NLS-1$
+
+	/**
+	 * Variable that expands to the working set object (value <code>working_set</code>).
+	 */
+	public static final String VAR_WORKING_SET = "working_set"; //$NON-NLS-1$
 
 	// ------- Build Types -------
 	/**

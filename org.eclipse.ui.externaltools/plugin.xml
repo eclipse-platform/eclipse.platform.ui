@@ -92,15 +92,31 @@
 			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
 		</variable>
 		<variable
+			tag="project_loc"
+			description="Expands to the selected resource's project absolute file system path."
+			expanderClass="org.eclipse.ui.externaltools.variable.ResourceProjectExpander">
+		</variable>
+		<variable
+			tag="project_path"
+			description="Expands to the full path, relative to the workspace root, of the selected project"
+			expanderClass="org.eclipse.ui.externaltools.variable.ProjectExpander">
+		</variable>
+		<variable
+			tag="project_name"
+			description="Expands to the name of the selected project"
+			expanderClass="org.eclipse.ui.externaltools.variable.ProjectNameExpander">
+		</variable>
+		<variable
 			tag="resource_loc"
 			description="Expands to the resource's absolute file system path."
 			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
 			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
 		</variable>
 		<variable
-			tag="project_loc"
-			description="Expands to the selected resource's project absolute file system path."
-			expanderClass="org.eclipse.ui.externaltools.variable.ResourceProjectExpander">
+			tag="resource_loc"
+			description="Expands to the resource's path relative to the workspace root."
+			componentClass="org.eclipse.ui.externaltools.variable.SpecificFileResourceComponent"
+			expanderClass="org.eclipse.ui.externaltools.variable.ResourceExpander">
 		</variable>
 		<variable
 			tag="container_loc"
