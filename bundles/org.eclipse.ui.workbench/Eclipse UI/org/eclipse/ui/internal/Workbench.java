@@ -57,6 +57,22 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
@@ -81,20 +97,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -142,6 +145,7 @@ import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.internal.csm.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -151,15 +155,13 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressManager;
-import org.eclipse.ui.internal.roles.IDERoleManager;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
-import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.RoleManagerFactory;
+
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -203,12 +205,12 @@ public class Workbench
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 			getShowTasksChangeListener(),
-			IResourceChangeEvent.POST_CHANGE);
+			IResourceChangeEvent.POST_CHANGE);        
 	}
 
 	/* begin command, activity, and role support */
 		
-	/** The properties key for the key strokes that should be processed out of
+    /** The properties key for the key strokes that should be processed out of
 	 * order.
 	 */
 	private static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
@@ -445,6 +447,7 @@ public class Workbench
 
 	private IActionService actionService;
 	private IContextActivationService contextActivationService;
+    private WorkbenchActivityHelper activityHelper;
 
 	public IActionService getActionService() {
 		if (actionService == null) {
@@ -462,7 +465,7 @@ public class Workbench
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
-	
+
 	public IRoleManager getRoleManager() {
 		return roleManager;
 	}	
@@ -941,7 +944,7 @@ public class Workbench
 		activityManager.setActiveActivityIds(new HashSet(activeContextIds));
 	}
 
-	private void initializeCommandsAndContexts(final Display display) {			
+	private void initializeCommandsAndContexts(final Display display) {
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 			public String guessCommandIdFromActionId(String actionId) {
 				// TODO bad cast
@@ -973,9 +976,6 @@ public class Workbench
 				return Workbench.this.isKeyFilterEnabled();
 			}
 		});
-
-		activityManager = ActivityManagerFactory.getActivityManager();
-		activityManager.addActivityManagerListener(activityManagerListener);
 		
 		/* TODO remove
 		Set definedActivityIds = activityManager.getDefinedActivityIds();
@@ -987,9 +987,7 @@ public class Workbench
 			System.out.println(activity.getId() + ": " + activity.getPatternBindings());
 		}
 		*/		
-		
-		roleManager = RoleManagerFactory.getRoleManager();		
-		
+        
 		/* TODO remove
 		Set definedRoleIds = roleManager.getDefinedRoleIds();
 		System.out.println(definedRoleIds);
@@ -1688,7 +1686,12 @@ public class Workbench
 	 */
 	private boolean init(String[] commandLineArgs, final Display display) {
 		this.commandLineArgs = commandLineArgs;
-		initializeCommandsAndContexts(display);
+        activityManager = ActivityManagerFactory.getActivityManager();
+        activityManager.addActivityManagerListener(activityManagerListener);
+                    
+        roleManager = RoleManagerFactory.getRoleManager();      
+        
+        initializeCommandsAndContexts(display);
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
@@ -1720,9 +1723,9 @@ public class Workbench
 				new UISynchronizer(display, uiLockListener));
 		}
 		
-		RoleManager.setManager(new IDERoleManager());
+        activityHelper = WorkbenchActivityHelper.getInstance();        
 
-		try {
+        try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 			disableAutoBuild();
 			int restoreCode = openPreviousWorkbenchState();
@@ -2601,8 +2604,8 @@ public class Workbench
 		JFaceColors.disposeColors();
 		if (getDecoratorManager() != null)
 			 ((DecoratorManager) getDecoratorManager()).shutdown();
-		RoleManager.shutdown();
-	}
+		activityHelper.shutdown();
+    }
 
 	/**
 	 * Creates the action delegate for each action extension contributed by
@@ -2671,12 +2674,12 @@ public class Workbench
 	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
 	 */
 	public IObjectActivityManager getObjectActivityManager(String id, boolean create) {
-		if(RoleManager.getInstance().isFiltering())
+//		if(RoleManager.getInstance().isFiltering())
 			return ObjectActivityManager.getManager(id,create);
-		else
-			return null;
+//		else
+//			return null;
 	}
-	
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#getProgressManager()
 	 */

@@ -19,18 +19,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.roles.CheckboxActivityHelper;
-import org.eclipse.ui.internal.roles.SwapActivityHelper;
+import org.eclipse.ui.internal.csm.activities.SwapActivityHelper;
 
 /**
- * Activates the Role configuration dialog. Can be replaced by addition to
+ * Activates the Activity configuration dialog. Can be replaced by addition to
  * welcome page (new &lt;tag&gt;).
  * 
  * @since 3.0
  */
-public class RoleConfigurationAction extends Action {
-
-	protected CheckboxActivityHelper checkboxHelper;
+public class ActivityEnablementAction extends Action {
 	protected SwapActivityHelper swapHelper;
 
 	/**
@@ -38,8 +35,8 @@ public class RoleConfigurationAction extends Action {
 	 * 
 	 * @since 3.0
 	 */
-	public RoleConfigurationAction() {
-		super(WorkbenchMessages.getString("RoleConfigurationAction.text")); //$NON-NLS-1$
+	public ActivityEnablementAction() {
+		super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
 	}
 
 	/*
@@ -68,9 +65,6 @@ public class RoleConfigurationAction extends Action {
 			 * (non-Javadoc) @see org.eclipse.jface.dialogs.Dialog#okPressed()
 			 */
 			protected void okPressed() {
-				if (checkboxHelper != null) {
-					checkboxHelper.updateActivityStates();
-				}
 				if (swapHelper != null) {
 					swapHelper.updateActivityStates();
 				}

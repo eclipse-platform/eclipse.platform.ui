@@ -15,6 +15,8 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ui.roles.IRoleManager;
+
 /**
  * The RoleContentProvider is a class that supplies the contents for the
  * viewer in the RolePreferencePage.
@@ -33,8 +35,8 @@ public class RoleContentProvider implements IStructuredContentProvider {
 	 */
 	public Object[] getElements(Object inputElement) {
 		Object [] roles = new Object[0];
-		if (inputElement instanceof RoleManager) {
-			roles = ((RoleManager)inputElement).getRoles();
+		if (inputElement instanceof IRoleManager) {
+			roles = ((IRoleManager)inputElement).getDefinedRoleIds().toArray();
 		}
         else if (inputElement instanceof Collection) {
             roles = ((Collection)inputElement).toArray();

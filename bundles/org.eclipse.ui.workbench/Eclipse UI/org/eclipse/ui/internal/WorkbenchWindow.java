@@ -1314,9 +1314,10 @@ public class WorkbenchWindow
 			closeAllPages();
 			actionBuilder.dispose();
 			workbench.fireWindowClosed(this);
-		} finally {
-			return super.close();
+		} catch (Throwable t) {			
 		}
+		
+		return super.close();
 	}
 	/**
 	 * @see IWorkbenchWindow

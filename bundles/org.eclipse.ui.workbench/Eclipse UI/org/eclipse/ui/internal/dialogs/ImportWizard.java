@@ -18,10 +18,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * The import wizard allows the user to choose which nested import wizard to run.
@@ -82,8 +86,8 @@ public class ImportWizard extends Wizard {
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
 		first.saveWidgetValues();
-		RoleManager.getInstance().enableActivities(
-			first.getSelectedNode().getWizard().getClass().getName());
+        WorkbenchActivityHelper.enableActivities(
+                first.getSelectedNode().getWizard().getClass().getName());
 		return true;
 	}
 }

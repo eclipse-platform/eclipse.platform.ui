@@ -19,11 +19,11 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.ICategory;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.roles.IDERoleManager;
 
 public class ViewContentProvider implements ITreeContentProvider {
 	/**
@@ -51,7 +51,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 ArrayList filtered = new ArrayList();
                 Collection activeObjects = objectManager.getActiveObjects();                
     			for (int i = 0; i < categories.length; i++) {
-                    if (activeObjects.contains(IDERoleManager.createViewCategoryIdKey(categories[i].getId()))) {
+                    if (activeObjects.contains(WorkbenchActivityHelper.createViewCategoryIdKey(categories[i].getId()))) {
                         filtered.add(categories[i]);
                     }
     			}

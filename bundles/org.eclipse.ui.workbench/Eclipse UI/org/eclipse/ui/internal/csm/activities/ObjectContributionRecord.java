@@ -8,9 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.csm.activities;
 
-import org.eclipse.ui.activities.*;
+import org.eclipse.ui.activities.IObjectContributionRecord;
 
 /**
  * Class that represents an extension contribution from a given plugin with a 

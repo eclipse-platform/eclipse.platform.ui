@@ -8,11 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.csm.activities;
 
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
+
+import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.IActivity;
 
 /**
  * @since 3.0
@@ -37,6 +40,12 @@ public class ActivityLabelProvider extends LabelProvider {
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
     public String getText(Object element) {
-        return ((Activity)element).getName();
+        IActivity activity = ((IActivity)element);
+        try {
+            return activity.getName();
+        }
+        catch (ActivityNotDefinedException e) {
+            return activity.getId();
+        }
     }
 }

@@ -23,8 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
-import org.eclipse.ui.internal.actions.RoleConfigurationAction;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.actions.ActivityEnablementAction;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -156,7 +155,7 @@ public class WorkbenchActionBuilder {
 
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
-    private RoleConfigurationAction roleManagerAction;
+    private ActivityEnablementAction roleManagerAction;
 
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -1070,10 +1069,10 @@ public class WorkbenchActionBuilder {
 		getWindow().registerGlobalAction(projectPropertyDialogAction);
 				
 		//Only add the role manager action if we are using role support
-        if(RoleManager.getInstance().isFiltering()){
-        	roleManagerAction = new RoleConfigurationAction();
+        //if(RoleManager.getInstance().isFiltering()){
+        	roleManagerAction = new ActivityEnablementAction();
         	getWindow().registerGlobalAction(roleManagerAction);
-        }
+        //}
 	}
 
 	/**
