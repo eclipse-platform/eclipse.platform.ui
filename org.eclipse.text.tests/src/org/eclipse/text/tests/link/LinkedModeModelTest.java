@@ -615,18 +615,18 @@ public class LinkedModeModelTest extends TestCase {
 		"	MARGARETE:\n" + 
 		"	Nun sag, wie hast du\'s mit der Religion?\n" + 
 		"	Du bist ein herzlich guter Mann,\n" + 
-		"	Allein ich glaub, du hältst nicht viel davon.\n" + 
+		"	Allein ich glaub, du haltst nicht viel davon.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Laß das, mein Kind! Du fühlst, ich bin dir gut;\n" + 
-		"	Für meine Lieben ließ\' ich Leib und Blut,\n" + 
-		"	Will niemand sein Gefühl und seine Kirche rauben.\n" + 
+		"	Las das, mein Kind! Du fuhlst, ich bin dir gut;\n" + 
+		"	Fur meine Lieben lies\' ich Leib und Blut,\n" + 
+		"	Will niemand sein Gefuhl und seine Kirche rauben.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Das ist nicht recht, man muß dran glauben.\n" + 
+		"	Das ist nicht recht, man mus dran glauben.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Muß man?\n" + 
+		"	Mus man?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Ach! wenn ich etwas auf dich konnte! Du ehrst auch nicht die heil\'gen Sakramente.\n" + 
@@ -642,46 +642,46 @@ public class LinkedModeModelTest extends TestCase {
 		"	Mein Liebchen, wer darf sagen: Ich glaub an Gott?\n" + 
 		"	Magst Priester oder Weise fragen,\n" + 
 		"	Und ihre Antwort scheint nur Spott\n" + 
-		"	Über den Frager zu sein.\n" + 
+		"	uber den Frager zu sein.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	So glaubst du nicht?\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Mißhör mich nicht, du holdes Angesicht!\n" + 
+		"	Mishor mich nicht, du holdes Angesicht!\n" + 
 		"	Wer darf ihn nennen?\n" + 
 		"	Und wer bekennen:\n" + 
-		"	»Ich glaub ihn!«?\n" + 
+		"	\"Ich glaub ihn!\"?\n" + 
 		"	Wer empfinden,\n" + 
 		"	Und sich unterwinden\n" + 
-		"	Zu sagen: »Ich glaub ihn nicht!«?\n" + 
+		"	Zu sagen: \"Ich glaub ihn nicht!\"?\n" + 
 		"	Der Allumfasser,\n" + 
 		"	Der Allerhalter,\n" + 
-		"	Faßt und erhält er nicht\n" + 
+		"	Fast und erhalt er nicht\n" + 
 		"	Dich, mich, sich selbst?\n" + 
-		"	Wölbt sich der Himmel nicht da droben?\n" + 
+		"	Wolbt sich der Himmel nicht da droben?\n" + 
 		"	Liegt die Erde nicht hier unten fest?\n" + 
 		"	Und steigen freundlich blickend\n" + 
 		"	Ewige Sterne nicht herauf?\n" + 
 		"	Schau ich nicht Aug in Auge dir,\n" + 
-		"	Und drängt nicht alles\n" + 
+		"	Und drangt nicht alles\n" + 
 		"	Nach Haupt und Herzen dir,\n" + 
 		"	Und webt in ewigem Geheimnis\n" + 
 		"	Unsichtbar sichtbar neben dir?\n" + 
-		"	Erfüll davon dein Herz, so groß es ist,\n" + 
-		"	Und wenn du ganz in dem Gefühle selig bist,\n" + 
+		"	Erfull davon dein Herz, so gros es ist,\n" + 
+		"	Und wenn du ganz in dem Gefuhle selig bist,\n" + 
 		"	Nenn es dann, wie du willst,\n" + 
-		"	Nenn\'s Glück! Herz! Liebe! Gott\n" + 
+		"	Nenn\'s Gluck! Herz! Liebe! Gott\n" + 
 		"	Ich habe keinen Namen\n" + 
-		"	Dafür! Gefühl ist alles;\n" + 
+		"	Dafur! Gefuhl ist alles;\n" + 
 		"	Name ist Schall und Rauch,\n" + 
 		"	Umnebelnd Himmelsglut.\n";
 	
 	private static final String GARTEN2=
 		"	MARGARETE:\n" + 
-		"	Das ist alles recht schön und gut;\n" + 
-		"	Ungefähr sagt das der Pfarrer auch,\n" + 
-		"	Nur mit ein bißchen andern Worten.\n" + 
+		"	Das ist alles recht schon und gut;\n" + 
+		"	Ungefahr sagt das der Pfarrer auch,\n" + 
+		"	Nur mit ein bischen andern Worten.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
 		"	Es sagen\'s allerorten\n" + 
@@ -690,7 +690,7 @@ public class LinkedModeModelTest extends TestCase {
 		"	Warum nicht ich in der meinen?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Wenn man\'s so hört, möcht\'s leidlich scheinen,\n" + 
+		"	Wenn man\'s so hort, mocht\'s leidlich scheinen,\n" + 
 		"	Steht aber doch immer schief darum;\n" + 
 		"	Denn du hast kein Christentum.\n" + 
 		"	 \n" + 
@@ -698,89 +698,89 @@ public class LinkedModeModelTest extends TestCase {
 		"	Liebs Kind!\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Es tut mir lange schon weh, Daß ich dich in der Gesellschaft seh.\n" + 
+		"	Es tut mir lange schon weh, Das ich dich in der Gesellschaft seh.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
 		"	Wieso?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Der Mensch, den du da bei dir hast, Ist mir in tiefer innrer Seele verhaßt;\n" + 
+		"	Der Mensch, den du da bei dir hast, Ist mir in tiefer innrer Seele verhast;\n" + 
 		"	Es hat mir in meinem Leben\n" + 
 		"	So nichts einen Stich ins Herz gegeben\n" + 
 		"	Als des Menschen widrig Gesicht.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Liebe Puppe, fürcht ihn nicht!\n" + 
+		"	Liebe Puppe, furcht ihn nicht!\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Seine Gegenwart bewegt mir das Blut.\n" + 
 		"	Ich bin sonst allen Menschen gut;\n" + 
 		"	Aber wie ich mich sehne, dich zu schauen,\n" + 
 		"	Hab ich vor dem Menschen ein heimlich Grauen,\n" + 
-		"	Und halt ihn für einen Schelm dazu!\n" + 
+		"	Und halt ihn fur einen Schelm dazu!\n" + 
 		"	Gott verzeih mir\'s, wenn ich ihm unrecht tu!\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Es muß auch solche Käuze geben.\n" + 
+		"	Es mus auch solche Kauze geben.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Wollte nicht mit seinesgleichen leben!\n" + 
-		"	Kommt er einmal zur Tür herein,\n" + 
-		"	Sieht er immer so spöttisch drein\n" + 
+		"	Kommt er einmal zur Tur herein,\n" + 
+		"	Sieht er immer so spottisch drein\n" + 
 		"	Und halb ergrimmt;\n" + 
-		"	Man sieht, daß er an nichts keinen Anteil nimmt;\n" + 
+		"	Man sieht, das er an nichts keinen Anteil nimmt;\n" + 
 		"	Es steht ihm an der Stirn geschrieben,\n" + 
-		"	Daß er nicht mag eine Seele lieben.\n" + 
+		"	Das er nicht mag eine Seele lieben.\n" + 
 		"	Mir wird\'s so wohl in deinem Arm,\n" + 
 		"	So frei, so hingegeben warm,\n" + 
-		"	Und seine Gegenwart schnürt mir das Innre zu.\n" + 
+		"	Und seine Gegenwart schnurt mir das Innre zu.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
 		"	Du ahnungsvoller Engel du!\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Das übermannt mich so sehr,\n" + 
-		"	Daß, wo er nur mag zu uns treten,\n" + 
+		"	Das ubermannt mich so sehr,\n" + 
+		"	Das, wo er nur mag zu uns treten,\n" + 
 		"	Mein ich sogar, ich liebte dich nicht mehr.\n" + 
-		"	Auch, wenn er da ist, könnt ich nimmer beten,\n" + 
-		"	Und das frißt mir ins Herz hinein;\n" + 
-		"	Dir, Heinrich, muß es auch so sein.\n" + 
+		"	Auch, wenn er da ist, konnt ich nimmer beten,\n" + 
+		"	Und das frist mir ins Herz hinein;\n" + 
+		"	Dir, Heinrich, mus es auch so sein.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
 		"	Du hast nun die Antipathie!\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
-		"	Ich muß nun fort.\n" + 
+		"	Ich mus nun fort.\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Ach kann ich nie Ein Stündchen ruhig dir am Busen hängen\n" + 
-		"	Und Brust an Brust und Seel in Seele drängen?\n" + 
+		"	Ach kann ich nie Ein Stundchen ruhig dir am Busen hangen\n" + 
+		"	Und Brust an Brust und Seel in Seele drangen?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Ach wenn ich nur alleine schlief!\n" + 
-		"	Ich ließ dir gern heut nacht den Riegel offen;\n" + 
-		"	Doch meine Mutter schläft nicht tief,\n" + 
-		"	Und würden wir von ihr betroffen,\n" + 
-		"	Ich wär gleich auf der Stelle tot!\n" + 
+		"	Ich lies dir gern heut nacht den Riegel offen;\n" + 
+		"	Doch meine Mutter schlaft nicht tief,\n" + 
+		"	Und wurden wir von ihr betroffen,\n" + 
+		"	Ich war gleich auf der Stelle tot!\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
 		"	Du Engel, das hat keine Not.\n" + 
-		"	Hier ist ein Fläschchen!\n" + 
-		"	Drei Tropfen nur In ihren Trank umhüllen\n" + 
-		"	Mit tiefem Schlaf gefällig die Natur.\n" + 
+		"	Hier ist ein Flaschchen!\n" + 
+		"	Drei Tropfen nur In ihren Trank umhullen\n" + 
+		"	Mit tiefem Schlaf gefallig die Natur.\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Was tu ich nicht um deinetwillen?\n" + 
 		"	Es wird ihr hoffentlich nicht schaden!\n" + 
 		"	 \n" + 
 		"	FAUST:\n" + 
-		"	Würd ich sonst, Liebchen, dir es raten?\n" + 
+		"	Wurd ich sonst, Liebchen, dir es raten?\n" + 
 		"	 \n" + 
 		"	MARGARETE:\n" + 
 		"	Seh ich dich, bester Mann, nur an,\n" + 
-		"	Weiß nicht, was mich nach deinem Willen treibt,\n" + 
-		"	Ich habe schon so viel für dich getan,\n" + 
-		"	Daß mir zu tun fast nichts mehr übrigbleibt.";
+		"	Weis nicht, was mich nach deinem Willen treibt,\n" + 
+		"	Ich habe schon so viel fur dich getan,\n" + 
+		"	Das mir zu tun fast nichts mehr ubrigbleibt.";
 
 	private class LinkedAdapter implements ILinkedModeListener {
 		public void left(LinkedModeModel environment, int flags) {}
