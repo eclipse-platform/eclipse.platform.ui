@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ui.IPrinting;
 
 /**
  * SWT based implementation of <code>ITextViewer</code>. Once the viewer and its SWT control
@@ -59,7 +60,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @see ITextViewer
  */  
-public class TextViewer extends Viewer implements ITextViewer, ITextOperationTarget {
+public class TextViewer extends Viewer implements ITextViewer, ITextOperationTarget, IPrinting {
 	
 	
 	public static boolean TRACE_ERRORS= false;
@@ -584,7 +585,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			case SELECT_ALL:
 				return true;
 			case PRINT:
-				return true;
+				return isPrintable();
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
 				return isEditable() && fIndentChars != null && isBlockSelected();
@@ -1391,6 +1392,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		return false;
 	}
+	/*
+	 * @see IPrinting#isPrintable
+	 */
+	public boolean isPrintable() {
+		if (fTextWidget == null)
+			return false;
+		return true;
+	}
+	
 	/*
 	 * @see ITextViewer#isEditable
 	 */
