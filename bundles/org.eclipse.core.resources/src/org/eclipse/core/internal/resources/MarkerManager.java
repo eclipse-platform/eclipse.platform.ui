@@ -263,7 +263,7 @@ public long getChangeId() {
  * Returns the table of marker deltas, keyed by path.
  * Returns null if there are no deltas.
  *
- * @return Hashtable of IPath to IMarkerDelta[]
+ * @return Hashtable of IPath to MarkerSet
  */
 public Hashtable getMarkerDeltas() {
 	return markerDeltas;
