@@ -30,8 +30,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -47,12 +45,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -71,7 +69,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -122,28 +119,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private IDEExceptionHandler exceptionHandler = null;
 	
 	/**
-	 * Tracks whether we were autobuilding.
-	 */
-	private boolean autoBuild;
-
-	/**
 	 * Contains the workspace location if the -showlocation command line
 	 * argument is specified, or <code>null</code> if not specified.
 	 */
 	private String workspaceLocation = null;
 
-	/**
-	 * Set of versioned feature ids from previous session; <code>null</code>
-	 * if uninitialized. Element type: <code>String</code>
-	 */
-	private Set previousFeatures = null;
-	
-	/**
-	 * Set of versioned feature ids from currrent session; <code>null</code>
-	 * if uninitialized. Element type: <code>String</code>
-	 */
-	private Set currentFeatures = null;
-	
 	/**
 	 * Ordered set of versioned feature ids new for this session; <code>null</code>
 	 * if uninitialized. Element type: <code>String</code>
@@ -232,8 +212,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
 	public void preStartup() {
-		disableAutoBuild();
-		
 		// collect the welcome perspectives of the new installed features
 		initializeFeatureSets();
 		Set s = getNewlyAddedFeatures();
@@ -254,7 +232,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	public void postStartup() {
 		refreshFromLocal();
-		enableAutoBuild();
 				
 		if (!openIntro()) { // only try to open the editors if there is no intro in the system
 			try {
@@ -326,7 +303,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				IDEWorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
 				false);
 
-			if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
+			if (dlg.getReturnCode() == Window.OK) {
 				store.setValue(
 					IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
 					!dlg.getToggleState());
@@ -358,11 +335,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// hook up the listeners to update the window title
 		windowConfigurer.getWindow().addPageListener(new IPageListener () {
 			public void pageActivated(IWorkbenchPage page) {
+			    // do nothing
 			}
 			public void pageClosed(IWorkbenchPage page) {
 				updateTitle(page.getWorkbenchWindow());
 			}
 			public void pageOpened(IWorkbenchPage page) {
+			    // do nothing
 			}
 		});
 		windowConfigurer.getWindow().addPerspectiveListener(new IPerspectiveListener() {
@@ -370,6 +349,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				updateTitle(page.getWorkbenchWindow());
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+			    // do nothing
 			}
 		});
 		windowConfigurer.getWindow().getPartService().addPartListener(new IPartListener2() {
@@ -384,16 +364,22 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			}
 			public void partClosed(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 			public void partDeactivated(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 			public void partOpened(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 			public void partHidden(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 			public void partVisible(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 			public void partInputChanged(IWorkbenchPartReference ref) {
+			    // do nothing
 			}
 		});
 	}
@@ -502,66 +488,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return null;
 	}
 	
-	/**
-	 * Temporarily disables auto build.
-	 */
-	private void disableAutoBuild() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceDescription description = workspace.getDescription();
-		
-		// record setting of flag for future reference
-		autoBuild = description.isAutoBuilding();
-		if (autoBuild) {
-			description.setAutoBuilding(false);
-			try {
-				workspace.setDescription(description);
-			} catch (CoreException exception) { 
-				MessageDialog.openError(
-					null, 
-					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
-					IDEWorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
-			}
-		}
-	}	
-
-	/**
-	 * Restore auto builds if temporarily disabled.
-	 * Assumes that workbench windows have already been restored.
-	 * <p>
-	 * Use a WorkspaceModifyOperation to trigger an immediate build.
-	 * See bug 6091.
-	 * </p>
-	 */
-	private void enableAutoBuild() {
-		if (autoBuild) {
-			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-			Shell shell = windows[windows.length - 1].getShell();				
-			try {
-				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-					protected void execute(IProgressMonitor monitor) throws CoreException {
-						monitor.setTaskName(IDEWorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
-
-						IWorkspace workspace = ResourcesPlugin.getWorkspace();
-						IWorkspaceDescription description = workspace.getDescription();
-						description.setAutoBuilding(true);
-						workspace.setDescription(description);
-					}
-				};
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (window != null)
-					window.run(true, true, op);
-				else
-					new ProgressMonitorDialog(shell).run(true, true, op);
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException exception) {
-				MessageDialog.openError(
-					shell, 
-					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
-					IDEWorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
-			}
-		}
-	}
-
 	private void refreshFromLocal() {
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
@@ -793,26 +719,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 	
 	/**
-	 * Returns the set of versioned feature ids from previous session.
-	 * 
-	 * @return set of versioned feature ids (element type: <code>String</code>)
-	 */
-	private Set getPreviousFeatures() {
-		Assert.isNotNull(previousFeatures);
-		return previousFeatures;
-	}
-	
-	/**
-	 * Returns the set of versioned feature ids from current session.
-	 * 
-	 * @return set of versioned feature ids (element type: <code>String</code>)
-	 */
-	private Set getCurrentFeatures() {
-		Assert.isNotNull(currentFeatures);
-		return currentFeatures;
-	}
-	
-	/**
 	 * Returns the ordered set of versioned feature ids new for this session.
 	 * 
 	 * @return ordered set of versioned feature ids (element type: <code>String</code>)
@@ -826,12 +732,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Initializes the old, current, and newly added features.
 	 */
 	private void initializeFeatureSets() {
-		Assert.isTrue(currentFeatures == null);
-		
 		// retrieve list of installed feature from last session	
 		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		String[] previousFeaturesArray = settings.getArray(INSTALLED_FEATURES);
-		previousFeatures = null;
+		Set previousFeatures = null;
 		if (previousFeaturesArray != null) {
 			previousFeatures = new HashSet(Arrays.asList(previousFeaturesArray));
 		} else {
@@ -839,7 +743,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 
 		// store list of installed features for next session
-		currentFeatures = computeFeatureSet();
+		Set currentFeatures = computeFeatureSet();
 		String[] currentFeaturesArray = new String[currentFeatures.size()];
 		currentFeatures.toArray(currentFeaturesArray);
 		settings.put(INSTALLED_FEATURES, currentFeaturesArray);
@@ -1095,6 +999,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			URL URL_BASIC = Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getDescriptor().getInstallURL();
 			url = new URL(URL_BASIC, path);
 		} catch (MalformedURLException e) {
+		    // do nothing
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		configurer.declareImage(symbolicName, desc, shared);
