@@ -564,4 +564,20 @@ public abstract class PreferencePage
 		return messageComposite;
 	}
 
+	/**
+	 * Returns the applyButton.
+	 * @return Button
+	 */
+	protected Button getApplyButton() {
+		return applyButton;
+	}
+
+	/**
+	 * Returns the defaultsButton.
+	 * @return Button
+	 */
+		protected Button getDefaultsButton() {
+		return defaultsButton;
+	}
+
 }
