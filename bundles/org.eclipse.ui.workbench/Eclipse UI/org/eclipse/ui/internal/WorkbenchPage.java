@@ -704,8 +704,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		if (view != null) {
 			if (activate)
 				activate(view);
-			else
-				bringToTop(view);
 			return view;
 		}
 
@@ -715,8 +713,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 			zoomOutIfNecessary(view);
 			if (activate)
 				activate(view);
-			else
-				bringToTop(view);
 			window.firePerspectiveChanged(
 				this,
 				getPerspective(),
@@ -2786,14 +2782,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		return showView(viewID, true);
 	}
 
-	/*
-	 * NOTE: Making showView(string, boolean) public instead of being private,
-	 * so debug team can test out showing views on context changes.
-	 */
 	/**
 	 * See IWorkbenchPage.
 	 */
-	public IViewPart showView(final String viewID, final boolean activate)
+	private IViewPart showView(final String viewID, final boolean activate)
 		throws PartInitException {
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
@@ -3343,4 +3335,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		}
 		return new IViewPart [] {part};
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#createView(java.lang.String)
+	 */
+	public IViewPart createView(String viewId) throws PartInitException {		
+		return showView(viewId, false);		
+	}	
 }
