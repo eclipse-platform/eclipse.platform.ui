@@ -536,6 +536,8 @@ private void grayUpdateHierarchy(Object treeElement) {
 public void initialCheckListItem(Object element) {
 	Object parent = treeContentProvider.getParent(element);
 	selectAndReveal(parent);
+	//Check the element in the viewer as if it had been manually checked
+	listViewer.setChecked(element,true);
 	//As this is not done from the UI then set the box for updating from the selection to false 
 	listItemChecked(element, true, false);
 	grayUpdateHierarchy(parent);
