@@ -20,6 +20,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -34,6 +35,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -54,6 +56,7 @@ public class RepositoriesView extends RemoteViewPart {
 	private Action newAction;
 	private Action newAnonAction;
 	private PropertyDialogAction propertiesAction;
+	private RemoveRootAction removeRootAction;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -139,7 +142,7 @@ public class RepositoriesView extends RemoteViewPart {
 				propertiesAction.setEnabled(enabled);
 			}
 		});
-
+		removeRootAction = new RemoveRootAction(viewer.getControl().getShell());
 		super.contributeActions();
 	}
 	
@@ -167,6 +170,9 @@ public class RepositoriesView extends RemoteViewPart {
 		sub.add(newAction);
 		if (newAnonAction != null)
 			sub.add(newAnonAction);
+		manager.add(removeRootAction);
+		IActionBars bars = getViewSite().getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
 	}
 	
 	/*
@@ -191,6 +197,26 @@ public class RepositoriesView extends RemoteViewPart {
 		root = new AllRootsElement();
 	}
 
+	protected void initializeListeners() {
+		super.initializeListeners();
+		viewer.addSelectionChangedListener(removeRootAction);
+		viewer.getControl().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				handleKeyPressed(event);
+			}
+			public void keyReleased(KeyEvent event) {
+				handleKeyReleased(event);
+			}
+		});
+	}
+	public void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			removeRootAction.run();
+		}
+	}
+	protected void handleKeyReleased(KeyEvent event) {
+	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#getTreeInput()
 	 */

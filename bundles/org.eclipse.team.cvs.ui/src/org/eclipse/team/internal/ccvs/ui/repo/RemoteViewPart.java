@@ -58,7 +58,7 @@ import org.eclipse.ui.part.ViewPart;
 public abstract class RemoteViewPart extends ViewPart implements ISelectionListener {
 	
 	// The tree viewer
-	private TreeViewer viewer;
+	protected TreeViewer viewer;
 
 	// Drill down adapter
 	private DrillDownAdapter drillPart;
@@ -115,7 +115,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		
 		contributeActions();
 
-		initializeSelectionListeners();
+		initializeListeners();
 
 		// F1 Help
 		String helpID = getHelpContextId();
@@ -166,7 +166,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		};
 	}
 
-	protected void initializeSelectionListeners() {
+	protected void initializeListeners() {
 		// listen for selection changes in the repo view
 		getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(this);
 	}

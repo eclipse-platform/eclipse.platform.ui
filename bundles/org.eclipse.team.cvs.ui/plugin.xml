@@ -500,14 +500,6 @@
                id="org.eclipse.team.ccvs.ui.copyNames">
          </action>
          <action
-               label="%RemoveRootAction.label"
-               tooltip="%RemoveRootAction.tooltip"
-               menubarPath="miscGroup"
-               class="org.eclipse.team.internal.ccvs.ui.repo.RemoveRootAction"
-               helpContextId="org.eclipse.team.cvs.ui.remove_root_action_context"
-               id="org.eclipse.team.ccvs.ui.removeRoot">
-         </action>
-         <action
                label="%RefreshTagsAction.label"
                icon="icons/full/clcl16/newstream_wiz.gif"
                tooltip="%RefreshTagsAction.tooltip"
