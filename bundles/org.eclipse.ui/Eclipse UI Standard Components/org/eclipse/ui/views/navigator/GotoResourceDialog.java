@@ -91,6 +91,10 @@ import org.eclipse.ui.help.*;
 				 		resourceNames.remove(itemIndex[0],itemCount[0] -1);
 			 			resourceNames.setRedraw(true);
 			 		}
+			 		// If no resources, remove remaining folder entries
+			 		if(resourceNames.getItemCount() == 0) {
+			 			folderNames.removeAll();
+			 		}
 				}
 			});
 		}
