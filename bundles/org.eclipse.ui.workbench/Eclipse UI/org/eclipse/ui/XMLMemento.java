@@ -173,7 +173,7 @@ public final class XMLMemento implements IMemento {
 	 */
 	public IMemento createChild(String type, String id) {
 		Element child = factory.createElement(type);
-		child.setAttribute(TAG_ID, id);
+		child.setAttribute(TAG_ID, id == null ? "" : id); //$NON-NLS-1$
 		element.appendChild(child);
 		return new XMLMemento(factory, child);
 	}

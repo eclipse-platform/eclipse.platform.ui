@@ -357,14 +357,15 @@ public void save(String fileName) throws IOException {
 private void save(Document document,Node parent) {
 	Element root = document.createElement(TAG_SECTION);
 	parent.appendChild(root);
-	root.setAttribute(TAG_NAME, name);
+	root.setAttribute(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
 	
 	for(Iterator i = items.keySet().iterator();i.hasNext();) {
 		String key = (String)i.next();
 		Element child = document.createElement(TAG_ITEM);
 		root.appendChild(child);
 		child.setAttribute(TAG_KEY, key);
-		child.setAttribute(TAG_VALUE, (String)items.get(key));	
+		String string = (String)items.get(key);
+        child.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
 	}
 
 	for(Iterator i = arrayItems.keySet().iterator();i.hasNext();) {
@@ -376,7 +377,8 @@ private void save(Document document,Node parent) {
 		for (int index = 0; index < value.length; index++){
 			Element c = document.createElement(TAG_ITEM);
 			child.appendChild(c);
-			c.setAttribute(TAG_VALUE, value[index]);
+			String string = value[index];
+            c.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
 		}	
 	}
 	for(Iterator i = sections.values().iterator();i.hasNext();) {
