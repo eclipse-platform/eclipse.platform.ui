@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.jobs.Job;
  * Tests the implemented get/set methods of the abstract class Job
  */
 public class JobTest extends TestCase {
-	private Job shortJob;
-	private Job longJob;
+	protected Job shortJob;
+	protected Job longJob;
 	
 	public static Test suite() {
 		return new TestSuite(JobTest.class);
@@ -115,10 +115,50 @@ public class JobTest extends TestCase {
 		assertTrue("1.1", shortJob.getThread() == t);
 		
 		shortJob.setThread(new Thread());
-		assertTrue("1.2", shortJob.getThread() instanceof Thread);
+		assertTrue("1.2", shortJob.getThread() != t);
 		
 		shortJob.setThread(null);
 		assertTrue("1.3", shortJob.getThread() == null);
+	}
+	public void testJoin() {
+		longJob.schedule(100000);
+		//create a thread that will join the test job
+		final int[] status = new int[1];
+		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = StatusChecker.STATUS_START;
+				try {
+					longJob.join();
+				} catch (InterruptedException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = StatusChecker.STATUS_DONE;
+			}
+		});
+		t.start();
+		StatusChecker.waitForStatus(status, StatusChecker.STATUS_START);
+		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		//putting the job to sleep should not affect the join call
+		longJob.sleep();
+		//give a chance for the sleep to take effect
+		sleep(100);
+		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		//similarly waking the job up should not affect the join
+		longJob.wakeUp(100000);
+		sleep(100);
+		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		
+		//finally canceling the job will cause the join to return
+		longJob.cancel();
+		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+	}
+
+	private void sleep(long duration) {
+		try {
+			Thread.sleep(duration);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	public void testIsSystem() {
