@@ -366,8 +366,10 @@ private void queryNewResourceNameInline(final IResource resource) {
 public void run() {
 
 	if (this.navigatorTree == null) {
-		IResource currentResource =
-			(IResource) getStructuredSelection().getFirstElement();
+		List resources = getSelectedResources();
+		if (resources.size() == 0) return;
+		IResource currentResource = (IResource) resources.get(0);
+		if (!currentResource.exists()) return;
 		//Do a quick read only and null check
 		if (!checkReadOnlyAndNull(currentResource))
 			return;
@@ -450,6 +452,10 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if (resources.size() != 1)
 		return false;
 
+	IResource currentResource = (IResource) resources.get(0);
+	if (!currentResource.exists()) 
+		return false;
+	
 	return true;
 }
 public void setTextActionHandler(TextActionHandler actionHandler){
