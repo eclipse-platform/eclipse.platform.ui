@@ -8,23 +8,23 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <meta name=ProgId content=Word.Document>
 <meta name=Generator content="Microsoft Word 9">
 <meta name=Originator content="Microsoft Word 9">
-<link rel=File-List href="./rplugman_files/filelist.xml">
+<link rel=File-List href="./plugin_manifest_files/filelist.xml">
 <title>Plug-in manifest</title>
 <!--[if gte mso 9]><xml>
  <o:DocumentProperties>
   <o:Author>OTI Employee</o:Author>
   <o:LastAuthor>Dwilson</o:LastAuthor>
-  <o:Revision>17</o:Revision>
-  <o:TotalTime>113</o:TotalTime>
+  <o:Revision>18</o:Revision>
+  <o:TotalTime>115</o:TotalTime>
   <o:Created>2002-02-14T21:02:00Z</o:Created>
-  <o:LastSaved>2002-03-26T20:31:00Z</o:LastSaved>
+  <o:LastSaved>2002-06-20T20:33:00Z</o:LastSaved>
   <o:Pages>4</o:Pages>
-  <o:Words>1745</o:Words>
-  <o:Characters>9949</o:Characters>
+  <o:Words>1773</o:Words>
+  <o:Characters>10109</o:Characters>
   <o:Company>Object Technology Int'l</o:Company>
-  <o:Lines>82</o:Lines>
-  <o:Paragraphs>19</o:Paragraphs>
-  <o:CharactersWithSpaces>12218</o:CharactersWithSpaces>
+  <o:Lines>84</o:Lines>
+  <o:Paragraphs>20</o:Paragraphs>
+  <o:CharactersWithSpaces>12414</o:CharactersWithSpaces>
   <o:Version>9.3821</o:Version>
  </o:DocumentProperties>
 </xml><![endif]--><!--[if gte mso 9]><xml>
@@ -207,13 +207,12 @@ ul
 <h1>IBM Eclipse Platform<br>
 Plug-in Manifest</h1>
 
-<p class=MsoNormal><span style='font-size:10.0pt'>Version 1.90 - Last revised
-March 26, 2002</span></p>
+<p class=MsoNormal><span style='font-size:10.0pt'>Version 2.0 - Last revised June
+20, 2002</span></p>
 
 <p>The manifest markup definitions below make use of various naming tokens and
-identifiers. To eliminate ambiguity, here are some production rules for these
-[are referenced in text below]. In general, all identifiers are case-sensitive.
-</p>
+identifiers. To eliminate ambiguity, here are some production rules for these [are
+referenced in text below]. In general, all identifiers are case-sensitive. </p>
 
 <pre>SimpleToken := sequence of characters from ('a-z','A-Z','0-9')&nbsp;</pre><pre>ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)&nbsp;</pre><pre>JavaClassName := ComposedToken&nbsp;</pre><pre>PlugInId := ComposedToken</pre><pre>PlugInPrereq := PlugInId | 'export' PlugInId&nbsp;</pre><pre>ExtensionId := SimpleToken&nbsp;</pre><pre>ExtensionPointId := SimpleToken&nbsp;</pre><pre>ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
 
@@ -247,7 +246,8 @@ extension points defined by other plug-ins, or introduced by this plug-in).
       appending additional name tokens separated by dot [.]). For example,
       provider ibm.com could define plug-in identifier com.ibm.db2</li>
   <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-      auto;mso-list:l2 level2 lfo3;tab-stops:list 1.0in'>[production rule: PlugInId]</li>
+      auto;mso-list:l2 level2 lfo3;tab-stops:list 1.0in'>[production rule:
+      PlugInId]</li>
  </ul>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
      mso-list:l2 level1 lfo3;tab-stops:list .5in'><b>version </b>- plug-in
@@ -303,14 +303,14 @@ following attributes: </p>
      mso-list:l0 level1 lfo6;tab-stops:list .5in'><b>version</b> - optional
      version specification</li>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-     mso-list:l0 level1 lfo6;tab-stops:list .5in'><b>match</b> - version matching
-     rule. Ignored if version attribute is not specified. Determines whether
-     the dependency is satisfied only with a plug-in<span style="mso-spacerun:
-     yes">&nbsp; </span>that has this exact<span style="mso-spacerun:
-     yes">&nbsp; </span>specified version, with a plug-in that has a service or
-     qualifier more recent than this one, with any compatible version
-     (including a more recent minor version of the plug-in) or with any more
-     recent version of this plug-in</li>
+     mso-list:l0 level1 lfo6;tab-stops:list .5in'><b>match</b> - version
+     matching rule. Ignored if version attribute is not specified. Determines
+     whether the dependency is satisfied only with a plug-in<span
+     style="mso-spacerun: yes">&nbsp; </span>that has this exact<span
+     style="mso-spacerun: yes">&nbsp; </span>specified version, with a plug-in
+     that has a service or qualifier more recent than this one, with any
+     compatible version (including a more recent minor version of the plug-in)
+     or with any more recent version of this plug-in</li>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
      mso-list:l0 level1 lfo6;tab-stops:list .5in'><b>export</b> - specifies
      whether the dependent plug-in classes are made visible (are (re)exported)
@@ -352,7 +352,11 @@ following attributes: </p>
      of type &#8216;code&#8217; accessing anything in this library will cause activation of
      the plug-in.<span style="mso-spacerun: yes">&nbsp; </span>Accessing a
      &#8216;resource&#8217; will not cause plug-in activation (a potential for significant
-     performance improvement).</li>
+     performance improvement).<span style="mso-spacerun: yes">&nbsp; </span>It
+     should be noted that specifying a library of type &#8216;code&#8217; allows it to
+     contain both code and resources.<span style="mso-spacerun: yes">&nbsp;
+     </span>But specifying a library of type &#8216;resource&#8217; assumes it will only be
+     used for resources.</li>
 </ul>
 
 <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Each
@@ -367,8 +371,8 @@ exported. The export rules are specified as a set of export masks. By default
      export mask. Valid values are:</li>
  <ul type=circle>
   <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-      auto;mso-list:l5 level2 lfo12;tab-stops:list 1.0in'><b>*</b> - indicates all
-      contents of library are exported (public)</li>
+      auto;mso-list:l5 level2 lfo12;tab-stops:list 1.0in'><b>*</b> - indicates
+      all contents of library are exported (public)</li>
  </ul>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
      mso-list:l5 level1 lfo12;tab-stops:list .5in'><b>package-name</b></li>
@@ -426,14 +430,14 @@ points. </p>
 <p class=MsoNormal style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>Actual
 extensions are configured into extension points (predefined, or newly declared
 in this plug-in) in the &lt;extension&gt; section. The configuration
-information is specified as well-formed XML contained between the
-&lt;extension&gt; and &lt;/extension&gt; tags. The platform does not specify
-the actual form of the configuration markup (other than requiring it to be
-well-formed XML). The markup is defined by the supplier of the plug-in that
-declared the extension point. The platform does not actually interpret the
-configuration markup. It simply passes the configuration information to the
-plug-in as part of the extension point processing (at the time the extension
-point logic queries all of its configured extensions). </p>
+information is specified as well-formed XML contained between the &lt;extension&gt;
+and &lt;/extension&gt; tags. The platform does not specify the actual form of
+the configuration markup (other than requiring it to be well-formed XML). The
+markup is defined by the supplier of the plug-in that declared the extension
+point. The platform does not actually interpret the configuration markup. It
+simply passes the configuration information to the plug-in as part of the
+extension point processing (at the time the extension point logic queries all
+of its configured extensions). </p>
 
 <pre>&lt;!ELEMENT extension ANY&gt;&nbsp;</pre><pre>&lt;!ATTLIST extension&nbsp;</pre><pre>&nbsp; point&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;</pre><pre>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;</pre><pre>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;</pre><pre>&gt;</pre>
 
@@ -442,9 +446,9 @@ point logic queries all of its configured extensions). </p>
 
 <ul type=disc>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-     mso-list:l4 level1 lfo18;tab-stops:list .5in'><b>point - </b>reference to an
-     extension point being configured. The extension point can be one defined
-     in this plug-in or another plug-in</li>
+     mso-list:l4 level1 lfo18;tab-stops:list .5in'><b>point - </b>reference to
+     an extension point being configured. The extension point can be one
+     defined in this plug-in or another plug-in</li>
  <ul type=circle>
   <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
       auto;mso-list:l4 level2 lfo18;tab-stops:list 1.0in'>[production rule:
@@ -500,10 +504,11 @@ attributes are as follows: </p>
       for naming collisions, the identifier should be derived from the id of
       the associated plug-in in addition to something which identifies the
       scope of this fragment.<span style="mso-spacerun: yes">&nbsp; </span>For
-      example, org.eclipse.core.runtime.nl1 could define a natural language
-      fragment for the org.eclipse.core.runtime plug-in</li>
+      example, org.eclipse.core.runtime.nl1 could define a natural language fragment
+      for the org.eclipse.core.runtime plug-in</li>
   <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-      auto;mso-list:l2 level2 lfo3;tab-stops:list 1.0in'>[production rule: PlugInId]</li>
+      auto;mso-list:l2 level2 lfo3;tab-stops:list 1.0in'>[production rule:
+      PlugInId]</li>
  </ul>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
      mso-list:l2 level1 lfo3;tab-stops:list .5in'><b>version </b>- fragment
@@ -523,10 +528,10 @@ attributes are as follows: </p>
  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
      mso-list:l2 level1 lfo3;tab-stops:list .5in'><b>match &#8211;</b><span
      style='mso-bidi-font-weight:bold'> the matching rule used to find an
-     associated plug-in using &lt;plugin-id&gt; and &lt;plugin-version&gt;.<span
-     style="mso-spacerun: yes">&nbsp; </span>See the definition of
-     &lt;match&gt; in the &lt;requires&gt; clause for complete details.</span><b
-     style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
+     associated plug-in using &lt;plugin-id&gt; and
+     &lt;plugin-version&gt;.<span style="mso-spacerun: yes">&nbsp; </span>See
+     the definition of &lt;match&gt; in the &lt;requires&gt; clause for
+     complete details.</span><b style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
 </ul>
 
 <p style='tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'><i><span
