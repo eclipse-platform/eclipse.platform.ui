@@ -109,8 +109,8 @@ public class CVSWorkspaceRoot {
 			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
 		} else if(resource.getType() == IResource.FILE) {
 			baseTree = remote;
-			ICVSRemoteResource remoteParent = CVSWorkspaceRoot.getRemoteResourceFor(resource.getParent());
-			remote = RemoteFile.getLatest((RemoteFolder)remoteParent, (ICVSFile)managed, tag, progress);
+			ICVSRepositoryLocation location = remote.getRepository();
+			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
 		} else {
 			ICVSRepositoryLocation location = remote.getRepository();
 			baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
@@ -125,8 +125,8 @@ public class CVSWorkspaceRoot {
 		if (remote == null) {
 			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
 		} else if(resource.getType() == IResource.FILE) {
-			ICVSRemoteResource remoteParent = CVSWorkspaceRoot.getRemoteResourceFor(resource.getParent());
-			remote = RemoteFile.getLatest((RemoteFolder)remoteParent, (ICVSFile)managed, tag, progress);
+			ICVSRepositoryLocation location = remote.getRepository();
+			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
 		} else {
 			ICVSRepositoryLocation location = remote.getRepository();
 			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		

@@ -154,6 +154,11 @@ public class RemoteFolderTreeBuilder {
  		return builder.buildTree(monitor);
 	}
 	
+	public static RemoteFile buildRemoteTree(CVSRepositoryLocation repository, ICVSFile file, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, file.getParent(), tag);
+ 		return builder.buildTree(file, monitor);
+	}
+	
 	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
 		
 		// Make sure that the cvs commands are not quiet during this operations
@@ -168,7 +173,7 @@ public class RemoteFolderTreeBuilder {
 			session.open(Policy.subMonitorFor(monitor, 10));
 			try {
 				Policy.checkCanceled(monitor);
-				fetchDelta(session, Policy.subMonitorFor(monitor, 50));
+				fetchDelta(session, Session.CURRENT_LOCAL_FOLDER, Policy.subMonitorFor(monitor, 50));
 				if (projectDoesNotExist) {
 					return null;
 				}
@@ -220,6 +225,62 @@ public class RemoteFolderTreeBuilder {
 			}
 			
 			return remoteRoot;
+			
+		} finally {
+			CVSProviderPlugin.getPlugin().setQuietness(quietness);
+			monitor.done();
+		}
+	}
+	
+	private RemoteFile buildTree(ICVSFile file, IProgressMonitor monitor) throws CVSException {
+		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+		try {
+			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+			
+			monitor.beginTask(null, 100);
+	
+			// Query the server to see if there is a delta available
+			Policy.checkCanceled(monitor);
+			Session session = new Session(repository, root, false);
+			session.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				Policy.checkCanceled(monitor);
+				fetchDelta(session, file.getName(), Policy.subMonitorFor(monitor, 50));
+				if (projectDoesNotExist) {
+					return null;
+				}
+			} finally {
+				session.close();
+			}
+			// Create a parent for the remote resource
+			remoteRoot =
+				new RemoteFolderTree(null, root.getName(), repository,
+					new Path(root.getFolderSyncInfo().getRepository()),
+					tagForRemoteFolder(root, tag));
+			// Create the remote resource (using the delta if there is one)
+			RemoteFile remoteFile;
+			Map deltas = (Map)fileDeltas.get(Path.EMPTY);
+			if (deltas == null || deltas.isEmpty()) {
+				remoteFile = new RemoteFile(remoteRoot, file.getSyncInfo());
+			} else {
+				DeltaNode d = (DeltaNode)deltas.get(file.getName());
+				remoteFile = new RemoteFile(remoteRoot, d.getSyncState(), file.getName(), tagForRemoteFolder(remoteRoot, tag));
+			}
+			// Add the resource to its parent
+			remoteRoot.setChildren(new ICVSRemoteResource[] {remoteFile});
+			// If there was a delta, ftech the new revision
+			if (!changedFiles.isEmpty()) {
+				// Add the remote folder to the remote folder lookup table (used to update file revisions)
+				remoteFolderTable.put(new Path(remoteRoot.getFolderSyncInfo().getRemoteLocation()), remoteRoot);
+				session = new Session(repository, remoteRoot, false);
+				session.open(Policy.subMonitorFor(monitor, 10));
+				try {
+					fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), Policy.subMonitorFor(monitor, 20));
+				} finally {
+					session.close();
+				}
+			}
+			return remoteFile;
 			
 		} finally {
 			CVSProviderPlugin.getPlugin().setQuietness(quietness);
@@ -426,7 +487,7 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * Returns the list of changed files
 	 */
-	private List fetchDelta(Session session, final IProgressMonitor monitor) throws CVSException {
+	private List fetchDelta(Session session, String argument, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
@@ -486,7 +547,7 @@ public class RemoteFolderTreeBuilder {
 		IStatus status = Command.UPDATE.execute(session,
 			new GlobalOption[] { Command.DO_NOT_CHANGE },
 			updateLocalOptions,
-			new String[] { Session.CURRENT_LOCAL_FOLDER },
+			new String[] { argument },
 			new UpdateListener(listener),
 			monitor);
 		return changedFiles;

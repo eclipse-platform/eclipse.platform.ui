@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
  * Concurrent Versions System (CVS) NT 1.11.1.1 (Build 27)
  * Concurrent Versions System (CVSNT) 1.11.1.3  (Build 57a) (client/server)
  */
-public class Version extends AbstractMessageCommand {
+public class Version extends RemoteCommand {
 
 	private static final String CVS_NT_PREFIX_1 = "Concurrent Versions System (CVS) NT "; //$NON-NLS-1$
 	private static final String CVS_NT_PREFIX_2 = "Concurrent Versions System (CVSNT) "; //$NON-NLS-1$

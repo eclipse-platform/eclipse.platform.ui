@@ -459,13 +459,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		if (parent == null) {
 			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", getName(), ancestor.getName())); //$NON-NLS-1$
 		}
-		// Append the receivers name to the parents path relative to the ancestor
-		String parentPath = parent.getRelativePath(ancestor);
-		if (parentPath.equals(Session.CURRENT_LOCAL_FOLDER) || parentPath.length() == 0) {
-			return getName();
-		} else {
-			return Util.appendPath(parentPath, getName());
-		}
+		return super.getRelativePath(ancestor);
 	}
 	
 	public ICVSRepositoryLocation getRepository() {

@@ -51,7 +51,9 @@ public class Util {
 	 * Append the prefix and suffix to form a valid CVS path.
 	 */
 	public static String appendPath(String prefix, String suffix) {
-		if (prefix.endsWith(Session.SERVER_SEPARATOR)) {
+		if (prefix.length() == 0 || prefix.equals(Session.CURRENT_LOCAL_FOLDER)) {
+			return suffix;
+		} else if (prefix.endsWith(Session.SERVER_SEPARATOR)) {
 			if (suffix.startsWith(Session.SERVER_SEPARATOR))
 				return prefix + suffix.substring(1);
 			else

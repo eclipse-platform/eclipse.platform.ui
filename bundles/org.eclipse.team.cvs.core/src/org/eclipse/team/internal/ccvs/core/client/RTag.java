@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
-public class RTag extends Command {
+public class RTag extends RemoteCommand {
 	/*** Local options: specific to tag ***/
 	public static final LocalOption CREATE_BRANCH = Tag.CREATE_BRANCH;
 
@@ -42,7 +47,6 @@ public class RTag extends Command {
 		}
 	}
 	
-	protected RTag() { }
 	protected String getRequestId() {
 		return "rtag"; //$NON-NLS-1$
 	}
@@ -50,17 +54,7 @@ public class RTag extends Command {
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
 		String[] arguments) throws CVSException {
 		if (arguments.length < 2) throw new IllegalArgumentException();
-		return new ICVSResource[0];
-	}
-
-	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
-		throws CVSException {
-		// do nothing
-	}
-	
-	protected void sendLocalWorkingDirectory(Session session) throws CVSException {
-		// do nothing
+		return super.computeWorkResources(session, localOptions, arguments);
 	}
 	
 	public IStatus execute(Session session, GlobalOption[] globalOptions,

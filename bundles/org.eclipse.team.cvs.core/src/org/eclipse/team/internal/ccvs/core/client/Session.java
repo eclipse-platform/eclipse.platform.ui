@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -897,6 +902,7 @@ public class Session {
 				in = new ProgressMonitorInputStream(in, size, TRANSFER_PROGRESS_INCREMENT, monitor) {
 					protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
 						if (bytesRead == 0) return;
+						Assert.isTrue(bytesRead <= bytesTotal);
 						monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
 							new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
 					}

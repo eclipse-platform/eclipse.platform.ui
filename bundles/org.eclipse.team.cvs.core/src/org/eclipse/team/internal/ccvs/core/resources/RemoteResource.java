@@ -42,6 +42,13 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	}
 
 	/*
+	 * @see ICVSResource#getRelativePath(ICVSFolder)
+	 */
+	public String getRelativePath(ICVSFolder ancestor) throws CVSException {
+		return Util.appendPath(parent.getRelativePath(ancestor), getName());
+	}
+	
+	/*
 	 * @see ICVSRemoteResource#getParent()
 	 */
 	public ICVSRemoteResource getRemoteParent() {

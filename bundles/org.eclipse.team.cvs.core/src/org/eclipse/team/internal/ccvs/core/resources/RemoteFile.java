@@ -53,6 +53,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -60,10 +61,10 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 
-	// Contents will be cahced to disk when this thrshold is exceeded
+	// Contents will be cached to disk when this thrshold is exceeded
 	private static final int CACHING_THRESHOLD = 32768;
 	
-	// cache for file contents received from the server
+	// buffer for file contents received from the server
 	private byte[] contents;
 	// cach the log entry for the remote file
 	private ILogEntry entry;
@@ -85,71 +86,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
-	}
-	
-	/**
-	 * Static method which creates a file as a single child of its parent.
-	 * This should only be used when one is only interested in the file alone.
-	 * 
-	 * The returned RemoteFile represents the latest remote revision corresponding to the local resource.
-	 * If the local resource does not have a base, then null is returned
-	 * even if the resource does exists remotely (e.g. created by another party).
-	 */
-	public static RemoteFile getLatest(RemoteFolder parent, ICVSFile managed, CVSTag tag, IProgressMonitor monitor) throws CVSException {
-		ResourceSyncInfo info = managed.getSyncInfo();
-		if ((info == null) || info.isAdded()) {
-			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
-			return null;
-		}
-		
-		// ensure that the entry line has the tag in it. Or else status will return
-		// the latest from the branch of the local resource.
-		if(tag!=null) {
-			MutableResourceSyncInfo newInfo = info.cloneMutable();
-			newInfo.setTag(tag);
-			info = newInfo;
-		}
-		
-		// initialize with new sync info from the local resource, this info will
-		// be updated when updateRevision is called.
-		RemoteFile file = new RemoteFile(parent, info);
-		
-		// use the contents of the file on disk so that the server can calculate the relative
-		// sync state. This is a trick to allow the server to calculate sync state for us.
-		InputStream is = managed.getContents();
-		file.setContents(is, ICVSFile.UPDATED, false, Policy.monitorFor(null));
-			
-		parent.setChildren(new ICVSRemoteResource[] {file});
-		if( ! file.updateRevision(tag, monitor)) {
-			// If updateRevision returns false then the resource no longer exists remotely
-			return null;
-		}
-		
-		// forget local contents. Remote contents will be fetched the next time
-		// the returned handle is used.
-		file.clearContents();
-		
-		// If the revision changed, clear the contents of the original revision in case contents where cached
-		if ( ! info.getRevision().equals(file.getRevision())) {
-			RemoteFile originalRevision = new RemoteFile(parent, info);
-			originalRevision.clearContents();
-		}
-		return file;
-	}
-	
-	/**
-	 * Forget the contents associated with this remote handle.
-	 */
-	public void clearContents() {
-		contents = null;
-		try {
-			File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-			if (ioFile.exists()) {
-				ioFile.delete();
-			}
-		} catch (IOException e) {
-			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
-		}
 	}
 		
 	/**
@@ -194,28 +130,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public InputStream getContents(IProgressMonitor monitor) throws CVSException {
 		if (contents == null) {
 			// First, check to see if there's a cached contents for the file
-			try {
-				try {
-					File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-					if (ioFile.exists()) {
-						return new BufferedInputStream(new FileInputStream(ioFile));
-					}
-				} catch (IOException e) {
-					// Try to purge the cache and continue
-					File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-					if (ioFile.exists()) {
-						ioFile.delete();
-					}
-				}
-			} catch (IOException e) {
-				// We will end up here if we couldn't read or delete the cache file
-				throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+			InputStream cached = getCachedContents();
+			if (cached != null) {
+				return cached;
 			}
 
+			// We need to fetch the contents from the server
 			monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
 			Session.run(getRepository(), parent, false, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
-					monitor.beginTask(null, 100);
 					IStatus status = Command.UPDATE.execute(
 						Command.NO_GLOBAL_OPTIONS,
 						new LocalOption[] { 
@@ -223,16 +146,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 							Update.IGNORE_LOCAL_CHANGES },
 						new ICVSResource[] { RemoteFile.this },
 						null,
-						Policy.subMonitorFor(monitor, 90));
-					if (status.getCode() != CVSStatus.SERVER_ERROR) {
-						try {
-							getLogEntry(Policy.subMonitorFor(monitor, 10));
-						} catch (CVSException e) {
-							// Ignore the status of the log entry fetch. 
-							// If it fails, the entry will still be null
-						}
-					}
-					monitor.done();
+						monitor);
 					if (status.getCode() == CVSStatus.SERVER_ERROR) {
 						throw new CVSServerException(status);
 					}
@@ -243,16 +157,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			// than we can assume that the remote file has no contents.
 			if (contents == null) {
 				// The above is true unless there is a cache file
-				try {
-					File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-					if (ioFile.exists()) {
-						return new BufferedInputStream(new FileInputStream(ioFile));
-					} else {
-						contents = new byte[0];
-					}
-				} catch (IOException e) {
-					// Something is wrong with the cached file so signal an error.
-					throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+				cached = getCachedContents();
+				if (cached != null) {
+					return cached;
+				} else {
+					contents = new byte[0];
 				}
 			}
 		}
@@ -339,29 +248,33 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		return file;
 	}
 	
-		/**
-	 * @see IManagedFile#getSize()
+	/**
+	 * @see ICVSFile#getSize()
 	 */
 	public long getSize() {
+		if (contents == null) {
+			try {
+				File ioFile = getCacheFile();
+				if (ioFile.exists()) {
+					return ioFile.length();
+				}
+			} catch (IOException e) {
+				// Try to purge the cache and continue
+				try {
+					clearCachedContents();
+				} catch (IOException e2) {
+				}
+				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			}
+		}
 		return contents == null ? 0 : contents.length;
 	}
 
 	/**
-	 * @see IManagedFile#getFileInfo()
+	 * @see ICVSFile#getSyncInfo()
 	 */
 	public ResourceSyncInfo getSyncInfo() {
 		return info;
-	}
- 	
-	/**
-	 * @see ICVSResource#getRelativePath(ICVSFolder)
-	 */
-	public String getRelativePath(ICVSFolder ancestor) throws CVSException {
-		String result = parent.getRelativePath(ancestor);
-		if (result.length() == 0)
-			return getName();
-		else
-			return result + Session.SERVER_SEPARATOR + getName();
 	}
 	
 	/**
@@ -407,13 +320,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public InputStream getContents() throws CVSException {
 		if (contents == null) {
 			// Check for cached contents for the file
-			try {
-				File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-				if (ioFile.exists()) {
-					return new BufferedInputStream(new FileInputStream(ioFile));
-				}
-			} catch (IOException e) {
-				throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+			InputStream cached = getCachedContents();
+			if (cached != null) {
+				return cached;
 			}
 		}
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
@@ -434,16 +343,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 							// Detect when the file is getting too big to keep in memory
 							// and switch to a caching strategy for the contents of the file
 							if (out == byteStream && byteStream.size() > CACHING_THRESHOLD) {
-								// Get the cache file to write to
-								File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-								if ( ! ioFile.getParentFile().exists()) {
-									ioFile.getParentFile().mkdirs();
-								}
 								// Switch streams
 								byteStream.close();
-								out = new BufferedOutputStream(new FileOutputStream(ioFile));
-								// Write what we've read so far
-								out.write(byteStream.toByteArray());
+								out = switchToCacheOutputStream(byteStream);
 								// Continue looping until the whole file is read
 							}
 						}
@@ -453,17 +355,16 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				} catch (IOException e) {
 					// Make sure we don't leave the cache file around as it may not have the right contents
 					if (byteStream != out) {
-						File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
-						if (ioFile.exists()) {
-							ioFile.delete();
-						}
+						clearCachedContents();
 					}
 					throw e;
 				}
 
-				// Set the contents if we didn't cahce them
+				// Set the contents if we didn't cache them to disk
 				if (out == byteStream) {
 					contents = byteStream.toByteArray();
+				} else {
+					contents = null;
 				}
 			} finally {
 				stream.close();
@@ -564,5 +465,52 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		path = path.append(parent.getRepositoryRelativePath());
 		path = path.append(getName() + ' ' + getRevision());
 		return path.toString();
+	}
+	
+	private File getCacheFile() throws IOException {
+		return CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+	}
+	
+	private void clearCachedContents() throws IOException {
+		try {
+			File ioFile =  getCacheFile();
+			if (ioFile.exists()) {
+				ioFile.delete();
+			}
+		} catch (IOException e) {
+			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+		}
+	}
+	
+	private InputStream getCachedContents() throws CVSException {
+		try {
+			try {
+				File ioFile = getCacheFile();
+				if (ioFile.exists()) {
+					return new BufferedInputStream(new FileInputStream(ioFile));
+				}
+			} catch (IOException e) {
+				// Try to purge the cache and continue
+				clearCachedContents();
+				throw e;
+			}
+		} catch (IOException e) {
+			// We will end up here if we couldn't read or delete the cache file
+			throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+		}
+		return null;
+	}
+		
+	private OutputStream switchToCacheOutputStream(ByteArrayOutputStream byteStream) throws IOException {
+		// Get the cache file and make sure it's parent exists
+		File ioFile = getCacheFile();
+		if ( ! ioFile.getParentFile().exists()) {
+			ioFile.getParentFile().mkdirs();
+		}
+		// Switch streams
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(ioFile));
+		// Write what we've read so far
+		out.write(byteStream.toByteArray());
+		return out;
 	}
 }
