@@ -159,6 +159,7 @@ class SearchAdapter extends MonitorAdapter {
 			findUpdates(candidates[i]);
 			backgroundProgress.worked(1);
 		}
+		searchInProgress = false;
 		monitor.done();
 		UpdateModel model = getModel();
 		asyncFireObjectChanged(this, P_REFRESH);
