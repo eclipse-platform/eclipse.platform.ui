@@ -343,7 +343,7 @@
     <!-- File System Provider bindings -->
 	<activity
 		name="%activity.team.examples.filesystem.name"
-		description="%activity.team.examples.filesystem.desc"
+		description="%activity.team.examples.filesystem.description"
 		id="org.eclipse.team.examples.filesystem">
 	</activity> 
 	   
@@ -370,7 +370,7 @@
     <!-- Pessimistic Provider bindings -->   
     <activity
 		name="%activity.team.examples.pessimistic.name"
-		description="%activity.team.examples.pessimistic.desc"
+		description="%activity.team.examples.pessimistic.description"
 		id="org.eclipse.team.examples.pessimistic">
 	</activity> 
 	   
