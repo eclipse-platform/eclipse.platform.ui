@@ -183,7 +183,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 		createMessageArea(composite);
 
-		fListViewer= new CheckboxTableViewer(composite, SWT.BORDER);
+		fListViewer= CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.heightHint= SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint= SIZING_SELECTION_WIDGET_WIDTH;
