@@ -24,11 +24,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -37,7 +35,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,8 +46,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
@@ -122,7 +117,7 @@ public class AntClasspathPage extends AntPage {
 	/**
 	 * Allows the user to enter a folder as a classpath.
 	 */
-	private void addFolder(ExternalToolsContentProvider contentProvider, String message) {
+	private void addFolder(TableViewer viewer, String message) {
 		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER);
 		if (lastUsedPath == null) {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
@@ -134,14 +129,15 @@ public class AntClasspathPage extends AntPage {
 		if (result != null) {
 			try {
 				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
-				contentProvider.add(url);
+				((ExternalToolsContentProvider)viewer.getContentProvider()).add(url);
 			} catch (MalformedURLException e) {
 			}
 		}
+		viewer.setSelection(viewer.getSelection());
 		fDialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER, result);
 	}
 	
-	private void addJars(ExternalToolsContentProvider contentProvider) {
+	private void addJars(TableViewer viewer) {
 		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
@@ -161,11 +157,11 @@ public class AntClasspathPage extends AntPage {
 			try {
 				IPath path= filterPath.append(jarName).makeAbsolute();	
 				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
-				contentProvider.add(url);
+				((ExternalToolsContentProvider)viewer.getContentProvider()).add(url);
 			} catch (MalformedURLException e) {
 			}
 		}
-		
+		viewer.setSelection(viewer.getSelection());
 		fDialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
 	}
 	
@@ -175,10 +171,10 @@ public class AntClasspathPage extends AntPage {
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case ADD_JARS_BUTTON :
-				addJars((ExternalToolsContentProvider)getTableViewer().getContentProvider());
+				addJars(getTableViewer());
 				break;
 			case ADD_FOLDER_BUTTON :
-				addFolder((ExternalToolsContentProvider)getTableViewer().getContentProvider(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+				addFolder(getTableViewer(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				break;
 			case UP_BUTTON :
 				handleMove(-1, getTableViewer());
@@ -190,10 +186,10 @@ public class AntClasspathPage extends AntPage {
 				remove();
 				break;
 			case ADD_USER_JARS_BUTTON :
-				addJars(userContentProvider);
+				addJars(userTableViewer);
 				break;
 			case ADD_USER_FOLDER_BUTTON :
-				addFolder(userContentProvider,AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+				addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				break;
 			case UP_USER_BUTTON :
 				handleMove(-1, userTableViewer);
@@ -273,11 +269,7 @@ public class AntClasspathPage extends AntPage {
 	 */
 	protected List getUserURLs() {
 		Object[] elements = userContentProvider.getElements(null);
-		List contents= new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			contents.add(elements[i]);
-		}
-		return contents;
+		return Arrays.asList(elements);
 	}
 	
 	/**
@@ -285,7 +277,11 @@ public class AntClasspathPage extends AntPage {
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		getTableViewer().setInput(Arrays.asList(prefs.getAntURLs()));
+		/*URL[] extensionURLs= prefs.getDefaultURLs();
+		List allURLs= new ArrayList();
+		allURLs.addAll(Arrays.asList(prefs.getAntURLs()));
+		allURLs.addAll(Arrays.asList(extensionURLs));*/
+		getTableViewer().setInput(prefs.getAntURLs());
 		userTableViewer.setInput(Arrays.asList(prefs.getCustomURLs()));
 		String antHomePath= prefs.getAntHome();
 		boolean enabled= antHomePath.length() > 0;
@@ -300,7 +296,7 @@ public class AntClasspathPage extends AntPage {
 					setAntHome(rootDir);
 				}
 			}
-			});
+		});
 		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
 		userTableSelectionChanged((IStructuredSelection)userTableViewer.getSelection());
 		getPreferencePage().setErrorMessage(null);
@@ -440,14 +436,10 @@ public class AntClasspathPage extends AntPage {
 		}
 	}
 			
-	private void userTableSelectionChanged(IStructuredSelection newSelection) {
-		IStructuredSelection selection = (IStructuredSelection)userTableViewer.getSelection();
+	private void userTableSelectionChanged(IStructuredSelection selection) {
 		ExternalToolsContentProvider contentProvider= (ExternalToolsContentProvider)userTableViewer.getContentProvider();
 		Object[] elements = contentProvider.getElements(null);
-		List files= new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			files.add(elements[i]);
-		}
+		List files = Arrays.asList(elements);
 
 		boolean notEmpty = !selection.isEmpty();
 		Iterator selected= selection.iterator();
@@ -490,8 +482,7 @@ public class AntClasspathPage extends AntPage {
 	/* (non-Javadoc)
 	 * Method declared on AntPage.
 	 */
-	protected void tableSelectionChanged(IStructuredSelection newSelection) {
-		IStructuredSelection selection = (IStructuredSelection)getTableViewer().getSelection();
+	protected void tableSelectionChanged(IStructuredSelection selection) {
 		List urls = getContents();
 		boolean notEmpty = !selection.isEmpty();
 		Iterator elements= selection.iterator();
@@ -541,103 +532,6 @@ public class AntClasspathPage extends AntPage {
 		viewer.setSelection(viewer.getSelection());
 	}
 
-	/**
-	 * Label provider for classpath elements
-	 */
-	private static final class AntClasspathLabelProvider extends LabelProvider implements ITableLabelProvider {
-		private static final String IMG_JAR_FILE = "icons/full/obj16/jar_l_obj.gif"; //$NON-NLS-1$;
-		private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
-
-		private Image classpathImage;
-		private Image folderImage;
-		private Image jarImage;
-	
-		/**
-		 * Creates an instance.
-		 */
-		public AntClasspathLabelProvider() {
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IBaseLabelProvider.
-		 */
-		public void dispose() {
-			// Folder image is shared, do not dispose.
-			folderImage = null;
-			if (jarImage != null) {
-				jarImage.dispose();
-				jarImage = null;
-			}
-			if (classpathImage != null) {
-				classpathImage.dispose();
-				classpathImage = null;
-			}
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			URL url = (URL) element;
-			if (url.getFile().endsWith("/")) //$NON-NLS-1$
-				return getFolderImage();
-			else
-				return getJarImage();
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			return ((URL) element).getFile();
-		}
-
-		private Image getFolderImage() {
-			if (folderImage == null)
-				folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			return folderImage;
-		}
-		
-		private Image getJarImage() {
-			if (jarImage == null) {
-				ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_JAR_FILE);
-				jarImage = desc.createImage();
-			}
-			return jarImage;
-		}
-		
-		private Image getClasspathImage() {
-			if (classpathImage == null) {
-				ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_CLASSPATH);
-				classpathImage = desc.createImage();
-			}
-			return classpathImage;
-		}
-	}
-	/**
-	 * Content provider that maintains a generic list of objects which
-	 * are shown in a table viewer.
-	 */
-	private static class AntClasspathContentProvider extends ExternalToolsContentProvider {
-		public void add(Object o) {
-			URL newURL= (URL)o;
-			Iterator itr= elements.iterator();
-			while (itr.hasNext()) {
-				URL url = (URL) itr.next();
-				if (url.sameFile(newURL)) {
-					return;
-				}
-			}
-			elements.add(o);
-			viewer.add(o);
-		}
-		
-		public void removeAll() {
-			viewer.remove(elements.toArray());
-			elements= new ArrayList(5);
-		}
-	}
-	
 	protected String getAntHome() {
 		if (antHomeButton.getSelection()) {
 			return antHome.getText();
