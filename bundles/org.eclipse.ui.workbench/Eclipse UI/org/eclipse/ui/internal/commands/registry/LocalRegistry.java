@@ -33,9 +33,9 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 	private final static int RANK_LOCAL = 1;
 	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 	
-	public static IMutableRegistry instance;
+	public static LocalRegistry instance;
 	
-	public static IMutableRegistry getInstance() {
+	public static LocalRegistry getInstance() {
 		if (instance == null)
 			instance = new LocalRegistry();
 	

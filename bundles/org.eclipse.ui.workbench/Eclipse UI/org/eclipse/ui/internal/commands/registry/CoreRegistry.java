@@ -217,9 +217,9 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 	}
 
-	private static IRegistry instance;
+	private static CoreRegistry instance;
 	
-	public static IRegistry getInstance() {
+	public static CoreRegistry getInstance() {
 		if (instance == null)
 			instance = new CoreRegistry();
 	

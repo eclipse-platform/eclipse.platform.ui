@@ -30,9 +30,9 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	private final static int RANK_PREFERENCE = 0;
 	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 
-	public static IMutableRegistry instance;
+	public static PreferenceRegistry instance;
 	
-	public static IMutableRegistry getInstance() {
+	public static PreferenceRegistry getInstance() {
 		if (instance == null)
 			instance = new PreferenceRegistry();
 	

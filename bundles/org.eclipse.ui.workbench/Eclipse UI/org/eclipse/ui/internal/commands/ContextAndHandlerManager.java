@@ -291,7 +291,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			if (contexts.size() == 0)
 				contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
 			
-			keyMachine.setScopes((String[]) contexts.toArray(new String[contexts.size()]));
+			keyMachine.setContexts((String[]) contexts.toArray(new String[contexts.size()]));
 		} catch (IllegalArgumentException eIllegalArgument) {
 			System.err.println(eIllegalArgument);
 		}

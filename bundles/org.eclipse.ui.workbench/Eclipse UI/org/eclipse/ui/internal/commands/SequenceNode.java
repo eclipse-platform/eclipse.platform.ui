@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.commands.util.Util;
 
 final class SequenceNode {
 
-	static void add(SortedMap tree, SequenceBinding sequenceBinding, State scopeConfiguration, State platformLocale) {
+	static void add(SortedMap tree, SequenceBinding sequenceBinding, State contextConfiguration, State platformLocale) {
 		List strokes = sequenceBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
 		SequenceNode node = null;
@@ -48,15 +48,15 @@ final class SequenceNode {
 		}
 
 		if (node != null)
-			add(node.scopeConfigurationMap, scopeConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
+			add(node.contextConfigurationMap, contextConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
 	}
 
-	static void add(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {			
-		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
+	static void add(SortedMap contextConfigurationMap, State contextConfiguration, Integer rank, State platformLocale, String command) {			
+		SortedMap rankMap = (SortedMap) contextConfigurationMap.get(contextConfiguration);
 		
 		if (rankMap == null) {
 			rankMap = new TreeMap();	
-			scopeConfigurationMap.put(scopeConfiguration, rankMap);
+			contextConfigurationMap.put(contextConfiguration, rankMap);
 		}
 
 		SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
@@ -91,7 +91,7 @@ final class SequenceNode {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, SequenceBinding sequenceBinding, State scopeConfiguration, State platformLocale) {
+	static void remove(SortedMap tree, SequenceBinding sequenceBinding, State contextConfiguration, State platformLocale) {
 		List strokes = sequenceBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
 		SequenceNode node = null;
@@ -107,11 +107,11 @@ final class SequenceNode {
 		}
 
 		if (node != null)
-			remove(node.scopeConfigurationMap, scopeConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
+			remove(node.contextConfigurationMap, contextConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
 	}
 
-	static void remove(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {
-		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
+	static void remove(SortedMap contextConfigurationMap, State contextConfiguration, Integer rank, State platformLocale, String command) {
+		SortedMap rankMap = (SortedMap) contextConfigurationMap.get(contextConfiguration);
 
 		if (rankMap != null) {
 			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
@@ -129,7 +129,7 @@ final class SequenceNode {
 							rankMap.remove(rank);
 							
 							if (rankMap.isEmpty())
-								scopeConfigurationMap.remove(scopeConfiguration);
+								contextConfigurationMap.remove(contextConfiguration);
 						}
 					}					
 				}
@@ -137,14 +137,14 @@ final class SequenceNode {
 		}
 	}
 
-	static void solve(SortedMap tree, State[] scopeConfigurations, State[] platformLocales) {
+	static void solve(SortedMap tree, State[] contextConfigurations, State[] platformLocales) {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
 			SequenceNode node = (SequenceNode) iterator.next();			
-			CommandEnvelope commandEnvelope = solveScopeConfigurationMap(node.scopeConfigurationMap, scopeConfigurations, platformLocales);					
+			CommandEnvelope commandEnvelope = solveContextConfigurationMap(node.contextConfigurationMap, contextConfigurations, platformLocales);					
 			node.command = commandEnvelope != null ? commandEnvelope.getCommand() : null;
-			solve(node.childMap, scopeConfigurations, platformLocales);								
+			solve(node.childMap, contextConfigurations, platformLocales);								
 		}		
 	}
 	
@@ -208,17 +208,17 @@ final class SequenceNode {
 		return null;
 	}
 
-	static CommandEnvelope solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State scopeConfiguration, State[] platformLocales) {
+	static CommandEnvelope solveContextConfigurationMap(SortedMap contextConfigurationMap, State contextConfiguration, State[] platformLocales) {
 		int bestMatch = -1;
 		String bestCommand = null;
-		Iterator iterator = scopeConfigurationMap.entrySet().iterator();
+		Iterator iterator = contextConfigurationMap.entrySet().iterator();
 		boolean match = false;
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			State testScopeConfiguration = (State) entry.getKey();
+			State testContextConfiguration = (State) entry.getKey();
 			SortedMap testRankMap = (SortedMap) entry.getValue();
-			int testMatch = testScopeConfiguration.match(scopeConfiguration);	
+			int testMatch = testContextConfiguration.match(contextConfiguration);	
 
 			if (testMatch >= 0) {
 				match = true;
@@ -239,9 +239,9 @@ final class SequenceNode {
 		return match ? CommandEnvelope.create(bestCommand) : null;
 	}
 
-	static CommandEnvelope solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State[] scopeConfigurations, State[] platformLocales) {
-		for (int i = 0; i < scopeConfigurations.length; i++) {
-			CommandEnvelope commandEnvelope = solveScopeConfigurationMap(scopeConfigurationMap, scopeConfigurations[i], platformLocales);
+	static CommandEnvelope solveContextConfigurationMap(SortedMap contextConfigurationMap, State[] contextConfigurations, State[] platformLocales) {
+		for (int i = 0; i < contextConfigurations.length; i++) {
+			CommandEnvelope commandEnvelope = solveContextConfigurationMap(contextConfigurationMap, contextConfigurations[i], platformLocales);
 				
 			if (commandEnvelope != null)
 				return commandEnvelope;
@@ -295,7 +295,7 @@ final class SequenceNode {
 
 	private SortedMap childMap = new TreeMap();	
 	private String command = null;
-	private SortedMap scopeConfigurationMap = new TreeMap();
+	private SortedMap contextConfigurationMap = new TreeMap();
 	
 	private SequenceNode() {
 		super();

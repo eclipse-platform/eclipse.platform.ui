@@ -1070,7 +1070,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 
 	private void selectedButtonChange() {
 		Sequence gestureSequence = getGestureSequence();
-		boolean validGestureSequence = gestureSequence != null && Manager.validateSequence(gestureSequence);
+		boolean validGestureSequence = gestureSequence != null && Util.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String gestureConfigurationId = getGestureConfigurationId();
@@ -1130,7 +1130,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 		boolean commandSelected = command != null;
 
 		Sequence gestureSequence = getGestureSequence();
-		boolean validGestureSequence = gestureSequence != null && Manager.validateSequence(gestureSequence);
+		boolean validGestureSequence = gestureSequence != null && Util.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String gestureConfigurationId = getGestureConfigurationId();

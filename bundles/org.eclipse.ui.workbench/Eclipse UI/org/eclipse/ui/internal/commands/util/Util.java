@@ -201,6 +201,27 @@ public final class Util {
 		return sortedMap;
 	}	
 	
+	public static boolean validateSequence(Sequence sequence) {
+		List strokes = sequence.getStrokes();
+		int size = strokes.size();
+			
+		if (size == 0)
+			return false;
+		else 
+			for (int i = 0; i < size; i++) {
+				Stroke stroke = (Stroke) strokes.get(i);	
+	
+				if (!validateStroke(stroke))
+					return false;
+			}
+			
+		return true;
+	}
+
+	public static boolean validateStroke(Stroke stroke) {
+		return stroke.getValue() != 0;
+	}
+
 	private Util() {
 		super();
 	}
