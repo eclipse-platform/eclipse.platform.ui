@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+	name="%pluginName"
+	id="org.eclipse.team.cvs.ssh"
+	version="2.0.0"
+	class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin"
+	provider-name="Object Technology International, Inc."
+>
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.team.cvs.core"/>
+  </requires>
+
+  <runtime>
+    <library name="teamcvsssh.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
+    <adapter>
+      <run class="org.eclipse.team.internal.ccvs.ssh.SSHMethod">
+        <parameter name="trace" value="false" /> 
+      </run>
+    </adapter>
+  </extension>
+
+</plugin>

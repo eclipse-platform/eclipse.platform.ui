@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.team.core"
+   name="%pluginName"
+   version="2.0.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.team.core.TeamPlugin">
+<requires>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.core.runtime"/>
+</requires>
+
+<runtime>
+   <library name="team.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<extension-point id="providers" name="Providers"/>
+<extension-point id="fileTypes" name="File Types Registry"/>
+
+<extension point="org.eclipse.core.resources.fileModificationValidator">
+	<fileModificationValidator class="org.eclipse.team.core.internal.FileModificationValidator"/>
+</extension>
+
+</plugin>

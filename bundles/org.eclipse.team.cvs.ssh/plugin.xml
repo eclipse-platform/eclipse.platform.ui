@@ -17,13 +17,4 @@
       <export name="*"/>
     </library>
   </runtime>
-
-  <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
-    <adapter>
-      <run class="org.eclipse.team.internal.ccvs.ssh.SSHMethod">
-        <parameter name="trace" value="false" /> 
-      </run>
-    </adapter>
-  </extension>
-
 </plugin>
