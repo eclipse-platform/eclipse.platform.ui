@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ant.ui.internal.editor.TaskDescriptionProvider;
 
 /**
- * Tests the taks description provider.
+ * Tests the tasks description provider.
  * 
  */
 public class TaskDescriptionProviderTest extends TestCase {
@@ -37,30 +37,30 @@ public class TaskDescriptionProviderTest extends TestCase {
      * Tests getting the description of a task.
      */
     public void testGettingTaskDescription() {
-        TaskDescriptionProvider tempProvider = new TaskDescriptionProvider();
-        String tempDescription = tempProvider.getDescriptionForTask("apply");
-        assertNotNull(tempDescription);
-        assertTrue(tempDescription.length() > 0);
+        TaskDescriptionProvider provider = new TaskDescriptionProvider();
+        String description = provider.getDescriptionForTask("apply");
+        assertNotNull(description);
+        assertTrue(description.length() > 0);
     }
 
     /**
      * Tests getting the description of an attribute.
      */
     public void testGettingAttribute() {
-        TaskDescriptionProvider tempProvider = new TaskDescriptionProvider();
-        String tempDescription = tempProvider.getDescriptionForTaskAttribute("apply", "executable");
-        assertNotNull(tempDescription);
-        assertTrue(tempDescription.length() > 0);
+        TaskDescriptionProvider provider = new TaskDescriptionProvider();
+        String description = provider.getDescriptionForTaskAttribute("apply", "executable");
+        assertNotNull(description);
+        assertTrue(description.length() > 0);
     }
     
     /**
      * Tests getting the required value of an attribute.
      */
     public void testGettingRequired() {
-        TaskDescriptionProvider tempProvider = new TaskDescriptionProvider();
-        String tempRequired = tempProvider.getRequiredAttributeForTaskAttribute("apply", "executable");
-        assertNotNull(tempRequired);
-        assertEquals("yes", tempRequired);
+        TaskDescriptionProvider provider = new TaskDescriptionProvider();
+        String required = provider.getRequiredAttributeForTaskAttribute("apply", "executable");
+        assertNotNull(required);
+        assertEquals("yes", required);
     }
 
     public static Test suite() {

@@ -139,8 +139,8 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * Initializes the handler.
      */
     protected void initialize() throws ParserConfigurationException {
-        DocumentBuilder tempDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        document = tempDocumentBuilder.newDocument();
+        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        document = documentBuilder.newDocument();
     }
 
     /**
@@ -163,10 +163,10 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
                  * 0-based.
                  */
 
-                int tempLineNr = locator.getLineNumber() -1;
-                int tempColumnNr = locator.getColumnNumber() -1;
-                if(tempLineNr> rowOfCursorPosition ||
-                    (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
+                int lineNum = locator.getLineNumber() -1;
+                int columnNum = locator.getColumnNumber() -1;
+                if(lineNum> rowOfCursorPosition ||
+                    (lineNum == rowOfCursorPosition && columnNum > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
                         parentElement = (Element)stillOpenElements.peek();
                         if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
 							AntUIPlugin.log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
@@ -184,11 +184,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
-    public void startElement(
-        String aUri,
-        String aLocalName,
-        String aQualifiedName,
-        Attributes anAttributes)
+    public void startElement(String uri, String localName, String qualifiedName, Attributes attributes)
         throws SAXException {
         /*
          * While the crimson parser passes the tag name as local name, apache's
@@ -197,7 +193,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
          */
         
 		 if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-			AntUIPlugin.log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			AntUIPlugin.log("AntEditorSaxDefaultHandler.startElement(" +uri+ ", " +localName+ ", "+qualifiedName+ ", "+attributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -207,20 +203,20 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         checkForParentElement();
 
         // Create a Dom Element
-        String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
-        if(tempTagName == null || tempTagName.length() == 0) {
+        String tagName = localName.length() > 0 ? localName : qualifiedName;
+        if(tagName == null || tagName.length() == 0) {
             throw new AntEditorException(AntEditorMessages.getString("AntEditorSaxDefaultHandler.Error_parsing")); //$NON-NLS-1$
         }
         // This code added to determine root element in a rational way bf
         if (rootElementName == null) {
-        	rootElementName = tempTagName;
+        	rootElementName = tagName;
         }
         
-        Element tempElement = document.createElement(tempTagName);
+        Element element = document.createElement(tagName);
         
-        stillOpenElements.push(tempElement);
+        stillOpenElements.push(element);
         
-        super.startElement(aUri, aLocalName, aQualifiedName, anAttributes);
+        super.startElement(uri, localName, qualifiedName, attributes);
     }
 
     /* (non-Javadoc)
@@ -238,20 +234,20 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         }        
         
         // Checks whether we know the parent for sure
-        boolean tempParentKnown = checkForParentElement();
+        boolean parentKnown = checkForParentElement();
         
-        String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
+        String tagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
 
 		if(!stillOpenElements.isEmpty()) {        
-	        Element tempLastStillOpenElement = (Element)stillOpenElements.peek(); 
-	        if(tempLastStillOpenElement != null && tempLastStillOpenElement.getTagName().equals(tempTagName)) {
+	        Element lastStillOpenElement = (Element)stillOpenElements.peek(); 
+	        if(lastStillOpenElement != null && lastStillOpenElement.getTagName().equals(tagName)) {
 	            stillOpenElements.pop();
 	            
 	            if(!stillOpenElements.empty()) {
-	                Element tempSecondLastStillOpenElement = (Element)stillOpenElements.peek();
-	                tempSecondLastStillOpenElement.appendChild(tempLastStillOpenElement);
+	                Element secondLastStillOpenElement = (Element)stillOpenElements.peek();
+	                secondLastStillOpenElement.appendChild(lastStillOpenElement);
 	            }
-	            if(tempParentKnown && parentElement != null && parentElement.getTagName().equals(tempTagName)) {
+	            if(parentKnown && parentElement != null && parentElement.getTagName().equals(tagName)) {
 	                parsingFinished = true;
 	            }
 	        }
@@ -274,28 +270,21 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * position. That happens when the parser finds an error within the parsed 
      * document before. In that case the parent element might be guessed to be
      * the one that opened last. To tell the handler whether the parent should
-     * be guessed, <code>aGuessParentFlag</code> may be specified.
+     * be guessed, <code>guessParent</code> may be specified.
      * 
      * @param aGuessParentFlag whether the parent should be guessed
      * @return the parent element or <code>null</code> if not known.
      */
-    public Element getParentElement(boolean aGuessParentFlag) {
+    public Element getParentElement(boolean guessParent) {
         if(parentElement != null) {
             return parentElement;
         }
-        if(aGuessParentFlag) {
+        if(guessParent) {
             if(!stillOpenElements.empty()) {
                 return (Element)stillOpenElements.peek();
             }
         }
         return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.ErrorHandler#error(SAXParseException)
-     */
-    public void error(SAXParseException anException) throws SAXException {
-        super.error(anException);
     }
 
     /**
