@@ -282,7 +282,7 @@ public class TocData extends RequestData {
 	private void generateTopic(
 		ITopic topic,
 		Writer out,
-		String path,
+		String id,
 		int maxLevels,
 		int currentLevel)
 		throws IOException {
@@ -313,7 +313,7 @@ public class TocData extends RequestData {
 				out.write("<ul class='collapsed'>\n");
 			} else {
 				// children will not be generated
-				out.write("<ul class='collapsed' id=\"" + path + "\">\n");
+				out.write("<ul class='collapsed' id=\"" + id + "\">\n");
 			}
 
 			ITopic[] topics = topic.getSubtopics();
@@ -325,7 +325,7 @@ public class TocData extends RequestData {
 					generateTopic(
 						topics[i],
 						out,
-						path + "_" + i,
+						id + "_" + i,
 						DYNAMIC_LOAD_LEVELS,
 						currentLevel + 1);
 				}
@@ -334,7 +334,7 @@ public class TocData extends RequestData {
 					generateTopic(
 						topics[i],
 						out,
-						path + "_" + i,
+						id + "_" + i,
 						maxLevels - 1,
 						currentLevel + 1);
 				}
