@@ -64,6 +64,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		// call the basic XML describer to do basic recognition
 		if (super.describe(contents, description) == INVALID)
 			return INVALID;
+		// super.describe will have consumed some chars, need to rewind		
 		contents.reset();
 		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
 		if (!xmlHandler.parseContents(contents))
@@ -84,6 +85,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		// call the basic XML describer to do basic recognition
 		if (super.describe(contents, description) == INVALID)
 			return INVALID;
+		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
 		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
 		if (!xmlHandler.parseContents(contents))

@@ -17,7 +17,6 @@
       <import plugin="org.eclipse.osgi.services" export="true"/>
    </requires>
 
-
    <extension-point id="applications" name="%applicationsName" schema="schema/applications.mxsd"/>
    <extension-point id="products" name="%productsName" schema="schema/products.exsd"/>
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
@@ -33,7 +32,9 @@
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type id="text" name="%textContentTypeName" 
 			priority="high"
-			file-extensions="txt"/>
+			file-extensions="txt">
+			<describer class="org.eclipse.core.internal.content.TextContentDescriber"/>			
+		</content-type>
 		<content-type id="xml" name="%xmlContentTypeName" 	
 			base-type="text"
 			priority="high"			

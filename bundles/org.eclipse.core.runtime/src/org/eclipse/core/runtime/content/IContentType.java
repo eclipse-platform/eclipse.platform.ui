@@ -192,6 +192,7 @@ public interface IContentType {
 	 * given content type, <code>false</code> otherwise
 	 */
 	public boolean isKindOf(IContentType another);
+
 	/**
 	 * Sets the default charset for this content type. If 
 	 * <code>null</code> is provided, restores the pre-defined default charset. 

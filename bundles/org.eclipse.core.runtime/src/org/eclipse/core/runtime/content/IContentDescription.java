@@ -4,7 +4,7 @@
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *  
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,17 +44,31 @@ public interface IContentDescription {
 	/**
 	 * Key for the byte order mark property.
 	 */
-	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset"); //$NON-NLS-1$	
-
+	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset"); //$NON-NLS-1$
 	/**
-	 * Key for the byte order mark property.
+	 * Key for the byte order mark property. This property is only meaningful 
+	 * when describing byte streams.  
 	 */
 	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IPlatform.PI_RUNTIME, "bom"); //$NON-NLS-1$
-
 	/**
 	 * Options constant meaning that all properties should be described. 
 	 */
 	public final static QualifiedName[] ALL = null;
+	/**
+	 * Constant that identifies the Byte-Order-Mark for contents encoded with 
+	 * the UTF-8 character encoding scheme. 
+	 */
+	public final static byte[] BOM_UTF_8 = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+	/**
+	 * Constant that identifies the Byte-Order-Mark for contents encoded with 
+	 * the UTF-16 Big Endian character encoding scheme. 
+	 */
+	public final static byte[] BOM_UTF_16BE = {(byte) 0xFE, (byte) 0xFF};
+	/**
+	 * Constant that identifies the Byte-Order-Mark for contents encoded with 
+	 * the UTF-16 Little Endian character encoding scheme. 
+	 */
+	public final static byte[] BOM_UTF_16LE = {(byte) 0xFF, (byte) 0xFE};
 
 	/**
 	 * Returns whether the given property is requested to be described. This 

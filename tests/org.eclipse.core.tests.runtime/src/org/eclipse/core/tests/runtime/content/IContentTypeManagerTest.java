@@ -26,11 +26,6 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String BOM_UTF_32_BE = "\u0000\u0000\u00FE\u00FF";
-	private final static String BOM_UTF_32_LE = "\u00FF\u00FE\u0000\u0000";
-	private final static String BOM_UTF_16_BE = "\u00FE\u00FF";
-	private final static String BOM_UTF_16_LE = "\u00FF\u00FE";
-	private final static String BOM_UTF_8 = "\u00EF\u00BB\u00BF";
 	private final static String SAMPLE_BIN1_SIGNATURE = "\u0010\u0011\u0012\u0013";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static String SAMPLE_BIN2_SIGNATURE = "\u0010\u0011\u0012\u0014";
@@ -45,7 +40,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
 		assertTrue("1.1", isText(contentTypeManager, textContentType));
-		assertNull("1.2", ((ContentType) textContentType).getDescriber());
+		assertNotNull("1.2", ((ContentType) textContentType).getDescriber());
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
 		assertTrue("2.1", isText(contentTypeManager, xmlContentType));
@@ -72,7 +67,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
-		assertEquals("8.1", "BAR", myText.getDefaultCharset());		
+		assertEquals("8.1", "BAR", myText.getDefaultCharset());
 		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor("foo.bar");
 		assertEquals("9.0", 2, fooBarTypes.length);
 		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
@@ -108,7 +103,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
 		// if all are provided, the more specific types will appear before the more generic types
 		IContentType[] selected = contentTypeManager.findContentTypesFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2});
-		assertEquals("4.0", 3, selected.length); 
+		assertEquals("4.0", 3, selected.length);
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
 		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
 		assertTrue("4.3", appropriate == selected[2]);
@@ -150,7 +145,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
 		assertNotNull("5.10", description);
 		assertEquals("5.11", mytext, description.getContentType());
-		assertEquals("5.12", "BAR", description.getProperty(IContentDescription.CHARSET));		
+		assertEquals("5.12", "BAR", description.getProperty(IContentDescription.CHARSET));
 	}
 
 	public void testBinaryTypes() throws IOException {
@@ -276,7 +271,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		registerListener(listener, Platform.PI_RUNTIME);
 		Bundle installed = installBundle("content/bundle01");
-		refreshPackages(new Bundle[] {installed});		
+		refreshPackages(new Bundle[] {installed});
 		try {
 			IRegistryChangeEvent event = listener.getEvent(10000);
 			assertNotNull("1.5", event);
@@ -296,7 +291,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		} finally {
 			//remove installed bundle
 			installed.uninstall();
-			refreshPackages(new Bundle[] {installed});			
+			refreshPackages(new Bundle[] {installed});
 		}
 	}
 
@@ -308,12 +303,36 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
 	}
-	
+
 	public void testInvalidMarkup() {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
 		assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
-		assertNull("3.0", contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.'+ "invalid-missing-name"));			
+		assertNull("3.0", contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
+	}
+
+	public void testByteOrderMark() throws Exception {
+		IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+		QualifiedName[] options = new QualifiedName[] {IContentDescription.BYTE_ORDER_MARK};
+		IContentDescription description;
+		// tests with UTF-8 BOM
+		String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNotNull("1.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		assertEquals("1.1", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// tests with UTF-16 Little Endian BOM			
+		String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_LE_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNotNull("2.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		assertEquals("2.1", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// tests with UTF-16 Big Endian BOM			
+		String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_BE_BOM + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNotNull("3.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		assertEquals("3.1", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// test with no BOM
+		description = text.getDescriptionFor(new ByteArrayInputStream(MINIMAL_XML.getBytes("ISO-8859-1")), options);
+		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {

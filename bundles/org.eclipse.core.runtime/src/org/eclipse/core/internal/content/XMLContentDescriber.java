@@ -20,13 +20,22 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
  * 
  * @see "http://www.w3.org/TR/REC-xml *"
  */
-public class XMLContentDescriber implements ITextContentDescriber {
+public class XMLContentDescriber extends TextContentDescriber implements ITextContentDescriber {
+	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final byte[] XML_PREFIX_BYTES = new byte[] {'<', '?', 'x', 'm', 'l', ' '}; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description) throws IOException {
-		//TODO: support BOM
+		byte[] bom = getByteOrderMark(input);
+		input.reset();
+		if (bom != null) {
+			// skip BOM to make comparison simpler
+			input.skip(bom.length);
+			// set the BOM in the description if requested
+			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
+				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
+		}
 		byte[] prefix = new byte[XML_PREFIX.length()];
 		if (input.read(prefix) < prefix.length)
 			// there is not enough info to say anything
@@ -38,7 +47,7 @@ public class XMLContentDescriber implements ITextContentDescriber {
 		if (description == null)
 			return VALID;
 		// describe charset if requested
-		if ((description.isRequested(IContentDescription.CHARSET))) {
+		if (description.isRequested(IContentDescription.CHARSET)) {
 			String fullXMLDecl = readFullXMLDecl(input);
 			if (fullXMLDecl != null)
 				description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
@@ -84,6 +93,6 @@ public class XMLContentDescriber implements ITextContentDescriber {
 	}
 
 	public QualifiedName[] getSupportedOptions() {
-		return new QualifiedName[] {IContentDescription.CHARSET};
+		return SUPPORTED_OPTIONS;
 	}
 }

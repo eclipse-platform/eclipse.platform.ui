@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.*;
  * 
  * @since 3.0
  */
-public class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
+public final class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
 	private final static String SIGNATURE = "signature"; //$NON-NLS-1$
 	private final static String OFFSET = "offset"; //$NON-NLS-1$
 	private static final Object REQUIRED = "required"; //$NON-NLS-1$
