@@ -170,7 +170,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
 		IThread thread= getThread(element);
 		if (thread != null) {
-			fThreadTimer.stopTimer((IThread)element);
+			fThreadTimer.stopTimer(thread);
 		}
 		
 		boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
