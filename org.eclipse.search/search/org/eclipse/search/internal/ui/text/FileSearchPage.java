@@ -11,7 +11,6 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
