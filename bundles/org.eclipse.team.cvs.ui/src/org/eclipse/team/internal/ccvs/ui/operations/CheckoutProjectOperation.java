@@ -336,7 +336,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			// We do not want to delete the .project to avoid core exceptions
 			IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			Policy.checkCanceled(monitor);
-			monitor.beginTask(null, children.length * 100);
+			monitor.beginTask(null, 100 + children.length * 100);
 			monitor.subTask(Policy.bind("CheckoutOperation.scrubbingProject", project.getName())); //$NON-NLS-1$	
 			try {
 				for (int j = 0; j < children.length; j++) {
@@ -344,6 +344,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 						children[j].delete(true /*force*/, Policy.subMonitorFor(monitor, 100));
 					}
 				}
+				// Make sure there is no sync info cached for the project since
+				// a reader thread may have caused it to be loaded since the unmap.
+				EclipseSynchronizer.getInstance().flush(project, true, Policy.subMonitorFor(monitor, 100));
 			} finally {
 				monitor.done();
 			}
