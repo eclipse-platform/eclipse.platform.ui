@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Table;
  * object is a lightweight wrapper that adapts the algorithm to work with 
  * <code>TableViewer</code>.
  * </p>
+ * 
+ * @since 3.1
  */
 public class DeferredContentProvider implements ILazyContentProvider {
 
