@@ -71,12 +71,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private String fInitialMode;
 	
 	/**
-	 * The (initial) selection for the launch configuration
-	 * tree.
-	 */
-	private ISelection fSelection = new StructuredSelection();
-	
-	/**
 	 * The 'new' button to create a new configuration
 	 */
 	private Button fNewButton;
@@ -110,6 +104,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private Button fRadioDebugButton;
 	
 	private Label fMessageLabel;
+	
+	private Label fStatusImageLabel;
 	
 	private Label fModeLabel;
 	
@@ -413,19 +409,29 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		} catch (CoreException ce) {
 			String message = ce.getStatus().getMessage();
 			setStatusErrorMessage(message);
+			enableStatusDependentButtons(false);
 			return;
 		}
 		setStatusOKMessage();
+		enableStatusDependentButtons(true);
 	}
 	
 	protected void setStatusErrorMessage(String message) {
 		setStatusMessage(message);
 		getMessageLabel().setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
+		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_FAIL));
 	}
 	
 	protected void setStatusOKMessage() {
 		setStatusMessage(LAUNCH_STATUS_OK_MESSAGE);
 		getMessageLabel().setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));		
+		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
+	}
+	
+	protected void enableStatusDependentButtons(boolean enable) {
+		getSaveButton().setEnabled(enable);
+		getSaveAndLaunchButton().setEnabled(enable);
+		getLaunchButton().setEnabled(enable);
 	}
 	
 	/**
@@ -582,14 +588,14 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginHeight = 0;
 		topLayout.marginWidth = 0;
-		topLayout.numColumns = 3;
+		topLayout.numColumns = 4;
 		comp.setLayout(topLayout);
-		
-		fModeLabel = new Label(comp, SWT.NONE);		
 		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		comp.setLayoutData(gd);
+		
+		fModeLabel = new Label(comp, SWT.NONE);
 		
 		Composite radioComposite = new Composite(comp, SWT.NONE);
 		GridLayout radioLayout = new GridLayout();
@@ -614,6 +620,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		getMessageLabel().setAlignment(SWT.RIGHT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getMessageLabel().setLayoutData(gd);
+		
+		setStatusImageLabel(new Label(comp, SWT.NONE));
+		getStatusImageLabel().setAlignment(SWT.RIGHT);
+		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_FAIL));
 		
 		return comp;
 	}
@@ -645,6 +655,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected TreeViewer getTreeViewer() {
 		return fConfigTree;
+	}
+	
+	protected IStructuredSelection getTreeViewerSelection() {
+		return (IStructuredSelection)getTreeViewer().getSelection();
 	}
 		
 	/**
@@ -737,29 +751,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}	
 		
 	/**
-	 * Sets the specified selection in the launch configuration
-	 * selection tree.
-	 * 
-	 * @param selection the items to select
-	 */
-	public void setSelection(ISelection selection) {
-		fSelection = selection;
-		if (isVisible()) {
-			getTreeViewer().setSelection(selection);
-		}
-	}
-	
-	/**
-	 * Returns the current selection in the launch configuration
-	 * tree (or what should be initially selected on startup
-	 * 
-	 * @return selection
-	 */
-	protected ISelection getSelection() {
-		return fSelection;
-	}
-	
-	/**
 	 * Notification selection has changed in the launch configuration
 	 * tree. 
 	 * <p>
@@ -770,28 +761,23 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @param event selection changed event
 	 */
  	public void selectionChanged(SelectionChangedEvent event) {
- 		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
- 		fSelection = selection;
  		
  		// ToDo: prompt for save of current configuration 			
  		
- 		// enable buttons
+		
+ 		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+ 		Object firstSelectedElement = selection.getFirstElement();		
  		boolean singleSelection = selection.size() == 1;
- 		
-		getLaunchButton().setEnabled(singleSelection);
- 		getSaveAndLaunchButton().setEnabled(singleSelection);
- 		getNewButton().setEnabled(singleSelection);
- 		getCopyButton().setEnabled(singleSelection);
+		boolean configSelected = firstSelectedElement instanceof ILaunchConfiguration;
 
- 		getDeleteButton().setEnabled(selection.size() >= 1);
+ 		// enable buttons
+		getCopyButton().setEnabled(configSelected);
+		getDeleteButton().setEnabled(configSelected);
+ 		 		
  		
- 		getSaveButton().setEnabled(false);
- 		
- 		if (singleSelection && selection.getFirstElement() instanceof ILaunchConfiguration) {
- 			ILaunchConfiguration selectedConfig = (ILaunchConfiguration)selection.getFirstElement();
- 			setLaunchConfiguration(selectedConfig);
- 		} else if (singleSelection && selection.getFirstElement() instanceof ILaunchConfigurationType) {
- 			//setTabsForConfigType((ILaunchConfigurationType)selection.getFirstElement());
+ 		if (singleSelection && firstSelectedElement instanceof ILaunchConfiguration) {
+ 			setLaunchConfiguration((ILaunchConfiguration)firstSelectedElement);
+ 		} else if (singleSelection && firstSelectedElement instanceof ILaunchConfigurationType) {
 			handleNewPressed();
  		} else {
  			// multi-selection
@@ -941,6 +927,24 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	 */
 	protected Label getMessageLabel() {
 		return fMessageLabel;
+	}
+	
+ 	/**
+ 	 * Sets the 'status image' label.
+ 	 * 
+ 	 * @param label the 'status image' label.
+ 	 */	
+	protected void setStatusImageLabel(Label label) {
+		fStatusImageLabel = label;
+	}
+	
+ 	/**
+ 	 * Returns the 'status image' label
+ 	 * 
+ 	 * @return the 'status image' label
+ 	 */
+	protected Label getStatusImageLabel() {
+		return fStatusImageLabel;
 	}
 	
  	/**
@@ -1152,7 +1156,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		// same type as the selected config
 		try {
 			ILaunchConfigurationType type = null;
-			IStructuredSelection sel = (IStructuredSelection)getSelection();
+			IStructuredSelection sel = getTreeViewerSelection();;
+			
 			Object obj = sel.getFirstElement();
 			if (obj instanceof ILaunchConfiguration) {
 				type = ((ILaunchConfiguration)obj).getType();

@@ -302,6 +302,12 @@ public interface IDebugUIConstants {
 	/** Run wizard banner image identifier. */
 	public static final String IMG_WIZBAN_RUN= "IMG_WIZBAN_RUN"; //$NON-NLS-1$
 	
+	/** OK wizard banner image identifier. */
+	public static final String IMG_WIZBAN_OK= "IMG_WIZBAN_OK"; //$NON-NLS-1$
+	
+	/** FAIL wizard banner image identifier. */
+	public static final String IMG_WIZBAN_FAIL= "IMG_WIZBAN_FAIL"; //$NON-NLS-1$
+	
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).
 	 */
