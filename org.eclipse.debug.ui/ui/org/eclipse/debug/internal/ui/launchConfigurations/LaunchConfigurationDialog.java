@@ -1400,7 +1400,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	private void setLaunchConfiguration(ILaunchConfiguration config, boolean init) {
 		try {
 			
-			// turn on initializing flag to ignore message updates
+			// Turn on initializing flag to ignore message updates
 			setInitializingTabs(true);
 			
 			getEditArea().setVisible(true);
@@ -1413,22 +1413,29 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 			fUnderlyingConfig = getLaunchConfiguration().getOriginal();
 	 		
-	 		// update the name field before to avoid verify error 
+	 		// Update the name field before to avoid verify error 
 	 		getNameTextWidget().setText(config.getName());	 		
+	 			 	
+	 		// Retrieve the current tab group.  If there is none, clean up and leave
+	 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
+	 		if (tabGroup == null) {
+	 			clearLaunchConfiguration();
+	 			return;
+	 		}
 	 			 		
 	 		// Set the defaults for all tabs before any are initialized
 	 		// so that every tab can see ALL the default values
 	 		if (init) {
-				getTabGroup().setDefaults(getLaunchConfiguration());
+				tabGroup.setDefaults(getLaunchConfiguration());
 	 		}
 
-	 		// update the tabs with the new working copy	 		
-			getTabGroup().initializeFrom(getLaunchConfiguration());
+	 		// Update the tabs with the new working copy	 		
+			tabGroup.initializeFrom(getLaunchConfiguration());
 	 		
-	 		// update the name field after in case client changed it 
+	 		// Update the name field after in case client changed it 
 	 		getNameTextWidget().setText(config.getName());
 	 				
-	 		// turn off initializing flag to update message
+	 		// Turn off initializing flag to update message
 			setInitializingTabs(false);
 			
 	 		refreshStatus();
