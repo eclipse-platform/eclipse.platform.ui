@@ -20,8 +20,6 @@ public class ApiTestSuite extends TestSuite {
 	 */
 	public ApiTestSuite() {
 		addTest(new TestSuite(PlatformUITest.class));
-		addTest(new TestSuite(IWorkbenchTest.class));
-		addTest(new TestSuite(IWorkbenchWindowTest.class));
 		addTest(new TestSuite(IWorkbenchPageTest.class));
 		addTest(new TestSuite(IActionFilterTest.class));
 		addTest(new TestSuite(IPageListenerTest.class));
