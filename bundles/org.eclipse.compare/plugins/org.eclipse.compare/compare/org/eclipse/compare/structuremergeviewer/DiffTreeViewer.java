@@ -429,6 +429,8 @@ public class DiffTreeViewer extends TreeViewer {
 			};
 			Utilities.initAction(fExpandAllAction, fBundle, "action.ExpandAll."); //$NON-NLS-1$
 		}
+		ISelection selection= getSelection();
+		fExpandAllAction.setEnabled(selection != null && !selection.isEmpty());
 		manager.add(fExpandAllAction);
 		
 		if (fCopyLeftToRightAction != null)
@@ -694,6 +696,8 @@ public class DiffTreeViewer extends TreeViewer {
 						break;
 				}
 			}
+			if (fExpandAllAction != null)
+				fExpandAllAction.setEnabled(selection.isEmpty());
 		}
 		if (fCopyLeftToRightAction != null)
 			fCopyLeftToRightAction.setEnabled(leftToRight > 0);
