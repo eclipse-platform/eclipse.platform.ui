@@ -73,7 +73,9 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		tableViewer = new CheckboxTableViewer(table);
 		table.setLayout(new TableLayout());
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 300;
+		table.setLayoutData(data);
 		tableViewer.setContentProvider(new ProjectContentProvider());
 		tableViewer.setLabelProvider(new WorkbenchLabelProvider());
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
@@ -109,7 +111,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 
 		browseButton = new Button(inner, SWT.PUSH);
 		browseButton.setText(Policy.bind("ExportProjectSetMainPage.Browse_4")); //$NON-NLS-1$
-		GridData data = new GridData();
+		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -118,8 +120,9 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell(), SWT.SAVE);
-				d.setFilterExtensions(new String[] {Policy.bind("ExportProjectSetMainPage.*.psf_2")}); //$NON-NLS-1$
+				d.setFilterExtensions(new String[] {"*.psf"}); //$NON-NLS-1$
 				d.setFilterNames(new String[] {Policy.bind("ExportProjectSetMainPage.Project_Set_Files_3")}); //$NON-NLS-1$
+				d.setFileName(Policy.bind("ExportProjectSetMainPage.default"));
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);

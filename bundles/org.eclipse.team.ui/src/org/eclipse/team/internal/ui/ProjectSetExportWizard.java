@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -62,8 +64,11 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					
 					String filename = mainPage.getFileName();
+					Path path = new Path(filename);
+					if (path.getFileExtension() == null) {
+						filename = filename + ".psf"; //$NON-NLS-1$
+					}
 					ProjectSetImportWizard.lastFile = filename;
 					File file = new File(filename);
 					File parentFile = file.getParentFile();
@@ -87,12 +92,14 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							return;
 						}
 					}
-					OutputStreamWriter writer = null;
+					BufferedWriter writer = null;
 					try {
-						writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8"); //$NON-NLS-1$
+						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")); //$NON-NLS-1$
 						
-						writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
-						writer.write("<psf version=\"2.0\">\n"); //$NON-NLS-1$
+						writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+						writer.newLine();
+						writer.write("<psf version=\"2.0\">"); //$NON-NLS-1$
+						writer.newLine();
 						IProject[] projects = mainPage.getSelectedProjects();
 						
 						// Hash the projects by provider
@@ -119,7 +126,8 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							String id = (String)it.next();
 							writer.write("\t<provider id=\""); //$NON-NLS-1$
 							writer.write(id);
-							writer.write("\">\n"); //$NON-NLS-1$
+							writer.write("\">"); //$NON-NLS-1$
+							writer.newLine();
 							List list = (List)map.get(id);
 							IProject[] projectArray = (IProject[])list.toArray(new IProject[list.size()]);
 							IProjectSetSerializer serializer = Team.getProjectSetSerializer(id);
@@ -128,12 +136,15 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 								for (int i = 0; i < references.length; i++) {
 									writer.write("\t\t<project reference=\""); //$NON-NLS-1$
 									writer.write(references[i]);
-									writer.write("\"/>\n"); //$NON-NLS-1$
+									writer.write("\"/>"); //$NON-NLS-1$
+									writer.newLine();
 								}
 							}
-							writer.write("\t</provider>\n"); //$NON-NLS-1$
+							writer.write("\t</provider>"); //$NON-NLS-1$
+							writer.newLine();
 						}
-						writer.write("</psf>\n"); //$NON-NLS-1$
+						writer.write("</psf>"); //$NON-NLS-1$
+						writer.newLine();
 						result[0] = true;
 					} catch (IOException e) {
 						throw new InvocationTargetException(e);

@@ -73,8 +73,8 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell());
-				d.setFilterExtensions(new String[] {Policy.bind("ImportProjectSetMainPage.*.psf_1")}); //$NON-NLS-1$
-				d.setFilterNames(new String[] {Policy.bind("ImportProjectSetMainPage.Project_Set_Files_2")}); //$NON-NLS-1$
+				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
+				d.setFilterNames(new String[] {Policy.bind("ImportProjectSetMainPage.Project_Set_Files_2"), Policy.bind("ImportProjectSetMainPage.allFiles")}); //$NON-NLS-1$  //$NON-NLS-2$
 				String f = d.open();
 				if (f != null) {
 					fileText.setText(f);
