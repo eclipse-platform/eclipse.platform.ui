@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids - bug 50567 Eclipse ANT support on Win98
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -24,10 +25,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -1615,12 +1618,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			String nativeCommand= null;
 			boolean windowsOS= false;
+			boolean isWin9xME= false; //see bug 50567
 			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 				windowsOS= true;
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
-				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				isWin9xME= osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME")); //$NON-NLS-1$ //$NON-NLS-2$
+				if (isWin9xME) {
 					// Win 95, 98, and ME
-					nativeCommand= "command.com /C set"; //$NON-NLS-1$
+					// SET might not return therefore we pipe into a file
+					nativeCommand= "command.com /C set > env.txt"; //$NON-NLS-1$
 				} else {
 					// Win NT, 2K, XP
 					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
@@ -1632,24 +1638,43 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				return fgNativeEnv;
 			}
 			Process process= Runtime.getRuntime().exec(nativeCommand);
-			BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line= reader.readLine();
-			while (line != null) {
-				int separator= line.indexOf('=');
-				if (separator > 0) {
-					String key= line.substring(0, separator);
-					if (windowsOS) {
-						// Win32's environment vars are case insensitive. Put everything
-						// to uppercase so that (for example) the "PATH" variable will match
-						// "pAtH" correctly on Windows.
-						key= key.toUpperCase();
-					}
-					String value= line.substring(separator + 1);
+			if (isWin9xME) {
+				//read piped data on Win 95, 98, and ME
+				Properties p= new Properties();
+				File file= new File("env.txt"); //$NON-NLS-1$
+				file.deleteOnExit(); // if delete() fails try again on VM close
+				p.load(new FileInputStream(file));
+				/*ignore*/ file.delete();
+				for (Enumeration enum = p.keys(); enum.hasMoreElements();) {
+					// Win32's environment vars are case insensitive. Put everything
+					// to uppercase so that (for example) the "PATH" variable will match
+					// "pAtH" correctly on Windows.
+					String key= ((String) enum.nextElement()).toUpperCase();
+					//no need to cast value
+					Object value= p.get(key);
 					fgNativeEnv.put(key, value);
 				}
-				line= reader.readLine();
+			} else {
+				//read process directly on other platforms
+				BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
+				String line= reader.readLine();
+				while (line != null) {
+					int separator= line.indexOf('=');
+					if (separator > 0) {
+						String key= line.substring(0, separator);
+						if (windowsOS) {
+							// Win32's environment vars are case insensitive. Put everything
+							// to uppercase so that (for example) the "PATH" variable will match
+							// "pAtH" correctly on Windows.
+							key= key.toUpperCase();
+						}
+						String value= line.substring(separator + 1);
+						fgNativeEnv.put(key, value);
+					}
+					line= reader.readLine();
+				}
+				reader.close();
 			}
-			reader.close();
 		} catch (IOException e) {
 			// Native environment-fetching code failed.
 			// This can easily happen and is not useful to log.
