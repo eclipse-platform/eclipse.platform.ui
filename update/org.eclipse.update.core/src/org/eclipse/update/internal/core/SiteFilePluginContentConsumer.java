@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	private boolean closed = false;
 
 	// recovery
-	private String oldPath;
-	private String newPath;
+	// temporary name to original name map
+	private Map renames = new HashMap(2);
 
 	// for abort
 	private List /*of path as String */
@@ -71,13 +71,13 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				logEntry=ErrorRecoveryLog.BUNDLE_MANIFEST_ENTRY;
 			}
 			if (logEntry!=null) {
-				oldPath = pluginPath.replace(File.separatorChar, '/');
-				File localFile = new File(oldPath);
+				String originalName = pluginPath.replace(File.separatorChar, '/');
+				File localFile = new File(originalName);
 				if (localFile.exists()) {
 					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
 				}
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
-				newPath = pluginPath;
+				renames.put(pluginPath, originalName);
 				ErrorRecoveryLog.getLog().appendPath(logEntry, pluginPath);
 			}
 			//
@@ -108,17 +108,20 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			return;
 		}
 
-		if (newPath != null) {
+		for(Iterator it = renames.entrySet().iterator(); it.hasNext();){
 			// rename file 
-			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);
-			File fileToRename = new File(newPath);
+			Map.Entry entry = (Map.Entry)it.next();
+			String temporary = (String) entry.getKey();
+			String original = (String) entry.getValue();
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, temporary);
+			File fileToRename = new File(temporary);
 			boolean sucess = false;
 			if (fileToRename.exists()) {
-				File renamedFile = new File(oldPath);
+				File renamedFile = new File(original);
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", newPath, oldPath);
+				String msg = Policy.bind("ContentConsumer.UnableToRename", temporary, original);
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -138,22 +141,23 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			return;
 		}
 
-		boolean sucess = true;
+		boolean success = true;
+		// delete plugin manifests first
+		for(Iterator it = renames.values().iterator(); it.hasNext();){
+			String originalName = (String) it.next();
 
-		// delete plugin.xml first
-		if (oldPath != null) {
-			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.DELETE_ENTRY, oldPath);
-			File fileToRemove = new File(oldPath);
-
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.DELETE_ENTRY, originalName);
+			File fileToRemove = new File(originalName);
 			if (fileToRemove.exists()) {
-				sucess = fileToRemove.delete();
+				if(!fileToRemove.delete()){
+					String msg = Policy.bind("Unable to delete", originalName);
+					UpdateCore.log(msg, null);	
+					success = false;
+				}
 			}
 		}
 
-		if (!sucess) {
-			String msg = Policy.bind("Unable to delete", oldPath);
-			UpdateCore.log(msg, null);
-		} else {
+		if (success) {
 			// remove the plugin files;
 			Iterator iter = installedFiles.iterator();
 			File featureFile = null;
