@@ -1090,6 +1090,17 @@ public class DefaultPartPresentation extends StackPresentation {
 			current = toSelect;
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
+			// if the act of setting the part visible has caused it to be 
+			// removed or the folder to be disposed (the case when restoring 
+			// editors with non-existant input) then don't modify the state of 
+			// this presentation any further - leave the last tab visible
+			// see Bug 63721
+			if (isDisposed())
+				return;
+			if (getTab(toSelect) == null) {
+				selectPart(oldPart);
+				return;
+			}
 			setControlSize();	
 			// update the newly selected item in the activation order
 			if (activationListChange) {
