@@ -223,5 +223,17 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 					break; 						
 			}
 		}
-	}	
+	}
+
+	public void registerListeners(ISyncSetChangedListener listener) {
+		getWorkingSetSyncSet().addSyncSetChangedListener(listener);
+		getFilteredSyncSet().addSyncSetChangedListener(listener);
+		getSubscriberSyncSet().addSyncSetChangedListener(listener);
+	}
+
+	public void deregisterListeners(ISyncSetChangedListener listener) {
+		getWorkingSetSyncSet().removeSyncSetChangedListener(listener);
+		getFilteredSyncSet().removeSyncSetChangedListener(listener);
+		getSubscriberSyncSet().removeSyncSetChangedListener(listener);
+	}
 }

@@ -128,7 +128,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	
 	// Remembering the current input and the previous.
 	private SubscriberInput input = null;
-	private SubscriberInput lastInput = null;
 	
 	// Stats about the current subscriber. This is used for status line and/or title updating
 	private ViewStatusInformation statusInformation;
@@ -207,19 +206,12 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	 */
 	public synchronized void initializeSubscriberInput(final SubscriberInput input) {
 		Assert.isNotNull(input);
-		this.lastInput = this.input;
-		this.input = input;
-	
+
 		// listen to sync set changes in order to update state relating to the
 		// size of the sync sets and update the title
-		if(lastInput != null) {
-			lastInput.getWorkingSetSyncSet().removeSyncSetChangedListener(this);
-			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
-			lastInput.getSubscriberSyncSet().removeSyncSetChangedListener(this);
-		}
-		input.getWorkingSetSyncSet().removeSyncSetChangedListener(this);
-		input.getFilteredSyncSet().addSyncSetChangedListener(this);
-		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
+		disconnectSubscriberInput();
+		this.input = input;
+		input.registerListeners(this);
 
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
@@ -238,6 +230,13 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			}
 		});
 		updateTitle();
+	}
+	
+	private void disconnectSubscriberInput() {
+		if(input != null) {
+			input.deregisterListeners(this);
+			input = null;
+		}
 	}
 	/**
 	 * Toggles between label/tree/table viewers. 
@@ -611,9 +610,23 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		// forget about this input
 		subscriberInputs.remove(s.getId());
 		
-		if (si == input && lastInput != null) {
-			// show last input
-			initializeSubscriberInput(lastInput);
+		if (si == input) {
+			if (subscriberInputs.isEmpty()) {
+				disconnectSubscriberInput();
+				if(viewer != null) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if(viewer == null) return;
+							ActionContext context = new ActionContext(null);
+							context.setInput(null);
+							actions.setContext(context);
+							viewer.setInput(null);
+						}
+					});
+				}
+			} else {
+				initializeSubscriberInput((SubscriberInput)subscriberInputs.values().iterator().next());
+			}
 		}
 	}
 	
