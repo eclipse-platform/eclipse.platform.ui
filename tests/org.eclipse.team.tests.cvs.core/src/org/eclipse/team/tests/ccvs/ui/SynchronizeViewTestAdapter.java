@@ -208,13 +208,14 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IResource)
-	 */
-	public void refresh(Subscriber subscriber, IResource resource) throws TeamException {
-		super.refresh(subscriber, resource);
+     * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.Subscriber, org.eclipse.core.resources.IResource[])
+     */
+    public void refresh(Subscriber subscriber, IResource[] resources)
+            throws TeamException {
+        super.refresh(subscriber, resources);
 		// Getting the collector waits for the subscriber input handlers
 		getCollector(subscriber);
-	}
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#reset()

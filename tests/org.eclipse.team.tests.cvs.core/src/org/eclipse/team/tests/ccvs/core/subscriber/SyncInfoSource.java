@@ -61,9 +61,16 @@ public class SyncInfoSource {
 	 * Refresh the subscriber for the given resource
 	 */
 	public void refresh(Subscriber subscriber, IResource resource) throws TeamException {
-		subscriber.refresh(new IResource[] { resource}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		refresh(subscriber, new IResource[] { resource});
 	}
 	
+	/**
+	 * Refresh the subscriber for the given resources
+	 */
+    public void refresh(Subscriber subscriber, IResource[] resources) throws TeamException {
+        subscriber.refresh(resources, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+    }
+    
 	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {
 		IResource[] roots = subscriber.roots();
 		for (int i = 0; i < roots.length; i++) {
