@@ -171,7 +171,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
-		initializeCommandsAndContexts();
 	}
 
 
@@ -1103,6 +1102,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs) {	
+		initializeCommandsAndContexts();
 		this.commandLineArgs = commandLineArgs;
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
