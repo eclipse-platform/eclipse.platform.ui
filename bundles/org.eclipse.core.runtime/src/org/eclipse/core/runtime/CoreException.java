@@ -54,7 +54,7 @@ public void printStackTrace() {
 public void printStackTrace(PrintStream output) {
 	synchronized (output) {
 		if (status.getException() != null) {
-			output.print("org.eclipse.core.runtime.CoreException: ");
+			output.print(getClass().getName() + "[" + status.getCode() + "]: ");
 			status.getException().printStackTrace(output);
 		} else
 			super.printStackTrace(output);
@@ -68,7 +68,7 @@ public void printStackTrace(PrintStream output) {
 public void printStackTrace(PrintWriter output) {
 	synchronized (output) {
 		if (status.getException() != null) {
-			output.print("org.eclipse.core.runtime.CoreException: ");
+			output.print(getClass().getName() + "[" + status.getCode() + "]: ");
 			status.getException().printStackTrace(output);
 		} else
 			super.printStackTrace(output);

@@ -7,6 +7,7 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.runtime.Policy;
 import java.io.File;
 import java.util.*;
 import java.net.URL;
