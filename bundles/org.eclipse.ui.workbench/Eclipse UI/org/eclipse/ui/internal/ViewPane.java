@@ -54,13 +54,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
     private boolean showFocus = false;
 
-    // toolbars can be locked (i.e. part of the view form and 
-    // positioned inside it, or not locked (embedded in a floating
-    // toolbar that is not part of the view form
-    private boolean locked = true;
-
     Composite toolbarWrapper;
-    ToolBar isvToolBar;
 
     // create initially toolbarless bar manager so that actions may be added in the 
     // init method of the view.
@@ -259,19 +253,17 @@ public class ViewPane extends PartPane implements IPropertyListener {
         toolbarWrapper.setLayout(new EnhancedFillLayout());
         // ISV toolbar.
         //			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-        isvToolBar = isvToolBarMgr.createControl(toolbarWrapper);
+        ToolBar isvToolBar = isvToolBarMgr.createControl(toolbarWrapper);
 
-        if (locked) {
-            //((ViewForm2)control).setTopCenter(isvToolBar);	
             isvToolBar.addMouseListener(new MouseAdapter() {
                 public void mouseDoubleClick(MouseEvent event) {
-                    if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
-                        doZoom();
+                    if (event.widget instanceof ToolBar) {
+                    
+	                    if (((ToolBar)event.widget).getItem(new Point(event.x, event.y)) == null)
+	                        doZoom();
+                    }
                 }
             });
-        } else {
-            //isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
-        }
 
         isvToolBar.addListener(SWT.Activate, this);
     }
@@ -289,6 +281,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
             isvMenuMgr.dispose();
         if (isvToolBarMgr != null)
             isvToolBarMgr.dispose();
+        if (toolbarWrapper != null) {
+            toolbarWrapper.dispose();
+            toolbarWrapper = null;
+        }
     }
 
     /**
