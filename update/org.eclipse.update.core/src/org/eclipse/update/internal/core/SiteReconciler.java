@@ -117,7 +117,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 					UpdateCore.debug("Site not found in previous configurations.Create new Configured Site:" + resolvedURL);
 				}
-				ISite site = SiteManager.getSite(resolvedURL);
+				ISite site = SiteManager.getSite(resolvedURL,null);
 
 				//site policy
 				IPlatformConfiguration.ISitePolicy sitePolicy = currentSiteEntry.getSitePolicy();
@@ -418,8 +418,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IFeature feature1 = null;
 		IFeature feature2 = null;
 		try {
-			feature1 = featureRef1.getFeature();
-			feature2 = featureRef2.getFeature();
+			feature1 = featureRef1.getFeature(null);
+			feature2 = featureRef2.getFeature(null);
 		} catch (CoreException e) {
 			UpdateCore.warn(null, e);
 			return 0;
@@ -669,7 +669,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		ArrayList allPossibleConfiguredFeatures = new ArrayList();
 		for (int i = 0; i < configuredRefs.length; i++) {
 			try {
-				IFeature feature = configuredRefs[i].getFeature();
+				IFeature feature = configuredRefs[i].getFeature(null);
 				allPossibleConfiguredFeatures.add(feature);
 				// debug
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
@@ -730,9 +730,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					IFeature child = null;
 					try {
 						//remove best match and exact feature
-						child = children[j].getFeature(false, null);
+						child = children[j].getFeature(false, null, null);
 						result.remove(child);
-						child = children[j].getFeature(true, null);
+						child = children[j].getFeature(true, null, null);
 						result.remove(child);
 					} catch (CoreException e) {
 						// if optional, it may not exist, do not throw error for that
@@ -818,7 +818,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		for (int j = 0; j < children.length; j++) {
 			IFeature child = null;
 			try {
-				child = children[j].getFeature();
+				child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
 					UpdateCore.warn("", e);

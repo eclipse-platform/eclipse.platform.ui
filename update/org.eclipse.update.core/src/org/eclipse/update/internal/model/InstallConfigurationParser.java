@@ -142,7 +142,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		//site url
 		String urlString = attributes.getValue("url"); //$NON-NLS-1$
 		siteURL = new URL(urlString);
-		ISite site = SiteManager.getSite(siteURL);
+		ISite site = SiteManager.getSite(siteURL,null);
 		sites.put(urlString,site);
 
 		// policy

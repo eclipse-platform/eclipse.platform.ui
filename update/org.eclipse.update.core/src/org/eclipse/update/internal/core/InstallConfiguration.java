@@ -339,7 +339,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			for (int j = 0; j < configuredFeaturesRef.length; j++) {
 				IFeature feature = null;
 				try {
-					feature = configuredFeaturesRef[j].getFeature();
+					feature = configuredFeaturesRef[j].getFeature(null);
 				} catch (CoreException e) {
 					UpdateCore.warn(null, e);
 				}
@@ -604,7 +604,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 					for (int j = 0; j < featuresToUnconfigure.length; j++) {
 						IFeature featureToUnconfigure = null;
 						try {
-							featureToUnconfigure = featuresToUnconfigure[j].getFeature();
+							featureToUnconfigure = featuresToUnconfigure[j].getFeature(null);
 						} catch (CoreException e) {
 							UpdateCore.warn(null, e);
 						}

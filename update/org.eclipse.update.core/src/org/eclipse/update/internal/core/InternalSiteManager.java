@@ -72,6 +72,7 @@ public class InternalSiteManager {
 	 */
 	public static ISite getSite(URL siteURL, boolean useCache, IProgressMonitor monitor) throws CoreException {
 		ISite site = null;
+		if (monitor==null) monitor = new NullProgressMonitor();
 
 		if (siteURL == null)
 			return null;
@@ -99,20 +100,16 @@ public class InternalSiteManager {
 		}
 
 		//PERF: if file: <path>/ and directory exists then consider executable
-		if (monitor != null) {
-			monitor.beginTask(null, 8);
-		}
+		monitor.beginTask(Policy.bind("InternalSiteManager.ConnectingToSite"), 8);
 		if (fileProtocol && directoryExists) {
 			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
-			if (monitor != null)
-				monitor.worked(4); // only one attempt
+			monitor.worked(4); // only one attempt
 		} else {
 			try {
 				site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL, monitor);
-				if (monitor != null)
-					monitor.worked(4);
+				monitor.worked(4);
 			} catch (CoreException preservedException) {
-				if (monitor==null ||(monitor != null && !monitor.isCanceled())) {
+				if (!monitor.isCanceled()) {
 					// attempt a retry is the protocol is file, with executbale type
 					if (!fileProtocol)
 						throw preservedException;
@@ -149,17 +146,17 @@ public class InternalSiteManager {
 	 * attempt to create a type with the type found in the site.xml
 	 */
 	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL, IProgressMonitor monitor) throws CoreException {
+		if (monitor != null) monitor = new NullProgressMonitor();
 		ISite site = null;
 
 		try {
 			site = createSite(guessedTypeSite, siteURL, monitor);
-			if (monitor != null)
-				monitor.worked(2); // no error, teh rtry doesn't need to be executed
+			monitor.worked(2); // if no error, occurs the retry branch doesn't need to be executed
 		} catch (InvalidSiteTypeException e) {
+			if (monitor.isCanceled()) return null;
 
 			// the type in the site.xml is not the one expected	
 			// attempt to use this type instead	
-
 			//DEBUG:
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_TYPE) {
 				UpdateCore.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());

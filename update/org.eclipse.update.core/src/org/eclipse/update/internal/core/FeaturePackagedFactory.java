@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.URLEntryModel;
 
@@ -24,12 +25,15 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 	public IFeature createFeature(URL url,ISite site, IProgressMonitor monitor) throws CoreException {
 		Feature feature = null;
 		InputStream featureStream = null;
-		
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+					
 		try {	
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);	
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
+			monitor.worked(1);
 	
 			// if there is no update URL for the Feature
 			// use the Site URL

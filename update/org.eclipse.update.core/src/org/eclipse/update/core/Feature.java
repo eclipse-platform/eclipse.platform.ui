@@ -238,7 +238,7 @@ public class Feature extends FeatureModel implements IFeature {
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
-			monitor = null;
+			monitor = new InstallMonitor(new NullProgressMonitor());
 		else if (progress instanceof InstallMonitor)
 			monitor = (InstallMonitor) progress;
 		else
@@ -286,8 +286,7 @@ public class Feature extends FeatureModel implements IFeature {
 			// + 1 task for custom non-plugin entry handling (1 for all combined)
 			// + 5*x tasks for children features (5 subtasks per install)
 			int taskCount = 2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1 + 5 * children.length;
-			if (monitor != null)
-				monitor.beginTask("", taskCount);
+			monitor.beginTask("", taskCount);
 			SubProgressMonitor subMonitor = null;
 
 			// start log
@@ -324,13 +323,12 @@ public class Feature extends FeatureModel implements IFeature {
 			for (int i = 0; i < children.length; i++) {
 				IFeature childFeature = null;
 				try {
-					childFeature = children[i].getFeature();
+					childFeature = children[i].getFeature(null);
 				} catch (CoreException e) {
 					UpdateCore.warn(null, e);
 				}
 				if (childFeature != null) {
-					if (monitor != null)
-						subMonitor = new SubProgressMonitor(monitor, 5);
+					subMonitor = new SubProgressMonitor(monitor, 5);
 					((Site) targetSite).install(// need to cast
 					childFeature, optionalfeatures, consumer, verifier, verificationListener, subMonitor);
 				}
@@ -342,22 +340,18 @@ public class Feature extends FeatureModel implements IFeature {
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 
 				String msg = "";
-				if (monitor != null) {
-					subMonitor = new SubProgressMonitor(monitor, 1);
-					VersionedIdentifier pluginVerId = pluginsToInstall[i].getVersionedIdentifier();
-					String pluginID = (pluginVerId == null) ? "" : pluginVerId.getIdentifier();
-					msg = Policy.bind("Feature.TaskInstallPluginFiles", pluginID); //$NON-NLS-1$
-				}
-
+				subMonitor = new SubProgressMonitor(monitor, 1);
+				VersionedIdentifier pluginVerId = pluginsToInstall[i].getVersionedIdentifier();
+				String pluginID = (pluginVerId == null) ? "" : pluginVerId.getIdentifier();
+				msg = Policy.bind("Feature.TaskInstallPluginFiles", pluginID); //$NON-NLS-1$
+				
 				for (int j = 0; j < references.length; j++) {
 					setMonitorTaskName(subMonitor, msg + references[j].getIdentifier());
 					pluginConsumer.store(references[j], subMonitor);
 				}
 
-				if (monitor != null) {
-					if (monitor.isCanceled())
+				if (monitor.isCanceled())
 						abort();
-				}
 			}
 
 			// check if we need to install feature files [16718]	
@@ -369,24 +363,20 @@ public class Feature extends FeatureModel implements IFeature {
 				references = provider.getFeatureEntryContentReferences(monitor);
 
 				String msg = "";
-				if (monitor != null) {
-					subMonitor = new SubProgressMonitor(monitor, 1);
-					msg = Policy.bind("Feature.TaskInstallFeatureFiles"); //$NON-NLS-1$
-				}
-
+				subMonitor = new SubProgressMonitor(monitor, 1);
+				msg = Policy.bind("Feature.TaskInstallFeatureFiles"); //$NON-NLS-1$
+				
 				for (int i = 0; i < references.length; i++) {
 					setMonitorTaskName(subMonitor, msg + " " + references[i].getIdentifier());
 					consumer.store(references[i], subMonitor);
 				}
 			} else {
-				if (monitor != null)
-					monitor.worked(1);
+				monitor.worked(1);
 			}
 
-			if (monitor != null) {
-				if (monitor.isCanceled())
-					abort();
-			}
+			if (monitor.isCanceled())
+				abort();
+			
 
 			// call handler to complete installation (eg. handle non-plugin entries)
 			handler.completeInstall(consumer);
@@ -546,9 +536,9 @@ public class Feature extends FeatureModel implements IFeature {
 
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
-				plugins = children[i].getFeature().getPluginEntries();
+				plugins = children[i].getFeature(null).getPluginEntries();
 				allPluginEntries.addAll(Arrays.asList(plugins));
-				nonPlugins = children[i].getFeature().getNonPluginEntries();
+				nonPlugins = children[i].getFeature(null).getNonPluginEntries();
 				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
@@ -587,9 +577,9 @@ public class Feature extends FeatureModel implements IFeature {
 
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
-				plugins = children[i].getFeature().getPluginEntries();
+				plugins = children[i].getFeature(null).getPluginEntries();
 				allPluginEntries.addAll(Arrays.asList(plugins));
-				nonPlugins = children[i].getFeature().getNonPluginEntries();
+				nonPlugins = children[i].getFeature(null).getNonPluginEntries();
 				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
@@ -832,7 +822,7 @@ public class Feature extends FeatureModel implements IFeature {
 			currentReference = references[i];
 			// do not compare URL
 			try {
-				if (this.equals(currentReference.getFeature()))
+				if (this.equals(currentReference.getFeature(null)))
 					return currentReference; // 18867
 			} catch (CoreException e) {
 				UpdateCore.warn(null, e);
@@ -856,7 +846,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 		IFeature feature = null;
 		try {
-			feature = referenceToReinitialize.getFeature();
+			feature = referenceToReinitialize.getFeature(null);
 			if (feature != null && feature instanceof Feature) {
 				((Feature) feature).initializeIncludedReferences();
 			}

@@ -11,6 +11,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;
 
@@ -23,47 +24,45 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	 * @see IFeatureFactory#createFeature(URL,ISite,IProgressMonitor)
 	 */
 	public IFeature createFeature(URL url, ISite site, IProgressMonitor monitor) throws CoreException {
-	
-	
+
 		TargetFeature feature = null;
 		InputStream featureStream = null;
-	
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+
 		if (url == null)
 			return createFeature(site);
-	
+
 		// the URL should point to a directory
 		url = validate(url);
-	
+
 		try {
-			IFeatureContentProvider contentProvider =
-				new FeatureExecutableContentProvider(url);
+			IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(url);
 			// PERF: Do not create FeatureContentConsumer
 			//IFeatureContentConsumer contentConsumer =new FeatureExecutableContentConsumer();
-	
-			URL nonResolvedURL =
-				contentProvider.getFeatureManifestReference(null /*InstallMonitor */).asURL(); 
+
+			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null).asURL();
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
-	
+
 			feature = (TargetFeature) this.parseFeature(featureStream);
+			monitor.worked(1);
 			feature.setSite(site);
-	
+
 			feature.setFeatureContentProvider(contentProvider);
 			// PERF: FeatureContentConsumer
 			//feature.setContentConsumer(contentConsumer);
-	
+
 			feature.resolve(url, url);
 			feature.markReadOnly();
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			throw e;
-		} catch (Exception e){
-			throw Utilities.newCoreException(
-				Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()),
-				e);
+		} catch (Exception e) {
+			throw Utilities.newCoreException(Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()), e);
 			//$NON-NLS-1$
 		} finally {
 			try {
-				if (featureStream!=null)
+				if (featureStream != null)
 					featureStream.close();
 			} catch (IOException e) {
 			}
@@ -84,10 +83,8 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private IFeature createFeature(ISite site) throws CoreException {
 		TargetFeature feature = null;
 
-		IFeatureContentProvider contentProvider =
-			new FeatureExecutableContentProvider(null);
-		IFeatureContentConsumer contentConsumer =
-			new FeatureExecutableContentConsumer();
+		IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(null);
+		IFeatureContentConsumer contentConsumer = new FeatureExecutableContentConsumer();
 		feature = (TargetFeature) createFeatureModel();
 		feature.setSite(site);
 		feature.setFeatureContentProvider(contentProvider);
@@ -103,21 +100,15 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private URL validate(URL url) throws CoreException {
 
 		if (url == null)
-			throw Utilities.newCoreException(
-				Policy.bind("FeatureExecutableFactory.NullURL"),
-				null);
+			throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.NullURL"), null);
 		//$NON-NLS-1$
 
-		if (!(url.getFile().endsWith("/")
-			|| url.getFile().endsWith(File.separator)
-			|| url.getFile().endsWith(Feature.FEATURE_XML))) { //$NON-NLS-1$
+		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))) { //$NON-NLS-1$
 			try {
 				String path = url.getFile() + "/"; //$NON-NLS-1$
 				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(
-					Policy.bind("FeatureExecutableFactory.CannotCreateURL", url.toExternalForm()),
-					e);
+				throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.CannotCreateURL", url.toExternalForm()), e);
 				//$NON-NLS-1$
 			}
 		}

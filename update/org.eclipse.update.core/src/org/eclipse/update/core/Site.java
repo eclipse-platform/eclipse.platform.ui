@@ -326,12 +326,12 @@ public class Site extends SiteModel implements ISite {
 				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
 					IFeature featureToCompare = null;
 					try {
-						featureToCompare = features[indexFeatures].getFeature();
+						featureToCompare = features[indexFeatures].getFeature(null);
 					} catch (CoreException e) {
 						UpdateCore.warn(null, e);
 					}
 					if (!feature.equals(featureToCompare)) {
-						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
+						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature(null).getPluginEntries();
 						if (pluginEntries != null) {
 							for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
 								allPluginID.add(pluginEntries[indexEntries].getVersionedIdentifier());
@@ -480,6 +480,7 @@ public class Site extends SiteModel implements ISite {
 
 	/**
 	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
+	 * @deprecated
 	 */
 	public IFeature createFeature(String type, URL url) throws CoreException {
 		return createFeature(type,url,null);

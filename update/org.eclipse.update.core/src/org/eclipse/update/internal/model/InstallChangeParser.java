@@ -138,7 +138,7 @@ public class InstallChangeParser extends DefaultHandler {
 				e);
 			//$NON-NLS-1$
 		}
-		ISite currentSite = SiteManager.getSite(siteURL);
+		ISite currentSite = SiteManager.getSite(siteURL,null);
 
 		// feature url
 		String featureUrlPath = attributes.getValue("featureURL"); //$NON-NLS-1$

@@ -433,12 +433,12 @@ public class UpdateManagerUtils {
 		IFeature compareFeature = null;
 		for (int i = 0; i < possiblesParent.length; i++) {
 			try {
-				IFeature possibleParentFeature = possiblesParent[i].getFeature();
+				IFeature possibleParentFeature = possiblesParent[i].getFeature(null);
 				if (possibleParentFeature != null) {
 					children = possibleParentFeature.getIncludedFeatureReferences();
 					for (int j = 0; j < children.length; j++) {
 						try {
-							compareFeature = children[j].getFeature(true,null); // compare with the 'real' feature, not the best match
+							compareFeature = children[j].getFeature(true,null,null); // compare with the 'real' feature, not the best match
 						} catch (CoreException e) {
 							UpdateCore.warn("", e);
 						};
@@ -482,7 +482,7 @@ public class UpdateManagerUtils {
 
 		IFeature childFeature = null;
 		try {
-			childFeature = child.getFeature();
+			childFeature = child.getFeature(null);
 		} catch (CoreException e) {
 			UpdateCore.warn(null, e);
 		}

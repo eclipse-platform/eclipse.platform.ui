@@ -65,7 +65,8 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 
 	/**
 	 * Returns the feature this reference points to 
-	 *  @return the feature on the Site
+	 * @return the feature on the Site
+	 * @deprecated
 	 */
 	public IFeature getFeature() throws CoreException {
 		return getFeature(null);

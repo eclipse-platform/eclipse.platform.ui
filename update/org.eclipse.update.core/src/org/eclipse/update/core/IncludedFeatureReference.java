@@ -114,6 +114,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	/**
 	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean,
 	 * IConfiguredSite)
+	 * @deprecated
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite) throws CoreException {
 		return getFeature(perfectMatch,configuredSite,null);
@@ -180,6 +181,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	}			
 	/**
 	 * @see org.eclipse.update.core.IFeatureReference#getFeature()
+	 * @deprecated
 	 */
 	public IFeature getFeature() throws CoreException {
 		return getFeature(null);

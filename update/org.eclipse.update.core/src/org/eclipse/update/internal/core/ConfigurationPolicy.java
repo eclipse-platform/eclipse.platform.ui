@@ -90,7 +90,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		IFeature feature = null;
 		try {
-			feature = featureReference.getFeature();
+			feature = featureReference.getFeature(null);
 		} catch (CoreException e) {
 			if (!UpdateManagerUtils.isOptional(featureReference)){			
 				URL url = featureReference.getURL();
@@ -172,7 +172,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		IFeature feature = null;
 		try {
-			feature = featureReference.getFeature();
+			feature = featureReference.getFeature(null);
 		} catch (CoreException e) {
 			if (!UpdateManagerUtils.isOptional(featureReference)){
 				URL url = featureReference.getURL();
@@ -384,7 +384,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = null;
 				try {
-					feature = element.getFeature();
+					feature = element.getFeature(null);
 				} catch (CoreException e) {
 					UpdateCore.warn(null, e);
 				};

@@ -245,7 +245,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		 ((SiteFile) getSite()).addFeatureReferenceModel((SiteFeatureReferenceModel) localFeatureReference);
 		IFeature localFeature = null;
 		try {
-			localFeature = localFeatureReference.getFeature();
+			localFeature = localFeatureReference.getFeature(null);
 		} catch (CoreException e) {
 			UpdateCore.warn(null, e);
 			return;

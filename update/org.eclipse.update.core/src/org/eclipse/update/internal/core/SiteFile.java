@@ -186,12 +186,12 @@ public class SiteFile extends Site {
 			for (int i = 0; i < childrenRef.length; i++) {
 				IFeature childFeature = null;
 				try {
-					childFeature = childrenRef[i].getFeature();
+					childFeature = childrenRef[i].getFeature(null);
 				} catch (CoreException e) {
 					UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
 				}
 				if (childFeature != null)
-					remove(childrenRef[i].getFeature(), monitor);
+					remove(childrenRef[i].getFeature(null), monitor);
 			}
 
 			handler.completeUninstall();
@@ -272,7 +272,7 @@ public class SiteFile extends Site {
 			IFeatureReference[] children = feature.getIncludedFeatureReferences();
 			IFeature currentFeature = null;
 			for (int i = 0; i < children.length; i++) {
-				currentFeature = children[i].getFeature();
+				currentFeature = children[i].getFeature(null);
 				if (currentFeature != null) {
 					pluginsToInstall.addAll(Arrays.asList(currentFeature.getPluginEntries()));
 				}
@@ -336,7 +336,7 @@ public class SiteFile extends Site {
 	private IFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
 		IFeature result = null;
 		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(DEFAULT_INSTALLED_FEATURE_TYPE);
-		result = factory.createFeature(/*URL*/null, this);
+		result = factory.createFeature(/*URL*/null, this, null);
 
 		// at least set the version identifier to be the same
 		 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionedIdentifier().getIdentifier());
@@ -417,7 +417,7 @@ public class SiteFile extends Site {
 		IFeature childFeature = null;
 		for (int i = 0; i < childrenRef.length; i++) {
 			try {
-				childFeature = childrenRef[i].getFeature();
+				childFeature = childrenRef[i].getFeature(null);
 			} catch (CoreException e) {
 				UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
 			}

@@ -333,18 +333,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private IFeature createFeature(URL url, String type) throws CoreException {
-		// InternalFeatureReference
-		SiteFeatureReference ref = new SiteFeatureReference();
-		ref.setSite(site);
-		ref.setURL(url);
-		ref.setType(type);
-		return ref.getFeature();
-	}
-
 	/*
 	 * @see SiteModelFactory#createSiteMapModel()
 	 */

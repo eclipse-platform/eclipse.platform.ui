@@ -57,54 +57,6 @@ public class SiteStatusAnalyzer {
 			return label;
 		}
 	}
-	/**
-	* compare two feature references
-	* returns 0 if the feature are different
-	* returns 1 if the version of feature 1 is greater than version of feature 2
-	* returns 2 if opposite
-	*/
-	private int compare(IFeatureReference featureRef1, IFeatureReference featureRef2) throws CoreException {
-		if (featureRef1 == null)
-			return 0;
-
-		IFeature feature1 = null;
-		IFeature feature2 = null;
-		try {
-			feature1 = featureRef1.getFeature();
-			feature2 = featureRef2.getFeature();
-		} catch (CoreException e) {
-			UpdateCore.warn(null, e);
-			return 0;
-		}
-
-		if (feature1 == null || feature2 == null) {
-			return 0;
-		}
-
-		VersionedIdentifier id1 = feature1.getVersionedIdentifier();
-		VersionedIdentifier id2 = feature2.getVersionedIdentifier();
-
-		if (id1 == null || id2 == null) {
-			return 0;
-		}
-
-		if (id1.getIdentifier() != null && id1.getIdentifier().equals(id2.getIdentifier())) {
-			PluginVersionIdentifier version1 = id1.getVersion();
-			PluginVersionIdentifier version2 = id2.getVersion();
-			if (version1 != null) {
-				boolean greaterOrEqual = (version1.isGreaterOrEqualTo(version2));
-				if (greaterOrEqual) {
-					return 1;
-				} else {
-					return 2;
-				}
-			} else {
-				return 2;
-			}
-		}
-		return 0;
-	}
-
 	/*
 	 *  check if the Plugins of the feature are on the plugin path
 	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY
@@ -191,7 +143,7 @@ public class SiteStatusAnalyzer {
 			for (int i = 0; i < children.length; i++) {
 				if (!UpdateManagerUtils.isOptional(children[i])) {
 					try {
-						childFeature = children[i].getFeature();
+						childFeature = children[i].getFeature(null);
 					} catch (CoreException e) {
 						if (!UpdateManagerUtils.isOptional(children[i]))
 							UpdateCore.warn("Error retrieving feature:" + children[i]);
@@ -400,7 +352,7 @@ public class SiteStatusAnalyzer {
 				for (int j = 0; j < refs.length; j++) {
 					feature = null;
 					try {
-						feature = refs[j].getFeature();
+						feature = refs[j].getFeature(null);
 					} catch (CoreException e) {
 					}
 					if (feature != null) {

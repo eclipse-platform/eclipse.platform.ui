@@ -145,7 +145,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 			configuredFeaturesRef = configuredSites[i].getConfiguredFeatures();
 			for (int j = 0; j < configuredFeaturesRef.length; j++) {
 				try {
-					feature = configuredFeaturesRef[j].getFeature();
+					feature = configuredFeaturesRef[j].getFeature(null);
 					int result = compare(newlyConfiguredFeatures, feature);
 					if (result != 0) {
 						if (result == 1) {
@@ -215,6 +215,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	public void process(IFeatureReference[] selected, IProgressMonitor pm) throws CoreException {
 		
 		createInstallConfiguration();
+		if (pm==null) pm = new NullProgressMonitor();
 
 		// process all feature references to configure
 		// find the configured site each feature belongs to
@@ -223,10 +224,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 			UpdateCore.warn("ENABLE SESSION DELTA");
 			if (featureReferences != null && featureReferences.size() > 0) {
 				// manage ProgressMonitor
-				if (pm != null) {
-					int nbFeatures = featureReferences.size();
-					pm.beginTask(Policy.bind("SessionDelta.EnableFeatures"), nbFeatures);
-				}
+				int nbFeatures = featureReferences.size();
+				pm.beginTask(Policy.bind("SessionDelta.EnableFeatures"), nbFeatures);
 				// since 2.0.2 ISite.getConfiguredSite()
 				// find the configuredSite that maintains this featureReference
 				// configure the feature
@@ -237,15 +236,13 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 					ref = (IFeatureReference) selected[i];
 
 					try {
-						featureToConfigure = ref.getFeature();
+						featureToConfigure = ref.getFeature(null);
 					} catch (CoreException e) {
 						UpdateCore.warn(null, e);
 					}
 
 					if (featureToConfigure != null) {
-						if (pm != null)
-							pm.worked(1);
-
+						pm.worked(1);
 						configSite = ref.getSite().getCurrentConfiguredSite();
 						try {
 							// make sure only the latest version of the configured features
@@ -269,7 +266,5 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 
 		delete();
 		saveLocalSite();
-				
 	}
-
 }

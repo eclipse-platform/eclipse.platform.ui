@@ -30,6 +30,7 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * equivalent to getFeature(false,null);
 	 * 
 	 * @return the referenced feature
+	 * @deprecated use getFeature(IProgressMonitor) instead
 	 * @since 2.0 
 	 */
 	public IFeature getFeature() throws CoreException;
