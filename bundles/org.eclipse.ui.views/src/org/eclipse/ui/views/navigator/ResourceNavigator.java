@@ -24,17 +24,18 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ViewsPlugin;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.framelist.*;
+import org.eclipse.ui.views.framelist.FrameList;
+import org.eclipse.ui.views.framelist.TreeFrame;
 
 /**
  * Implements the Resource Navigator view.
@@ -305,14 +306,6 @@ public class ResourceNavigator
 				handleOpen(event);
 			}
 		});
-		viewer.getControl().addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent event) {
-				handleKeyPressed(event);
-			}
-			public void keyReleased(KeyEvent event) {
-				handleKeyReleased(event);
-			}
-		});
 	}
 
 	/* (non-Javadoc)
@@ -572,9 +565,11 @@ public class ResourceNavigator
 	 * 
 	 * @param event the key event
 	 * @since 2.0
+	 * @deprecated navigator actions are registered with KeyBindingService.
+	 * 	There is no need to invoke actions manually and this is no longer 
+	 * 	supported. API will be removed in the next release (2.1).
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
-		getActionGroup().handleKeyPressed(event);
 	}
 
 	/**
@@ -582,6 +577,9 @@ public class ResourceNavigator
 	 * 
 	 * @param event the key event
 	 * @since 2.0
+	 * @deprecated navigator actions are registered with KeyBindingService.
+	 * 	There is no need to invoke actions manually and this is no longer 
+	 * 	supported. API will be removed in the next release (2.1). 
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 	}
