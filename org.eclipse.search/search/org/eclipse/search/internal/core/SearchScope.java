@@ -5,12 +5,12 @@
 package org.eclipse.search.internal.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.jface.util.Assert;
 
 /**

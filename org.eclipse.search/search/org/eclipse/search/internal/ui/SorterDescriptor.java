@@ -4,14 +4,13 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 

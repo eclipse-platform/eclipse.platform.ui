@@ -9,7 +9,6 @@ import java.net.URL;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;

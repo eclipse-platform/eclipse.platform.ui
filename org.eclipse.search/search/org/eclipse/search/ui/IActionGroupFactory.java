@@ -10,7 +10,6 @@
  */
 package org.eclipse.search.ui;
 
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**

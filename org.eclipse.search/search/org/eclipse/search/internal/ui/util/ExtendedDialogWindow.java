@@ -31,7 +31,6 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 

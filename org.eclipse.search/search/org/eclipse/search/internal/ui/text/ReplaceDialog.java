@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -187,7 +186,6 @@ public class ReplaceDialog extends Dialog {
 		Control control= view.getViewer().getControl();
 		Point size= control.getSize();
 		Point location= control.toDisplay(control.getLocation());
-		Rectangle bounds = control.getDisplay().getBounds();
 		result.x= Math.max(0, location.x + size.x - initialSize.x);
 		result.y= Math.max(0, location.y + size. y - initialSize.y);
 		return result;
