@@ -29,13 +29,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -1114,4 +1117,12 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertTrue("Folder should still exist", project.getFolder("folder2").exists());
 	}
 	
+	public void testDisconnectingProject() throws CoreException, TeamException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject("testDisconnect", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
+		provider.deconfigure();		
+		assertProjectRemoved(project);
+	}
 }
