@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Phil Loats (IBM Corp.) - fix to use only foundation APIs
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.util.*;
@@ -29,15 +30,54 @@ public class Context extends ContextsNode implements IStyledContext {
 			return;
 		shortID = attrs.getValue("id"); //$NON-NLS-1$
 	}
+	private static String stripStyle(String s, String style) {
+		int len = s.length();
+		int skipLen = style.length();
+		StringBuffer sb = new StringBuffer(s.length());
+		int idx;
+		int lastIdx=0;
+		
+		while ((idx = s.indexOf(style, lastIdx)) != -1) {
+			int start = idx;
+			boolean hasSpace = false;
+			while ((start>lastIdx) && Character.isWhitespace(s.charAt(start-1))) { 
+				start--;
+			}
+			if (idx != start)
+				hasSpace = true;
+			//add everthing to start
+			sb.append(s.substring(lastIdx, start));
+			
+			// skip style
+			idx += skipLen;
+			int end = idx;
+			while ((end<len) && Character.isWhitespace(s.charAt(end)))
+				end++;
+			if (end != idx)
+				hasSpace = true;
+			lastIdx = end;
+			
+			if (hasSpace)
+				sb.append(' ');
+		}
+		
+		// add everything else
+		sb.append(s.substring(lastIdx, len));
+		return sb.toString();
+	}
 	/**
 	 * @return plain text (without <@#$b>or </@#$b> bug 59541)
 	 */
 	public String getText() {
+		//PAL foundation
+		/*
 		return text
 		// if there are spaces on any or both side of bold they need to be
 				// collapsed to one
 				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		*/
+		return stripStyle(stripStyle(text,"<@#$b>"),"</@#$b>");
 	}
 	/**
 	 * @return styled text with <@#$b>and </@#$b> to mark bold range
