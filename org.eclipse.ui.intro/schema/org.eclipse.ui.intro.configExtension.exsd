@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.ui.intro">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.intro" id="config" name="Intro Part Configuration"/>
+         <meta.schema plugin="org.eclipse.ui.intro" id="configExtension" name="Intro Part Configuration Extension"/>
       </appInfo>
       <documentation>
-         This extension point is used to define and configure the Eclipse &apos;Out of The Box Experience&apos;. The extension point can be used to define if the OOBE will be presented to the user through a Browser based implementation or an SWT based implementation.
+         This extension point is used to extend an existing intro configuration by provide either more content or additional StandbyParts.
       </documentation>
    </annotation>
 
@@ -19,21 +19,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified identifier of the target extension point
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional identifier for this extension instance
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name for this extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -43,400 +43,24 @@
    <element name="configExtension">
       <annotation>
          <documentation>
-            Defines an extension to an intro part configuration. Any page or div in an intro part configuration can be extended, if that page has declared extensability through the expandable-by flag.
+            Defines an extension to an intro configuration. Any page or div in an intro part configuration can be extended, if that page has declared extensability through the expandable-by flag. (todo - what happened to place holders, I thought we removed the extendable attribute)
          </documentation>
       </annotation>
       <complexType>
          <sequence>
-            <element ref="extensionContent"/>
-            <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="div" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="configId" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of an intro part contribution that will be extended by this configExtension.
+                  the id of an intro contribution that will be extended
                </documentation>
             </annotation>
          </attribute>
          <attribute name="content" type="string" use="required">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="extensionContent">
-      <annotation>
-         <documentation>
-            The content to be added to the target page or div. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target element could not be found, for example) then the pages and/or divs in the extension need to be ingnored.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice>
-            <element ref="text"/>
-            <element ref="div"/>
-            <element ref="link"/>
-         </choice>
-         <attribute name="style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="alt-style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="path" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the path that uniquely represents the element (e.g. page/div1/div2) within the target configuration to be extended. It can only be a page or a div, including shared divs at configuration level.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="page">
-      <complexType>
-         <choice>
-            <element ref="div"/>
-            <element ref="link"/>
-            <element ref="text"/>
-            <element ref="html"/>
-            <element ref="img"/>
-            <element ref="include"/>
-            <element ref="title"/>
-         </choice>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="title" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="alt-style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="url" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-url" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-alt-style" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="title">
-      <annotation>
-         <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  unique identifier of this title.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="link">
-      <complexType>
-         <sequence>
-            <element ref="text" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="url" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="title">
-      <annotation>
-         <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It is used as the page Title.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  unique identifier of this title.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="div">
-      <complexType>
-         <choice>
-            <element ref="text"/>
-            <element ref="div"/>
-            <element ref="link"/>
-            <element ref="html"/>
-            <element ref="img"/>
-            <element ref="include"/>
-         </choice>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  unique identifier of the division
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="html">
-      <annotation>
-         <documentation>
-            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative rendering.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice>
-            <element ref="img"/>
-            <element ref="text"/>
-         </choice>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  unique identifier of this HTML element
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="src" type="string" use="required">
-            <annotation>
-               <documentation>
-                  relative or absolute URL to a file containing HTML
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  if &apos;inline&apos;, value of &apos;src&apos; will be treated as a snippet of HTML to emit &apos;in-place&apos;. If &apos;embed&apos;, a valid (full) HTML document will be embedded using HTML &apos;OBJECT&apos; tag. (if type is not specified, this html object is ignored by the intro configuration).
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="inline">
-                  </enumeration>
-                  <enumeration value="embed">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="img">
-      <annotation>
-         <documentation>
-            an image that represents presentation content (as opposed to decoration images defined in styles).
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  unique identifier of this image
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="src" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the file to load the image from
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="alt" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="text">
-      <annotation>
-         <documentation>
-            a snippet of text that can optionally contain escaped HTML tags.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  unique identifier of this text.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class-id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="include">
-      <annotation>
-         <documentation>
-            expands an element targeted by the given path, and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a div defined at the configuration level, or any element in a page.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="configId" type="string">
-            <annotation>
-               <documentation>
-                  identifier of a configuration where the included element is defined. If specified, it is assumed that the element to be included is specified in another configuration, and not the enclosing configuration. In this case, that external config is loaded and the element is resolved from that new config. If not specified, enclosing (parent) configuration of this include is assumed.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="path" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the path that uniquely represents the target element within the configuration (e.g. page/div1/div2). It may be a div element, or any element that may be contained in a div.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="merge-style" type="boolean">
-            <annotation>
-               <documentation>
-                  if &lt;code&gt;true&lt;/code&gt;, style belonging to the page that owns the included element will be added to list of styles of the including page. If &lt;code&gt;false&lt;/code&gt; (the default), the including page is responsible for controling properties of the included element.
+                  an intro content file. The content file is an XML file that contains the specifics of the intro (&lt;a href=&quot;introContentFileSpec.html&quot;&gt;intro content file format specification)&lt;/a&gt;.
+The content file is parsed at run time by the intro framework. Based on the settings in this file, a certain number of pages, groups, and links are shown to the user when the intro is opened.
                </documentation>
             </annotation>
          </attribute>
@@ -446,28 +70,29 @@
    <element name="standbyPart">
       <annotation>
          <documentation>
-            standby part registration.
+            standby part registration. (todo - seems out of place) (todo - say something about the intro command and the id to reference this standbypart)
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  (todo - say something about the intro command and the id to reference this standbypart)
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="pluginId" type="string" use="required">
+         <attribute name="pluginId" type="string">
             <annotation>
                <documentation>
-                  The name of the plugin that holds the class defined in the &quot;class&quot; attribute.
+                  The name of the plugin that holds the class defined in the &quot;class&quot; attribute. (todo - is this needed? shouldn&apos;t the class be in the declaring plugin already.)
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of a class that implements IStandbyContent interface in org.eclipse.ui.intro.
+                  The fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet. The class must be public, and have a public 1-argument constructor that accepts the attribute name
+(a &lt;code&gt;String&lt;/code&gt;).
                </documentation>
             </annotation>
          </attribute>
@@ -488,11 +113,18 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         An example here:
+         Here is an example implementation of this extension point:
 
-&lt;pre&gt;
-     &lt;page&gt;dsads &lt;/page&gt;
-&lt;/pre&gt;
+&lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
+    &lt;configExtension
+         configId=&quot;com.org.xyz.introConfig&quot; 
+         content=&quot;extensionContent.xml&quot;/&gt;  
+
+    &lt;standbyPart
+         id=&quot;com.org.xyz.myStandbyPart&quot;
+         class=&quot;com.org.xyz.internal.MyStandbyContent&quot;
+         pluginId=&quot;org.eclipse.platform&quot;/&gt; (todo - remove the pluginId?)
+&lt;/extension&gt;
       </documentation>
    </annotation>
 
@@ -510,17 +142,12 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         There are two supplied implementations that can be used to specify the OOBE presentation UI. 
-
-
-
-&lt;samp&gt;org.eclipse.ui.IIntroPart&lt;/samp&gt; interface. However, these parts are only available through the following optional plugin:
-&lt;p&gt;
-&lt;pre&gt;
-plugin name: UI Intro.
-plugin ID: org.eclipse.ui.intro
-&lt;/pre&gt;
-&lt;/p&gt;
+         There are three supplied implementations:
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.jdt, makes use of configExtension&lt;/li&gt;
+&lt;li&gt;org.eclipse.pde, makes use of configExtension&lt;/li&gt;
+&lt;li&gt;org.eclipse.platform, makes use of standbyPoint&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
@@ -529,7 +156,16 @@ plugin ID: org.eclipse.ui.intro
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
+         /************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *  IBM Corporation - Initial API and implementation
+ *************************************************************************/
       </documentation>
    </annotation>
 

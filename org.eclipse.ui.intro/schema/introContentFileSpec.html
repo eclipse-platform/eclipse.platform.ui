@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta content="text/html; charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <meta content="Microsoft FrontPage 4.0" name="GENERATOR">
+  <meta content="FrontPage.Editor.Document" name="ProgId">
+  <title>Intro Content File XML Format</title>
+</head>
+<body>
+<h1>Intro Content File XML Format</h1>
+<p>Version 3.0</p>
+<p>This document describes the intro content file structure as a series
+of
+DTD fragments (machine readable <a href="contentFile.xsd">XML schema</a>).</p>
+<h2><code>introContent</code></h2>
+<pre>&lt;!ELEMENT introContent (page+ | div* | extensionContent*)&gt;&nbsp;<br>&lt;!ATTLIST introContent&nbsp;<br>&gt;</pre>
+<p>The &lt;introContent&gt; element defines the body of the intro
+content
+file. &lt;intoContent&gt; has no attributes.<br>
+</p>
+<h2><code>page</code></h2>
+<pre>&lt;!ELEMENT page (div* | link* | text* | head? | img* | include* | html* | title?)&gt;<br>&lt;!ATTLIST page<br>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED <br>&nbsp; title &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED <br>  style &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED <br>  alt-style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED <br>  url&nbsp;&nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED <br>  standby-url          CDATA #IMPLIED <br>  standby-style        CDATA #IMPLIED <br>  standby-alt-style    CDATA #IMPLIED<br> &nbsp;class-id             CDATA #IMPLIED <br>&gt;</pre>
+<p>The &lt;page&gt; element is used to describe a page to
+be displayed. The &lt;page&gt; is either either dynamic or static.
+&lt;page&gt; attributes are as follows:</p>
+<ul>
+  <li><b>id</b> - A unique name that can be used to identify this page.<br>
+  </li>
+  <li><b>style</b> - A relative path to a CSS file which is applied to
+the page only when using the Web based presentation.<br>
+  </li>
+  <li><b>alt-style</b> - A relative path to a SWT presentation
+properies file which is applied to the page only when using the SWT
+based presentation. </li>
+  <li><b>url</b> - The optional relative path to an HTML file. When
+using the Web based presentation, this HTML file will displayed instead
+of any content defined for this page. </li>
+  <li><b>standby-url</b> - (todo - is this even used?)<br>
+  </li>
+  <li><b>standby-style</b> - (todo - is this even used?) </li>
+  <li><b>standby-alt-style</b> - (todo - is this even used?) </li>
+  <li><span style="font-weight: bold;">class-id</span> - A means to
+classifiy the page into a given category so that a common style may be
+applied.</li>
+</ul>
+Static pages allow for reuse of existing HTML documents within ones
+introduction. When a static page is used, none of the subelements are
+utilized. Also note when the SWT presentation is used and a static page
+is to be displayed an external brower is launched and the current page
+remains visible.<br>
+<br>
+Dynamic pages do not have a <span style="font-weight: bold;">url</span>
+defined and their contents are generated from the subelements of the
+page. The <span style="font-weight: bold;">style</span> or <span
+ style="font-weight: bold;">alt-style</span> will be applied depending
+on the presentation. The styles can be further enhanced by referencing
+the <span style="font-weight: bold;">id</span> or <span
+ style="font-weight: bold;">class-id</span>.<br>
+<br>
+A &lt;div&gt; subelement is used to group of content and apply style
+across the grouped content. A &lt;link&gt; subelement defines a link
+which can be used to link to a page and run an intro
+action/command.&nbsp; A link is normally defined at the page level to
+navigate between main pages verses links within a page. A &lt;text&gt;
+subelement defines textual content for the page level. A &lt;head&gt;
+subelement is only applicable for the Web based presentation and allows
+for additional html to be added to the HTML &lt;head&gt; section. This
+is useful for adding java srcipts or extra styles sheets. An
+&lt;img&gt; subelement defines image content for the page level. An
+&lt;include&gt; subelement allows for reuse any element other than a
+page. An &lt;html&gt; subelement is only applicable for the Web based
+presentation and allows for the embedding or inclusion of html into the
+page's content. Embedding allows for a fully defined html file to be
+embeded within an HTML &lt;object&gt; by referencing the html file.
+Inclusion allows for embedding an html snippets directly from html
+file. A &lt;title&gt; subelement defines the title of the page.<br>
+<h2><code>div</code></h2>
+<pre>&lt;!ELEMENT div (div* | link* | text* | img* | include* | html*)&gt;&nbsp;<br>&lt;!ATTLIST div&nbsp;<br>&nbsp; id   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;    CDATA #IMPLIED&nbsp;<br>&nbsp; class-id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&gt;</pre>
+<p>The &lt;div&gt; element is used to group related elements, either
+content or presentation-wise. &lt;div&gt; attributes are
+as
+follows:</p>
+<ul type="disc">
+  <li><b>id</b>- A unique name that can be used to identify this div. </li>
+  <li><b>label</b>- The title of the div item. (todo - should this be
+moved to a title element?)<br>
+  </li>
+  <li><b>class-id</b>- A means to classifiy the div into a given
+category so that a common style may be applied.</li>
+</ul>
+A &lt;link&gt; subelement defines a link which can be used to link to a
+page and run an intro action/command.&nbsp; A link is normally defined
+at
+the page level to navigate between main pages verses links within a
+page. A &lt;text&gt; subelement defines textual content for the page
+level. An &lt;img&gt; subelement defines image content for the
+page level. An &lt;include&gt; subelement allows for reuse any element
+other than a page. An &lt;html&gt; subelement is only applicable for
+the Web based presentation and allows for the embedding or inclusion of
+html into the page's content. Embedding allows for a fully defined html
+file to be embeded within an HTML &lt;object&gt; by referencing the
+html file. Inclusion allows for embedding an html snippets directly
+from html file.
+<h2><code></code>link</h2>
+<code></code>
+<pre>&lt;!ELEMENT link (text?)&gt;&nbsp;<br>&lt;!ATTLIST link&nbsp;<br>&nbsp; url&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>  id                CDATA #IMPLIED<br>  label             CDATA #IMPLIED<br>  class-id          CDATA #IMPLIED<br>&gt;</pre>
+<p>Each &lt;conditional-subitem&gt; element describes a single sub-step
+whose
+form can differ based on a condition known at the time the item is
+expanded.
+&lt;conditional-subitem&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><span style="font-weight: bold;">url</span> - A valid URL to
+external web site or a 'special' URL syntax will be reserved for
+Eclipse actions. All URLs in the following form
+http://org.eclipse.ui.intro/&lt;command&gt;?p1=v1&amp;p2=v2...will be
+processed as Eclipse requests. (todo - either include all the commands
+here or reference the file describing the commands)<br>
+  </li>
+  <li><b>id</b> - A unique name that can be used to identify this link.
+  </li>
+  <li><b>label</b> - The title of the div item. </li>
+  <li><b>class-id</b> - A means to classifiy the div into a given
+category so that a common style may be applied.</li>
+</ul>
+<h2><code>text</code></h2>
+<pre>&lt;!ELEMENT text EMPTY&gt;&nbsp;<br>&lt;!ATTLIST text&nbsp;<br>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&nbsp; class-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&gt;</pre>
+<p>Each &lt;text&gt; element defines textual content. &lt;text&gt;
+attributes
+are as
+follows:</p>
+<ul type="disc">
+  <li><b>id</b> - A unique name that can be used to identify this text.</li>
+  <li><b>class-id</b> - A means to classifiy the div into a given
+category so that a common style may be applied.</li>
+</ul>
+<h2><code>head</code></h2>
+<pre>&lt;!ELEMENT head EMPTY&gt;&nbsp;<br>&lt;!ATTLIST head&nbsp;<br>&nbsp; src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   CDATA #REQUIRED<br>&gt;</pre>
+<p>A &lt;head&gt; element is only applicable for the Web based
+presentation and allows for additional html to be added to the HTML
+&lt;head&gt; section. This is useful for adding java srcipts or extra
+styles sheets.
+&lt;head&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>src</b>- A relative URL to a file containing the HTML to
+include directly into the HTML &lt;head&gt; section. </li>
+</ul>
+<h2><code>img</code></h2>
+<pre>&lt;!ELEMENT img EMPTY&gt;&nbsp;<br>&lt;!ATTLIST img&nbsp;<br>&nbsp; id       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; src      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; alt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       CDATA #IMPLIED<br>&nbsp; class-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  CDATA #IMPLIED<br>&gt;</pre>
+<p>Each &lt;img&gt; element describes an image that represents intro
+content.not presentation content.
+&lt;img&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>id</b> - A unique name that can be used to identify this img.</li>
+  <li><b>src</b> - A relative URL to the image file. </li>
+  <li><b>alt</b> - The alternative text to use when the image can not
+be load or is not use by the presentation.</li>
+  <li><b>class-id</b> - A means to classifiy the div into a given
+category so that a common style may be applied.</li>
+</ul>
+<h2><code>include</code></h2>
+<pre>&lt;!ELEMENT include EMPTY&gt;&nbsp;<br>&lt;!ATTLIST include&nbsp;<br>&nbsp; path     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; configId &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; merge-style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ("true" | "false") "false"<br>&gt;</pre>
+<p>Each &lt;include&gt; element expands an element targeted by the
+given path and an optional configId attributes. The path should
+uniquely address an element within the specified configuration. It
+could point to a div defined at the configuration level, or any element
+in a page.(todo - can the path reference elements within divs? I
+thought it could reference any element.)
+&lt;include&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>path</b> - The path that uniquely represents the target
+element within the configuration (e.g. page/div1/div2). It may be a div
+element, or any element that may be contained in a div. You can not
+include a page.</li>
+  <li><b>configId</b> - An identifier of an intro configuration where
+the included element is defined. If specified, it is assumed that the
+element to be included is specified in another configuration, and not
+the enclosing configuration. In this case, that external config is
+loaded and the element is resolved from that new config. If not
+specified, enclosing (parent) configuration of this include is assumed.
+(todo - the configId was marked as required in the schema but the
+description states that it is optional. So is it optional?)</li>
+  <li><b>mergeStyle</b> - If true, style belonging to the page that
+owns the included element will be added to list of styles of the
+including page. If false, the including page is responsible for
+controling properties of the included element.</li>
+</ul>
+<h2><code>html</code></h2>
+<pre>&lt;!ELEMENT html ( [img|text] )&gt;&nbsp;<br>&lt;!ATTLIST html&nbsp;<br>&nbsp; id       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; src      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ("embed" | "inline") <br>&nbsp; class-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  CDATA #IMPLIED<br>&gt;</pre>
+<p>An &lt;html&gt; element is only applicable for
+the Web based presentation and allows for the embedding or inclusion of
+html into the page's content. Embedding allows for a fully defined html
+file to be embeded within an HTML &lt;object&gt; by referencing the
+html file. Inclusion allows for embedding an html snippets directly
+from html file. &lt;html&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>id</b> - A unique name that can be used to identify this html.</li>
+  <li><b>src</b> - A relative URL to a file containing the HTML embed
+or include.</li>
+  <li><span style="font-weight: bold;">type</span> - If 'embed', a
+valid (full) HTML document will be embedded using HTML &lt;object&gt;
+tag. If 'inline', value of 'src' will be treated as a snippet of HTML
+to emit 'in-place'. If type is not specified, the html element will be
+ignored by the intro configuration. </li>
+  <li><b>class-id</b> - A means to classifiy the div into a given
+category so that a common style may be applied.<br>
+  </li>
+</ul>
+<h2><code>title</code></h2>
+<pre>&lt;!ELEMENT title EMPTY&gt;&nbsp;<br>&lt;!ATTLIST title&nbsp;<br>&nbsp; id       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&nbsp; class-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  CDATA #IMPLIED<br>&gt;</pre>
+<p>A &lt;title&gt; element defines a page's title.
+&lt;title&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>id</b> - A unique name that can be used to identify this title.</li>
+  <li><b>class-id</b> - A means to classifiy the div into a given
+category so that a common style may be applied.<br>
+  </li>
+</ul>
+<h2><code>extensionContent</code></h2>
+<pre>&lt;!ELEMENT extensionContent( div* | link* )&gt;&nbsp;<br>&lt;!ATTLIST extensionContent<br>&nbsp; path    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED<br>&nbsp; style   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&nbsp; alt-style   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED<br>&gt;</pre>
+<p>An &lt;extensionContent&gt; element defines the content to be added
+to the target page or div. (todo - what happen to placeholders?)
+&lt;extensionContent&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>path</b>- The path that uniquely represents the element (e.g.
+page/div1/div2) within the target configuration to be extended. It can
+only be a page or a div, including shared divs at configuration level. </li>
+  <li><b>style</b> - A relative path to a CSS file which is applied to
+the page only when using the Web based presentation.<br>
+  </li>
+  <li><b>alt-style</b> - A relative path to a SWT presentation
+properies file which is applied to the page only when using the SWT
+based presentation. </li>
+</ul>
+<h2><code></code>Example</h2>
+<p>The following is an example of a very simple cheat sheet content
+file:</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;cheatsheet title="Example"&gt;<br>  &lt;intro&gt;<br>    &lt;description&gt;Example cheat sheet with two steps.&lt;/description&gt;<br>  &lt;/intro&gt;<br>  &lt;item title="Step 1"&gt;<br>     &lt;description&gt;This is a step with an action.&lt;/description&gt;<br>     &lt;action class="com.xyz.myaction" pluginId="com.xyz"/&gt;<br>  &lt;/item&gt;<br>  &lt;item title="Step 2"&gt;<br>     &lt;description&gt;This is a fully manual step.&lt;/description&gt;<br>  &lt;/item&gt;<br>&lt;/cheatsheet&gt;</pre>
+</body>
+</html>
