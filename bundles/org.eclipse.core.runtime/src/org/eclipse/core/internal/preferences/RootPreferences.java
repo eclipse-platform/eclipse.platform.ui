@@ -32,14 +32,44 @@ public class RootPreferences extends EclipsePreferences {
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
 	public void flush() throws BackingStoreException {
-		// no-op for the root...only applicable for scope roots
+		// flush all children
+		BackingStoreException exception = null;
+		String[] names = childrenNames();
+		for (int i = 0; i < names.length; i++) {
+			try {
+				node(names[i]).flush();
+			} catch (BackingStoreException e) {
+				// store the first exception we get and still try and flush
+				// the rest of the children.
+				if (exception != null)
+					exception = e;
+			}
+		}
+
+		if (exception != null)
+			throw exception;
 	}
 
 	/*
 	 * @see org.osgi.service.prefs.Preferences#sync()
 	 */
 	public void sync() throws BackingStoreException {
-		// no-op for the root...only applicable for scope roots
+		// sync all children
+		BackingStoreException exception = null;
+		String[] names = childrenNames();
+		for (int i = 0; i < names.length; i++) {
+			try {
+				node(names[i]).sync();
+			} catch (BackingStoreException e) {
+				// store the first exception we get and still try and sync
+				// the rest of the children.
+				if (exception != null)
+					exception = e;
+			}
+		}
+
+		if (exception != null)
+			throw exception;
 	}
 
 	public void addChild(IEclipsePreferences child) {

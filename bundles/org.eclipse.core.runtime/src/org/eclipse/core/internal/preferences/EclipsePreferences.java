@@ -42,6 +42,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected ListenerList preferenceListeners;
 	protected boolean isLoading = false;
 	private String cachedPath;
+	protected boolean dirty = false;
 
 	public EclipsePreferences() {
 		this(null, null);
@@ -217,8 +218,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			properties = new Properties();
 		String oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			preferenceChanged(key, oldValue, newValue);
+		}
 	}
 
 	/*
@@ -243,6 +246,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			properties = null;
 		if (oldValue != null) {
 			properties.remove(key);
+			makeDirty();
 			preferenceChanged(key, oldValue, null);
 		}
 	}
@@ -260,6 +264,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		for (Enumeration e = properties.keys(); e.hasMoreElements();)
 			remove((String) e.nextElement());
 		properties = null;
+		makeDirty();
 	}
 
 	/*
@@ -274,6 +279,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
 		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			if (oldValue != null)
 				try {
 					oldValue = new Integer((String) oldValue);
@@ -315,6 +321,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
 		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			if (oldValue != null)
 				try {
 					oldValue = new Long((String) oldValue);
@@ -355,8 +362,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		String newValue = value ? TRUE : FALSE;
 		String oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			preferenceChanged(key, oldValue == null ? null : new Boolean(oldValue), value ? Boolean.TRUE : Boolean.FALSE);
+		}
 	}
 
 	/*
@@ -383,6 +392,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
 		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			if (oldValue != null)
 				try {
 					oldValue = new Float((String) oldValue);
@@ -424,6 +434,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		Object oldValue = properties.getProperty(key);
 		properties.put(key, newValue);
 		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			if (oldValue != null)
 				try {
 					oldValue = new Double((String) oldValue);
@@ -466,8 +477,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		newValue = new String(value);
 		properties.put(key, newValue);
 		// protect against NPE here. there is probably an easier way to do this
-		if (!newValue.equals(oldValue))
+		if (!newValue.equals(oldValue)) {
+			makeDirty();
 			preferenceChanged(key, oldValue == null ? null : oldValue.getBytes(), value);
+		}
 	}
 
 	/*
@@ -518,6 +531,14 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public Preferences node(String pathName) {
 		return node(new Path(pathName));
+	}
+
+	protected void makeDirty() {
+		EclipsePreferences node = this;
+		while (node != null && !node.removed) {
+			node.dirty = true;
+			node = (EclipsePreferences) node.parent();
+		}
 	}
 
 	private IEclipsePreferences calculateRoot() {
@@ -643,8 +664,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	protected void removeNode(IEclipsePreferences child) {
 		if (children != null)
-			if (children.remove(child.name()) != null)
+			if (children.remove(child.name()) != null) {
+				makeDirty();
 				nodeRemoved(child);
+			}
 		if (children != null && children.isEmpty())
 			children = null;
 	}
@@ -842,8 +865,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException {
 		if (!visitor.visit(this) || children == null)
 			return;
-		for (Iterator i = children.values().iterator(); i.hasNext();)
-			((IEclipsePreferences) i.next()).accept(visitor);
+		for (Iterator i = children.values().iterator(); i.hasNext();) {
+			Object next = i.next();
+			if (next instanceof IEclipsePreferences)
+				((IEclipsePreferences) next).accept(visitor);
+		}
 	}
 
 }

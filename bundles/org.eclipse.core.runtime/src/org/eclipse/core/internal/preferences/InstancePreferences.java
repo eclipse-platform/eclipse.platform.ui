@@ -55,6 +55,8 @@ public class InstancePreferences extends EclipsePreferences {
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
 	public void flush() throws BackingStoreException {
+		if (!dirty)
+			return;
 		super.flush();
 		// TODO move this to superclass?
 		if (!isLoadLevel()) {
@@ -77,6 +79,7 @@ public class InstancePreferences extends EclipsePreferences {
 			return;
 		}
 		node.save(location);
+		dirty = false;
 	}
 
 	/*
@@ -99,6 +102,7 @@ public class InstancePreferences extends EclipsePreferences {
 		}
 		node.load(location);
 		node.flush();
+		dirty = false;
 	}
 
 	/**
