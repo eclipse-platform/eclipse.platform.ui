@@ -39,6 +39,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
@@ -97,6 +98,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private String root;
 	private boolean userFixed;
 	private boolean passwordFixed;
+	
 	private int serverPlatform = UNDETERMINED_PLATFORM;
 	private String remoteCVSProgramName = DEFAULT_REMOTE_CVS_PROGRAM_NAME;
 	
@@ -326,8 +328,15 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * use the plugged-in authenticator to prompt for the username and/or
 	 * password if one has not previously been provided or if the previously
 	 * supplied username and password are invalid.
+	 * 
+	 * This method is synchronized to ensure that authentication with the 
+	 * remote server is serialized. This is needed to avoid the situation where
+	 * multiple failed authentications occur and result in the remote account
+	 * being locked. The CVSProviderPlugin enforces that there is one instance
+	 * of a CVSRepositoryLocation per remote location thus this method is called
+	 * for any connection made to this remote location.
 	 */
-	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
+	public synchronized Connection openConnection(IProgressMonitor monitor) throws CVSException {
 		
 		try {
 			// Allow two ticks in case of a retry
