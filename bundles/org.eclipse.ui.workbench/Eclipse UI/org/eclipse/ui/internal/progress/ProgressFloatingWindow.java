@@ -236,9 +236,11 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		if (getShell() == null)
+		
+		Shell shellToClose = getShell();
+		if (shellToClose == null || shellToClose.isDisposed())
 			return super.close();
-		Region oldRegion = getShell().getRegion();
+		Region oldRegion = shellToClose.getRegion();
 		boolean result = super.close();
 		if (result && oldRegion != null)
 			oldRegion.dispose();
