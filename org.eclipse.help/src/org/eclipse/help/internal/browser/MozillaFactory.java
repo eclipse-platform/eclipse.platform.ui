@@ -3,12 +3,13 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.browser;
-import java.io.IOException;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	private String executable;
 	private String executableName;
@@ -77,7 +78,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 					IStatus.ERROR,
 					HelpPlugin.PLUGIN_ID,
 					IStatus.OK,
-					"MozillaFactory.dataMissing",
+					Resources.getString("MozillaFactory.dataMissing"),
 					e));
 		}
 	}
