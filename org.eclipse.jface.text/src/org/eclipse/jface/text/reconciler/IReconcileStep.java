@@ -20,7 +20,7 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
  * A reconcile step is one of n steps of a reconcile
  * strategy that consists of several steps.
  * 
- * @see 
+ * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy 
  * @since 3.0
  */
 public interface IReconcileStep {
