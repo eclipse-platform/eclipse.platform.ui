@@ -201,6 +201,9 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 * @return path to root ant installation directory
 	 */
 	public String getAntHome() {
+		if (antHomeLocation == null) {
+			return AntCorePlugin.getPlugin().getPreferences().getAntHome();
+		}
 		return antHomeLocation;
 	}
 }

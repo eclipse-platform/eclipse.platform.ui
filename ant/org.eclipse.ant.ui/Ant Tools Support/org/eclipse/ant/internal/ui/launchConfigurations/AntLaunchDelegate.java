@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		if (isSeparateJRE) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, idStamp, port, requestPort, commandLine, captureOutput, setInputHandler);
+			runInSeparateVM(configuration, launch, monitor, idStamp, antHome, port, requestPort, commandLine, captureOutput, setInputHandler);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine, captureOutput);
 		}
@@ -469,7 +469,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		commandLine.append(" \""); //$NON-NLS-1$
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, String antHome, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
         boolean debug= fMode.equals(ILaunchManager.DEBUG_MODE);
 		if (debug) {
 			RemoteAntDebugBuildListener listener= new RemoteAntDebugBuildListener(launch);
@@ -485,7 +485,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
-		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler);
+		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler, antHome);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
         copy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
         if (copy.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false)) {
@@ -494,6 +494,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
         if (debug) { //do not allow launch in foreground bug 83254
             copy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
         }
+        
+        //set the ANT_HOME environment variable
+		Map vars= new HashMap(1);
+		vars.put("ANT_HOME", antHome); //$NON-NLS-1$
+		copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
 
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
@@ -557,7 +562,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 	
-	private StringBuffer generateVMArguments(ILaunchConfiguration config, boolean setInputHandler) {
+	private StringBuffer generateVMArguments(ILaunchConfiguration config, boolean setInputHandler, String antHome) {
 		StringBuffer vmArgs= new StringBuffer();
 		try {
 			String configArgs= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
@@ -569,9 +574,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	
 		vmArgs.append("-Dant.home=\""); //$NON-NLS-1$
-		vmArgs.append(AntCorePlugin.getPlugin().getPreferences().getAntHome());
+		vmArgs.append(antHome);
 		vmArgs.append("\" "); //$NON-NLS-1$
-		File antLibDir= new File(AntCorePlugin.getPlugin().getPreferences().getAntHome(), "lib"); //$NON-NLS-1$
+		File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
 		vmArgs.append("-Dant.library.dir=\""); //$NON-NLS-1$
 		vmArgs.append(antLibDir.getAbsolutePath());
 		vmArgs.append('\"');

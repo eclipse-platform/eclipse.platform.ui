@@ -170,11 +170,10 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns a String specifying the Ant home to use for the build, or
-	 * <code>null</code> if none is specified.
+	 * Returns a String specifying the Ant home to use for the build.
 	 *
 	 * @param configuration launch configuration
-	 * @return String specifying Ant home to use, or <code>null</code>
+	 * @return String specifying Ant home to use
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
