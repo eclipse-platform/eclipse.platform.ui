@@ -15,7 +15,7 @@ import java.io.*;
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an
  * array of <code>IResources</code>s from one part to another in a 
- * in a drag and drop operation.
+ * drag and drop operation.
  * <p>
  * In every drag and drop operation there is a <code>DragSource</code> and 
  * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is 
