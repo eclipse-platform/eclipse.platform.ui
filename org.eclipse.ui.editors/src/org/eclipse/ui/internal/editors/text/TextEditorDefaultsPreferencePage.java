@@ -452,6 +452,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private void handleAppearanceColorListSelection() {	
 		int i= fAppearanceColorList.getSelectionIndex();
+		if (i == -1)
+			return;
+
 		String key= fAppearanceColorListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
 		fAppearanceColorEditor.setColorValue(rgb);		
@@ -621,6 +624,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
 				
 				int i= fAppearanceColorList.getSelectionIndex();
+				if (i == -1)
+					return;
+
 				String key= fAppearanceColorListModel[i][2];
 				if (key != null)
 					fOverlayStore.setValue(key, systemDefault);
@@ -651,8 +657,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 			public void widgetSelected(SelectionEvent e) {
 				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][1];
+				if (i == -1)
+					return;
 				
+				String key= fAppearanceColorListModel[i][1];
 				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
 			}
 		});
