@@ -52,10 +52,8 @@ public class SwapActivityHelper {
 		private ListViewer sourceViewer, destinationViewer;
 
 		/**
-		 * @param sourceViewer
-		 *            the source viewer.
-		 * @param destinationViewer
-		 *            the destination viewer.
+		 * @param sourceViewer the source viewer.
+		 * @param destinationViewer the destination viewer.
 		 * @since 3.0
 		 */
 		public SwapSelectionListener(
@@ -99,23 +97,27 @@ public class SwapActivityHelper {
 	/**
 	 * Answers whether the given activity id is bound to a category.
 	 * 
-	 * @param activityId
-	 *            the activity id to test.
+	 * @param activityId the activity id to test.
 	 * @return whether the given activity is bound to a category.
 	 * @since 3.0
 	 */
 	private boolean belongsToACategory(String activityId) {
-		IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-		
-		for (Iterator categoryItr = activityManager.getDefinedCategoryIds().iterator();
+		IActivityManager activityManager =
+			PlatformUI.getWorkbench().getActivityManager();
+
+		for (Iterator categoryItr =
+			activityManager.getDefinedCategoryIds().iterator();
 			categoryItr.hasNext();
 			) {
-			ICategory category = activityManager.getCategory((String) categoryItr.next());
-			
-			for (Iterator bindingItr = category.getCategoryActivityBindings().iterator();
+			ICategory category =
+				activityManager.getCategory((String) categoryItr.next());
+
+			for (Iterator bindingItr =
+				category.getCategoryActivityBindings().iterator();
 				bindingItr.hasNext();
 				) {
-				ICategoryActivityBinding binding = (ICategoryActivityBinding) bindingItr.next();
+				ICategoryActivityBinding binding =
+					(ICategoryActivityBinding) bindingItr.next();
 				if (binding.getActivityId().equals(activityId)) {
 					return true;
 				}
@@ -128,14 +130,11 @@ public class SwapActivityHelper {
 	/**
 	 * Create a swap button.
 	 * 
-	 * @param parent
-	 *            the parent control.
-	 * @param source
-	 *            the ListViewer to copy selections from.
-	 * @param destination
-	 *            the ListViewer to copy selections to.
-	 * @param leftToRight
-	 *            whether the arrow on the Button should face to the right.
+	 * @param parent the parent control.
+	 * @param source the ListViewer to copy selections from.
+	 * @param destination the ListViewer to copy selections to.
+	 * @param leftToRight whether the arrow on the Button should face to the
+	 *            right.
 	 * @since 3.0
 	 */
 	private void createButton(
@@ -155,8 +154,7 @@ public class SwapActivityHelper {
 	/**
 	 * Create the List controls and the Buttons.
 	 * 
-	 * @param parent
-	 *            the parent control.
+	 * @param parent the parent control.
 	 * @since 3.0
 	 */
 	public void createControl(Composite parent) {
@@ -193,8 +191,7 @@ public class SwapActivityHelper {
 	}
 
 	/**
-	 * @param parent
-	 *            the middle section of the main composite area.
+	 * @param parent the middle section of the main composite area.
 	 * 
 	 * @since 3.0
 	 */
@@ -214,8 +211,7 @@ public class SwapActivityHelper {
 	/**
 	 * Create a ListViewer with the given Label (as provided by a Group box).
 	 * 
-	 * @param label
-	 *            the label to give to the viewer.
+	 * @param label the label to give to the viewer.
 	 * @return @since 3.0
 	 */
 	private ListViewer createViewer(String label) {

@@ -22,17 +22,10 @@ import org.eclipse.ui.PlatformUI;
 public final class WorkbenchActivityHelper {
 
 	/**
-	 * Not intended to be instantiated.
-	 */
-	private WorkbenchActivityHelper() {
-	}
-
-	/**
 	 * Utility method to create a <code>String</code> containing the plugin
 	 * and local ids of a contribution.
 	 * 
-	 * @param contribution
-	 *            the contribution to use.
+	 * @param contribution the contribution to use.
 	 * @return the unified id.
 	 */
 	public static final String createUnifiedId(IPluginContribution contribution) {
@@ -44,11 +37,10 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Answers whether the provided object should be filtered from the UI based
 	 * on activity state. Returns false except when the object is an instance
-	 * of <code>IPluginContribution</code> whos unified id matches an 
-     * <code>IIdentifier</code> that is currently disabled.
+	 * of <code>IPluginContribution</code> whos unified id matches an <code>IIdentifier</code>
+	 * that is currently disabled.
 	 * 
-	 * @param object
-	 *            the object to test.
+	 * @param object the object to test.
 	 * @return whether the object should be filtered.
 	 * @see createUnifiedId(IPluginContribution)
 	 */
@@ -56,11 +48,15 @@ public final class WorkbenchActivityHelper {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
 			if (contribution.getPluginId() != null) {
-				IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+				IWorkbenchActivitySupport workbenchActivitySupport =
+					(IWorkbenchActivitySupport) PlatformUI
+						.getWorkbench()
+						.getAdapter(
+						IWorkbenchActivitySupport.class);
 
 				if (workbenchActivitySupport != null) {
 					IIdentifier identifier =
-					workbenchActivitySupport
+						workbenchActivitySupport
 							.getActivityManager()
 							.getIdentifier(
 							createUnifiedId(contribution));
@@ -82,5 +78,11 @@ public final class WorkbenchActivityHelper {
 			.getActivityManager()
 			.getDefinedCategoryIds()
 			.isEmpty();
+	}
+
+	/**
+	 * Not intended to be instantiated.
+	 */
+	private WorkbenchActivityHelper() {
 	}
 }

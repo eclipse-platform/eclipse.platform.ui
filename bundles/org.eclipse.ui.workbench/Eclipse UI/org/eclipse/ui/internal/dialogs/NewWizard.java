@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -29,18 +28,18 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
- * The new wizard is responsible for allowing the user to choose which
- * new (nested) wizard to run. The set of available new wizards comes
- * from the new extension point.
+ * The new wizard is responsible for allowing the user to choose which new
+ * (nested) wizard to run. The set of available new wizards comes from the new
+ * extension point.
  */
 public class NewWizard extends Wizard {
 	private static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
-
-	private IWorkbench workbench;
-	private IStructuredSelection selection;
+	private String categoryId = null;
 	private NewWizardSelectionPage mainPage;
 	private boolean projectsOnly = false;
-	private String categoryId = null;
+	private IStructuredSelection selection;
+
+	private IWorkbench workbench;
 	/**
 	 * Create the wizard pages
 	 */
@@ -68,6 +67,16 @@ public class NewWizard extends Wizard {
 		addPage(mainPage);
 	}
 	/**
+	 * Returns the id of the category of wizards to show or <code>null</code>
+	 * to show all categories. If no entries can be found with this id then all
+	 * categories are shown.
+	 * 
+	 * @return String or <code>null</code>.
+	 */
+	public String getCategoryId() {
+		return categoryId;
+	}
+	/**
 	 * Returns the child collection element for the given id
 	 */
 	private WizardCollectionElement getChildWithID(
@@ -83,27 +92,7 @@ public class NewWizard extends Wizard {
 		return null;
 	}
 	/**
-	 * Returns the id of the category of wizards to show
-	 * or <code>null</code> to show all categories.
-	 * If no entries can be found with this id then all 
-	 * categories are shown.
-	 * @return String or <code>null</code>.
-	 */
-	public String getCategoryId() {
-		return categoryId;
-	}
-	/**
-	 * Sets the id of the category of wizards to show
-	 * or <code>null</code> to show all categories.
-	 * If no entries can be found with this id then all
-	 * categories are shown.
-	 * @param id. String or <code>null</code>.
-	 */
-	public void setCategoryId(String id) {
-		categoryId = id;
-	}
-	/**
-	 *	Lazily create the wizards pages
+	 * Lazily create the wizards pages
 	 */
 	public void init(
 		IWorkbench aWorkbench,
@@ -116,30 +105,43 @@ public class NewWizard extends Wizard {
 		else
 			setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**
-	 *	The user has pressed Finish.  Instruct self's pages to finish, and
-	 *	answer a boolean indicating success.
-	 *
-	 *	@return boolean
+	 * The user has pressed Finish. Instruct self's pages to finish, and answer
+	 * a boolean indicating success.
+	 * 
+	 * @return boolean
 	 */
 	public boolean performFinish() {
 		//save our selection state
 		mainPage.saveWidgetValues();
 		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
-        
-        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-        IIdentifier identifier = activityManager.getIdentifier(selectedWizard.getClass().getName());
-        Set activities = new HashSet(activityManager .getEnabledActivityIds());
-        if (activities.addAll(identifier.getActivityIds())) {
-            PlatformUI.getWorkbench().setEnabledActivityIds(activities);
-        }        
+
+		IActivityManager activityManager =
+			PlatformUI.getWorkbench().getActivityManager();
+		IIdentifier identifier =
+			activityManager.getIdentifier(selectedWizard.getClass().getName());
+		Set activities = new HashSet(activityManager.getEnabledActivityIds());
+		if (activities.addAll(identifier.getActivityIds())) {
+			PlatformUI.getWorkbench().setEnabledActivityIds(activities);
+		}
 		return true;
 	}
 	/**
-	 * Sets the projects only flag.  If <code>true</code> only projects will
+	 * Sets the id of the category of wizards to show or <code>null</code> to
+	 * show all categories. If no entries can be found with this id then all
+	 * categories are shown.
+	 * 
+	 * @param id. String or <code>null</code>.
+	 */
+	public void setCategoryId(String id) {
+		categoryId = id;
+	}
+	/**
+	 * Sets the projects only flag. If <code>true</code> only projects will
 	 * be shown in this wizard.
 	 */
 	public void setProjectsOnly(boolean b) {

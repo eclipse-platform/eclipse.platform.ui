@@ -56,17 +56,14 @@ public class ActivityEnabler {
 	/**
 	 * Create a new instance.
 	 * 
-	 * @param activityManager
-	 *            the activity manager that will be used.
+	 * @param activityManager the activity manager that will be used.
 	 */
-	public ActivityEnabler(
-		IMutableActivityManager activityManager) {
+	public ActivityEnabler(IMutableActivityManager activityManager) {
 		this.activityManager = activityManager;
 	}
 
 	/**
-	 * @param categoryId
-	 *            the id to check.
+	 * @param categoryId the id to check.
 	 * @return whether all activities in the category are enabled.
 	 */
 	private boolean categoryEnabled(String categoryId) {
@@ -78,8 +75,7 @@ public class ActivityEnabler {
 	/**
 	 * Create the controls.
 	 * 
-	 * @param parent
-	 *            the parent in which to create the controls.
+	 * @param parent the parent in which to create the controls.
 	 * @return the composite in which the controls exist.
 	 */
 	public Control createControl(Composite parent) {
@@ -94,13 +90,14 @@ public class ActivityEnabler {
 		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		{			
+		{
 			categoryViewer =
 				CheckboxTableViewer.newCheckList(mainComposite, SWT.BORDER);
 			categoryViewer.getControl().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 			categoryViewer.setContentProvider(new CategoryContentProvider());
-			categoryViewer.setLabelProvider(new CategoryLabelProvider(activityManager));
+			categoryViewer.setLabelProvider(
+				new CategoryLabelProvider(activityManager));
 			categoryViewer.setSorter(new ViewerSorter());
 			categoryViewer.setInput(activityManager);
 			categoryViewer.setSelection(new StructuredSelection());
@@ -132,8 +129,8 @@ public class ActivityEnabler {
 						lastCategory = categoryId;
 						activitiesViewer.setInput(
 							getCategoryActivities(categoryId));
+					}
 				}
-			}
 			}
 		});
 
@@ -164,8 +161,7 @@ public class ActivityEnabler {
 	}
 
 	/**
-	 * @param categoryId
-	 *            the id to fetch.
+	 * @param categoryId the id to fetch.
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {
@@ -173,7 +169,8 @@ public class ActivityEnabler {
 		Set activityBindings = category.getCategoryActivityBindings();
 		List categoryActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
-			ICategoryActivityBinding binding = (ICategoryActivityBinding) j.next();
+			ICategoryActivityBinding binding =
+				(ICategoryActivityBinding) j.next();
 			String activityId = binding.getActivityId();
 			categoryActivities.add(activityId);
 		}

@@ -36,16 +36,19 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
- * The import wizard allows the user to choose which nested import wizard to run.
- * The set of available wizards comes from the import wizard extension point.
+ * The import wizard allows the user to choose which nested import wizard to
+ * run. The set of available wizards comes from the import wizard extension
+ * point.
  */
 public class ImportWizard extends Wizard {
-	private IWorkbench workbench;
-	private IStructuredSelection selection;
 
 	//the list selection page
 	class SelectionPage extends WorkbenchWizardListSelectionPage {
-		SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e, String s) {
+		SelectionPage(
+			IWorkbench w,
+			IStructuredSelection ss,
+			AdaptableList e,
+			String s) {
 			super(w, ss, e, s);
 		}
 		public void createControl(Composite parent) {
@@ -57,12 +60,15 @@ public class ImportWizard extends Wizard {
 		public IWizardNode createWizardNode(WorkbenchWizardElement element) {
 			return new WorkbenchWizardNode(this, element) {
 				public IWorkbenchWizard createWizard() throws CoreException {
-					return (IWorkbenchWizard) wizardElement.createExecutableExtension();
+					return (IWorkbenchWizard) wizardElement
+						.createExecutableExtension();
 				}
 			};
 		}
 	}
-	
+	private IStructuredSelection selection;
+	private IWorkbench workbench;
+
 	/**
 	 * Creates the wizard's pages lazily.
 	 */
@@ -73,34 +79,41 @@ public class ImportWizard extends Wizard {
 	 * Returns the import wizards that are available for invocation.
 	 */
 	protected AdaptableList getAvailableImportWizards() {
-		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
+		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT)
+			.getWizards();
 	}
 	/**
 	 * Initializes the wizard.
 	 */
-	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
+	public void init(
+		IWorkbench aWorkbench,
+		IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 
 		setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**
-	 * Subclasses must implement this <code>IWizard</code> method 
-	 * to perform any special finish processing for their wizard.
+	 * Subclasses must implement this <code>IWizard</code> method to perform
+	 * any special finish processing for their wizard.
 	 */
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
 		first.saveWidgetValues();
-        
-        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-		IIdentifier identifier = activityManager.getIdentifier(first.getSelectedNode().getWizard().getClass().getName());
-        Set activities = new HashSet(activityManager .getEnabledActivityIds());
-        if (activities.addAll(identifier.getActivityIds())) {
-        	PlatformUI.getWorkbench().setEnabledActivityIds(activities);
-        }
+
+		IActivityManager activityManager =
+			PlatformUI.getWorkbench().getActivityManager();
+		IIdentifier identifier =
+			activityManager.getIdentifier(
+				first.getSelectedNode().getWizard().getClass().getName());
+		Set activities = new HashSet(activityManager.getEnabledActivityIds());
+		if (activities.addAll(identifier.getActivityIds())) {
+			PlatformUI.getWorkbench().setEnabledActivityIds(activities);
+		}
 		return true;
 	}
 }

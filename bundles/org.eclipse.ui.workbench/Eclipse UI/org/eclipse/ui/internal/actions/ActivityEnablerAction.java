@@ -24,20 +24,20 @@ import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
 /**
- * Activates the Activity configuration dialog. 
+ * Activates the Activity configuration dialog.
  * 
  * @since 3.0
  */
 public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
-	private IWorkbenchWindow workbenchWindow;
-    private ActivityEnabler enabler;
 	private IMutableActivityManager activityManager;
+    private ActivityEnabler enabler;
+	private IWorkbenchWindow workbenchWindow;
 
     /**
-     * Create a new instance of the receiver.
-     * 
-     * @since 3.0
-     */
+	 * Create a new instance of the receiver.
+	 * 
+	 * @since 3.0
+	 */
     public ActivityEnablerAction(IWorkbenchWindow window) {
         super(ActivityMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
         if (window == null) {
@@ -47,9 +47,20 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
         this.activityManager = (IMutableActivityManager) window.getWorkbench().getActivityManager();
     }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+	 */
+	public void dispose() {
+		workbenchWindow = null;
+	}
+
     /*
-     * (non-Javadoc) @see org.eclipse.jface.action.IAction#run()
-     */
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
     public void run() {
     	if (workbenchWindow == null) {
     		// action has been disposed
@@ -58,8 +69,10 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
         Dialog d = new Dialog(workbenchWindow.getShell()) {
 
             /*
-             * (non-Javadoc) @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-             */
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+			 */
             protected Control createDialogArea(Composite parent) {
                 Composite composite = (Composite) super.createDialogArea(parent);
                 GridData data = new GridData(GridData.FILL_BOTH);
@@ -73,8 +86,10 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
             }
 
             /*
-             * (non-Javadoc) @see org.eclipse.jface.dialogs.Dialog#okPressed()
-             */
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+			 */
             protected void okPressed() {
                 if (enabler != null) {
                     enabler.updateActivityStates();
@@ -84,11 +99,4 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
         };
         d.open();
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-	 */
-	public void dispose() {
-		workbenchWindow = null;
-	}
 }
