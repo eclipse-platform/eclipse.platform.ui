@@ -15,7 +15,7 @@
    </requires>
 
 
-<!--
+<!-- -->
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -27,7 +27,7 @@
       		productId="org.eclipse.platform"
       		introId="org.eclipse.platform.intro"/>
    </extension>
--->
+<!-- -->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
@@ -206,6 +206,14 @@
                   url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.update.ui&amp;class=org.eclipse.update.internal.ui.InstallWizardAction"
                   label="%news.updates.label"
                   id="updates">
+               <text>
+                  %news.updates.text
+               </text>
+            </link>
+            <link
+                  url="http://www.eclipse.org"
+                  label="%news.eclipse.label"
+                  id="eclipse">
                <text>
                   %news.updates.text
                </text>
