@@ -632,6 +632,10 @@ private void showBootstrapPart() {
  * @param pageRec the page record containing the page to show
  */
 protected void showPageRec(PageRec pageRec) {
+	// If already showing do nothing
+	if (activeRec == pageRec)
+		return;
+	
 	// Hide old page.
 	if (activeRec != null) {
 		activeRec.subActionBars.deactivate();
