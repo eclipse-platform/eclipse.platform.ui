@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -194,18 +196,34 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 DirectoryDialog dialog = new DirectoryDialog(getShell());
-                dialog
-                        .setText(IDEWorkbenchMessages
-                                .getString("ChooseWorkspaceDialog.directoryBrowserTitle")); //$NON-NLS-1$
-                dialog
-                        .setMessage(IDEWorkbenchMessages
-                                .getString("ChooseWorkspaceDialog.directoryBrowserMessage")); //$NON-NLS-1$
-                dialog.setFilterPath(text.getText());
+                dialog.setText(IDEWorkbenchMessages
+                        .getString("ChooseWorkspaceDialog.directoryBrowserTitle")); //$NON-NLS-1$
+                dialog.setMessage(IDEWorkbenchMessages
+                        .getString("ChooseWorkspaceDialog.directoryBrowserMessage")); //$NON-NLS-1$
+                dialog.setFilterPath(getInitialBrowsePath());
                 String dir = dialog.open();
                 if (dir != null)
                     text.setText(dir);
             }
         });
+    }
+
+    /**
+     * Return a string containing the path that is closest to the current
+     * selection in the text widget. This starts with the current value and
+     * works toward the root until there is a directory for which File.exists
+     * returns true. Return the current working dir if the text box does not
+     * contain a valid path.
+     * 
+     * @return closest parent that exists or an empty string
+     */
+    private String getInitialBrowsePath() {
+        File dir = new File(text.getText());
+        while (dir != null && !dir.exists())
+            dir = dir.getParentFile();
+
+        return dir != null ? dir.getAbsolutePath() : System
+                .getProperty("user.dir"); //$NON-NLS-1$
     }
 
     /**
