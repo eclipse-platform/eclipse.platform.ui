@@ -38,6 +38,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 	 */
 	public OverviewRulerHoverManager(IOverviewRuler ruler, ISourceViewer sourceViewer, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		super(ruler, sourceViewer, annotationHover, creator);
+		setAnchor(ANCHOR_LEFT);
 	}
 	
 	/*
