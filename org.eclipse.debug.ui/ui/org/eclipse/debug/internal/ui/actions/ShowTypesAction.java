@@ -11,9 +11,8 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -25,11 +24,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ShowTypesAction extends Action {
 
-	private StructuredViewer fViewer;
+	private IDebugView fView;
 
-	public ShowTypesAction(StructuredViewer viewer) {
+	public ShowTypesAction(IDebugView view) {
 		super(ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1")); //$NON-NLS-1$
-		setViewer(viewer);
+		setView(view);
 		setToolTipText(ActionMessages.getString("ShowTypesAction.Show_Type_Names")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
@@ -46,16 +45,16 @@ public class ShowTypesAction extends Action {
 	}
 
 	private void valueChanged(boolean on) {
-		if (getViewer().getControl().isDisposed()) {
+		if (getView().getViewer().getControl().isDisposed()) {
 			return;
 		}
-		ILabelProvider labelProvider= (ILabelProvider)getViewer().getLabelProvider();
-		if (labelProvider instanceof IDebugModelPresentation) {
-			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)labelProvider;
+		
+		IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)getView().getAdapter(IDebugModelPresentation.class);
+		if (debugLabelProvider != null) {
 			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));			
-			BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
+			BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 				public void run() {
-					getViewer().refresh();					
+					getView().getViewer().refresh();					
 				}
 			});
 		}
@@ -69,12 +68,12 @@ public class ShowTypesAction extends Action {
 		valueChanged(value);
 	}
 	
-	protected StructuredViewer getViewer() {
-		return fViewer;
+	protected IDebugView getView() {
+		return fView;
 	}
 
-	protected void setViewer(StructuredViewer viewer) {
-		fViewer = viewer;
+	protected void setView(IDebugView view) {
+		fView = view;
 	}
 }
 

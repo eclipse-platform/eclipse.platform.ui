@@ -222,6 +222,15 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (adapter == IDebugView.class) {
 			return this;
 		}
+		if (adapter == IDebugModelPresentation.class) {
+			StructuredViewer viewer = getStructuredViewer();
+			if (viewer != null) {
+				IBaseLabelProvider labelProvider = viewer.getLabelProvider();
+				if (labelProvider instanceof IDebugModelPresentation) {
+					return (IDebugModelPresentation)labelProvider;
+				}
+			}
+		}
 		return super.getAdapter(adapter);
 	}
 	

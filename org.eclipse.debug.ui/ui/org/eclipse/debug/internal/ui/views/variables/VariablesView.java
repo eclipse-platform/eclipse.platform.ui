@@ -64,6 +64,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -679,7 +680,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		IAction action = new ShowTypesAction(getStructuredViewer());
+		IAction action = new ShowTypesAction(this);
 		action.setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_TYPE_NAMES));
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
@@ -975,6 +976,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		if (ITextViewer.class.equals(required)) {
 			return getDetailViewer();
+		}
+		if (IDebugModelPresentation.class.equals(required)) {
+			IBaseLabelProvider labelProvider = getStructuredViewer().getLabelProvider();
+			if (labelProvider instanceof VariablesViewLabelProvider) {
+				return ((VariablesViewLabelProvider)labelProvider).getPresentation();
+			}
 		}
 		return super.getAdapter(required);
 	}
