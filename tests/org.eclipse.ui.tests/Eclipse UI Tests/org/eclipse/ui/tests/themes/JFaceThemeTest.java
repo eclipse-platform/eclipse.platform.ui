@@ -39,8 +39,10 @@ public class JFaceThemeTest extends ThemeTest {
         {
 	        FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
 	        FontRegistry themeFonts = theme.getFontRegistry();
-	        assertEquals(themeFonts.getKeySet(), jfaceFonts.getKeySet());	        
-	        for (Iterator i = jfaceFonts.getKeySet().iterator(); i.hasNext();) {
+	        // don't test for equality - other tests (or clients) may be pushing 
+	        // new items into jface
+	        assertTrue(jfaceFonts.getKeySet().containsAll(themeFonts.getKeySet()));	        
+	        for (Iterator i = themeFonts.getKeySet().iterator(); i.hasNext();) {
 	            String key = (String) i.next();
 	            assertArrayEquals(themeFonts.getFontData(key), jfaceFonts.getFontData(key));
 	        }
@@ -48,8 +50,8 @@ public class JFaceThemeTest extends ThemeTest {
         {
             ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
             ColorRegistry themeColors = theme.getColorRegistry();
-            assertEquals(themeColors.getKeySet(), jfaceColors.getKeySet());
-            for (Iterator i = jfaceColors.getKeySet().iterator(); i.hasNext();) {
+            assertTrue(jfaceColors.getKeySet().containsAll(themeColors.getKeySet()));
+            for (Iterator i = themeColors.getKeySet().iterator(); i.hasNext();) {
 	            String key = (String) i.next();
 	            assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
 	        }            
