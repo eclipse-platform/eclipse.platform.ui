@@ -13,14 +13,15 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -28,10 +29,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * The ProgressFeedbackManager is a class that blocks a Thread
- * until a result in the UI has occured.
- * <b> NOTE: This is an experimental API subject to change at any
- * time.
+ * The ProgressFeedbackManager is a class that blocks a Thread until a result
+ * in the UI has occured. <b>NOTE: This is an experimental API subject to
+ * change at any time.
  */
 public class ProgressFeedbackManager {
 
@@ -39,8 +39,8 @@ public class ProgressFeedbackManager {
 	List pendingInfos = new ArrayList();
 
 		private UIJob openProgressJob = new UIJob(ProgressMessages.getString("ProgressFeedbackManager.OpenFeedbackJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			openProgressRequestDialog();
@@ -49,26 +49,31 @@ public class ProgressFeedbackManager {
 	};
 
 	IStructuredContentProvider contentProvider;
-	
+
 	/**
-	 * Create a new instance of the receiver.	 *
+	 * Create a new instance of the receiver. *
 	 */
 	ProgressFeedbackManager() {
 		contentProvider = getContentProvider();
 	}
 	/**
-	 * Block the current thread until UIJob is served. The message
-	 * is used to announce to the user a pending UI Job.
+	 * Block the current thread until UIJob is served. The message is used to
+	 * announce to the user a pending UI Job.
 	 * 
-	 * Note: This is experimental API and subject to change
-	 * at any time.
-	 * 
+	 * Note: This is experimental API and subject to change at any time.
 	 * @param job
 	 * @param message
 	 * @return IStatus
+	 * @throws IllegalThreadStateException if this is called from the UIThread
+	 * as we do not want to block the UIThread to make a request in the UIThread.
 	 * @since 3.0
 	 */
-	IStatus requestInUI(UIJob job, String message) {
+	IStatus requestInUI(UIJob job, String message){
+		
+		//We are in the UI Thread so we want to avoid blocking
+		if(Thread.currentThread() == Display.getCurrent().getThread()){
+			throw new IllegalThreadStateException(ProgressMessages.getString("ProgressFeedbackManager.invalidThreadMessage")); //$NON-NLS-1$
+		}
 
 		final IStatus[] statuses = new IStatus[1];
 		final boolean[] wait = { true };
@@ -76,8 +81,8 @@ public class ProgressFeedbackManager {
 		pendingInfos.add(info);
 
 		job.addJobChangeListener(new JobChangeAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
 				statuses[0] = event.getResult();
@@ -101,17 +106,17 @@ public class ProgressFeedbackManager {
 	}
 
 	/**
-	 * Bring the request dialog to the front. If it does not exist
-	 * yet then create ir first
-	 *
+	 * Bring the request dialog to the front. If it does not exist yet then
+	 * create ir first
+	 *  
 	 */
 	void openProgressRequestDialog() {
 		if (dialog == null) {
 			dialog = new ProgressFeedbackDialog(contentProvider);
 			dialog.create();
 			dialog.getShell().addDisposeListener(new DisposeListener() {
-				/* (non-Javadoc)
-				 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+				/*
+				 * (non-Javadoc) @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 				 */
 				public void widgetDisposed(DisposeEvent arg0) {
 					clearDialog();
@@ -141,31 +146,34 @@ public class ProgressFeedbackManager {
 	}
 
 	/**
-	 * Get the content provider to use for the feedback
-	 * dialog.
+	 * Get the content provider to use for the feedback dialog.
+	 * 
+	 * 
 	 * @return IStructuredContentProvider
 	 */
 	private IStructuredContentProvider getContentProvider() {
 		return new IStructuredContentProvider() {
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 				return pendingInfos.toArray();
 			}
-			/* (non-Javadoc)
-			* @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			*/
+			/*
+			 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
 			public void dispose() {
 			}
 
-			/* (non-Javadoc)
-			* @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			*/
+			/*
+			 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 * java.lang.Object, java.lang.Object)
+			 */
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				viewer.refresh();
 			}
 		};
 	}
+
 }

@@ -13,12 +13,14 @@ package org.eclipse.ui.internal.progress;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,11 +33,18 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IProgressProvider;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -46,7 +55,7 @@ import org.eclipse.ui.progress.UIJob;
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
  */
-public class ProgressManager extends JobChangeAdapter implements IProgressProvider,IProgressManager {
+public class ProgressManager extends JobChangeAdapter implements IProgressProvider, IProgressManager {
 
 	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
@@ -82,8 +91,15 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	//A list of keys for looking up the images in the image registry
 	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
 
+	Hashtable runnableMonitors = new Hashtable();
+
 	/**
 	 * Get the progress manager currently in use.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @return JobProgressManager
 	 */
@@ -101,9 +117,15 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		Job job;
 		boolean cancelled = false;
 		IProgressMonitor workbenchMonitor;
+		String currentTaskName;
 
 		/**
 		 * Create a monitor on the supplied job.
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
 		 * 
 		 * @param newJob
 		 */
@@ -112,15 +134,15 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			workbenchMonitor = monitorProvider.getMonitor(job);
 		}
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
 		 * int)
 		 */
 		public void beginTask(String taskName, int totalWork) {
 			JobInfo info = getJobInfo(job);
 			info.beginTask(taskName, totalWork);
 			refresh(info);
-			workbenchMonitor.beginTask(taskName,totalWork);
+			currentTaskName = taskName;
+			workbenchMonitor.beginTask(taskName, totalWork);
 		}
 		/* (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done() */
 		public void done() {
@@ -128,11 +150,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			info.clearTaskInfo();
 			info.clearChildren();
 			workbenchMonitor.done();
+			runnableMonitors.remove(this);
 		}
 
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
 			JobInfo info = getJobInfo(job);
@@ -143,16 +165,14 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			workbenchMonitor.internalWorked(work);
 		}
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
 			return cancelled;
 		}
 
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
 			cancelled = value;
@@ -160,8 +180,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		}
 
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String taskName) {
 
@@ -175,12 +194,12 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 			info.clearChildren();
 			refresh(info);
+			currentTaskName = taskName;
 			workbenchMonitor.setTaskName(taskName);
 		}
 
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
 
@@ -195,8 +214,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		}
 
 		/*
-		 * (non-Javadoc) @see
-		 * org.eclipse.core.runtime.IProgressMonitor#worked(int)
+		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
 			internalWorked(work);
@@ -204,7 +222,8 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/**
-	 * Create a new instance of the receiver. */
+	 * Create a new instance of the receiver.
+	 */
 	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
 		Platform.getJobManager().addJobChangeListener(this);
@@ -232,6 +251,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Set up the image in the image regsitry.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param iconsRoot
 	 * @param fileName
 	 * @param key
@@ -243,15 +267,37 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.core.runtime.jobs.IProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
+	 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.IProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public IProgressMonitor createMonitor(Job job) {
-		return new JobMonitor(job);
+		return progressFor(job);
+	}
+
+	/**
+	 * Return a monitor for the job. Check if we cached a monitor for this job
+	 * previously for a long operation timeout check.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @param job
+	 * @return IProgressMonitor
+	 */
+	private JobMonitor progressFor(Job job) {
+		if (runnableMonitors.containsKey(job))
+			return (JobMonitor) runnableMonitors.get(job);
+		else
+			return new JobMonitor(job);
 	}
 
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @param listener
 	 */
@@ -263,6 +309,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * Remove the supplied IJobProgressManagerListener from the list of
 	 * listeners.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
@@ -270,8 +321,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void scheduled(IJobChangeEvent event) {
 		if (isNeverDisplayedJob(event.getJob()))
@@ -282,8 +332,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void aboutToRun(IJobChangeEvent event) {
 		JobInfo info = getJobInfo(event.getJob());
@@ -291,8 +340,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void done(IJobChangeEvent event) {
 
@@ -301,8 +349,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			info.setError(event.getResult());
 				UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -326,6 +373,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Get the JobInfo for the job. If it does not exist create it.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param job
 	 * @return
 	 */
@@ -341,6 +393,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in
 	 * info.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @param info
 	 */
@@ -360,6 +417,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * Refresh all the IJobProgressManagerListener as a result of a change in
 	 * the whole model.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param info
 	 */
 	public void refreshAll() {
@@ -375,6 +437,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Refresh the content providers as a result of a deletion of info.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @param info
 	 */
@@ -393,6 +460,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Refresh the content providers as a result of an addition of info.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param info
 	 */
 	public void add(JobInfo info) {
@@ -409,6 +481,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Return whether or not this job is currently displayable.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @param job
 	 * @param debug
@@ -427,6 +504,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Return whether or not this job is ever displayable.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param job
 	 * @return
 	 */
@@ -436,6 +518,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Get the jobs currently being displayed.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @return JobInfo[]
 	 */
@@ -456,6 +543,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Return whether or not there are any jobs being displayed.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @return boolean
 	 */
 	public boolean hasJobInfos() {
@@ -472,6 +564,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * Clear the job out of the list of those being displayed. Only do this for
 	 * jobs that are an error.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param job
 	 */
 	void clearJob(Job job) {
@@ -483,7 +580,8 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	}
 
 	/**
-	 * Clear all of the errors from the list. */
+	 * Clear all of the errors from the list.
+	 */
 	void clearAllErrors() {
 		Collection jobsToDelete = new ArrayList();
 		synchronized (jobs) {
@@ -506,6 +604,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Return whether or not there are any errors displayed.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @return
 	 */
 	boolean hasErrorsDisplayed() {
@@ -526,6 +629,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param source
 	 * @return Image
 	 */
@@ -536,6 +644,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Returns the image descriptor with the given relative path.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * @param fileSystemPath
 	 *           The URL for the file system to the image.
@@ -562,6 +675,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * Get the current image for the receiver. If there is no progress yet
 	 * return null.
 	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @param element
 	 * @return
 	 */
@@ -585,29 +703,86 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Block the current thread until UIJob is served. The message
-	 * is used to announce to the user a pending UI Job.
+	 * Block the current thread until UIJob is served. The message is used to
+	 * announce to the user a pending UI Job.
 	 * 
-	 * Note: This is experimental API and subject to change
-	 * at any time.
-	 * 
+	 * Note: This is experimental API and subject to change at any time.
 	 * @param job
 	 * @param message
 	 * @return IStatus
 	 * @since 3.0
 	 */
 	public IStatus requestInUI(UIJob job, String message) {
-		return feedbackManager.requestInUI(job,message);
+		return feedbackManager.requestInUI(job, message);
 	}
-	
+
 	/**
 	 * Return the ProgressFeedbackManager for the receiver.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * @return ProgressFeedbackManager
 	 */
-	ProgressFeedbackManager getFeedbackManager(){
+	ProgressFeedbackManager getFeedbackManager() {
 		return feedbackManager;
 	}
-	
+
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.progress.IProgressManager#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void busyCursorWhile(final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException
+	{
+
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
+		dialog.setOpenOnRun(false);
+		
+		UIJob updateJob = new UIJob(ProgressMessages.getString("ProgressManager.openJobName")) { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				dialog.open();
+				if(monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				else
+					return Status.OK_STATUS;
+			}
+		};
+
+		updateJob.schedule(IProgressManager.LONG_OPERATION_MILLISECONDS);
+		
+		final InvocationTargetException[] invokes = new InvocationTargetException[1];
+		final InterruptedException[] interrupt = new InterruptedException[1];
+		
+		invokes[0] = null;
+		interrupt[0] = null;
+
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			/*
+			 * (non-Javadoc) @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				try {
+					dialog.run(true,true,runnable);
+				} catch (InvocationTargetException e) {
+					invokes[0] = e;
+				} catch (InterruptedException e) {
+					interrupt[0] = e;
+				}
+			}
+		});
+		
+		if(invokes[0] != null)
+			throw invokes[0];
+		
+		if(interrupt[0] != null)
+			throw interrupt[0];
+
+	}
+
 }
