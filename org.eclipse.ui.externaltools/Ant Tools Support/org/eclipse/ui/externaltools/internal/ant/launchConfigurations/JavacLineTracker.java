@@ -36,7 +36,7 @@ public class JavacLineTracker implements IConsoleLineTracker {
 	 */
 	public void init(IConsole console) {
 		fConsole = console;
-		fErrorMatcher = new StringMatcher("*[javac]*ERROR in*.java*(at line*)*",false, false);
+		fErrorMatcher = new StringMatcher("*[javac]*ERROR in*.java*(at line*)*",false, false); //$NON-NLS-1$
 	}
 
 	/**
@@ -48,9 +48,9 @@ public class JavacLineTracker implements IConsoleLineTracker {
 			int lineLength = line.getLength();
 			String text = fConsole.getDocument().get(lineOffset, lineLength);
 			if (fErrorMatcher.match(text)) {
-				int index = text.indexOf("ERROR in");
+				int index = text.indexOf("ERROR in"); //$NON-NLS-1$
 				int fileStart = index + 9;
-				index = text.lastIndexOf("(at line ");
+				index = text.lastIndexOf("(at line "); //$NON-NLS-1$
 				int fileEnd = index - 1;
 				int numberStart = index + 9;
 				index = text.lastIndexOf(')');
