@@ -82,9 +82,9 @@ DIV.active {
 	// Populate the combo box and select the appropriate infoset.
 	// If this is the first time, pick the first one, else the one from request
 	Element selectedTOC = (Element)session.getAttribute("org.eclipse.help.selectedTOC");
-	Element[] tocNodes = tocs.getTocs();
+	Element[] tocNodes = tocs.getTocs(request);
 	
-	String bookshelf = WebappResources.getString("Bookshelf", null);
+	String bookshelf = WebappResources.getString("Bookshelf", request);
 	if (selectedTOC == null)
 	{
 %>

@@ -81,7 +81,7 @@ TABLE {
 		// Generate the results
 		Search search = (Search)application.getAttribute("org.eclipse.help.search");
 		if (search != null)
-			search.generateResults(request.getQueryString(), out);
+			search.generateResults(request.getQueryString(), out, request);
 			
 		// Highlight topic
 		String topic = request.getParameter("topic");
@@ -105,7 +105,7 @@ TABLE {
 <%
 		}
 	}else{
-		out.write(WebappResources.getString("doSearch", null) );
+		out.write(WebappResources.getString("doSearch", request) );
 	}
 %>
 

@@ -6,9 +6,9 @@
 %>
 
 <%
-	 String  ContentStr = WebappResources.getString("Content", null);
-	 String  SearchStr = WebappResources.getString("SearchResults", null);
-	 String  LinksStr = WebappResources.getString("Links", null);
+	 String  ContentStr = WebappResources.getString("Content", request);
+	 String  SearchStr = WebappResources.getString("SearchResults", request);
+	 String  LinksStr = WebappResources.getString("Links", request);
 %>
 
 <html>

@@ -83,7 +83,7 @@ TABLE {
 		// Generate the links
 		Links links = (Links)application.getAttribute("org.eclipse.help.links");
 		if (links != null){
-			links.generateResults(request.getQueryString(), out);
+			links.generateResults(request.getQueryString(), out, request);
 		}
 		
 		// Highlight topic
@@ -108,7 +108,7 @@ TABLE {
 <%
 		}
 	}else{
-		out.write(WebappResources.getString("pressF1", null));
+		out.write(WebappResources.getString("pressF1", request));
 	}
 %>
 

@@ -26,12 +26,12 @@
 			if (topic.startsWith("/"))
 				topic = "help:" + topic;
 				
-			selectedTOC = tocs.findTocContainingTopic(topic);
+			selectedTOC = tocs.findTocContainingTopic(topic, request);
 		}
 	}
 	else
 	{
-		selectedTOC = tocs.getToc(tocHref);
+		selectedTOC = tocs.getToc(tocHref, request);
 	}
 		
 	if (selectedTOC != null)
@@ -161,7 +161,7 @@ A.book {
 <%
 	// Generate the tree
 	if (selectedTOC != null)
-		tocs.loadTOC(selectedTOC, out);	
+		tocs.loadTOC(selectedTOC, out, request);	
 		
 	// Highlight topic
 	if (topic != null && !topic.equals(""))

@@ -6,12 +6,12 @@
 	
 %>
 <%
-	String title = WebappResources.getString("Bookshelf", null);
+	String title = WebappResources.getString("Bookshelf", request);
 	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
 	if (tocs == null)
 		return;
 	String tocHref = request.getParameter("toc");
-	Element selectedTOC = tocs.getToc(tocHref);
+	Element selectedTOC = tocs.getToc(tocHref, request);
 	if (selectedTOC != null)
 	{
 		String label = selectedTOC.getAttribute("label");

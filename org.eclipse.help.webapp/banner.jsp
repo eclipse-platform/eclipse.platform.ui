@@ -95,7 +95,7 @@ function doSearch()
 {
 	var form = document.forms["searchForm"];
 	var searchWord = form.searchWord.value;
-	var maxHits = form.maxHits;
+	var maxHits = form.maxHits.value;
 	if (!searchWord || searchWord == "")
 		return;
 	else
@@ -121,9 +121,9 @@ function doSearch()
 	<td>
 		<table width="100%" cellspacing=0 cellpading=0 border=0  style="color:white; ">
 			<tr>
-				<td  valign=bottom><%=WebappResources.getString("Search", null)%></td>
+				<td  valign=bottom><%=WebappResources.getString("Search", request)%></td>
 				<td>&nbsp;</td>
-				<td align=right><a id="advanced"  href="javascript:openAdvanced();"  alt='<%=WebappResources.getString("Search", null)%>'><%=WebappResources.getString("Advanced", null)%></a></td>
+				<td align=right><a id="advanced"  href="javascript:openAdvanced();"  alt='<%=WebappResources.getString("Search", request)%>'><%=WebappResources.getString("Advanced", request)%></a></td>
 			</tr>
 		</table>
 	</td>
@@ -133,10 +133,10 @@ function doSearch()
 		<table cellspacing=0 cellpading=0 border=0 style="margin-bottom:10px;">
 			<tr>
 			<td width="100%" >
-					<input type="text" id="searchWord" name="searchWord" value="<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", null)%>'>
+					<input type="text" id="searchWord" name="searchWord" value="<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 			</td>
 			<td>
-					<input type="submit"  value='<%=WebappResources.getString("Go", null)%>'  id="go" alt='<%=WebappResources.getString("Go", null)%>'>
+					<input type="submit"  value='<%=WebappResources.getString("Go", request)%>'  id="go" alt='<%=WebappResources.getString("Go", request)%>'>
           	  		<input type="hidden" name="maxHits" value="500" >
 			</td>
 			</tr>

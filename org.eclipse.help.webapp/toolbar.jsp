@@ -113,18 +113,18 @@ SPAN {
    
    <body  leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
  	  
-	  <div id="title" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;">&nbsp;<%=WebappResources.getString("Bookshelf", null)%></div>
+	  <div id="title" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;">&nbsp;<%=WebappResources.getString("Bookshelf", request)%></div>
 		
 		<div style="right:5px; top:4px; bottom:3px;position:absolute;">
 		<!--
-		<a  href="#" onclick="showBookshelf(this);"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", null)%>' border="0" name="bookshelf"></a>
+		<a  href="#" onclick="showBookshelf(this);"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" name="bookshelf"></a>
 		<span style="width:4px;"></span>
 		-->
-		<a href="#" onclick="toggleNav(this);" ><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", null)%>' border="0" name="hide_nav"></a>
+		<a href="#" onclick="toggleNav(this);" ><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav"></a>
 		<span style="width:4px;"></span>
-		<a  href="#" onclick="resynch(this);"><img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", null)%>' border="0" name="sync_nav"></a>
+		<a  href="#" onclick="resynch(this);"><img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" name="sync_nav"></a>
 		<span style="width:3px;"></span>
-		<a  href="#" onclick="printContent(this);" ><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", null)%>' border="0" name="print"></a>
+		<a  href="#" onclick="printContent(this);" ><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" name="print"></a>
 
 		</div>
 	  

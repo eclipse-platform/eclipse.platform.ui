@@ -6,9 +6,9 @@
 %>
 
 <%
- String  ContentStr = WebappResources.getString("Content", null);
- String  SearchStr = WebappResources.getString("SearchResults", null);
- String  LinksStr = WebappResources.getString("Links", null);
+ String  ContentStr = WebappResources.getString("Content", request);
+ String  SearchStr = WebappResources.getString("SearchResults", request);
+ String  LinksStr = WebappResources.getString("Links", request);
  %>
 
 <html>
@@ -93,7 +93,7 @@ IMG {
 <table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 valign=bottom width="100%" height="100%" nowrap>
 <tr>
 <td valign=bottom><div id="titleText"></div></td>
-<td align=right ><div id="toolbarButton"><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", null)%>' border="0" ></a></div></td>
+<td align=right ><div id="toolbarButton"><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a></div></td>
 </tr>
 </table>
 </div>

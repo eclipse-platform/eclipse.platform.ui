@@ -114,7 +114,7 @@ function doAdvancedSearch()
 	{
 		var form = document.forms["searchForm"];
 		var searchWord = form.searchWord.value;
-		var maxHits = form.maxHits;
+		var maxHits = form.maxHits.value;
 		if (!searchWord || searchWord == "")
 			return;
 	
@@ -143,23 +143,23 @@ function doAdvancedSearch()
 
 <form name="searchForm" onsubmit="doAdvancedSearch()">
   
-<div style="width:100%; height:15px; margin-left:12px; margin-top:10px;"><%=WebappResources.getString("SearchExpression", null)%></div>
+<div style="width:100%; height:15px; margin-left:12px; margin-top:10px;"><%=WebappResources.getString("SearchExpression", request)%></div>
 
-<div style="width:420px; height:16px;margin-left:7px"><input type="text" id="searchWord" name="searchWord" value='<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", null)%>'>
+<div style="width:420px; height:16px;margin-left:7px"><input type="text" id="searchWord" name="searchWord" value='<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
           	  			<input type="hidden" name="maxHits" value="500" >
 </div>
 
-<div style="height:40px; margin-left:12px;margin-top:4px; "><%=WebappResources.getString("expression_label", null)%></div>
+<div style="height:40px; margin-left:12px;margin-top:4px; "><%=WebappResources.getString("expression_label", request)%></div>
   	
  <div id="booksContainer" >
- 		<div style="height:20px; margin-top:-5px; padding-top:10px; padding-bottom:5px; "><%=WebappResources.getString("Select", null)%></div>
+ 		<div style="height:20px; margin-top:-5px; padding-top:10px; padding-bottom:5px; "><%=WebappResources.getString("Select", request)%></div>
   		
  <% 
 	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
 	if (tocs == null)
 		return;
 	
-	Element[] tocNodes = tocs.getTocs();
+	Element[] tocNodes = tocs.getTocs(request);
 	for (int i=0; i<tocNodes.length; i++)
 	{
 		String label = tocNodes[i].getAttribute("label");
@@ -176,10 +176,10 @@ function doAdvancedSearch()
   				<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
   					<tr valign=center >
   						<td style="border:1px solid black; padding:0px;">
-  							<input class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", null)%>'  id="go" >
+  							<input class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" >
   						</td>
   						<td style="border:1px solid black; padding:0px;">
-  						  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", null)%>'  id="cancel">
+  						  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel">
   						</td>
   					</tr>
   				</table>
