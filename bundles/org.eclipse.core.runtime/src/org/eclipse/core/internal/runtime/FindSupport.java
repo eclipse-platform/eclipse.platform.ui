@@ -293,11 +293,17 @@ public class FindSupport {
 	 * @return an input stream
 	 */
 	public static final InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException {
-		URL url = b.getEntry(file.toString());
+		URL url = null;
+		if (! localized) {
+			url = findInPlugin(b, file);
+			if(url==null)
+				url = findInFragments(b, file);
+		} else {
+			url = FindSupport.find(b, file);
+		}
 		if (url != null)
 			return url.openStream();
-		return null;
-		//TODO Need to put support to do the localization. 
+		throw new IOException("Can not find " + file.toString());	//$NON-NLS-1$
 	}
 	
 }
