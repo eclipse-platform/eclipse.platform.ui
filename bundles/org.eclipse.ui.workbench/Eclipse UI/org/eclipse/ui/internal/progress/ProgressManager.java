@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
@@ -52,6 +53,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardBlockedHandler;
 import org.eclipse.ui.internal.util.BundleUtility;
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -286,6 +288,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
+		WizardDialog.setBlockedHandler(new WorkbenchWizardBlockedHandler());
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
 		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID, ProgressManager.PROGRESS_FOLDER);
