@@ -26,9 +26,6 @@ public class HelpURLFactory {
 			url = url.substring(0, indx);
 		} 
 		
-		if (url.startsWith(TocURL.getPrefix())) // "toc"
-			return new TocURL(url.substring(TocURL.getPrefix().length()), query);
-		else
-			return new PluginURL(url, query);
+		return new PluginURL(url, query);
 	}
 }
