@@ -342,10 +342,9 @@
         <action id="org.eclipse.ui.tests.internal.as_1" 
             label="anyText" 
             menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
-            <enablement>
-            	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-            </enablement>
+            class="org.eclipse.ui.tests.api.MockActionDelegate"
+            enablesFor="1"> 
+            <selection class="org.eclipse.jface.text.ITextSelection"/>
         </action> 
         <action id="org.eclipse.ui.tests.internal.ac_2" 
             label="emptyText" 
