@@ -48,4 +48,13 @@ public class GroupBreakpointsAction extends Action {
             fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
         }
     }
+    
+    /**
+     * Returns this action's organizer.
+     * 
+     * @return breakpoint organizer
+     */
+    public IBreakpointOrganizer getOrganizer() {
+    	return fOrganzier;
+    }
 }
