@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -639,7 +646,24 @@ private Composite createTitleArea(Composite parent) {
 	titleArea.setBackground(background);
 
 	// Message label
-	final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT);
+	final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT) {
+		protected String shortenText(GC gc, String text, int width) {
+			if (gc.textExtent(text, SWT.DRAW_MNEMONIC).x <= width) return text;
+			final String ellipsis= "..."; //$NON-NLS-1$
+			int ellipseWidth = gc.textExtent(ellipsis, SWT.DRAW_MNEMONIC).x;
+			int length = text.length();
+			int end = length - 1;
+			while (end > 0) {
+				text = text.substring(0, end);
+				int l1 = gc.textExtent(text, SWT.DRAW_MNEMONIC).x;
+				if (l1 + ellipseWidth <= width) {
+					return text + ellipsis;
+				}
+				end--;
+			}
+			return text + ellipsis;			
+		}
+	};
 	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(getBannerTitle());
 	messageLabel.setFont(JFaceResources.getHeaderFont());
