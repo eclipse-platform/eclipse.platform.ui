@@ -21,7 +21,7 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public class CompareWithRevisionAction extends CVSAction {
 	/**

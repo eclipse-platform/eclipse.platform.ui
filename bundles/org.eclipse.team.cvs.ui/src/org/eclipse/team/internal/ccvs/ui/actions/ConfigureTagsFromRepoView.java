@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * DefineTagAction remembers a tag by name

@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * RemoveRootAction removes a repository

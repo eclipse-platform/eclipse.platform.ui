@@ -16,7 +16,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * TagAction tags the selected resources with a version tag specified by the user.

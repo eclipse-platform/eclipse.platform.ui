@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class ReplaceWithRemoteAction extends CVSAction {

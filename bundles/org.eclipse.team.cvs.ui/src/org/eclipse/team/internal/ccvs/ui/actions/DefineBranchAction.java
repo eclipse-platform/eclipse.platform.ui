@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * DefineTagAction remembers a tag by name

@@ -19,7 +19,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public class ShowResourceInHistoryAction extends TeamAction {
 	/*
