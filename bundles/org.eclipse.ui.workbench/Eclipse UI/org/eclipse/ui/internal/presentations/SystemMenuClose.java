@@ -10,48 +10,44 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuClose extends ContributionItem {
+/**
+ * This convenience class provides a "close" system menu item that closes
+ * the currently selected pane in a presentation. Presentations can use
+ * this to add a close item to their system menu.
+ * 
+ * @since 3.0
+ */
+public final class SystemMenuClose extends Action implements ISelfUpdatingAction {
 
-    private IPresentablePart presentablePart;
+    private IStackPresentationSite site;
 
-    private IStackPresentationSite stackPresentationSite;
-
-    public SystemMenuClose(IPresentablePart presentablePart,
-            IStackPresentationSite stackPresentationSite) {
-        this.presentablePart = presentablePart;
-        this.stackPresentationSite = stackPresentationSite;
+    public SystemMenuClose(IStackPresentationSite site) {
+    	this.site = site;
+    	setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
     }
 
     public void dispose() {
-        presentablePart = null;
-        stackPresentationSite = null;
+    	site = null;
     }
     
-    public void fill(Menu menu, int index) {
-        MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
-        menuItem.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                stackPresentationSite.close(presentablePart);
-            }
-        });
-
-        menuItem.setEnabled(presentablePart != null
-                && stackPresentationSite.isCloseable(presentablePart));
+    public void run() {
+    	IPresentablePart part = site.getSelectedPart();
+    	if (part != null) {
+    		site.close(part);
+    	}
     }
     
-    public boolean isDynamic() {
-        return true;
+    public void update() {
+    	IPresentablePart presentablePart = site.getSelectedPart();
+    	setEnabled(presentablePart != null && site.isCloseable(presentablePart));
+    }
+    
+    public boolean shouldBeVisible() {
+    	return true;
     }
 }
