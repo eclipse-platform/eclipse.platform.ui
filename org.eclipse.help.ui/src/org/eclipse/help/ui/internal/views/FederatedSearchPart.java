@@ -250,6 +250,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		ArrayList entries = new ArrayList();
 		final FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
 		.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+		ArrayList eds = new ArrayList();
 		for (int i = 0; i < engineDescriptors.size(); i++) {
 			final EngineDescriptor ed = (EngineDescriptor) engineDescriptors.get(i);
 			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
@@ -265,6 +266,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 							}
 						} );
 				entries.add(entry);
+				eds.add(ed);
 			}
 		}
 		if (entries.size() == 0)
@@ -276,8 +278,8 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 			parent.reflow();
 		}
 		results.clearResults();
-		BaseHelpSystem.getSearchManager().search(text, array);
-		results.startNewSearch(text);
+		results.startNewSearch(text, eds);
+		BaseHelpSystem.getSearchManager().search(text, array);		
 	}
 
 	private void doAdvanced() {

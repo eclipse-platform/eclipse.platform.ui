@@ -34,6 +34,14 @@ public class LocalHelp implements ISearchEngine {
         if (scope instanceof WorkingSet)
             workingSets = new WorkingSet[] {(WorkingSet)scope};
         SearchResults localResults = new SearchResults(workingSets, MAX_HITS, Platform.getNL());
+        // If the indexer has been started and is currently running,
+        // wait for it to finish.
+        try {
+        	Platform.getJobManager().join(IndexerJob.FAMILY, monitor);
+        }
+        catch (InterruptedException e) {
+        	//TODO we may need to do something here
+        }
         BaseHelpSystem.getSearchManager().search(searchQuery, localResults, monitor);
         collector.add(localResults.getSearchHits());
 

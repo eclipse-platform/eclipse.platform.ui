@@ -50,15 +50,10 @@ public class EngineResultSection {
 
 	private int resultOffset = 0;
 
-	private boolean showCategories = false;
-
-	private boolean showDescription = false;
-
 	public EngineResultSection(FederatedSearchResultsPart part,
-			EngineDescriptor desc, boolean showCategories) {
+			EngineDescriptor desc) {
 		this.part = part;
 		this.desc = desc;
-		this.showCategories = showCategories;
 		hits = new ArrayList();
 		sorter = new FederatedSearchSorter();
 	}
@@ -117,7 +112,7 @@ public class EngineResultSection {
 					part.doOpenLink(e.getHref());
 			}
 		});
-		searchResults.setText("", false, false); //$NON-NLS-1$
+		searchResults.setText("Search in progress...", false, false); //$NON-NLS-1$
 		// searchResults.setLayoutData(new
 		// TableWrapData(TableWrapData.FILL_GRAB));
 		needsUpdating = true;
@@ -155,14 +150,14 @@ public class EngineResultSection {
 			section.getDisplay().asyncExec(runnable);
 	}
 
-	private void updateResults(boolean reflow) {
+	void updateResults(boolean reflow) {
 		updateSectionTitle();
 		/*
 		 * if (!section.isExpanded()) { needsUpdating=true; return; }
 		 */
 		ISearchEngineResult[] results = (ISearchEngineResult[]) hits
 				.toArray(new ISearchEngineResult[hits.size()]);
-		if (showCategories)
+		if (part.getShowCategories())
 			sorter.sort(null, results);
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
@@ -175,7 +170,7 @@ public class EngineResultSection {
 			}
 			ISearchEngineResult hit = results[i];
 			IHelpResource cat = hit.getCategory();
-			if (showCategories
+			if (part.getShowCategories()
 					&& cat != null
 					&& (oldCat == null || !oldCat.getLabel().equals(
 							cat.getLabel()))) {
@@ -194,8 +189,8 @@ public class EngineResultSection {
 				buff.append("</p>");
 				oldCat = cat;
 			}
-			int indent = showCategories && cat != null ? 26 : 21;
-			int bindent = showCategories && cat != null ? 5 : 0;
+			int indent = part.getShowCategories() && cat != null ? 26 : 21;
+			int bindent = part.getShowCategories() && cat != null ? 5 : 0;
 			buff
 					.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$
 			buff.append(desc.getId());
@@ -211,16 +206,12 @@ public class EngineResultSection {
 			buff.append(">"); //$NON-NLS-1$
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
-			if (showDescription) {
-				String desc = hit.getDescription();
-				if (desc!=null) {
+			if (part.getShowDescription()) {
+				String summary = getSummary(hit);
+				if (summary!=null) {
 					buff.append("<br/>");
-					String edesc = escapeSpecialChars(desc);
-					if (!edesc.equals(hit.getLabel())) {
-						if (edesc.startsWith(hit.getLabel()))
-							edesc = edesc.substring(hit.getLabel().length()+1);
-						buff.append(edesc);
-					}
+					buff.append(summary);
+					buff.append("...");
 				}
 			}
 			/*
@@ -267,6 +258,23 @@ public class EngineResultSection {
 		if (reflow)
 			part.reflow();
 	}
+	
+	private String getSummary(ISearchEngineResult hit) {
+		String desc = hit.getDescription();
+		if (desc!=null) {
+			String edesc = escapeSpecialChars(desc);
+			if (!edesc.equals(hit.getLabel())) {
+				String label = hit.getLabel();
+				if (edesc.length()>label.length()) {
+					String ldesc = edesc.substring(0, label.length());
+					if (ldesc.equalsIgnoreCase(label))
+						edesc = edesc.substring(label.length()+1);
+				}
+				return edesc;				
+			}
+		}
+		return null;
+	}
 
 	private String escapeSpecialChars(String value) {
 		StringBuffer buf = new StringBuffer();
@@ -311,23 +319,5 @@ public class EngineResultSection {
 		searchResults.setMenu(null);
 		section.setMenu(null);
 		section.dispose();
-	}
-
-	public boolean isShowCategories() {
-		return showCategories;
-	}
-
-	public void setShowCategories(boolean showCategories) {
-		this.showCategories = showCategories;
-		updateResults(false);
-	}
-
-	public boolean isShowDescription() {
-		return showDescription;
-	}
-
-	public void setShowDescription(boolean showDescription) {
-		this.showDescription = showDescription;
-		updateResults(false);
 	}
 }

@@ -83,7 +83,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	private void contributeToToolBar(IToolBarManager tbm) {
 		showCategoriesAction = new Action() {
 			public void run() {
-				toggleShowCategories(showCategoriesAction.isChecked());
+				updateResultSections();
 			}
 		};
 		showCategoriesAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
@@ -92,30 +92,29 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		
 		showDescriptionAction = new Action() {
 			public void run() {
-				toggleShowDescription(showDescriptionAction.isChecked());
+				updateResultSections();
 			}
 		};
 		showDescriptionAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
 		showDescriptionAction.setChecked(false);
 		tbm.add(showDescriptionAction);
 	}
-	
-	private void toggleShowCategories(boolean checked) {
+
+	private void updateResultSections() {
 		for (int i=0; i<results.size(); i++) {
 			EngineResultSection section = (EngineResultSection)results.get(i);
-			section.setShowCategories(checked);
+			section.updateResults(false);
 		}
 		reflow();
 		markThisState();
 	}
 	
-	private void toggleShowDescription(boolean checked) {
-		for (int i=0; i<results.size(); i++) {
-			EngineResultSection section = (EngineResultSection)results.get(i);
-			section.setShowDescription(checked);
-		}
-		reflow();
-		markThisState();
+	
+	boolean getShowCategories() {
+		return showCategoriesAction.isChecked();
+	}
+	boolean getShowDescription() {
+		return showDescriptionAction.isChecked();
 	}
 	
 	/*
@@ -165,7 +164,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	}
 	
 	
-	void startNewSearch(String phrase) {
+	void startNewSearch(String phrase, ArrayList eds) {
 		this.phrase = phrase;
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
@@ -181,6 +180,10 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		searchResults.setText(buff.toString(), true, false);
 		separator.setVisible(true);
 		markThisState();
+		for (int i=0; i<eds.size(); i++) {
+			add((EngineDescriptor)eds.get(i));
+		}
+		reflow();
 	}
 	
 	private void markThisState() {
@@ -236,7 +239,8 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	public synchronized void add(EngineDescriptor ed, ISearchEngineResult match) {
 		asyncUpdateResults();
 		EngineResultSection ers = findEngineResult(ed);
-		ers.add(match);
+		if (match!=null)
+			ers.add(match);
 	}
  
     /* (non-Javadoc)
@@ -254,7 +258,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
     		if (er.matches(ed))
     			return er;
     	}
-    	final EngineResultSection er = new EngineResultSection(this, ed, true);
+    	final EngineResultSection er = new EngineResultSection(this, ed);
     	Display display = parent.getForm().getToolkit().getColors().getDisplay();
     	display.syncExec(new Runnable() {
     		public void run() {
@@ -264,6 +268,12 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
     	});
     	results.add(er);
     	return er;
+    }
+    private void add(EngineDescriptor ed) {
+    	final EngineResultSection er = new EngineResultSection(this, ed);
+		Control c = er.createControl(innerForm.getBody(), parent.getForm().getToolkit());
+		c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		results.add(er);
     }
     void reflow() {
     	innerForm.reflow(true);

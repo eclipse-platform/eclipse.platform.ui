@@ -99,6 +99,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 						runningJob.cancel();
 						runningJob = null;
 					}
+					clearResults();
 				} else if (href.equals(MORE_HREF)) {
 					doMore();
 				} else
@@ -167,7 +168,9 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
 		buff.append("</span>"); //$NON-NLS-1$
-		buff.append("<a href=\"_cancel\">"); //$NON-NLS-1$
+		buff.append("<a href=\"");
+		buff.append(CANCEL_HREF);
+		buff.append("\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$

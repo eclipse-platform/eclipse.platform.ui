@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -69,7 +70,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		}
 		protected abstract void busyRun();
 	}
-	
 	private abstract class OpenHrefAction extends BusyRunAction {
 		private Object target;
 		public OpenHrefAction(String name) {
@@ -82,7 +82,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			return target;
 		}
 	}
-	
 	private class CopyAction extends Action {
 		private FormText target;
 		public CopyAction() {
@@ -97,7 +96,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				target.copy();
 		}
 	}
-
 	private static class PartRec {
 		String id;
 		boolean flexible;
@@ -110,7 +108,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			this.grabVertical = grabVertical;
 		}
 	}
-
 	private class HelpPartPage {
 		private String id;
 		private int vspacing = verticalSpacing;
@@ -198,7 +195,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			rec.part.setFocus();
 		}
 	}
-
 	class HelpPartLayout extends Layout implements ILayoutExtension {
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
@@ -301,8 +297,15 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		this.runnableContext = runnableContext;
 		history = new ReusableHelpPartHistory();
 		this.style = style;
+		ensureHelpIndexed();
 	}
-
+	
+	private void ensureHelpIndexed() {
+		// make sure we have the index
+		IndexerJob indexerJob = new IndexerJob();
+		indexerJob.schedule();
+	}
+	
 	private void definePages() {
 		pages = new ArrayList();
 		// federated search page

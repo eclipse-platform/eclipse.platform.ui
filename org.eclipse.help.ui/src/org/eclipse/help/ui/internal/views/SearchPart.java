@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
@@ -149,11 +150,18 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		Job job = new Job(HelpUIResources.getString("SearchPart.dynamicJob")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					try {
+						Platform.getJobManager().join(IndexerJob.FAMILY, monitor);
+					}
+					catch (InterruptedException e) {
+						//TODO should we do someting here?
+					}
 					performSearch(phrase, excludeContext, monitor);
 					return Status.OK_STATUS;
 				}
 				catch (OperationCanceledException e) {
-					return new Status(IStatus.ERROR, HelpUIPlugin.PLUGIN_ID, IStatus.OK, HelpUIResources.getString("SearchPart.errors"), e); //$NON-NLS-1$
+					// it is ok to cancel the search
+					return Status.OK_STATUS;
 				}
 			}
 		};

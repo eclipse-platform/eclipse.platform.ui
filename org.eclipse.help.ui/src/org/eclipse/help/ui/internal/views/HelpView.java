@@ -14,11 +14,9 @@ import java.util.Hashtable;
 
 import org.eclipse.help.IContextProvider;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
@@ -43,7 +41,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
+		//toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
     	//toolkit.setBackground(toolkit.getColors().createColor("bg", 245, 250, 255));
 		reusableHelpPart.createControl(parent, toolkit);
 		//reusableHelpPart.setShowDocumentsInPlace(false);
