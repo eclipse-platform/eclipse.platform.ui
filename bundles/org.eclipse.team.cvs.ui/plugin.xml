@@ -138,17 +138,17 @@
 			objectClass="org.eclipse.core.resources.IProject">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithVersion"
-				label="%CompareWithVersionAction.label"
-				tooltip="%CompareWithVersionAction.tooltip"
+				id="org.eclipse.team.ccvs.ui.compareWithTag"
+				label="%CompareWithTagAction.label"
+				tooltip="%CompareWithTagAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithVersionAction"/>
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.replaceWithVersion"
-				label="%ReplaceWithVersionAction.label"
-				tooltip="%ReplaceWithVersionAction.tooltip"
+				id="org.eclipse.team.ccvs.ui.replaceWithTag"
+				label="%ReplaceWithTagAction.label"
+				tooltip="%ReplaceWithTagAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithVersionAction"/>
+				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IFileContributions"

@@ -23,9 +23,9 @@ import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
- * Action for replace with version.
+ * Action for replace with tag.
  */
-public class ReplaceWithVersionAction extends TeamAction {
+public class ReplaceWithTagAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */

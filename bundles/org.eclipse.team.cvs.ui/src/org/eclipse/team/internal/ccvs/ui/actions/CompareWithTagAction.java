@@ -27,9 +27,9 @@ import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
- * Action for compare with version.
+ * Action for compare with tag.
  */
-public class CompareWithVersionAction extends TeamAction {
+public class CompareWithTagAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
