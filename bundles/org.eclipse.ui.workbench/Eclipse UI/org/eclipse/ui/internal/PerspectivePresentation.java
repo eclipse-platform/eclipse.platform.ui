@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -744,8 +745,7 @@ public class PerspectivePresentation {
 	 * Wild cards now supported.
 	 */
 	private LayoutPart findPart(String id) {
-		String myNull = null;
-		return findPart(id, myNull);
+		return findPart(id, null);
 	}
 	/**
 	 * Find the first part that matches the specified 
@@ -754,9 +754,10 @@ public class PerspectivePresentation {
 	 */
 	private LayoutPart findPart(String primaryId, String secondaryId) {
 		// check main window.
+		ArrayList matchingParts = new ArrayList();
 		LayoutPart part = (secondaryId != null) ? 
-				findPart(primaryId, secondaryId, mainLayout.getChildren()) : 
-				findPart(primaryId, mainLayout.getChildren());
+				findPart(primaryId, secondaryId, mainLayout.getChildren(), matchingParts) : 
+				findPart(primaryId, mainLayout.getChildren(), matchingParts);
 		if (part != null)
 			return part;
 
@@ -764,8 +765,8 @@ public class PerspectivePresentation {
 		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
 			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
 			part = (secondaryId != null) ? 
-					findPart(primaryId, secondaryId, window.getChildren()) :
-					findPart(primaryId, window.getChildren());
+					findPart(primaryId, secondaryId, window.getChildren(), matchingParts) :
+					findPart(primaryId, window.getChildren(), matchingParts);
 			if (part != null)
 				return part;
 		}
@@ -773,28 +774,58 @@ public class PerspectivePresentation {
 			DetachedPlaceHolder holder =
 				(DetachedPlaceHolder) detachedPlaceHolderList.get(i);
 			part = (secondaryId != null) ? 
-					findPart(primaryId, secondaryId, holder.getChildren()) :
-					findPart(primaryId, holder.getChildren()) ;
+					findPart(primaryId, secondaryId, holder.getChildren(), matchingParts) :
+					findPart(primaryId, holder.getChildren(), matchingParts) ;
 			if (part != null)
 				return part;
+		}
+		
+		// sort the matching parts
+		if (matchingParts.size() > 0) {
+			Collections.sort(matchingParts);
+			MatchingPart mostSignificantPart = (MatchingPart)matchingParts.get(0);
+			if (mostSignificantPart != null)
+				return mostSignificantPart.part;
 		}
 		
 		// Not found.
 		return null;
 	}
-	private class MatchingPart {
+	private class MatchingPart implements Comparable {
 		String pid;
 		String sid;
 		LayoutPart part;
+		boolean hasWildcard;
+		int len;
+		
 		MatchingPart (String pid, String sid, LayoutPart part) {
-			this.pid = pid; this.sid = sid; this.part = part;
+			this.pid = pid; 
+			this.sid = sid; 
+			this.part = part;
+			this.len = 
+			    (pid == null ? 0 : pid.length()) +
+                (sid == null ? 0 : sid.length());
+            this.hasWildcard = 
+                (pid != null && pid.indexOf(PartPlaceholder.WILD_CARD) != -1) ||
+                (sid != null && sid.indexOf(PartPlaceholder.WILD_CARD) != -1);
+		}
+		public int compareTo(Object a) {
+		    // specific ids always outweigh ids with wildcards
+			MatchingPart ma = (MatchingPart) a;
+			if (this.hasWildcard && !ma.hasWildcard) {
+			    return -1; 
+			}
+			if (!this.hasWildcard && ma.hasWildcard) {
+			    return 1; 
+			}
+			// if both are specific or both have wildcards, simply compare based on length
+			return ma.len - this.len;
 		}
 	}
 	/**
 	 * Find the first part with a given ID in the presentation.
 	 */
-	private LayoutPart findPart(String id, LayoutPart[] parts) {
-		MatchingPart currentMatchingPart = null;
+	private LayoutPart findPart(String id, LayoutPart[] parts, ArrayList matchingParts) {
 		for (int i = 0, length = parts.length; i < length; i++) {
 			LayoutPart part = parts[i];
 			// check for part equality, parts with secondary ids fail
@@ -810,26 +841,18 @@ public class PerspectivePresentation {
 			// check pattern matching placeholders
 			else if (part instanceof PartPlaceholder && ((PartPlaceholder) part).hasWildCard()) {
 				StringMatcher sm = new StringMatcher(part.getID(), true, false);
-				MatchingPart matchingPart;
-				if (sm.match(id)) {
-					matchingPart = new MatchingPart(part.getID(), null, part);
-					if (currentMatchingPart == null)
-						currentMatchingPart = matchingPart;
-					else if (matchingPart.pid.length() > currentMatchingPart.pid.length())
-						currentMatchingPart = matchingPart;							
-				}
+				if (sm.match(id))
+					matchingParts.add(new MatchingPart(part.getID(), null, part));
 			}
 			else if (part instanceof EditorArea) {
 				// Skip.
 			} 
 			else if (part instanceof ILayoutContainer) {
-				part = findPart(id, ((ILayoutContainer) part).getChildren());
+				part = findPart(id, ((ILayoutContainer) part).getChildren(), matchingParts);
 				if (part != null)
 					return part;
 			} 
 		}
-		if (currentMatchingPart != null)
-			return currentMatchingPart.part;
 		return null;
 	}
 	/**
@@ -837,15 +860,13 @@ public class PerspectivePresentation {
 	 * primary and secondary id pair.  Wild cards
 	 * are supported.
 	 */
-	private LayoutPart findPart(String primaryId, String secondaryId, LayoutPart[] parts) {
-		MatchingPart currentMatchingPart = null;
-		LayoutPart wildCard = null;
+	private LayoutPart findPart(String primaryId, String secondaryId, LayoutPart[] parts, ArrayList matchingParts) {
 		for (int i = 0, length = parts.length; i < length; i++) {
 			LayoutPart part = parts[i];
 			// check containers first
 			if (part instanceof ILayoutContainer) {
 				LayoutPart testPart = findPart(primaryId, secondaryId, 
-						((ILayoutContainer) part).getChildren());
+						((ILayoutContainer) part).getChildren(), matchingParts);
 				if (testPart != null)
 					return testPart;
 			} 
@@ -863,10 +884,10 @@ public class PerspectivePresentation {
 				String id = part.getID();
 				
 				// optimization: don't bother parsing id if it has no separator -- it can't match
-				if (id.indexOf(ViewFactory.ID_SEP) == -1) { //$NON-NLS-1$
+				if (id.indexOf(ViewFactory.ID_SEP) == -1) {
 				    // but still need to check for wildcard case
 					if (id.equals(PartPlaceholder.WILD_CARD))
-						wildCard = part;
+						matchingParts.add(new MatchingPart(id, null, part));
 					continue;
 				}
 				
@@ -884,29 +905,15 @@ public class PerspectivePresentation {
 				if (sm.match(primaryId)) {
 					sm = new StringMatcher(phSecondaryId, true, false);
 					if (sm.match(secondaryId)) {
-						matchingPart = new MatchingPart(phPrimaryId, phSecondaryId, part);						
-						// check for most specific
-						if (currentMatchingPart != null) {
-							if (matchingPart.pid.length() > currentMatchingPart.pid.length())
-								currentMatchingPart = matchingPart;							
-							else if (matchingPart.pid.length() == currentMatchingPart.pid.length()) {
-								if (matchingPart.sid.length() > currentMatchingPart.sid.length())
-									currentMatchingPart = matchingPart;	
-							}								
-						}
-						else
-							currentMatchingPart = matchingPart;
+						matchingParts.add(new MatchingPart(phPrimaryId, phSecondaryId, part));						
 					}
-				}
-									
+				}									
 			} 
 			else if (part instanceof EditorArea) {
 				// Skip.
 			}
 		}
-		if (currentMatchingPart != null)
-			return currentMatchingPart.part;
-		return wildCard;
+		return null;
 	}
 	/**
 	 * Returns true if a placeholder exists for a given ID.
