@@ -301,7 +301,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	protected IProject createAndImportProject(String prefix, File zipFile) throws Exception {
 		IProject project = Util.createUniqueProject(prefix);
-		Util.importZipIntoProject(project, zipFile);
+		Util.importZip(project, zipFile);
 		return project;
 	}
 	

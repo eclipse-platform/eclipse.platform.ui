@@ -95,7 +95,9 @@ public class PrintTextDiffVisitor extends PrintDiffVisitor {
 		line = new StringBuffer(indent);
 		line.append("  diff : ");
 		
-		if (isNegligible(entry, olderEntry)) {
+		if (isDifferenceUncertain(entry, olderEntry)) {
+			line.append("UNCERTAIN");
+		} else if (isDifferenceNegligible(entry, olderEntry)) {
 			line.append("NEGLIGIBLE");
 		} else {
 			line.append(diff > 0 ? "SLOWER" : "FASTER");

@@ -92,8 +92,8 @@ public class CVSTestSetup extends TestSetup {
 				// while debugging, dump CVS command line client results to stdout
 				// prefix distinguishes between message source stream
 				debugStream.println();
-				debugStream.println("CMD> " + commandLine);
-				if (workingDirectory != null) debugStream.println("DIR> " + workingDirectory.toString());
+				printPrefixedLine(debugStream, "CMD> ", commandLine);
+				if (workingDirectory != null) printPrefixedLine(debugStream, "DIR> ", workingDirectory.toString());
 			}
 			Process cvsProcess = Runtime.getRuntime().exec(commandLine, environment, workingDirectory);
 			// stream output must be dumped to avoid blocking the process or causing a deadlock
@@ -104,13 +104,15 @@ public class CVSTestSetup extends TestSetup {
 			if (debugStream != null) debugStream.println("RESULT> " + returnCode);
 			return returnCode;
 		} catch (IOException e) {
-			System.err.println("Unable to execute command: " + commandLine);
+			printPrefixedLine(System.err, "Unable to execute command: ", commandLine);
+			e.printStackTrace(System.err);
 		} catch (InterruptedException e) {
-			System.err.println("Unable to execute command: " + commandLine);
+			printPrefixedLine(System.err, "Unable to execute command: ", commandLine);
+			e.printStackTrace(System.err);
 		}
 		return -1;
 	}
-
+	
 	private static void startBackgroundPipeThread(final InputStream is, final PrintStream os,
 		final String prefix) {
 		new Thread() {
@@ -122,7 +124,7 @@ public class CVSTestSetup extends TestSetup {
 						for (;;) {
 							String line = reader.readLine();
 							if (line == null) break;
-							if (os != null) os.println(prefix + line);
+							if (os != null) printPrefixedLine(os, prefix, line);
 						}
 					} finally {
 						if (reader != null) reader.close();
@@ -132,6 +134,11 @@ public class CVSTestSetup extends TestSetup {
 				}
 			}
 		}.start();
+	}
+	
+	private static void printPrefixedLine(PrintStream os, String prefix, String line) {
+		os.print(prefix);
+		os.println(line.substring(0, Math.min(line.length(), 256))); // trim long lines
 	}
 
 	/*

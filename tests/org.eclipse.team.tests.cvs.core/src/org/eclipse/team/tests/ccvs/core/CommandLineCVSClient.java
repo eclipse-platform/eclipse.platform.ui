@@ -3,12 +3,29 @@ package org.eclipse.team.tests.ccvs.core;
 import java.io.File;
 
 import junit.framework.Assert;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
-public class CommandLineCVSClient {
+public class CommandLineCVSClient implements ICVSClient {
+	public static final ICVSClient INSTANCE = new CommandLineCVSClient();
 	private static final String cvsExecutable =
 		System.getProperty("eclipse.cvs.command");
-
+		
+	public void executeCommand(ICVSRepositoryLocation repositoryLocation,
+		IContainer localRoot, String command, String[] globalOptions,
+		String[] localOptions, String[] arguments) throws CVSException {
+		execute(repositoryLocation.getLocation(), localRoot.getLocation().toFile(), command,
+			globalOptions, localOptions, arguments);
+		try {
+			localRoot.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			throw new CVSClientException("CoreException during refreshLocal: " + e.getMessage());
+		}
+	}
+	
 	public static void execute(
 		String repositoryLocation, File localRoot, String command,
 		String[] globalOptions, String[] localOptions,

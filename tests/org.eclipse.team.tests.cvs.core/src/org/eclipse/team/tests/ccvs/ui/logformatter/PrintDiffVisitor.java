@@ -60,15 +60,25 @@ public abstract class PrintDiffVisitor implements ILogEntryVisitor {
 		if (olderParent != null) {
 			olderEntry = (TaskEntry) olderParent.findMember(entry.getName(), TaskEntry.class);
 		}
-		if (ignoreNegligible && isNegligible(entry, olderEntry)) return;
+		if (ignoreNegligible && isDifferenceNegligible(entry, olderEntry)) return;
 		visitTaskEntry(entry, olderEntry);
 	}
 	
-	protected boolean isNegligible(TaskEntry newerEntry, TaskEntry olderEntry) {
+	protected boolean isDifferenceNegligible(TaskEntry newerEntry, TaskEntry olderEntry) {
 		if (newerEntry.getTotalRuns() == 0 || olderEntry.getTotalRuns() == 0) return false;
 		int olderMean = olderEntry.getAverageMillis();
-		if (olderMean == 0) return true;
-		int diff = Math.abs(newerEntry.getAverageMillis() - olderMean);
+		if (olderMean == 0) return false;
+		int newerMean = newerEntry.getAverageMillis();
+		int diff = Math.abs(newerMean - olderMean);
 		return diff * 100 / olderMean < threshold;
+	}
+	
+	protected boolean isDifferenceUncertain(TaskEntry newerEntry, TaskEntry olderEntry) {
+		if (newerEntry.getTotalRuns() == 0 || olderEntry.getTotalRuns() == 0) return false;
+		int olderMean = olderEntry.getAverageMillis();
+		int newerMean = newerEntry.getAverageMillis();
+		int diff = Math.abs(newerMean - olderMean);
+		int diffCI = newerEntry.getConfidenceInterval() + olderEntry.getConfidenceInterval();
+		return diff < diffCI;
 	}
 }

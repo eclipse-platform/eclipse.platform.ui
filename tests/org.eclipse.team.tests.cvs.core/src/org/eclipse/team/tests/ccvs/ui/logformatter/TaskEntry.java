@@ -63,7 +63,7 @@ public class TaskEntry extends LogEntry {
 	/**
 	 * Returns a 95% confidence interval from the mean represented by getAverageMillis()
 	 * Uses the formula:
-	 *   1.960 *  / sqrt(n)
+	 *   1.960 * stdev() / sqrt(n)
 	 */
 	public int getConfidenceInterval() {
 		return (int) (1.960 * getStandardDeviation() / Math.sqrt(getTotalRuns()));

@@ -54,7 +54,9 @@ public class PrintCSVDiffVisitor extends PrintDiffVisitor {
 		if (entry.getTotalRuns() != 0 && olderEntry.getTotalRuns() != 0) {
 			int olderMean = olderEntry.getAverageMillis();
 			int diff = entry.getAverageMillis() - olderMean;
-			if (isNegligible(entry, olderEntry)) {
+			if (isDifferenceUncertain(entry, olderEntry)) {
+				writer.printField("UNCERTAIN");
+			} else if (isDifferenceNegligible(entry, olderEntry)) {
 				writer.printField("NEGLIGIBLE");
 			} else {
 				writer.printField(diff > 0 ? "SLOWER" : "FASTER"); // change type

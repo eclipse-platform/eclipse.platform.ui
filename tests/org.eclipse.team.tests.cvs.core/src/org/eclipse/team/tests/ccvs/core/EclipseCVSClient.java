@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.Assert;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -16,8 +17,10 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
-public class EclipseCVSClient {
+public class EclipseCVSClient implements ICVSClient {
+	public static final ICVSClient INSTANCE = new EclipseCVSClient();
 	private static final HashMap commandPool = new HashMap();
 	static {
 		commandPool.put("update", Command.UPDATE);
@@ -32,6 +35,13 @@ public class EclipseCVSClient {
 		commandPool.put("rtag", Command.RTAG);
 		commandPool.put("admin", Command.ADMIN);
 		commandPool.put("diff", Command.DIFF);
+	}
+	
+	public void executeCommand(ICVSRepositoryLocation repositoryLocation,
+		IContainer localRoot, String command, String[] globalOptions,
+		String[] localOptions, String[] arguments) throws CVSException {
+		execute(repositoryLocation, CVSWorkspaceRoot.getCVSFolderFor(localRoot), command,
+			globalOptions, localOptions, arguments);
 	}
 	
 	public static void execute(
@@ -81,6 +91,7 @@ public class EclipseCVSClient {
 			}
 		} finally {
 			session.close();
+			monitor.done();
 		}
 	}
 

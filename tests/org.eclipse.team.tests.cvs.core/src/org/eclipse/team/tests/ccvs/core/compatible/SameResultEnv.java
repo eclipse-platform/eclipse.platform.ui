@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -28,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSClientException;
 import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
 import org.eclipse.team.tests.ccvs.core.EclipseCVSClient;
+import org.eclipse.team.tests.ccvs.core.ICVSClient;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 
@@ -116,46 +119,36 @@ public final class SameResultEnv extends JUnitTestCase {
 		String pathRelativeToRoot) throws CVSException {
 		
 		// run with reference client
-		boolean referenceClientException = false;
-		try {
-			File localRoot = referenceProject.getLocation().toFile();
-			if (pathRelativeToRoot.length() != 0) {
-				localRoot = new File(localRoot, pathRelativeToRoot);
-			}
-			CommandLineCVSClient.execute(
-				CompatibleTestSetup.referenceClientRepository.getLocation(),
-				localRoot, command, globalOptions, localOptions, arguments);
-		} catch (CVSClientException e) {
-			if (! ignoreExceptions) throw e;
-			referenceClientException = true;
-		} finally {
-			try {
-				// temporary flush
-				referenceProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (CoreException e) {
-				fail("CoreException during refreshLocal: " + e.getMessage());
-			}
-		}
-		
+		boolean referenceClientException = execute(CommandLineCVSClient.INSTANCE,
+			CompatibleTestSetup.referenceClientRepository, referenceProject,
+			command, globalOptions, localOptions, arguments, pathRelativeToRoot);
 		// run with Eclipse client
-		boolean eclipseClientException = false;
-		try {
-			ICVSFolder localRoot = eclipseRoot;
-			IPath path = new Path(pathRelativeToRoot);
-			while (path.segmentCount() != 0) {
-				localRoot = localRoot.getFolder(path.segment(0));
-				path = path.removeFirstSegments(1);
-			}
-			EclipseCVSClient.execute(
-				CompatibleTestSetup.eclipseClientRepository, localRoot,
-				command, globalOptions, localOptions, arguments);
-		} catch (CVSClientException e) {
-			if (! ignoreExceptions) throw e;
-			eclipseClientException = true;
-		}
+		boolean eclipseClientException = execute(EclipseCVSClient.INSTANCE,
+			CompatibleTestSetup.eclipseClientRepository, eclipseProject,
+			command, globalOptions, localOptions, arguments, pathRelativeToRoot);
+			
+		// assert same results
 		assertEquals(referenceClientException, eclipseClientException);
 		assertConsistent();
-	}	
+	}
+	
+	private boolean execute(ICVSClient client, ICVSRepositoryLocation repositoryLocation,
+		IContainer localRoot, String command,
+		String[] globalOptions, String[] localOptions, String[] arguments,
+		String pathRelativeToRoot) throws CVSException {
+		try {
+			IPath path = new Path(pathRelativeToRoot);
+			if (path.segmentCount() != 0) {
+				localRoot = localRoot.getFolder(path);
+			}
+			client.executeCommand(repositoryLocation, localRoot, command, globalOptions,
+				localOptions, arguments);
+		} catch (CVSException e) {
+			if (ignoreExceptions) return true;
+			throw e;
+		}
+		return false;
+	}
 
 	/**
 	 * Deletes files on the both of the cvs-servers.

@@ -278,15 +278,15 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	}
 	
 	/**
-	 * Imports a .zip file into a project's root folder.
-	 * @param project the project
+	 * Imports a .zip file into a container's root folder.
+	 * @param container the container
 	 * @param file the path of the .zip file
 	 */
-	public static void importZipIntoProject(IProject project, File file)
+	public static void importZip(IContainer container, File file)
 		throws IOException, ZipException, InterruptedException, InvocationTargetException {
 		ZipFile zipFile = new ZipFile(file);
 		ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-		ImportOperation importOperation = new ImportOperation(project.getFullPath(),
+		ImportOperation importOperation = new ImportOperation(container.getFullPath(),
 			provider.getRoot(), provider, null);
 		importOperation.setOverwriteResources(true); // don't ask
 		importOperation.run(new NullProgressMonitor());
