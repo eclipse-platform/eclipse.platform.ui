@@ -561,6 +561,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
+		menu.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));
+		menu.add(new GroupMarker(IDebugUIConstants.STEP_OVER_GROUP));
+		menu.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
