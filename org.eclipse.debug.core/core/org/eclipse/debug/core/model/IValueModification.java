@@ -36,9 +36,9 @@ public interface IValueModification {
 	public void setValue(String expression) throws DebugException;
 	
 	/**
-	 * Returns whether this varaible supports value modification.
+	 * Returns whether this variable supports value modification.
 	 *
-	 * @return whether this varaible supports value modification
+	 * @return whether this variable supports value modification
 	 */
 	public boolean supportsValueModification();
 	

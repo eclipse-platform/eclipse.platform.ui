@@ -17,7 +17,7 @@ import org.eclipse.debug.core.DebugException;
  * <ul>
  * <li>suspend/resume (convenience to resume this stack frame's thread)
  * <li>stepping
- * <li>termination (convience to terminate this stack frame's thread or debug target)
+ * <li>termination (convenience to terminate this stack frame's thread or debug target)
  * </ul>
  * <p>
  * An implementation may choose to re-use or discard

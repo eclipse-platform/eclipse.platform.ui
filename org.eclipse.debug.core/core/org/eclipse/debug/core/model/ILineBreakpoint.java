@@ -1,5 +1,10 @@
 package org.eclipse.debug.core.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.runtime.CoreException;
 
 public interface ILineBreakpoint extends IBreakpoint {
