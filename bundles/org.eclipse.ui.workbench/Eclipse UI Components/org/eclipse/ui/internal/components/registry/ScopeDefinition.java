@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.components.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.components.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
 
 /**
  * @since 3.1

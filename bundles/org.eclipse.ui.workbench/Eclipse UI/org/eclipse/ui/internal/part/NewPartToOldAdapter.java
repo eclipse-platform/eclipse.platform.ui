@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -19,7 +20,9 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.part.services.NullActionBars;
+import org.eclipse.ui.internal.part.services.PartToViewActionBarsAdapter;
 
 /**
  * Can be used to convert an existing Part into an IEditorPart or IViewPart. The lifecycle
@@ -31,12 +34,30 @@ public class NewPartToOldAdapter extends NewPartToWorkbenchPartAdapter implement
 
     private CompatibilityPartSite site;
     
+    /**
+     * @param services
+     * @param propertyProvider
+     * @param isView determines whether we want this to behave like an IViewPart or an IEditorPart (their
+     * IActionBars behave differently)
+     * @throws ComponentException
+     */
     public NewPartToOldAdapter(
             StandardWorkbenchServices services,
-            IPartPropertyProvider propertyProvider) throws ComponentException {
+            IPartPropertyProvider propertyProvider,
+            boolean isView) throws ComponentException {
         super(propertyProvider);
+        
+        IActionBars actionBars;
+        
+        if (isView) { 
+            actionBars = new PartToViewActionBarsAdapter(services.getActionBars(), 
+                    services.getStatusHandler(), services.getStatusFactory());
+        } else {
+            actionBars = new NullActionBars(); 
+        }
+        
         this.site = new CompatibilityPartSite(
-                services, this, null);
+                services, this, null, actionBars);
     }
     
     /* (non-Javadoc)

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import org.eclipse.ui.part.Part;
+import org.eclipse.ui.internal.part.Part;
 
 /**
  * 

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ui.components.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
 
 /**
  * @since 3.1

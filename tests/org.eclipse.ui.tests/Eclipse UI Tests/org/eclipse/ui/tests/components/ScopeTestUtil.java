@@ -12,8 +12,8 @@ package org.eclipse.ui.tests.components;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.components.ClassIdentifier;
 import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
 import org.eclipse.ui.internal.components.registry.IComponentScope;
 import org.eclipse.ui.internal.components.registry.IScopeReference;
 

@@ -126,7 +126,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 
     private Map actionCache = new HashMap();
 
-   private static final String PIN_EDITOR_KEY = "PIN_EDITOR"; //$NON-NLS-1$
+    private static final String PIN_EDITOR_KEY = "PIN_EDITOR"; //$NON-NLS-1$
 
     private static final String PIN_EDITOR = "ovr16/pinned_ovr.gif"; //$NON-NLS-1$
 
@@ -151,6 +151,9 @@ public class EditorManager implements IExtensionRemovalHandler {
      */
     public EditorManager(WorkbenchWindow window, WorkbenchPage workbenchPage,
             EditorAreaHelper pres) {
+        Assert.isNotNull(window);
+        Assert.isNotNull(workbenchPage);
+        Assert.isNotNull(pres);
         this.window = window;
         this.page = workbenchPage;
         this.editorPresentation = pres;
@@ -400,7 +403,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 
         // Read action extensions.
         EditorActionBuilder builder = new EditorActionBuilder();
-        contr = builder.readActionExtensions(desc, actionBars);
+        contr = builder.readActionExtensions(desc);
         if (contr != null) {
             actionBars.setExtensionContributor(contr);
             contr.init(actionBars, page);
@@ -1172,7 +1175,6 @@ public class EditorManager implements IExtensionRemovalHandler {
             } else {
                 throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_invalid_editor_descriptor, editorID)); //$NON-NLS-1$
             }
-            
 
             // Create a pane for this part
             PartPane pane = ref.getPane();

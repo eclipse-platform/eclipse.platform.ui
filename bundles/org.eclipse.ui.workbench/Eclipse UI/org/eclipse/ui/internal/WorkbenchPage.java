@@ -85,6 +85,7 @@ import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -92,7 +93,6 @@ import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -406,8 +406,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          */
         private void activateContributions(IWorkbenchPart part, boolean enable) {
             PartSite site = (PartSite) part.getSite();
-            SubActionBars actionBars = (SubActionBars) site.getActionBars();
-            actionBars.activate(enable);
+            site.activateActionBars(enable);
         }
 
         /**
@@ -423,8 +422,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          */
         private void deactivateContributions(IWorkbenchPart part, boolean remove) {
             PartSite site = (PartSite) part.getSite();
-            SubActionBars actionBars = (SubActionBars) site.getActionBars();
-            actionBars.deactivate(remove);
+            site.deactivateActionBars(remove);
         }
 
         /**

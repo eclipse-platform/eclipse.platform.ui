@@ -11,21 +11,29 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.part.Part;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
-import org.eclipse.ui.part.services.ISecondaryId;
-import org.eclipse.ui.part.services.ISelectionHandler;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
+import org.eclipse.ui.internal.part.components.services.ISecondaryId;
+import org.eclipse.ui.internal.part.components.services.ISelectionHandler;
+import org.eclipse.ui.internal.part.components.services.IStatusHandler;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 
 /**
  * Wraps a new-style Part in an IWorkbenchPart. This object will create and manage
@@ -43,8 +51,12 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
 
     private PartServices services;
     private IWorkbenchPartSite partSite;
+    private IPartActionBars partActionBars = null;
+    private ResourceManager rm;
+    private ImageDescriptor currentStatusImageDescriptor = null;
+    private Image currentStatusImage = null;
     
-    private final class PartServices implements ISecondaryId, IAdaptable, ISelectionHandler {
+    private final class PartServices implements ISecondaryId, IAdaptable, ISelectionHandler, IStatusHandler {
        		
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.workbench.services.ISecondaryId#getSecondaryId()
@@ -52,22 +64,32 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
 		public String getSecondaryId() {
 			return NewPartToOldWrapper.this.getSecondaryId();
 		}
-
+        
+        public void set(IStatus message, ImageDescriptor image) {
+            setStatus(message, image);
+        }
+        
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {
+            
+            if (adapter == IPartActionBars.class) {
+                return getPartActionBars();
+            }
+            
 //		    return getViewSite().getAdapter(adapter);
 //			if (adapter == IActionBars.class) {
 //				return getViewSite().getActionBars();
-//			} else if (adapter == IKeyBindingService.class) {
-//				return getViewSite().getKeyBindingService();
-//			}
+//			} else 
+            if (adapter == IKeyBindingService.class) {
+				return getSite().getKeyBindingService();
+			}
 			return null;
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.part.interfaces.ISelectable#setSelection(org.eclipse.jface.viewers.ISelection)
+		 * @see org.eclipse.ui.internal.part.components.interfaces.ISelectable#setSelection(org.eclipse.jface.viewers.ISelection)
 		 */
 		public void setSelection(ISelection newSelection) {
             ISelectionProvider newSelectionProvider = null;
@@ -88,9 +110,64 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
     public NewPartToOldWrapper(IPartPropertyProvider provider) {
         super(provider);
         
-        this.services = new PartServices();        
+        this.services = new PartServices();
     }
     
+    public void setStatus(IStatus message, ImageDescriptor image) {
+        IStatusLineManager mgr = getStatusLineManager();
+        
+        Image newImage = null;
+        
+        if (image != null) {
+            newImage = getResources().createImageWithDefault(image);
+        }
+        
+        if (message == null) {
+            mgr.setErrorMessage(null);
+            mgr.setMessage(null);
+        } else if (message.getSeverity() == IStatus.ERROR){
+            mgr.setMessage(null);
+            
+            if (newImage == null) {
+                mgr.setErrorMessage(message.getMessage());
+            } else {
+                mgr.setErrorMessage(newImage, message.getMessage());
+            }
+        } else {
+            mgr.setErrorMessage(null);
+            
+            if (newImage == null) {
+                mgr.setMessage(message.getMessage());
+            } else {
+                mgr.setMessage(newImage, message.getMessage());
+            }
+        }
+        
+        disposeStatusImage();
+        currentStatusImage = newImage;
+        currentStatusImageDescriptor = image;
+        
+    }
+    
+    private void disposeStatusImage() {
+        if (currentStatusImageDescriptor != null) {
+            getResources().destroy(currentStatusImageDescriptor);
+            currentStatusImage = null;
+            currentStatusImageDescriptor = null;
+        }
+    }
+
+    protected abstract IStatusLineManager getStatusLineManager();
+
+    public IPartActionBars getPartActionBars() {
+        if (partActionBars == null) {
+            partActionBars = createPartActionBars();
+        }
+        return partActionBars ;
+    }
+
+    protected abstract IPartActionBars createPartActionBars();
+
     protected abstract IMemento getMemento();
 
     /* (non-Javadoc)
@@ -98,6 +175,8 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
      */
     public void createPartControl(Composite parent) {
         try {
+            
+            
         	FactoryMap args = new FactoryMap();
             args.addInstance(services);
             args.addInstance(getPropertyProvider());
@@ -113,6 +192,13 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
         }
     }
 
+    private ResourceManager getResources() {
+        if (rm == null) {
+            rm = (ResourceManager)getSite().getAdapter(ResourceManager.class);
+        }
+        return rm;
+    }
+    
     protected void addServices(FactoryMap context) {
         context.mapInstance(IPartPropertyProvider.class, getPropertyProvider());
     }
@@ -159,7 +245,7 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
         
         // If the site doesn't want to play nicely, reach to the workbench page
         if (siteFactory == null) {
-            return getSite().getPage().getPartFactory();
+            return ((WorkbenchPage)getSite().getPage()).getPartFactory();
         }
         
         return siteFactory;
@@ -196,6 +282,12 @@ abstract class NewPartToOldWrapper extends NewPartToWorkbenchPartAdapter {
         }
         
         return null;
+    }
+    
+    public void dispose() {
+        disposeStatusImage();
+        
+        super.dispose();
     }
     
 }

@@ -12,10 +12,12 @@ package org.eclipse.ui.internal.components;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ReflectionFactory;
+import org.eclipse.ui.internal.components.framework.SingletonFactory;
 
 /**
  * Creates components from a named attribute of a configuration element.
@@ -55,6 +57,14 @@ public class ExecutableExtensionFactory extends ComponentFactory {
                 ComponentHandle result = cachedAdapter.createHandle(availableServices);
                 return result;
             } catch (ComponentException e) {
+                // This branch omits the classes ReflectionFactory and SingletonFactory from the dependency
+                // chain when displaying the exception message -- clients are probably interested in debugging their
+                // own classes, and probably aren't interested in classes supplied by the framework. This
+                // keeps the error messages more concise.
+                if (cachedAdapter instanceof ReflectionFactory || cachedAdapter instanceof SingletonFactory) {
+                    throw e;
+                }
+                
                 throw new ComponentException(cachedAdapter.getClass(), e);
             }
         }

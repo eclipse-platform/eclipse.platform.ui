@@ -16,12 +16,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
-import org.eclipse.ui.part.Part;
 import org.osgi.framework.Bundle;
 
 /**
@@ -45,6 +44,7 @@ public abstract class PartWrapper extends Part {
         
         container = new SiteServices(parentControl, bundle, page, context);
         IPartPropertyProvider provider;
+
         try {
             provider = (IPartPropertyProvider)container.getService(IPartPropertyProvider.class);
         
@@ -58,6 +58,7 @@ public abstract class PartWrapper extends Part {
                     disposed();
                 }
             });
+            
         } catch (ComponentException e1) {
             container.dispose();
             throw e1;
@@ -80,7 +81,7 @@ public abstract class PartWrapper extends Part {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
+     * @see org.eclipse.ui.internal.part.components.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
      */
     public void saveState(IMemento memento) {
         wrappedPart.saveState(memento);

@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.components.ClassIdentifier;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.components.registry.ComponentRegistry;
 import org.eclipse.ui.internal.components.registry.ComponentScope;
 import org.eclipse.ui.internal.components.registry.ExtensionPointManager;
@@ -174,23 +174,23 @@ public class ComponentUtil {
         return result;
     }
     
+    public static Throwable getMostSpecificCause(Throwable exception) {
+        return getMostSpecificException(getCause(exception));
+    }
+    
     /**
      * @since 3.1 
      *
      * @param exception
      * @return
      */
-    public static Throwable getMostSpecificException(Throwable exception) {
-        if (exception instanceof ComponentException) {
-            Throwable cause = exception.getCause();
-            if (cause == null) {
-                return exception;
-            }
-            
-            return getMostSpecificException(cause);
+    private static Throwable getMostSpecificException(Throwable exception) {
+        Throwable cause = getCause(exception);
+        if (cause == null || cause == exception) {
+            return exception;
         }
         
-        return exception;
+        return getMostSpecificException(cause);
     }
 
 	/**

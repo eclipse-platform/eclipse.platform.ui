@@ -53,7 +53,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
      * registered in 'editorActions' extension point.
      */
     public IEditorActionBarContributor readActionExtensions(
-            IEditorDescriptor desc, IActionBars bars) {
+            IEditorDescriptor desc) {
         ExternalContributor ext = null;
         readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE,
                 IWorkbenchConstants.PL_EDITOR_ACTIONS);

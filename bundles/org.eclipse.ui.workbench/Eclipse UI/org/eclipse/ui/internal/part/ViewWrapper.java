@@ -13,10 +13,10 @@ package org.eclipse.ui.internal.part;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.osgi.framework.Bundle;
 
 /**
@@ -39,7 +39,7 @@ public class ViewWrapper extends PartWrapper {
                 IServiceProvider container = getContainer();
                 StandardWorkbenchServices services = new StandardWorkbenchServices(container);
                 IPartPropertyProvider provider = (IPartPropertyProvider)Components.queryInterface( getWrappedPart(), IPartPropertyProvider.class);
-                part = new NewPartToOldAdapter(services, provider);
+                part = new NewPartToOldAdapter(services, provider, true);
             }
         } catch (ComponentException e) {
             getWrappedPart().getControl().dispose();

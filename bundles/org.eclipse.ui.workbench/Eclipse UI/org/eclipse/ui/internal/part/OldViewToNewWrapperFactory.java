@@ -11,11 +11,12 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
 
 /**
  * @since 3.1
@@ -25,10 +26,14 @@ public class OldViewToNewWrapperFactory extends ComponentFactory {
     public ComponentHandle createHandle(IServiceProvider availableServices) throws ComponentException {
         IViewPart part = (IViewPart) Components.queryInterface(availableServices,
                 IViewPart.class);
+
+        IPartActionBars actionBars = (IPartActionBars) Components.queryInterface(availableServices,
+                IPartActionBars.class);
         
         StandardWorkbenchServices services = new StandardWorkbenchServices(availableServices);
         
-        return new ComponentHandle(new OldViewToNewWrapper(part, services));
+        return new ComponentHandle(new OldViewToNewWrapper(part, actionBars, services));
     }
 
+    
 }

@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.components.ClassIdentifier;
-import org.eclipse.ui.components.ComponentFactory;
 import org.eclipse.ui.internal.components.ExecutableExtensionFactory;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
 
 /**
  * @since 3.1

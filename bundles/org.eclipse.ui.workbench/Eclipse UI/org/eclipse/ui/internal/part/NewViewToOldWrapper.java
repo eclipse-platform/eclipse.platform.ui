@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.services.NullEditorInput;
-import org.eclipse.ui.part.Part;
-import org.eclipse.ui.part.services.IPartDescriptor;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
+import org.eclipse.ui.internal.part.services.ViewToPartActionBarsAdapter;
 
 /**
  * This class is used to wrap a new-style view inside something that implements
@@ -105,4 +107,11 @@ public class NewViewToOldWrapper extends NewPartToOldWrapper implements IViewPar
         }
     }    
     
+    protected IPartActionBars createPartActionBars() {
+        return new ViewToPartActionBarsAdapter(getViewSite().getActionBars());
+    }
+    
+    protected IStatusLineManager getStatusLineManager() {
+        return getViewSite().getActionBars().getStatusLineManager();
+    }
 }

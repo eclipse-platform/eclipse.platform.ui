@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
 
 /**
  * An object implementing this interface will be made available as 

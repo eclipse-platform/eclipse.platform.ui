@@ -20,16 +20,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IDisposable;
-import org.eclipse.ui.part.interfaces.IFocusable;
-import org.eclipse.ui.part.interfaces.IPersistable;
-import org.eclipse.ui.part.services.INameable;
-import org.eclipse.ui.part.services.IStatusFactory;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IDisposable;
+import org.eclipse.ui.internal.part.components.interfaces.IFocusable;
+import org.eclipse.ui.internal.part.components.services.INameable;
+import org.eclipse.ui.internal.part.components.services.IStatusFactory;
 
 /**
  * @since 3.1
@@ -141,7 +141,7 @@ public abstract class OldPartToNewWrapper implements IFocusable, IAdaptable, IDi
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.interfaces.IFocusable#setFocus()
+	 * @see org.eclipse.ui.internal.part.components.interfaces.IFocusable#setFocus()
 	 */
 	public boolean setFocus() {
 	    if (part != null) {
@@ -164,7 +164,7 @@ public abstract class OldPartToNewWrapper implements IFocusable, IAdaptable, IDi
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
+     * @see org.eclipse.ui.internal.part.components.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
      */
     public void saveState(IMemento memento) {
         if (part != null) {

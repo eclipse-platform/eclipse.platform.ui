@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.components;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.part.Part;
+import org.eclipse.ui.internal.part.Part;
 import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 
 /**

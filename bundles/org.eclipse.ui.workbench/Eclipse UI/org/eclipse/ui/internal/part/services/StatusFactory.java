@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.services;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.part.services.IStatusFactory;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.part.components.services.IStatusFactory;
 import org.osgi.framework.Bundle;
 
 /**
+ * Constructs status messages associated with the given plugin bundle.
+ * 
+ * Not intended to be subclassed by clients
+ * 
  * @since 3.1
  */
 public class StatusFactory implements IStatusFactory {
@@ -29,30 +35,28 @@ public class StatusFactory implements IStatusFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.component.services.IErrorContext#getStatus(java.lang.Throwable)
      */
-    public IStatus newStatus(Throwable t) {
-        String message = t.getLocalizedMessage();
+    public IStatus newError(Throwable t) {
+        String message = StatusUtil.getLocalizedMessage(t);
         
-        if (message == null) {
-            message = t.getMessage();
-        }
-        
-        if (message == null) {
-            message = t.toString();
-        }
-        
-        Throwable cause = t.getCause();
-        if (cause == null) {
-            cause = t;
-        }
-        
-        return newStatus(message, cause); 
+        return newError(message, t); 
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.component.services.IErrorContext#getStatus(java.lang.String, java.lang.Throwable)
      */
-    public IStatus newStatus(String message, Throwable t) {
-        return new Status(IStatus.ERROR, pluginBundle.getSymbolicName(), Status.OK, message, t);
+    public IStatus newError(String message, Throwable t) {
+        String pluginId = pluginBundle.getSymbolicName();
+        int errorCode = IStatus.OK;
+        
+        // If this was a CoreException, keep the original plugin ID and error code
+        if (t instanceof CoreException) {
+            CoreException ce = (CoreException)t;
+            pluginId = ce.getStatus().getPlugin();
+            errorCode = ce.getStatus().getCode();
+        }
+        
+        return new Status(IStatus.ERROR, pluginId, errorCode, message, 
+                StatusUtil.getCause(t));
     }
 
     /* (non-Javadoc)
@@ -62,4 +66,7 @@ public class StatusFactory implements IStatusFactory {
         return new Status(severity, pluginBundle.getSymbolicName(), Status.OK, message, null);
     }
 
+    public IStatus newMessage(String message) {
+        return newStatus(IStatus.INFO, message);
+    }
 }

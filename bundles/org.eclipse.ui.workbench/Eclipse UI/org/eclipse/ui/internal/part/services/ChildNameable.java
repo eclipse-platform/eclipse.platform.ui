@@ -11,12 +11,14 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.Assert;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.Part;
+import org.eclipse.ui.internal.part.components.services.INameable;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 import org.eclipse.ui.internal.part.multiplexer.INestedComponent;
 import org.eclipse.ui.internal.part.multiplexer.ISharedContext;
-import org.eclipse.ui.part.services.INameable;
-import org.eclipse.ui.part.services.IPartDescriptor;
 
 /**
  * Multiplexed version of the INameable interface.
@@ -36,9 +38,11 @@ public class ChildNameable implements INameable, INestedComponent {
      * Component constructor. Do not invoke directly.
      */
     public ChildNameable(IPartDescriptor descr, ISharedContext shared) throws ComponentException {
+        Assert.isNotNull(descr);
         IServiceProvider sharedContainer = shared.getSharedComponents();
         
         currentName = descr.getLabel();
+        Assert.isNotNull(currentName);
         image = descr.getImage();
         this.parent = (INameable)sharedContainer.getService(INameable.class);
     }
@@ -47,6 +51,7 @@ public class ChildNameable implements INameable, INestedComponent {
      * @see org.eclipse.ui.workbench.services.INameable#setName(java.lang.String)
      */
     public void setName(String newName) {
+        Assert.isNotNull(newName);
         if (!newName.equals(currentName)) {
             currentName = newName;
             if (isActive) {
@@ -94,7 +99,7 @@ public class ChildNameable implements INameable, INestedComponent {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.part.serviceimplementation.multiplexer.INestedComponent#activate()
      */
-    public void activate() {
+    public void activate(Part newActivePart) {
         if (isActive) {
             return;
         }
@@ -109,7 +114,7 @@ public class ChildNameable implements INameable, INestedComponent {
         isActive = true;
     }
     
-    public void deactivate() {
+    public void deactivate(Object newActive) {
         isActive = false;
     }
 }

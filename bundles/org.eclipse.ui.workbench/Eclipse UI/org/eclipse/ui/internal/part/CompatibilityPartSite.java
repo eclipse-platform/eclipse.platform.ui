@@ -27,9 +27,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.KeyBindingService;
 import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.part.services.NullActionBars;
 
 /**
  * @since 3.1
@@ -37,9 +35,8 @@ import org.eclipse.ui.internal.part.services.NullActionBars;
 public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEditorSite {
     private ArrayList menuExtenders;
     private IWorkbenchPart part;
-    private IKeyBindingService keyBindingService;
     private ISelectionProvider selectionProvider;
-    private IActionBars actionBars = new NullActionBars();
+    private IActionBars actionBars;
     private IEditorActionBarContributor actionBarContributor;
     private StandardWorkbenchServices services;
     
@@ -60,11 +57,13 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
      * @param part
      * @param page
      */
-    public CompatibilityPartSite(StandardWorkbenchServices services, IWorkbenchPart part, IEditorActionBarContributor actionBarContributor) {
+    public CompatibilityPartSite(StandardWorkbenchServices services, IWorkbenchPart part, 
+            IEditorActionBarContributor actionBarContributor, IActionBars actionBars) {
         super();
         this.services = services;
         this.part = part;
         this.actionBarContributor = actionBarContributor;
+        this.actionBars = actionBars;
     }
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartSite#getId()
@@ -131,10 +130,7 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
      * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
      */
     public IKeyBindingService getKeyBindingService() {
-        if (keyBindingService == null) {
-            keyBindingService = new KeyBindingService(this);
-        }
-        return keyBindingService;
+        return services.getKeyBindingService();
     }
 
     /* (non-Javadoc)
@@ -190,6 +186,7 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
     public Object getAdapter(Class adapter) {
         return services.getAdapter(adapter);
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartSite#getPart()
      */

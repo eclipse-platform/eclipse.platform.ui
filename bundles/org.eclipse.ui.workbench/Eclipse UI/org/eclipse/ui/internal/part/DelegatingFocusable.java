@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.components.interfaces.IFocusable;
 import org.eclipse.ui.internal.part.multiplexer.IDelegatingContext;
-import org.eclipse.ui.part.interfaces.IFocusable;
 
 /**
  * @since 3.1
@@ -27,7 +27,7 @@ public class DelegatingFocusable implements IFocusable {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.IFocusable#setFocus()
+     * @see org.eclipse.ui.internal.part.components.interfaces.IFocusable#setFocus()
      */
     public boolean setFocus() {
         IServiceProvider active = context.getActive();

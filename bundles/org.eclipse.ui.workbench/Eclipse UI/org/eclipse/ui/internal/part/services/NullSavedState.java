@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.part.services.ISavedState;
+import org.eclipse.ui.internal.part.components.services.ISavedState;
 
 /**
  * @since 3.1
@@ -19,7 +19,7 @@ import org.eclipse.ui.part.services.ISavedState;
 public class NullSavedState implements ISavedState {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.ISavedState#getState()
+     * @see org.eclipse.ui.internal.part.components.interfaces.ISavedState#getState()
      */
     public IMemento getState() {
         return null;

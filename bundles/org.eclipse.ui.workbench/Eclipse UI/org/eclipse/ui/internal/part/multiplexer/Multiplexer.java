@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal.part.multiplexer;
 
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.part.DelegatingServiceFactory;
 import org.eclipse.ui.internal.part.IWorkbenchScopeConstants;
 
@@ -53,16 +53,19 @@ public class Multiplexer {
     
     public void setActive(MultiplexerChild newActive) {
         if (activePart != null) {
-            activePart.getContext().deactivate();
+            activePart.getContext().deactivate(newActive == null ? null : newActive.getContext());
         }
         
         this.activePart = newActive;
 
         if (activePart != null) {
-            activePart.getContext().activate();
+            activePart.getContext().activate(newActive.getPart());
+            delegatingContext.setActive(activePart.getPart());
+        } else {
+            delegatingContext.setActive(null);
         }
         
-        delegatingContext.setActive(activePart.getPart());
+        
     }
 
     /**

@@ -41,6 +41,8 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.part.components.services.IStatusFactory;
+import org.eclipse.ui.internal.part.services.StatusFactory;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -94,6 +96,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     
     // Default instance of the receiver
     private static WorkbenchPlugin inst;
+    private static StatusFactory statusFactory;
 
     // Manager that maps resources to descriptors of editors to use
     private EditorRegistry editorRegistry;
@@ -580,8 +583,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
+    public static IStatusFactory getStatusFactory() {
+        return getDefault().statusFactory();
+    }
+    
     public static IStatus getStatus(Throwable t) {
-        return getStatus(StatusUtil.getLocalizedMessage(t), t);
+        return getStatusFactory().newError(t);
     }
     
     public static void log(Throwable t) {
@@ -589,19 +596,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
     
     public static IStatus getStatus(String message, Throwable t) {
-        // If this is a low-level exception, report it as though it came from the workbench
-        String pluginId = getDefault().getBundle().getSymbolicName();
-        int errorCode = IStatus.OK;
-        
-        // If this was a CoreException, keep the original plugin ID and error code
-        if (t instanceof CoreException) {
-            CoreException ce = (CoreException)t;
-            pluginId = ce.getStatus().getPlugin();
-            errorCode = ce.getStatus().getCode();
-        }
-        
-        return new Status(IStatus.ERROR, pluginId, errorCode, 
-                message, StatusUtil.getCause(t));
+        return getStatusFactory().newError(message, t);
     }
     
     /**
@@ -932,6 +927,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     	return ExportWizardRegistry.getInstance();
     }
 
+    IStatusFactory statusFactory() {
+        if (statusFactory == null) {
+            statusFactory = new StatusFactory(getBundle());
+        }
+        
+        return statusFactory;
+    }
     
     /**
      * FOR INTERNAL WORKBENCH USE ONLY. 

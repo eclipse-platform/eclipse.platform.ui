@@ -16,8 +16,10 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.part.services.IPartDescriptor;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.services.PartToViewActionBarsAdapter;
 
 /**
  * @since 3.1
@@ -29,17 +31,22 @@ public class OldViewToNewWrapper extends OldPartToNewWrapper {
     
     private IViewPart part;
     private IEditorInput editorInput;
+    private PartToViewActionBarsAdapter actionBars;
     
-    public OldViewToNewWrapper(IViewPart part, StandardWorkbenchServices services) throws ComponentException {
+    public OldViewToNewWrapper(IViewPart part, IPartActionBars partActionBars, 
+            StandardWorkbenchServices services) throws ComponentException {
         super(services);
     	this.part = part;
+
+        actionBars = new PartToViewActionBarsAdapter(partActionBars, 
+                services.getStatusHandler(), services.getStatusFactory());
         
         descriptor = services.getDescriptor();
         
         editorInput = services.getEditorInput();
         site = new CompatibilityPartSite(
-                services, part, null);
-				
+                services, part, null, actionBars);
+
         try {
 			part.init(site, services.getState());
 		} catch (PartInitException e) {

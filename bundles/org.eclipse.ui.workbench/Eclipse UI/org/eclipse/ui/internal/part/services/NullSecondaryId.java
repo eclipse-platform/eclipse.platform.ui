@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.services;
 
-import org.eclipse.ui.part.services.ISecondaryId;
+import org.eclipse.ui.internal.part.components.services.ISecondaryId;
 
 /**
  * @since 3.1

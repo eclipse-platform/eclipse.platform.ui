@@ -148,7 +148,7 @@ public final class Assert {
      */
     public static void isNotNull(Object object, String message) {
         if (object == null)
-            throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
+            throw new AssertionFailedException("null argument " + message);//$NON-NLS-1$
     }
 
     /**

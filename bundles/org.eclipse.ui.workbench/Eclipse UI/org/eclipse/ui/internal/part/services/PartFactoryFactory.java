@@ -11,11 +11,12 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.NonDisposingHandle;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.NonDisposingHandle;
 
 /**
  * Factory for the default IPartFactory instance.  
@@ -37,6 +38,6 @@ public class PartFactoryFactory extends ComponentFactory {
         } catch (ComponentException e) {
             throw new ComponentException(PartFactoryFactory.class, e);
         }
-        return new NonDisposingHandle(page.getPartFactory());
+        return new NonDisposingHandle(((WorkbenchPage)page).getPartFactory());
     }
 }

@@ -44,8 +44,8 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.keys.IBindingService;
 
 /**

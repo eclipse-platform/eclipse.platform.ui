@@ -15,10 +15,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IDisposable;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IDisposable;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
 
 /**
  * @since 3.1

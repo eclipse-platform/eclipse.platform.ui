@@ -12,9 +12,9 @@ package org.eclipse.ui.tests.components;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ServiceFactory;
-import org.eclipse.ui.part.Part;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.Part;
 
 /**
  * @since 3.1

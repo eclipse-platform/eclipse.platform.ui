@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 public class ComponentMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.components.messages";//$NON-NLS-1$
 
+    public static String Components_instantiationException;
 	public static String ComponentException_unable_to_instantiate;
 	public static String ComponentException_recursive_requires_string;
 	public static String Components_missing_required;

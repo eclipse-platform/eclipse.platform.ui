@@ -16,15 +16,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.components.ClassIdentifier;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.NonDisposingHandle;
-import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.NonDisposingHandle;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 
 /**
  * @since 3.1

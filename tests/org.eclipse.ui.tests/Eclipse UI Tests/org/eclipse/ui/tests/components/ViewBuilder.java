@@ -15,9 +15,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ServiceFactory;
-import org.eclipse.ui.part.Part;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.Part;
 
 /**
  * @since 3.1
@@ -38,7 +39,7 @@ public class ViewBuilder implements IPartBuilder {
     public Part createPart(Composite parent, ServiceFactory context, IMemento savedState) throws ComponentException {
         page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         
-        return page.getPartFactory().createView(viewId, parent, savedState, context);
+        return ((WorkbenchPage)page).getPartFactory().createView(viewId, parent, savedState, context);
     }
 
     /* (non-Javadoc)

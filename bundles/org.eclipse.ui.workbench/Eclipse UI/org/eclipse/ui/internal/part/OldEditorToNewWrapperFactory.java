@@ -12,11 +12,11 @@ package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
 
 /**
  * @since 3.1

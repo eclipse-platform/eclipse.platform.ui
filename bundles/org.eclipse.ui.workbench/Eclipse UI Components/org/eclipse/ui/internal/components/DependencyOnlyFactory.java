@@ -12,10 +12,10 @@ package org.eclipse.ui.internal.components;
 
 import java.util.Collection;
 
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 
 /**
  * Service factory that exposes the dependencies, but nothing else, from another

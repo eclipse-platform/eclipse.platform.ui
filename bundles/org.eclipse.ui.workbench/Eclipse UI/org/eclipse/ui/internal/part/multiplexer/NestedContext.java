@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
-import org.eclipse.ui.components.util.ServiceMap;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.components.util.ServiceMap;
+import org.eclipse.ui.internal.part.Part;
 
 /**
  * Contains a factory for services that can delegate to a shared implementation.
@@ -36,9 +38,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class NestedContext extends ServiceFactory {
 
-	private List componentList = new ArrayList();
+	//private List componentList = new ArrayList();
 	private IServiceProvider sharedComponents;
     private ServiceFactory nestedFactories;
+    private Map componentMap = new HashMap();
     
     private ISharedContext sharedContext = new ISharedContext() {
     /* (non-Javadoc)
@@ -78,10 +81,7 @@ public class NestedContext extends ServiceFactory {
         	), null);
         }
         
-        INestedComponent nestedComponent = (INestedComponent)component;
-                
-        // Find the nested service
-        componentList.add(component);
+        componentMap.put(componentKey, component);
         
         return handle;     
 	}
@@ -98,25 +98,31 @@ public class NestedContext extends ServiceFactory {
 	 * will copy their current state to the shared container and start
 	 * delegating to the shared implementation.
 	 */
-	public void activate() {
+	public void activate(Part partBeingActivated) {
+        Collection componentList = componentMap.values();
+        
 		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
 			INestedComponent next = (INestedComponent) iter.next();
 			
-			next.activate();
+			next.activate(partBeingActivated);
 		}
 	}
 	
 	/**
 	 * Deactivates all the components created by this context. The components
 	 * will stop delegating to the shared implementation.
+     * 
+     * @param newActive context that is about to be activated (or null if none)
 	 */
-	public void deactivate() {
-		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
-			INestedComponent next = (INestedComponent) iter.next();
-			
-			next.deactivate();
-		}		
-	}
+	public void deactivate(NestedContext newActive) {
+        Set entries = componentMap.entrySet();
+        for (Iterator iter = entries.iterator(); iter.hasNext();) {
+            Map.Entry next = (Map.Entry) iter.next();
+            INestedComponent component = (INestedComponent)next.getValue();
+            
+            component.deactivate(newActive.componentMap.get(next.getKey()));
+        }
+   	}
     
     /* (non-Javadoc)
      * @see org.eclipse.core.components.IComponentContext#getMissingDependencies()

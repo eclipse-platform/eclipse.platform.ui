@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.multiplexer.Multiplexer;
 import org.eclipse.ui.internal.part.multiplexer.MultiplexerChild;
 import org.eclipse.ui.internal.part.multiplexer.NestedContext;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
 
 /**
  * @since 3.1

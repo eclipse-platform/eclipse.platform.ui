@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.part;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.interfaces.IFocusable;
+import org.eclipse.ui.internal.part.components.interfaces.IFocusable;
 
 /**
  * @since 3.1

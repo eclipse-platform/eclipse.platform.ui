@@ -12,18 +12,22 @@ package org.eclipse.ui.internal.part;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.Components;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.part.services.INameable;
-import org.eclipse.ui.part.services.IPartDescriptor;
-import org.eclipse.ui.part.services.ISavedState;
-import org.eclipse.ui.part.services.ISecondaryId;
-import org.eclipse.ui.part.services.ISelectionHandler;
-import org.eclipse.ui.part.services.IStatusFactory;
-import org.eclipse.ui.part.services.ISystemLog;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.components.services.IActionBarContributorFactory;
+import org.eclipse.ui.internal.part.components.services.INameable;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.components.services.ISavedState;
+import org.eclipse.ui.internal.part.components.services.ISecondaryId;
+import org.eclipse.ui.internal.part.components.services.ISelectionHandler;
+import org.eclipse.ui.internal.part.components.services.IStatusFactory;
+import org.eclipse.ui.internal.part.components.services.IStatusHandler;
+import org.eclipse.ui.internal.part.components.services.ISystemLog;
 import org.osgi.framework.Bundle;
 
 /**
@@ -45,8 +49,12 @@ public class StandardWorkbenchServices {
     ISecondaryId secondaryId;
     ISystemLog log;
     IMemento state;
+    IKeyBindingService keyBindingService;
+    IStatusHandler statusHandler;
     
     IServiceProvider componentProvider;
+    IPartActionBars partActionBars;
+    IActionBarContributorFactory sharedActionBarsFactory;
 
     public StandardWorkbenchServices(IServiceProvider availableServices) throws ComponentException {
         componentProvider = availableServices;
@@ -59,8 +67,8 @@ public class StandardWorkbenchServices {
                 IEditorInput.class);
         page = (IWorkbenchPage) Components.queryInterface(availableServices,
                 IWorkbenchPage.class);
-//        actionBars = (IActionBars) Components.queryInterface(availableServices,
-//                IActionBars.class);
+        partActionBars = (IPartActionBars) Components.queryInterface(availableServices,
+                IPartActionBars.class);
         selectionHandler = (ISelectionHandler) Components.queryInterface(availableServices,
                 ISelectionHandler.class);
         nameable = (INameable) Components.queryInterface(availableServices,
@@ -73,8 +81,30 @@ public class StandardWorkbenchServices {
                 IPartDescriptor.class);        
         secondaryId = (ISecondaryId) Components.queryInterface(availableServices,
                 ISecondaryId.class);
+        sharedActionBarsFactory = (IActionBarContributorFactory) Components.queryInterface(availableServices,
+                IActionBarContributorFactory.class);
         log = (ISystemLog) Components.queryInterface(availableServices,
                 ISystemLog.class);
+        keyBindingService = (IKeyBindingService) Components.queryInterface(availableServices,
+                IKeyBindingService.class);
+        statusHandler = (IStatusHandler) Components.queryInterface(availableServices,
+                IStatusHandler.class);
+    }
+    
+    public IStatusHandler getStatusHandler() {
+        return statusHandler;
+    }
+    
+    public IKeyBindingService getKeyBindingService() {
+        return keyBindingService;
+    }
+    
+    public IActionBarContributorFactory getActionBarContributorFactory() {
+        return sharedActionBarsFactory;
+    }
+    
+    public IPartActionBars getActionBars() {
+        return partActionBars;
     }
     
     public Object getAdapter(Class key) {
@@ -107,6 +137,8 @@ public class StandardWorkbenchServices {
     public INameable getNameable() {
         return nameable;
     }
+    
+    
     public IWorkbenchPage getPage() {
         return page;
     }

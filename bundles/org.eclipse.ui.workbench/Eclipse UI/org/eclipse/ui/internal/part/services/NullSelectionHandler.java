@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.part.services.ISelectionHandler;
+import org.eclipse.ui.internal.part.components.services.ISelectionHandler;
 
 /**
  * @since 3.1
@@ -19,7 +19,7 @@ import org.eclipse.ui.part.services.ISelectionHandler;
 public class NullSelectionHandler implements ISelectionHandler {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.ISelectionHandler#setSelection(org.eclipse.jface.viewers.ISelection)
+     * @see org.eclipse.ui.internal.part.components.interfaces.ISelectionHandler#setSelection(org.eclipse.jface.viewers.ISelection)
      */
     public void setSelection(ISelection newSelection) {
 

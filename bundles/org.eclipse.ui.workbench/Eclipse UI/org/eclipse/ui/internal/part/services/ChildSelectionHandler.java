@@ -11,11 +11,12 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.part.Part;
+import org.eclipse.ui.internal.part.components.services.ISelectionHandler;
 import org.eclipse.ui.internal.part.multiplexer.INestedComponent;
 import org.eclipse.ui.internal.part.multiplexer.ISharedContext;
-import org.eclipse.ui.part.services.ISelectionHandler;
 
 /**
  * Multiplexed version of the ISelectionHandler interface
@@ -37,23 +38,23 @@ public class ChildSelectionHandler implements ISelectionHandler, INestedComponen
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.INestedComponent#activate()
+     * @see org.eclipse.ui.internal.part.components.interfaces.INestedComponent#activate()
      */
-    public void activate() {
+    public void activate(Part newActivePart) {
         // Forward our stored selection to the shared interface
         parent.setSelection(selection);
         isActive = true;
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.INestedComponent#deactivate()
+     * @see org.eclipse.ui.internal.part.components.interfaces.INestedComponent#deactivate()
      */
-    public void deactivate() {
+    public void deactivate(Object newActive) {
         isActive = false;
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.ISelectionHandler#setSelection(org.eclipse.jface.viewers.ISelection)
+     * @see org.eclipse.ui.internal.part.components.interfaces.ISelectionHandler#setSelection(org.eclipse.jface.viewers.ISelection)
      */
     public void setSelection(ISelection newSelection) {
         // Remember the child's new selection

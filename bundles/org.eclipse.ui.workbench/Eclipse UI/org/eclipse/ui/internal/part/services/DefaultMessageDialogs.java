@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.part.services.IUserMessages;
+import org.eclipse.ui.internal.part.components.services.IUserMessages;
 
 /**
  * Default implementation of the IMessageDialogs interface. Takes the part's 
@@ -58,7 +58,7 @@ public class DefaultMessageDialogs implements IUserMessages {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.IMessageDialogs#open(int, java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.IMessageDialogs#open(int, java.lang.String)
      */
     public void show(int severity, String message) {
         if (severity == IStatus.ERROR) {

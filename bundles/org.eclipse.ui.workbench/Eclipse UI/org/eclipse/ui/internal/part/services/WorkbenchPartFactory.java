@@ -22,27 +22,27 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.ComponentPart;
 import org.eclipse.ui.internal.part.EditorWrapper;
 import org.eclipse.ui.internal.part.OldEditorToNewWrapperFactory;
 import org.eclipse.ui.internal.part.OldViewToNewWrapperFactory;
+import org.eclipse.ui.internal.part.Part;
 import org.eclipse.ui.internal.part.PartGenerator;
 import org.eclipse.ui.internal.part.ViewWrapper;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.components.services.ISavedState;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
-import org.eclipse.ui.part.ComponentPart;
-import org.eclipse.ui.part.Part;
-import org.eclipse.ui.part.services.IPartDescriptor;
-import org.eclipse.ui.part.services.ISavedState;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
 import org.eclipse.ui.views.IViewRegistry;
 import org.osgi.framework.Bundle;
 
@@ -63,7 +63,7 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.interfaces.IPartFactory#createView(java.lang.String, org.eclipse.swt.widgets.Composite, org.eclipse.ui.IMemento, org.eclipse.core.component.IComponentArguments)
+	 * @see org.eclipse.ui.internal.part.components.interfaces.IPartFactory#createView(java.lang.String, org.eclipse.swt.widgets.Composite, org.eclipse.ui.IMemento, org.eclipse.core.component.IComponentArguments)
 	 */
 	public Part createView(String viewId, Composite parentComposite, 
 			final IMemento savedState, ServiceFactory args) throws ComponentException {
@@ -117,13 +117,12 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
                 }
             }
         }
-
-                    
+        
         return result;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.interfaces.IPartFactory#createEditor(java.lang.String, org.eclipse.swt.widgets.Composite, org.eclipse.ui.IMemento, org.eclipse.core.component.IComponentArguments, org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.ui.internal.part.components.interfaces.IPartFactory#createEditor(java.lang.String, org.eclipse.swt.widgets.Composite, org.eclipse.ui.IMemento, org.eclipse.core.component.IComponentArguments, org.eclipse.ui.IEditorInput)
 	 */
 	public Part createEditor(String editorId, Composite parentComposite,
 			IEditorInput input, IMemento savedState, ServiceFactory args) throws ComponentException {
@@ -138,7 +137,6 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
             .mapInstance(IPartDescriptor.class, descriptor.getPartDescriptor())
             .mapInstance(IEditorInput.class, input)
             .add(args);
-
     
         if (savedState != null) {
             context.mapInstance(ISavedState.class, new SavedState(savedState));
@@ -158,7 +156,7 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
         
         return result;
 	}
-
+    
 	private Part createPart(IConfigurationElement e, 
             String attrib, Composite parentComposite, 
             ServiceFactory args) throws ComponentException {
@@ -189,6 +187,5 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
         } catch (CoreException ex) {
             throw new ComponentException(extensionClass != null ? extensionClass : getClass(), ex);
         }
-		        
 	}
 }

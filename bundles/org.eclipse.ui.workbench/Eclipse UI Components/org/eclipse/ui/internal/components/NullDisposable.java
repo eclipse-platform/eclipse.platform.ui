@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.components;
 
-import org.eclipse.ui.components.IDisposable;
+import org.eclipse.ui.internal.components.framework.IDisposable;
 
 public class NullDisposable implements IDisposable {
 

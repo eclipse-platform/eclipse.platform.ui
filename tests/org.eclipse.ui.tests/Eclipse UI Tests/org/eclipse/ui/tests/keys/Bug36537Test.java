@@ -22,7 +22,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.util.UITestCase;
 

@@ -15,11 +15,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
-import org.eclipse.ui.components.util.ServiceMap;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.components.util.ServiceMap;
 import org.eclipse.ui.internal.part.multiplexer.IDelegatingComponent;
 import org.eclipse.ui.internal.part.multiplexer.IDelegatingContext;
 

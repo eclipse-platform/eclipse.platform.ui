@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.ui.part.interfaces.IFocusable;
+import org.eclipse.ui.internal.part.components.interfaces.IFocusable;
 
 /**
  * Default implementation of the IFocusable adapter. If a part doesn't explicitly
@@ -27,7 +27,7 @@ public class NullFocusable implements IFocusable {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.interfaces.IFocusable#setFocus()
+	 * @see org.eclipse.ui.internal.part.components.interfaces.IFocusable#setFocus()
 	 */
 	public boolean setFocus() {        
         return false;

@@ -11,12 +11,17 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Components;
+import org.eclipse.ui.internal.part.components.services.IActionBarContributor;
+import org.eclipse.ui.internal.part.services.NullActionBars;
 
 /**
  * @since 3.1
@@ -26,13 +31,24 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
 	
 	private IEditorPart part;
 	
+    private IActionBarContributor actionBarContributor;
+    
 	public OldEditorToNewWrapper(IEditorPart part, StandardWorkbenchServices services) throws CoreException, ComponentException {
         super(services);
         
 		this.part = part;
-		
+        actionBarContributor = services.getActionBarContributorFactory().getContributor(services.getDescriptor());
+        
+        IActionBars actionBars = (IActionBars)Components.getAdapter(actionBarContributor, IActionBars.class);
+        
+        if (actionBars == null) {
+            actionBars = new NullActionBars();
+        }
+        
 		site = new CompatibilityPartSite(
-                services, part, null);
+                services, part, 
+                (IEditorActionBarContributor)Components.getAdapter(actionBarContributor, IEditorActionBarContributor.class), 
+                actionBars);
 				
 		try {
 			part.init(site, services.getEditorInput());
@@ -87,5 +103,11 @@ public class OldEditorToNewWrapper extends OldPartToNewWrapper {
     public boolean isDirty() {
         IEditorPart part = (IEditorPart)getPart();
         return part.isDirty();
+    }
+    
+    public void dispose() {
+        super.dispose();
+        
+        actionBarContributor.dispose();
     }
 }

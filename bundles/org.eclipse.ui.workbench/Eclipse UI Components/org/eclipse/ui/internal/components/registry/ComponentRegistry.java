@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.components.registry;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ui.components.ClassIdentifier;
-import org.eclipse.ui.components.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
 
 /**
  * @since 3.1

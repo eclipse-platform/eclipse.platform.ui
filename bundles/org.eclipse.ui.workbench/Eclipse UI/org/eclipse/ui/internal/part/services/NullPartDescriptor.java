@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.part.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 
 /**
  * @since 3.1

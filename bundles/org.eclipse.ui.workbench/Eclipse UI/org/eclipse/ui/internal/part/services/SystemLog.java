@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.part.services;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.part.services.IStatusFactory;
-import org.eclipse.ui.part.services.ISystemLog;
+import org.eclipse.ui.internal.part.components.services.IStatusFactory;
+import org.eclipse.ui.internal.part.components.services.ISystemLog;
 import org.osgi.framework.Bundle;
 
 /**
@@ -44,7 +44,7 @@ public class SystemLog implements ISystemLog {
      * @see org.eclipse.ui.component.services.IErrorContext#log(java.lang.Throwable)
      */
     public void log(Throwable t) {
-        log(factory.newStatus(t));
+        log(factory.newError(t));
     }
 
 }

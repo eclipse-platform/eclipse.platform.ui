@@ -13,12 +13,17 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.SubActionBars2;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
+import org.eclipse.ui.internal.part.services.EditorToPartActionBarsAdapter;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.presentations.IPresentablePart;
@@ -35,6 +40,8 @@ public class EditorSite extends PartSite implements IEditorSite {
 
     private ListenerList propChangeListeners = new ListenerList(1);
 
+    private SubActionBars ab = null;
+    
     /**
      * Constructs an EditorSite for an editor.  The resource editor descriptor
      * may be omitted for an OLE editor.
@@ -54,6 +61,30 @@ public class EditorSite extends PartSite implements IEditorSite {
         }
     }
 
+    public void setActionBars(SubActionBars bars) {
+        super.setActionBars(bars);
+        
+        if (bars instanceof IActionBars2) {
+            ab = new SubActionBars2((IActionBars2)bars);
+        } else {
+            ab = new SubActionBars(bars);
+        }
+    }
+    
+    public void activateActionBars(boolean forceVisibility) {
+        if (ab != null) {
+            ab.activate(forceVisibility);
+        }
+        super.activateActionBars(forceVisibility);
+    }
+
+    public void deactivateActionBars(boolean forceHide) {
+        if (ab != null) {
+            ab.deactivate(forceHide);
+        }
+        super.deactivateActionBars(forceHide);
+    }
+    
     /**
      * Returns the editor action bar contributor for this editor.
      * <p>
@@ -142,4 +173,20 @@ public class EditorSite extends PartSite implements IEditorSite {
             });
         }
     }
+    
+    public void dispose() {
+        super.dispose();
+        
+        if (ab != null) {
+            ab.dispose();
+        }
+    }
+    
+    protected IPartActionBars createPartActionBars() {
+        if (ab == null) {
+            return null;
+        }
+        return new EditorToPartActionBarsAdapter(ab);
+    }
+
 }

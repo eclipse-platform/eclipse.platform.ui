@@ -118,7 +118,7 @@
       		name="ERROR: View that caches its shell"
       		icon="icons\view.gif"
       		category="org.eclipse.ui.tests.errorhandling"
-      		class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.api.workbenchpart.ViewThatCachesItsShell"
+      		class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.api.workbenchpart.ViewThatCachesItsShell"
       		id="org.eclipse.ui.test.api.workbenchpart.ViewThatCachesItsShell">
       </view>
       
@@ -160,32 +160,32 @@
       </view>
 
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CyclicDependencyView"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.CyclicDependencyView"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: Cyclic dependency view"
             id="org.eclipse.ui.tests.components.CyclicDependencyView"/>      
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: Missing dependency"
             id="org.eclipse.ui.tests.components.MissingDependencyView"/>      
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: View that throws an exception"
             id="org.eclipse.ui.tests.components.ViewThatThrowsAnException"/>      
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: Dependency that throws an exception"
             id="org.eclipse.ui.tests.components.DependsOnSomethingThatThrowsExceptions"/>      
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnMissingImplementation"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.DependsOnMissingImplementation"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: Dependency with missing implementation"
             id="org.eclipse.ui.tests.components.DependsOnMissingImplementation"/>
       <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"
       		category="org.eclipse.ui.tests.errorhandling"
             name="ERROR: View requiring component in wrong scope"
             id="org.eclipse.ui.tests.components.ViewRequiringComponentInWrongScope"/>
@@ -2109,19 +2109,19 @@
   	<extension
          point="org.eclipse.ui.views">
  		<view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexAllView"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexAllView"
             category="org.eclipse.ui.examples.components.context"
             name="MultiplexAllView"
             id="org.eclipse.ui.tests.components.MultiplexAllView"/>
             
         <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexNameView"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexNameView"
             category="org.eclipse.ui.examples.components.context"
             name="MultiplexNameView"
             id="org.eclipse.ui.tests.components.MultiplexNameView"/>
             
         <view
-            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexerTestView"
+            class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexerTestView"
             category="org.eclipse.ui.examples.components.componentExamples"
             name="Test multiplexer"
             id="org.eclipse.ui.tests.components.MultiplexerTestView"/>                              
@@ -2132,44 +2132,44 @@
           
           <scope id="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest2"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest2"
              interface="org.eclipse.ui.tests.components.CycleTest2"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest1"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest1"
              interface="org.eclipse.ui.tests.components.CycleTest1"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
              interface="org.eclipse.ui.tests.components.MissingDependencyView"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.InstanceCountComponent"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.InstanceCountComponent"
              interface="org.eclipse.ui.tests.components.InstanceCountComponent"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
              interface="org.eclipse.ui.tests.components.IInterfaceThatThrowsAnException"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency"
              interface="org.eclipse.ui.tests.components.ValidDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency2"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency2"
              interface="org.eclipse.ui.tests.components.ValidDependency2"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ComponentThatDoesNotExist"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ComponentThatDoesNotExist"
              interface="org.eclipse.ui.tests.components.IInterfaceThatNobodyImplements"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
              interface="org.eclipse.ui.tests.components.ViewScopeDependency"
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewScopeDependency"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.ViewScopeDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
              interface="org.eclipse.ui.tests.components.WrongScopeDependency"
-             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.WrongScopeDependency"
+             class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.components.WrongScopeDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>             
        </extension>
 

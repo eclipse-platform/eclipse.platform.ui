@@ -25,7 +25,7 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.part.NewViewToOldWrapper;
-import org.eclipse.ui.part.services.IPartDescriptor;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 

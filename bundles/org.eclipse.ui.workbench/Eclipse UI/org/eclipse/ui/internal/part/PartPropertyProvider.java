@@ -27,13 +27,13 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.components.IDisposable;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.components.framework.IDisposable;
+import org.eclipse.ui.internal.part.components.services.IDirtyHandler;
+import org.eclipse.ui.internal.part.components.services.IInputHandler;
+import org.eclipse.ui.internal.part.components.services.INameable;
+import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.part.services.IDirtyHandler;
-import org.eclipse.ui.part.services.IInputHandler;
-import org.eclipse.ui.part.services.INameable;
-import org.eclipse.ui.part.services.IPartDescriptor;
 
 /**
  * Note: this class is used in an addInstance call -- if this class implements an
@@ -174,7 +174,7 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.INameable#setContentDescription(java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.INameable#setContentDescription(java.lang.String)
      */
     public void setContentDescription(String contentDescription) {
         if (this.contentDescription.equals(contentDescription)) {
@@ -205,7 +205,7 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.INameable#setImage(org.eclipse.jface.resource.ImageDescriptor)
+     * @see org.eclipse.ui.internal.part.components.services.INameable#setImage(org.eclipse.jface.resource.ImageDescriptor)
      */
     public void setImage(ImageDescriptor theImage) {
         ImageDescriptor oldImageDescriptor = this.titleImage;
@@ -230,7 +230,7 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.INameable#setName(java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.INameable#setName(java.lang.String)
      */
     public void setName(String newName) {
         if (this.partName.equals(newName)) {
@@ -249,7 +249,7 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.INameable#setTooltip(java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.INameable#setTooltip(java.lang.String)
      */
     public void setTooltip(String toolTip) {
         if (this.tooltip.equals(toolTip)) {

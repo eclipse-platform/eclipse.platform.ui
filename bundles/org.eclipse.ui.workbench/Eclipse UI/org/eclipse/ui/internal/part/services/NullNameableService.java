@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.part.services;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.part.services.INameable;
+import org.eclipse.ui.internal.part.components.services.INameable;
 
 /**
  * Default implementation of the Nameable service. All methods are no-ops.

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.ui.part.interfaces.IPersistable;
 
 /**
  * A view is a visual component within a workbench page.  It is typically used to

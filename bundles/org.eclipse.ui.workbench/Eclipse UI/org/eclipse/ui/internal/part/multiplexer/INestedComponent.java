@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
+import org.eclipse.ui.internal.part.Part;
+
 /**
  * Nested component implementation. Components implementing this interface
  * are capable of delegating to a shared component.
@@ -26,13 +28,16 @@ public interface INestedComponent {
      * Copies the component's current state to the shared instance,
      * and start delegating to the shared component.  
      */
-	public void activate();
+	public void activate(Part partBeingActivated);
     
     /**
      * Stops delegating to the shared component. Remove anything
      * that was added to the shared component in the activate() method,
      * if necessary, so that another component can start using
      * the shared instance.
+     * 
+     * @param newActive component of the same type that is about to
+     * be activated as a replacement for this component, or null if none.
      */
-	public void deactivate();
+	public void deactivate(Object newActive);
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.components.registry;
 
-import org.eclipse.ui.components.ClassIdentifier;
+import org.eclipse.ui.internal.components.framework.ClassIdentifier;
 
 
 /**

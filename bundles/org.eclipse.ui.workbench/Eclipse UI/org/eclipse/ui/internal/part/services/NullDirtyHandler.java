@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.services;
 
-import org.eclipse.ui.part.services.IDirtyHandler;
+import org.eclipse.ui.internal.part.components.services.IDirtyHandler;
 
 /**
  * @since 3.1

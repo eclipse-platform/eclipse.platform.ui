@@ -90,10 +90,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 

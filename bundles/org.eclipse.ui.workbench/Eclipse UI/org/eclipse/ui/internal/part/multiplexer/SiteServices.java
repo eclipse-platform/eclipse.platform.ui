@@ -12,13 +12,13 @@ package org.eclipse.ui.internal.part.multiplexer;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.Container;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.IDisposable;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.Container;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.IDisposable;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
 import org.eclipse.ui.internal.part.IWorkbenchScopeConstants;
 import org.osgi.framework.Bundle;
 

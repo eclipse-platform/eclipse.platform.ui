@@ -31,13 +31,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.ComponentFactory;
-import org.eclipse.ui.components.ComponentHandle;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.IServiceProvider;
-import org.eclipse.ui.components.NonDisposingHandle;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentFactory;
+import org.eclipse.ui.internal.components.framework.ComponentHandle;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.IServiceProvider;
+import org.eclipse.ui.internal.components.framework.NonDisposingHandle;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.components.services.IPartActionBars;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -63,11 +65,13 @@ import org.osgi.framework.Bundle;
  * <li>the site is activated, causing the actions to become visible </li>
  * </ol>
  */
-public class PartSite implements IWorkbenchPartSite {
+public abstract class PartSite implements IWorkbenchPartSite {
     private IWorkbenchPartReference partReference;
 
     private IWorkbenchPart part;
 
+    private IPartActionBars partActionBars = null;
+    
     private IWorkbenchPage page;
 
     private String extensionID;
@@ -78,7 +82,7 @@ public class PartSite implements IWorkbenchPartSite {
 
     private ISelectionProvider selectionProvider;
 
-    private IActionBars actionBars;
+    private SubActionBars actionBars;
 
     private KeyBindingService keyBindingService;
 
@@ -305,7 +309,7 @@ public class PartSite implements IWorkbenchPartSite {
     /**
      * Sets the action bars for the part.
      */
-    public void setActionBars(IActionBars bars) {
+    public void setActionBars(SubActionBars bars) {
         actionBars = bars;
     }
 
@@ -467,10 +471,30 @@ public class PartSite implements IWorkbenchPartSite {
         if (adapter == Bundle.class) {
             return Platform.getBundle(getPluginId());
         }
+        if (adapter == IPartActionBars.class) {
+            if (partActionBars == null) {
+                partActionBars = createPartActionBars();
+            }
+            return partActionBars;
+        }
 
         return null;
     }
 
+    protected abstract IPartActionBars createPartActionBars();
+    
+    public void activateActionBars(boolean forceVisibility) {
+        if (actionBars != null) {
+            actionBars.activate(forceVisibility);
+        }
+    }
+    
+    public void deactivateActionBars(boolean forceHide) {
+        if (actionBars != null) {
+            actionBars.deactivate(forceHide);
+        }
+    }
+    
     /**
      * Get a progress service for the receiver.
      * @return WorkbenchSiteProgressService

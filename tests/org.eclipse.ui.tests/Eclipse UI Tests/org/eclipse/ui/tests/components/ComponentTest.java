@@ -14,8 +14,8 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.components.Container;
 import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.framework.Container;
 import org.osgi.framework.Bundle;
 
 /**

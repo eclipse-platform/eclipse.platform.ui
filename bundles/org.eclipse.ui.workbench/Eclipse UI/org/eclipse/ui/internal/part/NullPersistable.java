@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.part.interfaces.IPersistable;
+import org.eclipse.ui.IPersistable;
 
 /**
  * @since 3.1
@@ -19,7 +19,7 @@ import org.eclipse.ui.part.interfaces.IPersistable;
 public class NullPersistable implements IPersistable {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
+     * @see org.eclipse.ui.internal.part.components.interfaces.IPersistable#saveState(org.eclipse.ui.IMemento)
      */
     public void saveState(IMemento memento) {
     }

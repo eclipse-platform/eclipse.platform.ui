@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.ServiceFactory;
-import org.eclipse.ui.part.Part;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.Part;
 import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 import org.eclipse.ui.tests.autotests.UITestCaseWithResult;
 

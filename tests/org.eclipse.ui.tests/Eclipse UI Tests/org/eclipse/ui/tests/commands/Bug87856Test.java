@@ -21,7 +21,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**

@@ -17,17 +17,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.components.ComponentException;
-import org.eclipse.ui.components.FactoryMap;
-import org.eclipse.ui.components.IDisposable;
-import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.framework.ComponentException;
+import org.eclipse.ui.internal.components.framework.FactoryMap;
+import org.eclipse.ui.internal.components.framework.IDisposable;
+import org.eclipse.ui.internal.components.framework.ServiceFactory;
+import org.eclipse.ui.internal.part.Part;
+import org.eclipse.ui.internal.part.components.services.INameable;
+import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.multiplexer.Multiplexer;
 import org.eclipse.ui.internal.part.multiplexer.MultiplexerChild;
 import org.eclipse.ui.internal.part.multiplexer.NestedContext;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
-import org.eclipse.ui.part.Part;
-import org.eclipse.ui.part.services.INameable;
-import org.eclipse.ui.part.services.IWorkbenchPartFactory;
 import org.osgi.framework.Bundle;
 
 /**

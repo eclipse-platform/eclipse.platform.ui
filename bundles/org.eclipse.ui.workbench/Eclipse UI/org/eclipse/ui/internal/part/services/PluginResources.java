@@ -16,7 +16,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.part.services.IPluginResources;
+import org.eclipse.ui.internal.part.components.services.IPluginResources;
 import org.osgi.framework.Bundle;
 
 /**
@@ -38,14 +38,14 @@ public class PluginResources implements IPluginResources {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.IPluginResources#getPluginFile(java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.IPluginResources#getPluginFile(java.lang.String)
      */
     public URL getPluginURL(String path) {
         return Platform.find(bundle, new Path(path));
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.services.IPluginResources#getStateFile(java.lang.String)
+     * @see org.eclipse.ui.internal.part.components.services.IPluginResources#getStateFile(java.lang.String)
      */
     public File getStateFile(String path) {
         return Platform.getStateLocation(bundle).append(path).toFile();
