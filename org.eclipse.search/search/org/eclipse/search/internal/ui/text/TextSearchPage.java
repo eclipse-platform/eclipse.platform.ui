@@ -237,6 +237,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				getContainer().setPerformActionEnabled(fPattern.getText().length() > 0);
 			}
 		});
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint= convertWidthInCharsToPixels(30);
+		fPattern.setLayoutData(gd);
+		
 		layouter.perform( new Control[] { fPattern }, 0);
 		
 		label= new Label(group, SWT.LEFT);
@@ -337,7 +341,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		label.setText(SearchPlugin.getResourceString("SearchPage.extensions"));
 		
 		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
-		fExtensions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint= convertWidthInCharsToPixels(30);
+		fExtensions.setLayoutData(gd);
+		
 		String extension= getExtensionFromEditor();
 		if (extension != null)
 			fExtensions.setText(extension);
