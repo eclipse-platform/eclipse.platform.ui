@@ -71,6 +71,7 @@ public class SyncAction extends WorkspaceAction {
 				}
 			});
 			final SyncInfo info = subscriber.getSyncInfo(resource);
+			if (info == null) return;
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (info.getKind() == SyncInfo.IN_SYNC) {
@@ -104,6 +105,6 @@ public class SyncAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
 	 */
 	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
-		return super.isEnabledForCVSResource(cvsResource) || cvsResource.getParent().isCVSFolder();
+		return (super.isEnabledForCVSResource(cvsResource) || (cvsResource.getParent().isCVSFolder() && !cvsResource.isIgnored()));
 	}
 }
