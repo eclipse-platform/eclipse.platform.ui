@@ -177,6 +177,8 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				}
 			}
 		});
+
+		sash.setWeights(new int[] {33, 67});
 		
 		TargetManager.addSiteListener(this);
 		initalizeActions();
