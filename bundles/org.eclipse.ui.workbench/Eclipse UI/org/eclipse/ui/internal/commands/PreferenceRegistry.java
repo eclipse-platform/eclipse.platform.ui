@@ -27,7 +27,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public final class PreferenceRegistry {
+public final class PreferenceRegistry extends AbstractMutableRegistry {
 
 	private final static String DEPRECATED_TAG_BINDING = "binding"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_BINDINGS = "bindings"; //$NON-NLS-1$
@@ -51,54 +51,8 @@ public final class PreferenceRegistry {
 		return instance;
 	}
 
-	private String activeGestureConfiguration;
-	private String activeKeyConfiguration;
-	private List commands = Collections.EMPTY_LIST; 
-	private List gestureBindings = Collections.EMPTY_LIST;
-	private List gestureConfigurations = Collections.EMPTY_LIST;
-	private List groups = Collections.EMPTY_LIST; 
-	private List keyBindings = Collections.EMPTY_LIST;
-	private List keyConfigurations = Collections.EMPTY_LIST;
-	private List scopes = Collections.EMPTY_LIST; 
-
 	private PreferenceRegistry() {
 		super();
-	}
-
-	public String getActiveGestureConfiguration() {
-		return activeGestureConfiguration;
-	}
-
-	public String getActiveKeyConfiguration() {
-		return activeKeyConfiguration;
-	}
-
-	public List getCommands() {
-		return commands;
-	}
-
-	public List getGestureBindings() {
-		return gestureBindings;
-	}
-
-	public List getGestureConfigurations() {
-		return gestureConfigurations;
-	}
-	
-	public List getGroups() {
-		return groups;
-	}
-
-	public List getKeyBindings() {
-		return keyBindings;
-	}
-
-	public List getKeyConfigurations() {
-		return keyConfigurations;
-	}
-
-	public List getScopes() {
-		return scopes;
 	}
 
 	public void load() 
@@ -124,8 +78,8 @@ public final class PreferenceRegistry {
 		}	
 		
 		String preferenceString = preferenceStore.getString(KEY);
-
-		//if (preferenceString == null || preferenceString.length() == 0)
+		
+		// TODO if (preferenceString == null || preferenceString.length() == 0)
 		//	throw new IOException();
 		
 		if (preferenceString != null && preferenceString.length() != 0) {
@@ -133,14 +87,16 @@ public final class PreferenceRegistry {
 			
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				activeGestureConfiguration = Persistence.readActiveGestureConfiguration(memento);
-				activeKeyConfiguration = Persistence.readActiveKeyConfiguration(memento);
+				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
+				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+				categories = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_CATEGORY, null));
 				commands = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_COMMAND, null));
 				gestureBindings = Collections.unmodifiableList(Persistence.readGestureBindings(memento, Persistence.TAG_GESTURE_BINDING, null));
 				gestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
-				groups = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_GROUP, null));
 				keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null));
 				keyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_KEY_CONFIGURATION, null));
+				regionalGestureBindings = Collections.unmodifiableList(Persistence.readRegionalGestureBindings(memento, Persistence.TAG_REGIONAL_GESTURE_BINDING, null));
+				regionalKeyBindings = Collections.unmodifiableList(Persistence.readRegionalKeyBindings(memento, Persistence.TAG_REGIONAL_KEY_BINDING, null));
 				scopes = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_SCOPE, null));
 			} catch (WorkbenchException eWorkbench) {
 				throw new IOException();
@@ -158,12 +114,16 @@ public final class PreferenceRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(Persistence.TAG_PACKAGE);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_COMMAND, commands);
 		Persistence.writeGestureBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
 		Persistence.writeItems(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
-		Persistence.writeItems(xmlMemento, Persistence.TAG_GROUP, groups);		
 		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
 		Persistence.writeItems(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
+		Persistence.writeRegionalGestureBindings(xmlMemento, Persistence.TAG_REGIONAL_GESTURE_BINDING, regionalGestureBindings);
+		Persistence.writeRegionalKeyBindings(xmlMemento, Persistence.TAG_REGIONAL_KEY_BINDING, regionalKeyBindings);
 		Persistence.writeItems(xmlMemento, Persistence.TAG_SCOPE, scopes);
 		Writer writer = new StringWriter();
 
@@ -174,49 +134,6 @@ public final class PreferenceRegistry {
 		} finally {
 			writer.close();
 		}
-	}
-
-	public void setActiveGestureConfiguration(String activeGestureConfiguration) {
-		this.activeGestureConfiguration = activeGestureConfiguration;
-	}
-
-	public void setActiveKeyConfiguration(String activeKeyConfiguration) {
-		this.activeKeyConfiguration = activeKeyConfiguration;
-	}
-
-	public void setCommands(List commands)
-		throws IllegalArgumentException {
-		this.commands = Util.safeCopy(commands, Item.class);	
-	}
-
-	public void setGestureBindings(List gestureBindings)
-		throws IllegalArgumentException {
-		this.gestureBindings = Util.safeCopy(gestureBindings, GestureBinding.class);	
-	}
-
-	public void setGestureConfigurations(List gestureConfigurations)
-		throws IllegalArgumentException {
-		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, Item.class);	
-	}
-
-	public void setGroups(List groups)
-		throws IllegalArgumentException {
-		this.groups = Util.safeCopy(groups, Item.class);	
-	}
-
-	public void setKeyBindings(List keyBindings)
-		throws IllegalArgumentException {
-		this.keyBindings = Util.safeCopy(keyBindings, KeyBinding.class);	
-	}
-
-	public void setKeyConfigurations(List keyConfigurations)
-		throws IllegalArgumentException {
-		this.keyConfigurations = Util.safeCopy(keyConfigurations, Item.class);		
-	}
-
-	public void setScopes(List scopes)
-		throws IllegalArgumentException {
-		this.scopes = Util.safeCopy(scopes, Item.class);;		
 	}
 
 	private static KeyBinding readDeprecatedKeyBinding(IMemento memento)

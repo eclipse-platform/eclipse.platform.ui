@@ -315,6 +315,11 @@ public class KeyManager {
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
+			coreRegistry.load();
+		} catch (IOException eIO) {
+		}
+
+		try {
 			localRegistry.load();
 		} catch (IOException eIO) {
 		}

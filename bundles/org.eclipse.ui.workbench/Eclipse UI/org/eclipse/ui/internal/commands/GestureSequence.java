@@ -43,7 +43,7 @@ public final class GestureSequence implements Comparable {
 
 	public static GestureSequence parse(String gestureString)
 		throws IllegalArgumentException {
-		// TBD!
+		// TODO
 		return create();
 	}
 

@@ -21,6 +21,7 @@ final class Persistence {
 
 	final static String TAG_ACTIVE_GESTURE_CONFIGURATION = "activeGestureConfiguration"; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
+	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_GESTURE_BINDING = "gestureBinding"; //$NON-NLS-1$
@@ -28,7 +29,6 @@ final class Persistence {
 	final static String TAG_GESTURE_STRING = "gestureString"; //$NON-NLS-1$
 	final static String TAG_GESTURE_SEQUENCE = "gestureSequence"; //$NON-NLS-1$
 	final static String TAG_GESTURE_STROKE = "gestureStroke"; //$NON-NLS-1$
-	final static String TAG_GROUP = "group"; //$NON-NLS-1$
 	final static String TAG_ICON = "icon"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_KEY_BINDING = "keyBinding"; //$NON-NLS-1$

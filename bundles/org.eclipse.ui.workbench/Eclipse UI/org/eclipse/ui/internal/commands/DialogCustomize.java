@@ -1295,7 +1295,7 @@ final class DialogCustomize extends Dialog {
 	}	
 	
 	private void selectedButtonDetails() {
-		// TBD add dialog to display the plugin map for selected row in tableAction
+		// TODO add dialog to display the plugin map for selected row in tableAction
 	}
 
 	private void modifiedComboKeySequence() {
@@ -1468,7 +1468,7 @@ final class DialogCustomize extends Dialog {
 
 		boolean bValidKeySequence = keySequence != null && keySequence.getKeyStrokes().size() >= 1;
 		tableKeySequence.setEnabled(bValidKeySequence);		
-		//buttonBrowseSelectedAction.setEnabled(bValidKeySequence); //TBD + table has selection
+		//buttonBrowseSelectedAction.setEnabled(bValidKeySequence); // TODO + table has selection
 		groupState.setEnabled(bValidKeySequence);
 		labelScope.setEnabled(bValidKeySequence);
 		comboScope.setEnabled(bValidKeySequence);

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
@@ -28,7 +27,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public final class LocalRegistry {
+public final class LocalRegistry extends AbstractMutableRegistry {
 
 	private final static String PATH = Persistence.TAG_PACKAGE + ".xml"; //$NON-NLS-1$
 
@@ -41,56 +40,10 @@ public final class LocalRegistry {
 		return instance;
 	}
 
-	private List commands = Collections.EMPTY_LIST; 
-	private List gestureBindings = Collections.EMPTY_LIST;
-	private List gestureConfigurations = Collections.EMPTY_LIST;
-	private List groups = Collections.EMPTY_LIST; 
-	private List keyBindings = Collections.EMPTY_LIST;
-	private List keyConfigurations = Collections.EMPTY_LIST;
-	private List regionalGestureBindings = Collections.EMPTY_LIST;
-	private List regionalKeyBindings = Collections.EMPTY_LIST;
-	private List scopes = Collections.EMPTY_LIST; 
-
 	private LocalRegistry() {
 		super();
 	}
 
-	public List getCommands() {
-		return commands;
-	}
-
-	public List getGestureBindings() {
-		return gestureBindings;
-	}
-
-	public List getGestureConfigurations() {
-		return gestureConfigurations;
-	}
-	
-	public List getGroups() {
-		return groups;
-	}
-
-	public List getKeyBindings() {
-		return keyBindings;
-	}
-
-	public List getKeyConfigurations() {
-		return keyConfigurations;
-	}
-
-	public List getRegionalGestureBindings() {
-		return regionalGestureBindings;
-	}
-
-	public List getRegionalKeyBindings() {
-		return regionalKeyBindings;
-	}
-
-	public List getScopes() {
-		return scopes;
-	}
-	
 	public void load()
 		throws IOException {
 		IPath path = WorkbenchPlugin.getDefault().getStateLocation();
@@ -100,10 +53,12 @@ public final class LocalRegistry {
 
 		try {
 			IMemento memento = XMLMemento.createReadRoot(reader);
+			activeGestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
+			activeKeyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+			categories = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_CATEGORY, null));
 			commands = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_COMMAND, null));
 			gestureBindings = Collections.unmodifiableList(Persistence.readGestureBindings(memento, Persistence.TAG_GESTURE_BINDING, null));
 			gestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
-			groups = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_GROUP, null));
 			keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null));
 			keyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 			regionalGestureBindings = Collections.unmodifiableList(Persistence.readRegionalGestureBindings(memento, Persistence.TAG_REGIONAL_GESTURE_BINDING, null));
@@ -119,10 +74,12 @@ public final class LocalRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(Persistence.TAG_PACKAGE);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
+		Persistence.writeItems(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_COMMAND, commands);
 		Persistence.writeGestureBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
 		Persistence.writeItems(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
-		Persistence.writeItems(xmlMemento, Persistence.TAG_GROUP, groups);		
 		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
 		Persistence.writeItems(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
 		Persistence.writeRegionalGestureBindings(xmlMemento, Persistence.TAG_REGIONAL_GESTURE_BINDING, regionalGestureBindings);
@@ -138,50 +95,5 @@ public final class LocalRegistry {
 		} finally {
 			writer.close();
 		}
-	}
-
-	public void setCommands(List commands)
-		throws IllegalArgumentException {
-		this.commands = Util.safeCopy(commands, Item.class);	
-	}
-
-	public void setGestureBindings(List gestureBindings)
-		throws IllegalArgumentException {
-		this.gestureBindings = Util.safeCopy(gestureBindings, GestureBinding.class);	
-	}
-
-	public void setGestureConfigurations(List gestureConfigurations)
-		throws IllegalArgumentException {
-		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, Item.class);	
-	}
-
-	public void setGroups(List groups)
-		throws IllegalArgumentException {
-		this.groups = Util.safeCopy(groups, Item.class);	
-	}
-
-	public void setKeyBindings(List keyBindings)
-		throws IllegalArgumentException {
-		this.keyBindings = Util.safeCopy(keyBindings, KeyBinding.class);	
-	}
-
-	public void setKeyConfigurations(List keyConfigurations)
-		throws IllegalArgumentException {
-		this.keyConfigurations = Util.safeCopy(keyConfigurations, Item.class);		
-	}
-
-	public void setScopes(List scopes)
-		throws IllegalArgumentException {
-		this.scopes = Util.safeCopy(scopes, Item.class);		
-	}
-
-	public void setRegionalGestureBindings(List regionalGestureBindings)
-		throws IllegalArgumentException {
-		this.regionalGestureBindings = Util.safeCopy(regionalGestureBindings, RegionalGestureBinding.class);	
-	}
-
-	public void setRegionalKeyBindings(List regionalKeyBindings)
-		throws IllegalArgumentException {
-		this.regionalKeyBindings = Util.safeCopy(regionalKeyBindings, RegionalKeyBinding.class);	
 	}
 }

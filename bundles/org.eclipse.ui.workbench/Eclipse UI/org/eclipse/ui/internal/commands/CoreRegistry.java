@@ -11,6 +11,7 @@ Contributors:
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 
-public final class CoreRegistry {
+public final class CoreRegistry extends AbstractRegistry {
 
 	private final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 
@@ -42,10 +43,12 @@ public final class CoreRegistry {
 		private final static String DEPRECATED_TAG_KEY = "key"; //$NON-NLS-1$
 		private final static String DEPRECATED_TAG_SCOPE_ID = "scopeId"; //$NON-NLS-1$	
 		
+		private List activeGestureConfigurations;
+		private List activeKeyConfigurations;		
+		private List categories;
 		private List commands;
 		private List gestureBindings;
 		private List gestureConfigurations;
-		private List groups;
 		private List keyBindings;
 		private String keyConfiguration;
 		private List keyConfigurations;
@@ -56,15 +59,17 @@ public final class CoreRegistry {
 	
 		private RegistryReader(IPluginRegistry pluginRegistry) {
 			super();
+			activeGestureConfigurations = new ArrayList();
+			activeKeyConfigurations = new ArrayList();		
+			categories = new ArrayList();
 			commands = new ArrayList();
 			gestureBindings = new ArrayList();
 			gestureConfigurations = new ArrayList();
-			groups = new ArrayList();
 			keyBindings = new ArrayList();
 			keyConfigurations = new ArrayList();
 			regionalGestureBindings = new ArrayList();
 			regionalKeyBindings = new ArrayList();
-			scopes = new ArrayList();	
+			scopes = new ArrayList();
 
 			if (pluginRegistry != null) {
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_CONFIGURATIONS);
@@ -73,11 +78,13 @@ public final class CoreRegistry {
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACTION_DEFINITIONS);				
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, Persistence.TAG_COMMAND);
 			}
-		
+
+			CoreRegistry.this.activeGestureConfigurations = Collections.unmodifiableList(activeGestureConfigurations);
+			CoreRegistry.this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
+			CoreRegistry.this.categories = Collections.unmodifiableList(categories);
 			CoreRegistry.this.commands = Collections.unmodifiableList(commands);
 			CoreRegistry.this.gestureBindings = Collections.unmodifiableList(gestureBindings);
 			CoreRegistry.this.gestureConfigurations = Collections.unmodifiableList(gestureConfigurations);
-			CoreRegistry.this.groups = Collections.unmodifiableList(groups);
 			CoreRegistry.this.keyBindings = Collections.unmodifiableList(keyBindings);
 			CoreRegistry.this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
 			CoreRegistry.this.regionalGestureBindings = Collections.unmodifiableList(regionalGestureBindings);
@@ -147,6 +154,9 @@ public final class CoreRegistry {
 			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
 				return readActiveKeyConfiguration(element);
 
+			if (Persistence.TAG_CATEGORY.equals(name))
+				return readCategory(element);
+
 			if (Persistence.TAG_COMMAND.equals(name))
 				return readCommand(element);
 
@@ -155,9 +165,6 @@ public final class CoreRegistry {
 
 			if (Persistence.TAG_GESTURE_CONFIGURATION.equals(name))
 				return readGestureConfiguration(element);
-
-			if (Persistence.TAG_GROUP.equals(name))
-				return readGroup(element);
 
 			if (Persistence.TAG_KEY_BINDING.equals(name))
 				return readKeyBinding(element);
@@ -195,12 +202,29 @@ public final class CoreRegistry {
 		}
 
 		private boolean readActiveGestureConfiguration(IConfigurationElement element) {
-			activeGestureConfiguration = Persistence.readActiveGestureConfiguration(ConfigurationElementMemento.create(element));
+			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+		
+			if (item != null)
+				activeGestureConfigurations.add(item);	
+			
 			return true;
 		}
 
 		private boolean readActiveKeyConfiguration(IConfigurationElement element) {
-			activeKeyConfiguration = Persistence.readActiveKeyConfiguration(ConfigurationElementMemento.create(element));
+			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+		
+			if (item != null)
+				activeKeyConfigurations.add(item);	
+			
+			return true;
+		}
+
+		private boolean readCategory(IConfigurationElement element) {
+			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+		
+			if (item != null)
+				categories.add(item);	
+			
 			return true;
 		}
 
@@ -296,15 +320,6 @@ public final class CoreRegistry {
 			return true;
 		}
 
-		private boolean readGroup(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
-		
-			if (item != null)
-				groups.add(item);	
-			
-			return true;
-		}
-
 		private boolean readKeyBinding(IConfigurationElement element) {
 			KeyBinding keyBinding = Persistence.readKeyBinding(ConfigurationElementMemento.create(element), getPlugin(element));
 
@@ -360,64 +375,12 @@ public final class CoreRegistry {
 		return instance;
 	}
 
-	private String activeGestureConfiguration;
-	private String activeKeyConfiguration;
-	private List commands = Collections.EMPTY_LIST; 
-	private List gestureBindings = Collections.EMPTY_LIST;
-	private List gestureConfigurations = Collections.EMPTY_LIST;
-	private List groups = Collections.EMPTY_LIST; 
-	private List keyBindings = Collections.EMPTY_LIST;
-	private List keyConfigurations = Collections.EMPTY_LIST;
-	private List regionalGestureBindings = Collections.EMPTY_LIST;
-	private List regionalKeyBindings = Collections.EMPTY_LIST;
-	private List scopes = Collections.EMPTY_LIST; 
-
 	private CoreRegistry() {
 		super();
-		new RegistryReader(Platform.getPluginRegistry());		
 	}
 
-	public String getActiveGestureConfiguration() {
-		return activeGestureConfiguration;
-	}
-
-	public String getActiveKeyConfiguration() {
-		return activeKeyConfiguration;
-	}
-
-	public List getCommands() {
-		return commands;
-	}
-
-	public List getGestureBindings() {
-		return gestureBindings;
-	}
-
-	public List getGestureConfigurations() {
-		return gestureConfigurations;
-	}
-	
-	public List getGroups() {
-		return groups;
-	}
-
-	public List getKeyBindings() {
-		return keyBindings;
-	}
-
-	public List getKeyConfigurations() {
-		return keyConfigurations;
-	}
-
-	public List getRegionalGestureBindings() {
-		return regionalGestureBindings;
-	}
-
-	public List getRegionalKeyBindings() {
-		return regionalKeyBindings;
-	}
-
-	public List getScopes() {
-		return scopes;
+	public void load()
+		throws IOException {
+		new RegistryReader(Platform.getPluginRegistry());			
 	}
 }

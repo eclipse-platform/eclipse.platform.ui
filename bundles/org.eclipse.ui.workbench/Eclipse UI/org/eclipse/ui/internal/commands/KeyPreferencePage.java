@@ -104,11 +104,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					preferenceBindingSet = dialogCustomize.getPreferenceBindingSet();	
 				}
 				
-				//TBD: doesn't this have to be disposed somehow?
+				// TODO: doesn't this have to be disposed?
 			}	
 		});
 
-		//TBD: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
+		// TODO: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
 
 		return composite;	
 	}
