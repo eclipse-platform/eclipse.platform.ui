@@ -16,7 +16,6 @@ public class Messages extends PlatformMessages {
 	public static String dtree_immutable;
 	public static String dtree_malformedTree;
 	public static String dtree_missingChild;
-	public static String dtree_navigationError;
 	public static String dtree_notFound;
 	public static String dtree_notImmutable;
 	public static String dtree_parentsNotImmutable;
@@ -29,12 +28,9 @@ public class Messages extends PlatformMessages {
 	public static String events_building_0;
 	public static String events_building_1;
 	public static String events_errors;
-	public static String events_instantiate_0;
 	public static String events_instantiate_1;
 	public static String events_invoking_1;
 	public static String events_invoking_2;
-	public static String events_noProject;
-	public static String events_notification;
 	public static String events_skippingBuilder;
 	public static String events_unknown;
 
@@ -53,7 +49,6 @@ public class Messages extends PlatformMessages {
 	public static String history_problemsCleaning;
 	public static String history_problemsPurging;
 	public static String history_problemsRemoving;
-	public static String history_sameKey;
 	public static String history_specificProblemsCleaning;
 	public static String history_tooManySimUpdates;
 
@@ -67,9 +62,7 @@ public class Messages extends PlatformMessages {
 	public static String indexed_couldNotGetIndex;
 	public static String indexed_couldNotOpen;
 	public static String indexed_couldNotRead;
-	public static String indexed_couldNotRollback;
 	public static String indexed_couldNotWrite;
-	public static String indexed_storeProblem;
 
 	//### indexing
 	public static String indexedStore_contextNotAvailable;
@@ -409,7 +402,6 @@ public class Messages extends PlatformMessages {
 	public static String url_couldNotResolve;
 
 	//### utils
-	public static String utils_address;
 	public static String utils_buildException;
 	public static String utils_builds;
 	public static String utils_buildTime;
