@@ -176,7 +176,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.DebugUIViewsMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "ConsoleView.find_replace_action.", this)); //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
 	
 		action= new TextViewerGotoLineAction(getConsoleViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);				

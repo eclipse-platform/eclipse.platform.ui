@@ -517,7 +517,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction(ITextEditorActionConstants.PASTE, textAction);
 		
 		//XXX Still using "old" resource access
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.DebugUIViewsMessages"); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
 		
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
