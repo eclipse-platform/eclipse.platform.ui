@@ -79,5 +79,11 @@ class JobInfo {
 		if (currentChild != null)
 			currentChild.addWork(workIncrement);
 	}
+	/**
+	 * Clear the collection of children.
+	 */
+	void clearChildren(){
+		children.clear();
+	}
 
 }

@@ -17,12 +17,13 @@ import org.eclipse.swt.graphics.Image;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class ProgressLabelProvider implements ILabelProvider {
+	
+	Image image;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		// XXX Auto-generated method stub
 		return null;
 	}
 
@@ -30,7 +31,6 @@ public class ProgressLabelProvider implements ILabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		// XXX Auto-generated method stub
 		return ((JobInfo) element).getDisplayString();
 	}
 

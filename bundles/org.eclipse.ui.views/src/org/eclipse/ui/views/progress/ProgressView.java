@@ -11,14 +11,14 @@ import org.eclipse.ui.part.ViewPart;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
-	TreeViewer viewer;
+	ProgressTreeViewer viewer;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		viewer =
-			new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		initContentProvider(viewer);
 		initLabelProvider(viewer);

@@ -108,6 +108,7 @@ public class ProgressContentProvider
 		if (name.length() == 0)
 			return;
 		JobInfo info = getInfo(job);
+		info.clearChildren();
 		info.addChild(new JobInfo(name));
 		refreshViewer(info);
 
