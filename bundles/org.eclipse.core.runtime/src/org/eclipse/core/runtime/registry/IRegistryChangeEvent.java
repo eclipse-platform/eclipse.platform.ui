@@ -52,6 +52,7 @@ public interface IRegistryChangeEvent {
 	 * @param extensionPoint the simple identifier of the 
 	 * extension point (e.g. <code>"builders"</code>)
 	 * @param extension the unique identifier of the extension
+	 * @return the extension delta, or <code>null</code>
 	 */
 	public IExtensionDelta getExtensionDelta(String hostId, String extensionPoint, String extension);	
 }

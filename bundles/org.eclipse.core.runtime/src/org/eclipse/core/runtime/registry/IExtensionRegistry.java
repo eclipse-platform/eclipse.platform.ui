@@ -163,19 +163,26 @@ public interface IExtensionRegistry {
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 	/**
-	 * Returns all extension points declared by the given host.
+	 * Returns all extension points declared by the given host. Returns an empty array if 
+	 * the given host does not declare any extension points.
 	 * 
+	 * @param hostId the unique identifier of the host 
+	 *		(e.g. <code>"org.eclipse.core.resources"</code>) 
 	 * @return the extension points in this registry declared by the given host 
 	 */
 	public IExtensionPoint[] getExtensionPoints(String hostId);
 	/**
-	 * Returns all extensions declared by the given host. 
+	 * Returns all extensions declared by the given host. Returns an empty array if 
+	 * the given host does not declare any extensions.
 	 * 
+	 * @param hostId the unique identifier of the host 
+	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
 	 * @return the extensions in this registry declared by the given host 
 	 */
 	public IExtension[] getExtensions(String hostId);
 	/**
-	 * Returns all hosts that declare extensions and/or extension points.
+	 * Returns all hosts that declare extensions and/or extension points. Returns an 
+	 * empty array if there is no known extension/extension point hosts in this registry.
 	 * 
 	 * @return the identifiers of all hosts known to this registry
 	 */

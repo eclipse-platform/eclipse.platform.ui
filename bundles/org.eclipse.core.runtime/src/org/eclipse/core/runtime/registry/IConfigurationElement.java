@@ -73,6 +73,29 @@ public Object createExecutableExtension(String propertyName) throws CoreExceptio
  * @return attribute value, or <code>null</code> if none
  */
 public String getAttribute(String name);
+/**
+ * Returns the untranslated text value of this configuration element.
+ * For example, the configuration markup 
+ * <pre>
+ * &lt;script lang="javascript"&gt;.\scripts\cp.js&lt;/script&gt;
+ * </pre>
+ * corresponds to a configuration element <code>"script"</code>
+ * with value <code>".\scripts\cp.js"</code>.
+ * <p> Values may span multiple lines (i.e., contain carriage returns
+ * and/or line feeds).
+ * <p>
+ * Note that translation specified in the manifest
+ * file is <b>not</b> automatically applied.
+ * For example, the configuration markup 
+ * <pre>
+ * &lt;tooltip&gt;#hattip&lt;/tooltip&gt;
+ * </pre>
+ * corresponds to a configuration element, named <code>"tooltip"</code>,
+ * with value <code>"#hattip"</code>.
+ * </p>
+ *
+ * @return the untranslated text value of this configuration element or <code>null</code>
+ */
 public String getAttributeAsIs(String name);
 /**
  * Returns the names of the attributes of this configuration element.
@@ -166,7 +189,6 @@ public Object getParent();
  * <p> Note that any translation specified in the plug-in manifest
  * file is automatically applied.
  * </p>
- *
  *
  * @return the text value of this configuration element or <code>null</code>
  */
