@@ -26,22 +26,17 @@
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
 		<antcall target="gather.bin.parts">
-			<param name="destination" value="${temp.folder}/"/>
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
-<!--
-		<delete>
-			<fileset dir="${base}" includes="WEB-INF/lib/*.bin.log"/>
-		</delete>
--->
-
 		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
 		<delete dir="${temp.folder}"/>
 	</target>
+
 	
-	<target name="gather.bin.parts" depends="init" if="destination">
-		<mkdir dir="${destination}/${full.name}"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination}/${full.name}"/>
-		<copy todir="${destination}/${full.name}">
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}"/>
+		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="images/,ns4/,infocenter/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,webapp.properties,plugin.xml" excludes="src/,WEB-INF/lib/*.bin.log,WEB-INF/lib/*src.zip,WEB-INF/classes/"/>
 		</copy>
 	</target>
@@ -87,19 +82,21 @@
 	<target name="build.zips" depends="init">
 	</target>
 
-	<target name="gather.sources" depends="init" if="destination">
-		<mkdir dir="${destination}/${full.name}"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination}/${full.name}"/>
-		<copy todir="${destination}/${full.name}">
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination.temp.folder}/${full.name}"/>
+		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="about.html"/>
 		</copy>
 	</target>
 
-	
-	<target name="gather.logs" depends="init" if="destination">
-		<mkdir dir="${destination}/${full.name}"/>
-		<copy file="${basedir}/webapp.jar.bin.log" todir="${destination}/${full.name}/WEB-INF/lib"/>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${basedir}/webapp.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 	</target>
+
 
 	<target name="clean" depends="init">
 		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>
