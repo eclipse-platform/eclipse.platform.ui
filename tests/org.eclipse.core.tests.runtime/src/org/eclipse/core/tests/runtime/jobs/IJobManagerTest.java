@@ -152,7 +152,7 @@ private void sleep(long duration) {
 			jobs[i].schedule();
 		}
 		//first job should be running, all others should be waiting
-		sleep(50);
+		waitForStart();
 		assertState("1.0", jobs[0], Job.RUNNING);
 		for (int i = 1; i < JOB_COUNT; i++) {
 			assertState("1.1." + i, jobs[i], Job.WAITING);
@@ -160,7 +160,7 @@ private void sleep(long duration) {
 		//cancel job i, then i+1 should run and all others should wait
 		for (int i = 0; i < JOB_COUNT-1; i++) {
 			jobs[i].cancel();
-			sleep(20);
+			waitForStart();
 			assertState("2.0." + i, jobs[i+1], Job.RUNNING);
 			for (int j = i+2; j < JOB_COUNT; j++) {
 				assertState("2.1"+ i + "." + j, jobs[j], Job.WAITING);
@@ -183,7 +183,7 @@ private void sleep(long duration) {
 			jobs[i].schedule();
 		}
 		//first two jobs should be running, all others should be waiting
-		sleep(30);
+		waitForStart();
 		assertState("1.0", jobs[0], Job.RUNNING);
 		assertState("1.1", jobs[1], Job.RUNNING);
 		for (int i = 2; i < JOB_COUNT; i++) {
@@ -192,7 +192,7 @@ private void sleep(long duration) {
 		//cancel job i then i+1 and i+2 should run and all others should wait
 		for (int i = 0; i < JOB_COUNT; i++) {
 			jobs[i].cancel();
-			sleep(30);
+			waitForStart();
 			try {
 				assertState("2.0." + i, jobs[i+1], Job.RUNNING);
 				assertState("2.1." + i, jobs[i+2], Job.RUNNING);
@@ -213,7 +213,7 @@ private void sleep(long duration) {
 		//sleeping a job that is already running should not work
 		job.schedule();
 		//give the job a chance to start
-		sleep(100);
+		waitForStart();
 		assertState("2.0", job, Job.RUNNING);
 		assertTrue("2.1", !job.sleep());
 		assertState("2.2", job, Job.RUNNING);
@@ -236,7 +236,7 @@ private void sleep(long duration) {
 		while (true) {
 			job = new TestJob("Long Job", 1000000, 10);
 			job.schedule();
-			sleep(30);
+			waitForStart();
 			if (job.getState() == Job.WAITING) {
 				//if the job is waiting, then we have saturated the worker pool
 				break;
@@ -251,13 +251,13 @@ private void sleep(long duration) {
 		
 		//cancel all the long jobs, thus freeing the pool for the waiting job
 		cancel(longJobs);
-		sleep(100);
+		waitForStart();
 		//make sure the job is still waiting
 		assertState("1.3", job, Job.SLEEPING);
 		
 		//now wake the job up
 		job.wakeUp();
-		sleep(50);
+		waitForStart();
 		assertState("2.0", job, Job.RUNNING);
 		
 		//finally cancel the job
@@ -270,5 +270,14 @@ private void sleep(long duration) {
 			} catch (InterruptedException e) {
 			}
 		}
+	}
+	/**
+	 * A job has been scheduled.  Pause this thread so that a worker thread
+	 * has a chance to pick up the new job.
+	 */
+	private void waitForStart() {
+		Thread.yield();
+		sleep(100);
+		Thread.yield();
 	}
 }
