@@ -33,7 +33,7 @@ class ImplicitJobs {
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
 			setSystem(true);
-			setPriority(INTERACTIVE);
+//			setPriority(INTERACTIVE);
 			setRule(rule);
 			ruleStack = new ISchedulingRule[2];
 			top = -1;
