@@ -26,14 +26,15 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -155,28 +156,35 @@ public abstract class MarkerView extends TableView {
 		monitor.beginTask(Messages.getString("MarkerView.19"), markerLimit == -1? 60 : 100); //$NON-NLS-1$
 		
 		haltTableUpdates();
-
+		IJobManager jobMan = Platform.getJobManager();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
 		try {
 			monitor.subTask(WAITING_FOR_WORKSPACE_CHANGES_TO_FINISH);
-			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor innerMonitor) throws CoreException {
-
-					if (innerMonitor.isCanceled()) return;
-					innerMonitor.subTask(SEARCHING_FOR_MARKERS);
-					currentMarkers = MarkerList.compute(getFilter(), innerMonitor, true);
-					
-					if (innerMonitor.isCanceled()) return;								
-					if (markerCountDirty) {
-						innerMonitor.subTask(REFRESHING_MARKER_COUNTS);
-						totalMarkers = MarkerList.compute(getMarkerTypes()).length;
-						markerCountDirty = false;
-					}
-				}
-			}, subMonitor);
 			
-		} catch (CoreException e1) {
-			throw new InvocationTargetException(e1);
+			jobMan.beginRule(root, monitor);
+			
+			if (monitor.isCanceled()) {
+				return;
+			}
+			
+			monitor.subTask(SEARCHING_FOR_MARKERS);
+			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
+			currentMarkers = MarkerList.compute(getFilter(), subMonitor, true);
+			
+			if (monitor.isCanceled()) {
+				return;								
+			}
+			if (markerCountDirty) {
+				monitor.subTask(REFRESHING_MARKER_COUNTS);
+				totalMarkers = MarkerList.compute(getMarkerTypes()).length;
+				markerCountDirty = false;
+			}
+			
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} finally {
+			jobMan.endRule(root);
 		}
 		
 		if (monitor.isCanceled()) {
