@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -82,17 +84,33 @@ public final class WorkbenchActivityHelper {
 	        return true;
 	    }
 	    
-	    EnablementDialog dialog = new EnablementDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), identifier);
+	    Set activityIds = new HashSet(identifier.getActivityIds());
+	    for (Iterator i = activityIds.iterator(); i.hasNext();) {
+            String id = (String) i.next();
+            if (PlatformUI.getWorkbench().getPreferenceStore().getBoolean(removalKey(id))) 
+                i.remove();
+        }
+	    
+	    if (activityIds.isEmpty()) {
+	        activityIds = identifier.getActivityIds();
+	    }
+	    
+	    EnablementDialog dialog = new EnablementDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), activityIds);
 	    if (dialog.open() == Window.OK) {
-	        enableIdentifier(identifier);
+	        enabledActivities(dialog.getActivitiesToEnable());
+	        if (dialog.getDontAsk()) {
+	            for (Iterator i = activityIds.iterator(); i.hasNext();) {
+	                String id = (String) i.next();
+	                PlatformUI.getWorkbench().getPreferenceStore().setValue(removalKey(id), true);
+	            } 
+	        }
 	        return true;
 	    }
 	    
 	    return false;
 	}
     
-    
-	/**
+    /**
 	 * Utility method to create a <code>String</code> containing the plugin
 	 * and local ids of a contribution.
 	 * 
@@ -105,6 +123,18 @@ public final class WorkbenchActivityHelper {
 			return contribution.getPluginId() + '/' + contribution.getLocalId();
 		return contribution.getLocalId();
 	}
+	
+	/**
+	 * Enables the set of activities.
+	 * 
+	 * @param activities the activities to enable
+	 */
+    private static void enabledActivities(Collection activities) {
+	    IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+        Set newSet = new HashSet(activitySupport.getActivityManager().getEnabledActivityIds());
+        newSet.addAll(activities);
+        activitySupport.setEnabledActivityIds(newSet);	    
+    }	
 	
 	/**
 	 * Enables the activities associated with the given identifier.
@@ -172,6 +202,14 @@ public final class WorkbenchActivityHelper {
 		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedCategoryIds().isEmpty();
 	}
 
+	 /**
+     * @param id 
+     * @return 
+     */
+    private static String removalKey(String id) {
+        return "no-prompt-for." + id; //$NON-NLS-1$
+    }	
+	
 	/**
 	 * Not intended to be instantiated.
 	 */

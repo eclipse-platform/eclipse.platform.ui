@@ -24,7 +24,7 @@ public class ActivityContentProvider implements IStructuredContentProvider {
 	/**
 	 * @since 3.0
 	 */
-	protected ActivityContentProvider() {
+	public ActivityContentProvider() {
 	}
 
 	/*
