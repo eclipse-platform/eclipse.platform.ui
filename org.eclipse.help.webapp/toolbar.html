@@ -52,8 +52,11 @@ function search()
 
 function toggleNav()
 {
+// Mozilla browser do not support this yet, waiting for a fix..
+
 	var frameset = parent.document.getElementById("contentFrameset"); 
 	var navFrameSize = frameset.getAttribute("cols");
+
 	if (navVisible)
 	{
 		document["hide_nav"].src = "images/eclipse_collapsedepressed.gif";
