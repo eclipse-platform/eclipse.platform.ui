@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -66,7 +69,7 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
  * @see TreeViewerAdvisor
  * @since 3.0
  */
-public abstract class StructuredViewerAdvisor {
+public abstract class StructuredViewerAdvisor implements IAdaptable {
 	
 	// The physical model shown to the user in the provided viewer. The information in 
 	// this set is transformed by the model provider into the actual logical model displayed
@@ -80,6 +83,9 @@ public abstract class StructuredViewerAdvisor {
 	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
 	private SynchronizeModelManager modelManager;
+	
+	private INavigatable nav;
+	private IOpenable openable;
 	
 	// Property change listener which reponds to:
 	//    - working set selection by the user
@@ -145,6 +151,25 @@ public abstract class StructuredViewerAdvisor {
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.setContentProvider(getContentProvider());
 		hookContextMenu(viewer);
+	}
+	
+	/* (non-Javadoc)
+	 * Allow adding an advisor to the PartNavigator and support coordinated
+ 	 * navigation between several objects.
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if(adapter == INavigatable.class) {
+			if(nav == null) {
+				nav = new INavigatable() {
+					public boolean gotoDifference(boolean next) {
+						return StructuredViewerAdvisor.this.navigate(next);
+					}
+				};
+			}
+			return nav;
+		}
+		return null;
 	}
 	
 	/*

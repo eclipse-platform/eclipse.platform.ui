@@ -72,15 +72,10 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 				};
 				Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
 				
-				INavigatable nav = new INavigatable() {
-					public boolean gotoDifference(boolean next) {
-						return TreeViewerAdvisor.this.navigate(next);
-					}
-				};
 				ISynchronizeParticipant participant = configuration.getParticipant();
 				ISynchronizePageSite site = configuration.getSite();
-				gotoNext = new NavigateAction(site, participant.getName(), nav, true /*next*/);		
-				gotoPrevious = new NavigateAction(site, participant.getName(), nav, false /*previous*/);
+				gotoNext = new NavigateAction(site, participant.getName(), configuration, true /*next*/);		
+				gotoPrevious = new NavigateAction(site, participant.getName(), configuration, false /*previous*/);
 			}
 		}
 		public void fillContextMenu(IMenuManager manager) {
@@ -128,9 +123,6 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 		ISynchronizePageConfiguration configuration;
 		Map listeners = new HashMap();
 		
-		/**
-		 * 
-		 */
 		public CheckboxSelectionProvider(ContainerCheckedTreeViewer viewer, ISynchronizePageConfiguration configuration) {
 			this.viewer = viewer;
 			this.configuration = configuration;
@@ -235,10 +227,12 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
 	public TreeViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
-		super(configuration);
-		
+		super(configuration);	
+		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+		if (nav == null) {
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, this);
+		}
 		configuration.addActionContribution(new NavigationActionGroup());
-		
 		StructuredViewer viewer = TreeViewerAdvisor.createViewer(parent, configuration);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
@@ -257,7 +251,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#navigate(boolean)
 	 */
 	public boolean navigate(boolean next) {
-		return TreeViewerAdvisor.navigate((TreeViewer)getViewer(), next, true, false);
+		return TreeViewerAdvisor.navigate((TreeViewer)getViewer(), next, false, false);
 	}
 	
 	/* (non-Javadoc)

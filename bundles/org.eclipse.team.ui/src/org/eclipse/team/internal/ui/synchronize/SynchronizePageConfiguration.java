@@ -52,6 +52,14 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	public static final String P_ADVISOR = TeamUIPlugin.ID  + ".P_ADVISOR"; //$NON-NLS-1$
 	
 	/**
+	 * Property constant for the page's navigator
+	 * an instance of <code>INavigable</code>.
+	 * This property can be queried by clients and can be set. By default
+	 * the advisors navigator will be used.
+	 */
+	public static final String P_NAVIGATOR = TeamUIPlugin.ID  + ".P_NAVIGATOR"; //$NON-NLS-1$
+	
+	/**
 	 * Property constant for the page's model  manager which is 
 	 * an instance of <code>SynchronizeModelManager</code>.
 	 * This property can be queried by clients but should not be

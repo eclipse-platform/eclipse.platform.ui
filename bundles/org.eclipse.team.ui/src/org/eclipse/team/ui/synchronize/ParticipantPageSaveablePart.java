@@ -59,7 +59,6 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	
 	//	 SWT controls
 	private CompareViewerSwitchingPane fContentPane;
-	private CompareViewerPane fMemberPane;
 	private CompareViewerPane fEditionPane;
 	private CompareViewerSwitchingPane fStructuredComparePane;
 	private Viewer viewer;
@@ -224,7 +223,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		// we need two panes: the left for the elements, the right one for the structured diff
 		Splitter hsplitter = new Splitter(vsplitter, SWT.HORIZONTAL);
 		fEditionPane = new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
-		fStructuredComparePane = new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, true) {
+		fStructuredComparePane = new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, false) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (input instanceof ICompareInput)
 					return CompareUI.findStructureViewer(oldViewer, (ICompareInput) input, this, cc);
@@ -289,7 +288,23 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			}
 		};
 		vsplitter.setWeights(new int[]{30, 70});
+		setNavigator(pageConfiguration);
 		control = parent;
+	}
+	
+	/* (non Javadoc)
+	 * TODO: using internal compare classes to support page navigation. This is required because
+	 * we are building our own compare editor input that includes a participant page instead of a
+	 * viewer.
+	 */
+	public void setNavigator(ISynchronizePageConfiguration configuration) {
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new PartNavigator(
+				new Object[] {
+					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
+					fStructuredComparePane,
+					fContentPane
+				}
+			));
 	}
 	
 	/*

@@ -19,11 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -35,20 +34,14 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class NavigateAction extends Action {
 	private final boolean next;
-	private INavigatable navigator;
 	private ISynchronizePageSite site;
 	private String title;
+	private ISynchronizePageConfiguration configuration;
 	
-	/**
-	 * Direction to navigate
-	 */
-	final public static int NEXT = 1;
-	final public static int PREVIOUS = 2;
-	
-	public NavigateAction(ISynchronizePageSite site, String title, INavigatable navigator, boolean next) {
+	public NavigateAction(ISynchronizePageSite site, String title, ISynchronizePageConfiguration configuration, boolean next) {
 		this.site = site;
 		this.title = title;
-		this.navigator = navigator;
+		this.configuration = configuration;
 		this.next = next;
 		IWorkbenchSite workbenchSite = site.getWorkbenchSite();
 		IViewSite viewSite = null;
@@ -66,19 +59,24 @@ public class NavigateAction extends Action {
 		}
 	}
 	
+	/**
+	 * Two types of navigation is supported: navigation that is specific to coordinating between a view
+	 * and a compare editor and navigation simply using the configured navigator.
+ 	 */
 	public void run() {
 		IWorkbenchSite ws = site.getWorkbenchSite();
-		if (ws instanceof IWorkbenchPartSite) {
-			navigate();
+		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+		if (nav != null && ws != null && ws instanceof IViewSite) {
+			navigate(nav);
 		} else {
-			navigator.gotoDifference(next);
+			nav.gotoDifference(next);
 		}
 	}
 	
-	private void navigate() {
+	private void navigate(INavigatable nav) {
 		SyncInfo info = getSyncInfoFromSelection();
 		if(info == null) {
-			if(navigator.gotoDifference(next)) {
+			if(nav.gotoDifference(next)) {
 				return;
 			} else {
 				info = getSyncInfoFromSelection();
@@ -87,7 +85,7 @@ public class NavigateAction extends Action {
 		}
 		
 		if(info.getLocal().getType() != IResource.FILE) {
-			if(! navigator.gotoDifference(next)) {
+			if(! nav.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
 				OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
 			}
@@ -106,7 +104,7 @@ public class NavigateAction extends Action {
 				navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
 				if(navigator != null) {
 					if(navigator.selectChange(next)) {
-						if(! this.navigator.gotoDifference(next)) {
+						if(! nav.gotoDifference(next)) {
 							info = getSyncInfoFromSelection();
 							OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
 						}
