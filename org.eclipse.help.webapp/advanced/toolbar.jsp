@@ -215,7 +215,7 @@ if (data.isMozilla()) {
 		</table> 
 	</div>	
 
-    <iframe name="liveHelpFrame" style="visibility:hidden" frameborder="no" width="0" height="0" scrolling="no">
+    <iframe name="liveHelpFrame" style="visibility:hidden" tabindex="-1" frameborder="no" width="0" height="0" scrolling="no">
     </iframe>
 
 </body>     
