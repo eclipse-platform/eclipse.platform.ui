@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
- 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 
 /**
  * Dialog to prompt the user to choose a tag for a selected resource
@@ -29,6 +36,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class TagSelectionDialog extends Dialog implements IPropertyChangeListener {
 	
 	private TagSelectionArea tagSelectionArea;
+	private Cursor appBusyCursor;
 	
 	public static final int INCLUDE_HEAD_TAG = TagSourceWorkbenchAdapter.INCLUDE_HEAD_TAG;
 	public static final int INCLUDE_BASE_TAG = TagSourceWorkbenchAdapter.INCLUDE_BASE_TAG;
@@ -147,7 +155,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 	 * Subclasses should override.
 	 * </p>
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param parent the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -172,6 +180,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 		    tagSelectionArea.setTagAreaLabel(message);
 		tagSelectionArea.addPropertyChangeListener(this);
 		tagSelectionArea.createArea(top);
+		tagSelectionArea.setRunnableContext(getRunnableContext());
 		
 		// Create a separator between the tag area and the button area
 		Label seperator = new Label(top, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -220,6 +229,8 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 	 */
 	protected void initialize() {
 		okButton.setEnabled(false);
+		if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG))
+			tagSelectionArea.refreshTagList();
 	}
 
 	
@@ -244,4 +255,65 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
             okPressed();
         }
     }
+    
+    /**
+     * Creates a runnable context that allows refreshing the tags in the background. 
+     * 
+     * @since 3.1
+     */
+    private IRunnableContext getRunnableContext() {
+    	return new IRunnableContext() {
+			public void run(boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+				final Job refreshJob = new Job(Policy.bind("TagSelectionDialog.7")) { //$NON-NLS-1$
+		    		protected IStatus run(IProgressMonitor monitor) {
+							if (monitor.isCanceled())
+							return Status.CANCEL_STATUS;
+						try {
+							setBusy(true);
+							runnable.run(monitor);
+						} catch (InvocationTargetException e) {
+							return new CVSStatus(IStatus.ERROR, Policy.bind("TagSelectionDialog.8"), e); //$NON-NLS-1$
+						} catch (InterruptedException e) {
+							return new CVSStatus(IStatus.ERROR, Policy.bind("TagSelectionDialog.8"), e); //$NON-NLS-1$
+						} finally {
+							setBusy(false);
+						}
+						if (monitor.isCanceled())
+							return Status.CANCEL_STATUS;
+						else
+							return Status.OK_STATUS;
+					}
+		    	};
+		    	refreshJob.setUser(false);
+		    	refreshJob.setPriority(Job.DECORATE);
+		    	getShell().addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						refreshJob.cancel();
+					}
+		    	});
+		    	refreshJob.schedule();
+			}
+		};
+    }
+    
+    private void setBusy(final boolean busy) {
+		final Shell shell = getShell();
+		shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				Cursor cursor = null;
+				if (busy) {
+					if (appBusyCursor == null)
+						appBusyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_APPSTARTING);
+					cursor = appBusyCursor;
+				}
+				shell.setCursor(cursor);
+			}
+		});
+	}
+        
+	public boolean close() {
+		if(appBusyCursor != null)
+			appBusyCursor.dispose();
+		return super.close();
+	}
 }

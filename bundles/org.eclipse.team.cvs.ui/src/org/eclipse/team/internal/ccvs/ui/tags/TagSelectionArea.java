@@ -71,6 +71,7 @@ public class TagSelectionArea extends DialogArea {
     private String helpContext;
     private Text filterText;
     private TagSource tagSource;
+    private Label tagAreaTextLabel;
     private final Shell shell;
     private TagRefreshButtonArea tagRefreshArea;
     private final TagSource.ITagSourceChangeListener listener = new TagSource.ITagSourceChangeListener() {
@@ -78,8 +79,8 @@ public class TagSelectionArea extends DialogArea {
 			Shell shell = getShell();
 			if (!shell.isDisposed()) {
 	            shell.getDisplay().syncExec(new Runnable() {
-					public void run() {
-					    refresh();
+					public void run() {								    
+						refresh();					   
 					}
 				});
 			}
@@ -138,9 +139,9 @@ public class TagSelectionArea extends DialogArea {
         Composite inner = createGrabbingComposite(parent, 1);
         if (isIncludeFilterInputArea()) {
             createFilterInput(inner);
-            createWrappingLabel(inner, Policy.bind("TagSelectionArea.0"), 1); //$NON-NLS-1$
+            tagAreaTextLabel = createWrappingLabel(inner, Policy.bind("TagSelectionArea.0"), 1); //$NON-NLS-1$
         } else {
-		    createWrappingLabel(inner, Policy.bind("TagSelectionArea.1", getTagAreaLabel()), 1);  //$NON-NLS-1$
+		    tagAreaTextLabel = createWrappingLabel(inner, Policy.bind("TagSelectionArea.1", getTagAreaLabel()), 1);  //$NON-NLS-1$
         }
 		switcher = new PageBook(inner, SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -536,6 +537,10 @@ public class TagSelectionArea extends DialogArea {
 	            tagTable.refresh();
 	        }
         }
+    }
+    
+    public void refreshTagList() {
+    	tagRefreshArea.refresh();
     }
 
     /**

@@ -91,6 +91,7 @@ public interface ICVSUIConstants {
 	public final String PREF_SHOW_COMPARE_REVISION_IN_DIALOG = "pref_show_compare_revision_in_dialog"; //$NON-NLS-1$
 	public final String PREF_SHOW_AUTHOR_IN_EDITOR = "pref_show_author_in_editor"; //$NON-NLS-1$
 	public final String PREF_COMMIT_SET_DEFAULT_ENABLEMENT = "pref_enable_commit_sets"; //$NON-NLS-1$
+	public final String PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG = "pref_auto_refresh_tags_in_tag_selection_dialog"; //$NON-NLS-1$
 	
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

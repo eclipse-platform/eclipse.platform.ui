@@ -59,6 +59,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button determineVersionEnabled;
 	private Button confirmMoveTag;
 	private Button debugProtocol;
+	private Button autoRefreshTags;
 	
 	private Button never;
 	private Button prompt;
@@ -171,6 +172,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
 		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
+		autoRefreshTags = createCheckBox(composite, Policy.bind("CVSPreferencePage.autoRefreshTags")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -239,6 +241,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
 		WorkbenchHelp.setHelp(confirmMoveTag, IHelpContextIds.PREF_CONFIRM_MOVE_TAG);
+		WorkbenchHelp.setHelp(autoRefreshTags, IHelpContextIds.PREF_AUTOREFRESH_TAG);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
@@ -297,6 +300,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		confirmMoveTag.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		debugProtocol.setSelection(store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
+		autoRefreshTags.setSelection(store.getBoolean(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG));
 		
 		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
@@ -340,6 +344,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
+		store.setValue(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, autoRefreshTags.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -391,6 +396,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
+		autoRefreshTags.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG));
 	}
 
    private void createSaveCombo(Composite composite) {

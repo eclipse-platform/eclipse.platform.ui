@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.tags;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -84,38 +83,53 @@ public class TagRefreshButtonArea extends DialogArea {
 		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);		
 		Dialog.applyDialogFont(buttonComp);
     }
+    
+    public void refresh() {
+		try {
+			getRunnableContext().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						setBusy(true);
+						monitor.beginTask(Policy.bind("TagRefreshButtonArea.5"), 100); //$NON-NLS-1$
+						CVSTag[] tags = tagSource.refresh(false, Policy.subMonitorFor(monitor, 70));
+						if (tags.length == 0 && promptForBestEffort()) {
+							tagSource.refresh(true, Policy.subMonitorFor(monitor, 30));
+						}
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					} finally {
+						setBusy(false);
+						monitor.done();
+					}
+				}
+			});
+		} catch (InterruptedException e) {
+			// operation cancelled
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(shell, Policy.bind("TagConfigurationDialog.14"), null, e); //$NON-NLS-1$
+		}
+	}
+    
+    private void setBusy(final boolean busy) {
+    	shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				refreshButton.setEnabled(! busy);
+			}
+		});
+    }
 	
 	/*
-	 * Returns a button that implements the standard refresh tags operation. The runnable is run immediatly after 
-	 * the tags are fetched from the server. A client should refresh their widgets that show tags because they
-	 * may of changed. 
+	 * Returns a button that implements the standard refresh tags operation. The
+	 * runnable is run immediatly after the tags are fetched from the server. A
+	 * client should refresh their widgets that show tags because they may of
+	 * changed.
 	 */
 	private Button createTagRefreshButton(Composite composite, String title) {
 		Button refreshButton = new Button(composite, SWT.PUSH);
 		refreshButton.setText (title);
 		refreshButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					try {
-						getRunnableContext().run(true, true, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								try {
-								    monitor.beginTask(Policy.bind("TagRefreshButtonArea.5"), 100); //$NON-NLS-1$
-								    CVSTag[] tags = tagSource.refresh(false, Policy.subMonitorFor(monitor, 70));
-								    if (tags.length == 0 && promptForBestEffort()) {
-								        tagSource.refresh(true, Policy.subMonitorFor(monitor, 30));
-								    }
-								} catch (TeamException e) {
-									throw new InvocationTargetException(e);
-								} finally {
-								    monitor.done();
-								}
-							}
-						});
-					} catch (InterruptedException e) {
-						// operation cancelled
-					} catch (InvocationTargetException e) {
-						CVSUIPlugin.openError(shell, Policy.bind("TagConfigurationDialog.14"), null, e); //$NON-NLS-1$
-					}
+					refresh();						
 				}
 			});
 		return refreshButton;		
