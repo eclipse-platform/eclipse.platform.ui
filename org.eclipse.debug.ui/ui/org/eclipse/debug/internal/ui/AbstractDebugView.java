@@ -30,6 +30,12 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	private StructuredViewer fViewer = null;
 
 	/**
+	 * The debug selection provider associated with this view
+	 * or <code>null</code> if none.
+	 */
+	private DebugSelectionProvider fDebugSelectionProvider;
+	
+	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
@@ -120,10 +126,42 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	
 	protected void setViewer(StructuredViewer viewer) {
 		fViewer = viewer;
+		if (viewer != null) {
+			if (getDebugSelectionProvider() != null) {
+				getViewer().addSelectionChangedListener(getDebugSelectionProvider());
+			}				
+		}
 	}
 	
 	protected abstract void fillContextMenu(IMenuManager mgr);
 	
 	protected abstract void configureToolBar(IToolBarManager tbm);	
+	
+	/**
+	 * Sets the debug selection provider for this debug view,
+	 * possibly <code>null</code>
+	 * 
+	 * @param provider debug selection provider
+	 */
+	protected void setDebugSelectionProvider(DebugSelectionProvider provider) {
+		fDebugSelectionProvider = provider;
+		if (getViewer() != null) {
+			getViewer().addSelectionChangedListener(provider);
+		}
+	}
+	
+	/**
+	 * Returns the debug selection provider for this debug view,
+	 * possibly <code>null</code>
+	 * 
+	 * @return  debug selection provider, or <code>null</code>
+	 */
+	protected DebugSelectionProvider getDebugSelectionProvider() {
+		return fDebugSelectionProvider;
+	}	
+	
+	protected void controlCreated() {
+
+	}	
 }	
 

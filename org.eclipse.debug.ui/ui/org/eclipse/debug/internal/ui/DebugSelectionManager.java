@@ -105,8 +105,8 @@ public class DebugSelectionManager implements IPageListener, ISelectionService, 
 	 * @param page workbench page
 	 */
 	protected void registerListeners(IWorkbenchPage page) {
-		DebugUITools.getDebugViewSelectionProvider(page, IDebugUIConstants.ID_DEBUG_VIEW).addSelectionChangedListener(this);
-		DebugUITools.getDebugViewSelectionProvider(page, IDebugUIConstants.ID_PROCESS_VIEW).addSelectionChangedListener(this);
+		//DebugUITools.getDebugViewSelectionProvider(page, IDebugUIConstants.ID_DEBUG_VIEW).addSelectionChangedListener(this);
+		//DebugUITools.getDebugViewSelectionProvider(page, IDebugUIConstants.ID_PROCESS_VIEW).addSelectionChangedListener(this);
 	}
 	
 	/**
