@@ -365,6 +365,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * A resource has changed. Traverses the delta for breakpoint changes.
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (!isRestored()) {
+			// if breakpoints have not been restored, deltas
+			// should not be processed (we are unable to restore
+			// breakpoints in a resource callback, as that might
+			// cause the resource tree to be modififed, which is
+			// not allowed during notification).
+			// @see bug 9327
+			return;
+		}
 		IResourceDelta delta= event.getDelta();
 		if (delta != null) {
 			try {
@@ -376,6 +385,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				logError(ce);
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether breakpoints have been restored
+	 * since the workbench was started.
+	 * 
+	 * @return whether breakpoints have been restored
+	 * since the workbench was started
+	 */
+	protected boolean isRestored() {
+		return fBreakpoints != null;
 	}
 
 	/**
