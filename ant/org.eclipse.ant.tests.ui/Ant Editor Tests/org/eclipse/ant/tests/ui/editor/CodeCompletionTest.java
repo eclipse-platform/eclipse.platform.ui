@@ -579,5 +579,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(1, proposals.length);
         assertEquals("project", proposals[0].getDisplayString());
     }
+    
+    /**
+     * Tests the code completion for refids (Bug 49830)
+     */
+    public void testRefidProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("refid.xml"));
+
+		int lineNumber= 9;
+    	int columnNumber= 16;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//for sure should have project.class.path and project.class.path2
+    	assertTrue(proposals.length >= 2);
+    	assertContains("project.class.path", proposals);
+    }
 
 }

@@ -276,7 +276,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * Returns the proposals for the specified document.
      */
-    private ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
+    protected ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
         String taskString = null;
 		ICompletionProposal[] proposals= null;
         switch (determineProposalMode(document, cursorPosition, prefix)) {
@@ -1065,7 +1065,16 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * Returns whether the specified element name is known
      */
     protected boolean isKnownElement(String elementName) {
-    	return elementName.equals("target") || elementName.equals("project") || getTaskClass(elementName) != null; //$NON-NLS-1$ //$NON-NLS-2$
+    	if (elementName.equals("target") || elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
+    		return true;
+    	} else {
+    		AntProjectNode node= antModel.getProjectNode();
+        	if (node != null) {
+        		Project antProject= node.getProject();
+        		return ComponentHelper.getComponentHelper(antProject).getAntTypeTable().get(elementName) != null; 
+        	}
+    	}
+        return false;
     }
 
     private Class getTaskClass(String taskName) {

@@ -139,4 +139,10 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     		return dtd.getElement(elementName) != null ;
     	}
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getProposalsFromDocument(org.eclipse.jface.text.IDocument, java.lang.String)
+	 */
+	public ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
+		return super.getProposalsFromDocument(document, prefix);
+	}
 }
