@@ -236,7 +236,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
-		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
+		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), false);
 	}
 
 	/* (non-Javadoc)
