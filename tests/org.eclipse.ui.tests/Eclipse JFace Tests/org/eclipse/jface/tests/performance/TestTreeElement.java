@@ -9,7 +9,7 @@ public class TestTreeElement extends TestElement {
 
 	private static int index = 0;
 
-	private static String characters = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+	static String characters = "M1NqBwV2CeXrZ3LtKyJ4HuGiF5DoSpA6PaOsI7UdYfT8RgEhW9Qjk0DlWzMxUcsvfbwnm";
 
 	/**
 	 * Create a new instance of the receiver .
@@ -28,7 +28,7 @@ public class TestTreeElement extends TestElement {
 	 * 
 	 * @return String
 	 */
-	private String generateFirstEntry() {
+	static String generateFirstEntry() {
 
 		String next = characters.substring(index);
 		index++;
