@@ -28,6 +28,8 @@ import java.util.TreeMap;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -86,6 +88,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static RGB RGB_MINUS =	new RGB(160, 160, 160);
 	private final static char SPACE = ' ';
 
+	/*
 	private final class CommandSetPair {
 		
 		Set customSet;
@@ -143,6 +146,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				defaultCommand = (String) defaultSet.iterator().next();
 		}
 	}
+	*/
 
 	private Button buttonAdd;
 	private Button buttonRemove;
@@ -162,30 +166,30 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map contextIdsByUniqueName;
 	private Map contextUniqueNamesById;
 	private ContextManager contextManager;
-	// TODO private Font fontLabelContextExtends;
-	// TODO private Font fontLabelKeyConfigurationExtends;	
 	private Group groupCommand; 
 	private Group groupKeySequence; 
 	private Map keyConfigurationDefinitionsById;
 	private Map keyConfigurationIdsByUniqueName;
 	private Map keyConfigurationUniqueNamesById;
+	private Label labelAssignmentsForCommand;
+	private Label labelAssignmentsForKeySequence;
 	private Label labelCategory; 	
 	private Label labelCommand;
-	private Label labelCommandsForKeySequence;
 	private Label labelContext; 
 	private Label labelContextExtends;
 	private Label labelKeyConfiguration;
 	private Label labelKeyConfigurationExtends;
 	private Label labelKeySequence;
-	private Label labelKeySequencesForCommand;
-	private Table tableCommandsForKeySequence;
-	private Table tableKeySequencesForCommand;
+	private Table tableAssignmentsForCommand;
+	private Table tableAssignmentsForKeySequence;
 	private KeySequenceText textKeySequence;
 	private SortedMap tree;
 	private IWorkbench workbench;	
 
+	/*
 	private List commandRecords = new ArrayList();	
 	private List keySequenceRecords = new ArrayList();
+	*/
 		
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
@@ -445,14 +449,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelKeyConfigurationExtends = new Label(composite, SWT.LEFT);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		labelKeyConfigurationExtends.setLayoutData(gridData);
-		
-		/*
-		labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+
+		Control spacer = new Composite(composite, SWT.NULL);
+		gridData = new GridData();
+		gridData.heightHint = 10;
 		gridData.horizontalSpan = 3;
-		labelSeparator.setLayoutData(gridData);
-		labelSeparator.setVisible(false);
-		*/
+		gridData.widthHint = 10;
+		spacer.setLayoutData(gridData);
 			
 		groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
@@ -485,6 +488,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalSpan = 2;		
 		gridData.widthHint = 300;
 		textKeySequence.setLayoutData(gridData);
+		
+		textKeySequence.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				modifiedTextKeySequence();
+			}
+		});
 
 		/* TODO remove?
 		buttonClear = new Button(compositeKeySequence, SWT.FLAT);
@@ -501,42 +510,42 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 		*/
 
-		labelCommandsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
+		labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		labelCommandsForKeySequence.setLayoutData(gridData);
-		labelCommandsForKeySequence.setText(Util.translateString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
-		tableCommandsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableCommandsForKeySequence.setHeaderVisible(true);
+		labelAssignmentsForKeySequence.setLayoutData(gridData);
+		labelAssignmentsForKeySequence.setText(Util.translateString(resourceBundle, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
+		tableAssignmentsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableAssignmentsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 40;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 520;
-		tableCommandsForKeySequence.setLayoutData(gridData);
+		tableAssignmentsForKeySequence.setLayoutData(gridData);
 		int width = 0;
-		TableColumn tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 0);
+		TableColumn tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 1);
+		tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();		
 		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
+		tableColumn = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));		
 
-		tableCommandsForKeySequence.addMouseListener(new MouseAdapter() {
+		tableAssignmentsForKeySequence.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				doubleClickedTableCommandsForKeySequence();	
 			}			
 		});		
 
-		tableCommandsForKeySequence.addSelectionListener(new SelectionAdapter() {
+		tableAssignmentsForKeySequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableCommandsForKeySequence();
 			}	
@@ -582,42 +591,42 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
-		labelKeySequencesForCommand = new Label(groupCommand, SWT.LEFT);
+		labelAssignmentsForCommand = new Label(groupCommand, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		labelKeySequencesForCommand.setLayoutData(gridData);
-		labelKeySequencesForCommand.setText(Util.translateString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
-		tableKeySequencesForCommand = new Table(groupCommand, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableKeySequencesForCommand.setHeaderVisible(true);
+		labelAssignmentsForCommand.setLayoutData(gridData);
+		labelAssignmentsForCommand.setText(Util.translateString(resourceBundle, "labelAssignmentsForCommand")); //$NON-NLS-1$
+		tableAssignmentsForCommand = new Table(groupCommand, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableAssignmentsForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 40;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 520;
-		tableKeySequencesForCommand.setLayoutData(gridData);
+		tableAssignmentsForCommand.setLayoutData(gridData);
 		width = 0;
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 0);
+		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 1);
+		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
+		tableColumn = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));	
 
-		tableKeySequencesForCommand.addMouseListener(new MouseAdapter() {
+		tableAssignmentsForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				doubleClickedTableKeySequencesForCommand();	
 			}			
 		});		
 
-		tableKeySequencesForCommand.addSelectionListener(new SelectionAdapter() {
+		tableAssignmentsForCommand.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableKeySequencesForCommand();
 			}	
@@ -751,6 +760,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
         return textKeySequence.getKeySequence();
 	}
 
+	private void modifiedTextKeySequence() {
+		update();
+	}
+
 	private void selectedButtonAdd() {
 		String commandId = getCommandId();
 		String contextId = getContextId();
@@ -877,20 +890,25 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void update() {
+		String categoryId = getCategoryId();
+		String commandId = getCommandId();
+		String contextId = getContextId();
+		String keyConfigurationId = getKeyConfigurationId();
+		KeySequence keySequence = getKeySequence();
+		
 		updateLabelContextExtends();
 		updateLabelKeyConfigurationExtends();		
-		/*
-		updateComboCommands();
-		String categoryId = getCategoryId();
-		String commandId = getCommandId();
-		KeySequence keySequence = getKeySequence();
-		*/		
-	}
 
-	private void updateComboCommands() {		
-		String categoryId = getCategoryId();
-		String commandId = getCommandId();
-	}	
+		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
+		tableAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
+
+		labelAssignmentsForCommand.setEnabled(commandId != null);
+		tableAssignmentsForCommand.setEnabled(commandId != null);
+
+		buttonAdd.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
+		buttonRemove.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
+		buttonRestore.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
+	}
 
 	private void updateLabelContextExtends() {
 		IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionsById.get(getContextId());
@@ -905,23 +923,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		} else
 			labelContextExtends.setText(Util.ZERO_LENGTH_STRING);
 	}
-
-	/* TODO remove?
-	private void updateLabelDescriptionAndTextDescription() {
-		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(getCommandId());
-		
-		if (commandDefinition != null) {			
-			String description = commandDefinition.getDescription();
-			textDescription.setText(description != null ? description : Util.ZERO_LENGTH_STRING);
-			labelDescription.setEnabled(true);
-			textDescription.setEnabled(true);		
-		} else {		
-			textDescription.setText(Util.ZERO_LENGTH_STRING);
-			labelDescription.setEnabled(false);
-			textDescription.setEnabled(false);
-		} 
-	}
-	*/
 
 	private void updateLabelKeyConfigurationExtends() {
 		IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(getKeyConfigurationId());
