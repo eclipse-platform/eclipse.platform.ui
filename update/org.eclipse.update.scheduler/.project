@@ -8,7 +8,6 @@
 		<project>org.eclipse.jface.text</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.editors</project>
-		<project>org.eclipse.ui.ide</project>
 		<project>org.eclipse.ui.views</project>
 		<project>org.eclipse.ui.workbench.texteditor</project>
 		<project>org.eclipse.update.core</project>
