@@ -38,7 +38,7 @@ public class AddTaskDialog extends Dialog {
 	private Button okButton;
 	private Text nameField;
 	private Text classField;
-	private Combo libraryField;
+	private List libraryField;
 
 	private URL[] libraryUrls;
 
@@ -121,9 +121,10 @@ public class AddTaskDialog extends Dialog {
 
 		label = new Label(dialogArea, SWT.NONE);
 		label.setText(ToolMessages.getString("AddTaskDialog.library")); //$NON-NLS-1$;
-		libraryField = new Combo(dialogArea, SWT.READ_ONLY | SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		libraryField = new List(dialogArea, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL |SWT.V_SCROLL);
+		data = new GridData(GridData.FILL_BOTH);
+		data.widthHint= IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.heightHint= 100;
 		libraryField.setLayoutData(data);
 		libraryField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
