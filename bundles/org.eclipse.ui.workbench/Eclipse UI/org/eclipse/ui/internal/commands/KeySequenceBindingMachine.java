@@ -80,14 +80,21 @@ final class KeySequenceBindingMachine {
 		return keySequenceBindingsByCommandId;
 	}
 
+	/**
+	 * Gets all of the active key bindings as a map of <code>KeySequence</code>
+	 * to command identifiers (<code>String</code>).  The map returned is not a
+	 * copy, and is not safe to modify.  <em>Do not modify the return 
+	 * value</em>. 
+	 * @return The active key bindings; never <code>null,/code>.  <em>Do not
+	 * modify the return value</em>.
+	 */
 	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
 			validateSolution();
 			matchesByKeySequence =
-				Collections.unmodifiableMap(
-					KeySequenceBindingNode.getMatchesByKeySequence(
-						tree,
-						KeySequence.getInstance()));
+				KeySequenceBindingNode.getMatchesByKeySequence(
+					tree,
+					KeySequence.getInstance());
 		}
 
 		return matchesByKeySequence;

@@ -439,7 +439,21 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public boolean isPartialMatch(KeySequence keySequence) {
-		return !getPartialMatches(keySequence).isEmpty();
+		for (Iterator iterator =
+			keySequenceBindingMachine
+				.getMatchesByKeySequence()
+				.entrySet()
+				.iterator();
+			iterator.hasNext();
+			) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			KeySequence keySequence2 = (KeySequence) entry.getKey();
+
+			if (keySequence2.startsWith(keySequence, false))
+				return true;
+		}
+		
+		return false;
 	}
 
 	public boolean isPerfectMatch(KeySequence keySequence) {
