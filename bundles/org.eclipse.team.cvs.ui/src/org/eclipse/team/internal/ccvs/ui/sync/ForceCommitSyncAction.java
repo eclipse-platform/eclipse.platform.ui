@@ -21,6 +21,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -92,13 +94,13 @@ public class ForceCommitSyncAction extends MergeAction {
 		}
 		
 		// prompt to get comment and any resources to be added to version control
-		RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 		ReleaseCommentDialog dialog = promptForComment(manager, unadded);
 		if (dialog == null) {
 			// User cancelled.
 			return null;
 		}
-		String comment = dialog.getComment();
+		final String comment = dialog.getComment();
 		
 		// remove unshared resources that were not selected by the user
 		IResource[] toBeAdded = dialog.getResourcesToAdd();
@@ -125,16 +127,16 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 		}
 		
-		List commits = new ArrayList();
-		List additions = new ArrayList();
-		List deletions = new ArrayList();
-		List toMerge = new ArrayList();
-		List incoming = new ArrayList();
+		final List commits = new ArrayList();
+		final List additions = new ArrayList();
+		final List deletions = new ArrayList();
+		final List toMerge = new ArrayList();
+		final List incoming = new ArrayList();
 
 		// A list of diff elements in the sync set which are incoming folder additions
-		List parentCreationElements = new ArrayList();
+		final List parentCreationElements = new ArrayList();
 		// A list of diff elements in the sync set which are folder conflicts
-		List parentConflictElements = new ArrayList();
+		final List parentConflictElements = new ArrayList();
 		
 		for (int i = 0; i < changed.length; i++) {
 			int kind = changed[i].getKind();
@@ -180,66 +182,75 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 		}
 		try {
-			if (parentCreationElements.size() > 0) {
-				// If a node has a parent that is an incoming folder creation, we have to 
-				// create that folder locally and set its sync info before we can get the
-				// node itself. We must do this for all incoming folder creations (recursively)
-				// in the case where there are multiple levels of incoming folder creations.
-				Iterator it = parentCreationElements.iterator();
-				while (it.hasNext()) {
-					makeInSync((IDiffElement)it.next());
-				}				
-			}
-			if (parentConflictElements.size() > 0) {
-				// If a node has a parent that is a folder conflict, that means that the folder
-				// exists locally but has no sync info. In order to get the node, we have to 
-				// create the sync info for the folder (and any applicable parents) before we
-				// get the node itself.
-				Iterator it = parentConflictElements.iterator();
-				while (it.hasNext()) {
-					makeInSync((IDiffElement)it.next());
-				}				
-			}
+			// execute the operations in a single CVS runnable so sync changes are batched
+			CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(
+				new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						try {
+							if (parentCreationElements.size() > 0) {
+								// If a node has a parent that is an incoming folder creation, we have to 
+								// create that folder locally and set its sync info before we can get the
+								// node itself. We must do this for all incoming folder creations (recursively)
+								// in the case where there are multiple levels of incoming folder creations.
+								Iterator it = parentCreationElements.iterator();
+								while (it.hasNext()) {
+									makeInSync((IDiffElement)it.next());
+								}				
+							}
+							if (parentConflictElements.size() > 0) {
+								// If a node has a parent that is a folder conflict, that means that the folder
+								// exists locally but has no sync info. In order to get the node, we have to 
+								// create the sync info for the folder (and any applicable parents) before we
+								// get the node itself.
+								Iterator it = parentConflictElements.iterator();
+								while (it.hasNext()) {
+									makeInSync((IDiffElement)it.next());
+								}				
+							}
 
-			// Handle any real incomming deletions by unmanaging them before adding
-			Iterator it = incoming.iterator();
-			Set incomingDeletions = new HashSet(incoming.size());
-			while (it.hasNext()) {
-				ITeamNode node = (ITeamNode)it.next();
-				collectIncomingDeletions(node, incomingDeletions, monitor);
-				if ((node instanceof TeamFile) && !additions.contains(node)) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeOutgoing(monitor);
-				}
-			}
-			it = incomingDeletions.iterator();
-			while (it.hasNext()) {
-				ITeamNode node = (ITeamNode)it.next();
-				CVSRemoteSyncElement syncElement;
-				if (node instanceof TeamFile) {
-					syncElement = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-				} else {
-					syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-				}
-				additions.add(syncElement.getLocal());
-				CVSWorkspaceRoot.getCVSResourceFor(syncElement.getLocal()).unmanage(null);
-			}
+							// Handle any real incomming deletions by unmanaging them before adding
+							Iterator it = incoming.iterator();
+							Set incomingDeletions = new HashSet(incoming.size());
+							while (it.hasNext()) {
+								ITeamNode node = (ITeamNode)it.next();
+								collectIncomingDeletions(node, incomingDeletions, monitor);
+								if ((node instanceof TeamFile) && !additions.contains(node)) {
+									CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+									element.makeOutgoing(monitor);
+								}
+							}
+							it = incomingDeletions.iterator();
+							while (it.hasNext()) {
+								ITeamNode node = (ITeamNode)it.next();
+								CVSRemoteSyncElement syncElement;
+								if (node instanceof TeamFile) {
+									syncElement = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+								} else {
+									syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
+								}
+								additions.add(syncElement.getLocal());
+								CVSWorkspaceRoot.getCVSResourceFor(syncElement.getLocal()).unmanage(null);
+							}
 
-			if (additions.size() != 0) {
-				manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
+							if (additions.size() != 0) {
+								manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
+							}
+							if (deletions.size() != 0) {
+								manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
+							}
+							if (toMerge.size() != 0) {
+								manager.merged((IRemoteSyncElement[])toMerge.toArray(new IRemoteSyncElement[0]));
+							}
+							manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, monitor);
+						} catch (TeamException e) {
+							throw CVSException.wrapException(e);
+						}
+					}
+				}, monitor);
+			} catch (CVSException e) {
+				handle(e);
+				return null;
 			}
-			if (deletions.size() != 0) {
-				manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
-			}
-			if (toMerge.size() != 0) {
-				manager.merged((IRemoteSyncElement[])toMerge.toArray(new IRemoteSyncElement[0]));
-			}
-			manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, monitor);
-			
-		} catch (final TeamException e) {
-			handle(e);
-			return null;
-		}
 		
 		return syncSet;
 	}

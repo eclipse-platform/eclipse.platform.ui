@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -24,6 +25,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -64,18 +66,28 @@ public class CommitAction extends WorkspaceAction {
 		
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				int ticks=100;
-				monitor.beginTask(null, ticks);
 				try {
-					if (resourcesToBeAdded[0].length > 0) {
-						int addTicks = 20;
-						manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
-						ticks-=addTicks;
-					}
-					IResource[] shared = getSharedResources(resources);
-					if (shared.length == 0) return;
-					manager.commit(shared, comment[0], Policy.subMonitorFor(monitor,ticks));
-				} catch (TeamException e) {
+					// execute the add and commit in a single CVS runnable so sync changes are batched
+					CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(
+						new ICVSRunnable() {
+							public void run(IProgressMonitor monitor) throws CVSException {
+								try {
+									int ticks=100;
+									monitor.beginTask(null, ticks);
+									if (resourcesToBeAdded[0].length > 0) {
+										int addTicks = 20;
+										manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
+										ticks-=addTicks;
+									}
+									IResource[] shared = getSharedResources(resources);
+									if (shared.length == 0) return;
+									manager.commit(shared, comment[0], Policy.subMonitorFor(monitor,ticks));
+								} catch (TeamException e) {
+									throw CVSException.wrapException(e);
+								}
+							}
+						}, monitor);
+				} catch (CVSException e) {
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
