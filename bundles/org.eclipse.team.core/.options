@@ -7,3 +7,4 @@ org.eclipse.team.core/debug=false
 org.eclipse.team.core/streams=false
 org.eclipse.team.core/refreshjob=false
 org.eclipse.team.core/backgroundevents=false
+org.eclipse.team.core/threading=false

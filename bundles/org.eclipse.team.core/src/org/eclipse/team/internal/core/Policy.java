@@ -14,11 +14,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;
@@ -27,6 +23,7 @@ public class Policy {
 	public static boolean DEBUG_STREAMS = false;
 	public static boolean DEBUG_REFRESH_JOB = true;
 	public static boolean DEBUG_BACKGROUND_EVENTS = false;
+	public static boolean DEBUG_THREADING = false;
 
 	static {
 		//init debug options
@@ -34,6 +31,7 @@ public class Policy {
 			DEBUG_STREAMS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/streams"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_REFRESH_JOB = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/refreshjob"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_BACKGROUND_EVENTS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/backgroundevents"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_THREADING = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/threading"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

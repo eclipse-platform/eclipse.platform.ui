@@ -45,7 +45,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class BatchingLock {
 
-	private final static boolean DEBUG = false;
+    private final static boolean DEBUG = Policy.DEBUG_THREADING;
 	
 	// This is a placeholder rule used to indicate that no scheduling rule is needed
 	/* internal use only */ static final ISchedulingRule NULL_SCHEDULING_RULE= new ISchedulingRule() {
@@ -81,6 +81,10 @@ public class BatchingLock {
 				} finally {
 					if (!success) {
 						try {
+						    // The begin was cancelled (or some other problem occurred).
+							// Free the scheduling rule
+							// so the clients of ReentrantLock don't need to
+							// do an endRule when the operation is cancelled.
 							Platform.getJobManager().endRule(rule);
 						} catch (RuntimeException e) {
 							// Log and ignore so the original exception is not lost
@@ -184,8 +188,11 @@ public class BatchingLock {
 			} catch (RuntimeException e) {
 				handleAbortedFlush(e);
 				throw e;
+			} finally {
+			    // We have to clear the resources no matter what since the next attempt
+				// to fluch may not have an appropriate scheduling rule
+			    changedResources.clear();
 			}
-			changedResources.clear();
 		}
 		private boolean isFlushRequired() {
 			return rules.size() == 1 || remainingRulesAreNull();
@@ -228,7 +235,11 @@ public class BatchingLock {
 	
 	private Map infos = new HashMap();
 	
-	private ThreadInfo getThreadInfo() {
+	/**
+	 * Return the thread info for the current thread
+	 * @return the thread info for the current thread
+	 */
+	protected ThreadInfo getThreadInfo() {
 		Thread thisThread = Thread.currentThread();
 		synchronized (infos) {
 			ThreadInfo info = (ThreadInfo)infos.get(thisThread);
@@ -253,7 +264,7 @@ public class BatchingLock {
 		boolean added = false;
 		synchronized (infos) {
 			if (info == null) {
-				info = new ThreadInfo(operation);
+				info = createThreadInfo(operation);
 				Thread thisThread = Thread.currentThread();
 				infos.put(thisThread, info);
 				added = true;
@@ -275,6 +286,17 @@ public class BatchingLock {
 	}
 	
 	/**
+	 * Create the ThreadInfo instance used to cache the lock state for the 
+	 * current thread. Subclass can override to provide a subclass of
+	 * ThreadInfo.
+     * @param operation the flush operation
+     * @return a ThreadInfo instance
+     */
+    protected ThreadInfo createThreadInfo(IFlushOperation operation) {
+        return new ThreadInfo(operation);
+    }
+
+    /**
 	 * Release the lock held on any resources by this thread. The provided rule must
 	 * be identical to the rule returned by the corresponding acquire(). If the rule
 	 * for the release is non-null and all remaining rules held by the lock are null,
