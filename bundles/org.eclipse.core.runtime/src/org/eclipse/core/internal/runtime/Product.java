@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProduct;
 
 public class Product implements IProduct {
 	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
-	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_APPLICATION = "application"; //$NON-NLS-1$
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
@@ -27,12 +26,12 @@ public class Product implements IProduct {
 	String description = null;
 	HashMap properties;
 
-	public Product(IConfigurationElement element) {
+	public Product(String id, IConfigurationElement element) {
+		this.id = id;
 		if (element == null)
 			return;
 		application = element.getAttribute(ATTR_APPLICATION);
 		name = element.getAttribute(ATTR_NAME);
-		id = element.getAttribute(ATTR_ID);
 		description = element.getAttribute(ATTR_DESCRIPTION);
 		loadProperties(element);
 	}
