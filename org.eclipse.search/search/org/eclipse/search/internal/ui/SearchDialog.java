@@ -577,18 +577,20 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			return container;
 		}
 		
+		page.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 		// Search scope
 		boolean showScope= descriptor.showScopeSection();
 		if (showScope) {
 			Composite c= new Composite(pageWrapper, SWT.NONE);
-			layout= new GridLayout();
-			c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			c.setLayout(layout);
+			c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			c.setLayout(new GridLayout());
 			
 			int index= fDescriptors.indexOf(descriptor);
 			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
 			Control part= fScopeParts[index].createPart(c);
 			applyDialogFont(part);
+			part.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			fScopeParts[index].setVisible(true);
 		}
 		return pageWrapper;

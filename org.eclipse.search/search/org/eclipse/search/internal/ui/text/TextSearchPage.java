@@ -36,7 +36,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -56,6 +55,7 @@ import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
@@ -78,7 +78,6 @@ import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
-import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
@@ -364,35 +363,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		initializeDialogUnits(parent);
 		readConfiguration();
 		
-		GridData gd;
 		Composite result= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout(3, false);
+		GridLayout layout= new GridLayout(2, false);
 		layout.horizontalSpacing= 10;
 		result.setLayout(layout);
-		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		RowLayouter layouter= new RowLayouter(layout.numColumns);
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.FILL;
-		gd.verticalAlignment= GridData.VERTICAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_FILL;
-	
-		layouter.setDefaultGridData(gd, 0);
-		layouter.setDefaultGridData(gd, 1);
-		layouter.setDefaultGridData(gd, 2);
-		layouter.setDefaultSpan();
-
-		layouter.perform(createTextSearchComposite(result));
-		
-
-		// Vertical filler
-		Label filler= new Label(result, SWT.LEFT);
-		gd= new GridData(GridData.BEGINNING | GridData.VERTICAL_ALIGN_FILL);
-		gd.heightHint= convertHeightInCharsToPixels(1) / 3;
-		filler.setLayoutData(gd);
-		layouter.perform(new Control[] {filler}, 3);
-
-		layouter.perform(createFileNamePatternComposite(result));
-		
+		addTextPatternControls(result);
+		addFileNameControls(result);
 
 		setControl(result);
 		Dialog.applyDialogFont(result);
@@ -414,16 +391,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return true;
 	}
 
-	private Control createTextSearchComposite(Composite group) {
-		GridData gd;
-		Label label;
+	private void addTextPatternControls(Composite group) {
+		// grid layout with 2 columns
 
 		// Info text		
-		label= new Label(group, SWT.LEFT);
+		Label label= new Label(group, SWT.LEAD);
 		label.setText(SearchMessages.getString("SearchPage.containingText.text")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
-		gd.horizontalSpan= 3;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 
 		// Pattern combo
 		fPattern= new Combo(group, SWT.SINGLE | SWT.BORDER);
@@ -441,32 +415,25 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				updateOKStatus();
 			}
 		});
-		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		fPattern.setLayoutData(gd);
+		fPattern.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		fIgnoreCase= new Button(group, SWT.CHECK);
 		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		fIgnoreCase.setLayoutData(gd);
 		fIgnoreCase.setSelection(!fIsCaseSensitive);
 		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fIsCaseSensitive= !fIgnoreCase.getSelection();
 			}
 		});
+		fIgnoreCase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		// Text line which explains the special characters
-		fStatusLabel= new Label(group, SWT.LEFT);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		fStatusLabel.setLayoutData(gd);
+		fStatusLabel= new Label(group, SWT.LEAD);
+		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		// RegEx checkbox
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
 		fIsRegExCheckbox.setText(SearchMessages.getString("SearchPage.regularExpression")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		fIsRegExCheckbox.setLayoutData(gd);
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 		setContentAssistsEnablement(fIsRegExSearch);
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
@@ -478,8 +445,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				setContentAssistsEnablement(fIsRegExSearch);
 			}
 		});
-		
-		return group;
+		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 	}
 
 	private void handleWidgetSelected() {
@@ -586,15 +552,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return null;
 	}
 
-	private Control createFileNamePatternComposite(Composite group) {
-		GridData gd;
-
+	private void addFileNameControls(Composite group) {
+		// grid layout with 2 columns
+		
 		// Line with label, combo and button
-		Label label= new Label(group, SWT.LEFT);
+		Label label= new Label(group, SWT.LEAD);
 		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.text")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
-		gd.horizontalSpan= 3;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fExtensions.addModifyListener(new ModifyListener() {
@@ -602,29 +566,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				updateOKStatus();
 			}
 		});
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
-		fExtensions.setLayoutData(gd);
+		fExtensions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Button button= new Button(group, SWT.PUSH);
 		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_END);
-		button.setLayoutData(gd);
+		button.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		SWTUtil.setButtonDimensionHint(button);
-		fFileTypeEditor= new FileTypeEditor(
-			SearchPlugin.getDefault().getWorkbench().getEditorRegistry(),
-			fExtensions, button);
+		
+		IEditorRegistry editorRegistry= SearchPlugin.getDefault().getWorkbench().getEditorRegistry();
+		fFileTypeEditor= new FileTypeEditor(editorRegistry, fExtensions, button);
 		
 		// Text line which explains the special characters
-		label= new Label(group, SWT.LEFT);
-		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
-		gd.horizontalSpan= 3;
-		label.setLayoutData(gd);
+		Label description= new Label(group, SWT.LEAD);
+		description.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
+		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		
 		fSearchDerivedCheckbox= new Button(group, SWT.CHECK);
-		gd= new GridData(GridData.BEGINNING);
-		fSearchDerivedCheckbox.setLayoutData(gd);
 		fSearchDerivedCheckbox.setText(SearchMessages.getString("TextSearchPage.searchDerived.label")); //$NON-NLS-1$
 		
 		fSearchDerivedCheckbox.setSelection(fSearchDerived);
@@ -634,7 +591,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				writeConfiguration();
 			}
 		});
-		return group;
+		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 	}
 	
 	public boolean isValid() {
