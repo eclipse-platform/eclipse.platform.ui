@@ -388,7 +388,7 @@ public abstract class TitleAreaDialogHeader {
 		
 		FormData titleData = new FormData();
 		titleData.top = new FormAttachment(0, verticalSpacing);
-		titleData.right = new FormAttachment(titleImage);
+		titleData.right = new FormAttachment(titleImage,horizontalSpacing);
 		titleData.left = new FormAttachment(0, horizontalSpacing);
 		getTitleControl().setLayoutData(titleData);
 
