@@ -7,7 +7,6 @@
 package org.eclipse.welcome.internal.actions;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.ui.internal.*;

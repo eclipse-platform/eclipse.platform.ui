@@ -7,9 +7,6 @@
 package org.eclipse.welcome.internal.portal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
