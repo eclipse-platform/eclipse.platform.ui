@@ -74,6 +74,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		//need to build all external tools from one builder (see bug 39713)
 		//if not a full build
 		ICommand[] commands = getProject().getDescription().getBuildSpec();
+		projectsWithinScope= new ArrayList();
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
@@ -86,6 +87,9 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	private IProject[] getProjectsWithinScope() {
+		if (projectsWithinScope.isEmpty()) {
+			projectsWithinScope = null;
+		}
 		if (projectsWithinScope == null) {
 			return null;
 		} else {
@@ -97,7 +101,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		boolean buildForChange = true;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
 		if (resources != null && resources.length > 0) {
-			projectsWithinScope= new ArrayList();
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				projectsWithinScope.add(resource.getProject());
