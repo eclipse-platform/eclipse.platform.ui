@@ -43,6 +43,9 @@ public class ContentType implements IContentType {
 	final static byte UNKNOWN = 3;
 	private static final int USER_DEFINED_SPEC = IGNORE_USER_DEFINED;
 	final static byte VALID = 1;
+	final static byte NOT_ASSOCIATED = 0;
+	final static byte ASSOCIATED_BY_NAME = 1;
+	final static byte ASSOCIATED_BY_EXTENSION = 2;
 
 	private ContentType aliasTarget;
 	private String baseTypeId;
@@ -394,16 +397,21 @@ public class ContentType implements IContentType {
 		return describer = new InvalidDescriber();
 	}
 
-	public boolean isAssociatedWith(String fileName) {
+	public byte internalIsAssociatedWith(String fileName) {
 		if (aliasTarget != null)
-			return getTarget().isAssociatedWith(fileName);
-		//TODO: should parent be queried?
-		if (fileSpecs == null)
-			return false;
+			return getTarget().internalIsAssociatedWith(fileName);
+		if (fileSpecs == null) {
+			IContentType baseType = getBaseType();
+			return baseType == null ? NOT_ASSOCIATED : ((ContentType) baseType).internalIsAssociatedWith(fileName);
+		}
 		if (hasFileSpec(fileName, FILE_NAME_SPEC))
-			return true;
+			return ASSOCIATED_BY_NAME;
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
-		return (fileExtension == null) ? false : hasFileSpec(fileExtension, FILE_EXTENSION_SPEC);
+		return (fileExtension == null || !hasFileSpec(fileExtension, FILE_EXTENSION_SPEC)) ? NOT_ASSOCIATED : ASSOCIATED_BY_EXTENSION;
+	}
+
+	public boolean isAssociatedWith(String fileName) {
+		return internalIsAssociatedWith(fileName) != NOT_ASSOCIATED;
 	}
 
 	//TODO this can be done better

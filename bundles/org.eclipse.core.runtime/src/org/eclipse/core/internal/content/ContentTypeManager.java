@@ -194,7 +194,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			for (int i = 0; i < children.length; i++) {
 				ContentType child = (ContentType) children[i];
 				// must avoid duplicates and ensure children do not override filespecs
-				if (!child.hasAnyFileSpec() && !result.contains(child))
+				if (child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_NAME && !result.contains(child))
 					result.add(count++, child);
 			}
 		}
@@ -209,7 +209,7 @@ public class ContentTypeManager implements IContentTypeManager {
 					IContentType[] children = main.getChildren();
 					for (int i = 0; i < children.length; i++) {
 						ContentType child = (ContentType) children[i];
-						if (!child.hasAnyFileSpec() && !result.contains(children[i]))
+						if (child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_EXTENSION && !result.contains(children[i]))
 							result.add(count++, children[i]);
 					}
 				}
