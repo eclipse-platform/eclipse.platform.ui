@@ -9,27 +9,39 @@
 <h2>Team - File System Repository Provider Example</h2>
 
 <h3>Introduction</h3>
-
 <p>
-The File System Repository Provider shows how to define your own repository provider.
-It shows how to override the RepositoryProvider class and register this new class as 
-a repository provider using the Team extension point. It also illustrates how to create
-and register a configuration wizard for connecting a local project to a remote location
-and how to provide some custom Team and Replace with menu items for simple Get and Put operations. In 
-addition it also shows how to use the validate save/validate edit mechanism to support
-pessimistic providers.
-
+The File System and Pessimistic Repository Providers examples shows how to define your own repository provider. In particular you
+this example shows how to:
+<ul>
+<li>Extend the RepositoryProvider class and register a new repository provider.
+<li>Register a sharing wizard that will appear in the Team > Share... wizard.
+<li>Add resource actions to the Team menu.
+<li>Implement synchronization support that shows up the Synchronize View.
+<li>Use decorators to show the repository state of the local resources.
+<li>How to implement a file modification validator.
+<li>Adding a repository provider to a capability.
+</ul>
+The example includes two separate repository providers, the basic file system and the pessimistic file system. The basic provider illustrates
+the synchronization support whereas the pessimistic provider is more focused to allowing you to test the workbench behavior with pessimistic
+repository providers. There is a preference page for the pessimistic provider that allows configuring the behavior of the file modification
+validator.
 
 <h3>Running the example</h3>
+<p>
+To start using this example create a project and select <b>Team > Share Project...</b> from the project's popup menu. Click the show 
+all wizards button. This will show both the file system provider and the pessimistic provider.
+<ul>
+<li><b>Basic file system provider</b>: you will have to enter the location in the local file system where you would like to connect the project
+to. The Get and Put operations in the Team menu will now transfer to and from the selected location. And if you open the Synchronize View
+you can browse the synchronization between the local workspace and the remote file system location the files are stored in. If you edit
+a file and then create a Synchronization you can browse changes between the local and the remote.
+<li><b>Pessimistic file system provider</b>: the sharing wizard next page doesn't actually require any user input. The pessimistic
+provider doesn't actually copy the local files anywhere, and instead simply simulates a check in/check out by flipping the 
+read-only bit on files. Once a project is shared with the pessimistic provider you can add files to control and the check in and check out.
+</ul>
+<p>
 
-To start using this example create a project and select Team > Share Project... from the
-project's popup menu. In the wizrd that opens, select File System Example and click Next.
-Now enter the location in the local file system where you would like to connect the project
-to. The Get and Put operations in the Team menu will now transfer to and from the selected 
-location.
-
-
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2004.  All Rights Reserved." BORDER=0></a>
 </body>
 </html>
 
