@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -175,5 +176,12 @@ public class CommitOperation extends SingleCommandOperation {
 			}
 		}
 		return (IResource[]) shared.toArray(new IResource[shared.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#isServerModificationOperation()
+	 */
+	protected boolean isServerModificationOperation() {
+		return true;
 	}
 }
