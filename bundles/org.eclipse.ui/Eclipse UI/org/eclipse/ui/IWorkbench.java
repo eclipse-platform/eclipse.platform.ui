@@ -122,6 +122,7 @@ public IWorkbenchWindow[] getWorkbenchWindows();
  * @exception WorkbenchException if a new page could not be opened
  * @since 2.0
  * @deprecated This experimental API will be removed.
+ * @see IWorkbench#showPerspective
  */
 public IWorkbenchPage openPage(IAdaptable input) 
 	throws WorkbenchException;
@@ -170,6 +171,7 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @see #getPerspectiveRegistry
  * @since 2.0
  * @deprecated This experimental API will be removed.
+ * @see IWorkbench#showPerspective
  */
 public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState) 
 	throws WorkbenchException;
