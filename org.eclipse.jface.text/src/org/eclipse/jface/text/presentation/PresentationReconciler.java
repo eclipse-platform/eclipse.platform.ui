@@ -91,7 +91,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 					oldDocument.removePositionCategory(fPositionCategory);
 				
 				} catch (BadPositionCategoryException x) {
-					// should not happend for former input documents;
+					// should not happened for former input documents;
 				}
 			}
 		}
