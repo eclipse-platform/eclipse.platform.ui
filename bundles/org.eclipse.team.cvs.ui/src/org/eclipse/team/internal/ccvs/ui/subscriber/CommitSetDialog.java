@@ -20,6 +20,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
@@ -154,8 +155,16 @@ public class CommitSetDialog extends Dialog {
     }
     
     private void createOptionsArea(Composite composite) {
-        useTitleButton = createRadioButton(composite, Policy.bind("CommitSetDialog.2")); //$NON-NLS-1$
-        enterCommentButton = createRadioButton(composite, Policy.bind("CommitSetDialog.3")); //$NON-NLS-1$
+		Composite radioArea = new Composite(composite, SWT.NONE);
+		RowLayout radioAreaLayout = new RowLayout(SWT.VERTICAL);
+		radioAreaLayout.marginLeft = 0;
+		radioAreaLayout.marginRight = 0;
+		radioAreaLayout.marginTop = 0;
+		radioAreaLayout.marginBottom = 0;
+		radioArea.setLayout(radioAreaLayout);
+		
+        useTitleButton = createRadioButton(radioArea, Policy.bind("CommitSetDialog.2")); //$NON-NLS-1$
+        enterCommentButton = createRadioButton(radioArea, Policy.bind("CommitSetDialog.3")); //$NON-NLS-1$
         SelectionAdapter listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnablements();
@@ -169,7 +178,6 @@ public class CommitSetDialog extends Dialog {
 	private Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO);
 		button.setText(label);
-		button.setLayoutData(new GridData());
 		return button;
 	}
 	
