@@ -437,8 +437,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 		
 		if (getTopMemoryTab() != null)
 			return getTopMemoryTab().getMemoryBlock();
-		else
-			return new Object();
+        return new Object();
 	}
 	
 	/* (non-Javadoc)

@@ -81,10 +81,7 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 				String label = ((IMemoryRenderingInfo)element).getName();
 				return label;
 			}
-			else
-			{
-				return element.toString();
-			}
+            return element.toString();
 		}
 
 		/* (non-Javadoc)
