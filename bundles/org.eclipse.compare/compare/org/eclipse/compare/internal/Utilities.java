@@ -204,12 +204,7 @@ public class Utilities {
 	}
 	
 	public static String getIconPath(Display display) {
-		if (display == null)
-			display= Display.getCurrent();
-		String path= "icons/basic/"; //$NON-NLS-1$
-		if (display != null && display.getIconDepth() > 4)
-			path= "icons/full/"; //$NON-NLS-1$
-		return path;
+		return "icons/full/";
 	}
 	
 	/**
