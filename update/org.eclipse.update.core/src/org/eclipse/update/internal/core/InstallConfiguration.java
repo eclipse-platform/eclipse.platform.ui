@@ -809,7 +809,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 			
-		ConfigurationActivator configurator = ConfigurationActivator.configurator;
+		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
 		configurator.installBundles();
 		return true;
 	}

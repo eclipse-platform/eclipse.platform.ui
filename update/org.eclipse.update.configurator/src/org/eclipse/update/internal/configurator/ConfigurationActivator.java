@@ -51,7 +51,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private long lastTimeStamp;
 	
 	// Singleton
-	public static ConfigurationActivator configurator;
+	private static ConfigurationActivator configurator;
 
 	public ConfigurationActivator() {
 		configurator = this;
@@ -378,5 +378,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			// TODO handle unmanaged plugins later
 			return (IBundleGroup[])configuration.getConfiguredFeatureEntries();
 		}
+	}
+
+	public static void setConfigurator(ConfigurationActivator configurator) {
+		ConfigurationActivator.configurator = configurator;
+	}
+
+	public static ConfigurationActivator getConfigurator() {
+		return configurator;
 	}
 }
