@@ -84,6 +84,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.CHANGE :
+					if (element instanceof IStackFrame) {
+						IStackFrame lastFrame= getLaunchView().getStackFrame();
+						if (element.equals(lastFrame)) {
+							getLaunchView().setStackFrame(null);
+						}
+					}
 					refresh(element);
 					break;
 			}

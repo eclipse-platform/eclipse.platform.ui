@@ -645,16 +645,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 	
 	/**
-	 * Sets the stack frame that source was retrieved
-	 * for.
-	 * 
-	 * @param frame stack frame
-	 */
-	private void setStackFrame(IStackFrame frame) {
-		fStackFrame = frame;
-	}
-	
-	/**
 	 * Returns the last stack frame that source was retrieved
 	 * for. Used to avoid source lookups for the same stack
 	 * frame when stepping.
@@ -663,6 +653,18 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected IStackFrame getStackFrame() {
 		return fStackFrame;
+	}	
+	
+	/**
+	 * Sets the last stack frame that source was retrieved
+	 * for. Used to avoid source lookups for the same stack
+	 * frame when stepping. Setting the stack frame to <code>null</code>
+	 * effectively forces a source lookup.
+	 * 
+	 * @param frame The stack frame or <code>null</code>
+	 */
+	protected void setStackFrame(IStackFrame frame) {
+		fStackFrame= frame;
 	}	
 	
 	/**
