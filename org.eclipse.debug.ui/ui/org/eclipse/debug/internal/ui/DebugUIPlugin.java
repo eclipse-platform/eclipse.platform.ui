@@ -74,6 +74,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -1093,6 +1094,41 @@ public static Object createExtension(final IConfigurationElement element, final 
 	
 	public IProcess getCurrentProcess() {
 		return fCurrentProcess;
+	}
+	
+	public IDebugElement getDebugContext() {
+		LaunchesView view = fSwitchContext.getDebuggerView();
+		if (view == null) {
+			return null;
+		}
+		StructuredViewer viewer = view.getViewer();
+		if (viewer == null) {
+			return null;
+		}
+		ISelection s = viewer.getSelection();
+		if (s == null || s.isEmpty()) {
+			return null;
+		}
+		if (s instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection)s;
+			if (ss.size() > 1) {
+				return null;
+			} else {
+				Object element = ss.getFirstElement();
+				if (element instanceof IDebugElement) {
+					return (IDebugElement)element;
+				}
+				if (element instanceof IProcess) {
+					element = ((IProcess)element).getLaunch();
+				}				
+				if (element instanceof ILaunch) {
+					return ((ILaunch)element).getDebugTarget();
+				}
+
+			}
+			
+		}
+		return null;
 	}
 	public void setCurrentProcess(IProcess process) {
 		if (fCurrentProcess != null) {

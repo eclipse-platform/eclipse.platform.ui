@@ -5,6 +5,8 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui.*;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.graphics.Image;import org.eclipse.ui.*;
 
 /**
@@ -121,5 +123,29 @@ public class DebugUITools {
 	public static IDebugModelPresentation newDebugModelPresentation() {
 		return new DelegatingModelPresentation();
 	}
+	
+	/**
+	 * Returns the currently selected debug element in the 
+	 * debug view of the current workbench page, or <code>null</code>
+	 * if there is no current debug context.
+	 * 
+	 * @return the currently selected debug context, or <code>null</code>
+	 */
+	public static IDebugElement getDebugContext() {
+		return DebugUIPlugin.getDefault().getDebugContext();
+	}
+	
+	/**
+	 * Returns the process associated with the current debug context.
+	 * If there is no debug context currently, the most recently
+	 * launched process is returned. If there is no current process
+	 * <code>null</code> is returned.
+	 * 
+	 * @return the current process, or <code>null</code>
+	 */
+	public static IProcess getCurrentProcess() {
+		return DebugUIPlugin.getDefault().getCurrentProcess();
+	}
+	
 }
 
