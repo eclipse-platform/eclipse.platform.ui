@@ -613,7 +613,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					return viewer;
 			}
 			// fallback
-			return new TextViewer(parent);
+			return new SimpleTextViewer(parent);
 		}
 
 		ICompareInput input= (ICompareInput) in;

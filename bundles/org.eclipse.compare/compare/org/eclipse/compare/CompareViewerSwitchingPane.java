@@ -207,12 +207,14 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			
 		boolean hadFocus= hasFocus2();
 		
-//		try {
-//			if (fViewer != null)
-//				fViewer.setInput(null);	// force save before switching viewer
-//		} catch (ViewerSwitchingCancelled ex) {
-//			return;
-//		}
+		/*
+		try {
+			if (fViewer != null)
+				fViewer.setInput(null);	// force save before switching viewer
+		} catch (ViewerSwitchingCancelled ex) {
+			return;
+		}
+ 		*/
 
 		fInput= input;
 

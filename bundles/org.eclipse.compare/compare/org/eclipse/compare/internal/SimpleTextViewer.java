@@ -19,13 +19,13 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 
-public class TextViewer extends AbstractViewer {
+public class SimpleTextViewer extends AbstractViewer {
 		
 	private SourceViewer fSourceViewer;
 	private ICompareInput fInput;
 	
 	
-	TextViewer(Composite parent) {
+	SimpleTextViewer(Composite parent) {
 		fSourceViewer= new SourceViewer(parent, null, SWT.H_SCROLL + SWT.V_SCROLL);
 		fSourceViewer.setEditable(false);
 	}

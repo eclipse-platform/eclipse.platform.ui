@@ -21,6 +21,6 @@ import org.eclipse.compare.IViewerCreator;
 public class TextViewerCreator implements IViewerCreator {
 
 	public Viewer createViewer(Composite parent, CompareConfiguration mp) {
-		return new TextViewer(parent);
+		return new SimpleTextViewer(parent);
 	}
 }
