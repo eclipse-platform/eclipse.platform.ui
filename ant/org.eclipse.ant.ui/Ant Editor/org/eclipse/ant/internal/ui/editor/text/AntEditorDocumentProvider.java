@@ -103,7 +103,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 			fPreviouslyOverlaid= fCurrentlyOverlaid;
 			fCurrentlyOverlaid= new ArrayList();
 				
-			synchronized (fAnnotations) {
+			synchronized (getAnnotationMap()) {
 					
 				if (fGeneratedAnnotations.size() > 0) {
 					temporaryProblemsChanged= true;	
