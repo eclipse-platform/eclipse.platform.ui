@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.contexts;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * <p>
@@ -50,7 +50,9 @@ public interface IContextManager {
     IContext getContext(String contextId);
 
     /**
-     * Returns the set of identifiers to defined contexts.
+     * Returns the set of identifiers to defined contexts.  The set is sorted by
+     * the depth of the context within the tree of contexts.  So, for example,
+     * a child context will always appear before its parent.
      * <p>
      * Notification is sent to all registered listeners if this property
      * changes.
@@ -61,10 +63,12 @@ public interface IContextManager {
      *         set is not empty, it is guaranteed to only contain instances of
      *         <code>String</code>.
      */
-    Set getDefinedContextIds();
+    SortedSet getDefinedContextIds();
 
     /**
-     * Returns the set of identifiers to enabled contexts.
+     * Returns the set of identifiers to enabled contexts.  The set is sorted by
+     * the depth of the context within the tree of contexts.  So, for example,
+     * a child context will always appear before its parent.
      * <p>
      * Notification is sent to all registered listeners if this property
      * changes.
@@ -75,7 +79,7 @@ public interface IContextManager {
      *         set is not empty, it is guaranteed to only contain instances of
      *         <code>String</code>.
      */
-    Set getEnabledContextIds();
+    SortedSet getEnabledContextIds();
 
     /**
      * Unregisters an instance of <code>IContextManagerListener</code>

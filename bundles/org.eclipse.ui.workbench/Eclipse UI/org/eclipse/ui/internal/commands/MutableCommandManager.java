@@ -82,6 +82,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		}
 		return false;
 	}
+	
 	static boolean validateKeySequence(KeySequence keySequence) {
 		if (keySequence == null)
 			return false;
@@ -106,9 +107,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 				iterator.remove();
 		}
 	}
-	// TODO review begin
-	private Map handlersByCommandId = new HashMap();
-	private Set activeContextIds = new HashSet();
+	private SortedSet activeContextIds = new TreeSet();
 	// TODO does this have any use anymore?
 	private String activeKeyConfigurationId = null;
 	private String activeLocale = null;
@@ -125,6 +124,8 @@ public final class MutableCommandManager implements IMutableCommandManager {
 	private Set definedCommandIds = new HashSet();
 	private Set definedHandlers = new HashSet();
 	private Set definedKeyConfigurationIds = new HashSet();
+	// TODO review begin
+	private Map handlersByCommandId = new HashMap();
 	private Map keyConfigurationDefinitionsById = new HashMap();
 	private Map keyConfigurationsById = new WeakHashMap();
 	private Set keyConfigurationsWithListeners = new HashSet();
@@ -176,32 +177,46 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (!commandManagerListeners.contains(commandManagerListener))
 			commandManagerListeners.add(commandManagerListener);
 	}
-	private void calculateImageBindings() {
-		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
-		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
-		// TODO
-	}
+	
+	/**
+     * <p>
+     * Calculates the active key sequence bindings for this command manager. The
+     * active key sequence bindings are a function of the active contexts, the
+     * active key configurations, the active locales and the active platforms
+     * within the system. To ensure that the contexts are considered from the
+     * most specific to the least specific, sorting is applied to the context
+     * identifier array. This sorting takes into account the depth of the
+     * context within the context tree.
+     * </p>
+     * <p>
+     * When this method completes, the
+     * <code>keySequenceBindingsByCommandId</code> will represent an accurate
+     * an update-to-date mapping of key sequence bindings. The key sequence
+     * binding machine (i.e., a utility for computing key sequence bindings)
+     * will also be up-to-date.
+     * </p>
+     */
 	private void calculateKeySequenceBindings() {
-		List list = new ArrayList(this.activeContextIds);
-		// TODO high priority. temporary fix for M3 for automatic inheritance
-		// of activities for the specific case of the java editor scope.
-		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") //$NON-NLS-1$
-				&& !list.contains("org.eclipse.ui.textEditorScope")) //$NON-NLS-1$
-			list.add("org.eclipse.ui.textEditorScope"); //$NON-NLS-1$
-		// TODO Remove -- debuggging println
-		String[] activeContextIds = extend((String[]) list
-				.toArray(new String[list.size()]));
-		String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId));
-		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
-		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
-		keySequenceBindingMachine.setActiveContextIds(activeContextIds);
-		keySequenceBindingMachine
-				.setActiveKeyConfigurationIds(activeKeyConfigurationIds);
-		keySequenceBindingMachine.setActiveLocales(activeLocales);
-		keySequenceBindingMachine.setActivePlatforms(activePlatforms);
-		keySequenceBindingsByCommandId = keySequenceBindingMachine
+	    // Get the current state of the system.
+	    final String[] contextIds = (String[]) activeContextIds.toArray(new String[activeContextIds.size()]);
+		final String[] extendedContextIds = extend(contextIds);
+        final String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId));
+        final String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
+        final String[] activePlatforms = extend(getPath(activePlatform,
+                SEPARATOR));
+
+        // Transfer this information to the key sequence binding machine.
+        keySequenceBindingMachine.setActiveContextIds(extendedContextIds);
+        keySequenceBindingMachine
+                .setActiveKeyConfigurationIds(activeKeyConfigurationIds);
+        keySequenceBindingMachine.setActiveLocales(activeLocales);
+        keySequenceBindingMachine.setActivePlatforms(activePlatforms);
+
+        // Allow the machine to compute our key sequences for us.
+        keySequenceBindingsByCommandId = keySequenceBindingMachine
 				.getKeySequenceBindingsByCommandId();
 	}
+	
 	private void fireCommandManagerChanged(
 			CommandManagerEvent commandManagerEvent) {
 		if (commandManagerEvent == null)
@@ -210,9 +225,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 			for (int i = 0; i < commandManagerListeners.size(); i++)
 				((ICommandManagerListener) commandManagerListeners.get(i))
 						.commandManagerChanged(commandManagerEvent);
-	}
-	public Map getHandlersByCommandId() {
-		return Collections.unmodifiableMap(handlersByCommandId);
 	}
 	public Set getActiveContextIds() {
 		return Collections.unmodifiableSet(activeContextIds);
@@ -269,6 +281,9 @@ public final class MutableCommandManager implements IMutableCommandManager {
 	}
 	public Set getDefinedKeyConfigurationIds() {
 		return Collections.unmodifiableSet(definedKeyConfigurationIds);
+	}
+	public Map getHandlersByCommandId() {
+		return Collections.unmodifiableMap(handlersByCommandId);
 	}
 	public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {
 		if (keyConfigurationId == null)
@@ -528,20 +543,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (commandManagerListeners != null)
 			commandManagerListeners.remove(commandManagerListener);
 	}
-	public void setHandlersByCommandId(Map handlersByCommandId) {
-		handlersByCommandId = Util.safeCopy(handlersByCommandId, String.class,
-				IHandler.class, false, true);
-		boolean commandManagerChanged = false;
-		Map commandEventsByCommandId = null;
-		if (!Util.equals(handlersByCommandId, this.handlersByCommandId)) {
-			this.handlersByCommandId = handlersByCommandId;
-			commandManagerChanged = true;
-			commandEventsByCommandId = updateCommands(commandsById.keySet());
-		}
-		if (commandEventsByCommandId != null)
-			notifyCommands(commandEventsByCommandId);
-	}
-	public void setActiveContextIds(Set activeContextIds) {
+	public void setActiveContextIds(SortedSet activeContextIds) {
 		activeContextIds = Util.safeCopy(activeContextIds, String.class);
 		boolean commandManagerChanged = false;
 		Map commandEventsByCommandId = null;
@@ -584,7 +586,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (!Util.equals(this.activeLocale, activeLocale)) {
 			this.activeLocale = activeLocale;
 			commandManagerChanged = true;
-			calculateImageBindings();
 			calculateKeySequenceBindings();
 			commandEventsByCommandId = updateCommands(commandsById.keySet());
 		}
@@ -600,7 +601,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (!Util.equals(this.activePlatform, activePlatform)) {
 			this.activePlatform = activePlatform;
 			commandManagerChanged = true;
-			calculateImageBindings();
 			calculateKeySequenceBindings();
 			commandEventsByCommandId = updateCommands(commandsById.keySet());
 		}
@@ -610,6 +610,20 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);
 	}
+	public void setHandlersByCommandId(Map handlersByCommandId) {
+		handlersByCommandId = Util.safeCopy(handlersByCommandId, String.class,
+				IHandler.class, false, true);
+		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
+		if (!Util.equals(handlersByCommandId, this.handlersByCommandId)) {
+			this.handlersByCommandId = handlersByCommandId;
+			commandManagerChanged = true;
+			commandEventsByCommandId = updateCommands(commandsById.keySet());
+		}
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);
+	}
+	
 	private Map updateCategories(Collection categoryIds) {
 		Map categoryEventsByCategoryId = new TreeMap();
 		for (Iterator iterator = categoryIds.iterator(); iterator.hasNext();) {

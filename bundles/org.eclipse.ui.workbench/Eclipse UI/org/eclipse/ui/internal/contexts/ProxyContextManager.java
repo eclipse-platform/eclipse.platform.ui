@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
@@ -47,11 +47,11 @@ public final class ProxyContextManager extends AbstractContextManager {
 		return contextManager.getContext(contextId);
 	}
 
-	public Set getDefinedContextIds() {
+	public SortedSet getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
 
-	public Set getEnabledContextIds() {
+	public SortedSet getEnabledContextIds() {
 		return contextManager.getEnabledContextIds();
 	}
 }

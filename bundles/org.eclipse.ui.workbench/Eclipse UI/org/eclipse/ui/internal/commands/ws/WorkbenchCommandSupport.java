@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -473,7 +474,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      *            set of string values. It may be empty, but it should never be
      *            <code>null</code>.
      */
-    public void setActiveContextIds(Set activeContextIds) {
+    public void setActiveContextIds(SortedSet activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
     }
 }
