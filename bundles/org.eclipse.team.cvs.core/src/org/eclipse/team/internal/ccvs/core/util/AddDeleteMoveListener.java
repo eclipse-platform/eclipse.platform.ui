@@ -344,34 +344,29 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		for (int i = 0; i < changedResources.length; i++) {
 			try {
 				final IResource resource = changedResources[i];
-				// Only update markers for projects with a provider
-				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
-				if (provider == null) break;
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				// Continue to attempt to remove addition markers even though we no longer create them
-				if (cvsResource.isManaged() || cvsResource.isIgnored()) {
-					if (cvsResource.exists()) {
-						// Remove the addition marker for managed or ignored resources
-						IMarker marker = getAdditionMarker(resource);
+				
+				if (resource.exists()) {
+					// First, delete any addition markers even though we no longer create them
+					IMarker marker = getAdditionMarker(resource);
+					if (marker != null)
+						marker.delete();
+					// Also, delete any deletion markers stored on the parent
+					if (resource.getType() == IResource.FILE) {
+						marker = getDeletionMarker(resource);
 						if (marker != null)
 							marker.delete();
 					}
-				}
-				
-				// Handle deletion markers
-				if (resource.getType() == IResource.FILE) {
-					if (cvsResource.exists()) {
+				} else if (resource.getType() == IResource.FILE) {
+					// Handle deletion markers on non-existant files
+					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
+					if (provider == null) break;
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					if (cvsResource.isManaged()) {
+						createDeleteMarker(resource);
+					} else {
 						IMarker marker = getDeletionMarker(resource);
 						if (marker != null)
 							marker.delete();
-					} else {
-						if (cvsResource.isManaged()) {
-							createDeleteMarker(resource);
-						} else {
-							IMarker marker = getDeletionMarker(resource);
-							if (marker != null)
-								marker.delete();
-						}
 					}
 				}
 			} catch (CVSException e) {
