@@ -26,15 +26,6 @@ import org.eclipse.ui.externaltools.internal.model.ToolUtil;
  * and migrating it to create a new external tool.
  */
 public final class ExternalToolMigration {
-	private static final String SEPERATOR = ";"; //$NON-NLS-1$	
-	private static final String STATE_FILE_NAME_OLD = "oldexternaltools.xml"; //$NON-NLS-1$
-	private static final String STATE_FILE_NAME = "externaltools.xml"; //$NON-NLS-1$
-	private static final String TAG_EXTERNALTOOLS = "externaltools"; //$NON-NLS-1$
-	private static final String TAG_TOOL = "tool"; //$NON-NLS-1$
-	private static final String TAG_ENTRY = "entry"; //$NON-NLS-1$
-	//private static final String TAG_KEY = "key"; //$NON-NLS-1$
-	private static final String TAG_VALUE = "value"; //$NON-NLS-1$
-
 	/*
 	 * Ant tags
 	 */
@@ -54,13 +45,11 @@ public final class ExternalToolMigration {
 	private static final String TAG_TOOL_BLOCK = "!{tool_block}"; //$NON-NLS-1$
 
 	// Known kind of tools
-	private static final String TOOL_TYPE_PROGRAM = "org.eclipse.ui.externaltools.type.program"; //$NON-NLS-1$
 	private static final String TOOL_TYPE_ANT = "org.eclipse.ui.externaltools.type.ant"; //$NON-NLS-1$
 
 	/*
 	 * 2.1 External Tool Keys
 	 */
-	private static final String TAG_EXTERNAL_TOOL = "externalTool"; //$NON-NLS-1$
 	private static final String TAG_TYPE = "type"; //$NON-NLS-1$
 	private static final String TAG_NAME = "name"; //$NON-NLS-1$
 	private static final String TAG_LOCATION = "location"; //$NON-NLS-1$
@@ -68,19 +57,14 @@ public final class ExternalToolMigration {
 	private static final String TAG_CAPTURE_OUTPUT = "captureOutput"; //$NON-NLS-1$
 	private static final String TAG_SHOW_CONSOLE = "showConsole"; //$NON-NLS-1$
 	private static final String TAG_RUN_BKGRND = "runInBackground"; //$NON-NLS-1$
-	private static final String TAG_OPEN_PERSP = "openPerspective"; //$NON-NLS-1$
 	private static final String TAG_PROMPT_ARGS = "promptForArguments"; //$NON-NLS-1$
-	private static final String TAG_SHOW_MENU = "showInMenu"; //$NON-NLS-1$
-	private static final String TAG_SAVE_DIRTY = "saveDirtyEditors"; //$NON-NLS-1$
 	private static final String TAG_ARGS = "arguments"; //$NON-NLS-1$
 	private static final String TAG_REFRESH_SCOPE = "refreshScope"; //$NON-NLS-1$
 	private static final String TAG_REFRESH_RECURSIVE = "refreshRecursive"; //$NON-NLS-1$
 	private static final String TAG_RUN_BUILD_KINDS = "runForBuildKinds"; //$NON-NLS-1$
 	private static final String TAG_EXTRA_ATTR = "extraAttribute"; //$NON-NLS-1$
-	private static final String TAG_KEY = "key"; //$NON-NLS-1$
 	private static final String TAG_VERSION = "version"; //$NON-NLS-1$
 
-	private static final String BUILD_TYPE_SEPARATOR = ","; //$NON-NLS-1$
 	private static final String EXTRA_ATTR_SEPARATOR = "="; //$NON-NLS-1$
 
 	private static final String VERSION_21 = "2.1"; //$NON-NLS-1$;
