@@ -13,6 +13,7 @@ package org.eclipse.core.tests.harness;
 import java.io.*;
 
 import junit.framework.*;
+import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -848,6 +849,8 @@ protected void setUp() throws Exception {
 		deltaListener = new DeltaDebugListener();
 		getWorkspace().addResourceChangeListener(deltaListener);
 	}
+	//decrease the minimum notification delay to speed up tests
+	ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_MIN_NOTIFICATION_DELAY, 10);
 }
 /**
  * Returns the test suite for this test class.
@@ -906,5 +909,12 @@ protected void tearDown() throws Exception {
 	// Session tests should overwrite it.
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 	getWorkspace().save(true, null);
+}
+protected void waitForNotify() {
+	try {
+		TestingSupport.getListenerNotifyJob().join();
+	} catch (InterruptedException e) {
+		Assert.fail("Unable to join listener job: " + e);
+	}
 }
 }
