@@ -78,7 +78,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					insert(source);
 					if (source instanceof IDebugTarget) {
 						ILaunch launch= ((IDebugTarget)source).getLaunch();
-						getLaunchView().autoExpand(launch, true, true);
+						getLaunchView().autoExpand(launch, false, true);
 					}
 					break;
 				case DebugEvent.TERMINATE :
@@ -138,7 +138,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				fThreadTimer.startTimer(thread);
 			}
 			return;
-		}	
+		}
 		refresh(source);
 		if (source instanceof IThread) {
 			// When a thread resumes, try to select another suspended thread
@@ -156,8 +156,17 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			selectAndReveal(source);
 			return;
-		}	
-		labelChanged(source);
+		}
+	}
+	
+	/**
+	 * Helper method to update the label of the given element - must be called in UI thread
+	 */
+	protected void labelChanged(Object element) {
+		if (isAvailable()) {
+			getView().showViewer();
+			((LaunchView) getView()).getLabelDecorator().computeText(element);
+		}
 	}
 	
 	/**
@@ -224,11 +233,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
 			if (frame != null && frame.equals(fLastStackFrame)) {
-				Object[] objectsToUpdate= new Object[]{thread, frame};
 				if (wasTimedOut) {
 					getLaunchViewer().updateStackFrameIcons(thread);
 				}
-				getLaunchViewer().update(objectsToUpdate, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
+				// Update the thread and top stack frame text and thread image separately to allow for
+				// background text computation.
+				getLaunchViewer().update(thread, new String[] {IBasicPropertyConstants.P_IMAGE});
+				labelChanged(thread);
+				labelChanged(frame);
 				if (!evaluationEvent) {
 					getLaunchViewer().setSelection(new StructuredSelection(frame));
 				}
