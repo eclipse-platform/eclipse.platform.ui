@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -69,12 +70,16 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @param newValue the new property value 
 	 */
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
-		Object[] listeners = propertyChangeListeners.getListeners();
-		PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
+		final PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
 
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				Object[] listeners = propertyChangeListeners.getListeners();		
+				for (int i = 0; i < listeners.length; i++) {
+					((IPropertyChangeListener) listeners[i]).propertyChange(event);
+				}
+			}
+		});
 	}
 	/**
 	 * Returns the receiver if the requested type is either IWorkingSet 
