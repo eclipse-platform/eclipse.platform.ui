@@ -177,7 +177,7 @@ public class HistoryView extends ViewPart {
 	 */
 	protected void contributeActions() {
 		// Refresh (toolbar)
-		refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
+		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 					public void run() {
