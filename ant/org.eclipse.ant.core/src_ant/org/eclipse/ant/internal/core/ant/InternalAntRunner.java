@@ -1129,7 +1129,7 @@ public class InternalAntRunner {
 				int posEq = name.indexOf("="); //$NON-NLS-1$
 				if (posEq == 0) {
 					value= name.substring(1);
-					name= "";
+					name= ""; //$NON-NLS-1$
 				} else if (posEq > 0 && posEq != name.length() - 1) {
 					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);
