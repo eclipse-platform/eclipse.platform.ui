@@ -227,14 +227,9 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 	
 	/**
-	 * Sets the source locator to use when locating
-	 * source for the debug target associated with this
-	 * launch.
-	 * 
-	 * @param sourceLocator the source locator for
-	 *  this launch, or <code>null</code> if none.
+	 * @see ILaunch#setSourceLocator(ISourceLocator)
 	 */
-	private void setSourceLocator(ISourceLocator sourceLocator) {
+	public final void setSourceLocator(ISourceLocator sourceLocator) {
 		fLocator = sourceLocator;
 	}	
 

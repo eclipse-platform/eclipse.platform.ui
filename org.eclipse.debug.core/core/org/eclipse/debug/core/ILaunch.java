@@ -104,6 +104,17 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return the source locator
 	 */
 	public ISourceLocator getSourceLocator();
+	
+	/**
+	 * Sets the source locator to use for locating source elements for
+	 * the debug target associated with this launch, or <code>null</code>
+	 * if source lookup is not supported.
+	 *
+	 * @param sourceLocator source locator or <code>null</code>
+	 * @since 2.0
+	 */
+	public void setSourceLocator(ISourceLocator sourceLocator);
+		
 	/**
 	 * Returns the mode of this launch - one of the mode constants defined by
 	 * the launch manager.
