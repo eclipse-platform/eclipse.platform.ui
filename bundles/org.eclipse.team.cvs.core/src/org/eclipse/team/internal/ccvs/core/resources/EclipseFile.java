@@ -77,8 +77,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	/*
 	 * @see ICVSFile#getTimeStamp()
 	 */
-	public Date getTimeStamp() {						
-		return new Date((getIOFile().lastModified()/1000)*1000);
+	public Date getTimeStamp() {
+		File ioFile = getIOFile();
+		if (ioFile == null) {
+			// If there is no file, return the same timestamp as ioFile.lastModified() would
+			return new Date(0L);
+		}			
+		return new Date((ioFile.lastModified()/1000)*1000);
 	}
  
 	/*
