@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="CVS Testing">
+        <topic label="End-To-End Use Cases" href="html/00002.html">
+        </topic>
+        <topic label="Unit Use-Cases" href="html/00003.html">
+            <topic label="Repositories View" href="html/00004.html">
+                <topic label="Check Out - prompts" href="html/00007.html">
+                </topic>
+            </topic>
+            <topic label="Comparing" href="html/00008.html">
+                <topic label="Remote resources" href="html/00009.html">
+                </topic>
+            </topic>
+            <topic label="Synchronizing" href="html/00010.html">
+                <topic label="Sync View operations and selection" href="html/00011.html">
+                </topic>
+                <topic label="Sync View modes and working sets" href="html/00016.html">
+                </topic>
+            </topic>
+            <topic label="Merging" href="html/00012.html">
+                <topic label="Sync View operations and selection" href="html/00013.html">
+                </topic>
+            </topic>
+            <topic label="Resource History" href="html/00014.html">
+                <topic label="Editor linking" href="html/00015.html">
+                </topic>
+            </topic>
+            <topic label="Crash Recovery" href="html/00017.html">
+            </topic>
+        </topic>
+</toc>

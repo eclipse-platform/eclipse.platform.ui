@@ -1,0 +1,43 @@
+<html><head><title>Sync View operations and selection</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><body><h2>Sync View operations and selection</h2>
+
+<p>Ensure Commit and Update buttons:</p>
+<ul>
+  <li>operate on all applicable visible changes</li>
+  <li>exclude filtered changes</li>
+  <li>exclude conflicts</li>
+</ul>
+<p>Ensure Update menu action:</p>
+<ul>
+  <li>is enabled when selection contains incoming or conflicting changes</li>
+  <li>operates only on selected changes</li>
+  <li>silently handles mergable conflicts</li>
+  <li>will prompt if conflicts are no mergable</li>
+</ul>
+<p>Ensure Commit menu action</p>
+<ul>
+  <li>is enable only when selection contains outgoing changes</li>
+  <li>prompts form unadded resources</li>
+  <li>operates only on selected changes</li>
+</ul>
+<p>Ensure Override and Commit and Override and Update</p>
+<ul>
+  <li>are only enabled for conflicts or changes in the opposite direction</li>
+  <li>operates only on selected changes</li>
+</ul>
+<p>Ensure Refresh button refreshes all projects regardless of mode, selection 
+  or working set.</p>
+<p>Ensure Refresh menu action refreshes only the selection</p>
+<h4>Modes and Working Sets</h4>
+<p>Ensure that choosing modes and working sets </p>
+<ul>
+  <li>result in proper filtering</li>
+  <li>updates status bar properly</li>
+</ul>
+<p>All actions on large sets (Mark as Merged as well)</p>
+
+
+</body></html>
