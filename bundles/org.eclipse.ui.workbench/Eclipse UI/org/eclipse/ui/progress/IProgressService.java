@@ -12,6 +12,7 @@ package org.eclipse.ui.progress;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * 
  * @since 3.0
  */
-public interface IProgressService {
+public interface IProgressService extends IRunnableContext {
 
 	/**
 	 * The time at which the busy cursor will be replaced with a progress

@@ -127,7 +127,6 @@ public class WorkbenchSiteProgressService
 		waitCursor = null;
 		ProgressManager.getInstance().removeListener(this);
 	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -212,10 +211,8 @@ public class WorkbenchSiteProgressService
 	 */
 	public void decrementBusy(Job job) {
 		synchronized (busyLock) {
-			
-			if(!busyJobs.contains(job))
+			if (!busyJobs.contains(job))
 				return;
-			
 			busyJobs.remove(job);
 			if (busyJobs.size() > 0)
 				return;
@@ -232,11 +229,9 @@ public class WorkbenchSiteProgressService
 	 * @see org.eclipse.ui.internal.progress.IJobBusyListener#incrementBusy(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void incrementBusy(Job job) {
-		
 		synchronized (busyLock) {
-			if(busyJobs.contains(job))
+			if (busyJobs.contains(job))
 				return;
-			
 			busyJobs.add(job);
 			//If it is greater than one we already set busy
 			if (busyJobs.size() > 1)
@@ -263,14 +258,28 @@ public class WorkbenchSiteProgressService
 	 *      org.eclipse.core.runtime.jobs.Job, boolean)
 	 */
 	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
-		showInDialog(shell,job);
+		showInDialog(shell, job);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
+	 *      org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void showInDialog(Shell shell, Job job) {
 		site.getWorkbenchWindow().getWorkbench().getProgressService()
-		.showInDialog(shell, job);
+				.showInDialog(shell, job);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean,
+	 *      org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void run(boolean fork, boolean cancelable,
+			IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		site.getWorkbenchWindow().getWorkbench().getProgressService().run(fork,
+				cancelable, runnable);
 	}
 }
