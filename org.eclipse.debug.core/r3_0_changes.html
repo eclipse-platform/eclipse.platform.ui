@@ -53,6 +53,13 @@
   model specific debug events.</p>
 <p>A data field has been added to debug events to allow clients to store application 
   specific data in debug events.</p>
+<h3>Extensible Instruction Pointer Images</h3>
+<p>When a stack frame is selected in the debug view, the debugger opens a corresponding 
+  editor and displays an image in the editor ruler on the line that corresponds 
+  to the selected stack frame. In releases prior to 3.0, the images were provided 
+  by the debug plug-in and could not be overridden by a debug model. In release 
+  3.0, a debug model presentation (<code>IDebugModelPresentation</code>) can provide 
+  specialized images by implementing the debug editor presentation interface (<code>IDebugEditorPresentation</code>).</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
