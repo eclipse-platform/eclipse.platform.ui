@@ -59,7 +59,8 @@ public class TargetInfo {
 	
 	/**
 	 * Returns the name of the enclosing project.
-	 * 	 * @return the project name	 */
+	 * 	 * @return the project name or <code>null</code> if
+	 * 	the enclosing project has no name	 */
 	public String getProject() {
 		return project;
 	}
